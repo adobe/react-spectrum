@@ -123,18 +123,6 @@ function RippleButton(props) {
 function ButtonPerformanceExample() {
   const [count, setCount] = useState(0);
   const [showButtons, setShowButtons] = useState(false);
-  const [isMetaTagPresent, setIsMetaTagPresent] = useState(false);
-  const metaTagName = 'viewport';
-  const metaTagContent = 'width=device-width, initial-scale=1';
-
-  useEffect(() => {
-    const existingMetaTag = document.querySelector(`meta[name="${metaTagName}"]`);
-    if (existingMetaTag && existingMetaTag.getAttribute('content') === metaTagContent) {
-      setIsMetaTagPresent(true);
-    } else {
-      setIsMetaTagPresent(false);
-    }
-  }, []);
 
   const handlePress = () => {
     if (!showButtons) {
@@ -144,30 +132,8 @@ function ButtonPerformanceExample() {
     }
   };
 
-  const toggleMetaTag = () => {
-    const existingMetaTag = document.querySelector(`meta[name="${metaTagName}"]`);
-    if (existingMetaTag && existingMetaTag.getAttribute('content') === metaTagContent) {
-      existingMetaTag.remove();
-      setIsMetaTagPresent(false);
-    } else {
-      // Remove any other viewport meta tag first
-      const anyViewportMetaTag = document.querySelector(`meta[name="${metaTagName}"]`);
-      if (anyViewportMetaTag) {
-        anyViewportMetaTag.remove();
-      }
-      const newMetaTag = document.createElement('meta');
-      newMetaTag.name = metaTagName;
-      newMetaTag.content = metaTagContent;
-      document.head.appendChild(newMetaTag);
-      setIsMetaTagPresent(true);
-    }
-  };
-
   return (
     <div>
-      <Button style={{marginTop: 24, marginBottom: 16, marginRight: 8}} onPress={toggleMetaTag}>
-        {isMetaTagPresent ? 'Remove Viewport Meta Tag' : 'Restore Viewport Meta Tag'}
-      </Button>
       <Button style={{marginTop: 24, marginBottom: 16}} onPress={handlePress}>
         {showButtons ? 'Re-render' : 'Render'}
       </Button>
@@ -186,7 +152,7 @@ export const ButtonPerformance = {
   render: (args) => <ButtonPerformanceExample {...args} />,
   parameters: {
     description: {
-      data: 'When usePress is used on the page, there should be a <style> tag placed in the head of the document that adds touch-action: pan-x pan-y pinch-zoom to the [data-react-aria-pressable] elements. This does not apply if the meta viewport tag is set to width=device-width.'
+      data: 'When usePress is used on the page, there should be a <style> tag placed in the head of the document that applies touch-action: pan-x pan-y pinch-zoom to the [data-react-aria-pressable] elements.'
     }
   }
 };

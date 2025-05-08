@@ -822,21 +822,8 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     const ownerDocument = getOwnerDocument(domRef.current);
-    if (!ownerDocument || !ownerDocument.head) {
+    if (!ownerDocument || !ownerDocument.head || ownerDocument.getElementById(STYLE_ID)) {
       return;
-    }
-
-    if (ownerDocument.getElementById(STYLE_ID)) {
-      return;
-    }
-
-    // Skip adding if meta viewport tag has width=device-width
-    const viewportMeta = ownerDocument.querySelector('meta[name="viewport"]');
-    if (viewportMeta) {
-      const content = viewportMeta.getAttribute('content');
-      if (content && content.includes('width=device-width')) {
-        return;
-      }
     }
 
     const style = ownerDocument.createElement('style');
