@@ -11,8 +11,8 @@
  */
 
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
+import {getDescendantKeys, useTreeData} from '../src/useTreeData';
 import React from 'react';
-import {useTreeData} from '../src/useTreeData';
 
 const initial = [
   {
@@ -1104,25 +1104,24 @@ describe('useTreeData', function () {
     it('should return an empty array for a leaf node', function () {
       let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
       let leafNode = result.current.getItem('Suzie');
-      expect(result.current.getDescendantKeys(leafNode)).toEqual([]);
+      expect(getDescendantKeys(leafNode)).toEqual([]);
     });
 
     it('should return all descendant keys for a root node', function () {
       let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
       let rootNode = result.current.getItem('David');
-      expect(result.current.getDescendantKeys(rootNode)).toEqual(['John', 'Suzie', 'Sam', 'Stacy', 'Brad', 'Jane']);
+      expect(getDescendantKeys(rootNode)).toEqual(['John', 'Suzie', 'Sam', 'Stacy', 'Brad', 'Jane']);
     });
 
     it('should return correct descendant keys for a mid-level node', function () {
       let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
       let midNode = result.current.getItem('Sam');
-      expect(result.current.getDescendantKeys(midNode)).toEqual(['Stacy', 'Brad']);
+      expect(getDescendantKeys(midNode)).toEqual(['Stacy', 'Brad']);
     });
 
     it('should return an empty array if node is undefined/null', function () {
-      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
-      expect(result.current.getDescendantKeys(undefined)).toEqual([]);
-      expect(result.current.getDescendantKeys(null)).toEqual([]);
+      expect(getDescendantKeys(undefined)).toEqual([]);
+      expect(getDescendantKeys(null)).toEqual([]);
     });
   });
 
