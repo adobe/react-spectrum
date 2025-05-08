@@ -30,7 +30,7 @@ import {
 } from 'react-aria-components';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
@@ -40,7 +40,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -150,25 +150,21 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   overflowY: 'auto',
   overflowX: 'hidden',
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont()
 });
 
 export let listboxItem = style({
   ...focusRing(),
-  boxSizing: 'border-box',
-  borderRadius: 'control',
-  font: 'control',
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: {
     default: 'transparent',
     isFocused: baseColor('gray-100').isFocusVisible
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -199,7 +195,7 @@ export let listboxItem = style({
     ':has([slot=description])': space(1)
   },
   alignItems: 'baseline',
-  minHeight: 'control',
+  minHeight: controlSize(),
   height: 'min',
   textDecoration: 'none',
   cursor: {
@@ -212,7 +208,7 @@ export let listboxItem = style({
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   color: 'neutral',
   boxSizing: 'border-box',
-  minHeight: 'control',
+  minHeight: controlSize(),
   paddingY: centerPadding(),
   marginX: {
     size: {
