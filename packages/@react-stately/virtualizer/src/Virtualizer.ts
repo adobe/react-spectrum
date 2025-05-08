@@ -193,8 +193,7 @@ export class Virtualizer<T extends object, V> {
     } else {
       rect = this._overscanManager.getOverscannedRect();
     }
-
-    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);

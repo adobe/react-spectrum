@@ -85,6 +85,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     this.stickyColumnIndices = [];
 
     let collection = this.virtualizer!.collection as TableCollection<T>;
+    if (collection.head?.key === -1) {
+      return [];
+    }
+
     for (let column of collection.columns) {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
@@ -569,7 +573,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     y += this.virtualizer!.visibleRect.y;
 
     // Find the closest item within on either side of the point using the gap width.
-    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, Math.max(1, this.gap * 2));
     let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
     let minDistance = Infinity;

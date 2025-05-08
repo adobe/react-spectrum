@@ -207,7 +207,9 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   width: 'full',
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
-  overflow: 'auto',
+  // TODO: Might help with horizontal scrolling happening on Windows, will need to check somehow. Otherwise, revert back to overflow: auto
+  overflowY: 'auto',
+  overflowX: 'hidden',
   font: controlFont()
 });
 
@@ -221,7 +223,7 @@ export let listboxItem = style({
     value: centerPadding()
   },
   paddingBottom: '--labelPadding',
-  backgroundColor: { // TODO: revisit color when I have access to dev mode again
+  backgroundColor: {
     default: 'transparent',
     isFocused: baseColor('gray-100').isFocusVisible
   },

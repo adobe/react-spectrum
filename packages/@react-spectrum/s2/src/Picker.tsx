@@ -333,6 +333,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
+  let layout = new ListLayout({estimatedRowHeight: 32, estimatedHeadingHeight: 50, padding: 8, loaderHeight: LOADER_ROW_HEIGHTS[size][scale]});
 
   return (
     <AriaSelect
@@ -413,13 +414,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   }]
                 ]}>
                 <Virtualizer
-                  layout={ListLayout}
-                  layoutOptions={{
-                    estimatedRowHeight: 32,
-                    estimatedHeadingHeight: 50,
-                    padding: 8,
-                    loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
-                  }}>
+                  layout={layout}>
                   <ListBox
                     items={items}
                     className={listbox({size})}>

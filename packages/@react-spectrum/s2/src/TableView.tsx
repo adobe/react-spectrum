@@ -193,6 +193,9 @@ export class S2TableLayout<T> extends TableLayout<T> {
 
   protected buildCollection(): LayoutNode[] {
     let [header, body] = super.buildCollection();
+    if (!header) {
+      return [];
+    }
     let {children, layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty

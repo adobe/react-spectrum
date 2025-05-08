@@ -102,12 +102,6 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     onScrollEnd: state.endScrolling
   }, scrollRef!);
 
-  // TODO: wull have to update this when multi section loading is implemented, will need to check if all items in a collection are loaders instead perhaps
-  let hasLoadingSentinel = collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader';
-  if (state.contentSize.area === 0 && !hasLoadingSentinel) {
-    return null;
-  }
-
   return (
     <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
