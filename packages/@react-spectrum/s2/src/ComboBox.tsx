@@ -26,9 +26,6 @@ import {
   ListLayout,
   Provider,
   SectionProps,
-  SeparatorContext,
-  SeparatorProps,
-  useContextProps,
   Virtualizer
 } from 'react-aria-components';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
@@ -43,19 +40,17 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, ElementType, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {createLeafComponent} from '@react-aria/collections';
-import {divider} from './Divider';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {filterDOMProps, mergeRefs, useResizeObserver} from '@react-aria/utils';
+import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {mergeStyles} from '../style/runtime';
-import {Placement, useSeparator} from 'react-aria';
+import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
@@ -251,7 +246,18 @@ const separatorWrapper = style({
       XL: `[${edgeToText(48)}]`
     }
   },
-  height: 12
+  height: 12,
+  alignItems: 'center'
+});
+
+const dividerStyle = style({
+  backgroundColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  borderRadius: 'full',
+  height: '[2px]',
+  width: 'full'
 });
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
@@ -505,44 +511,10 @@ export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>
   );
 }
 
-export function Divider(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL' | undefined}): ReactNode {
-  return (
-    <Separator
-      {...props}
-      className={mergeStyles(
-        divider({
-          size: 'M',
-          orientation: 'horizontal',
-          isStaticColor: false
-        }, style({alignSelf: 'center', width: 'full'})))} />
-  );
-}
-
-const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, SeparatorContext);
-
-  let {elementType, orientation, size, style, className, slot, ...otherProps} = props;
-  let Element = (elementType as ElementType) || 'hr';
-  if (Element === 'hr' && orientation === 'vertical') {
-    Element = 'div';
-  }
-
-  let {separatorProps} = useSeparator({
-    ...otherProps,
-    elementType,
-    orientation
-  });
-
+export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div className={separatorWrapper({size})}>
-      <Element
-        {...filterDOMProps(props)}
-        {...separatorProps}
-        style={style}
-        className={className ?? 'react-aria-Separator'}
-        ref={ref}
-        slot={slot || undefined} />
+      <div ref={ref} className={dividerStyle} />
     </div>
   );
 });
-
