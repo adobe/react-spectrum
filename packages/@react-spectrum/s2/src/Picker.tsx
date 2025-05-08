@@ -36,7 +36,8 @@ import {
   description,
   icon,
   iconCenterWrapper,
-  label
+  label,
+  sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -45,7 +46,6 @@ import {
   Divider,
   listbox,
   listboxHeader,
-  listboxHeading,
   listboxItem
 } from './ComboBox';
 import {
@@ -339,7 +339,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 <Provider
                   values={[
                     [HeaderContext, {styles: listboxHeader({size})}],
-                    [HeadingContext, {styles: listboxHeading}],
+                    [HeadingContext, {styles: sectionHeading}],
                     [TextContext, {
                       slots: {
                         description: {styles: description({size})}

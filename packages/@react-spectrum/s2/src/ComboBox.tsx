@@ -36,7 +36,8 @@ import {
   description,
   icon,
   iconCenterWrapper,
-  label
+  label,
+  sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -218,13 +219,6 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
       XL: `[${edgeToText(48)}]`
     }
   }
-});
-
-export let listboxHeading = style({
-  fontSize: 'ui',
-  fontWeight: 'bold',
-  lineHeight: 'ui',
-  margin: 0
 });
 
 const separatorWrapper = style({
@@ -412,7 +406,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
               <Provider
                 values={[
                   [HeaderContext, {styles: listboxHeader({size})}],
-                  [HeadingContext, {styles: listboxHeading}],
+                  [HeadingContext, {styles: sectionHeading}],
                   [TextContext, {
                     slots: {
                       'description': {styles: description({size})}
