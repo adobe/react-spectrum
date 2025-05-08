@@ -573,7 +573,7 @@ function TreeDragAndDropExample(args) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
-    getAllowedDropOperations: () => ['move'],
+    getAllowedDropOperations: () => ['move', 'cancel'],
     onReorder(e) {
       console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key}`);
       try {
@@ -584,11 +584,9 @@ function TreeDragAndDropExample(args) {
         } else if (e.target.dropPosition === 'on') {
           let targetNode = treeData.getItem(e.target.key);
           if (targetNode) {
-            let targetIndex = targetNode.children ? targetNode.children.length : 0;
-            let keyArray = Array.from(e.keys);
-            for (let i = 0; i < keyArray.length; i++) {
-              treeData.move(keyArray[i], e.target.key, targetIndex + i);
-            }
+            e.keys.forEach(key => {
+              treeData.move(key, e.target.key, targetNode.children ? targetNode.children.length : 0);
+            });
           } else {
             console.error('Target node not found for drop on:', e.target.key);
           }
@@ -596,6 +594,9 @@ function TreeDragAndDropExample(args) {
       } catch (error) {
         console.error(error);
       }
+    },
+    onItemDrop() {
+      // TODO: Need to get this to work without needing to pass this
     }
   });
 

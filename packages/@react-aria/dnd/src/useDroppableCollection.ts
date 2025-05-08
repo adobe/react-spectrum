@@ -139,7 +139,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
         }
 
-        if (target.dropPosition !== 'on') {
+        if (target.dropPosition !== 'on' || localState.state.collection.getItem(target.key)?.hasChildNodes) {
           if (!isInternal && onInsert) {
             await onInsert({items: filteredItems, dropOperation, target});
           }
@@ -750,7 +750,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
-        localState.props.onKeyDown?.(e as any);
       }
     });
   }, [localState, ref, onDrop, direction]);
