@@ -12,12 +12,12 @@
 
 import {ActionButtonContext} from './ActionButton';
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
+import {baseColor, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -124,7 +124,7 @@ const buttonStyles = style({
   outlineOffset: -2,
   font: 'heading',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   fontWeight: 'bold',
@@ -140,9 +140,9 @@ const buttonStyles = style({
   display: 'flex',
   flexGrow: 1,
   alignItems: 'baseline',
-  paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
+  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   paddingY: centerPadding(),
-  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
+  gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: {
     // compact is equivalent to 'control', but other densities have more padding.
     size: {
@@ -188,8 +188,8 @@ const buttonStyles = style({
   borderRadius: {
     // Only rounded for keyboard focus and quiet.
     default: 'none',
-    isFocusVisible: 'control',
-    isQuiet: 'control'
+    isFocusVisible: 'default',
+    isQuiet: 'default'
   },
   textAlign: 'start',
   disableTapHighlight: true
