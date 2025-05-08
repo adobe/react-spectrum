@@ -52,6 +52,7 @@ export default [{
         "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
         "examples/**/*",
         "starters/**/*",
+        "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
         "packages/@react-spectrum/s2/spectrum-illustrations"
     ],
