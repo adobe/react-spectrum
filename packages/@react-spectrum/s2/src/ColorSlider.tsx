@@ -19,10 +19,10 @@ import {
   useLocale
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
+import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -88,7 +88,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
           <SliderOutput
             className={style({
               gridArea: 'output',
-              font: 'control',
+              font: controlFont(),
               cursor: 'default',
               color: {
                 default: 'neutral-subdued',

@@ -54,7 +54,9 @@ type PropertyValue<T> =
         ? T[number]
         : never;
 
-export type ArbitraryValue = CustomProperty | `[${string}]`;
+type FunctionName = 'var' | 'calc' | 'min' | 'max' | 'clamp' | 'round' | 'mod' | 'rem' | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'atan2' | 'pow' | 'sqrt' | 'hypot' | 'log' | 'exp' | 'abs' | 'sign';
+type CSSWideKeyword = 'inherit' | 'initial' | 'unset';
+export type ArbitraryValue = CustomProperty | `[${string}]` | `${FunctionName}(${string})` | CSSWideKeyword;
 type PropertyValue2<T> = PropertyValue<T> | ArbitraryValue;
 type Merge<T> = T extends any ? T : never;
 type ShorthandValue<T extends Theme, P> = 

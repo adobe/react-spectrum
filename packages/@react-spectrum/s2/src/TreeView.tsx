@@ -345,7 +345,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
             <div
               className={style({
                 gridArea: 'level-padding',
-                width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
+                width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
               })} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} isHidden={!(hasChildItems)} />
@@ -380,7 +380,7 @@ interface ExpandableRowChevronProps {
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
   color: {
-    default: '[inherit]',
+    default: 'inherit',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
