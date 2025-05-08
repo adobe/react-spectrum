@@ -539,11 +539,11 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
       </div>
       {isLoading && renderProps.children && (
         <div
+          {...renderProps}
+          {...mergeProps(filterDOMProps(props as any))}
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}
-          ref={ref}
-          {...mergeProps(filterDOMProps(props as any))}
-          {...renderProps}>
+          ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}
             role="gridcell">

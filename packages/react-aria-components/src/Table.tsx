@@ -1405,10 +1405,10 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
       </TR>
       {isLoading && renderProps.children && (
         <TR
-          role="row"
-          ref={ref}
           {...mergeProps(filterDOMProps(props as any), rowProps)}
-          {...renderProps}>
+          {...renderProps}
+          role="row"
+          ref={ref}>
           <TD role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
           </TD>

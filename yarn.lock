@@ -6742,7 +6742,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/test-utils@npm:1.0.0-alpha.6, @react-aria/test-utils@npm:^1.0.0-alpha.6, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
+"@react-aria/test-utils@npm:1.0.0-alpha.6, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
@@ -7962,7 +7962,7 @@ __metadata:
     "@react-aria/interactions": "npm:^3.25.0"
     "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/overlays": "npm:^3.27.0"
-    "@react-aria/test-utils": "npm:^1.0.0-alpha.6"
+    "@react-aria/test-utils": "npm:1.0.0-alpha.6"
     "@react-aria/utils": "npm:^3.28.2"
     "@react-spectrum/utils": "npm:^3.12.4"
     "@react-stately/layout": "npm:^4.2.2"
@@ -7985,7 +7985,6 @@ __metadata:
     react-stately: "npm:^3.37.0"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -8763,7 +8762,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/select@workspace:packages/@react-stately/select"
   dependencies:
-    "@react-aria/utils": "npm:^3.28.2"
     "@react-stately/form": "npm:^3.1.3"
     "@react-stately/list": "npm:^3.12.1"
     "@react-stately/overlays": "npm:^3.6.15"
@@ -8772,7 +8770,6 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -27895,7 +27892,6 @@ __metadata:
     "@react-types/shared": "npm:^3.29.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 

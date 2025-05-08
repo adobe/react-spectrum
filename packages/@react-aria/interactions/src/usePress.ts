@@ -372,7 +372,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (isDisabled) {
             e.preventDefault();
           }
-
+          
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreEmulatedMouseEvents && !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
@@ -820,7 +820,7 @@ export function usePress(props: PressHookProps): PressResult {
       // Only apply touch-action if not already set by another CSS rule.
       let style = getOwnerWindow(element).getComputedStyle(element);
       if (style.touchAction === 'auto') {
-        // touchAction: 'manipulation' is supposed to be equivalent, but in
+        // touchAction: 'manipulation' is supposed to be equivalent, but in 
         // Safari it causes onPointerCancel not to fire on scroll.
         // https://bugs.webkit.org/show_bug.cgi?id=240917
         (element as HTMLElement).style.touchAction = 'pan-x pan-y pinch-zoom';

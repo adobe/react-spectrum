@@ -516,12 +516,12 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
       </div>
       {isLoading && renderProps.children && (
         <div
+          {...mergeProps(filterDOMProps(props as any), optionProps)}
+          {...renderProps}
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
           role="option"
-          ref={ref}
-          {...mergeProps(filterDOMProps(props as any), optionProps)}
-          {...renderProps}>
+          ref={ref}>
           {renderProps.children}
         </div>
       )}
