@@ -303,8 +303,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
     if (currentTargetIndex === -1) {
       // Shouldn't happen if targetNode exists, but safeguard anyway
-      console.error(`${targetKey} not found`);
-      return state;
+      throw new Error(`Target node ${targetKey} not found.`);
     }
 
     let tempInsertionIndex = currentTargetIndex + indexOffset;
@@ -380,8 +379,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     }
 
     if (currentTargetIndex === -1) {
-      console.error(`Target node ${targetKey} exists but not found in parent's children after removal.`);
-      return stateAfterRemoval;
+      throw new Error(`Target node ${targetKey} exists but not found in parent's children after removal.`);
     }
 
 
@@ -604,8 +602,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     moveBefore(key: Key, keysToMove: Iterable<Key>) {
       let targetNode = nodeMap.get(key);
       if (!targetNode) {
-        console.warn(`moveBefore: Target node with key ${key} not found.`);
-        return;
+        throw new Error(`moveBefore: Target node with key ${key} not found.`);
       }
       let keysArray = Array.from(keysToMove);
       if (keysArray.length === 0) {
@@ -616,19 +613,13 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
 
       setItems((currentState) => {
-        try {
-          return _internalMoveRelative(currentState, key, keysArray, 'before');
-        } catch (e) {
-          console.error('Error during moveBefore:', e);
-          return currentState;
-        }
+        return _internalMoveRelative(currentState, key, keysArray, 'before');
       });
     },
     moveAfter(key: Key, keysToMove: Iterable<Key>) {
       let targetNode = nodeMap.get(key);
       if (!targetNode) {
-        console.warn(`moveAfter: Target node with key ${key} not found.`);
-        return;
+        throw new Error(`moveAfter: Target node with key ${key} not found.`);
       }
       let keysArray = Array.from(keysToMove);
       if (keysArray.length === 0) {
@@ -639,12 +630,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
 
       setItems((currentState) => {
-        try {
-          return _internalMoveRelative(currentState, key, keysArray, 'after');
-        } catch (e) {
-          console.warn('Error during moveAfter:', e);
-          return currentState;
-        }
+        return _internalMoveRelative(currentState, key, keysArray, 'after');
       });
     },
     update(oldKey: Key, newValue: T) {
@@ -656,8 +642,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         let newKey = getKey(newValue);
         if (newKey !== oldKey && nodeMap.has(newKey)) {
-          console.error(`Cannot update node with key ${oldKey} to new key ${newKey} because a node with that key already exists.`);
-          return {items, nodeMap};
+          throw new Error(`Cannot update node with key ${oldKey} to new key ${newKey} because a node with that key already exists.`);
         }
 
         if (newKey === oldKey) {
@@ -689,8 +674,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           }
 
           if (originalIndex === -1) {
-            console.error(`Could not find original index for node ${oldKey}`);
-            return stateAfterRemoval;
+            throw new Error(`Could not find original index for node ${oldKey}`);
           }
 
 
