@@ -52,9 +52,6 @@ cat > icon-library-test/package.json << EOF
     "url": "https://github.com/adobe/react-spectrum"
   },
   "exports": {
-    "module": {},
-    "main": {},
-    "types": {},
     "./*": {
       "types": "./*.d.ts",
       "module": "./*.mjs",
@@ -62,23 +59,14 @@ cat > icon-library-test/package.json << EOF
       "require": "./*.cjs"
     }
   },
-  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",
     "react": "^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.24.1",
-    "@babel/plugin-transform-runtime": "^7.24.3",
-    "@babel/preset-env": "^7.24.3",
-    "@babel/preset-react": "^7.24.1",
-    "@babel/preset-typescript": "^7.24.1",
     "@react-spectrum/s2-icon-builder": "^1.0.0",
     "@react-spectrum/s2": "latest",
-    "babel-plugin-macros": "^3.0.1",
-    "babel-plugin-react-remove-properties": "^0.3.0",
-    "babel-plugin-transform-glob-import": "^1.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -92,8 +80,6 @@ mkdir icon-library-test/src
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_AlignRight_20_N.svg icon-library-test/src/S2_Icon_AlignRight_20_N.svg
-cp ../../babel.config.json icon-library-test/babel.config.json
-cp ../../svgo.config.json icon-library-test/svgo.config.json
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
