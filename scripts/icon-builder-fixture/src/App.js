@@ -16,7 +16,7 @@ import {
   ActionButton,
   Text
 } from '@react-spectrum/s2';
-import AlignRight from '@react-spectrum/test-icons/AlignRight';
+import AlignRight from '@react-spectrum/icon-library-test/AlignRight';
 
 function App() {
   return (
