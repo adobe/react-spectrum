@@ -63,13 +63,10 @@ cat > icon-library-test/package.json << EOF
     }
   },
   "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
-  "dependencies": {
-    "@swc/helpers": "^0.5.0"
-  },
   "peerDependencies": {
-    "@react-spectrum/s2": "latest",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@react-spectrum/s2": ">=0.8.0",
+    "react": "^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.24.1",
@@ -77,7 +74,7 @@ cat > icon-library-test/package.json << EOF
     "@babel/preset-env": "^7.24.3",
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
-    "@react-spectrum/s2-icon-builder": "latest",
+    "@react-spectrum/s2-icon-builder": "^1.0.0",
     "@react-spectrum/s2": "latest",
     "babel-plugin-macros": "^3.0.1",
     "babel-plugin-react-remove-properties": "^0.3.0",
