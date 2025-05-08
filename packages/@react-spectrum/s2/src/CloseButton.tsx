@@ -12,10 +12,10 @@
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps, ContextValue} from 'react-aria-components';
+import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
@@ -45,7 +45,7 @@ const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boo
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  size: 'control',
+  size: controlSize(),
   flexShrink: 0,
   borderRadius: 'full',
   padding: 0,
@@ -60,7 +60,7 @@ const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boo
   '--iconPrimary': {
     type: 'color',
     value: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isDisabled: 'disabled',
       isStaticColor: {
         default: baseColor('transparent-overlay-800'),

@@ -47,7 +47,7 @@ import {
   listboxHeading,
   listboxItem
 } from './ComboBox';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -118,6 +118,7 @@ export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
+  ...control({shape: 'default', icon: true}),
   ...fieldInput(),
   outlineStyle: {
     default: 'none',
@@ -125,8 +126,6 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 'none'
   },
   position: 'relative',
-  font: 'control',
-  display: 'flex',
   textAlign: 'start',
   borderStyle: {
     default: 'none',
@@ -138,14 +137,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
       isDisabled: 'GrayText'
     }
   },
-  borderRadius: 'control',
-  alignItems: 'center',
-  height: 'control',
   transition: 'default',
-  columnGap: {
-    default: 'text-to-control',
-    isQuiet: 'text-to-visual'
-  },
   paddingX: {
     default: 'edge-to-text',
     isQuiet: 0
@@ -157,7 +149,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 'transparent'
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -192,25 +184,25 @@ export let menu = style({
     }
   },
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control',
+  fontSize: controlFont(),
   gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
+  ...controlBorderRadius(),
   position: 'absolute',
   top: 0,
   left: 0,
   bottom: 0,
   right: 0,
   pointerEvents: 'none',
-  borderRadius: 'control',
   borderStyle: 'solid',
   borderWidth: 2,
-  borderColor: 'negative',
+  borderColor: baseColor('negative'),
   transition: 'default'
 });
 
