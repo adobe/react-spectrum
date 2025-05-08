@@ -83,9 +83,9 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
           width: {
             size: {
               // Copied from designs, not sure if correct.
-              S: 336,
-              M: 416,
-              L: 576,
+              S: 400,
+              M: 480,
+              L: 640,
               fullscreen: 'calc(100% - 40px)',
               fullscreenTakeover: 'full'
             }
