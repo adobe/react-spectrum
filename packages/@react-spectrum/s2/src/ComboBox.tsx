@@ -44,12 +44,12 @@ import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, 
 import {createFocusableRef} from '@react-spectrum/utils';
 import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
