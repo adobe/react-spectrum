@@ -47,6 +47,9 @@ cat > icon-library-test/package.json << EOF
   "name": "@react-spectrum/icon-library-test",
   "version": "1.0.0",
   "exports": {
+    "module": {},
+    "main": {},
+    "types": {},
     "./*": {
       "types": "./*.d.ts",
       "module": "./*.mjs",
