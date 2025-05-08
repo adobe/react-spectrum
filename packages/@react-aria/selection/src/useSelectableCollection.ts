@@ -516,8 +516,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
 
       if (modality === 'keyboard' || didAutoFocusRef.current) {
-        scrollIntoView(scrollRef.current, element);
-
+        requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollIntoView(scrollRef.current, element);
+          }
+        });
         // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
         if (modality !== 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});

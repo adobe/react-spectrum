@@ -354,11 +354,11 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                       }
                     }]
                   ]}>
-                    <ListBox
-                      items={items}
-                      className={listbox({size})}>
-                      {children}
-                    </ListBox>
+                  <ListBox
+                    items={items}
+                    className={listbox({size})}>
+                    {children}
+                  </ListBox>
                 </Provider>
               </PopoverBase>
             </Virtualizer>
