@@ -3,7 +3,7 @@ import {convertColor} from './colors';
 import {convertDimension, convertGridTrack} from './dimensions';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
-import {transformUnsafeStyle} from './unsafeStyle';
+import transformUnsafeStyle from './unsafeStyle';
 
 export const borderWidths = {
   none: 0,
@@ -591,7 +591,7 @@ function expandSpaceShorthand(
   }
 }
 
-export function transformStyleProps(path: NodePath<t.JSXElement>, element: string) {
+export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string) {
   let macroValues = new Map<string, object | string | number | boolean>;
   let dynamicValues = new Map<string, t.ObjectProperty['value']>;
   let conditions = new Map<string, t.ObjectProperty['value']>;

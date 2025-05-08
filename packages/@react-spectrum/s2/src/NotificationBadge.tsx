@@ -51,7 +51,7 @@ const badge = style({
     default: 'flex',
     isDisabled: 'none'
   },
-  font: 'control',
+  font: 'ui',
   color: {
     default: 'white',
     isStaticColor: 'auto',

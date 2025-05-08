@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import React, {AriaAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useUNSAFE_PortalContext} from './PortalProvider';
@@ -37,7 +37,7 @@ const Context = React.createContext<ModalContext | null>(null);
  * subtree from screen readers. This is done using React context in order to account for things
  * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
  */
-export function ModalProvider(props: ModalProviderProps): ReactNode {
+export function ModalProvider(props: ModalProviderProps): JSX.Element {
   let {children} = props;
   let parent = useContext(Context);
   let [modalCount, setModalCount] = useState(0);
@@ -101,7 +101,7 @@ function OverlayContainerDOM(props: ModalProviderProps) {
  * if a modal or other overlay is opened. Only the top-most modal or
  * overlay should be accessible at once.
  */
-export function OverlayProvider(props: ModalProviderProps): ReactNode {
+export function OverlayProvider(props: ModalProviderProps): JSX.Element {
   return (
     <ModalProvider>
       <OverlayContainerDOM {...props} />
