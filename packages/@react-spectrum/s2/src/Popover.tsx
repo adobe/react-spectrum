@@ -13,7 +13,6 @@
 import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
-  Button,
   composeRenderProps,
   Dialog,
   DialogProps,
@@ -23,11 +22,9 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DialogTrigger} from '../src';
 import {DOMRef} from '@react-types/shared';
-import {forwardRef, MutableRefObject, useCallback, useContext, useEffect, useRef} from 'react';
+import {forwardRef, MutableRefObject, RefObject, useCallback, useContext} from 'react';
 import {mergeStyles} from '../style/runtime';
-import {PressResponder} from '@react-aria/interactions';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -222,7 +219,9 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
 });
 
 export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {
-  triggerRef?: DOMRef<HTMLElement>
+  triggerRef?: RefObject<Element | null>,
+  isOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 const dialogStyle = style({
@@ -241,58 +240,11 @@ const dialogStyle = style({
  */
 export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
-  const {triggerRef, ...otherProps} = props;
-  const actionButtonRef = useRef<HTMLButtonElement>(null);
+  const {triggerRef, isOpen, onOpenChange, ...otherProps} = props;
 
 
-  useEffect(() => {
-    if (triggerRef && 'current' in triggerRef && actionButtonRef.current) {
-      const triggerElement = triggerRef.current?.UNSAFE_getDOMNode?.() || triggerRef.current;
-      if (triggerElement instanceof HTMLElement) {
-        // Set trigger element to position relative
-        triggerElement.style.position = 'relative';
-
-        // Position the button absolutely within the trigger element
-        const button = actionButtonRef.current;
-        button.style.position = 'absolute';
-        button.style.top = '0';
-        button.style.left = '0';
-        button.style.width = '100%';
-        button.style.height = '100%';
-        button.style.opacity = '0';
-        button.style.pointerEvents = 'none';
-        button.style.margin = '0';
-        button.style.padding = '0';
-        button.style.zIndex = '1';
-        button.tabIndex = -1;
-
-        triggerElement.appendChild(button);
-
-        const clickHandler = () => {
-          button?.click();
-        };
-        const keyDownHandler = (e: KeyboardEvent) => {
-
-          if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            button?.click();
-          }
-        };
-
-        triggerElement.addEventListener('click', clickHandler);
-        triggerElement.addEventListener('keydown', keyDownHandler);
-        return () => {
-          triggerElement.removeEventListener('click', clickHandler);
-          if (button && triggerElement.contains(button)) {
-            triggerElement.removeChild(button);
-          }
-        };
-      }
-    }
-  }, [triggerRef]);
-
-  const renderPopoverBase = () => {
-    return (<PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+  return (
+    <PopoverBase  isOpen={isOpen} onOpenChange={onOpenChange} triggerRef={triggerRef} size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
       <Dialog
         {...otherProps}
         ref={domRef}
@@ -305,30 +257,6 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
           </OverlayTriggerStateContext.Provider>
         ))}
       </Dialog>
-    </PopoverBase>);
-  };
-
-  const renderDialogTrigger = () => {
-    return (<>
-      <DialogTrigger>
-        <PressResponder isPressed={false}>
-          <Button
-            ref={actionButtonRef}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              padding: 0,
-              margin: 0,
-              pointerEvents: 'auto',
-              zIndex: 1
-            }} />
-
-          {renderPopoverBase()}
-        </PressResponder>
-      </DialogTrigger>
-    </>);
-  };
-
-  return props.triggerRef ? renderDialogTrigger() : renderPopoverBase();
+    </PopoverBase>
+  );
 });

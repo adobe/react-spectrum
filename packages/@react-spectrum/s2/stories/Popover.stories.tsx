@@ -22,7 +22,7 @@ import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components'
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
 const meta: Meta<typeof Popover> = {
@@ -168,47 +168,12 @@ AccountMenu.argTypes = {
   placement: {table: {disable: true}}
 };
 
-
 function Autocomplete(props) {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
     <RACAutocomplete filter={contains} {...props} />
   );
 }
-
-export const PopoverWithTriggerOnLink = (args: any) => {
-  const linkRef = useRef<any>(null);
-  return (
-    <div>
-      <Link ref={linkRef}>Popover Link Trigger</Link>
-      <Popover {...args} triggerRef={linkRef} placement="top right">
-        <Autocomplete>
-          <SearchField autoFocus label="Search" styles={style({marginTop: 12, marginX: 12})} />
-          <Menu aria-label="test menu" styles={style({marginTop: 12})}>
-            <MenuItem>Foo</MenuItem>
-            <MenuItem>Bar</MenuItem>
-            <MenuItem>Baz</MenuItem>
-          </Menu>
-        </Autocomplete>
-      </Popover>
-    </div>
-  );
-};
-
-export const PopoverWithTriggerOnButton = (args: any) => {
-  const buttonRef = useRef<any>(null);
-  return (
-    <div>
-      <Button ref={buttonRef}>Open Popover</Button>
-      <Popover {...args} triggerRef={buttonRef} >
-        <Autocomplete>
-          <SearchField autoFocus label="Search" styles={style({marginTop: 12, marginX: 12})} />
-        </Autocomplete>
-      </Popover>
-    </div>
-  );
-};
-
 
 export const AutocompletePopover = (args: any) => (
   <>
@@ -229,4 +194,24 @@ export const AutocompletePopover = (args: any) => (
     </DialogTrigger>
   </>
 );
+
+export const PopoverWithTrigger = () => {
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<any>(null);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div style={{display: 'flex', gap: 12}}>
+      <button ref={buttonRef} onClick={() => setOpen(!open)}>Open Popover</button>
+      <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={buttonRef}>
+        <Text>Popover with trigger on button</Text>
+      </Popover>
+    </div>
+  );
+};
 
