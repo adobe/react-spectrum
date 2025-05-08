@@ -183,7 +183,7 @@ export class SelectTester {
           return;
         }
 
-        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});

@@ -137,7 +137,7 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist || !this._tablist.contains(document.activeElement)) {
+      if (document.activeElement !== this._tablist && !this._tablist.contains(document.activeElement)) {
         act(() => this._tablist.focus());
       }
 

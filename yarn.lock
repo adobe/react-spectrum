@@ -6744,6 +6744,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
+    "@react-aria/utils": "npm:^3.28.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@testing-library/react": ^16.0.0
@@ -6855,7 +6856,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.14.2, @react-aria/utils@npm:^3.28.2, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.14.2, @react-aria/utils@npm:^3.28.1, @react-aria/utils@npm:^3.28.2, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
