@@ -16,7 +16,7 @@ import * as propertyInfo from './properties.json';
 
 // Postfix all class names with version for now.
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
-const POSTFIX = json.version.replace(/[0.]/g, '');
+const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
