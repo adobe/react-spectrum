@@ -800,7 +800,15 @@ describe('useTreeData', function () {
   });
 
   describe('moveBefore error', function () {
+    beforeEach(() => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+    afterEach(() => {
+      jest.spyOn(console, 'error').mockRestore();
+    });
+
     it('cannot move an item within itself', function () {
+      let error;
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
       let {result} = renderHook(() =>
@@ -809,8 +817,9 @@ describe('useTreeData', function () {
       try {
         act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
       } catch (e) {
-        expect(e.toString()).toContain('Error: Cannot move item John relative to Suzie because it is a descendant.');
+        error = e;
       }
+      expect(error?.message).toEqual('Cannot move item John relative to Suzie because it is a descendant.');
     });
 
     it('should throw error when moving relative to self', function () {
