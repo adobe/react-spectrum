@@ -218,11 +218,9 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {
-  triggerRef?: RefObject<Element | null>,
-  isOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {
 }
+
 
 const dialogStyle = style({
   padding: 8,
