@@ -93,6 +93,7 @@ import {MyCheckbox} from './Checkbox';
 ```css hidden
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
+@import './CheckboxGroup.mdx' layer(checkboxgroup);
 @import './Checkbox.mdx' layer(checkbox);
 @import './Popover.mdx' layer(popover);
 @import './Menu.mdx' layer(menu);
@@ -431,44 +432,74 @@ Now we can render a table with a default selection column built in.
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
-In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
-only the rows dynamic.
+In the example below, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns
+and add additional rows. You can also make the columns static and only the rows dynamic.
+
+**Note**: Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example). See the [collections](collections.html#dependencies) guide for more details.
 
 ```tsx example export=true
 import type {TableProps} from 'react-aria-components';
+import {MyCheckboxGroup} from './CheckboxGroup';
+import {MyCheckbox} from './Checkbox';
 
 function FileTable(props: TableProps) {
+  let [showColumns, setShowColumns] = React.useState(['name', 'type', 'date']);
   let columns = [
     {name: 'Name', id: 'name', isRowHeader: true},
     {name: 'Type', id: 'type'},
     {name: 'Date Modified', id: 'date'}
-  ];
+  ].filter(column => showColumns.includes(column.id));
 
-  let rows = [
+  let [rows, setRows] = React.useState([
     {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
     {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
     {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
     {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
+  ]);
+
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
 
   return (
-    <Table aria-label="Files" {...props}>
-      <MyTableHeader columns={columns}>
-        {column => (
-          <Column isRowHeader={column.isRowHeader}>
-            {column.name}
-          </Column>
-        )}
-      </MyTableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <MyRow columns={columns}>
-            {column => <Cell>{item[column.id]}</Cell>}
-          </MyRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="flex-col">
+      <MyCheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} style={{flexDirection: 'row'}}>
+        <MyCheckbox value="type">Type</MyCheckbox>
+        <MyCheckbox value="date">Date Modified</MyCheckbox>
+      </MyCheckboxGroup>
+      <Table aria-label="Files" {...props}>
+        <MyTableHeader columns={columns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows} dependencies={[columns]}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+      <Button onPress={addRow}>Add row</Button>
+    </div>
   );
+}
+```
+
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8;
+  align-items: start;
 }
 ```
 
@@ -1205,75 +1236,6 @@ function Example() {
       </Table>
     </ResizableTableContainer>
   );
-}
-```
-
-## Dependencies
-
-The `dependencies` prop can be used to ensure that separate parts of the collection update in response to each other, for example, column additions and removals.
-Be careful using it too frequently as it will cause the table to re-render more often than necessary which can cause performance degradation.
-Use the same strategies for reducing unnecessary invalidations as you would with any other hook.
-
-This prop is an array of dependencies that will trigger a cache invalidation within the collection. It should follow the same rules as React various hooks with dependencies arrays.
-> The list of dependencies must have a constant number of items and be written inline like `[dep1, dep2, dep3]`.
-
-### Dynamically adding and removing columns
-
-Tables support dynamically adding and removing columns. This is useful to change the density of information in a table.
-Columns are handled separately from rows when it comes to caching. As a result, the `TableBody` component accepts a `dependencies` prop much like React's various hooks.
-
-Note, the `dependencies` array is only needed for the dynamic items case. When using static items, the table will always re-render when the children change.
-
-```tsx example
-function Example() {
-  let [hide, setHide] = React.useState(false);
-
-  let items = [
-    // ...
-    ///- begin collapse -////
-    {
-      id: 1,
-      file: '2022-Roadmap-Proposal-Revision-012822-Copy(2)',
-      size: '214 KB',
-      date: 'November 27, 2022 at 4:56PM'
-    },
-    {
-      id: 2,
-      file: '62259692_p0_master1200',
-      size: '120 KB',
-      date: 'January 27, 2021 at 1:56AM'
-    }
-    ///- end collapse -///
-  ];
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start'}}>
-      <Button onPress={() => setHide(!hide)}>
-        {hide ? 'Show' : 'Hide'}
-      </Button>
-      <Table aria-label="Files" selectionMode="multiple">
-        <MyTableHeader>
-          <MyColumn isRowHeader>Name</MyColumn>
-          <MyColumn>Type</MyColumn>
-          {/*- begin highlight -*/}
-          {!hide && <MyColumn>Date Modified</MyColumn>}
-          {/*- end highlight -*/}
-        </MyTableHeader>
-        <TableBody
-          /*- begin highlight -*/
-          dependencies={[hide]}
-          /*- end highlight -*/
-          items={items}>
-          {item => (
-            <Row>
-              <Cell>{item.file}</Cell>
-              <Cell>{item.size}</Cell>
-              <Cell>{item.date}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  )
 }
 ```
 
