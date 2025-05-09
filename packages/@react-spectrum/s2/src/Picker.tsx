@@ -40,7 +40,8 @@ import {
   description,
   icon,
   iconCenterWrapper,
-  label
+  label,
+  sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -50,7 +51,6 @@ import {
   Divider,
   listbox,
   listboxHeader,
-  listboxHeading,
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
@@ -333,7 +333,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
-  let layout = new ListLayout({estimatedRowHeight: 32, estimatedHeadingHeight: 50, padding: 8, loaderHeight: LOADER_ROW_HEIGHTS[size][scale]});
 
   return (
     <AriaSelect
@@ -382,47 +381,52 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <PopoverBase
-              hideArrow
-              offset={menuOffset}
-              placement={`${direction} ${align}` as Placement}
-              shouldFlip={shouldFlip}
-              UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
-              }}
-              styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
-                minWidth: {
-                  default: '--trigger-width',
-                  isQuiet: 192
-                },
-                width: {
-                  default: '--trigger-width',
-                  isQuiet: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
-                }
-              })(props)}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: listboxHeader({size})}],
-                  [HeadingContext, {styles: listboxHeading}],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <Virtualizer
-                  layout={layout}>
+            <Virtualizer
+              layout={ListLayout}
+              layoutOptions={{
+                estimatedRowHeight: 32,
+                estimatedHeadingHeight: 50,
+                padding: 8,
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
+              <PopoverBase
+                hideArrow
+                offset={menuOffset}
+                placement={`${direction} ${align}` as Placement}
+                shouldFlip={shouldFlip}
+                UNSAFE_style={{
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                }}
+                styles={style({
+                  marginStart: {
+                    isQuiet: -12
+                  },
+                  minWidth: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: 192
+                  },
+                  width: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                  }
+                })(props)}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: listboxHeader({size})}],
+                    [HeadingContext, {styles: sectionHeading}],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
                   <ListBox
                     items={items}
                     className={listbox({size})}>
                     {renderer}
                   </ListBox>
-                </Virtualizer>
-              </Provider>
-            </PopoverBase>
+                </Provider>
+              </PopoverBase>
+            </Virtualizer>
           </InternalPickerContext.Provider>
         </>
       )}
@@ -536,6 +540,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
               className={iconStyles({isInitialLoad})} />
             {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
             {isInvalid && !isDisabled && !isQuiet &&
+              // @ts-ignore known limitation detecting functions from the theme
               <div className={invalidBorder({...renderProps, size})} />
             }
           </>

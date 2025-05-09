@@ -28,39 +28,35 @@ import {
   ListLayout,
   Provider,
   SectionProps,
-  SeparatorContext,
-  SeparatorProps,
   UNSTABLE_ListBoxLoadingSentinel,
-  useContextProps,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
   icon,
   iconCenterWrapper,
-  label
+  label,
+  sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, ElementType, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {createLeafComponent} from '@react-aria/collections';
-import {divider} from './Divider';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {filterDOMProps, mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeStyles} from '../style/runtime';
-import {Placement, useSeparator} from 'react-aria';
+import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
+import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
@@ -210,38 +206,34 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   // TODO: Might help with horizontal scrolling happening on Windows, will need to check somehow. Otherwise, revert back to overflow: auto
   overflowY: 'auto',
   overflowX: 'hidden',
-  font: controlFont()
+  fontFamily: 'sans',
+  fontSize: controlFont()
 });
 
 export let listboxItem = style({
   ...focusRing(),
-  ...controlBorderRadius(),
-  boxSizing: 'border-box',
-  font: controlFont(),
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: {
     default: 'transparent',
     isFocused: baseColor('gray-100').isFocusVisible
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
     }
   },
   position: 'relative',
-  // each menu item should take up the entire width, the subgrid will handle within the item
   gridColumnStart: 1,
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label  .',
-    '.      .      .  description .'
+    '. checkmark icon label       .',
+    '. .         .    description .'
   ],
   gridTemplateColumns: {
     size: {
@@ -285,20 +277,11 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   }
 });
 
-export let listboxHeading = style({
-  fontSize: 'ui',
-  fontWeight: 'bold',
-  lineHeight: 'ui',
-  margin: 0
-});
-
-// not sure why edgeToText won't work...
 const separatorWrapper = style({
   display: {
     ':is(:last-child > *)': 'none',
     default: 'flex'
   },
-  // A workaround since edgeToText() returns undefined for some reason
   marginX: {
     size: {
       S: `[${edgeToText(24)}]`,
@@ -307,7 +290,18 @@ const separatorWrapper = style({
       XL: `[${edgeToText(48)}]`
     }
   },
-  height: 12
+  height: 12,
+  alignItems: 'center'
+});
+
+const dividerStyle = style({
+  backgroundColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  borderRadius: 'full',
+  height: '[2px]',
+  width: 'full'
 });
 
 // Not from any design, just following the sizing of the existing rows
@@ -667,7 +661,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           <Provider
             values={[
               [HeaderContext, {styles: listboxHeader({size})}],
-              [HeadingContext, {styles: listboxHeading}],
+              [HeadingContext, {styles: sectionHeading}],
               [TextContext, {
                 slots: {
                   'description': {styles: description({size})}
@@ -700,43 +694,10 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   );
 });
 
-export function Divider(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL' | undefined}): ReactNode {
-  return (
-    <Separator
-      {...props}
-      className={mergeStyles(
-        divider({
-          size: 'M',
-          orientation: 'horizontal',
-          isStaticColor: false
-        }, style({alignSelf: 'center', width: 'full'})))} />
-  );
-}
-
-const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, SeparatorContext);
-
-  let {elementType, orientation, size, style, className, slot, ...otherProps} = props;
-  let Element = (elementType as ElementType) || 'hr';
-  if (Element === 'hr' && orientation === 'vertical') {
-    Element = 'div';
-  }
-
-  let {separatorProps} = useSeparator({
-    ...otherProps,
-    elementType,
-    orientation
-  });
-
+export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div className={separatorWrapper({size})}>
-      <Element
-        {...filterDOMProps(props)}
-        {...separatorProps}
-        style={style}
-        className={className ?? 'react-aria-Separator'}
-        ref={ref}
-        slot={slot || undefined} />
+      <div ref={ref} className={dividerStyle} />
     </div>
   );
 });
