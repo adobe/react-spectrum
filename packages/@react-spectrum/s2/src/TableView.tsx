@@ -401,7 +401,7 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={dependencies}>
           {children}
         </Collection>
         {loadingState === 'loadingMore' && loadMoreSpinner}
@@ -439,7 +439,7 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       className={style({height: 'full'})}
       {...props}
       renderEmptyState={emptyRender}
-      dependencies={[...dependencies, loadingState]}>
+      dependencies={[loadingState]}>
       {renderer}
     </RACTableBody>
   );

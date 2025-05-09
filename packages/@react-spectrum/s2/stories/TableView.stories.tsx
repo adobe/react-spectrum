@@ -134,29 +134,56 @@ let items = [
   {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10', yah: 'Yah long long long 10'}
 ];
 
-const DynamicTable = (args: any) => {
-  let [cols, setColumns] = useState(columns);
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <ActionButton onPress={() => setColumns((prev) => prev.length > 3 ? columns.slice(0, 3) : columns)}>Remove columns</ActionButton>
-      <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
-        <TableHeader columns={cols}>
-          {(column) => (
-            <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
-          )}
-        </TableHeader>
-        <TableBody items={items} dependencies={[cols]}>
-          {item => (
-            <Row id={item.id} columns={cols} dependencies={[cols]}>
-              {(col) => {
-                return <Cell>{item[col.id]}</Cell>;
-              }}
-            </Row>
-          )}
-        </TableBody>
-      </TableView>
-    </div>
-  );
+const DynamicTable = (args: any) => (
+  <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
+    <TableHeader columns={columns}>
+      {(column) => (
+        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+      )}
+    </TableHeader>
+    <TableBody items={items}>
+      {item => (
+        <Row id={item.id} columns={columns}>
+          {(column) => {
+            return <Cell>{item[column.id]}</Cell>;
+          }}
+        </Row>
+      )}
+    </TableBody>
+  </TableView>
+);
+
+export const DynamicColumns = {
+  render: function DynamicColumnsExample(args: any) {
+    let [cols, setColumns] = useState(columns);
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+        <ActionButton onPress={() => setColumns((prev) => prev.length > 3 ? [columns[0]].concat(columns.slice(2, 4)) : columns)}>Toggle columns</ActionButton>
+        <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
+          <TableHeader columns={cols}>
+            {(column) => (
+              <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={items} dependencies={[cols]}>
+            {item => (
+              <Row id={item.id} columns={cols}>
+                {(col) => {
+                  return <Cell>{item[col.id]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
+  },
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 const DynamicTableWithCustomMenus = (args: any) => (
