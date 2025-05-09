@@ -140,7 +140,9 @@ export class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>): void {
@@ -166,7 +168,9 @@ export class BaseNode<T> {
     newNode.parentNode = referenceNode.parentNode;
 
     this.invalidateChildIndices(referenceNode);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   removeChild(child: ElementNode<T>): void {
@@ -197,7 +201,9 @@ export class BaseNode<T> {
     child.index = 0;
 
     this.ownerDocument.markDirty(child);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   addEventListener(): void {}
@@ -328,7 +334,9 @@ export class ElementNode<T> extends BaseNode<T> {
     }
 
     this.hasSetProps = true;
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   get style(): CSSProperties {
@@ -466,9 +474,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
-    // First, update the indices of dirty element children.
+    // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
-      element.updateChildIndices();
+      if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
+        this.removeNode(element);
+      } else {
+        element.updateChildIndices();
+      }
     }
 
     // Next, update dirty collection nodes.
@@ -477,8 +489,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         if (element.isConnected && !element.isHidden) {
           element.updateNode();
           this.addNode(element);
-        } else {
-          this.removeNode(element);
         }
 
         element.isMutated = false;

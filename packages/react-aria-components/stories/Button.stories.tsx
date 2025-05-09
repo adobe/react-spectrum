@@ -119,3 +119,40 @@ function RippleButton(props) {
     </Button>
   );
 }
+
+function ButtonPerformanceExample() {
+  const [count, setCount] = useState(0);
+  const [showButtons, setShowButtons] = useState(false);
+
+  const handlePress = () => {
+    if (!showButtons) {
+      setShowButtons(true);
+    } else {
+      setCount(count + 1);
+    }
+  };
+
+  return (
+    <div>
+      <Button style={{marginTop: 24, marginBottom: 16}} onPress={handlePress}>
+        {showButtons ? 'Re-render' : 'Render'}
+      </Button>
+      {showButtons && (
+        <div style={{display: 'flex', gap: 2, flexWrap: 'wrap'}} key={count}>
+          {new Array(20000).fill(0).map((_, i) => (
+            <Button key={i}>Press me</Button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export const ButtonPerformance = {
+  render: (args) => <ButtonPerformanceExample {...args} />,
+  parameters: {
+    description: {
+      data: 'When usePress is used on the page, there should be a <style> tag placed in the head of the document that applies touch-action: pan-x pan-y pinch-zoom to the [data-react-aria-pressable] elements.'
+    }
+  }
+};

@@ -10,11 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {
+  Button,
+  Checkbox,
+  CheckboxProps,
+  Dialog,
+  DialogTrigger,
+  DropIndicator,
+  GridLayout,
+  GridList,
+  GridListItem,
+  GridListItemProps,
+  Heading,
+  ListLayout,
+  Modal,
+  ModalOverlay,
+  Popover,
+  Size,
+  Tag,
+  TagGroup,
+  TagList,
+  useDragAndDrop,
+  Virtualizer
+} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import {Key, useListData} from 'react-stately';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -65,7 +88,9 @@ const MyGridListItem = (props: GridListItemProps) => {
 
 GridListExample.story = {
   args: {
-    layout: 'stack'
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
   },
   argTypes: {
     layout: {
@@ -83,6 +108,10 @@ GridListExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };
@@ -158,7 +187,7 @@ export function VirtualizedGridListGrid() {
   }
 
   return (
-    <Virtualizer 
+    <Virtualizer
       layout={GridLayout}
       layoutOptions={{
         minItemSize: new Size(40, 40)
@@ -182,11 +211,18 @@ export function TagGroupInsideGridList() {
       }}>
       <MyGridListItem textValue="Tags">
         1,1
-        <TagGroup aria-label="Tag group">
+        <TagGroup aria-label="Tag group 1" onRemove={action('onRemove')}>
           <TagList style={{display: 'flex', gap: 10}}>
-            <Tag key="1">Tag 1</Tag>
-            <Tag key="2">Tag 2</Tag>
-            <Tag key="3">Tag 3</Tag>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
+          </TagList>
+        </TagGroup>
+        <TagGroup aria-label="Tag group 2" onRemove={action('onRemove')}>
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
           </TagList>
         </TagGroup>
       </MyGridListItem>
@@ -194,7 +230,7 @@ export function TagGroupInsideGridList() {
         1,2 <Button>Actions</Button>
       </MyGridListItem>
       <MyGridListItem>
-        1,3         
+        1,3
         <TagGroup aria-label="Tag group">
           <TagList style={{display: 'flex', gap: 10}}>
             <Tag key="1">Tag 1</Tag>
@@ -206,3 +242,100 @@ export function TagGroupInsideGridList() {
     </GridList>
   );
 }
+
+const GridListDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Set<Key>>(new Set([]));
+
+  const handleSelectionChange = (e) => {
+    setSelectedItem(e);
+    setIsOpen(false);
+  };
+
+  return (
+    <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Button>Open GridList Options</Button>
+      <Popover>
+        <div>
+          <GridList
+            className={styles.menu}
+            selectedKeys={selectedItem}
+            aria-label="Favorite pokemon"
+            selectionMode="single"
+            onSelectionChange={handleSelectionChange}
+            shouldSelectOnPressUp
+            autoFocus>
+            <MyGridListItem textValue="Charizard">
+              Option 1 <Button>A</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Blastoise">
+              Option 2 <Button>B</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Venusaur">
+              Option 3 <Button>C</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Pikachu">
+              Option 4 <Button>D</Button>
+            </MyGridListItem>
+          </GridList>
+        </div>
+      </Popover>
+    </DialogTrigger>
+  );
+};
+
+function GridListInModalPickerRender(props) {
+  const [mainModalOpen, setMainModalOpen] = useState(true);
+  return (
+    <>
+      <Button onPress={() => setMainModalOpen(true)}>
+        Open Modal
+      </Button>
+      <ModalOverlay
+        {...props}
+        isOpen={mainModalOpen}
+        onOpenChange={setMainModalOpen}
+        isDismissable
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.5)'
+        }}>
+        <Modal>
+          <Dialog>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: 8,
+                background: '#ccc',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%,-50%)',
+                width: 'max-content',
+                height: 'max-content'
+              }}>
+              <Heading slot="title">Open the GridList Picker</Heading>
+              <GridListDropdown />
+            </div>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </>
+  );
+}
+
+export const GridListInModalPicker = {
+  render: (args) => <GridListInModalPickerRender {...args} />,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Selecting an option from the grid list over the backdrop should not result in the modal closing.'
+      }
+    }
+  }
+};

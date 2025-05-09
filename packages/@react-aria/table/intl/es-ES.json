@@ -1,9 +1,9 @@
 {
-  "ascending": "de subida",
-  "ascendingSort": "ordenado por columna {columnName} en orden de subida",
+  "ascending": "ascendente",
+  "ascendingSort": "ordenado por columna {columnName} en sentido ascendente",
   "columnSize": "{value} píxeles",
-  "descending": "de bajada",
-  "descendingSort": "ordenado por columna {columnName} en orden de bajada",
+  "descending": "descendente",
+  "descendingSort": "ordenado por columna {columnName} en orden descendente",
   "resizerDescription": "Pulse Intro para empezar a redimensionar",
   "select": "Seleccionar",
   "selectAll": "Seleccionar todos",
