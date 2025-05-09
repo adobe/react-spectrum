@@ -502,13 +502,13 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
       style={pressScale(domRef)}
       className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
+        <TagWrapper isInRealDOM={isInRealDOM} isEmphasized={isEmphasized} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
       ))}
     </AriaTag>
   );
 });
 
-function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
+function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
@@ -553,6 +553,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
         <ClearButton
           slot="remove"
           size={size}
+          isStaticColor={isEmphasized && isSelected}
           isDisabled={isDisabled} />
       )}
     </>
