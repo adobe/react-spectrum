@@ -39,6 +39,7 @@ describe('Combobox', () => {
     jest.useFakeTimers();
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     user = userEvent.setup({delay: null, pointerMap});
   });
 
@@ -154,7 +155,7 @@ describe('Combobox', () => {
     }
 
     // A bit contrived, but essentially testing a combinaiton of insertions/deletions along side some of the old entries remaining
-    let newItems = [{name: 'Chocolate Mint'}, {name: 'Chocolate'}, {name: 'Chocolate Chip'}, {name: 'Chocolate Chip Cookie Dough'}];
+    let newItems = [{name: 'Chocolate'}, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}, {name: 'Chocolate Chip'}];
     tree.rerender(<DynamicCombobox items={newItems} loadingState="idle" />);
 
     options = comboboxTester.options();
