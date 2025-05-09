@@ -134,6 +134,24 @@ interface TreeDataState<T extends object> {
     nodeMap: Map<Key, TreeNode<T>>
 }
 
+export function getDescendantKeys(node: TreeNode<any>): Key[] {
+  let descendantKeys: Key[] = [];
+  if (!node) {
+    return descendantKeys;
+  }
+  function recurse(currentNode: TreeNode<any>) {
+    if (currentNode.children) {
+      for (let child of currentNode.children) {
+        descendantKeys.push(child.key);
+        recurse(child);
+      }
+    }
+  }
+
+  recurse(node);
+  return descendantKeys;
+}
+
 /**
  * Manages state for an immutable tree data structure, and provides convenience methods to
  * update the data over time.
@@ -398,12 +416,16 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         let {items, nodeMap} = prevState;
         let node = nodeMap.get(key);
         if (!node) {
-          return prevState;
+          throw new Error(`moveBefore: Target node with key ${key} not found.`);
         }
         let toParentKey = node.parentKey ?? null;
         let parent: null | TreeNode<T> = null;
         if (toParentKey != null) {
           parent = nodeMap.get(toParentKey) ?? null;
+        }
+        let keysArray = Array.from(keys);
+        if (keysArray.includes(key)) {
+          throw new Error('Cannot move an item before itself.');
         }
         let toIndex = parent?.children ? parent.children.indexOf(node) : items.indexOf(node);
         return moveItems(prevState, keys, parent, toIndex, updateTree);
@@ -414,12 +436,16 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         let {items, nodeMap} = prevState;
         let node = nodeMap.get(key);
         if (!node) {
-          return prevState;
+          throw new Error(`moveAfter: Target node with key ${key} not found.`);
         }
         let toParentKey = node.parentKey ?? null;
         let parent: null | TreeNode<T> = null;
         if (toParentKey != null) {
           parent = nodeMap.get(toParentKey) ?? null;
+        }
+        let keysArray = Array.from(keys);
+        if (keysArray.includes(key)) {
+          throw new Error('Cannot move an item after itself.');
         }
         let toIndex = parent?.children ? parent.children.indexOf(node) : items.indexOf(node);
         toIndex++;
@@ -461,7 +487,7 @@ function moveItems<T extends object>(
   let removeKeys = new Set(keys);
   while (parent?.parentKey != null) {
     if (removeKeys.has(parent.key)) {
-      throw new Error('Cannot move an item to be a child of itself.');
+      throw new Error(`Cannot move item ${parent.key} relative to ${toParent?.children[toIndex].key} because it is a descendant.`);
     }
     parent = nodeMap.get(parent.parentKey!) ?? null;
   }
