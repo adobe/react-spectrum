@@ -103,8 +103,7 @@ export class BaseNode<T> {
   }
 
   private invalidateChildIndices(child: ElementNode<T>): void {
-    if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
-      console.log('update minInvalidChildIndex', child.index);
+    if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
       this._minInvalidChildIndex = child;
     }
   }
@@ -157,7 +156,11 @@ export class BaseNode<T> {
 
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
-    newNode.index = referenceNode.index;
+    // Ensure that the newNode's index is less than that of the reference node so that
+    // invalidateChildIndices will properly use the newNode as the _minInvalidChildIndex, thus making sure
+    // we will properly update the indexes of all sibiling nodes after the newNode. The value here doesn't matter
+    // since updateChildIndices should calculate the proper indexes.
+    newNode.index = referenceNode.index - 1;
 
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
@@ -168,7 +171,7 @@ export class BaseNode<T> {
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
-    this.invalidateChildIndices(referenceNode);
+    this.invalidateChildIndices(newNode);
     if (this.isConnected) {
       this.ownerDocument.queueUpdate();
     }
@@ -180,7 +183,6 @@ export class BaseNode<T> {
     }
 
     if (this._minInvalidChildIndex === child && child.previousSibling) {
-      console.log(this._minInvalidChildIndex?.index, child.index, child.previousSibling?.index);
       this.invalidateChildIndices(child.previousSibling);
     }
 
@@ -479,13 +481,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
         this.removeNode(element);
       } else {
-        console.log('updateChildIndices', element.node?.type, element.node?.key);
         element.updateChildIndices();
       }
     }
 
     // Next, update dirty collection nodes.
-    // this.updateChildIndices();
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode) {
         if (element.isConnected && !element.isHidden) {

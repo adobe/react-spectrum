@@ -2207,7 +2207,7 @@ describe('Table', () => {
     });
   });
 
-  it.only('supports removing a column and adding it back', async () => {
+  it('supports removing a column and adding it back static', async () => {
     let {getByRole} = render(<App />);
     let button = getByRole('button');
     expect(button).toHaveTextContent('Hide Columns');
@@ -2215,25 +2215,37 @@ describe('Table', () => {
     await user.click(button);
     expect(button).toHaveTextContent('Show Columns');
 
-    // await user.click(button);
-    // expect(button).toHaveTextContent('Hide Columns');
+    await user.click(button);
+    expect(button).toHaveTextContent('Hide Columns');
+  });
+
+  it('supports removing a column and adding it back dynamic', async () => {
+    let {getByRole} = render(<App dynamic />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Hide Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Show Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Hide Columns');
   });
 });
 
-function App() {
+function App({dynamic = false}) {
   const [hideColumns, setHideColumns] = React.useState(false);
 
   const label = hideColumns ? 'Show Columns' : 'Hide Columns';
 
   return (
     <>
-      <StockTableExample hideColumns={hideColumns} />
+      {dynamic ? <StockTableExampleDynamic hideColumns={hideColumns} /> : <StockTableExampleStatic hideColumns={hideColumns} />}
       <button onClick={() => setHideColumns((prev) => !prev)}>{label}</button>
     </>
   );
 }
 
-function StockTableExample({hideColumns}) {
+function StockTableExampleDynamic({hideColumns}) {
   return (
     <div>
       <ResizableTableContainer>
@@ -2262,7 +2274,7 @@ function StockTableExample({hideColumns}) {
               Industry
             </Column>
           </TableHeader>
-          <TableBody items={stocks}>
+          <TableBody items={stocks} dependencies={[hideColumns]}>
             {(item) => (
               <Row id={item.symbol}>
                 <Cell>
@@ -2283,6 +2295,56 @@ function StockTableExample({hideColumns}) {
   );
 }
 
+function StockTableExampleStatic({hideColumns}) {
+  return (
+    <div>
+      <ResizableTableContainer>
+        <Table
+          aria-label="Stocks"
+          selectionMode="multiple"
+          selectionBehavior="replace">
+          <TableHeader>
+            <Column id="symbol">
+              Symbol
+            </Column>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            {!hideColumns && (
+              <Column id="marketCap">
+                Market Cap
+              </Column>
+            )}
+            {!hideColumns && (
+              <Column id="sector">
+                Sector
+              </Column>
+            )}
+            <Column id="industry">
+              Industry
+            </Column>
+          </TableHeader>
+          <TableBody>
+            {stocks.map((item) => (
+              <Row id={item.symbol} key={item.symbol}>
+                <Cell>
+                  <span>
+                    ${item.symbol}
+                  </span>
+                </Cell>
+                <Cell>{item.name}</Cell>
+                {!hideColumns && <Cell>{item.marketCap}</Cell>}
+                {!hideColumns && <Cell>{item.sector}</Cell>}
+                <Cell>{item.industry}</Cell>
+              </Row>
+            ))}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+}
+
 const stocks = [
   {
     id: 1,
@@ -2290,7 +2352,7 @@ const stocks = [
     name: 'Pacific Special Acquisition Corp.',
     sector: 'Finance',
     marketCap: 'n/a',
-    industry: 'Business Services',
+    industry: 'Business Services'
   },
   {
     id: 2,
@@ -2298,6 +2360,6 @@ const stocks = [
     name: 'Pacific Special Acquisition Corp.',
     sector: 'Finance',
     marketCap: 'n/a',
-    industry: 'Business Services',
+    industry: 'Business Services'
   }
 ];
