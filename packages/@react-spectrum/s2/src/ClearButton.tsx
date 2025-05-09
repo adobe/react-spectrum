@@ -28,14 +28,18 @@ interface ClearButtonStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether the ClearButton should be displayed with a static color. */
+  isStaticColor?: boolean
 }
 
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
 interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
 
+const focusRingStyles = focusRing();
+
 const visibleClearButton = style<ClearButtonRenderProps>({
-  ...focusRing(),
+  ...focusRingStyles,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -48,6 +52,10 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   boxSizing: 'border-box',
   padding: 0,
   outlineOffset: -4,
+  outlineColor: {
+    default: focusRingStyles.outlineColor,
+    isStaticColor: 'white'
+  },
   color: 'inherit',
   '--iconPrimary': {
     type: 'fill',
@@ -56,14 +64,14 @@ const visibleClearButton = style<ClearButtonRenderProps>({
 });
 
 export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
-  let {size = 'M', ...rest} = props;
+  let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
   return (
     <Button
       {...rest}
       ref={domRef}
       style={pressScale(domRef)}
-      className={renderProps => visibleClearButton({...renderProps, size})}>
+      className={renderProps => visibleClearButton({...renderProps, size, isStaticColor})}>
       <CrossIcon size={props.size} />
     </Button>
   );
