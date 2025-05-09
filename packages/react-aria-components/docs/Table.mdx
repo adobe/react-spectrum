@@ -1208,6 +1208,75 @@ function Example() {
 }
 ```
 
+## Dependencies
+
+The `dependencies` prop can be used to ensure that separate parts of the collection update in response to each other, for example, column additions and removals.
+Be careful using it too frequently as it will cause the table to re-render more often than necessary which can cause performance degradation.
+Use the same strategies for reducing unnecessary invalidations as you would with any other hook.
+
+This prop is an array of dependencies that will trigger a cache invalidation within the collection. It should follow the same rules as React various hooks with dependencies arrays.
+> The list of dependencies must have a constant number of items and be written inline like `[dep1, dep2, dep3]`.
+
+### Dynamically adding and removing columns
+
+Tables support dynamically adding and removing columns. This is useful to change the density of information in a table.
+Columns are handled separately from rows when it comes to caching. As a result, the `TableBody` component accepts a `dependencies` prop much like React's various hooks.
+
+Note, the `dependencies` array is only needed for the dynamic items case. When using static items, the table will always re-render when the children change.
+
+```tsx example
+function Example() {
+  let [hide, setHide] = React.useState(false);
+
+  let items = [
+    // ...
+    ///- begin collapse -////
+    {
+      id: 1,
+      file: '2022-Roadmap-Proposal-Revision-012822-Copy(2)',
+      size: '214 KB',
+      date: 'November 27, 2022 at 4:56PM'
+    },
+    {
+      id: 2,
+      file: '62259692_p0_master1200',
+      size: '120 KB',
+      date: 'January 27, 2021 at 1:56AM'
+    }
+    ///- end collapse -///
+  ];
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start'}}>
+      <Button onPress={() => setHide(!hide)}>
+        {hide ? 'Show' : 'Hide'}
+      </Button>
+      <Table aria-label="Files" selectionMode="multiple">
+        <MyTableHeader>
+          <MyColumn isRowHeader>Name</MyColumn>
+          <MyColumn>Type</MyColumn>
+          {/*- begin highlight -*/}
+          {!hide && <MyColumn>Date Modified</MyColumn>}
+          {/*- end highlight -*/}
+        </MyTableHeader>
+        <TableBody
+          /*- begin highlight -*/
+          dependencies={[hide]}
+          /*- end highlight -*/
+          items={items}>
+          {item => (
+            <Row>
+              <Cell>{item.file}</Cell>
+              <Cell>{item.size}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+```
+
 ## Drag and drop
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new items between existing rows, or reorder rows.
