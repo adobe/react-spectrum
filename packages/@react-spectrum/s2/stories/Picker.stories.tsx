@@ -131,6 +131,28 @@ export const WithIcons: Story = {
   }
 };
 
+function VirtualizedPicker(props) {
+  let items: IExampleItem[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i.toString(), label: `Item ${i}`});
+  }
+
+  return (
+    <Picker {...props} items={items}>
+      {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
+    </Picker>
+  );
+}
+
+export const ManyItems: Story = {
+  render: (args) => (
+    <VirtualizedPicker {...args} />
+  ),
+  args: {
+    label: 'Many items'
+  }
+};
+
 const ValidationRender = (props) => (
   <Form>
     <Picker {...props}>
