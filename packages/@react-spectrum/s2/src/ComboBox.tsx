@@ -26,6 +26,7 @@ import {
   ListBoxItemProps,
   ListBoxProps,
   ListLayout,
+  ListStateContext,
   Provider,
   SectionProps,
   UNSTABLE_ListBoxLoadingSentinel,
@@ -56,6 +57,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
+import {Node} from 'react-stately';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
@@ -278,10 +280,7 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
 });
 
 const separatorWrapper = style({
-  display: {
-    ':is(:last-child > *)': 'none',
-    default: 'flex'
-  },
+  display: 'flex',
   marginX: {
     size: {
       S: `[${edgeToText(24)}]`,
@@ -694,7 +693,14 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   );
 });
 
-export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>) {
+export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+  let listState = useContext(ListStateContext)!;
+
+  let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);
+  if (node.prevKey == null || !nextNode || nextNode.type === 'separator' || (nextNode.type === 'loader' && nextNode.nextKey == null)) {
+    return null;
+  }
+
   return (
     <div className={separatorWrapper({size})}>
       <div ref={ref} className={dividerStyle} />
