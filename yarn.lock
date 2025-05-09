@@ -9553,7 +9553,7 @@ __metadata:
   resolution: "@spectrum-icons/build-tools@workspace:packages/@spectrum-icons/build-tools"
   dependencies:
     "@svgr/core": "npm:^8.1.0"
-    fs-extra: "npm:^10.0.0"
+    fs-extra: "npm:^11.0.0"
   languageName: unknown
   linkType: soft
 
@@ -9581,7 +9581,7 @@ __metadata:
     "@react-spectrum/icon": "npm:^3.8.4"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
-    fs-extra: "npm:^10.0.0"
+    fs-extra: "npm:^11.0.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -18198,14 +18198,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "fs-extra@npm:10.0.0"
+"fs-extra@npm:^11.0.0":
+  version: 11.3.0
+  resolution: "fs-extra@npm:11.3.0"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 10c0/85802f3d9e49d197744a8372f0d78d5a1faa3df73f4c5375d6366a4b9f745197d3da1f095841443d50f29a9f81cdc01363eb6d17bef2ba70c268559368211040
+  checksum: 10c0/5f95e996186ff45463059feb115a22fb048bdaf7e487ecee8a8646c78ed8fdca63630e3077d4c16ce677051f5e60d3355a06f3cd61f3ca43f48cc58822a44d0a
   languageName: node
   linkType: hard
 
@@ -27700,7 +27700,7 @@ __metadata:
     fast-check: "npm:^2.19.0"
     fast-glob: "npm:^3.1.0"
     framer-motion: "npm:^11.3.0-alpha.0"
-    fs-extra: "npm:^10.0.0"
+    fs-extra: "npm:^11.0.0"
     glob: "npm:^8.0.3"
     glob-promise: "npm:^6.0.5"
     globals: "npm:^15.11.0"
