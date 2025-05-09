@@ -5,7 +5,7 @@ port=4000
 original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
-ci=false
+touch $output
 
 echo "Build and deploy to verdaccio"
 
