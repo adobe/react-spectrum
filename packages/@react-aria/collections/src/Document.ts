@@ -140,7 +140,9 @@ export class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>): void {
@@ -166,7 +168,9 @@ export class BaseNode<T> {
     newNode.parentNode = referenceNode.parentNode;
 
     this.invalidateChildIndices(referenceNode);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   removeChild(child: ElementNode<T>): void {
@@ -197,7 +201,9 @@ export class BaseNode<T> {
     child.index = 0;
 
     this.ownerDocument.markDirty(child);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   addEventListener(): void {}
@@ -328,7 +334,9 @@ export class ElementNode<T> extends BaseNode<T> {
     }
 
     this.hasSetProps = true;
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   get style(): CSSProperties {
