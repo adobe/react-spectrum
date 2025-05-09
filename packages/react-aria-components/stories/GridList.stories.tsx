@@ -15,6 +15,7 @@ import {
   Button,
   Checkbox,
   CheckboxProps,
+  Collection,
   Dialog,
   DialogTrigger,
   DropIndicator,
@@ -35,9 +36,11 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {Key, useListData} from 'react-stately';
+import {Key, useAsyncList, useListData} from 'react-stately';
+import {LoadingSpinner} from './utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
   title: 'React Aria Components'
@@ -198,6 +201,121 @@ export function VirtualizedGridListGrid() {
     </Virtualizer>
   );
 }
+
+let renderEmptyState = ({isLoading}) => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+    </div>
+  );
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const MyGridListLoaderIndicator = (props) => {
+  return (
+    <UNSTABLE_GridListLoadingSentinel
+      style={{
+        height: 30,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_GridListLoadingSentinel>
+  );
+};
+
+export const AsyncGridList = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <GridList
+      className={styles.menu}
+      style={{height: 200}}
+      aria-label="async gridlist"
+      renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+      <Collection items={list.items}>
+        {(item: Character) => (
+          <MyGridListItem id={item.name}>{item.name}</MyGridListItem>
+        )}
+      </Collection>
+      <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+    </GridList>
+  );
+};
+
+AsyncGridList.story = {
+  args: {
+    delay: 50
+  }
+};
+
+export const AsyncGridListVirtualized = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        loaderHeight: 30
+      }}>
+      <GridList
+        className={styles.menu}
+        style={{height: 200}}
+        aria-label="async virtualized gridlist"
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+        <Collection items={list.items}>
+          {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+      </GridList>
+    </Virtualizer>
+  );
+};
+
+AsyncGridListVirtualized.story = {
+  args: {
+    delay: 50
+  }
+};
 
 export function TagGroupInsideGridList() {
   return (

@@ -11,7 +11,12 @@
  */
 
 import type {Condition, CSSProperties, CSSValue, CustomValue, Property, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+import fs from 'fs';
 import * as propertyInfo from './properties.json';
+
+// Postfix all class names with version for now.
+const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
+const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
@@ -541,6 +546,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           }
 
           className += propertyInfo.values[cssProperty]?.[String(value)] ?? generateArbitraryValueSelector(String(value));
+          className += POSTFIX;
           rules.push(new StyleRule(className, key, String(value)));
         }
 

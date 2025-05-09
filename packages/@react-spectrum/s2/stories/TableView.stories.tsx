@@ -460,7 +460,7 @@ const OnLoadMoreTable = (args: any) => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -496,7 +496,8 @@ const OnLoadMoreTable = (args: any) => {
 export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
   args: {
-    ...Example.args
+    ...Example.args,
+    delay: 50
   },
   name: 'async loading table'
 };
