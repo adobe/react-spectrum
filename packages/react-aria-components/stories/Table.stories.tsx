@@ -22,7 +22,7 @@ import {useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
-  excludeStories: ['DndTable']
+  excludeStories: ['DndTable', 'makePromise']
 };
 
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {

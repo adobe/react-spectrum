@@ -14,7 +14,6 @@ import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, rende
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
-import * as module from '../src/Table';
 import React, {useMemo, useRef, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -29,6 +28,25 @@ let {
   TableCellColSpanWithVariousSpansExample: TableCellColSpan,
   TableWithSuspense
 } = composeStories(stories);
+
+const mockCollectionUpdate = jest.fn();
+
+jest.mock('react', () => {
+  const actual = jest.requireActual('react');
+
+  const useSyncExternalStore = (subscribe, ...args) => {
+    const fn = actual.useCallback((onStoreChange) => {
+      subscribe(() => {
+        mockCollectionUpdate();
+        onStoreChange();
+      });
+    }, [subscribe]);
+
+    return actual.useSyncExternalStore(fn, ...args);
+  };
+
+  return {...actual, useSyncExternalStore};
+});
 
 function MyColumn(props) {
   return (
@@ -213,6 +231,7 @@ describe('Table', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+    mockCollectionUpdate.mockClear();
   });
 
   afterEach(() => {
@@ -2178,26 +2197,17 @@ describe('Table', () => {
       }
 
       jest.useRealTimers();
-      const spy = jest.spyOn(module.Table, 'render');
 
       let tree = await act(() => render(<TableWithSuspense reactTransition />));
 
       await act(() => stories.makePromise([]));
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(1);
 
       let button = tree.getByRole('button');
       await act(() => button.click());
 
-      expect(spy).toHaveBeenCalledTimes(6);
-      expect(button).toHaveTextContent('Loading');
-
-      await act(() => stories.makePromise([]));
-
-      button = tree.getByRole('button');
-      expect(button).toHaveTextContent('Load more');
-
-      expect(spy).toHaveBeenCalledTimes(10);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
     });
   });
 

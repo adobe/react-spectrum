@@ -31,6 +31,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.3.0",
+    "react": "19.2.0-canary-38ef6550-20250508",
+    "react-dom": "19.2.0-canary-38ef6550-20250508",
     "react-lowlight": "^2.0.0"
   },
   "peerDependencies": {
