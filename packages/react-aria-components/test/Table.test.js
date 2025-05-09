@@ -14,6 +14,7 @@ import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, rende
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import * as module from '../src/Table';
 import React, {useMemo, useRef, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -2148,6 +2149,8 @@ describe('Table', () => {
 
       let promise = act(() => button.click());
 
+      expect(button).toHaveTextContent('Loading');
+
       rows = tree.getAllByRole('row');
       expect(rows).toHaveLength(3);
       expect(rows[1]).toHaveTextContent('FalconSat');
@@ -2166,6 +2169,35 @@ describe('Table', () => {
       expect(rows[2]).toHaveTextContent('DemoSat');
       expect(rows[3]).toHaveTextContent('Trailblazer');
       expect(rows[4]).toHaveTextContent('RatSat');
+    });
+
+    it('should not render excessively in React Suspense with transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      jest.useRealTimers();
+      const spy = jest.spyOn(module.Table, 'render');
+
+      let tree = await act(() => render(<TableWithSuspense reactTransition />));
+
+      await act(() => stories.makePromise([]));
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      let button = tree.getByRole('button');
+      await act(() => button.click());
+
+      expect(spy).toHaveBeenCalledTimes(6);
+      expect(button).toHaveTextContent('Loading');
+
+      await act(() => stories.makePromise([]));
+
+      button = tree.getByRole('button');
+      expect(button).toHaveTextContent('Load more');
+
+      expect(spy).toHaveBeenCalledTimes(10);
     });
   });
 
