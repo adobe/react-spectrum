@@ -45,7 +45,7 @@ jest.mock('react', () => {
     return actual.useSyncExternalStore(fn, ...args);
   };
 
-  return {...actual, useSyncExternalStore};
+  return actual.use ? {...actual, useSyncExternalStore} : actual;
 });
 
 function MyColumn(props) {
