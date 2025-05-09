@@ -54,7 +54,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   );
 }
 
-function getBackgroundColor(staticColor) {
+function getBackgroundColor(staticColor: 'black' | 'white' | undefined) {
   if (staticColor === 'black') {
     return 'linear-gradient(to right,#ddd6fe,#fbcfe8)';
   } else if (staticColor === 'white') {
@@ -91,7 +91,7 @@ function renderComponent(Component, props) {
 
 export function CodeOutput({code}) {
   let {name, importSource, props, controls} = useContext(Context);
-  let codeRef = useRef<Element | null>(null);
+  let codeRef = useRef<HTMLPreElement | null>(null);
   return (
     <div className={style({backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, position: 'relative'})}>
       <div className={style({display: 'flex', justifyContent: 'end', position: 'absolute', right: 0, paddingX: 16})}>
@@ -366,7 +366,7 @@ function UnionControl({control, value, onChange}) {
 function Wrapper({control, children}) {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <span className={style({font: 'control', color: 'neutral-subdued'})({})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
+      <span className={style({font: 'ui', color: 'neutral-subdued'})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
       {children}
     </div>
   );

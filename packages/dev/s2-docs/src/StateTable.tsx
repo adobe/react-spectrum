@@ -1,7 +1,7 @@
+import {Code, styles as codeStyles} from './Code';
 import {renderHTMLfromMarkdown} from './types';
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from './Table';
-import { Code, styles as codeStyles } from './Code';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
 const codeStyle = style({font: 'code-sm'});
 

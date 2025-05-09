@@ -5,12 +5,12 @@ import '../src/client';
 import '@react-spectrum/s2/page.css';
 import './font.css';
 import './anatomy.css';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { Code } from './Code';
+import {Code} from './Code';
+import {Example} from './Example';
 import {Link} from './Link';
-import { Example } from './Example';
-import {VisualExample} from './VisualExample';
 import {Search} from './Search';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {VisualExample} from './VisualExample';
 
 const components = {
   h1: ({children, ...props}) => <h1 {...props} className={style({font: 'heading-3xl', marginY: 0})}>{children}</h1>,

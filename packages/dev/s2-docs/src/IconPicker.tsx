@@ -56,17 +56,25 @@ export function IconPicker({value, onChange, label, contextualHelp}) {
     <Select
       aria-label="Icon"
       selectedKey={value?.icon ?? null}
-      onSelectionChange={icon => onChange(icon === value?.icon ? {...valueObject, icon: null, iconJSX: null} : {...valueObject, icon, iconJSX: createElement(iconMap[icon])})}
+      onSelectionChange={icon => {
+        if (!icon || icon === value?.icon) {
+          onChange({...valueObject, icon: null, iconJSX: null});
+        } else if (icon) {
+          onChange({...valueObject, icon, iconJSX: createElement(iconMap[icon])});
+        }
+      }}
       className={style({display: 'flex', flexDirection: 'column', gap: 2, width: 'fit'})}>
       {label && <div>
-        <Label className={style({font: 'control', color: 'neutral-subdued'})({})}>
+        <Label className={style({font: 'ui', color: 'neutral-subdued'})}>
           {label}
         </Label>
         {contextualHelp && <>&nbsp;<div style={{display: 'inline-flex'}}>{contextualHelp}</div></>}
       </div>}
       <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-        <ActionButton isPressed={false}>
-          <SelectValue className={style({display: 'contents'})}>
+        <ActionButton
+          // @ts-ignore
+          isPressed={false}>
+          <SelectValue<typeof iconList[0]> className={style({display: 'contents'})}>
             {({isPlaceholder, selectedItem}) => (
               isPlaceholder ? 'No icon' : (<>
                 {createElement(selectedItem?.icon, {'aria-label': selectedItem?.id})}

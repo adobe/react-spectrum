@@ -1,10 +1,9 @@
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { InterfaceType, renderHTMLfromMarkdown, setLinks, Type } from "./types";
-import React from 'react';
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from './Table';
 import {Code, styles as codeStyles} from './Code';
-import { Disclosure, DisclosurePanel, DisclosureTitle } from "@react-spectrum/s2";
-import { DisclosureRow } from "./DisclosureRow";
+import {DisclosureRow} from './DisclosureRow';
+import React from 'react';
+import {renderHTMLfromMarkdown, setLinks, Type} from './types';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
 const GROUPS = {
   Content: [
@@ -95,7 +94,7 @@ export function PropTable({component, links, showDescription}) {
 }
 
 function Rows({props, showDefault}) {
-  let properties = Object.values(props)
+  let properties = Object.values(props);
 
   // properties.sort((a, b) => a.name.localeCompare(b.name));
 

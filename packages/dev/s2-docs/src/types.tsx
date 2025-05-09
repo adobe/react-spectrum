@@ -12,17 +12,17 @@
 
 // import Asterisk from '@react-spectrum/s2/icons/Asterisk';
 // import clsx from 'clsx';
+import {Code, styles as codeStyles} from './Code';
+import {ColorLink, Link as SpectrumLink} from './Link';
 import {getAnchorProps, getUsedLinks} from './utils';
+// import Lowlight from 'react-lowlight';
 import {getDoc} from 'globals-docs';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
-// import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
-import React, {useContext} from 'react';
+import React, {ReactNode, useContext} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from './Table';
-import {ColorLink, Link as SpectrumLink} from './Link';
-import { Code, styles as codeStyles } from './Code';
-import { TypeLink } from './TypeLink';
+import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
+import {TypeLink} from './TypeLink';
 // import styles from './docs.css';
 // import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 // import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -54,10 +54,66 @@ const DOC_LINKS = {
   'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
 };
 
+type TParameter = {type: 'parameter', name: string, value: TType, optional: boolean, rest: boolean, description: string | null, default?: string};
+type Property = {type: 'property', name: string, indexType: TType | null, value: TType, optional: boolean, description: string | null, access: string | null, selector: string | null, default: string | null};
+type TTypeParameter = {type: 'typeParameter', name: string, constraint: TType | null, default: TType | null};
+type TKeyword = {type: 'any' | 'null' | 'undefined' | 'void' | 'unknown' | 'never' | 'this' | 'symbol' | 'string' | 'number' | 'boolean'};
+type TIdentifier = {type: 'identifier', name: string};
+type TString = {type: 'string', value?: string};
+type TNumber = {type: 'number', value?: number};
+type TBoolean = {type: 'boolean', value?: boolean};
+type TUnion = {type: 'union', elements: TType[]};
+type TIntersection = {type: 'intersection', types: TType[]};
+type TApplication = {type: 'application', base: TType, typeParameters: TType[]};
+type TTypeOperator = {type: 'typeOperator', operator: string, value: TType};
+type TFunction = {type: 'function', id?: string, name?: string, parameters: TParameter[], return: TType, typeParameters: TTypeParameter[], description: string | null, access: string | null};
+type TMethod = {type: 'method', name: string, value: TType, optional: boolean, access: string | null, description: string | null, default: string | null};
+type TAlias = {type: 'alias', id: string, name: string, value: TType, typeParameters: TTypeParameter[], description: string | null, access?: string};
+type TInterface = {type: 'interface', id: string, name: string, extends: TType[], properties: {[name: string]: Property | TMethod}, typeParameters: TTypeParameter[], description: string | null, access: string | null};
+type TObject = {type: 'object', properties: {[name: string]: Property | TMethod} | null, description: string | null, access: string | null};
+type TArray = {type: 'array', elementType: TType};
+type TTuple = {type: 'tuple', elements: TType[]};
+type TTemplate = {type: 'template', elements: TType[]};
+type TComponent = {type: 'component', id: string, name: string, props: TType | null, typeParameters: TTypeParameter[], ref: TType | null, description: string | null, access: string | null};
+type TConditional = {type: 'conditional', checkType: TType, extendsType: TType, trueType: TType, falseType: TType};
+type TIndexedAccess = {type: 'indexedAccess', objectType: TType, indexType: TType};
+type TKeyof = {type: 'keyof', keyof: TType};
+type TLink = {type: 'link', id: string};
+type TReference =  {type: 'reference', local: string, imported: string, specifier: string};
+type TMapped = {type: 'mapped', readonly: boolean | '+' | '-', typeParameter: TTypeParameter, typeAnnotation: TType};
+type TType = 
+  | TKeyword
+  | TIdentifier
+  | TString
+  | TNumber
+  | TBoolean
+  | TUnion
+  | TIntersection
+  | TApplication
+  | TTypeOperator
+  | TFunction
+  | TParameter
+  | TMethod
+  | TAlias
+  | TInterface
+  | TObject
+  | Property
+  | TArray
+  | TTuple
+  | TTemplate
+  | TTypeParameter
+  | TComponent
+  | TConditional
+  | TIndexedAccess
+  | TKeyof
+  | TLink
+  | TReference
+  | TMapped;
+
 const codeStyle = style({font: 'code-sm'});
 
 const styles = {};
-function Asterisk() {return null}
+function Asterisk() {return null;}
 
 // export const TypeContext = React.createContext();
 // export const LinkContext = React.createContext();
@@ -67,7 +123,7 @@ export function setLinks(links) {
   LINKS = links;
 }
 
-export function Type({type, links}) {
+export function Type({type, links}: {type: TType}) {
   // let links = useContext(TypeContext);
 
   if (!type) {
@@ -85,26 +141,23 @@ export function Type({type, links}) {
     case 'this':
       return <Keyword {...type} />;
     case 'symbol':
-      return <Symbol {...type} />;
+      return <Symbol />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
-      if (type.value) {
+      if ('value' in type && type.value != null) {
         return <StringLiteral {...type} />;
       }
-
       return <Keyword {...type} />;
     case 'number':
-      if (type.value) {
+      if ('value' in type && type.value != null) {
         return <NumberLiteral {...type} />;
       }
-
       return <Keyword {...type} />;
     case 'boolean':
-      if (type.value) {
+      if ('value' in type && type.value != null) {
         return <BooleanLiteral {...type} />;
       }
-
       return <Keyword {...type} />;
     case 'union':
       return <UnionType {...type} />;
@@ -126,7 +179,6 @@ export function Type({type, links}) {
       if (type.properties) {
         return <ObjectType {...type} />;
       }
-
       return <Keyword {...type} />;
     case 'alias':
       return <code className={codeStyle}><Type type={type.value} /></code>;
@@ -138,13 +190,16 @@ export function Type({type, links}) {
       return <TypeParameter {...type} />;
     case 'component': {
       let props = type.props;
-      if (props.type === 'application') {
+      if (props?.type === 'application') {
         props = props.base;
       }
-      if (props.type === 'link') {
+      if (props?.type === 'link') {
         props = LINKS[props.id];
       }
-      return <Type type={{...props, description: type.description}} />;
+      if (props) {
+        return <Type type={{...props, description: type.description} as any} />;
+      }
+      return null;
     }
     case 'conditional':
       return <ConditionalType {...type} />;
@@ -160,23 +215,23 @@ export function Type({type, links}) {
   }
 }
 
-function TypeOperator({operator, value}) {
+function TypeOperator({operator, value}: TTypeOperator) {
   return <span><span className={codeStyles.keyword}>{operator}</span>{' '}<Type type={value} /></span>;
 }
 
-function IndexedAccess({objectType, indexType}) {
+function IndexedAccess({objectType, indexType}: TIndexedAccess) {
   return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
-function StringLiteral({value}) {
-  return <span className={codeStyles.string}>{`'${value.replace(/'/, '\\\'')}'`}</span>;
+function StringLiteral({value}: TString) {
+  return <span className={codeStyles.string}>{`'${value!.replace(/'/, '\\\'')}'`}</span>;
 }
 
-function NumberLiteral({value}) {
+function NumberLiteral({value}: TNumber) {
   return <span className={codeStyles.number}>{'' + value}</span>;
 }
 
-function BooleanLiteral({value}) {
+function BooleanLiteral({value}: TBoolean) {
   return <span className={codeStyles.keyword}>{'' + value}</span>;
 }
 
@@ -184,11 +239,11 @@ function Symbol() {
   return <span className={codeStyles.keyword}>symbol</span>;
 }
 
-function Keyof({keyof}) {
+function Keyof({keyof}: TKeyof) {
   return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
 }
 
-function Keyword({type}) {
+function Keyword({type}: {type: string}) {
   let link = getDoc(type);
   if (link) {
     return <ColorLink href={link} type="keyword" rel="noreferrer" target="_blank">{type}</ColorLink>;
@@ -197,7 +252,7 @@ function Keyword({type}) {
   return <span className={codeStyles.keyword}>{type}</span>;
 }
 
-function Identifier({name}) {
+function Identifier({name}: TIdentifier) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
     return <ColorLink href={link} type="variable" rel="noreferrer" target="_blank">{name}</ColorLink>;
@@ -208,49 +263,50 @@ function Identifier({name}) {
 
 // const IndentContext = React.createContext({small: '', large: ''});
 
-export function Indent({params, open, close, children, alwaysIndent}) {
+export function Indent({params, open, close, children, alwaysIndent}: {params: TType[], open: string, close: string, children: ReactNode, alwaysIndent?: boolean}) {
   // let {small, large} = useContext(IndentContext);
-  let small = '';
+  // let small = '';
   let large = '';
+  let openElement, closeElement;
 
   if (params.length === 0) {
-    open = <span className="token punctuation">{open}</span>;
-    close = <span className="token punctuation">{close}</span>;
+    openElement = <span className="token punctuation">{open}</span>;
+    closeElement = <span className="token punctuation">{close}</span>;
   } else if (params.length > 2 || alwaysIndent) {
     // Always indent.
-    open =  <span className="token punctuation">{open.trimEnd() + '\n' + large + '  '}</span>;
-    close =  <span className="token punctuation">{'\n' + large + close.trimStart()}</span>;
+    openElement =  <span className="token punctuation">{open.trimEnd() + '\n' + large + '  '}</span>;
+    closeElement =  <span className="token punctuation">{'\n' + large + close.trimStart()}</span>;
     large += '  ';
-    small += '  ';
+    // small += '  ';
   } else {
     // Indent on small screens. Don't indent on large screens.
-    open = (
+    openElement = (
       <>
         {/* <span className="token punctuation small">{open.trimEnd() + '\n' + small + '  '}</span> */}
         <span className="token punctuation large">{open}</span>
       </>
     );
 
-    close = (
+    closeElement = (
       <>
         {/* <span className="token punctuation small">{'\n' + small + close.trimStart()}</span> */}
         <span className="token punctuation large">{close}</span>
       </>
     );
 
-    small += '  ';
+    // small += '  ';
   }
 
   return (
     <>
-      {open}
+      {openElement}
       {children}
-      {close}
+      {closeElement}
     </>
   );
 }
 
-export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverIndent}) {
+export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverIndent}: {elements: TType[], joiner: string, minIndent?: number, newlineBefore?: boolean, neverIndent?: boolean}) {
   // let {small, large, alwaysIndent} = useContext(IndentContext);
   let small = '';
   let large = '';
@@ -258,7 +314,7 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
   let contents;
   if (neverIndent || (elements.length <= minIndent && small.length === 0)) {
     contents = joiner;
-  } else if (elements.length > minIndent || alwaysIndent) {
+  } else if (elements.length > minIndent/* || alwaysIndent*/) {
     // Always indent.
     if (newlineBefore) {
       large += '  ';
@@ -288,7 +344,7 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
 
   return elements
     .filter(Boolean)
-    .reduce((acc, v, i) => [
+    .reduce<ReactNode[]>((acc, v, i) => [
       ...acc,
       <span
         className="token punctuation"
@@ -302,15 +358,15 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
     ], []).slice(1);
 }
 
-function UnionType({elements}) {
+function UnionType({elements}: TUnion) {
   return <JoinList elements={elements} joiner={' |\u00a0'} newlineBefore />;
 }
 
-function IntersectionType({types}) {
+function IntersectionType({types}: TIntersection) {
   return <JoinList elements={types} joiner={' &\u00a0'} newlineBefore />;
 }
 
-function TypeApplication({base, typeParameters}) {
+function TypeApplication({base, typeParameters}: TApplication) {
   return (
     <>
       <Type type={base} />
@@ -319,7 +375,7 @@ function TypeApplication({base, typeParameters}) {
   );
 }
 
-export function TypeParameters({typeParameters}) {
+export function TypeParameters({typeParameters}: {typeParameters: TType[]}) {
   if (typeParameters.length === 0) {
     return null;
   }
@@ -333,7 +389,7 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, constraint, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType}: TTypeParameter) {
   return (
     <>
       <span className={codeStyles.variable}>{name}</span>
@@ -355,7 +411,7 @@ function TypeParameter({name, constraint, default: defaultType}) {
   );
 }
 
-function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {
+function FunctionType({name, parameters, return: returnType, typeParameters}: TFunction) {
   return (
     <>
       {name && <span className={codeStyles.function}>{name}</span>}
@@ -369,7 +425,7 @@ function FunctionType({name, parameters, return: returnType, typeParameters, res
   );
 }
 
-function Parameter({name, value, default: defaultValue, optional, rest}) {
+function Parameter({name, value, default: defaultValue, optional, rest}: TParameter) {
   return (
     <>
       {rest && <span className="token punctuation">...</span>}
@@ -421,27 +477,27 @@ function Parameter({name, value, default: defaultValue, optional, rest}) {
 
 const cache = new Map();
 
-export function LinkType({id}) {
+export function LinkType({id}: TLink) {
   let type = LINKS[id];
   if (!type) {
     return null;
   }
 
   if (DOC_LINKS[type.name]) {
-    return <Identifier name={type.name} />;
+    return <Identifier type="identifier" name={type.name} />;
   }
 
   return <InlineLink type={type} />;
 }
 
-export function InlineLink({type}) {
+export function InlineLink({type}: {type: TType}) {
   if (cache.has(type.id)) {
     return cache.get(type.id);
   }
 
   let res = (
     <TypeLink name={type.name}>
-      {type.description && <Markdown  className={style({font: 'body'})} options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}}>{type.description}</Markdown>}
+      {'description' in type && type.description && <Markdown  className={style({font: 'body'})} options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}}>{type.description}</Markdown>}
       {type.type === 'interface' && type.extends?.length > 0 &&
         <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}><JoinList elements={type.extends} joiner=", " /></code></p>
       }
@@ -457,7 +513,7 @@ export function InlineLink({type}) {
   return res;
 }
 
-export function renderHTMLfromMarkdown(description, opts) {
+export function renderHTMLfromMarkdown(description: string, opts: object) {
   if (description) {
     const options = {forceInline: true, overrides: {a: {component: SpectrumLink}, code: {component: Code}}, disableParsingRawHTML: true, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
@@ -465,7 +521,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}: TInterface) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected').reverse();
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -582,32 +638,32 @@ export function InterfaceType({description, properties: props, typeParameters, s
   );
 }
 
-function ObjectType({properties, exact}) {
-  const startObject = <span className="token punctuation">{exact ? '{|' : '{'}</span>;
-  const endObject = <span className="token punctuation">{exact ? '|}' : '}'}</span>;
+function ObjectType({properties}: TObject) {
+  const startObject = <span className="token punctuation">{'{'}</span>;
+  const endObject = <span className="token punctuation">{'}'}</span>;
   return (
     <>
       {startObject}
-      {Object.values(properties).map((property, i, arr) => {
+      {Object.entries(properties!).map(([k, property], i, arr) => {
         let token = codeStyles.attribute;
-        let k = property.name;
         // https://mathiasbynens.be/notes/javascript-identifiers-es6
-        if (!/^[$_\p{ID_Start}][$_\u{200C}\u{200D}\p{ID_Continue}]+$/u.test(property.key)) {
-          k = `'${property.name}'`;
+        if (!/^[$_\p{ID_Start}][$_\u{200C}\u{200D}\p{ID_Continue}]+$/u.test(k)) {
+          k = `'${k}'`;
           token = codeStyles.string;
         }
 
         let optional = property.optional;
         let value = property.value;
+        let indexType = 'indexType' in property && property.indexType;
 
         let punc = optional ? '?: ' : ': ';
         return (
-          <div key={property.key ?? i} style={{paddingLeft: '1.5em'}}>
-            {property.indexType && <span className="token punctuation">[</span>}
+          <div key={k ?? i} style={{paddingLeft: '1.5em'}}>
+            {indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
-            {property.indexType && <span className="token punctuation">{': '}</span>}
-            {property.indexType && <Type type={property.indexType} />}
-            {property.indexType && <span className="token punctuation">]</span>}
+            {indexType && <span className="token punctuation">{': '}</span>}
+            {indexType && <Type type={indexType} />}
+            {indexType && <span className="token punctuation">]</span>}
             <span className="token punctuation">{punc}</span>
             <Type type={value} />
             {i < arr.length - 1 ? ',' : ''}
@@ -619,7 +675,7 @@ function ObjectType({properties, exact}) {
   );
 }
 
-function ArrayType({elementType}) {
+function ArrayType({elementType}: TArray) {
   return (
     <>
       <Type type={elementType} />
@@ -628,17 +684,17 @@ function ArrayType({elementType}) {
   );
 }
 
-function TupleType({elements}) {
+function TupleType({elements}: TTuple) {
   return (
     <>
       <Indent params={elements} alwaysIndent open="[" close="]">
-        <JoinList elements={elements} joiner=", " alwaysIndent />
+        <JoinList elements={elements} joiner=", " />
       </Indent>
     </>
   );
 }
 
-function ConditionalType({checkType, extendsType, trueType, falseType}) {
+function ConditionalType({checkType, extendsType, trueType, falseType}: TConditional) {
   return (
     <>
       <Type type={checkType} />
@@ -654,12 +710,12 @@ function ConditionalType({checkType, extendsType, trueType, falseType}) {
   );
 }
 
-function TemplateLiteral({elements}) {
+function TemplateLiteral({elements}: TTemplate) {
   return (
     <>
       <span className={codeStyles.string}>{'`'}</span>
       {elements.map((element, i) => {
-        if (element.type === 'string' && element.value) {
+        if (element.type === 'string' && 'value' in element && element.value != null) {
           return <span className={codeStyles.string} key={i}>{element.value}</span>;
         }
 

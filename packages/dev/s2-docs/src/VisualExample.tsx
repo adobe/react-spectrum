@@ -1,14 +1,9 @@
-// "use client";
-
-import React, { useState } from 'react';
-// import { Divider } from '@react-spectrum/s2';
-import { style } from '@react-spectrum/s2/style' with { type: 'macro' };
-import { VisualExampleClient, Output, CodeOutput, Control } from './VisualExampleClient';
-import { Code } from './Code';
-import { renderHTMLfromMarkdown, Type } from './types';
-import { Files } from './Example';
-import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
+import {Files} from './Example';
 import path from 'path';
+import React from 'react';
+import {renderHTMLfromMarkdown, Type} from './types';
+import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
