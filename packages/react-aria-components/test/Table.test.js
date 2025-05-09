@@ -2208,7 +2208,7 @@ describe('Table', () => {
   });
 
   it('supports removing a column and adding it back static', async () => {
-    let {getByRole} = render(<App />);
+    let {getByRole} = render(<HidingColumnsExample />);
     let button = getByRole('button');
     expect(button).toHaveTextContent('Hide Columns');
 
@@ -2220,7 +2220,7 @@ describe('Table', () => {
   });
 
   it('supports removing a column and adding it back dynamic', async () => {
-    let {getByRole} = render(<App dynamic />);
+    let {getByRole} = render(<HidingColumnsExample dynamic />);
     let button = getByRole('button');
     expect(button).toHaveTextContent('Hide Columns');
 
@@ -2232,7 +2232,7 @@ describe('Table', () => {
   });
 });
 
-function App({dynamic = false}) {
+function HidingColumnsExample({dynamic = false}) {
   const [hideColumns, setHideColumns] = React.useState(false);
 
   const label = hideColumns ? 'Show Columns' : 'Hide Columns';

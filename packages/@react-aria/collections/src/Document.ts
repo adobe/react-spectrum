@@ -103,7 +103,7 @@ export class BaseNode<T> {
   }
 
   private invalidateChildIndices(child: ElementNode<T>): void {
-    if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
+    if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
       this._minInvalidChildIndex = child;
     }
   }
@@ -156,11 +156,7 @@ export class BaseNode<T> {
 
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
-    // Ensure that the newNode's index is less than that of the reference node so that
-    // invalidateChildIndices will properly use the newNode as the _minInvalidChildIndex, thus making sure
-    // we will properly update the indexes of all sibiling nodes after the newNode. The value here doesn't matter
-    // since updateChildIndices should calculate the proper indexes.
-    newNode.index = referenceNode.index - 1;
+    newNode.index = referenceNode.index;
 
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
@@ -182,8 +178,8 @@ export class BaseNode<T> {
       return;
     }
 
-    if (this._minInvalidChildIndex === child && child.previousSibling) {
-      this.invalidateChildIndices(child.previousSibling);
+    if (this._minInvalidChildIndex === child) {
+      this._minInvalidChildIndex = null;
     }
 
     if (child.nextSibling) {
