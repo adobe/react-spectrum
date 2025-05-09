@@ -83,7 +83,6 @@ export const WithEmptyState = {
   }
 };
 
-// TODO: this one is probably not great for chromatic since it has the spinner, check if ignoreSelectors works for it
 export const WithInitialLoading = {
   ...EmptyCombobox,
   args: {

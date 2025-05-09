@@ -2003,23 +2003,6 @@ describe('Table', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    // TODO: decide if we want to allow customization for this (I assume we will)
-    it.skip('allows the user to customize the scrollOffset required to trigger onLoadMore', function () {
-      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
-
-      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} scrollOffset={2} />);
-
-      let scrollView = tree.getByTestId('scrollRegion');
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
-
-      scrollView.scrollTop = 50;
-      fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
-
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
-    });
-
     describe('virtualized', () => {
       let items = [];
       for (let i = 1; i <= 50; i++) {

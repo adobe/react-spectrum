@@ -844,7 +844,6 @@ function VirtualizedTableWithEmptyState(args) {
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
-            // TODO: adjust this as well
             isLoading={args.isLoading}
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>

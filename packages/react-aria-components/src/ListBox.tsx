@@ -509,7 +509,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
 
   return (
     <>
-      {/* TODO: Alway render the sentinel. Will need to figure out how best to position this in cases where the user is using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />

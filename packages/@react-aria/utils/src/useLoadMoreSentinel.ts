@@ -26,7 +26,6 @@ export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> 
    * @default 1
    */
   scrollOffset?: number
-  // TODO: Maybe include a scrollRef option so the user can provide the scrollParent to compare against instead of having us look it up
 }
 
 export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
