@@ -395,7 +395,11 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               <Provider
                 values={[
                   [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
+                  [HeadingContext, {
+                    // @ts-ignore
+                    role: 'presentation',
+                    styles: sectionHeading
+                  }],
                   [TextContext, {
                     slots: {
                       description: {styles: description({size})}
