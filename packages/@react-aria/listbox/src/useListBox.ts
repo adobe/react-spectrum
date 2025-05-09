@@ -48,9 +48,6 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    */
   shouldUseVirtualFocus?: boolean,
 
-  /** Whether options should be focused when the user hovers over them. */
-  shouldFocusOnHover?: boolean,
-
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.

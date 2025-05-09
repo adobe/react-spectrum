@@ -1297,9 +1297,9 @@ describe('ListBox', () => {
       let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange});
       let items = getAllByRole('option');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1309,9 +1309,9 @@ describe('ListBox', () => {
       let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
       let items = getAllByRole('option');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1321,11 +1321,40 @@ describe('ListBox', () => {
       let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
       let items = getAllByRole('option');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('shouldFocusOnHover', () => {
+    it('should focus options on hovering with shouldFocusOnHover', async () => {
+      let {getAllByRole} = renderListbox({shouldFocusOnHover: true});
+      let options = getAllByRole('option');
+      let option1 = options[0];
+      let option2 = options[1];
+
+      expect(option1).not.toHaveFocus();
+      expect(option2).not.toHaveFocus();
+
+      await user.hover(option1);
+      expect(option1).toHaveFocus();
+
+      keyPress('ArrowDown');
+      expect(option1).not.toHaveFocus();
+      expect(option2).toHaveFocus();
+    });
+
+    it.each([false, undefined])('should not focus options on hovering when shouldFocusOnHover is not true', async (shouldFocusOnHover) => {
+      let {getAllByRole} = renderListbox({shouldFocusOnHover});
+      let option = getAllByRole('option')[0];
+
+      expect(option).not.toHaveFocus();
+
+      await user.hover(option);
+      expect(option).not.toHaveFocus();
     });
   });
 });
