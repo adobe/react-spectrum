@@ -23,42 +23,39 @@ import {
   ListBoxItem,
   ListBoxItemProps,
   ListBoxProps,
+  ListLayout,
   Provider,
-  SectionProps
+  SectionProps,
+  Virtualizer
 } from 'react-aria-components';
-import {baseColor, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
+import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
-  Divider,
   icon,
   iconCenterWrapper,
   label,
-  menuitem,
-  section,
-  sectionHeader,
   sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 
 export interface ComboboxStyleProps {
   /**
@@ -144,6 +141,111 @@ const iconStyles = style({
     type: 'fill',
     value: 'currentColor'
   }
+});
+
+export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
+  width: 'full',
+  boxSizing: 'border-box',
+  maxHeight: '[inherit]',
+  // TODO: Might help with horizontal scrolling happening on Windows, will need to check somehow. Otherwise, revert back to overflow: auto
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  fontFamily: 'sans',
+  fontSize: controlFont()
+});
+
+export let listboxItem = style({
+  ...focusRing(),
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
+  paddingBottom: '--labelPadding',
+  backgroundColor: {
+    default: 'transparent',
+    isFocused: baseColor('gray-100').isFocusVisible
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  position: 'relative',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
+  display: 'grid',
+  gridTemplateAreas: [
+    '. checkmark icon label       .',
+    '. .         .    description .'
+  ],
+  gridTemplateColumns: {
+    size: {
+      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(48)]
+    }
+  },
+  gridTemplateRows: {
+    // min-content prevents second row from 'auto'ing to a size larger then 0 when empty
+    default: 'auto minmax(0, min-content)',
+    ':has([slot=description])': 'auto auto'
+  },
+  rowGap: {
+    ':has([slot=description])': space(1)
+  },
+  alignItems: 'baseline',
+  minHeight: controlSize(),
+  height: 'min',
+  textDecoration: 'none',
+  cursor: {
+    default: 'default',
+    isLink: 'pointer'
+  },
+  transition: 'default'
+}, getAllowedOverrides());
+
+export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
+  color: 'neutral',
+  boxSizing: 'border-box',
+  minHeight: controlSize(),
+  paddingY: centerPadding(),
+  marginX: {
+    size: {
+      S: `[${edgeToText(24)}]`,
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
+    }
+  }
+});
+
+const separatorWrapper = style({
+  display: {
+    ':is(:last-child > *)': 'none',
+    default: 'flex'
+  },
+  marginX: {
+    size: {
+      S: `[${edgeToText(24)}]`,
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
+    }
+  },
+  height: 12,
+  alignItems: 'center'
+});
+
+const dividerStyle = style({
+  backgroundColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  borderRadius: 'full',
+  height: '[2px]',
+  width: 'full'
 });
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
@@ -303,7 +405,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
               })}>
               <Provider
                 values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
+                  [HeaderContext, {styles: listboxHeader({size})}],
                   [HeadingContext, {styles: sectionHeading}],
                   [TextContext, {
                     slots: {
@@ -311,11 +413,19 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                     }
                   }]
                 ]}>
-                <ListBox
-                  items={items}
-                  className={menu({size})}>
-                  {children}
-                </ListBox>
+                <Virtualizer
+                  layout={ListLayout}
+                  layoutOptions={{
+                    estimatedRowHeight: 32,
+                    padding: 8,
+                    estimatedHeadingHeight: 50
+                  }}>
+                  <ListBox
+                    items={items}
+                    className={listbox({size})}>
+                    {children}
+                  </ListBox>
+                </Virtualizer>
               </Provider>
             </PopoverBase>
           </InternalComboboxContext.Provider>
@@ -324,7 +434,6 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
     </AriaComboBox>
   );
 });
-
 
 export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
@@ -347,7 +456,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
       ref={ref}
       textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, size, isLink}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
         return (
@@ -382,11 +491,18 @@ export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>
   return (
     <>
       <AriaListBoxSection
-        {...props}
-        className={section({size})}>
+        {...props}>
         {props.children}
       </AriaListBoxSection>
-      <Divider />
+      <Divider size={size} />
     </>
   );
 }
+
+export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>) {
+  return (
+    <div className={separatorWrapper({size})}>
+      <div ref={ref} className={dividerStyle} />
+    </div>
+  );
+});

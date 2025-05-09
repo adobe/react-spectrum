@@ -102,10 +102,6 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     onScrollEnd: state.endScrolling
   }, scrollRef!);
 
-  if (state.contentSize.area === 0) {
-    return null;
-  }
-
   return (
     <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
