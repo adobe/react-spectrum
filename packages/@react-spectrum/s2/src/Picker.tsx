@@ -18,6 +18,7 @@ import {
   SelectRenderProps as AriaSelectRenderProps,
   Button,
   ButtonRenderProps,
+  Collection,
   ContextValue,
   ListBox,
   ListBoxItem,
@@ -26,9 +27,12 @@ import {
   ListLayout,
   Provider,
   SectionProps,
+  SelectStateContext,
   SelectValue,
+  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -42,18 +46,19 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createHideableComponent} from '@react-aria/collections';
 import {
   Divider,
   listbox,
   listboxHeader,
-  listboxItem
+  listboxItem,
+  LOADER_ROW_HEIGHTS
 } from './ComboBox';
 import {
   FieldErrorIcon,
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -64,13 +69,14 @@ import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 
 export interface PickerStyleProps {
   /**
@@ -93,7 +99,9 @@ export interface PickerProps<T extends object> extends
   SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
-  Pick<AriaPopoverProps, 'shouldFlip'> {
+  Pick<AriaPopoverProps, 'shouldFlip'>,
+  AsyncLoadable
+   {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -222,6 +230,29 @@ const iconStyles = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  color: {
+    isInitialLoad: 'disabled'
+  }
+});
+
+const loadingWrapperStyles = style({
+  gridColumnStart: '1',
+  gridColumnEnd: '-1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginY: 8
+});
+
+const progressCircleStyles = style({
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
   }
 });
 
@@ -255,6 +286,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     UNSAFE_style,
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
+    isLoading,
+    onLoadMore,
     ...pickerProps
   } = props;
 
@@ -270,9 +303,41 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     menuOffset = 8;
   }
 
+  let renderer;
+  let spinnerId = useSlotId([isLoading]);
+
+  let listBoxLoadingCircle = (
+    <UNSTABLE_ListBoxLoadingSentinel
+      className={loadingWrapperStyles}
+      isLoading={isLoading}
+      onLoadMore={onLoadMore}>
+      <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
+    </UNSTABLE_ListBoxLoadingSentinel>
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items}>
+          {children}
+        </Collection>
+        {listBoxLoadingCircle}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {listBoxLoadingCircle}
+      </>
+    );
+  }
+  let scale = useScale();
+
   return (
     <AriaSelect
       {...pickerProps}
+      aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
@@ -295,13 +360,20 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               {label}
             </FieldLabel>
             <PickerButton
+              isLoading={isLoading}
               isOpen={isOpen}
               isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
               size={size}
               isInvalid={isInvalid}
               isDisabled={isDisabled}
-              buttonRef={domRef} />
+              buttonRef={domRef}
+              loadingCircle={
+                <PickerProgressCircle
+                  id={spinnerId}
+                  size={size}
+                  aria-label={stringFormatter.format('table.loading')} />
+              } />
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -312,9 +384,10 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
             <Virtualizer
               layout={ListLayout}
               layoutOptions={{
-                estimatedRowHeight: 32, 
-                estimatedHeadingHeight: 50, 
-                padding: 8}}>
+                estimatedRowHeight: 32,
+                estimatedHeadingHeight: 50,
+                padding: 8,
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
               <PopoverBase
                 hideArrow
                 offset={menuOffset}
@@ -349,7 +422,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   <ListBox
                     items={items}
                     className={listbox({size})}>
-                    {children}
+                    {renderer}
                   </ListBox>
                 </Provider>
               </PopoverBase>
@@ -361,11 +434,29 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   );
 });
 
-interface PickerButtonInnerProps extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'> {
+function PickerProgressCircle(props) {
+  let {
+    id,
+    size,
+    'aria-label': ariaLabel
+  } = props;
+  return (
+    <ProgressCircle
+      id={id}
+      isIndeterminate
+      size="S"
+      aria-label={ariaLabel}
+      styles={progressCircleStyles({size})} />
+  );
+}
+
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'isLoading'> {
+  loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
 }
 
-function PickerButton(props: PickerButtonInnerProps) {
+// Needs to be hidable component or otherwise the PressResponder throws a warning when rendered in the fake DOM and tries to register
+const PickerButton = createHideableComponent(function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
   let {
     isOpen,
     isQuiet,
@@ -373,8 +464,13 @@ function PickerButton(props: PickerButtonInnerProps) {
     size,
     isInvalid,
     isDisabled,
+    isLoading,
+    loadingCircle,
     buttonRef
   } = props;
+  let state = useContext(SelectStateContext);
+  // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
+  let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
@@ -437,12 +533,11 @@ function PickerButton(props: PickerButtonInnerProps) {
                 );
               }}
             </SelectValue>
-            {isInvalid && (
-              <FieldErrorIcon isDisabled={isDisabled} />
-            )}
+            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+            {isInitialLoad && !isOpen && loadingCircle}
             <ChevronIcon
               size={size}
-              className={iconStyles} />
+              className={iconStyles({isInitialLoad})} />
             {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
             {isInvalid && !isDisabled && !isQuiet &&
               // @ts-ignore known limitation detecting functions from the theme
@@ -453,7 +548,7 @@ function PickerButton(props: PickerButtonInnerProps) {
       </Button>
     </PressResponder>
   );
-}
+});
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
