@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
-import React, {Suspense, useState} from 'react';
+import React, {startTransition, Suspense, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -1076,3 +1076,443 @@ export const TableWithSuspense = {
     }
   }
 };
+
+let rows1 = [
+  {
+    id: 25,
+    name: 'Web Development',
+    date: '7/10/2023',
+    type: 'File folder'
+  },
+  {
+    id: 26,
+    name: 'drivers',
+    date: '2/2/2022',
+    type: 'System file'
+  },
+  {
+    id: 27,
+    name: 'debug.txt',
+    date: '12/5/2024',
+    type: 'Text Document'
+  },
+  {
+    id: 28,
+    name: 'Marketing Plan.pptx',
+    date: '3/15/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 29,
+    name: 'Contract_v3.pdf',
+    date: '1/2/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 30,
+    name: 'Movies',
+    date: '5/20/2024',
+    type: 'File folder'
+  },
+  {
+    id: 31,
+    name: 'User Manual.docx',
+    date: '9/1/2024',
+    type: 'Word Document'
+  },
+  {
+    id: 32,
+    name: 'Sales Data_Q1.xlsx',
+    date: '4/10/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 33,
+    name: 'archive_old.rar',
+    date: '6/1/2023',
+    type: 'RAR archive'
+  },
+  {
+    id: 34,
+    name: 'logo.svg',
+    date: '11/22/2024',
+    type: 'SVG image'
+  },
+  {
+    id: 35,
+    name: 'main.py',
+    date: '10/1/2024',
+    type: 'Python file'
+  },
+  {
+    id: 36,
+    name: 'base.html',
+    date: '8/18/2024',
+    type: 'HTML file'
+  },
+  {
+    id: 37,
+    name: 'Configurations',
+    date: '4/5/2024',
+    type: 'File folder'
+  },
+  {
+    id: 38,
+    name: 'kernel32.dll',
+    date: '9/10/2018',
+    type: 'System file'
+  },
+  {
+    id: 39,
+    name: 'security_log.txt',
+    date: '3/28/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 40,
+    name: 'Project Proposal v2.pptx',
+    date: '1/15/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 41,
+    name: 'NDA_Signed.pdf',
+    date: '12/20/2024',
+    type: 'PDF Document'
+  },
+  {
+    id: 42,
+    name: 'Downloads',
+    date: '7/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 43,
+    name: 'Meeting Minutes.docx',
+    date: '4/12/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 44,
+    name: 'Financial Report_FY24.xlsx',
+    date: '3/5/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 45,
+    name: 'data_backup_v1.tar.gz',
+    date: '11/8/2024',
+    type: 'GZIP archive'
+  },
+  {
+    id: 46,
+    name: 'icon.ico',
+    date: '6/25/2024',
+    type: 'ICO file'
+  },
+  {
+    id: 47,
+    name: 'app.config',
+    date: '9/30/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 48,
+    name: 'Templates',
+    date: '2/10/2025',
+    type: 'File folder'
+  }
+];
+
+let rows2 = [
+  {
+    id: 100,
+    name: 'Assets',
+    date: '8/15/2024',
+    type: 'File folder'
+  },
+  {
+    id: 101,
+    name: 'drivers64',
+    date: '3/3/2023',
+    type: 'System file'
+  },
+  {
+    id: 102,
+    name: 'install.log',
+    date: '1/8/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 103,
+    name: 'Product Demo.pptx',
+    date: '4/20/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 104,
+    name: 'Terms_of_Service.pdf',
+    date: '2/5/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 105,
+    name: 'Animations',
+    date: '6/25/2024',
+    type: 'File folder'
+  },
+  {
+    id: 106,
+    name: 'Release Notes.docx',
+    date: '10/1/2024',
+    type: 'Word Document'
+  },
+  {
+    id: 107,
+    name: 'Financial Projections.xlsx',
+    date: '5/12/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 108,
+    name: 'backup_2023.tar',
+    date: '7/1/2024',
+    type: 'TAR archive'
+  },
+  {
+    id: 109,
+    name: 'thumbnail.jpg',
+    date: '12/1/2024',
+    type: 'JPEG image'
+  },
+  {
+    id: 110,
+    name: 'api_client.py',
+    date: '11/15/2024',
+    type: 'Python file'
+  },
+  {
+    id: 111,
+    name: 'index.html',
+    date: '9/28/2024',
+    type: 'HTML file'
+  },
+  {
+    id: 112,
+    name: 'Resources',
+    date: '5/5/2024',
+    type: 'File folder'
+  },
+  {
+    id: 113,
+    name: 'msvcr100.dll',
+    date: '10/10/2019',
+    type: 'System file'
+  },
+  {
+    id: 114,
+    name: 'system_events.txt',
+    date: '4/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 115,
+    name: 'Training Presentation.pptx',
+    date: '2/20/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 116,
+    name: 'Privacy_Policy.pdf',
+    date: '1/10/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 117,
+    name: 'Desktop',
+    date: '8/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 118,
+    name: 'Meeting Agenda.docx',
+    date: '5/15/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 119,
+    name: 'Budget_Forecast.xlsx',
+    date: '4/15/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 120,
+    name: 'code_backup.7z',
+    date: '12/1/2024',
+    type: '7Z archive'
+  },
+  {
+    id: 121,
+    name: 'icon_large.ico',
+    date: '7/1/2024',
+    type: 'ICO file'
+  },
+  {
+    id: 122,
+    name: 'settings.ini',
+    date: '10/5/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 123,
+    name: 'Project Docs',
+    date: '3/1/2025',
+    type: 'File folder'
+  },
+  {
+    id: 124,
+    name: 'winload.exe',
+    date: '11/1/2010',
+    type: 'System file'
+  },
+  {
+    id: 125,
+    name: 'application.log',
+    date: '6/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 126,
+    name: 'Client Presentation.pptx',
+    date: '3/1/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 127,
+    name: 'EULA.pdf',
+    date: '2/15/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 128,
+    name: 'Temporary',
+    date: '9/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 129,
+    name: 'Action Items.docx',
+    date: '6/1/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 130,
+    name: 'Revenue_Report.xlsx',
+    date: '5/20/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 131,
+    name: 'data_dump.sql',
+    date: '1/1/2025',
+    type: 'SQL Dump'
+  },
+  {
+    id: 132,
+    name: 'image_preview.bmp',
+    date: '8/20/2024',
+    type: 'Bitmap image'
+  },
+  {
+    id: 133,
+    name: 'server.conf',
+    date: '11/20/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 134,
+    name: 'Documentation',
+    date: '4/1/2025',
+    type: 'File folder'
+  },
+  {
+    id: 135,
+    name: 'hal.dll',
+    date: '12/25/2007',
+    type: 'System file'
+  },
+  {
+    id: 136,
+    name: 'access.log',
+    date: '7/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 137,
+    name: 'Strategy Presentation.pptx',
+    date: '4/1/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 138,
+    name: 'Service Agreement.pdf',
+    date: '3/1/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 139,
+    name: 'Recycle Bin',
+    date: '1/1/2000',
+    type: 'System folder'
+  }
+];
+
+const columns1 = [
+  {
+    id: 'name',
+    name: 'Name',
+    isRowHeader: true,
+    allowsSorting: true
+  },
+  {
+    id: 'type',
+    name: 'Type',
+    allowsSorting: true
+  },
+  {
+    id: 'date',
+    name: 'Date Modified',
+    allowsSorting: true
+  }
+];
+
+export function TableWithReactTransition() {
+  const [show, setShow] = useState(true);
+  const items = show ? rows2 : rows1;
+
+  return (
+    <div>
+      <Button
+        onPress={() =>
+          startTransition(() => {
+            setShow((s) => !s);
+          })
+        }>
+        Toggle data using useState + startTransition
+      </Button>
+      <Table aria-label="test">
+        <TableHeader columns={columns1}>
+          {(column) => <Column {...column}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {(row: any) => (
+            <Row id={row.id} columns={columns1}>
+              {/* @ts-ignore */}
+              {(column) => <Cell>{row[column.id]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
