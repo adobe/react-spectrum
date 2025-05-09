@@ -105,6 +105,7 @@ export class BaseNode<T> {
   private invalidateChildIndices(child: ElementNode<T>): void {
     if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
       this._minInvalidChildIndex = child;
+      this.ownerDocument.markDirty(this);
     }
   }
 
@@ -481,12 +482,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     // Next, update dirty collection nodes.
-    // TODO: when updateCollection is called here, shouldn't we be calling this.updateChildIndicies as well? Theoretically it should only update
-    // nodes from _minInvalidChildIndex onwards so the increase in dirtyNodes should be minimal.
-    // Is element.updateNode supposed to handle that (it currently assumes the index stored on the node is correct already).
-    // At the moment, without this call to updateChildIndicies, filtering an async combobox doesn't actually update the index values of the
-    // updated collection...
-    this.updateChildIndices();
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode) {
         if (element.isConnected && !element.isHidden) {
