@@ -68,7 +68,8 @@ export interface PositionResult {
   arrowOffsetLeft?: number,
   arrowOffsetTop?: number,
   maxHeight: number,
-  placement: PlacementAxis
+  placement: PlacementAxis,
+  crossPlacement: PlacementAxis
 }
 
 const AXIS = {
@@ -441,7 +442,8 @@ export function calculatePositionInternal(
     maxHeight: maxHeight,
     arrowOffsetLeft: arrowPosition.left,
     arrowOffsetTop: arrowPosition.top,
-    placement: placementInfo.placement
+    placement: placementInfo.placement,
+    crossPlacement: placementInfo.crossPlacement
   };
 }
 

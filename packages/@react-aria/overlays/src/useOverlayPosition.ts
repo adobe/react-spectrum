@@ -68,6 +68,8 @@ export interface PositionAria {
   arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis | null,
+  /** Cross placement of the overlay with respect to the overlay trigger. */
+  crossPlacement: PlacementAxis | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -287,6 +289,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       }
     },
     placement: position?.placement ?? null,
+    crossPlacement: position?.crossPlacement ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',
