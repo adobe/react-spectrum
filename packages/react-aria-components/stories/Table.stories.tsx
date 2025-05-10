@@ -21,7 +21,7 @@ import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components',
-  excludeStories: ['DndTable']
+  excludeStories: ['DndTable', 'makePromise']
 };
 
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
@@ -1010,7 +1010,7 @@ const items: Launch[] = [
   {id: 3, mission_name: 'RatSat', launch_year: 2009}
 ];
 
-function makePromise(items: Launch[]) {
+export function makePromise(items: Launch[]) {
   return new Promise(resolve => setTimeout(() => resolve(items), 1000));
 }
 
