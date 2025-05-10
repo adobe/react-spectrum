@@ -166,6 +166,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     let overlay = (overlayRef.current as HTMLElement);
     if (!maxHeight && overlayRef.current) {
       overlay.style.top = '0px';
+      overlay.style.left = '0px';
       overlay.style.bottom = '';
       overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
     }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
+import {Button, Dialog, DialogTrigger, Heading, MenuTrigger, OverlayArrow, Popover} from 'react-aria-components';
 import React, {useEffect, useRef, useState} from 'react';
 
 export default {
@@ -432,4 +432,29 @@ export const PopoverTriggerWidthExample = () => (
       </Dialog>
     </Popover>
   </DialogTrigger>
+);
+
+const PopoverRightExampleContent = () => {
+  const [s, ss] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      ss(true);
+    }, 1500);
+  });
+  return s ? (
+    <div>
+      Longer content goes here. Hello, World! This is a popover.
+    </div>
+  ) : (
+    <div>Short content goes here.</div>
+  );
+};
+
+export const PopoverRightExample = () => (
+  <MenuTrigger>
+    <Button style={{marginLeft: 'auto'}}>Open popover</Button>
+    <Popover placement="bottom end">
+      <PopoverRightExampleContent />
+    </Popover>
+  </MenuTrigger>
 );
