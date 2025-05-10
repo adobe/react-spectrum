@@ -18,7 +18,7 @@ import {FormContext} from './Form';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -186,7 +186,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
   } = props;
   [props, ref] = useContextProps(otherProps, ref, RadioContext);
   let state = React.useContext(RadioGroupStateContext)!;
-  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
+  let inputRef = useObjectRef(useMemo(() => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null), [userProvidedInputRef, props.inputRef]));
   let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.
