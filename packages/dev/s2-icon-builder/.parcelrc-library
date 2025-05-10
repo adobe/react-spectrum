@@ -1,0 +1,12 @@
+{
+  "extends": "@parcel/config-default",
+  "namers": ["@react-spectrum/parcel-namer-s2", "@parcel/namer-default"],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  }
+}
