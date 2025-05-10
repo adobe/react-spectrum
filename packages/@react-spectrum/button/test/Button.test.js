@@ -363,5 +363,19 @@ describe('Button', function () {
     expect(button).not.toHaveAttribute('href');
   });
 
+  it('associates button with form with form id', () => {
+    let {getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <Form id="testForm">
+          <Checkbox>An Input</Checkbox>
+        </Form>
+        <Button form="testForm">Submit</Button>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('form', 'testForm');
+  });
+
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });
