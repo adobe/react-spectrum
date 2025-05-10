@@ -184,7 +184,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // adjusted space. In very specific cases this might result in the scrollbars disappearing
       // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
       // an infinite loop. This matches how browsers behavior with native CSS grid layout.
-      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
+      if (!isTestEnv && (dom.checkVisibility?.() ?? true) && (clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight)) {
         state.width = dom.clientWidth;
         state.height = dom.clientHeight;
         flush(() => {
