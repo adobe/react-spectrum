@@ -257,6 +257,7 @@ describe('ComboBox', function () {
   });
 
   beforeEach(() => {
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     load = jest
       .fn()
       .mockImplementationOnce(getFilterItems)

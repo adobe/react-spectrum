@@ -13,12 +13,11 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
-import {MyMenuItem} from './utils';
-import React, {startTransition, Suspense, useMemo, useRef, useState} from 'react';
+import {LoadingSpinner, MyMenuItem} from './utils';
+import React, {startTransition, Suspense, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
+import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
-import {useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
@@ -465,7 +464,7 @@ export const DndTable = (props: DndTableProps) => {
             </Row>
           )}
         </Collection>
-        {props.isLoading && list.items.length > 0 && <MyTableLoadingIndicator />}
+        <MyTableLoadingIndicator isLoading={props.isLoading} />
       </TableBody>
     </Table>
   );
@@ -533,27 +532,26 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-const MyTableLoadingIndicator = ({tableWidth = 400}) => {
+const MyTableLoadingIndicator = (props) => {
+  let {tableWidth =  400, ...otherProps} = props;
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingIndicator style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
-      <span>
-        Load more spinner
-      </span>
-    </UNSTABLE_TableLoadingIndicator>
+    <UNSTABLE_TableLoadingSentinel style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}} {...otherProps}>
+      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
+    </UNSTABLE_TableLoadingSentinel>
   );
 };
 
 function MyTableBody(props) {
-  let {rows, children, isLoadingMore, tableWidth, ...otherProps} = props;
+  let {rows, children, isLoading, onLoadMore, tableWidth, ...otherProps} = props;
   return (
     <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoadingMore && <MyTableLoadingIndicator tableWidth={tableWidth} />}
+      <MyTableLoadingIndicator tableWidth={tableWidth} isLoading={isLoading} onLoadMore={onLoadMore} />
     </TableBody>
   );
 }
@@ -566,7 +564,7 @@ const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} isLoadingMore={args.isLoadingMore}>
+      <MyTableBody rows={rows} isLoading={args.isLoadingMore}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -592,7 +590,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoadingMore && <MyTableLoadingIndicator />}
+      <MyTableLoadingIndicator isLoading={props.isLoadingMore} />
     </>
   );
 }
@@ -628,8 +626,8 @@ export const TableLoadingRowRenderWrapperStory = {
 
 
 function renderEmptyLoader({isLoading, tableWidth = 400}) {
-  let contents = isLoading ? 'Loading spinner' : 'No results found';
-  return <div style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
+  let contents = isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />  : 'No results found';
+  return <div style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
 }
 
 const RenderEmptyState = (args: {isLoading: boolean}) => {
@@ -675,7 +673,7 @@ interface Character {
   birth_year: number
 }
 
-const OnLoadMoreTable = () => {
+const OnLoadMoreTable = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -683,9 +681,10 @@ const OnLoadMoreTable = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
+
       return {
         items: json.results,
         cursor: json.next
@@ -693,17 +692,8 @@ const OnLoadMoreTable = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Table aria-label="Load more table">
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
@@ -714,7 +704,8 @@ const OnLoadMoreTable = () => {
         <MyTableBody
           tableWidth={400}
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -732,7 +723,10 @@ const OnLoadMoreTable = () => {
 
 export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
-  name: 'onLoadMore table'
+  name: 'onLoadMore table',
+  args: {
+    delay: 50
+  }
 };
 
 export function VirtualizedTable() {
@@ -850,7 +844,7 @@ function VirtualizedTableWithEmptyState(args) {
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
-            isLoadingMore={args.showRows && args.isLoading}
+            isLoading={args.isLoading}
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>
             {(item) => (
@@ -876,7 +870,7 @@ export const VirtualizedTableWithEmptyStateStory  = {
   name: 'Virtualized Table With Empty State'
 };
 
-const OnLoadMoreTableVirtualized = () => {
+const OnLoadMoreTableVirtualized = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -884,7 +878,7 @@ const OnLoadMoreTableVirtualized = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -894,23 +888,15 @@ const OnLoadMoreTableVirtualized = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLTableElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
     <Virtualizer
       layout={TableLayout}
       layoutOptions={{
         rowHeight: 25,
-        headingHeight: 25
+        headingHeight: 25,
+        loaderHeight: 30
       }}>
-      <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
           <Column id="height">Height</Column>
@@ -919,7 +905,8 @@ const OnLoadMoreTableVirtualized = () => {
         </TableHeader>
         <MyTableBody
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -937,10 +924,13 @@ const OnLoadMoreTableVirtualized = () => {
 
 export const OnLoadMoreTableStoryVirtualized  = {
   render: OnLoadMoreTableVirtualized,
-  name: 'Virtualized Table with async loading'
+  name: 'Virtualized Table with async loading',
+  args: {
+    delay: 50
+  }
 };
 
-const OnLoadMoreTableVirtualizedResizeWrapper = () => {
+const OnLoadMoreTableVirtualizedResizeWrapper = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -948,7 +938,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -958,22 +948,14 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
           rowHeight: 25,
-          headingHeight: 25
+          headingHeight: 25,
+          loaderHeight: 30
         }}>
         <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -984,7 +966,8 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
           </TableHeader>
           <MyTableBody
             renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-            isLoadingMore={list.loadingState === 'loadingMore'}
+            isLoading={list.loadingState === 'loadingMore'}
+            onLoadMore={list.loadMore}
             rows={list.items}>
             {(item) => (
               <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -1003,7 +986,15 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
-  name: 'Virtualized Table with async loading, resizable table container wrapper'
+  name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
+  args: {
+    delay: 50
+  },
+  parameters: {
+    description: {
+      data: 'This table has a ResizableTableContainer wrapper around the Virtualizer. The table itself doesnt have any resizablity, this is simply to test that it still loads/scrolls in this configuration.'
+    }
+  }
 };
 
 interface Launch {
