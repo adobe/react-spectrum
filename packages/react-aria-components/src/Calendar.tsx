@@ -263,6 +263,11 @@ export interface CalendarCellRenderProps {
    */
   isSelected: boolean,
   /**
+   * Whether the cell is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
    * Whether the cell is the first date in a range selection.
    * @selector [data-selection-start]
    */
@@ -541,7 +546,8 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
     'data-selection-end': isSelectionEnd || undefined,
-    'data-invalid': states.isInvalid || undefined
+    'data-invalid': states.isInvalid || undefined,
+    'data-readonly': states.isReadOnly || undefined
   };
 
   return (
