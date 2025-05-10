@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Link, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -22,6 +22,7 @@ import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components'
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
+import {useRef, useState} from 'react';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
 const meta: Meta<typeof Popover> = {
@@ -167,7 +168,6 @@ AccountMenu.argTypes = {
   placement: {table: {disable: true}}
 };
 
-
 function Autocomplete(props) {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
@@ -194,3 +194,24 @@ export const AutocompletePopover = (args: any) => (
     </DialogTrigger>
   </>
 );
+
+export const PopoverWithTrigger = () => {
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<any>(null);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div style={{display: 'flex', gap: 12}}>
+      <button ref={buttonRef} onClick={() => setOpen(!open)}>Open Popover</button>
+      <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={buttonRef}>
+        <Text>Popover with trigger on button</Text>
+      </Popover>
+    </div>
+  );
+};
+
