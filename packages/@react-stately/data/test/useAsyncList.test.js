@@ -45,6 +45,15 @@ describe('useAsyncList', () => {
     let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
+    expect(load).toHaveBeenCalledWith({
+      cursor: undefined,
+      filterText: '',
+      items: [],
+      loadingState: 'idle',
+      selectedKeys: new Set(),
+      signal: expect.any(AbortSignal),
+      sortDescriptor: undefined
+    });
     let args = load.mock.calls[0][0];
     expect(args.items).toEqual([]);
     expect(args.selectedKeys).toEqual(new Set());
