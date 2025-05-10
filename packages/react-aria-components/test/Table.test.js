@@ -2332,4 +2332,160 @@ describe('Table', () => {
       expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
+
+  it('supports removing a column and adding it back static', async () => {
+    let {getByRole} = render(<HidingColumnsExample />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Hide Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Show Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Hide Columns');
+  });
+
+  it('supports removing a column and adding it back dynamic', async () => {
+    let {getByRole} = render(<HidingColumnsExample dynamic />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Hide Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Show Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Hide Columns');
+  });
 });
+
+function HidingColumnsExample({dynamic = false}) {
+  const [hideColumns, setHideColumns] = React.useState(false);
+
+  const label = hideColumns ? 'Show Columns' : 'Hide Columns';
+
+  return (
+    <>
+      {dynamic ? <StockTableExampleDynamic hideColumns={hideColumns} /> : <StockTableExampleStatic hideColumns={hideColumns} />}
+      <button onClick={() => setHideColumns((prev) => !prev)}>{label}</button>
+    </>
+  );
+}
+
+function StockTableExampleDynamic({hideColumns}) {
+  return (
+    <div>
+      <ResizableTableContainer>
+        <Table
+          aria-label="Stocks"
+          selectionMode="multiple"
+          selectionBehavior="replace">
+          <TableHeader>
+            <Column id="symbol">
+              Symbol
+            </Column>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            {!hideColumns && (
+              <Column id="marketCap">
+                Market Cap
+              </Column>
+            )}
+            {!hideColumns && (
+              <Column id="sector">
+                Sector
+              </Column>
+            )}
+            <Column id="industry">
+              Industry
+            </Column>
+          </TableHeader>
+          <TableBody items={stocks} dependencies={[hideColumns]}>
+            {(item) => (
+              <Row id={item.symbol}>
+                <Cell>
+                  <span>
+                    ${item.symbol}
+                  </span>
+                </Cell>
+                <Cell>{item.name}</Cell>
+                {!hideColumns && <Cell>{item.marketCap}</Cell>}
+                {!hideColumns && <Cell>{item.sector}</Cell>}
+                <Cell>{item.industry}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+}
+
+function StockTableExampleStatic({hideColumns}) {
+  return (
+    <div>
+      <ResizableTableContainer>
+        <Table
+          aria-label="Stocks"
+          selectionMode="multiple"
+          selectionBehavior="replace">
+          <TableHeader>
+            <Column id="symbol">
+              Symbol
+            </Column>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            {!hideColumns && (
+              <Column id="marketCap">
+                Market Cap
+              </Column>
+            )}
+            {!hideColumns && (
+              <Column id="sector">
+                Sector
+              </Column>
+            )}
+            <Column id="industry">
+              Industry
+            </Column>
+          </TableHeader>
+          <TableBody>
+            {stocks.map((item) => (
+              <Row id={item.symbol} key={item.symbol}>
+                <Cell>
+                  <span>
+                    ${item.symbol}
+                  </span>
+                </Cell>
+                <Cell>{item.name}</Cell>
+                {!hideColumns && <Cell>{item.marketCap}</Cell>}
+                {!hideColumns && <Cell>{item.sector}</Cell>}
+                <Cell>{item.industry}</Cell>
+              </Row>
+            ))}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+}
+
+const stocks = [
+  {
+    id: 1,
+    symbol: 'PAACR',
+    name: 'Pacific Special Acquisition Corp.',
+    sector: 'Finance',
+    marketCap: 'n/a',
+    industry: 'Business Services'
+  },
+  {
+    id: 2,
+    symbol: 'PAACR-DEDUPE',
+    name: 'Pacific Special Acquisition Corp.',
+    sector: 'Finance',
+    marketCap: 'n/a',
+    industry: 'Business Services'
+  }
+];

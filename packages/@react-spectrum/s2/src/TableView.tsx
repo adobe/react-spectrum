@@ -369,13 +369,13 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
 export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {items, renderEmptyState, children} = props;
+  let {items, renderEmptyState, children, dependencies = []} = props;
   let domRef = useDOMRef(ref);
   let {loadingState, onLoadMore} = useContext(InternalTableContext);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -402,7 +402,7 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={dependencies}>
           {children}
         </Collection>
         {loadMoreSpinner}
@@ -1115,12 +1115,12 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies'>  {}
 
 /**
  * A row within a `<Table>`.
  */
-export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
@@ -1130,6 +1130,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       // @ts-ignore
       ref={domRef}
       id={id}
+      dependencies={[...dependencies, columns]}
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
@@ -1140,7 +1141,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
-      <Collection items={columns}>
+      <Collection items={columns} dependencies={[...dependencies, columns]}>
         {children}
       </Collection>
     </RACRow>

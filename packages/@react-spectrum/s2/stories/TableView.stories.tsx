@@ -153,6 +153,38 @@ const DynamicTable = (args: any) => (
   </TableView>
 );
 
+export const DynamicColumns = {
+  render: function DynamicColumnsExample(args: any) {
+    let [cols, setColumns] = useState(columns);
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+        <ActionButton onPress={() => setColumns((prev) => prev.length > 3 ? [columns[0]].concat(columns.slice(2, 4)) : columns)}>Toggle columns</ActionButton>
+        <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
+          <TableHeader columns={cols}>
+            {(column) => (
+              <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={items} dependencies={[cols]}>
+            {item => (
+              <Row id={item.id} columns={cols}>
+                {(col) => {
+                  return <Cell>{item[col.id]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
+  },
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
 
 const DynamicTableWithCustomMenus = (args: any) => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
@@ -817,39 +849,50 @@ export const FlexWidth = {
 };
 
 
+function ColSpanExample(args: any) {
+  let [hide, setHide] = useState(false);
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+      <ActionButton onPress={() => setHide(!hide)}>{hide ? 'Show' : 'Hide'}</ActionButton>
+      <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          {!hide && <Column>Date Modified</Column>}
+          <Column>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="1">
+            <Cell>Games</Cell>
+            <Cell>File folder</Cell>
+            {!hide && <Cell>6/7/2020</Cell>}
+            <Cell>74 GB</Cell>
+          </Row>
+          <Row id="2">
+            <Cell>Program Files</Cell>
+            <Cell>File folder</Cell>
+            {!hide && <Cell>4/7/2021</Cell>}
+            <Cell>1.2 GB</Cell>
+          </Row>
+          <Row id="3">
+            <Cell>bootmgr</Cell>
+            <Cell>System file</Cell>
+            {!hide && <Cell>11/20/2010</Cell>}
+            <Cell>0.2 GB</Cell>
+          </Row>
+          <Row id="4">
+            <Cell colSpan={hide ? 3 : 4}>Total size: 75.4 GB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    </div>
+  );
+}
+
+
 export const ColSpan = {
   render: (args: any) => (
-    <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
-      <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
-        <Column>Size</Column>
-      </TableHeader>
-      <TableBody>
-        <Row id="1">
-          <Cell>Games</Cell>
-          <Cell>File folder</Cell>
-          <Cell>6/7/2020</Cell>
-          <Cell>74 GB</Cell>
-        </Row>
-        <Row id="2">
-          <Cell>Program Files</Cell>
-          <Cell>File folder</Cell>
-          <Cell>4/7/2021</Cell>
-          <Cell>1.2 GB</Cell>
-        </Row>
-        <Row id="3">
-          <Cell>bootmgr</Cell>
-          <Cell>System file</Cell>
-          <Cell>11/20/2010</Cell>
-          <Cell>0.2 GB</Cell>
-        </Row>
-        <Row id="4">
-          <Cell colSpan={4}>Total size: 75.4 GB</Cell>
-        </Row>
-      </TableBody>
-    </TableView>
+    <ColSpanExample {...args} />
   ),
   parameters: {
     docs: {

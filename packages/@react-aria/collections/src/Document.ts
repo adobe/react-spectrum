@@ -182,6 +182,10 @@ export class BaseNode<T> {
       return;
     }
 
+    if (this._minInvalidChildIndex === child) {
+      this._minInvalidChildIndex = null;
+    }
+
     if (child.nextSibling) {
       this.invalidateChildIndices(child.nextSibling);
       child.nextSibling.previousSibling = child.previousSibling;
