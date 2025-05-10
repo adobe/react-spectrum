@@ -244,4 +244,26 @@ describe('Checkbox', () => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
     expect(contextInputRef.current).toBe(getByRole('checkbox'));
   });
+
+  it('should not trigger onBlur/onFocus on sequential presses', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let {getByRole} = render(
+      <Checkbox onFocus={onFocus} onBlur={onBlur}>Test</Checkbox>
+    );
+  
+    let checkbox = getByRole('checkbox');
+    let label = checkbox.closest('label');
+  
+    await user.click(label);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+    
+    onFocus.mockClear();
+
+    await user.click(label);
+    
+    expect(onFocus).not.toHaveBeenCalled();
+    expect(onBlur).not.toHaveBeenCalled();
+  });
 });
