@@ -79,7 +79,8 @@ governing permissions and limitations under the License.
   .spectrum-Tag-removeButton {
     grid-area: action;
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
-    width: var(--spectrum-global-dimension-size-300);
+    width: unset;
+    aspect-ratio: 1;
   }
 
   .spectrum-Tag-cell {
