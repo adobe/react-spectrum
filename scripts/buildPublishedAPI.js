@@ -57,7 +57,7 @@ async function build() {
           name.startsWith('@parcel') ||
           name === 'parcel' ||
           name === 'patch-package' ||
-          name.startsWith('@spectrum-css') ||
+          name.startsWith('@spectrum-css/spectrum-css-temp') ||
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
           name === 'react' ||
@@ -91,7 +91,7 @@ async function build() {
           name.startsWith('@parcel') ||
           name === 'parcel' ||
           name === 'patch-package' ||
-          name.startsWith('@spectrum-css') ||
+          name.startsWith('@spectrum-css/spectrum-css-temp') ||
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
           name === 'react' ||
@@ -163,7 +163,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', 'dev', 'docs'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
+  // fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
