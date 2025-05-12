@@ -980,7 +980,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
       ref={ref}
-      data-empty={collection.size === 0 || undefined}>
+      data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
         collection={collection}

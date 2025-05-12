@@ -1838,18 +1838,18 @@ describe('Table', () => {
     function LoadMoreTable({onLoadMore, isLoading, items}) {
       return (
         <ResizableTableContainer data-testid="scrollRegion">
-          <Table aria-label="Load more table">
-            <TableHeader>
+          <Table aria-label="Load more table" selectionMode="multiple">
+            <MyTableHeader>
               <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
-            </TableHeader>
+            </MyTableHeader>
             <TableBody renderEmptyState={() => 'No results'}>
               <Collection items={items}>
                 {(item) => (
-                  <Row>
+                  <MyRow>
                     <Cell>{item.foo}</Cell>
                     <Cell>{item.bar}</Cell>
-                  </Row>
+                  </MyRow>
                 )}
               </Collection>
               <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
@@ -1894,6 +1894,10 @@ describe('Table', () => {
       expect(rows[1]).toHaveTextContent('No results');
       expect(tree.queryByText('spinner')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+      let body = tableTester.rowGroups[1];
+      expect(body).toHaveAttribute('data-empty', 'true');
+      let selectAll = tree.getAllByRole('checkbox')[0];
+      expect(selectAll).toBeDisabled();
 
       // Even if the table is empty, providing isLoading will render the loader
       tree.rerender(<LoadMoreTable items={[]} isLoading />);
@@ -1902,6 +1906,10 @@ describe('Table', () => {
       expect(rows[2]).toHaveTextContent('No results');
       expect(tree.queryByText('spinner')).toBeTruthy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+      body = tableTester.rowGroups[1];
+      expect(body).toHaveAttribute('data-empty', 'true');
+      selectAll = tree.getAllByRole('checkbox')[0];
+      expect(selectAll).toBeDisabled();
     });
 
     it('should fire onLoadMore when intersecting with the sentinel', function () {
