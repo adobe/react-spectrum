@@ -243,7 +243,7 @@ class DragSession {
     this.cancelEvent(e);
 
     if (e.key === 'Enter') {
-      if (e.altKey || e.target === this.getCurrentActivateButton()) {
+      if (e.altKey || this.getCurrentActivateButton()?.contains(e.target as Node)) {
         this.activate();
       } else {
         this.drop();
