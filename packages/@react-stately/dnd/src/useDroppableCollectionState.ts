@@ -59,6 +59,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     onRootDrop,
     onItemDrop,
     onReorder,
+    onMove,
     shouldAcceptItemDrop,
     collection,
     selectionManager,
@@ -95,13 +96,35 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
     if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => types.has(type))) {
       let isValidInsert = onInsert && target.type === 'item' && !isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');
-      let isValidReorder = onReorder && target.type === 'item' && isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');
+
+      let hasSameParentAsTarget = false;
+      if (target.type === 'item' && isInternal && draggingKeys.size > 0) {
+        const targetItemNode = collection.getItem(target.key);
+        if (targetItemNode) {
+          const targetParentKey = targetItemNode.parentKey;
+          let allDraggedItemsMatchParent = true;
+          for (const draggedKey of draggingKeys) {
+            const draggedItemNode = collection.getItem(draggedKey);
+            // eslint-disable-next-line max-depth
+            if (!draggedItemNode || draggedItemNode.parentKey !== targetParentKey) {
+              allDraggedItemsMatchParent = false;
+              break;
+            }
+          }
+          if (allDraggedItemsMatchParent) {
+            hasSameParentAsTarget = true;
+          }
+        }
+      }
+
+      let isValidReorder = onReorder && target.type === 'item' && isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after') && hasSameParentAsTarget;
+      let isValidMove = onMove && target.type === 'item' && isInternal;
       // Feedback was that internal root drop was weird so preventing that from happening
       let isValidRootDrop = onRootDrop && target.type === 'root' && !isInternal;
       // Automatically prevent items (i.e. folders) from being dropped on themselves.
       let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternal && target.key != null && draggingKeys.has(target.key)) && (!shouldAcceptItemDrop || shouldAcceptItemDrop(target, types));
 
-      if (onDrop || isValidInsert || isValidReorder || isValidRootDrop || isValidOnItemDrop) {
+      if (onDrop || isValidInsert || isValidReorder || isValidMove || isValidRootDrop || isValidOnItemDrop) {
         if (getDropOperation) {
           return getDropOperation(target, types, allowedOperations);
         } else {
@@ -111,7 +134,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return 'cancel';
-  }, [isDisabled, acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
+  }, [isDisabled, acceptedDragTypes, onInsert, onReorder, onMove, onRootDrop, onItemDrop, shouldAcceptItemDrop, onDrop, getDropOperation, collection]);
 
   return {
     collection,

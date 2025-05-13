@@ -94,6 +94,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
+      onMove,
       acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
@@ -138,6 +139,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
         }
+
+        if (isInternal && onMove) {
+          await onMove({keys: draggingKeys, dropOperation, target});
+        } 
 
         if (target.dropPosition !== 'on') {
           if (!isInternal && onInsert) {

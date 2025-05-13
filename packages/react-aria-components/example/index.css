@@ -52,6 +52,11 @@ html {
     background: lightseagreen;
     color: white;
   }
+
+  &[data-drop-target] {
+    background: purple;
+    color: white;
+  }
 }
 
 .menu {

@@ -222,6 +222,10 @@ export interface DroppableCollectionUtilityOptions {
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
+   * Handler that is called when items are moved within the source collection, and potentially to a different parent.
+   */
+  onMove?: (e: DroppableCollectionReorderEvent) => void,
+  /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
   shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
