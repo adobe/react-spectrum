@@ -538,8 +538,8 @@ const MyTableLoadingIndicator = (props) => {
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingSentinel style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}} {...otherProps}>
-      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
+    <UNSTABLE_TableLoadingSentinel style={{height: 30, width: tableWidth}} {...otherProps}>
+      <LoadingSpinner style={{height: 20, position: 'unset'}} />
     </UNSTABLE_TableLoadingSentinel>
   );
 };
