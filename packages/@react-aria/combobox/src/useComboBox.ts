@@ -375,7 +375,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
