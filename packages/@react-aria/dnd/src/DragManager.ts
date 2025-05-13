@@ -320,7 +320,7 @@ class DragSession {
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
-      if (e.target === this.getCurrentActivateButton()) {
+      if (this.getCurrentActivateButton()?.contains(e.target as Node)) {
         this.activate();
         return;
       }
