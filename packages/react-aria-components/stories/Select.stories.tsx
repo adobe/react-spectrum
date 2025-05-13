@@ -146,23 +146,23 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
         <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
       </Button>
       <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{
-            rowHeight: 25,
-            loaderHeight: 30
-          }}>
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          loaderHeight: 30
+        }}>
         <Popover>
           <OverlayArrow>
             <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
           </OverlayArrow>
-            <ListBox className={styles.menu}>
-              <Collection items={list.items}>
-                {item => (
-                  <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
-                )}
-              </Collection>
-              <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
-            </ListBox>
+          <ListBox className={styles.menu}>
+            <Collection items={list.items}>
+              {item => (
+                <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
+              )}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+          </ListBox>
         </Popover>
       </Virtualizer>
     </Select>
