@@ -28,6 +28,25 @@ let {
   TableWithSuspense
 } = composeStories(stories);
 
+const mockCollectionUpdate = jest.fn();
+
+jest.mock('react', () => {
+  const actual = jest.requireActual('react');
+
+  const useSyncExternalStore = (subscribe, ...args) => {
+    const fn = actual.useCallback((onStoreChange) => {
+      subscribe(() => {
+        mockCollectionUpdate();
+        onStoreChange();
+      });
+    }, [subscribe]);
+
+    return actual.useSyncExternalStore(fn, ...args);
+  };
+
+  return actual.use ? {...actual, useSyncExternalStore} : actual;
+});
+
 function MyColumn(props) {
   return (
     <Column {...props}>
@@ -211,6 +230,7 @@ describe('Table', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+    mockCollectionUpdate.mockClear();
   });
 
   afterEach(() => {
@@ -2274,6 +2294,8 @@ describe('Table', () => {
 
       let promise = act(() => button.click());
 
+      expect(button).toHaveTextContent('Loading');
+
       rows = tree.getAllByRole('row');
       expect(rows).toHaveLength(3);
       expect(rows[1]).toHaveTextContent('FalconSat');
@@ -2292,6 +2314,26 @@ describe('Table', () => {
       expect(rows[2]).toHaveTextContent('DemoSat');
       expect(rows[3]).toHaveTextContent('Trailblazer');
       expect(rows[4]).toHaveTextContent('RatSat');
+    });
+
+    it('should not render excessively in React Suspense with transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      jest.useRealTimers();
+
+      let tree = await act(() => render(<TableWithSuspense reactTransition />));
+
+      await act(() => stories.makePromise([]));
+
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(1);
+
+      let button = tree.getByRole('button');
+      await act(() => button.click());
+
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
     });
   });
 
