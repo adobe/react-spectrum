@@ -145,26 +145,26 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
         {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
         <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
       </Button>
-      <Popover>
-        <OverlayArrow>
-          <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-        </OverlayArrow>
-        <Virtualizer
+      <Virtualizer
           layout={ListLayout}
           layoutOptions={{
             rowHeight: 25,
             loaderHeight: 30
           }}>
-          <ListBox className={styles.menu}>
-            <Collection items={list.items}>
-              {item => (
-                <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
-              )}
-            </Collection>
-            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
-          </ListBox>
-        </Virtualizer>
-      </Popover>
+        <Popover>
+          <OverlayArrow>
+            <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+          </OverlayArrow>
+            <ListBox className={styles.menu}>
+              <Collection items={list.items}>
+                {item => (
+                  <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
+                )}
+              </Collection>
+              <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+            </ListBox>
+        </Popover>
+      </Virtualizer>
     </Select>
   );
 };
