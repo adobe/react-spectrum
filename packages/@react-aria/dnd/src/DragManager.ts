@@ -244,7 +244,7 @@ class DragSession {
 
     if (e.key === 'Enter') {
       if (e.altKey || this.getCurrentActivateButton()?.contains(e.target as Node)) {
-        this.activate();
+        this.activate(this.currentDropTarget, this.currentDropItem);
       } else {
         this.drop();
       }
@@ -320,8 +320,12 @@ class DragSession {
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
-      if (this.getCurrentActivateButton()?.contains(e.target as Node)) {
-        this.activate();
+      let dropElements = dropItems.values();
+      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || item.activateButtonRef?.current === e.target as HTMLElement);
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
+      if (activateButton?.contains(e.target as HTMLElement) && dropTarget) {
+        this.activate(dropTarget, item);
         return;
       }
 
@@ -330,9 +334,7 @@ class DragSession {
         return;
       }
 
-      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
       if (dropTarget) {
-        let item = dropItems.get(e.target as HTMLElement);
         this.setCurrentDropTarget(dropTarget, item);
         this.drop(item);
       }
@@ -622,11 +624,11 @@ class DragSession {
     announce(this.stringFormatter.format('dropComplete'));
   }
 
-  activate() {
-    if (this.currentDropTarget && typeof this.currentDropTarget.onDropActivate === 'function') {
-      let target = this.currentDropItem?.target ?? null;
-      let rect = this.currentDropTarget.element.getBoundingClientRect();
-      this.currentDropTarget.onDropActivate({
+  activate(dropTarget: DropTarget | null, dropItem: DroppableItem | null) {
+    if (dropTarget && typeof dropTarget.onDropActivate === 'function') {
+      let target = dropItem?.target ?? null;
+      let rect = dropTarget.element.getBoundingClientRect();
+      dropTarget.onDropActivate({
         type: 'dropactivate',
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2)

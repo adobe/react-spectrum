@@ -135,7 +135,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         await onRootDrop({items: filteredItems, dropOperation});
       }
 
-      if (target.type === 'item') {        
+      if (target.type === 'item') {
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
         }
@@ -595,17 +595,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropTargetEnter(target) {
         localState.state.setTarget(target);
       },
-      onDropActivate(e) {
+      onDropActivate(e, target) {
         if (
-          localState.state.target?.type === 'item' &&
-          localState.state.target?.dropPosition === 'on' &&
+          target?.type === 'item' &&
+          target?.dropPosition === 'on' &&
           typeof localState.props.onDropActivate === 'function'
         ) {
           localState.props.onDropActivate({
             type: 'dropactivate',
             x: e.x, // todo
             y: e.y,
-            target: localState.state.target
+            target
           });
         }
       },
