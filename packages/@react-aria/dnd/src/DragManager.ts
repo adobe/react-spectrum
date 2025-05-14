@@ -321,7 +321,7 @@ class DragSession {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
       let dropElements = dropItems.values();
-      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || item.activateButtonRef?.current === e.target as HTMLElement);
+      let item = [...dropElements].find(item =>  item.activateButtonRef?.current?.contains(e.target as HTMLElement));
       let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
       let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
       if (activateButton?.contains(e.target as HTMLElement) && dropTarget) {
