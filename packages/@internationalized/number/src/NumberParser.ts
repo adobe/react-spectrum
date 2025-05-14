@@ -149,6 +149,7 @@ class NumberParserImpl {
       // javascript is bad at dividing by 100 and maintaining the same significant figures, so perform it on the string before parsing
       let isNegative = fullySanitizedValue.indexOf('-');
       fullySanitizedValue = fullySanitizedValue.replace('-', '');
+      fullySanitizedValue = fullySanitizedValue.replace('+', '');
       let index = fullySanitizedValue.indexOf('.');
       if (index === -1) {
         index = fullySanitizedValue.length;
