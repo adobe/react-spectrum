@@ -624,7 +624,7 @@ class DragSession {
     announce(this.stringFormatter.format('dropComplete'));
   }
 
-  activate(dropTarget: DropTarget | null, dropItem: DroppableItem | null) {
+  activate(dropTarget: DropTarget | null, dropItem: DroppableItem | null | undefined) {
     if (dropTarget && typeof dropTarget.onDropActivate === 'function') {
       let target = dropItem?.target ?? null;
       let rect = dropTarget.element.getBoundingClientRect();
