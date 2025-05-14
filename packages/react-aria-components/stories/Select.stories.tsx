@@ -145,16 +145,16 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
         {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
         <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
       </Button>
-      <Popover>
-        <OverlayArrow>
-          <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-        </OverlayArrow>
-        <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{
-            rowHeight: 25,
-            loaderHeight: 30
-          }}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          loaderHeight: 30
+        }}>
+        <Popover>
+          <OverlayArrow>
+            <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+          </OverlayArrow>
           <ListBox className={styles.menu}>
             <Collection items={list.items}>
               {item => (
@@ -163,8 +163,8 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
             </Collection>
             <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
           </ListBox>
-        </Virtualizer>
-      </Popover>
+        </Popover>
+      </Virtualizer>
     </Select>
   );
 };
