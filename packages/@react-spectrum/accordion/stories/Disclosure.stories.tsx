@@ -42,3 +42,16 @@ export const Default: DisclosureStory = {
     </Disclosure>
   )
 };
+
+export const WrappingTitle: DisclosureStory = {
+  render: (args) => (
+    <Disclosure maxWidth="size-3000" {...args}>
+      <DisclosureTitle>
+        Long long long long long long long long long long long long long  long long long wrapping title 
+      </DisclosureTitle>
+      <DisclosurePanel>
+        Files content
+      </DisclosurePanel>
+    </Disclosure>
+  )
+};
