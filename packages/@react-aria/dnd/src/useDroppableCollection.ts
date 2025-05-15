@@ -46,9 +46,7 @@ export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate: KeyboardDelegate,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate: DropTargetDelegate,
-  /** A custom keyboard event handler for drop targets. */
-  onKeyDown?: (e: KeyboardEvent) => void
+  dropTargetDelegate: DropTargetDelegate
 }
 
 export interface DroppableCollectionResult {
@@ -94,7 +92,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
-      onMove,
       acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
@@ -138,10 +135,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       if (target.type === 'item') {
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
-        }
-
-        if (onMove && isInternal) {
-          await onMove({keys: draggingKeys, dropOperation, target});
         }
 
         if (target.dropPosition !== 'on') {
@@ -208,7 +201,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.stop();
     },
     onDropActivate(e) {
-      if (state.target?.type === 'item' && typeof props.onDropActivate === 'function') {
+      if (state.target?.type === 'item' && state.target?.dropPosition === 'on' && typeof props.onDropActivate === 'function') {
         props.onDropActivate({
           type: 'dropactivate',
           x: e.x, // todo
@@ -595,17 +588,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropTargetEnter(target) {
         localState.state.setTarget(target);
       },
-      onDropActivate(e, target) {
+      onDropActivate(e) {
         if (
-          target?.type === 'item' &&
-          target?.dropPosition === 'on' &&
+          localState.state.target?.type === 'item' &&
+          localState.state.target?.dropPosition === 'on' &&
           typeof localState.props.onDropActivate === 'function'
         ) {
           localState.props.onDropActivate({
             type: 'dropactivate',
             x: e.x, // todo
             y: e.y,
-            target
+            target: localState.state.target
           });
         }
       },
@@ -755,7 +748,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
-        localState.props.onKeyDown?.(e);
       }
     });
   }, [localState, ref, onDrop, direction]);

@@ -16,7 +16,7 @@ import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, Dr
 import {getDragModality, getTypes} from './utils';
 import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
-import {RefObject, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
 let dropItems = new Map<Element, DroppableItem>();
@@ -32,8 +32,7 @@ interface DropTarget {
   onDropTargetEnter?: (target: DroppableCollectionTarget | null) => void,
   onDropActivate?: (e: DropActivateEvent, target: DroppableCollectionTarget | null) => void,
   onDrop?: (e: DropEvent, target: DroppableCollectionTarget | null) => void,
-  onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void,
-  activateButtonRef?: RefObject<FocusableElement | null>
+  onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void
 }
 
 export function registerDropTarget(target: DropTarget) {
@@ -48,8 +47,7 @@ export function registerDropTarget(target: DropTarget) {
 interface DroppableItem {
   element: FocusableElement,
   target: DroppableCollectionTarget,
-  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
-  activateButtonRef?: RefObject<FocusableElement | null>
+  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation
 }
 
 export function registerDropItem(item: DroppableItem) {
@@ -243,26 +241,15 @@ class DragSession {
     this.cancelEvent(e);
 
     if (e.key === 'Enter') {
-      if (e.altKey || this.getCurrentActivateButton()?.contains(e.target as Node)) {
-        this.activate(this.currentDropTarget, this.currentDropItem);
+      if (e.altKey) {
+        this.activate();
       } else {
         this.drop();
       }
     }
   }
 
-  getCurrentActivateButton(): FocusableElement | null {
-    return this.currentDropItem?.activateButtonRef?.current ?? this.currentDropTarget?.activateButtonRef?.current ?? null;
-  }
-
   onFocus(e: FocusEvent) {
-    let activateButton = this.getCurrentActivateButton();
-    if (e.target === activateButton) {
-      // TODO: canceling this breaks the focus ring. Revisit when we support tabbing.
-      this.cancelEvent(e);
-      return;
-    }
-
     // Prevent focus events, except to the original drag target.
     if (e.target !== this.dragTarget.element) {
       this.cancelEvent(e);
@@ -278,9 +265,6 @@ class DragSession {
       this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
 
     if (!dropTarget) {
-      // if (e.target === activateButton) {
-      //   activateButton.focus();
-      // }
       if (this.currentDropTarget) {
         this.currentDropTarget.element.focus();
       } else {
@@ -290,18 +274,10 @@ class DragSession {
     }
 
     let item = dropItems.get(e.target as HTMLElement);
-    if (dropTarget) {
-      this.setCurrentDropTarget(dropTarget, item);
-    }
+    this.setCurrentDropTarget(dropTarget, item);
   }
 
   onBlur(e: FocusEvent) {
-    let activateButton = this.getCurrentActivateButton();
-    if (e.relatedTarget === activateButton) {
-      this.cancelEvent(e);
-      return;
-    }
-
     if (e.target !== this.dragTarget.element) {
       this.cancelEvent(e);
     }
@@ -320,21 +296,14 @@ class DragSession {
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
-      let dropElements = dropItems.values();
-      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || item.activateButtonRef?.current?.contains(e.target as HTMLElement));
-      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-      let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
-      if (activateButton?.contains(e.target as HTMLElement) && dropTarget) {
-        this.activate(dropTarget, item);
-        return;
-      }
-
       if (e.target === this.dragTarget.element) {
         this.cancel();
         return;
       }
 
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
       if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
         this.setCurrentDropTarget(dropTarget, item);
         this.drop(item);
       }
@@ -350,7 +319,7 @@ class DragSession {
 
   cancelEvent(e: Event) {
     // Allow focusin and focusout on the drag target so focus ring works properly.
-    if ((e.type === 'focusin' || e.type === 'focusout') && (e.target === this.dragTarget?.element || e.target === this.getCurrentActivateButton())) {
+    if ((e.type === 'focusin' || e.type === 'focusout') && e.target === this.dragTarget?.element) {
       return;
     }
 
@@ -406,23 +375,14 @@ class DragSession {
 
     this.restoreAriaHidden = ariaHideOutside([
       this.dragTarget.element,
-      ...validDropItems.flatMap(item => item.activateButtonRef?.current ? [item.element, item.activateButtonRef?.current] : [item.element]),
-      ...visibleDropTargets.flatMap(target => target.activateButtonRef?.current ? [target.element, target.activateButtonRef?.current] : [target.element])
+      ...validDropItems.map(item => item.element),
+      ...visibleDropTargets.map(target => target.element)
     ]);
 
     this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
   }
 
   next() {
-    // TODO: Allow tabbing to the activate button. Revisit once we fix the focus ring.
-    // For now, the activate button is reachable by screen readers and ArrowLeft/ArrowRight
-    // is usable specifically by Tree. Will need tabbing for other components.
-    // let activateButton = this.getCurrentActivateButton();
-    // if (activateButton && document.activeElement !== activateButton) {
-    //   activateButton.focus();
-    //   return;
-    // }
-
     if (!this.currentDropTarget) {
       this.setCurrentDropTarget(this.validDropTargets[0]);
       return;
@@ -449,15 +409,6 @@ class DragSession {
   }
 
   previous() {
-    // let activateButton = this.getCurrentActivateButton();
-    // if (activateButton && document.activeElement === activateButton) {
-    //   let target = this.currentDropItem ?? this.currentDropTarget;
-    //   if (target) {
-    //     target.element.focus();
-    //     return;
-    //   }
-    // }
-
     if (!this.currentDropTarget) {
       this.setCurrentDropTarget(this.validDropTargets[this.validDropTargets.length - 1]);
       return;
@@ -536,6 +487,7 @@ class DragSession {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
         this.currentDropTarget.onDropTargetEnter(item.target);
       }
+
       item.element.focus();
       this.currentDropItem = item;
 
@@ -624,15 +576,14 @@ class DragSession {
     announce(this.stringFormatter.format('dropComplete'));
   }
 
-  activate(dropTarget: DropTarget | null, dropItem: DroppableItem | null | undefined) {
-    if (dropTarget && typeof dropTarget.onDropActivate === 'function') {
-      let target = dropItem?.target ?? null;
-      let rect = dropTarget.element.getBoundingClientRect();
-      dropTarget.onDropActivate({
+  activate() {
+    if (this.currentDropTarget && typeof this.currentDropTarget.onDropActivate === 'function') {
+      let rect = this.currentDropTarget.element.getBoundingClientRect();
+      this.currentDropTarget.onDropActivate({
         type: 'dropactivate',
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2)
-      }, target);
+      }, null);
     }
   }
 }
