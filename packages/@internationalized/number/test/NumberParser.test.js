@@ -170,7 +170,7 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+0%')).toBe(0);
       expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-10%')).toBe(-0.1);
       expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-0%')).toBe(-0);
-      expect(new NumberParser('en-US', {style: 'percent', signDisplay: 'exceptZero', minimumFractionDigits: 2}).parse('+0.50%')).toBe(0.005)
+      expect(new NumberParser('en-US', {style: 'percent', signDisplay: 'exceptZero', minimumFractionDigits: 2}).parse('+0.50%')).toBe(0.005);
     });
 
     it('should parse a percent with decimals and exceptZero', function () {
