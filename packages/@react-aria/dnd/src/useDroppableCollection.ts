@@ -46,9 +46,7 @@ export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate: KeyboardDelegate,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate: DropTargetDelegate,
-  /** A custom keyboard event handler for drop targets. */
-  onKeyDown?: (e: KeyboardEvent) => void
+  dropTargetDelegate: DropTargetDelegate
 }
 
 export interface DroppableCollectionResult {
@@ -208,7 +206,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.stop();
     },
     onDropActivate(e) {
-      if (state.target?.type === 'item' && typeof props.onDropActivate === 'function') {
+      if (state.target?.type === 'item' && state.target?.dropPosition === 'on' && typeof props.onDropActivate === 'function') {
         props.onDropActivate({
           type: 'dropactivate',
           x: e.x, // todo
@@ -755,7 +753,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
-        localState.props.onKeyDown?.(e);
       }
     });
   }, [localState, ref, onDrop, direction]);
