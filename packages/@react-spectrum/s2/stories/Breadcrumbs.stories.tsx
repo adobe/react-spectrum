@@ -111,3 +111,17 @@ export const ManyWithLinks = (args: any) => (
     </Breadcrumbs>
   </div>
 );
+
+export const WithAutoFocus = (args: any) => (
+  <Breadcrumbs {...args}>
+    <Breadcrumb href="/" autoFocus>
+      Home
+    </Breadcrumb>
+    <Breadcrumb href="/react-aria">
+      React Aria
+    </Breadcrumb>
+    <Breadcrumb href="/breadcrumbs">
+      Breadcrumbs
+    </Breadcrumb>
+  </Breadcrumbs>
+);

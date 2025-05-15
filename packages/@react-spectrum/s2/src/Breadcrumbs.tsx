@@ -292,12 +292,16 @@ const heading = style({
 
 export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus' | 'onClick'>, LinkDOMProps {
   /** The children of the breadcrumb item. */
-  children: ReactNode
+  children: ReactNode,
+  /**
+   * Whether to automatically focus the Breadcrumb when it first renders.
+   */
+  autoFocus?: boolean
 }
 
 /** An individual Breadcrumb for Breadcrumbs. */
 export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
-  let {href, target, rel, download, ping, referrerPolicy} = props;
+  let {href, target, rel, download, ping, referrerPolicy, autoFocus} = props;
   let {size = 'M'} = useContext(InternalBreadcrumbsContext) ?? {};
   let domRef = useDOMRef(ref);
   let {direction} = useLocale();
@@ -339,6 +343,7 @@ export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                   ping={ping}
                   referrerPolicy={referrerPolicy}
                   isDisabled={isDisabled || isCurrent}
+                  autoFocus={autoFocus}
                   className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed, isCurrent})}>
                   {children}
                 </Link>
