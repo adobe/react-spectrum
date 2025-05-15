@@ -49,7 +49,7 @@ import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMenuTriggerState} from '@react-stately/menu';
+import {useMenuTriggerState} from 'react-stately';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
