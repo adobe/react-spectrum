@@ -251,7 +251,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={props.dependencies}>
           {children}
         </Collection>
         {cardLoadingSentinel}

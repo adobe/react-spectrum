@@ -863,12 +863,12 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -899,7 +899,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           )}
         </RACColumn>
       )}
-      <Collection items={columns}>
+      <Collection items={columns} dependencies={dependencies}>
         {children}
       </Collection>
     </RACTableHeader>
