@@ -25,7 +25,7 @@ date: 2025-05-14
 * Popover
   * Add `--trigger-width` to `Popover` within `DialogTrigger` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7869)
 * TagGroup
-  * Enable tabbing to tag remove buttons - [@kirilMatsiuk](https://github.com/kirilMatsiuk) - [PR](https://github.com/adobe/react-spectrum/pull/8002)
+  * Enable tabbing to tag remove buttons - [@kirilMatsiuk](https://github.com/kirilMatsiuk) - [PR](https://github.com/adobe/react-spectrum/pull/8002), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8194)
 * Misc
   * Support React 19 ref cleanup callback - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/7758)
   * Export `useRenderProps` hook from `react-aria-components` - [@sebald](https://github.com/sebald) - [PR](https://github.com/adobe/react-spectrum/pull/8013)
@@ -37,7 +37,9 @@ date: 2025-05-14
   * Improve performance of collection updates in React transitions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8204)
 * Date and Time
   * Apply `aria-details` on `Calendar` - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/8042)
-  * Fix: circular dependency in @internationalized/date - [@luixo](https://github.com/luixo) - [PR](https://github.com/adobe/react-spectrum/pull/8001)
+  * Fix circular dependency in @internationalized/date - [@luixo](https://github.com/luixo) - [PR](https://github.com/adobe/react-spectrum/pull/8001)
+* Table
+  * Fix error when updating Table columns - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8211)
 * TypeScript
   * Fix PortalProvider's `getContainer` typings - [@alexasselin008](https://github.com/alexasselin008) - [PR](https://github.com/adobe/react-spectrum/pull/8185)
   * Fix optimize-locales plugin types - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/8087)
@@ -47,9 +49,9 @@ date: 2025-05-14
 * Misc
   * Fix `runAfterTransition` getting stuck when elements are removed - [@MercerK](https://github.com/MercerK) - [PR](https://github.com/adobe/react-spectrum/pull/8004)
   * Fix document is not defined error during SSR (#7926) - [@LisaRyrholm](https://github.com/LisaRyrholm) - [PR](https://github.com/adobe/react-spectrum/pull/7927)
-  * Give radio/checkbox position relative so the hidden input is contained - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8091)
+  * Give radio/checkbox `position: relative` so the hidden input is contained - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8091)
   * Export PortalProvider from `react-aria` monopackage - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8135)
-  * Fix ColorSlider className - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8190)
+  * Properly pass `UNSAFE_className` in ColorSlider - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8190)
 
 ## Docs
 
@@ -57,18 +59,3 @@ date: 2025-05-14
 * Fix typo in `enterKeyHint` prop docs - [@artola](https://github.com/artola) - [PR](https://github.com/adobe/react-spectrum/pull/8121)
 * Fix TypeScript error in `FileTrigger` docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/8172)
 
-## S2
-
-* feat(table): S2 tableview custom column menu - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7617)
-* refactor: Make it a TypeScript error to pass style macro to UNSAFE_className - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8109)
-* feat(s2): coachmarks - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/7590)
-* fix: spelling mistake in style macros list-style-type - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/8124)
-* refactor: Generate stable style macro class names between versions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8118)
-* Fix menu keyboard shortcut icons background color when hovered/focused - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8153)
-* refactor: Theme updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8155)
-* fix(s2): Update dialog sizes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8202)
-* chore: Refactor codemods - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8056)
-* feat: add virtualization to S2 combobox and picker - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8110)
-* chore: Temporarily add version postfix to style macro class names - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8207)
-* feat: Async loading support for S2 ComboBox/Picker - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7938)
-* fix(s2): Add role=presentation to ListBox section headings - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8213)

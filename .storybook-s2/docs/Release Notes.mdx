@@ -4,6 +4,54 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.9.0
+
+### Updates
+
+* [Combobox](?path=/docs/combobox--docs): Support for virtualization and async loading
+* [Dialog](?path=/docs/picker--dialog): Update sizes
+* [Picker](?path=/docs/picker--docs): Support for virtualization and async loading
+* [TableView](?path=/docs/tableview--docs): Support custom menu's in columns
+* Throw TypeScript error when passing style macro to UNSAFE_className
+* `dist` was renamed to `disc` (fixed spelling) in spectrum theme for `listStyleType`
+
+### Style macro updates
+
+We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between version. As we work to stablize the style macro class names, we are adding a postfix based on the version number so that class names don't conflict with any prior or future version. 
+
+This is not optimal long term since it forces browser cache invalidation on every upgrade even if the css did not change. We will aim to remove this before S2 reaches 1.0.
+
+### Theme updates
+
+In this release, we also made some adjustments to the theme. Please note the changes listed below:
+
+* Reduced the default spacing scale so it only goes up to 96px. Larger values are unlikely.
+* Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
+* Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
+* Used rems and touch scaling for icon sizes, and added t-shirt size prop
+* Used rems for checkbox and radio borders, even though normally borders don't scale. These feel more like icons that happen to be implemented with borders.
+* Added support for percentages and viewport relative units (e.g. vw) without square bracket syntax
+* Added support for arbitrary aspect ratio values without bracket syntax
+* Added support for calc and other math functions without bracket syntax
+* Added support for css-wide keywords like inherit without bracket syntax
+
+
+
+* feat(table): S2 tableview custom column menu - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7617)
+* feat: add virtualization to S2 combobox and picker - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8110)
+* feat: Async loading support for S2 ComboBox/Picker - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7938)
+* fix(s2): Add role=presentation to ListBox section headings - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8213)
+* refactor: Generate stable style macro class names between versions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8118)
+* feat(s2): coachmarks - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/7590)
+* refactor: Make it a TypeScript error to pass style macro to UNSAFE_className - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8109)
+* fix: spelling mistake in style macros list-style-type - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/8124)
+* Fix menu keyboard shortcut icons background color when hovered/focused - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8153)
+* fix(s2): Update dialog sizes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8202)
+* chore: Refactor codemods - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8056)
+* refactor: Theme updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8155)
+* chore: Temporarily add version postfix to style macro class names - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8207)
+
+
 ## v0.8.0
 
 ### New Components
