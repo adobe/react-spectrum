@@ -24,9 +24,6 @@ export default function transformComboBox(path: NodePath<t.JSXElement>) {
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
 
-  // Comment out loadingState
-  commentOutProp(path, {propName: 'loadingState'});
-
   // Remove placeholder
   removeProp(path, {propName: 'placeholder'});
 
@@ -40,7 +37,4 @@ export default function transformComboBox(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-
-  // Comment out onLoadMore
-  commentOutProp(path, {propName: 'onLoadMore'});
 } 
