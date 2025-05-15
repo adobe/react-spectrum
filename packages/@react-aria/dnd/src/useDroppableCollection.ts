@@ -30,7 +30,6 @@ import {
   DropTargetDelegate,
   Key,
   KeyboardDelegate,
-  KeyboardEvents,
   Node,
   RefObject
 } from '@react-types/shared';
