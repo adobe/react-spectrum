@@ -12,8 +12,11 @@ export default MDXLayout;
 * [Dialog](?path=/docs/picker--dialog): Update sizes
 * [Picker](?path=/docs/picker--docs): Support for virtualization and async loading
 * [TableView](?path=/docs/tableview--docs): Support custom menu's in columns
-* Throw TypeScript error when passing style macro to UNSAFE_className
 * `dist` was renamed to `disc` (fixed spelling) in spectrum theme for `listStyleType`
+
+### UNSAFE_className Typescript Error
+
+We are now going to throw a Typescript error if a style macro is passed to UNSAFE_className. This is not allowed because UNSAFE_className is not merged with the component's own styles. Instead, it is appended. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
 
 ### Style macro updates
 
