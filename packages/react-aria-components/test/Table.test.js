@@ -1858,18 +1858,18 @@ describe('Table', () => {
     function LoadMoreTable({onLoadMore, isLoading, items}) {
       return (
         <ResizableTableContainer data-testid="scrollRegion">
-          <Table aria-label="Load more table">
-            <TableHeader>
+          <Table aria-label="Load more table" selectionMode="multiple">
+            <MyTableHeader>
               <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
-            </TableHeader>
+            </MyTableHeader>
             <TableBody renderEmptyState={() => 'No results'}>
               <Collection items={items}>
                 {(item) => (
-                  <Row>
+                  <MyRow>
                     <Cell>{item.foo}</Cell>
                     <Cell>{item.bar}</Cell>
-                  </Row>
+                  </MyRow>
                 )}
               </Collection>
               <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
@@ -1893,8 +1893,8 @@ describe('Table', () => {
       let loaderRow = rows[11];
       expect(loaderRow).toHaveTextContent('spinner');
 
-      let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(sentinel.parentElement).toHaveAttribute('inert');
+      let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
+      expect(sentinel.closest('[inert]')).toBeTruthy();
     });
 
     it('should render the sentinel but not the loading indicator when not loading', async () => {
@@ -1914,6 +1914,10 @@ describe('Table', () => {
       expect(rows[1]).toHaveTextContent('No results');
       expect(tree.queryByText('spinner')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+      let body = tableTester.rowGroups[1];
+      expect(body).toHaveAttribute('data-empty', 'true');
+      let selectAll = tree.getAllByRole('checkbox')[0];
+      expect(selectAll).toBeDisabled();
 
       // Even if the table is empty, providing isLoading will render the loader
       tree.rerender(<LoadMoreTable items={[]} isLoading />);
@@ -1922,6 +1926,10 @@ describe('Table', () => {
       expect(rows[2]).toHaveTextContent('No results');
       expect(tree.queryByText('spinner')).toBeTruthy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+      body = tableTester.rowGroups[1];
+      expect(body).toHaveAttribute('data-empty', 'true');
+      selectAll = tree.getAllByRole('checkbox')[0];
+      expect(selectAll).toBeDisabled();
     });
 
     it('should fire onLoadMore when intersecting with the sentinel', function () {
@@ -1934,7 +1942,9 @@ describe('Table', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(0);
       let sentinel = tree.getByTestId('loadMoreSentinel');
       expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(sentinel.nodeName).toBe('TD');
+      expect(sentinel.nodeName).toBe('DIV');
+      expect(sentinel.parentElement.nodeName).toBe('TD');
+      expect(sentinel.parentElement.parentElement.nodeName).toBe('TR');
 
       expect(onLoadMore).toHaveBeenCalledTimes(0);
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
@@ -2087,7 +2097,7 @@ describe('Table', () => {
         expect(loaderParentStyles.height).toBe('30px');
 
         let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
-        expect(sentinel.parentElement).toHaveAttribute('inert');
+        expect(sentinel.closest('[inert]')).toBeTruthy();
       });
 
       it('should not reserve room for the loader if isLoading is false', () => {
@@ -2098,10 +2108,10 @@ describe('Table', () => {
         expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();
 
         let sentinel = within(tableTester.table).getByTestId('loadMoreSentinel');
-        let sentinelParentStyles = sentinel.parentElement.parentElement.style;
-        expect(sentinelParentStyles.top).toBe('1250px');
-        expect(sentinelParentStyles.height).toBe('0px');
-        expect(sentinel.parentElement).toHaveAttribute('inert');
+        let sentinelVirtWrapperStyles = sentinel.closest('[role="presentation"]').style;
+        expect(sentinelVirtWrapperStyles.top).toBe('1250px');
+        expect(sentinelVirtWrapperStyles.height).toBe('0px');
+        expect(sentinel.closest('[inert]')).toBeTruthy();
 
         tree.rerender(<VirtualizedTableLoad items={[]} />);
         rows = tableTester.rows;
@@ -2110,9 +2120,9 @@ describe('Table', () => {
         expect(emptyStateRow).toHaveTextContent('No results');
         expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();
         sentinel = within(tableTester.table).getByTestId('loadMoreSentinel', {hidden: true});
-        sentinelParentStyles = sentinel.parentElement.parentElement.style;
-        expect(sentinelParentStyles.top).toBe('0px');
-        expect(sentinelParentStyles.height).toBe('0px');
+        sentinelVirtWrapperStyles = sentinel.closest('[role="presentation"]').style;
+        expect(sentinelVirtWrapperStyles.top).toBe('0px');
+        expect(sentinelVirtWrapperStyles.height).toBe('0px');
 
         tree.rerender(<VirtualizedTableLoad items={[]} loadingState="loading" />);
         rows = tableTester.rows;
@@ -2121,9 +2131,9 @@ describe('Table', () => {
         expect(emptyStateRow).toHaveTextContent('loading');
 
         sentinel = within(tableTester.table).getByTestId('loadMoreSentinel', {hidden: true});
-        sentinelParentStyles = sentinel.parentElement.parentElement.style;
-        expect(sentinelParentStyles.top).toBe('0px');
-        expect(sentinelParentStyles.height).toBe('0px');
+        sentinelVirtWrapperStyles = sentinel.closest('[role="presentation"]').style;
+        expect(sentinelVirtWrapperStyles.top).toBe('0px');
+        expect(sentinelVirtWrapperStyles.height).toBe('0px');
       });
 
       it('should have the correct row indicies after loading more items', async () => {

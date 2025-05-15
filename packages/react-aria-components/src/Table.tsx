@@ -980,7 +980,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
       ref={ref}
-      data-empty={collection.size === 0 || undefined}>
+      data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
         collection={collection}
@@ -1399,8 +1399,10 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
     <>
       {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
-      <TR style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
-        <TD data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
+      <TR style={{height: 0}} inert={inertValue(true)}>
+        <TD style={{padding: 0, border: 0}}>
+          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'relative', height: 1, width: 1}} />
+        </TD>
       </TR>
       {isLoading && renderProps.children && (
         <TR
