@@ -215,7 +215,12 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer!.contentSize.width;
+    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
+    // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
+    // affect the positioning of the empty state renderer
+    let collection = this.virtualizer!.collection;
+    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
 
