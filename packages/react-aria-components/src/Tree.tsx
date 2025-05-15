@@ -257,7 +257,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 }
 
 // TODO: readd the rest of the render props when tree supports them
-export interface TreeItemRenderProps extends ItemRenderProps {
+export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
   /**
    * Whether the tree item is expanded.
    * @selector [data-expanded]

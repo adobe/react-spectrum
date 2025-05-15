@@ -30,6 +30,7 @@ import {
   DropTargetDelegate,
   Key,
   KeyboardDelegate,
+  KeyboardEvents,
   Node,
   RefObject
 } from '@react-types/shared';
@@ -92,7 +93,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
-      onMove,
       acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
@@ -136,10 +136,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       if (target.type === 'item') {
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
-        }
-
-        if (onMove && isInternal) {
-          await onMove({keys: draggingKeys, dropOperation, target});
         }
 
         if (target.dropPosition !== 'on') {
@@ -593,17 +589,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropTargetEnter(target) {
         localState.state.setTarget(target);
       },
-      onDropActivate(e, target) {
+      onDropActivate(e) {
         if (
-          target?.type === 'item' &&
-          target?.dropPosition === 'on' &&
+          localState.state.target?.type === 'item' &&
+          localState.state.target?.dropPosition === 'on' &&
           typeof localState.props.onDropActivate === 'function'
         ) {
           localState.props.onDropActivate({
             type: 'dropactivate',
             x: e.x, // todo
             y: e.y,
-            target
+            target: localState.state.target
           });
         }
       },

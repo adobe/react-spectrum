@@ -232,12 +232,11 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
     <>
       <TreeItem
         {...props}
-        className={({isFocused, isSelected, isHovered, isFocusVisible, isDropTarget}) => classNames(styles, 'tree-item', {
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
           focused: isFocused,
           'focus-visible': isFocusVisible,
           selected: isSelected,
-          hovered: isHovered,
-          'drop-target': isDropTarget
+          hovered: isHovered
         })}>
         <TreeItemContent>
           {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
