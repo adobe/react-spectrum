@@ -30,7 +30,6 @@ import {
   DropTargetDelegate,
   Key,
   KeyboardDelegate,
-  KeyboardEvents,
   Node,
   RefObject
 } from '@react-types/shared';
@@ -48,7 +47,8 @@ export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate: DropTargetDelegate,
-  onKeyDown?: KeyboardEvents['onKeyDown']
+  /** A custom keyboard event handler for drop targets. */
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export interface DroppableCollectionResult {
@@ -94,6 +94,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
+      onMove,
       acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
@@ -137,6 +138,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       if (target.type === 'item') {
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
+        }
+
+        if (onMove && isInternal) {
+          await onMove({keys: draggingKeys, dropOperation, target});
         }
 
         if (target.dropPosition !== 'on') {
@@ -590,17 +595,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropTargetEnter(target) {
         localState.state.setTarget(target);
       },
-      onDropActivate(e) {
+      onDropActivate(e, target) {
         if (
-          localState.state.target?.type === 'item' &&
-          localState.state.target?.dropPosition === 'on' &&
+          target?.type === 'item' &&
+          target?.dropPosition === 'on' &&
           typeof localState.props.onDropActivate === 'function'
         ) {
           localState.props.onDropActivate({
             type: 'dropactivate',
             x: e.x, // todo
             y: e.y,
-            target: localState.state.target
+            target
           });
         }
       },
@@ -750,7 +755,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
-        localState.props.onKeyDown?.(e as any);
+        localState.props.onKeyDown?.(e);
       }
     });
   }, [localState, ref, onDrop, direction]);
