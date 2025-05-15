@@ -1873,8 +1873,8 @@ describe('Table', () => {
       let loaderRow = rows[11];
       expect(loaderRow).toHaveTextContent('spinner');
 
-      let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(sentinel.parentElement.parentElement).toHaveAttribute('inert');
+      let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
+      expect(sentinel.closest('[inert]')).toBeTruthy();
     });
 
     it('should render the sentinel but not the loading indicator when not loading', async () => {
@@ -2077,7 +2077,7 @@ describe('Table', () => {
         expect(loaderParentStyles.height).toBe('30px');
 
         let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
-        expect(sentinel.parentElement.parentElement).toHaveAttribute('inert');
+        expect(sentinel.closest('[inert]')).toBeTruthy();
       });
 
       it('should not reserve room for the loader if isLoading is false', () => {
@@ -2091,7 +2091,7 @@ describe('Table', () => {
         let sentinelVirtWrapperStyles = sentinel.closest('[role="presentation"]').style;
         expect(sentinelVirtWrapperStyles.top).toBe('1250px');
         expect(sentinelVirtWrapperStyles.height).toBe('0px');
-        expect(sentinel.parentElement.parentElement).toHaveAttribute('inert');
+        expect(sentinel.closest('[inert]')).toBeTruthy();
 
         tree.rerender(<VirtualizedTableLoad items={[]} />);
         rows = tableTester.rows;
