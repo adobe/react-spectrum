@@ -106,7 +106,6 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="cta"</Code> to <Code>variant="accent"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>variant="primary" staticColor="white"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>style</Code> to <Code>fillStyle</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isPending</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>If <Code>href</Code> is present, the <Code>Button</Code> should be converted to a <Code>LinkButton</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>elementType</Code> (it is no longer supported in Spectrum 2)</li>
