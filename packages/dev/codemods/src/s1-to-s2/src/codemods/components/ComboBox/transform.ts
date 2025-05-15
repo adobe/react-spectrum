@@ -1,5 +1,4 @@
 import {
-  commentOutProp,
   convertDimensionValueToPx,
   removeProp,
   updatePropNameAndValue
