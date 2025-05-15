@@ -1887,7 +1887,7 @@ describe('SearchAutocomplete', function () {
       items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
       expect(items[1].textContent).toBe('Two');
-      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput).toHaveAttribute('aria-activedescendant', items[1].id);
       expect(trayInput.value).toBe('Two');
       expect(items[1]).toHaveAttribute('aria-selected', 'true');
     });
@@ -1940,7 +1940,7 @@ describe('SearchAutocomplete', function () {
       let items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
       expect(items[2].textContent).toBe('Three');
-      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput).toHaveAttribute('aria-activedescendant'), items[2].id;
       expect(trayInput.value).toBe('Three');
       expect(items[2]).toHaveAttribute('aria-selected', 'true');
     });
