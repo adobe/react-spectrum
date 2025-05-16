@@ -72,7 +72,7 @@ export const ContextualHelp = {
 
 export const EmptyAndLoading = {
   render: () => (
-    <Picker label="loading" isLoading>
+    <Picker label="loading" loadingState="loading">
       {[]}
     </Picker>
   ),
