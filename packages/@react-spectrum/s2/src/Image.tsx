@@ -120,8 +120,8 @@ const imgStyles = style({
   display: 'block',
   width: 'full',
   height: 'full',
-  objectFit: '[inherit]',
-  objectPosition: '[inherit]',
+  objectFit: 'inherit',
+  objectPosition: 'inherit',
   opacity: {
     default: 0,
     isRevealed: 1

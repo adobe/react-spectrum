@@ -35,7 +35,7 @@ export function Tag<T>(props: SpectrumTagProps<T>): ReactNode {
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: false});
   let ref = useRef(null);
   let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
     ...props,
@@ -81,7 +81,7 @@ function TagRemoveButton(props) {
 
   return (
     <span {...styleProps}>
-      <ClearButton {...props} />
+      <ClearButton {...props} inset />
     </span>
   );
 }

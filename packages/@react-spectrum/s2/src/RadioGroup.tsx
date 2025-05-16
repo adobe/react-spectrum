@@ -85,7 +85,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: 'calc(var(--field-height) - 1lh)'
         }
       }, getAllowedOverrides())({
         size,

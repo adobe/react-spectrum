@@ -11,13 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
-import {useTreeData} from '@react-stately/data';
 
 export default {
   title: 'React Aria Components'
@@ -28,11 +27,7 @@ interface StaticTreeItemProps extends TreeItemProps {
   children: ReactNode
 }
 
-interface MyCheckboxProps extends CheckboxProps {
-  children?: ReactNode
-}
-
-function MyCheckbox({children, ...props}: MyCheckboxProps) {
+function MyCheckbox({children, ...props}: CheckboxProps) {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => (
@@ -228,12 +223,11 @@ interface DynamicTreeItemProps extends TreeItemProps<object> {
   children: ReactNode,
   childItems?: Iterable<object>,
   isLoading?: boolean,
-  renderLoader?: (id: Key | undefined) => boolean,
-  supportsDragging?: boolean
+  renderLoader?: (id: Key | undefined) => boolean
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
-  let {childItems, renderLoader, supportsDragging} = props;
+  let {childItems, renderLoader} = props;
   return (
     <>
       <TreeItem
@@ -260,7 +254,6 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
                   </div>
                 </Button>
                 )}
-                {supportsDragging && <Button slot="drag">≡</Button>}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>
@@ -279,8 +272,8 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
-              {item.value.name}
+            <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
+              {item.name}
             </DynamicTreeItem>
           )}
         </Collection>
@@ -296,23 +289,15 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
 
-const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
-
-  return (
-    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
-        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
-          {item.value.name}
-        </DynamicTreeItem>
-      )}
-    </Tree>
-  );
-};
+const TreeExampleDynamicRender = (args: TreeProps<unknown>) => (
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    {(item) => (
+      <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
+        {item.name}
+      </DynamicTreeItem>
+    )}
+  </Tree>
+);
 
 export const TreeExampleDynamic = {
   ...TreeExampleStatic,
@@ -329,22 +314,15 @@ export const WithActions = {
   name: 'Tree with actions'
 };
 
-const WithLinksRender = (args: TreeProps<unknown>) => {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
-  return (
-    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
-        <DynamicTreeItem href="https://adobe.com/" childItems={item.children ?? []} textValue={item.value.name}>
-          {item.value.name}
-        </DynamicTreeItem>
+const WithLinksRender = (args: TreeProps<unknown>) => (
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    {(item) => (
+      <DynamicTreeItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
+        {item.name}
+      </DynamicTreeItem>
     )}
-    </Tree>
-  );
-};
+  </Tree>
+);
 
 export const WithLinks = {
   ...TreeExampleDynamic,
@@ -386,18 +364,12 @@ export const EmptyTreeStaticStory = {
 };
 
 function LoadingStoryDepOnCollection(args) {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
-  
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <Collection items={treeData.items} dependencies={[args.isLoading]}>
+      <Collection items={rows} dependencies={[args.isLoading]}>
         {(item) => (
-          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
-            {item.value.name}
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+            {item.name}
           </DynamicTreeItem>
         )}
       </Collection>
@@ -420,17 +392,11 @@ export const LoadingStoryDepOnCollectionStory = {
 };
 
 function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
-
   return (
-    <Tree {...args} dependencies={[args.isLoading]} items={treeData.items} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
-          {item.value.name}
+        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
         </DynamicTreeItem>
       )}
     </Tree>
@@ -505,8 +471,8 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
         </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItemWithButtonLoader renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
-              {item.value.name}
+            <DynamicTreeItemWithButtonLoader renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
+              {item.name}
             </DynamicTreeItemWithButtonLoader>
           )}
         </Collection>
@@ -516,16 +482,11 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
 };
 
 function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean}) {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
   return (
-    <Tree {...args} dependencies={[args.isLoading]} items={treeData.items} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
-          {item.value.name}
+        <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
         </DynamicTreeItemWithButtonLoader>
       )}
     </Tree>
@@ -555,62 +516,4 @@ function VirtualizedTreeRender(args) {
 export const VirtualizedTree = {
   ...TreeExampleDynamic,
   render: VirtualizedTreeRender
-};
-
-function TreeDragAndDropExample(args) {
-  let treeData = useTreeData<any>({
-    initialItems: rows,
-    getKey: item => item.id,
-    getChildren: item => item.childItems
-  });
-
-  let getItems = (keys) => [...keys].map(key => {
-    let item = treeData.getItem(key);
-    return {
-      'text/plain': item?.value.name
-    };
-  });
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems,
-    getAllowedDropOperations: () => ['move'],
-    onReorder(e) {
-      console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key}`);
-      try {
-        if (e.target.dropPosition === 'before') {
-          treeData.moveBefore(e.target.key, e.keys);
-        } else if (e.target.dropPosition === 'after') {
-          treeData.moveAfter(e.target.key, e.keys);
-        } else if (e.target.dropPosition === 'on') {
-          let targetNode = treeData.getItem(e.target.key);
-          if (targetNode) {
-            let targetIndex = targetNode.children ? targetNode.children.length : 0;
-            let keyArray = Array.from(e.keys);
-            for (let i = 0; i < keyArray.length; i++) {
-              treeData.move(keyArray[i], e.target.key, targetIndex + i);
-            }
-          } else {
-            console.error('Target node not found for drop on:', e.target.key);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  });
-
-  return (
-    <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={treeData.items}>
-      {(item: any) => (
-        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name} supportsDragging>
-          {item.value.name}
-        </DynamicTreeItem>
-      )}
-    </Tree>
-  );
-}
-
-export const TreeWithDragAndDrop = {
-  ...TreeExampleDynamic,
-  render: TreeDragAndDropExample
 };

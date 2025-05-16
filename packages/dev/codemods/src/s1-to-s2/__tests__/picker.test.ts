@@ -148,3 +148,17 @@ import {Picker, Section, Item} from '@adobe/react-spectrum';
   </Section>
 </Picker>
 `);
+
+test('Keeps isLoading and onLoadMore', `
+  import {Picker, Section, Item} from '@adobe/react-spectrum';
+    <>
+      <Picker label="Ice Cream" isLoading onLoadMore={() => {}}>
+        <Item>Red Panda</Item>
+        <Item>Cat</Item>
+      </Picker>
+      <Picker label="Ice Cream" isLoading={false} onLoadMore={() => {}}>
+        <Item>Red Panda</Item>
+        <Item>Cat</Item>
+      </Picker>
+    </>
+`);
