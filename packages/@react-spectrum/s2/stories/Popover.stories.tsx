@@ -195,9 +195,9 @@ export const AutocompletePopover = (args: any) => (
   </>
 );
 
-export const PopoverWithTrigger = () => {
+export const CustomTrigger = () => {
   const [open, setOpen] = useState(false);
-  const buttonRef = useRef<any>(null);
+  const triggerRef = useRef<any>(null);
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -206,10 +206,11 @@ export const PopoverWithTrigger = () => {
   };
 
   return (
-    <div style={{display: 'flex', gap: 12}}>
-      <button ref={buttonRef} onClick={() => setOpen(!open)}>Open Popover</button>
-      <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={buttonRef}>
-        <Text>Popover with trigger on button</Text>
+    <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+      <Button onPress={() => setOpen(!open)}>Open Popover</Button>
+      <div className={style({font: 'ui'})} ref={triggerRef}>Popover appears here</div>
+      <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={triggerRef}>
+        <span className={style({font: 'ui'})}>Popover with trigger on button</span>
       </Popover>
     </div>
   );
