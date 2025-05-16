@@ -30,14 +30,14 @@ This is not optimal long term since it forces browser cache invalidation on ever
 
 In this release, we also made some adjustments to the theme. Please note the changes listed below:
 
-* Reduced the default spacing scale so it only goes up to 96px. Larger values are unlikely.
+* Reduced the default spacing scale so it only goes up to 96px. Other values can be used vis the `space()` macro
 * Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
 * Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
 * Used rems and touch scaling for icon sizes, and added t-shirt size prop
 * Added support for percentages and [viewport relative units](https://www.w3.org/TR/css-values-4/#viewport-relative-lengths) (e.g. vw)
-* Added support for arbitrary aspect ratio values without bracket syntax
-* Added support for calc and other [math function](https://www.w3.org/TR/css-values-4/#math)
-* Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like inherit without bracket syntax
+* Added support for arbitrary `aspect ratio values`
+* Added support for `calc` and other [math function](https://www.w3.org/TR/css-values-4/#math)
+* Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like `inherit`
 
 
 ## v0.8.0
