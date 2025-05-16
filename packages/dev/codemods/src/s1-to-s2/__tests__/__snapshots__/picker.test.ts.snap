@@ -25,6 +25,20 @@ let options = [
 </div>"
 `;
 
+exports[`Keeps isLoading and onLoadMore 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+    <>
+      <Picker label="Ice Cream" isLoading onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+      <Picker label="Ice Cream" isLoading={false} onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+    </>"
+`;
+
 exports[`Static - Converts menuWidth to px value 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
 let menuWidth = 'size-10';

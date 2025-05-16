@@ -143,6 +143,39 @@ function addRowHeader(
 }
 
 /**
+ * Moves loadingState and onLoadMore from TableBody to TableView.
+ * @param path 
+ */ 
+function movePropsFromTableBodyToTableView(
+  path: NodePath<t.JSXElement>
+) {
+  const tableBodyPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableBody'
+  ) as NodePath<t.JSXElement> | undefined;
+
+  if (!tableBodyPath) {
+    return;
+  }
+
+  const propsToMove = ['loadingState', 'onLoadMore'];
+  const newAttributes: t.JSXAttribute[] = [];
+
+  tableBodyPath.node.openingElement.attributes = tableBodyPath.node.openingElement.attributes.filter(attribute => {
+    if (t.isJSXAttribute(attribute) && propsToMove.includes(attribute.name.name as string)) {
+      newAttributes.push(attribute);
+      return false; // Remove from TableBody
+    }
+    return true; // Keep in TableBody
+  });
+
+  if (newAttributes.length > 0) {
+    path.node.openingElement.attributes.push(...newAttributes);
+  }
+}
+
+/**
  * Transforms TableView:
  * - For Column and Row: Update key to be id (and keep key if rendered inside array.map).
  * - For dynamic tables, pass a columns prop into Row.
@@ -172,4 +205,7 @@ export default function transformTable(path: NodePath<t.JSXElement>) {
   commentOutProp(path, {propName: 'UNSTABLE_defaultExpandedKeys'});
 
   addRowHeader(path);
+
+  // Move loadingState and onLoadMore from TableBody to TableView
+  movePropsFromTableBodyToTableView(path);
 } 
