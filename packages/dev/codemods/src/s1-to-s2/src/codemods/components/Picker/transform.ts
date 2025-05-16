@@ -1,5 +1,4 @@
 import {
-  commentOutProp,
   convertDimensionValueToPx,
   removeProp,
   updatePropNameAndValue
@@ -13,8 +12,6 @@ import * as t from '@babel/types';
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
- * - Comment out isLoading (it has not been implemented yet).
- * - Comment out onLoadMore (it has not been implemented yet).
  */
 export default function transformPicker(path: NodePath<t.JSXElement>) {
   // Change menuWidth value from a DimensionValue to a pixel value
@@ -33,10 +30,4 @@ export default function transformPicker(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-
-  // Comment out isLoading
-  commentOutProp(path, {propName: 'isLoading'});
-
-  // Comment out onLoadMore
-  commentOutProp(path, {propName: 'onLoadMore'});
 } 
