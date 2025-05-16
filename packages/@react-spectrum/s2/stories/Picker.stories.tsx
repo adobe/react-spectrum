@@ -251,7 +251,7 @@ const AsyncPicker = (args: any) => {
   });
 
   return (
-    <Picker {...args} isLoading={list.isLoading} onLoadMore={list.loadMore} items={list.items}>
+    <Picker {...args} loadingState={list.loadingState} onLoadMore={list.loadMore} items={list.items}>
       {(item: Character) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
     </Picker>
   );
@@ -279,7 +279,7 @@ let list = useAsyncList({
 
 return (
   <Picker
-    isLoading={list.isLoading}
+    loadingState={list.loadingState}
     onLoadMore={list.loadMore}
     items={list.items}>
     {item => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}

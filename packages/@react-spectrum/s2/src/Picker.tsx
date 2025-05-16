@@ -27,12 +27,11 @@ import {
   ListLayout,
   Provider,
   SectionProps,
-  SelectStateContext,
   SelectValue,
   UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -71,7 +70,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -100,8 +99,7 @@ export interface PickerProps<T extends object> extends
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
-  AsyncLoadable
-   {
+  Pick<AsyncLoadable, 'onLoadMore'> {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -117,7 +115,9 @@ export interface PickerProps<T extends object> extends
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-    menuWidth?: number
+    menuWidth?: number,
+    /** The current loading state of the Picker. */
+    loadingState?: LoadingState
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -232,7 +232,7 @@ const iconStyles = style({
     value: 'currentColor'
   },
   color: {
-    isInitialLoad: 'disabled'
+    isLoading: 'disabled'
   }
 });
 
@@ -286,7 +286,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     UNSAFE_style,
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
-    isLoading,
+    loadingState,
     onLoadMore,
     ...pickerProps
   } = props;
@@ -304,12 +304,13 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   }
 
   let renderer;
-  let spinnerId = useSlotId([isLoading]);
+  let showButtonSpinner = useMemo(() => loadingState === 'loading', [loadingState]);
+  let spinnerId = useSlotId([showButtonSpinner]);
 
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
       className={loadingWrapperStyles}
-      isLoading={isLoading}
+      isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}>
       <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
     </UNSTABLE_ListBoxLoadingSentinel>
@@ -360,7 +361,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               {label}
             </FieldLabel>
             <PickerButton
-              isLoading={isLoading}
+              loadingState={loadingState}
               isOpen={isOpen}
               isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
@@ -454,7 +455,7 @@ function PickerProgressCircle(props) {
   );
 }
 
-interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'isLoading'> {
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
 }
@@ -468,13 +469,10 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     size,
     isInvalid,
     isDisabled,
-    isLoading,
+    loadingState,
     loadingCircle,
     buttonRef
   } = props;
-  let state = useContext(SelectStateContext);
-  // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
-  let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
@@ -538,10 +536,10 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
               }}
             </SelectValue>
             {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-            {isInitialLoad && !isOpen && loadingCircle}
+            {loadingState === 'loading' && !isOpen && loadingCircle}
             <ChevronIcon
               size={size}
-              className={iconStyles({isInitialLoad})} />
+              className={iconStyles({isLoading: loadingState === 'loading'})} />
             {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
             {isInvalid && !isDisabled && !isQuiet &&
               // @ts-ignore known limitation detecting functions from the theme
