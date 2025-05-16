@@ -382,7 +382,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction || shouldUseVirtualFocus ? pressProps : {},
+      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture, onClick, id},
       // Prevent DOM focus from moving on mouse down when using virtual focus
