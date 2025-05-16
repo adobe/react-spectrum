@@ -19,7 +19,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -389,6 +389,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   }, [item.textValue]);
 
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
+    }
+  // eslint-disable-next-line
+  }, []);
+
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
@@ -438,7 +446,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
                 slots: {
                   [DEFAULT_SLOT]: {},
                   chevron: {
-                    ...expandButtonProps
+                    ...expandButtonProps,
+                    ref: expandButtonRef
                   }
                 }
               }],

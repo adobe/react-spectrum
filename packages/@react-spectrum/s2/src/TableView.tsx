@@ -109,7 +109,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | 'isLoading' | 'onLoadMore'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -792,7 +792,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
-            <MenuSection aria-label={stringFormatter.format('table.standardColumnMenu')}>
+            <MenuSection>
               <Collection items={items}>
                 {(item) => <MenuItem>{item?.label}</MenuItem>}
               </Collection>
@@ -863,12 +863,12 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -899,7 +899,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           )}
         </RACColumn>
       )}
-      <Collection items={columns}>
+      <Collection items={columns} dependencies={dependencies}>
         {children}
       </Collection>
     </RACTableHeader>
