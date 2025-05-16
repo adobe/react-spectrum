@@ -11,7 +11,7 @@ export default MDXLayout;
 * [Combobox](?path=/docs/combobox--docs): Support for virtualization and async loading
 * [Dialog](?path=/docs/picker--dialog): Update sizes
 * [Picker](?path=/docs/picker--docs): Support for virtualization and async loading
-* [TableView](?path=/docs/tableview--docs): Support custom menu's in columns
+* [TableView](?path=/docs/tableview--docs): Support custom menus in columns
 * Apply `position: relative` to Radio and Checkbox to prevent layout jumps
 
 ### UNSAFE_className Typescript Error
@@ -23,20 +23,20 @@ We strongly discourage using `UNSAFE_className` because it results in inconsiste
 
 ### Style macro updates
 
-We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between version. While we work to stablize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version. 
+We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between version. While we work to stabilize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version. 
 
 We also made some changes to the available style macro values.
 
-* Reduced the default spacing scale so it only goes up to 96px. Other values can be used vis the `space()` macro
+* Reduced the default spacing scale so it only goes up to 96px. Other values can be used via the `space()` macro
 * Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
 * Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
 * Used rems and touch scaling for icon sizes, and added t-shirt size prop
 * Added support for percentages and [viewport relative units](https://www.w3.org/TR/css-values-4/#viewport-relative-lengths) (e.g. vw)
 * Added support for arbitrary `aspect ratio values`
-* Added support for `calc` and other [math function](https://www.w3.org/TR/css-values-4/#math)
+* Added support for `calc` and other [math functions](https://www.w3.org/TR/css-values-4/#math)
 * Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like `inherit`
 * Colors no longer include default hover/press/focus states (e.g. `backgroundColor: 'accent'`). Use the `baseColor` macro instead.
-* The ``control` value has been removed from `fontSize`, `borderRadius`, `width`, `height`, and other sizing properties. Use explicit values for each t-shirt size instead.
+* The `control` value has been removed from `fontSize`, `borderRadius`, `width`, `height`, and other sizing properties. Use explicit values for each t-shirt size instead.
 * Fixed spelling of `disc` in `listStyleType` (was `dist`)
 
 ## v0.8.0
