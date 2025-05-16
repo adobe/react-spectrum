@@ -13,10 +13,12 @@ export default MDXLayout;
 * [Picker](?path=/docs/picker--docs): Support for virtualization and async loading
 * [TableView](?path=/docs/tableview--docs): Support custom menu's in columns
 * `dist` was renamed to `disc` (fixed spelling) in spectrum theme for `listStyleType`
+* Apply `position: relative` to Radio and Checkbox to prevent layout jumps
+
 
 ### UNSAFE_className Typescript Error
 
-We are now going to throw a Typescript error if a style macro is passed to UNSAFE_className. This is not allowed because UNSAFE_className is not merged with the component's own styles. Instead, it is appended. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
+We are now going to throw a Typescript error if a style macro is passed to UNSAFE_className. This is not allowed because UNSAFE_className is appended with the component’s own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
 
 ### Style macro updates
 
@@ -32,11 +34,10 @@ In this release, we also made some adjustments to the theme. Please note the cha
 * Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
 * Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
 * Used rems and touch scaling for icon sizes, and added t-shirt size prop
-* Used rems for checkbox and radio borders, even though normally borders don't scale. These feel more like icons that happen to be implemented with borders.
-* Added support for percentages and viewport relative units (e.g. vw) without square bracket syntax
+* Added support for percentages and [viewport relative units](https://www.w3.org/TR/css-values-4/#viewport-relative-lengths) (e.g. vw)
 * Added support for arbitrary aspect ratio values without bracket syntax
-* Added support for calc and other math functions without bracket syntax
-* Added support for css-wide keywords like inherit without bracket syntax
+* Added support for calc and other [math function](https://www.w3.org/TR/css-values-4/#math)
+* Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like inherit without bracket syntax
 
 
 ## v0.8.0
