@@ -18,13 +18,13 @@ import {User} from '@react-aria/test-utils';
 describe('Picker', () => {
   let testUtilUser = new User();
   function DynamicPicker(props) {
-    let {items, isLoading, onLoadMore, ...otherProps} = props;
+    let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
       <Picker
         {...otherProps}
         label="Test picker"
         items={items}
-        isLoading={isLoading}
+        loadingState={loadingState}
         onLoadMore={onLoadMore}>
         {(item: any) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
       </Picker>
@@ -55,7 +55,7 @@ describe('Picker', () => {
     });
 
     let tree = render(
-      <Picker label="test" isLoading onLoadMore={onLoadMore}>
+      <Picker label="test" loadingState="loadingMore" onLoadMore={onLoadMore}>
         <PickerItem>Chocolate</PickerItem>
         <PickerItem>Mint</PickerItem>
         <PickerItem>Strawberry</PickerItem>
@@ -104,7 +104,7 @@ describe('Picker', () => {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
     }
 
-    tree.rerender(<DynamicPicker items={items} isLoading />);
+    tree.rerender(<DynamicPicker items={items} loadingState="loadingMore" />);
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);

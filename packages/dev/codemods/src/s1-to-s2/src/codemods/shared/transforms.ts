@@ -172,14 +172,19 @@ export function updatePropName(
     /** Prop name to replace. */
     oldPropName: string,
     /** Updated prop name. */
-    newPropName: string
+    newPropName: string,
+    /** Optional string to add to component if prop name is replaced. */
+    comment?: string
   }
 ) {
-  const {oldPropName, newPropName} = options;
+  const {oldPropName, newPropName, comment} = options;
 
   let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === oldPropName) {
     attrPath.node.name.name = newPropName;
+    if (comment) {
+      addComment(attrPath.parentPath.node, ` TODO(S2-upgrade): ${comment}`);
+    }
   }
 }
 
@@ -348,16 +353,16 @@ export function moveRenderPropsToChild(
   const {newChildComponentName} = options;
 
   const renderFunctionIndex = path.node.children.findIndex(
-    (child) => 
-      t.isJSXExpressionContainer(child) && 
+    (child) =>
+      t.isJSXExpressionContainer(child) &&
       t.isArrowFunctionExpression(child.expression) &&
       t.isJSXElement(child.expression.body) &&
       t.isJSXIdentifier(child.expression.body.openingElement.name));
-  
+
   const renderFunction = path.node.children[renderFunctionIndex] as t.JSXExpressionContainer;
 
   if (
-    t.isJSXExpressionContainer(renderFunction) && 
+    t.isJSXExpressionContainer(renderFunction) &&
     t.isArrowFunctionExpression(renderFunction.expression) &&
     t.isJSXElement(renderFunction.expression.body) &&
     t.isJSXIdentifier(renderFunction.expression.body.openingElement.name) &&
@@ -368,7 +373,7 @@ export function moveRenderPropsToChild(
   }
 
   if (
-    renderFunction && 
+    renderFunction &&
     t.isArrowFunctionExpression(renderFunction.expression) &&
     t.isJSXElement(renderFunction.expression.body)
   ) {
@@ -407,7 +412,7 @@ export function moveRenderPropsToChild(
       }
       return true;
     });
-    
+
     path.node.children[renderFunctionIndex] = t.jsxElement(
       t.jsxOpeningElement(t.jsxIdentifier(newChildComponentName), attributes),
       t.jsxClosingElement(t.jsxIdentifier(newChildComponentName)),
@@ -445,7 +450,7 @@ export function updateComponentWithinCollection(
     t.isJSXIdentifier(path.node.openingElement.name)
   ) {
     // Find closest parent collection component
-    let closestParentCollection = path.findParent((p) => 
+    let closestParentCollection = path.findParent((p) =>
       t.isJSXElement(p.node) &&
       t.isJSXIdentifier(p.node.openingElement.name) &&
       collectionItemParents.has(getName(path, p.node.openingElement.name))
@@ -489,7 +494,7 @@ export function commentIfParentCollectionNotDetected(
     t.isJSXElement(path.node)
   ) {
     // Find closest parent collection component
-    let closestParentCollection = path.findParent((p) => 
+    let closestParentCollection = path.findParent((p) =>
       t.isJSXElement(p.node) &&
       t.isJSXIdentifier(p.node.openingElement.name) &&
       collectionItemParents.has(getName(path, p.node.openingElement.name))
@@ -621,7 +626,7 @@ const conversions = {
 
 /**
  * Updates prop to use pixel value instead.
- * 
+ *
  * Example:
  * - ComboBox: Update `menuWidth` to a pixel value.
  */
@@ -674,7 +679,7 @@ export function convertDimensionValueToPx(
 
 /**
  * Updates double placement values to a single value.
- * 
+ *
  * Example:
  * - TooltipTrigger: Update `placement="bottom left"` to `placement="bottom"`.
  */
@@ -707,7 +712,7 @@ export function updatePlacementToSingleValue(
     'end bottom'
   ]);
 
-  let elementPath = childComponentName ? 
+  let elementPath = childComponentName ?
     path.get('children').find(
       (child) => t.isJSXElement(child.node) &&
       t.isJSXIdentifier(child.node.openingElement.name) &&
@@ -736,7 +741,7 @@ export function updatePlacementToSingleValue(
 
 /**
  * Remove component if within a parent component.
- * 
+ *
  * Example:
  * - Divider: Remove `Divider` if used within a `Dialog`.
  */

@@ -7,36 +7,22 @@ let options = [
   {id: 2, name: 'Vanilla'}
 ];
 <div>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem>{item.name}</PickerItem>}
   </Picker>
 </div>"
-`;
-
-exports[`Keeps isLoading and onLoadMore 1`] = `
-"import { PickerItem, Picker } from "@react-spectrum/s2";
-    <>
-      <Picker label="Ice Cream" isLoading onLoadMore={() => {}}>
-        <PickerItem>Red Panda</PickerItem>
-        <PickerItem>Cat</PickerItem>
-      </Picker>
-      <Picker label="Ice Cream" isLoading={false} onLoadMore={() => {}}>
-        <PickerItem>Red Panda</PickerItem>
-        <PickerItem>Cat</PickerItem>
-      </Picker>
-    </>"
 `;
 
 exports[`Static - Converts menuWidth to px value 1`] = `
@@ -161,4 +147,20 @@ exports[`handles sections 1`] = `
     <PickerItem>Item two</PickerItem>
   </PickerSection>
 </Picker>"
+`;
+
+exports[`replaces isLoading with loadingState and keeps onLoadMore 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+    <>
+      // TODO(S2-upgrade): Replace boolean passed to isLoading with appropriate loadingState.
+      <Picker label="Ice Cream" loadingState onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+      // TODO(S2-upgrade): Replace boolean passed to isLoading with appropriate loadingState.
+      <Picker label="Ice Cream" loadingState={false} onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+    </>"
 `;
