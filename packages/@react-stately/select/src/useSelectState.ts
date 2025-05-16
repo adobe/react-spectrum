@@ -47,7 +47,7 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: (key) => {
-      if (props.onSelectionChange != null && key != null) {
+      if (props.onSelectionChange != null) {
         props.onSelectionChange(key);
       }
 
