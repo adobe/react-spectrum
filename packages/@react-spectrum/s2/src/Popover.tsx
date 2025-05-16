@@ -23,7 +23,7 @@ import {
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
-import {forwardRef, MutableRefObject, RefObject, useCallback, useContext} from 'react';
+import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};

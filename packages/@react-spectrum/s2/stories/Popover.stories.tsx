@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Link, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
