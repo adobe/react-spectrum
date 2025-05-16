@@ -7212,7 +7212,7 @@ __metadata:
     "@react-spectrum/s2": "npm:^0.9.0"
     "@react-types/shared": "npm:^3.29.1"
     "@types/jscodeshift": "npm:^0.11.11"
-    "@types/node": "patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch"
+    "@types/node": "npm:^22"
     boxen: "npm:^5.1.2"
     build: "npm:^0.1.4"
     chalk: "npm:^4.0.0"
@@ -11474,21 +11474,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.14.13":
-  version: 20.14.13
-  resolution: "@types/node@npm:20.14.13"
+"@types/node@npm:^22":
+  version: 22.15.18
+  resolution: "@types/node@npm:22.15.18"
   dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10c0/10bb3ece675308742301c652ab8c6cb88b1ebddebed22316103c58f94fe7eff131edd5f679e487c19077fadb6b5e6b1ad9a60a2cee2869aa1f20452b9761d570
-  languageName: node
-  linkType: hard
-
-"@types/node@patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch":
-  version: 20.14.13
-  resolution: "@types/node@patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch::version=20.14.13&hash=24fda2"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10c0/1bbbadf2732c27a8f1bc7b20be41bf7faa50436461c1af6e67398c2003a8bde9893e04f762d55b231ef818d4567ec6bcb6bcdf28748f73a715a11dd7df88e9f5
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/e23178c568e2dc6b93b6aa3b8dfb45f9556e527918c947fe7406a4c92d2184c7396558912400c3b1b8d0fa952ec63819aca2b8e4d3545455fc6f1e9623e09ca6
   languageName: node
   linkType: hard
 
@@ -11653,9 +11644,9 @@ __metadata:
   linkType: hard
 
 "@types/webpack-env@npm:*":
-  version: 1.18.4
-  resolution: "@types/webpack-env@npm:1.18.4"
-  checksum: 10c0/3fa77dbff0ed71685404576b0a1cf74587567fe2ee1cfd11d56d6eefcab7a61e4c9ead0eced264e289d2cf0fc74296dbd55ed6c95774fe0fd6264d156c5a59f0
+  version: 1.18.8
+  resolution: "@types/webpack-env@npm:1.18.8"
+  checksum: 10c0/527a5d1eb75c5243e4f3665d956c7c340f899955dd25d16c9fd9750406f32e95a3a17d207640295038e8235c0c2a2daf084f420e088e58b965d82fc74f6012d7
   languageName: node
   linkType: hard
 
@@ -31533,10 +31524,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~5.26.4":
-  version: 5.26.5
-  resolution: "undici-types@npm:5.26.5"
-  checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
