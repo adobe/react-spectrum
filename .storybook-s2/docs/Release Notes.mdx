@@ -14,7 +14,6 @@ export default MDXLayout;
 * [TableView](?path=/docs/tableview--docs): Support custom menu's in columns
 * Apply `position: relative` to Radio and Checkbox to prevent layout jumps
 
-
 ### UNSAFE_className Typescript Error
 
 Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component’s own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
