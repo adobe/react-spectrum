@@ -389,17 +389,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.24.1":
-  version: 7.24.1
-  resolution: "@babel/eslint-parser@npm:7.24.1"
+"@babel/eslint-parser@npm:^7.27.1":
+  version: 7.27.1
+  resolution: "@babel/eslint-parser@npm:7.27.1"
   dependencies:
     "@nicolo-ribaudo/eslint-scope-5-internals": "npm:5.1.1-v1"
     eslint-visitor-keys: "npm:^2.1.0"
     semver: "npm:^6.3.1"
   peerDependencies:
     "@babel/core": ^7.11.0
-    eslint: ^7.5.0 || ^8.0.0
-  checksum: 10c0/76b066be5245fa24ea5726bea24ceca75811599dce43db5e120e91283f3a27be150a2b0559a8472bec2824f6abc66fb29e90b3f1889c596ec855a811fc83dc90
+    eslint: ^7.5.0 || ^8.0.0 || ^9.0.0
+  checksum: 10c0/dedb2bc7ef00307eaf8e40d5ec7f1e8ae4649838fa2e7ec5e1b47eaf9bd8708949503b05175de922e2431ce69a5f3b5fab1c1202003b1d9457d3c0b2c3bdc4ec
   languageName: node
   linkType: hard
 
@@ -7449,7 +7449,7 @@ __metadata:
     globals-docs: "npm:^2.4.1"
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
-    quicklink: "npm:^2.3.0"
+    quicklink: "npm:^3.0.1"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -27355,16 +27355,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quicklink@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "quicklink@npm:2.3.0"
+"quicklink@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "quicklink@npm:3.0.1"
   dependencies:
     route-manifest: "npm:^1.0.0"
-    throttles: "npm:^1.0.0"
+    throttles: "npm:^1.0.1"
   peerDependencies:
-    react: ^16.8.0
-    react-dom: ^16.8.0
-  checksum: 10c0/1b7b1e680004174f32b2c15d9a357ceec34e238ce7982d91ae4b7de202733997818bfe0b0b7b05500a24664e2c907b62b8ac81cbd566595564268ea3b79ff84c
+    react: ^16.8.0 || ^17 || ^18 || ^19
+    react-dom: ^16.8.0 || ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/40d14dd77ea2d002fbd975fefd94c74a8f6d60c687ecdeead0621e2378ccacb652e051f4cdb17d428d4a18d41670cd632a8b85210dab9dafe83c0fb095acbbb9
   languageName: node
   linkType: hard
 
@@ -27701,7 +27706,7 @@ __metadata:
     "@actions/github": "npm:^1.1.0"
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
-    "@babel/eslint-parser": "npm:^7.24.1"
+    "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/node": "npm:^7.23.9"
     "@babel/plugin-proposal-decorators": "npm:^7.24.1"
     "@babel/plugin-syntax-decorators": "npm:7.24.1"
@@ -30804,10 +30809,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"throttles@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "throttles@npm:1.0.0"
-  checksum: 10c0/9c1d980520e9e4c0706d4997b748b387a34dea5e8871e1d8a5c881e5391f3318693e5b6ff561f2d0e3d91f19dd29e198fa0af317a591797dd53aec453b524eae
+"throttles@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "throttles@npm:1.0.1"
+  checksum: 10c0/a9427aa198473d0edc50d58ffddc832bf68144661e8a0e87d58800d77d988e35a07eccfb5668180f0147929f009d51f39a5eac3ea3b0ad6fb74213fbc981a4b4
   languageName: node
   linkType: hard
 
