@@ -70,6 +70,36 @@ export function alignEnd(date: CalendarDate, duration: DateDuration, locale: str
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
+export function calculateStartDate(selectionAlignment: 'start' | 'end' | 'center' | undefined, focusedDate: CalendarDate, visibleDuration: DateDuration, locale: string, minValue: DateValue | null |undefined, maxValue: DateValue | null | undefined) : CalendarDate {
+  switch (selectionAlignment) {
+    case 'start':
+      return alignStart(
+        focusedDate,
+        visibleDuration,
+        locale,
+        minValue,
+        maxValue
+      );
+    case 'end':
+      return alignEnd(
+        focusedDate,
+        visibleDuration,
+        locale,
+        minValue,
+        maxValue
+      );
+    case 'center':
+    default:
+      return alignCenter(
+        focusedDate,
+        visibleDuration,
+        locale,
+        minValue,
+        maxValue
+      );
+  }
+}
+
 export function constrainStart(
   date: CalendarDate,
   aligned: CalendarDate,
