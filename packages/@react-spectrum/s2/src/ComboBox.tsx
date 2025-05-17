@@ -433,6 +433,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     description: descriptionMessage,
     errorMessage,
     children,
+    defaultItems,
     items,
     size = 'M',
     labelPosition = 'top',
@@ -555,10 +556,10 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     </UNSTABLE_ListBoxLoadingSentinel>
   );
 
-  if (typeof children === 'function' && items) {
+  if (typeof children === 'function') {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items ?? defaultItems}>
           {children}
         </Collection>
         {listBoxLoadingCircle}

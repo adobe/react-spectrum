@@ -95,7 +95,7 @@ export const Dynamic: Story = {
   ),
   args: {
     label: 'Favorite ice cream flavor',
-    items
+    defaultItems: items
   }
 };
 
@@ -106,7 +106,7 @@ function VirtualizedCombobox(props) {
   }
 
   return (
-    <ComboBox {...props} items={items}>
+    <ComboBox {...props} defaultItems={items}>
       {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
     </ComboBox>
   );
