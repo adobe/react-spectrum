@@ -16,7 +16,7 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
-  "namers": ["parcel-namer-s2", "parcel-namer-intl", "..."],
+  "namers": ["@react-spectrum/parcel-namer-s2", "parcel-namer-intl", "..."],
   "optimizers": {
     "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
