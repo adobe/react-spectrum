@@ -238,6 +238,19 @@ governing permissions and limitations under the License.
     }
   }
 
+  /*
+    Allow tab labels to wrap when TabList component has minWidth set.
+  */
+  &.spectrum-Tabs--verticalWrap:not(.spectrum-Tabs--compact) .spectrum-Tabs-item {
+    display: flex;
+    align-items: center;  
+    white-space: normal;
+    line-height: normal;
+    word-break: break-word;
+    block-size: auto;
+    min-height: var(--spectrum-tabs-vertical-item-height);
+  }
+
   &.spectrum-Tabs--compact {
     .spectrum-Tabs-item {
       block-size: var(--spectrum-tabs-compact-vertical-item-height);
