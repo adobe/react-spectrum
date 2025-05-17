@@ -40,6 +40,8 @@ export interface CalendarCellAria {
   isPressed: boolean,
   /** Whether the cell is selected. */
   isSelected: boolean,
+  /** Whether the cell is read only. */
+  isReadOnly: boolean,
   /** Whether the cell is focused. */
   isFocused: boolean,
   /**
@@ -305,7 +307,8 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       role: 'gridcell',
       'aria-disabled': !isSelectable || undefined,
       'aria-selected': isSelected || undefined,
-      'aria-invalid': isInvalid || undefined
+      'aria-invalid': isInvalid || undefined,
+      'aria-readonly': state.isReadOnly || undefined
     },
     buttonProps: mergeProps(pressProps, {
       onFocus() {
@@ -343,6 +346,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }),
     isPressed,
     isFocused,
+    isReadOnly: state.isReadOnly,
     isSelected,
     isDisabled,
     isUnavailable,
