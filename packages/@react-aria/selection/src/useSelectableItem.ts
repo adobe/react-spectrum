@@ -150,11 +150,23 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       } else if (e && e.shiftKey) {
         manager.extendSelection(key);
-      } else if (manager.selectionBehavior === 'toggle' || (e && (isCtrlKeyPressed(e) || e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+      } else if (e && (e.pointerType === 'touch' || e.pointerType === 'virtual')) {
         // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
         manager.toggleSelection(key);
+      } else if (manager.selectionBehavior === 'toggle') {
+        // if ctrl is pressed in toggle mode, we want to replace selection
+        if (isCtrlKeyPressed(e)) {
+          manager.replaceSelection(key);
+        } else {
+          manager.toggleSelection(key);
+        }
       } else {
-        manager.replaceSelection(key);
+        // if ctrl is pressed in replace mode, we want to toggle selection
+        if (isCtrlKeyPressed(e)) {
+          manager.toggleSelection(key);
+        } else {
+          manager.replaceSelection(key);
+        }
       }
     }
   };
