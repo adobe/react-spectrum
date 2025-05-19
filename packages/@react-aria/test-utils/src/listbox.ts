@@ -134,7 +134,6 @@ export class ListBoxTester {
       needsLongPress,
       keyboardActivation = 'Enter',
       interactionType = this._interactionType,
-      // TODO: perhaps this should just be shouldUseModifierKeys?
       selectionBehavior = 'toggle'
     } = opts;
 

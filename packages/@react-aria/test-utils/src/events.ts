@@ -11,10 +11,33 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import {isMac} from '@react-aria/utils';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
+function testPlatform(re: RegExp) {
+  return typeof window !== 'undefined' && window.navigator != null
+    ? re.test(window.navigator['userAgentData']?.platform || window.navigator.platform)
+    : false;
+}
+
+function cached(fn: () => boolean) {
+  if (process.env.NODE_ENV === 'test') {
+    return fn;
+  }
+
+  let res: boolean | null = null;
+  return () => {
+    if (res == null) {
+      res = fn();
+    }
+    return res;
+  };
+}
+
+const isMac = cached(function () {
+  return testPlatform(/^Mac/i);
+});
+
 export function getAltKey(): 'Alt' | 'ControlLeft' {
   return isMac() ? 'Alt' : 'ControlLeft';
 }
