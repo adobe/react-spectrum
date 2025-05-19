@@ -4,7 +4,9 @@
   "actionbar.clearSelection": "清除选择",
   "actionbar.selected": "{count, plural, =0 {无选择} other {已选择 # 个}}",
   "actionbar.selectedAll": "全选",
+  "breadcrumbs.more": "更多项目",
   "button.pending": "待处理",
+  "combobox.noResults": "无结果",
   "contextualhelp.help": "帮助",
   "contextualhelp.info": "信息",
   "dialog.alert": "警报",
@@ -17,6 +19,8 @@
   "label.(optional)": "（可选）",
   "label.(required)": "（必填）",
   "menu.moreActions": "更多操作",
+  "notificationbadge.indicatorOnly": "新活动",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "选择...",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "显示更少",
   "tag.noTags": "无",
   "tag.showAllButtonLabel": "全部显示 ({tagCount, number})",
-  "breadcrumbs.more": "更多项目"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

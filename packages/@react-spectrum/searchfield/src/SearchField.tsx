@@ -42,7 +42,7 @@ export const SearchField = forwardRef(function SearchField(props: SpectrumSearch
     ...otherProps
   } = props;
 
-  if (placeholder) {
+  if (placeholder && process.env.NODE_ENV !== 'production') {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
   }
 

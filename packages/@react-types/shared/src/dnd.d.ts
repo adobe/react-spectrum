@@ -218,9 +218,17 @@ export interface DroppableCollectionUtilityOptions {
    */
   onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
   /**
-   * Handler that is called when items are reordered via drag in the source collection.
+   * Handler that is called when items are reordered within the collection.
+   * This handler only allows dropping between items, not on items.
+   * It does not allow moving items to a different parent item within a tree.
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /**
+   * Handler that is called when items are moved within the source collection.
+   * This handler allows dropping both on or between items, and items may be
+   * moved to a different parent item within a tree.
+   */
+  onMove?: (e: DroppableCollectionReorderEvent) => void,
   /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
@@ -232,7 +240,6 @@ export interface DroppableCollectionBaseProps {
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /**
    * Handler that is called after a valid drag is held over a drop target for a period of time.
-   * @private
    */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits a drop target. */

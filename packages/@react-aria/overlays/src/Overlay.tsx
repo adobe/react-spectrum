@@ -16,7 +16,7 @@ import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useUNSTABLE_PortalContext} from './PortalProvider';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface OverlayProps {
   /**
@@ -49,14 +49,14 @@ export const OverlayContext = React.createContext<{contain: boolean, setContain:
  * A container which renders an overlay such as a popover or modal in a portal,
  * and provides a focus scope for the child elements.
  */
-export function Overlay(props: OverlayProps): ReactNode | null {
+export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
-  let {getContainer} = useUNSTABLE_PortalContext();
-  if  (!props.portalContainer && getContainer) {
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }
 

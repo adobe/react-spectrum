@@ -103,8 +103,8 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         offset={offset}
         crossOffset={crossOffset}
         hideArrow
-        UNSAFE_className={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: -24, padding: 24}))}>
+        styles={popover}>
+        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
           <Provider
             values={[
               [TextContext, {

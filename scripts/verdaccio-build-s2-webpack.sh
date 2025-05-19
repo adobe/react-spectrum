@@ -3,6 +3,7 @@
 port=4000
 registry="http://localhost:$port"
 output="output.out"
+touch $output
 
 set -e
 
@@ -16,8 +17,6 @@ if curl -sI http://localhost:4000/ >/dev/null; then
 else
     echo "Verdaccio is NOT running on port 4000."
 fi
-
-curl -s http://localhost:4000/@adobe/react-spectrum
 
 yarn config set npmPublishRegistry --home $registry
 yarn config set npmRegistryServer --home $registry

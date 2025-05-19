@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, UNSTABLE_useLoadMoreSentinel, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -389,6 +389,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -701,7 +704,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
   let isResizing = false;
   if (layoutState) {
     isResizing = layoutState.resizingColumn === column.key;
-  } else {
+  } else if (process.env.NODE_ENV !== 'production') {
     for (let prop in ['width', 'defaultWidth', 'minWidth', 'maxWidth']) {
       if (prop in column.props) {
         console.warn(`The ${prop} prop on a <Column> only applies when a <Table> is wrapped in a <ResizableTableContainer>. If you aren't using column resizing, you can set the width of a column with CSS.`);
@@ -928,9 +931,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
+  let isEmpty = collection.size === 0 || (collection.rows.length === 1 && collection.rows[0].type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: collection.size === 0
+    isEmpty
   };
   let renderProps = useRenderProps({
     ...props,
@@ -944,7 +948,8 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let TR = useElementType('tr');
   let TD = useElementType('td');
   let numColumns = collection.columnCount;
-  if (collection.size === 0 && props.renderEmptyState && state) {
+
+  if (isEmpty && props.renderEmptyState && state) {
     let rowProps = {};
     let rowHeaderProps = {};
     let style = {};
@@ -975,7 +980,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
       ref={ref}
-      data-empty={collection.size === 0 || undefined}>
+      data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
         collection={collection}
@@ -1067,7 +1072,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
-      if (dragState && !dragButtonRef.current) {
+      if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
         console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
       }
     // eslint-disable-next-line
@@ -1189,6 +1194,8 @@ export interface CellRenderProps {
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
+  /** The unique id of the cell. */
+  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Indicates how many columns the data cell spans. */
@@ -1341,17 +1348,34 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadingIndicatorProps extends StyleProps {
-  children?: ReactNode
+export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
 }
 
-export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
   let numColumns = state.collection.columns.length;
 
+  let sentinelRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [onLoadMore, scrollOffset, state?.collection]);
+  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoadingIndicator',
@@ -1364,7 +1388,7 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
   let style = {};
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowProps['aria-rowindex'] = item.index + 1 + state.collection.headerRows.length;
     rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {
@@ -1373,15 +1397,24 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
 
   return (
     <>
-      <TR
-        role="row"
-        ref={ref}
-        {...mergeProps(filterDOMProps(props as any), rowProps)}
-        {...renderProps}>
-        <TD role="rowheader" {...rowHeaderProps} style={style}>
-          {renderProps.children}
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <TR style={{height: 0}} inert={inertValue(true)}>
+        <TD style={{padding: 0, border: 0}}>
+          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'relative', height: 1, width: 1}} />
         </TD>
       </TR>
+      {isLoading && renderProps.children && (
+        <TR
+          {...mergeProps(filterDOMProps(props as any), rowProps)}
+          {...renderProps}
+          role="row"
+          ref={ref}>
+          <TD role="rowheader" {...rowHeaderProps} style={style}>
+            {renderProps.children}
+          </TD>
+        </TR>
+      )}
     </>
   );
 });

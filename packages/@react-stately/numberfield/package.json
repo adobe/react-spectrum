@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/numberfield",
-  "version": "3.9.10",
+  "version": "3.9.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,10 +22,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/number": "^3.6.0",
-    "@react-stately/form": "^3.1.2",
-    "@react-stately/utils": "^3.10.5",
-    "@react-types/numberfield": "^3.8.9",
+    "@internationalized/number": "^3.6.2",
+    "@react-stately/form": "^3.1.4",
+    "@react-stately/utils": "^3.10.6",
+    "@react-types/numberfield": "^3.8.11",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
