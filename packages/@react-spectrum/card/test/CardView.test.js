@@ -144,6 +144,10 @@ describe('CardView', function () {
     jest.useFakeTimers();
   });
 
+  beforeEach(() => {
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
     act(() => jest.runAllTimers());

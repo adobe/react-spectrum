@@ -368,4 +368,13 @@ describe('Select', () => {
     await selectTester.selectOption({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
   });
+  
+  it('should support autoFocus', () => {
+    let {getByTestId} = render(<TestSelect autoFocus />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
+    });
+    let trigger = selectTester.trigger;
+    expect(document.activeElement).toBe(trigger);
+  });
 });

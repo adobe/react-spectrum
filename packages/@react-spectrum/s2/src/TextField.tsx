@@ -20,7 +20,7 @@ import {
   InputContext,
   useSlottedContext
 } from 'react-aria-components';
-import {centerPadding, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -191,14 +191,14 @@ function TextAreaInput() {
       className={style({
         paddingX: 0,
         paddingY: centerPadding(),
-        minHeight: 'control',
+        minHeight: controlSize(),
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
-        color: '[inherit]',
-        fontFamily: '[inherit]',
-        fontSize: '[inherit]',
-        fontWeight: '[inherit]',
-        lineHeight: '[inherit]',
+        color: 'inherit',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        fontWeight: 'inherit',
+        lineHeight: 'inherit',
         flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',

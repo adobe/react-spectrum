@@ -46,7 +46,9 @@ export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate: KeyboardDelegate,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate: DropTargetDelegate
+  dropTargetDelegate: DropTargetDelegate,
+  /** A custom keyboard event handler for drop targets. */
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export interface DroppableCollectionResult {
@@ -92,6 +94,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
+      onMove,
       acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
@@ -135,6 +138,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       if (target.type === 'item') {
         if (target.dropPosition === 'on' && onItemDrop) {
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
+        }
+
+        if (onMove && isInternal) {
+          await onMove({keys: draggingKeys, dropOperation, target});
         }
 
         if (target.dropPosition !== 'on') {
@@ -201,7 +208,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.stop();
     },
     onDropActivate(e) {
-      if (state.target?.type === 'item' && state.target?.dropPosition === 'on' && typeof props.onDropActivate === 'function') {
+      if (state.target?.type === 'item' && typeof props.onDropActivate === 'function') {
         props.onDropActivate({
           type: 'dropactivate',
           x: e.x, // todo
@@ -258,18 +265,25 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // inserted item. If selection is disabled, then also show the focus ring so there
         // is some indication that items were added.
         if (state.selectionManager.focusedKey === prevFocusedKey) {
-          let first = newKeys.keys().next().value;
-          let item = state.collection.getItem(first);
+          let first: Key | null | undefined = newKeys.keys().next().value;
+          if (first != null) {
+            let item = state.collection.getItem(first);
 
-          // If this is a cell, focus the parent row.
-          if (item?.type === 'cell') {
-            first = item.parentKey;
-          }
+            // If this is a cell, focus the parent row.
+            // eslint-disable-next-line max-depth
+            if (item?.type === 'cell') {
+              first = item.parentKey;
+            }
 
-          state.selectionManager.setFocusedKey(first);
+            // eslint-disable-next-line max-depth
+            if (first != null) {
+              state.selectionManager.setFocusedKey(first);
+            }
 
-          if (state.selectionManager.selectionMode === 'none') {
-            setInteractionModality('keyboard');
+            // eslint-disable-next-line max-depth
+            if (state.selectionManager.selectionMode === 'none') {
+              setInteractionModality('keyboard');
+            }
           }
         }
       } else if (
@@ -335,7 +349,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     }, 50);
   }, [localState, defaultOnDrop, ref, updateFocusAfterDrop]);
 
-   
+
   useEffect(() => {
     return () => {
       if (droppingState.current) {
@@ -581,17 +595,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropTargetEnter(target) {
         localState.state.setTarget(target);
       },
-      onDropActivate(e) {
+      onDropActivate(e, target) {
         if (
-          localState.state.target?.type === 'item' &&
-          localState.state.target?.dropPosition === 'on' &&
+          target?.type === 'item' &&
+          target?.dropPosition === 'on' &&
           typeof localState.props.onDropActivate === 'function'
         ) {
           localState.props.onDropActivate({
             type: 'dropactivate',
             x: e.x, // todo
             y: e.y,
-            target: localState.state.target
+            target
           });
         }
       },
@@ -741,6 +755,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
+        localState.props.onKeyDown?.(e);
       }
     });
   }, [localState, ref, onDrop, direction]);

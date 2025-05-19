@@ -13,7 +13,7 @@
 import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps} from './Collection';
 import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {createContext, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -50,7 +50,7 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * It supports very large collections by only rendering visible items to the DOM, reusing
  * them as the user scrolls.
  */
-export function Virtualizer<O>(props: VirtualizerProps<O>): ReactNode {
+export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions} = props;
   let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
   let renderer: CollectionRenderer = useMemo(() => ({
@@ -101,10 +101,6 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     onScrollStart: state.startScrolling,
     onScrollEnd: state.endScrolling
   }, scrollRef!);
-
-  if (state.contentSize.area === 0) {
-    return null;
-  }
 
   return (
     <div {...contentProps}>
