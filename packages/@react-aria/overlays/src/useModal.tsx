@@ -11,9 +11,10 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import React, {AriaAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface ModalProviderProps extends DOMAttributes {
   children: ReactNode
@@ -36,7 +37,7 @@ const Context = React.createContext<ModalContext | null>(null);
  * subtree from screen readers. This is done using React context in order to account for things
  * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
  */
-export function ModalProvider(props: ModalProviderProps): ReactNode {
+export function ModalProvider(props: ModalProviderProps): JSX.Element {
   let {children} = props;
   let parent = useContext(Context);
   let [modalCount, setModalCount] = useState(0);
@@ -100,7 +101,7 @@ function OverlayContainerDOM(props: ModalProviderProps) {
  * if a modal or other overlay is opened. Only the top-most modal or
  * overlay should be accessible at once.
  */
-export function OverlayProvider(props: ModalProviderProps): ReactNode {
+export function OverlayProvider(props: ModalProviderProps): JSX.Element {
   return (
     <ModalProvider>
       <OverlayContainerDOM {...props} />
@@ -112,6 +113,7 @@ export interface OverlayContainerProps extends ModalProviderProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   portalContainer?: Element
 }
@@ -126,6 +128,10 @@ export interface OverlayContainerProps extends ModalProviderProps {
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, ...rest} = props;
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!props.portalContainer && getContainer) {
+    portalContainer = getContainer();
+  }
 
   React.useEffect(() => {
     if (portalContainer?.closest('[data-overlay-container]')) {

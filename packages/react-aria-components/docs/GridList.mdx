@@ -318,7 +318,7 @@ export function MyGridList<T extends object>({children, ...props}: GridListProps
   );
 }
 
-export function MyItem({children, ...props}: GridListItemProps) {
+export function MyItem({children, ...props}: Omit<GridListItemProps, 'children'> & {children?: React.ReactNode}) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <GridListItem textValue={textValue} {...props}>

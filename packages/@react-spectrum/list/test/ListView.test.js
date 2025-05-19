@@ -73,6 +73,7 @@ describe('ListView', function () {
   afterEach(function () {
     fireEvent.keyDown(document.activeElement, {key: 'Escape'});
     fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
     jest.clearAllMocks();
   });
 
@@ -812,6 +813,24 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
+    it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+
+      let rows = tree.getAllByRole('row');
+      await user.click(within(rows[1]).getByRole('checkbox'));
+      checkSelection(onSelectionChange, ['bar']);
+
+      onSelectionChange.mockClear();
+      await user.click(within(rows[2]).getByRole('checkbox'));
+      checkSelection(onSelectionChange, ['bar', 'baz']);
+
+      onSelectionChange.mockClear();
+      await user.keyboard('{Escape}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
     it('should support range selection', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
@@ -1435,27 +1454,33 @@ describe('ListView', function () {
 
       // scroll us down far enough that item 0 isn't in the view
       moveFocus('ArrowDown');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
       grid.scrollTop = 40;
       fireEvent.scroll(grid);
       moveFocus('ArrowDown');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
       grid.scrollTop = 80;
       fireEvent.scroll(grid);
       moveFocus('ArrowDown');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 3'));
       grid.scrollTop = 120;
       fireEvent.scroll(grid);
 
       moveFocus('ArrowUp');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
       grid.scrollTop = 80;
       fireEvent.scroll(grid);
       moveFocus('ArrowUp');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
       grid.scrollTop = 40;
       fireEvent.scroll(grid);
       moveFocus('ArrowUp');
+      act(() => jest.runAllTimers());
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 0'));
     });
 
@@ -1488,6 +1513,7 @@ describe('ListView', function () {
       });
 
       focusRow(tree, 'Item 1');
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
       expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
     });
@@ -1521,6 +1547,7 @@ describe('ListView', function () {
 
       // Moving focus should scroll the new focused item into view
       moveFocus('ArrowDown');
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
       expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
     });

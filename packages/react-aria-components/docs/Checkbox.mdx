@@ -167,7 +167,7 @@ This example wraps `Checkbox` and all of its children together into a single com
 ```tsx example export=true
 import type {CheckboxProps} from 'react-aria-components';
 
-export function MyCheckbox({children, ...props}: CheckboxProps) {
+export function MyCheckbox({children, ...props}: Omit<CheckboxProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => <>

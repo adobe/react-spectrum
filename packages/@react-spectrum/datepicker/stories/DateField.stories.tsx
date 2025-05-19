@@ -212,7 +212,7 @@ export const IsDateUnavailable: DateFieldStory = {
   ...Default,
   args: {
     isDateUnavailable: (date) => {
-      return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
+      return date.compare(new CalendarDate(1980, 1, 1)) >= 0
           && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
     },
     errorMessage: 'Date unavailable.',
@@ -310,7 +310,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key | null>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);

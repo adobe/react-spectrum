@@ -55,6 +55,11 @@ export interface AriaSelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
+   * Whether pressing the Escape should clear selection in the collection or not.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /**
    * Whether selection should occur automatically on focus.
    * @default false
    */
@@ -108,6 +113,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
+    escapeKeyBehavior = 'clearSelection',
     selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
@@ -279,7 +285,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Escape':
-        if (!disallowEmptySelection && manager.selectedKeys.size !== 0) {
+        if (escapeKeyBehavior === 'clearSelection' && !disallowEmptySelection && manager.selectedKeys.size !== 0) {
           e.stopPropagation();
           e.preventDefault();
           manager.clearSelection();
@@ -499,6 +505,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
+  let raf = useRef<number | null>(null);
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || didAutoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
@@ -510,8 +517,16 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
 
       if (modality === 'keyboard' || didAutoFocusRef.current) {
-        scrollIntoView(scrollRef.current, element);
 
+        if (raf.current) {
+          cancelAnimationFrame(raf.current);
+        }
+
+        raf.current = requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollIntoView(scrollRef.current, element);
+          }
+        });
         // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
         if (modality !== 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});
@@ -527,6 +542,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     lastFocusedKey.current = manager.focusedKey;
     didAutoFocusRef.current = false;
   });
+
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
   useEvent(ref, 'react-aria-focus-scope-restore', e => {

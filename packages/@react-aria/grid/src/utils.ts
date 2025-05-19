@@ -19,7 +19,8 @@ interface GridMapShared {
   actions: {
     onRowAction?: (key: Key) => void,
     onCellAction?: (key: Key) => void
-  }
+  },
+  shouldSelectOnPressUp?: boolean
 }
 
 // Used to share:

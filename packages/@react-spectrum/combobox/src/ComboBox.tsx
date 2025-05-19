@@ -191,7 +191,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumCombo
           {...listBoxProps}
           ref={listBoxRef}
           disallowEmptySelection
-          autoFocus={state.focusStrategy ?? undefined}
           shouldSelectOnPressUp
           focusOnPointerEnter
           layout={layout}

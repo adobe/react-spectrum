@@ -50,12 +50,13 @@ export default meta;
 
 export let Example = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
-        <TagGroup {...args}>
+        <TagGroup {...props}>
           <Tag id="chocolate">Chocolate</Tag>
           <Tag>Mint</Tag>
           <Tag>Strawberry</Tag>
@@ -102,12 +103,13 @@ let items: Array<ITagItem> = [
 ];
 export let Dynamic = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
-        <TagGroup {...args} items={items}>
+        <TagGroup {...props} items={items}>
           {(item: ITagItem) => <Tag>{item.name}</Tag>}
         </TagGroup>
       </div>
@@ -125,12 +127,13 @@ const SRC_URL_1 =
 
 export let Disabled = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
+      <TagGroup {...props} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
         <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">
@@ -165,12 +168,13 @@ function renderEmptyState() {
 }
 export let Empty = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} renderEmptyState={renderEmptyState} />
+      <TagGroup {...props} renderEmptyState={renderEmptyState} />
     );
   },
   args: {
@@ -179,12 +183,13 @@ export let Empty = {
 };
 export let DefaultEmpty = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} />
+      <TagGroup {...props} />
     );
   },
   args: {
@@ -194,8 +199,12 @@ export let DefaultEmpty = {
 
 export let Links = {
   render: (args: any) => {
+    let props = {...args};
+    if (args.onRemove) {
+      props.onRemove = action('remove');
+    }
     return (
-      <TagGroup {...args} disabledKeys={new Set(['google'])}>
+      <TagGroup {...props} disabledKeys={new Set(['google'])}>
         <Tag id="adobe" href="https://adobe.com">Adobe</Tag>
         <Tag id="google">Google</Tag>
         <Tag id="apple" href="https://apple.com">Apple</Tag>
@@ -210,12 +219,13 @@ export let Links = {
 
 export const ContextualHelpExample = {
   render: (args: any) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <TagGroup
-        {...args}
+        {...props}
         contextualHelp={
           <ContextualHelp>
             <Heading>What is a ice cream?</Heading>
