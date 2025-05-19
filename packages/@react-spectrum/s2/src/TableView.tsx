@@ -39,7 +39,7 @@ import {
   TableBodyRenderProps,
   TableLayout,
   TableRenderProps,
-  UNSTABLE_TableLoadingIndicator,
+  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -64,7 +64,6 @@ import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -194,10 +193,15 @@ export class S2TableLayout<T> extends TableLayout<T> {
 
   protected buildCollection(): LayoutNode[] {
     let [header, body] = super.buildCollection();
+    if (!header) {
+      return [];
+    }
     let {children, layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    if (children?.length === 0) {
+    // TODO: we may want to adjust RAC layouts to do something simlar? Current users of RAC table will probably run into something similar
+    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    if (isEmptyOrLoading) {
       layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
 
@@ -212,7 +216,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
     layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
-    layoutInfo.isSticky = true;
+    // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
+    // affect the positioning of the empty state renderer
+    let collection = this.virtualizer!.collection;
+    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
 
@@ -223,7 +231,8 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
-    if (children?.length === 0) {
+    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    if (isEmptyOrLoading) {
       layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
@@ -268,11 +277,11 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     overflowMode = 'truncate',
     styles,
     loadingState,
-    onLoadMore,
     onResize: propsOnResize,
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
     onAction,
+    onLoadMore,
     ...otherProps
   } = props;
 
@@ -295,17 +304,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     density,
     overflowMode,
     loadingState,
+    onLoadMore,
     isInResizeMode,
     setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, isInResizeMode, setIsInResizeMode]);
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
 
-  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLElement | null>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore
-  }), [isLoading, onLoadMore]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
@@ -369,26 +373,30 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
 export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {items, renderEmptyState, children} = props;
+  let {items, renderEmptyState, children, dependencies = []} = props;
   let domRef = useDOMRef(ref);
-  let {loadingState} = useContext(InternalTableContext);
+  let {loadingState, onLoadMore} = useContext(InternalTableContext);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let emptyRender;
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // TODO: still is offset strangely if loadingMore when there aren't any items in the table, see http://localhost:6006/?path=/story/tableview--empty-state&args=loadingState:loadingMore
+  // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
+  // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
+    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingIndicator>
+    </UNSTABLE_TableLoadingSentinel>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
@@ -398,22 +406,22 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={dependencies}>
           {children}
         </Collection>
-        {loadingState === 'loadingMore' && loadMoreSpinner}
+        {loadMoreSpinner}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {loadingState === 'loadingMore' && loadMoreSpinner}
+        {loadMoreSpinner}
       </>
     );
   }
 
-  if (renderEmptyState != null && loadingState !== 'loading') {
+  if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
         {renderEmptyState(props)}
@@ -512,7 +520,7 @@ export interface ColumnProps extends RACColumnProps {
   /** The content to render as the column header. */
   children: ReactNode,
   /** Menu fragment to be rendered inside the column header's menu. */
-  UNSTABLE_menuItems?: ReactNode
+  menuItems?: ReactNode
 }
 
 /**
@@ -522,7 +530,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
-  let isMenu = allowsResizing || !!props.UNSTABLE_menuItems;
+  let isMenu = allowsResizing || !!props.menuItems;
 
 
   return (
@@ -535,7 +543,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
           {isFocusVisible && <CellFocusRing />}
           {isMenu ?
             (
-              <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.UNSTABLE_menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
+              <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
                 {children}
               </ColumnWithMenu>
             ) : (
@@ -784,7 +792,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
-            <MenuSection aria-label={stringFormatter.format('table.standardColumnMenu')}>
+            <MenuSection>
               <Collection items={items}>
                 {(item) => <MenuItem>{item?.label}</MenuItem>}
               </Collection>
@@ -855,12 +863,12 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -891,7 +899,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           )}
         </RACColumn>
       )}
-      <Collection items={columns}>
+      <Collection items={columns} dependencies={dependencies}>
         {children}
       </Collection>
     </RACTableHeader>
@@ -1111,12 +1119,12 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies'>  {}
 
 /**
  * A row within a `<Table>`.
  */
-export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
@@ -1126,6 +1134,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       // @ts-ignore
       ref={domRef}
       id={id}
+      dependencies={[...dependencies, columns]}
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
@@ -1136,7 +1145,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
-      <Collection items={columns}>
+      <Collection items={columns} dependencies={[...dependencies, columns]}>
         {children}
       </Collection>
     </RACRow>

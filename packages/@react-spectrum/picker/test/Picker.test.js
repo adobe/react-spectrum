@@ -31,7 +31,7 @@ import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
   let testUtilUser = new User();
   let user;
@@ -40,6 +40,7 @@ describe('Picker', function () {
     user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     simulateDesktop();
     jest.useFakeTimers();
   });
@@ -47,6 +48,7 @@ describe('Picker', function () {
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+    scrollHeight.mockReset();
   });
 
   afterEach(() => {
