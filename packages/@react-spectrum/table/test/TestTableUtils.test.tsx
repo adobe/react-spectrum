@@ -309,30 +309,4 @@ describe('Table ', function () {
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
     });
   });
-
-  describe('long press, fake timers', () => {
-    installPointerEvent();
-    let testUtilFakeTimer = new User({interactionType: 'touch', advanceTimer: jest.advanceTimersByTime});
-    beforeAll(function () {
-      jest.useFakeTimers();
-    });
-
-    afterEach(function () {
-      act(() => jest.runAllTimers());
-      jest.clearAllMocks();
-    });
-
-    it('highlight selection should switch to selection mode on long press', async function () {
-      render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
-
-      await tableTester.toggleRowSelection({row: 2, needsLongPress: true});
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
-
-      await tableTester.toggleRowSelection({row: 'Foo 4'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(2);
-      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
-    });
-  });
 });

@@ -77,10 +77,6 @@ describe('GridList', () => {
     jest.clearAllMocks();
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should render with default classes', () => {
     let {getByRole} = renderGridList();
     let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});

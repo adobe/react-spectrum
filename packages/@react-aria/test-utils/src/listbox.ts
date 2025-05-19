@@ -94,8 +94,8 @@ export class ListBoxTester {
 
   // TODO: this is basically the same as menu except for the error message, refactor later so that they share
   // TODO: this also doesn't support grid layout yet
-  private async keyboardNavigateToOption(opts: {option: HTMLElement, useAltKey?: boolean}) {
-    let {option, useAltKey} = opts;
+  private async keyboardNavigateToOption(opts: {option: HTMLElement, avoidSelectionOnNav?: boolean}) {
+    let {option, avoidSelectionOnNav} = opts;
     let altKey = getAltKey();
     let options = this.options();
     let targetIndex = options.indexOf(option);
@@ -105,7 +105,7 @@ export class ListBoxTester {
 
     if (document.activeElement !== this._listbox && !this._listbox.contains(document.activeElement)) {
       act(() => this._listbox.focus());
-      await this.user.keyboard(`${useAltKey ? `[${altKey}>]` : ''}[ArrowDown]${useAltKey ? `[/${altKey}]` : ''}`);
+      await this.user.keyboard(`${avoidSelectionOnNav ? `[${altKey}>]` : ''}[ArrowDown]${avoidSelectionOnNav ? `[/${altKey}]` : ''}`);
     }
 
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -114,13 +114,13 @@ export class ListBoxTester {
     }
 
     let direction = targetIndex > currIndex ? 'down' : 'up';
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[${altKey}>]`);
     }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[/${altKey}]`);
     }
   };
@@ -153,7 +153,7 @@ export class ListBoxTester {
         return;
       }
 
-      await this.keyboardNavigateToOption({option, useAltKey: selectionBehavior === 'replace'});
+      await this.keyboardNavigateToOption({option, avoidSelectionOnNav: selectionBehavior === 'replace'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -205,7 +205,7 @@ export class ListBoxTester {
         return;
       }
 
-      await this.keyboardNavigateToOption({option, useAltKey: true});
+      await this.keyboardNavigateToOption({option, avoidSelectionOnNav: true});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, option, interactionType);

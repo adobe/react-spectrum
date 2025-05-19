@@ -55,8 +55,8 @@ export class TableTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, useAltKey?: boolean}) {
-    let {row, useAltKey} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, avoidSelectionOnNav?: boolean}) {
+    let {row, avoidSelectionOnNav} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
@@ -92,13 +92,13 @@ export class TableTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[${altKey}>]`);
     }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[/${altKey}]`);
     }
   };
@@ -129,7 +129,7 @@ export class TableTester {
     let rowCheckbox = within(row).queryByRole('checkbox');
 
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, useAltKey: selectionBehavior === 'replace'});
+      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: selectionBehavior === 'replace'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -359,7 +359,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      await this.keyboardNavigateToRow({row, useAltKey: true});
+      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: true});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

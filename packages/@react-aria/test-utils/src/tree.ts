@@ -64,8 +64,8 @@ export class TreeTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, useAltKey?: boolean}) {
-    let {row, useAltKey} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, avoidSelectionOnNav?: boolean}) {
+    let {row, avoidSelectionOnNav} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
@@ -78,7 +78,7 @@ export class TreeTester {
     }
 
     if (document.activeElement === this.tree) {
-      await this.user.keyboard(`${useAltKey ? `[${altKey}>]` : ''}[ArrowDown]${useAltKey ? `[/${altKey}]` : ''}`);
+      await this.user.keyboard(`${avoidSelectionOnNav ? `[${altKey}>]` : ''}[ArrowDown]${avoidSelectionOnNav ? `[/${altKey}]` : ''}`);
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
@@ -90,13 +90,13 @@ export class TreeTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[${altKey}>]`);
     }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-    if (useAltKey) {
+    if (avoidSelectionOnNav) {
       await this.user.keyboard(`[/${altKey}]`);
     }
   };
@@ -111,7 +111,6 @@ export class TreeTester {
       needsLongPress,
       checkboxSelection = true,
       interactionType = this._interactionType,
-      // TODO: perhaps this should just be shouldUseModifierKeys?
       selectionBehavior = 'toggle'
     } = opts;
 
@@ -137,7 +136,7 @@ export class TreeTester {
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, useAltKey: selectionBehavior === 'replace'});
+      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: selectionBehavior === 'replace'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -206,7 +205,7 @@ export class TreeTester {
       // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
       // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
       // to expand. Discuss if this is useful or not
-      await this.keyboardNavigateToRow({row, useAltKey: true});
+      await this.keyboardNavigateToRow({row});
       if (row.getAttribute('aria-expanded') === 'true') {
         await this.user.keyboard('[ArrowLeft]');
       } else {
@@ -242,7 +241,7 @@ export class TreeTester {
 
       // TODO: same as above, uses the modifier key to make sure we don't modify selection state on row focus
       // as we keyboard navigate to the row we want activate
-      await this.keyboardNavigateToRow({row, useAltKey: true});
+      await this.keyboardNavigateToRow({row});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);
