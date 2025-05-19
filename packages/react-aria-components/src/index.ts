@@ -30,7 +30,7 @@ export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from
 export {ColorThumb} from './ColorThumb';
 export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
-export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext} from './utils';
+export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useRenderProps, useSlottedContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridList, GridListItem, GridListContext} from './GridList';
+export {UNSTABLE_GridListLoadingSentinel, GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
@@ -49,7 +49,7 @@ export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createB
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
-export {ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
+export {UNSTABLE_ListBoxLoadingSentinel, ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
 export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
@@ -63,7 +63,7 @@ export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateConte
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {UNSTABLE_TableLoadingIndicator, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
+export {UNSTABLE_TableLoadingSentinel, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
 export {TableLayout} from './TableLayout';
 export {Tabs, TabList, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGroup';
@@ -141,7 +141,7 @@ export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} fro
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
-export type {ContextValue, SlotProps} from './utils';
+export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from './utils';
 export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';

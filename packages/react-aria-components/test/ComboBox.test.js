@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Popover, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
@@ -38,8 +38,15 @@ describe('ComboBox', () => {
   let user;
   let testUtilUser = new User();
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    act(() => jest.runAllTimers());
+  });
+
   it('provides slots', async () => {
     let {getByRole} = render(<TestComboBox />);
 
@@ -294,5 +301,43 @@ describe('ComboBox', () => {
     await user.click(input);
 
     expect(queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('should support virtualizer', async () => {
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, name: 'Item ' + i});
+    }
+
+    jest.restoreAllMocks(); // don't mock scrollTop for this test
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let tree = render(
+      <ComboBox >
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+          </Button>
+        </div>
+        <Popover>
+          <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
+            <ListBox items={items}>
+              {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+            </ListBox>
+          </Virtualizer>
+        </Popover>
+      </ComboBox>
+    );
+
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    expect(comboboxTester.listbox).toBeFalsy();
+    comboboxTester.setInteractionType('mouse');
+    await comboboxTester.open();
+
+    expect(comboboxTester.options()).toHaveLength(7);
   });
 });
