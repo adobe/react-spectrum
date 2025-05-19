@@ -920,24 +920,6 @@ describe('useTreeData', function () {
     expect(result.current.items.length).toEqual(2);
   });
 
-  it('should move an item to a different level after the target', function () {
-    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
-
-    act(() => {
-      result.current.move('Eli', 'David', 2);
-    });
-    expect(result.current.items[0].key).toEqual('David');
-
-    expect(result.current.items[0].children[0].key).toEqual('John');
-    expect(result.current.items[0].children[1].key).toEqual('Sam');
-    expect(result.current.items[0].children[2].key).toEqual('Eli');
-    expect(result.current.items[1].key).toEqual('Emily');
-    expect(result.current.items.length).toEqual(2);
-  });
-
   it('can move an item multiple times', function () {
     const initialItems = [...initial, {name: 'Eli'}];
 
@@ -1095,6 +1077,24 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[1].children[0].key).toEqual('project-2A');
     expect(result.current.items[0].children[1].children[1].key).toEqual('project-3');
     expect(result.current.items[0].children[1].children[2].key).toEqual('project-2B');
+  });
+
+  it('should move an item to a different level after the target', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+
+    act(() => {
+      result.current.move('Eli', 'David', 2);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+
+    expect(result.current.items[0].children[0].key).toEqual('John');
+    expect(result.current.items[0].children[1].key).toEqual('Sam');
+    expect(result.current.items[0].children[2].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(2);
   });
 
   it('should move an item to a different level at the end when the index is greater than the node list length', function () {
