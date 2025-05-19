@@ -104,6 +104,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       onInsert,
       onItemDrop,
       onReorder,
+      onMove,
       onRootDrop,
       getItems,
       renderDragPreview,
@@ -112,7 +113,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
     } = options;
 
     let isDraggable = !!getItems;
-    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
+    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onMove || onRootDrop);
 
     let hooks = {} as DragAndDropHooks;
     if (isDraggable) {
