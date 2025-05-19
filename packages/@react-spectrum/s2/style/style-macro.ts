@@ -11,7 +11,12 @@
  */
 
 import type {Condition, CSSProperties, CSSValue, CustomValue, Property, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+import fs from 'fs';
 import * as propertyInfo from './properties.json';
+
+// Postfix all class names with version for now.
+const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
+const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
@@ -69,7 +74,24 @@ export class ColorProperty<C extends string> extends MappedProperty<C> implement
   }
 }
 
-export class SizingProperty<T extends CSSValue> extends MappedProperty<T> implements Property<T | number> {
+export type LengthPercentageUnit = '%' | 'vw' | 'svw' | 'dvw' | 'vh' | 'svh' | 'dvh' | 'vmin' | 'svmin' | 'dvmin' | 'vmax' | 'svmax' | 'dvmax' | 'cqw' | 'cqh' | 'cqmin' | 'cqmax';
+export type LengthPercentage = `${number}${LengthPercentageUnit}`;
+
+export class PercentageProperty<T extends CSSValue> extends MappedProperty<T> implements Property<T | LengthPercentage> {
+  constructor(property: string, mapping: PropertyValueMap<T> | string[]) {
+    super(property, mapping);
+  }
+
+  toCSSValue(value: T | LengthPercentage): PropertyValueDefinition<Value> {
+    if (typeof value === 'string' && /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax)$/.test(value)) {
+      return value;
+    }
+
+    return super.toCSSValue(value as T);
+  }
+}
+
+export class SizingProperty<T extends CSSValue> extends PercentageProperty<T> implements Property<T | number | LengthPercentage> {
   numberToCSS: (value: number) => string;
 
   constructor(property: string, mapping: PropertyValueMap<T> | string[], numberToCSS: (value: number) => string) {
@@ -77,7 +99,7 @@ export class SizingProperty<T extends CSSValue> extends MappedProperty<T> implem
     this.numberToCSS = numberToCSS;
   }
 
-  toCSSValue(value: T | number): PropertyValueDefinition<Value> {
+  toCSSValue(value: T | LengthPercentage | number): PropertyValueDefinition<Value> {
     if (typeof value === 'number') {
       return value === 0 ? '0px' : this.numberToCSS(value);
     }
@@ -88,13 +110,19 @@ export class SizingProperty<T extends CSSValue> extends MappedProperty<T> implem
 
 export class ExpandedProperty<T extends Value> implements Property<T> {
   cssProperties: string[];
-  mapping: PropertyValueMap<CSSValue> | null;
+  mapping: Property<T> | null;
   expand: (v: T | CSSValue) => CSSProperties;
 
-  constructor(properties: string[], expand: (v: T | CSSValue) => CSSProperties, mapping?: PropertyValueMap<CSSValue>) {
+  constructor(properties: string[], expand: (v: T | CSSValue) => CSSProperties, mapping?: Property<T> | PropertyValueMap<CSSValue>) {
     this.cssProperties = properties;
     this.expand = expand;
-    this.mapping = mapping || null;
+    if (mapping instanceof MappedProperty) {
+      this.mapping = mapping;
+    } else if (mapping) {
+      this.mapping = new MappedProperty<any>(properties[0], mapping as any);
+    } else {
+      this.mapping = null;
+    }
   }
 
   toCSSValue(value: T): PropertyValueDefinition<Value> {
@@ -102,11 +130,7 @@ export class ExpandedProperty<T extends Value> implements Property<T> {
       return value;
     }
 
-    let res = this.mapping[String(value)];
-    if (res == null) {
-      throw new Error('Invalid style value: ' + value);
-    }
-    return res;
+    return this.mapping.toCSSValue(value);
   }
 
   toCSSProperties(customProperty: string | null, value: PropertyValueDefinition<T>): PropertyValueDefinition<[CSSProperties]> {
@@ -150,6 +174,13 @@ export function parseArbitraryValue(value: Value): string | undefined {
     return `var(${value})`;
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
     return value.slice(1, -1);
+  } else if (
+    typeof value === 'string' && (
+      /^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(value) || 
+      /^(inherit|initial|unset)$/.test(value)
+    )
+  ) {
+    return value;
   }
 }
 
@@ -280,6 +311,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         let shorthand = theme.shorthands[property];
         let props = Array.isArray(shorthand) ? shorthand : [property];
         for (let property of props) {
+          if (property.startsWith('--')) {
+            allowedOverridesSet.add(property);
+            continue;
+          }
+          
           let prop = properties.get(property);
           if (!prop) {
             throw new Error(`Invalid property ${property} in allowedOverrides`);
@@ -302,6 +338,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
               loop += `  if (p[1] === ${JSON.stringify(selector)}) ${p} = true;\n`;
             }
           }
+        } else if (property.startsWith('--') && allowedOverridesSet.has(property)) {
+          let selector = classNamePrefix(property, property);
+          let p = property.replace('--', '__');
+          js += `let ${p} = false;\n`;
+          loop += `  if (p[1] === ${JSON.stringify(selector)}) ${p} = true;\n`;
         }
       }
 
@@ -505,6 +546,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           }
 
           className += propertyInfo.values[cssProperty]?.[String(value)] ?? generateArbitraryValueSelector(String(value));
+          className += POSTFIX;
           rules.push(new StyleRule(className, key, String(value)));
         }
 

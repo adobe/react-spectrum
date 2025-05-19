@@ -49,7 +49,7 @@ import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMenuTriggerState} from '@react-stately/menu';
+import {useMenuTriggerState} from 'react-stately';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
@@ -136,7 +136,7 @@ let popover = style({
     }
   },
   // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: '[calc(100vw - 24px)]',
+  maxWidth: 'calc(100vw - 24px)',
   boxSizing: 'border-box',
   translateY: {
     placement: {
@@ -203,7 +203,7 @@ let popover = style({
 
 const image = style({
   width: 'full',
-  aspectRatio: '[3/2]',
+  aspectRatio: '3/2',
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
@@ -291,7 +291,7 @@ let content = style({
     ':first-child': 0
   },
   paddingBottom: {
-    default: '[calc(var(--card-spacing) * 1.5 / 2)]',
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
     ':last-child': 0
   }
 });
@@ -300,7 +300,7 @@ let actionMenu = style({
   gridArea: 'menu',
   // Don't cause the row to expand, preserve gap between title and description text.
   // Would use -100% here but it doesn't work in Firefox.
-  marginY: '[calc(-1 * self(height))]'
+  marginY: 'calc(-1 * self(height))'
 });
 
 let footer = style({
@@ -309,7 +309,7 @@ let footer = style({
   alignItems: 'end',
   justifyContent: 'space-between',
   gap: 8,
-  paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
+  paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
 const actionButtonSize = {

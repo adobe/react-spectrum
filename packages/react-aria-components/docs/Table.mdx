@@ -93,6 +93,7 @@ import {MyCheckbox} from './Checkbox';
 ```css hidden
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
+@import './CheckboxGroup.mdx' layer(checkboxgroup);
 @import './Checkbox.mdx' layer(checkbox);
 @import './Popover.mdx' layer(popover);
 @import './Menu.mdx' layer(menu);
@@ -431,44 +432,74 @@ Now we can render a table with a default selection column built in.
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
-In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
-only the rows dynamic.
+In the example below, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns
+and add additional rows. You can also make the columns static and only the rows dynamic.
+
+**Note**: Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example). See the [collections](collections.html#dependencies) guide for more details.
 
 ```tsx example export=true
 import type {TableProps} from 'react-aria-components';
+import {MyCheckboxGroup} from './CheckboxGroup';
+import {MyCheckbox} from './Checkbox';
 
 function FileTable(props: TableProps) {
+  let [showColumns, setShowColumns] = React.useState(['name', 'type', 'date']);
   let columns = [
     {name: 'Name', id: 'name', isRowHeader: true},
     {name: 'Type', id: 'type'},
     {name: 'Date Modified', id: 'date'}
-  ];
+  ].filter(column => showColumns.includes(column.id));
 
-  let rows = [
+  let [rows, setRows] = React.useState([
     {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
     {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
     {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
     {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
+  ]);
+
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
 
   return (
-    <Table aria-label="Files" {...props}>
-      <MyTableHeader columns={columns}>
-        {column => (
-          <Column isRowHeader={column.isRowHeader}>
-            {column.name}
-          </Column>
-        )}
-      </MyTableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <MyRow columns={columns}>
-            {column => <Cell>{item[column.id]}</Cell>}
-          </MyRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="flex-col">
+      <MyCheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} style={{flexDirection: 'row'}}>
+        <MyCheckbox value="type">Type</MyCheckbox>
+        <MyCheckbox value="date">Date Modified</MyCheckbox>
+      </MyCheckboxGroup>
+      <Table aria-label="Files" {...props}>
+        <MyTableHeader columns={columns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows} dependencies={[columns]}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+      <Button onPress={addRow}>Add row</Button>
+    </div>
   );
+}
+```
+
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8;
+  align-items: start;
 }
 ```
 
