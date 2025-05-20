@@ -27,7 +27,7 @@ import {Item, Picker, Section, SpectrumPickerProps} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},

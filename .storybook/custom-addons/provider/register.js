@@ -1,15 +1,8 @@
-
 import {addons, types} from '@storybook/manager-api';
-import {getQueryParams} from '@storybook/preview-api';
+import {useParameter} from '@storybook/preview-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
-const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
-  if (k.includes('providerSwitcher-')) {
-    return { ...acc, [k.replace('providerSwitcher-', '')]: v };
-  }
-  return acc;
-}, {});
 
 let THEMES = [
   {label: 'Auto', value: ''},
@@ -37,7 +30,13 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, express: providerValuesFromUrl.express === 'true'});
+
+  let [values, setValues] = useState({
+    locale: useParameter('providerSwitcher-locale') || undefined,
+    theme: useParameter('providerSwitcher-theme') || undefined,
+    scale: useParameter('providerSwitcher-scale') || undefined,
+    express: useParameter('providerSwitcher-express') === 'true'
+  });
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;

@@ -13,7 +13,7 @@
 import {Example, LongLabel} from '../stories/Tooltip.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Tooltip} from '../src';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
