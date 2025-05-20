@@ -33,7 +33,43 @@ describe('useFormReset', () => {
     expect(onReset).toHaveBeenCalled();
   });
 
-  it('should not call onReset if reset is cancelled', () => {
+  it('should call onReset on reset even if event is stopped', () => {
+    const onReset = jest.fn();
+    const Form = () => {
+      const ref = useRef<HTMLInputElement>(null);
+      useFormReset(ref, '', onReset);
+      return (
+        <form onReset={(e) => e.stopPropagation()}>
+          <input ref={ref} type="text" />
+          <button type="reset">Reset</button>
+        </form>
+      );
+    };
+    const {getByRole} = render(<Form />);
+    const button = getByRole('button');
+    fireEvent.click(button);
+    expect(onReset).toHaveBeenCalled();
+  });
+
+  it('should not call onReset if reset is cancelled', async () => {
+    const onReset = jest.fn();
+    const Form = () => {
+      const ref = useRef<HTMLInputElement>(null);
+      useFormReset(ref, '', onReset);
+      return (
+        <form onReset={(e) => e.preventDefault()}>
+          <input ref={ref} type="text" />
+          <button type="reset">Reset</button>
+        </form>
+      );
+    };
+    const {getByRole} = render(<Form />);
+    const button = getByRole('button');
+    fireEvent.click(button);
+    expect(onReset).not.toHaveBeenCalled();
+  });
+
+  it('should not call onReset if reset is cancelled in capture phase', async () => {
     const onReset = jest.fn();
     const Form = () => {
       const ref = useRef<HTMLInputElement>(null);
