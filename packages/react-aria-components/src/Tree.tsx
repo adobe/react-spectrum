@@ -276,11 +276,14 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
             if (target?.type === 'item' && target.dropPosition === 'after') {
               let nextKey = state.collection.getKeyAfter(target.key);
               if (nextKey != null) {
-                target = {
+                let beforeTarget = {
                   type: 'item',
                   key: nextKey,
                   dropPosition: 'before'
-                };
+                } as const;
+                if (isValidDropTarget(beforeTarget)) {
+                  return beforeTarget;
+                }
               }
             }
 
