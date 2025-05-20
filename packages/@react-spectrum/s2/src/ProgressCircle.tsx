@@ -93,6 +93,8 @@ const dashoffsetAnimation = keyframes(`
   }
 `);
 
+let pxToRem = px => (px / 16) + 'rem';
+
 /**
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
@@ -115,7 +117,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
   }
 
   // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
-  let radius = `calc(50% - ${strokeWidth / 2}px)`;
+  let radius = `calc(50% - ${pxToRem(strokeWidth / 2)})`;
   let isStaticColor = !!staticColor;
 
   return (
@@ -137,13 +139,13 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={strokeWidth}
+            strokeWidth={pxToRem(strokeWidth)}
             className={track({isStaticColor})} />
           <circle
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={strokeWidth}
+            strokeWidth={pxToRem(strokeWidth)}
             className={fill({isStaticColor})}
             style={{
               // These cubic-bezier timing functions were derived from the previous animation keyframes
