@@ -91,9 +91,25 @@ if (typeof document !== 'undefined') {
   }
 }
 
-export function runAfterTransition(fn: () => void) {
+/**
+ * Cleans up any elements that are no longer in the document.
+ * This is necessary because we can't rely on transitionend events to fire
+ * for elements that are removed from the document while transitioning.
+ */
+function cleanupDetachedElements() {
+  for (const [eventTarget] of transitionsByElement) {
+    // Similar to `eventTarget instanceof Element && !eventTarget.isConnected`, but avoids
+    // the explicit instanceof check, since it may be different in different contexts.
+    if ('isConnected' in eventTarget && !eventTarget.isConnected) {
+      transitionsByElement.delete(eventTarget);
+    }
+  }
+}
+
+export function runAfterTransition(fn: () => void): void {
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
   requestAnimationFrame(() => {
+    cleanupDetachedElements();
     // If no transitions are running, call the function immediately.
     // Otherwise, add it to a list of callbacks to run at the end of the animation.
     if (transitionsByElement.size === 0) {

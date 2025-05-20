@@ -15,7 +15,7 @@ import {SingleSelectListState, useSingleSelectListState} from '@react-stately/li
 import {useCallback, useEffect, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
-export interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
+export interface StepListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'onSelectionChange'> {
   /** The key of the last completed step (controlled). */
   lastCompletedStep?: Key,
   /** The key of the initially last completed step (uncontrolled). */
@@ -25,7 +25,9 @@ export interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
   /** Whether the step list is disabled. Steps will not be focusable or interactive. */
   isDisabled?: boolean,
   /** Whether the step list is read only. Steps will be focusable but non-interactive. */
-  isReadOnly?: boolean
+  isReadOnly?: boolean,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key) => void
 }
 
 export interface StepListState<T> extends SingleSelectListState<T> {
@@ -36,7 +38,14 @@ export interface StepListState<T> extends SingleSelectListState<T> {
 }
 
 export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {
-  let state = useSingleSelectListState<T>(props);
+  let state = useSingleSelectListState<T>({
+    ...props,
+    onSelectionChange: props.onSelectionChange ? (key => {
+      if (key != null) {
+        props.onSelectionChange?.(key);
+      }
+    }) : undefined
+  });
 
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(props.lastCompletedStep, props.defaultLastCompletedStep ?? null, props.onLastCompletedStepChange);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;

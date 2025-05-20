@@ -62,7 +62,13 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
+  /**
+   * Temporary text that occupies the select when it is empty.
+   * @default 'Select an item' (localized)
+   */
+  placeholder?: string
+}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
@@ -114,7 +120,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     triggerProps,
@@ -170,14 +178,15 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',
           triggerRef: buttonRef,
           scrollRef,
           placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties,
+          'aria-labelledby': menuProps['aria-labelledby']
         }],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],

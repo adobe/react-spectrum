@@ -33,14 +33,14 @@ interface VirtualizerOptions<T extends object, V> {
  * them as you scroll. Virtualizer can present any type of view, including non-item views
  * such as section headers and footers.
  *
- * Virtualizer uses {@link Layout} objects to compute what views should be visible, and how
+ * Virtualizer uses `Layout` objects to compute what views should be visible, and how
  * to position and style them. This means that virtualizer can have its items arranged in
  * a stack, a grid, a circle, or any other layout you can think of. The layout can be changed
  * dynamically at runtime as well.
  *
  * Layouts produce information on what views should appear in the virtualizer, but do not create
- * the views themselves directly. It is the responsibility of the {@link VirtualizerDelegate} object
- * to render elements for each layout info. The virtualizer manages a set of {@link ReusableView} objects,
+ * the views themselves directly. It is the responsibility of the `VirtualizerDelegate` object
+ * to render elements for each layout info. The virtualizer manages a set of `ReusableView` objects,
  * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
  */
 export class Virtualizer<T extends object, V> {
@@ -84,7 +84,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
-  isPersistedKey(key: Key) {
+  isPersistedKey(key: Key): boolean {
     // Quick check if the key is directly in the set of persisted keys.
     if (this.persistedKeys.has(key)) {
       return true;
@@ -182,7 +182,7 @@ export class Virtualizer<T extends object, V> {
     }
   }
 
-  getVisibleLayoutInfos() {
+  getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
@@ -193,8 +193,7 @@ export class Virtualizer<T extends object, V> {
     } else {
       rect = this._overscanManager.getOverscannedRect();
     }
-
-    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
@@ -266,6 +265,7 @@ export class Virtualizer<T extends object, V> {
     let offsetChanged = false;
     let sizeChanged = false;
     let itemSizeChanged = false;
+    let layoutOptionsChanged = false;
     let needsUpdate = false;
 
     if (opts.collection !== this.collection) {
@@ -308,8 +308,11 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged;
-        needsLayout ||= opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions;
+        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
+          && this._invalidationContext.layoutOptions != null
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions
+          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;
     }
@@ -327,6 +330,7 @@ export class Virtualizer<T extends object, V> {
         offsetChanged,
         sizeChanged,
         itemSizeChanged,
+        layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions
       });
     } else if (needsUpdate) {
@@ -340,11 +344,11 @@ export class Virtualizer<T extends object, V> {
     return this._visibleViews.get(key);
   }
 
-  invalidate(context: InvalidationContext) {
+  invalidate(context: InvalidationContext): void {
     this.delegate.invalidate(context);
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): void {
     if (!this.layout.updateItemSize) {
       return;
     }

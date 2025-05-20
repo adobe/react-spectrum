@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './ListBoxAnatomy.svg';
@@ -25,6 +25,7 @@ import Collections from '@react-spectrum/docs/pages/assets/component-illustratio
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import listboxUtils from 'docs:@react-aria/test-utils/src/listbox.ts';
 
 ---
 category: Collections
@@ -70,9 +71,10 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 .react-aria-ListBox {
   display: flex;
   flex-direction: column;
+  gap: 4px;
   max-height: inherit;
   overflow: auto;
-  padding: 2px;
+  padding: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--overlay-background);
@@ -90,8 +92,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 }
 
 .react-aria-ListBoxItem {
-  margin: 2px;
-  padding: 0.286rem 0.571rem;
+  padding: 0 0.571rem;
   border-radius: 6px;
   outline: none;
   cursor: default;
@@ -100,6 +101,8 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-height: 32px;
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -131,6 +134,7 @@ listbox components that can be styled as needed.
 * **Keyboard navigation** – List items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Layout options** – Items can be arranged in a vertical or horizontal stack, or as a two-dimensional grid.
 * **Drag and drop** – ListBox supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
+* **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large lists by rendering only the visible items.
 * **Touch friendly** – Selection behavior adapts depending on the device. For example, selection occurs on mouse down but on touch up, which is consistent with native conventions.
 * **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
@@ -234,7 +238,8 @@ function MyItem(props: ListBoxItemProps) {
 .my-listbox {
   max-height: inherit;
   overflow: auto;
-  padding: 2px;
+  padding: 4px;
+  gap: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--overlay-background);
@@ -247,7 +252,6 @@ function MyItem(props: ListBoxItemProps) {
 .my-item {
   --highlight: #e70073;
 
-  margin: 2px;
   padding: 0.286rem 0.571rem;
   border-radius: 6px;
   outline: none;
@@ -629,22 +633,11 @@ let albums = [
       max-width: 150px;
       margin-bottom: 4px;
       border-radius: 4px;
-      transition: box-shadow 200ms;
-    }
-
-    &[data-hovered] {
-      & img {
-        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
-      }
     }
 
     &[data-selected] {
       background: none;
       color: inherit;
-
-      & img {
-        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
-      }
 
       &:after {
         content: '✓';
@@ -667,6 +660,11 @@ let albums = [
         justify-content: center;
         box-shadow: 0 0 8px rgb(0 0 0 / .5);
       }
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
     }
   }
 }
@@ -864,7 +862,7 @@ function Example() {
   ];
 
   return (
-    <ListBox 
+    <ListBox
       aria-label="Animals with disabledKeys"
       items={options}
       selectionMode="single"
@@ -1983,7 +1981,7 @@ A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector,
 
 <StateTable properties={docs.exports.ListBoxItemRenderProps.properties} showOptional />
 
-Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [Text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
@@ -2089,3 +2087,34 @@ Now you can use `MyText` within a `Menu`, in place of the builtin React Aria Com
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useListBox](useListBox.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.
+
+```ts
+// ListBox.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('ListBox can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+     <ListBox selectionMode="single" data-testid="test-listbox">
+      ...
+    </ListBox>
+  );
+  let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
+
+  await listboxTester.toggleOptionSelection({option: 4});
+  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+});
+```
+
+<ClassAPI links={listboxUtils.links} class={listboxUtils.exports.ListBoxTester} />

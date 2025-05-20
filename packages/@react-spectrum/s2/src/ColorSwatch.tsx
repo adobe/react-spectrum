@@ -13,10 +13,10 @@
 import {
   ColorSwatch as AriaColorSwatch,
   ColorSwatchProps as AriaColorSwatchProps,
+  Color,
   ContextValue,
   parseColor
 } from 'react-aria-components';
-import {Color} from '@react-types/color';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -43,7 +43,7 @@ interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' 
   useWrapper: (swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) => JSX.Element
 }
 
-export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorSwatchContext = createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
 export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
 
 /**

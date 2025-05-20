@@ -59,7 +59,7 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
-| variant | 🟢 `'accent' \| 'blue' \| 'brown' \| 'celery' \| 'charteuse' \| 'cinnamon' \| 'cyan' \| 'fuchsia' \| 'gray' \| 'green' \| 'indigo' \| 'informative' \| 'magenta' \| 'negative' \| 'neutral' \| 'notice' \| 'orange' \| 'pink' \| 'positive' \| 'purple' \| 'red' \| 'seafoam' \| 'silver' \| 'turquoise' \| 'yellow'` | 🔴 `'fuchsia' \| 'indigo' \| 'info' \| 'magenta' \| 'negative' \| 'neutral' \| 'positive' \| 'purple' \| 'seafoam' \| 'yellow'` | |
+| variant | 🟢 `'accent' \| 'blue' \| 'brown' \| 'celery' \| 'chartreuse' \| 'cinnamon' \| 'cyan' \| 'fuchsia' \| 'gray' \| 'green' \| 'indigo' \| 'informative' \| 'magenta' \| 'negative' \| 'neutral' \| 'notice' \| 'orange' \| 'pink' \| 'positive' \| 'purple' \| 'red' \| 'seafoam' \| 'silver' \| 'turquoise' \| 'yellow'` | 🔴 `'fuchsia' \| 'indigo' \| 'info' \| 'magenta' \| 'negative' \| 'neutral' \| 'positive' \| 'purple' \| 'seafoam' \| 'yellow'` | |
 ## Button
 
 | Prop | Spectrum 2 | RSP v3 | Comments |

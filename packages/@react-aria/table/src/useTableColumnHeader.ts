@@ -18,10 +18,9 @@ import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
 import {TableState} from '@react-stately/table';
 import {useEffect} from 'react';
-import {useFocusable} from '@react-aria/focus';
+import {useFocusable, usePress} from '@react-aria/interactions';
 import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 
 export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
@@ -90,16 +89,16 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   return {
     columnHeaderProps: {
       ...mergeProps(
+        focusableProps,
         gridCellProps,
         pressProps,
-        focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable
         shouldDisableFocus ? {tabIndex: -1} : null
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : undefined,
+      'aria-colspan': node.colSpan && node.colSpan > 1 ? node.colSpan : undefined,
       'aria-sort': ariaSort
     }
   };

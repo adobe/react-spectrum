@@ -47,7 +47,7 @@ export const PopoverExample = () => (
       </Dialog>
     </Popover>
   </DialogTrigger>
-  );
+);
 
 
 const COUNTDOWN = 5000;
@@ -414,3 +414,22 @@ export const PopoverArrowBoundaryOffsetExample = {
     );
   }
 };
+
+export const PopoverTriggerWidthExample = () => (
+  <DialogTrigger>
+    <Button>Open popover</Button>
+    <Popover
+      placement="bottom start"
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        zIndex: 5,
+        width: 'var(--trigger-width)'
+      }}>
+      <Dialog>
+        Should match the width of the trigger button
+      </Dialog>
+    </Popover>
+  </DialogTrigger>
+);

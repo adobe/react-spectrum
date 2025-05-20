@@ -14,13 +14,15 @@ import _clsx from 'clsx';
 
 export let shouldKeepSpectrumClassNames = false;
 
-export function keepSpectrumClassNames() {
+export function keepSpectrumClassNames(): void {
   shouldKeepSpectrumClassNames = true;
-  console.warn(
-    'Legacy spectrum-prefixed class names enabled for backward compatibility. ' +
-    'We recommend replacing instances of CSS overrides targeting spectrum selectors ' +
-    'in your app with custom class names of your own, and disabling this flag.'
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      'Legacy spectrum-prefixed class names enabled for backward compatibility. ' +
+      'We recommend replacing instances of CSS overrides targeting spectrum selectors ' +
+      'in your app with custom class names of your own, and disabling this flag.'
+    );
+  }
 }
 
 export function classNames(cssModule: {[key: string]: string}, ...values: Array<string | Object | undefined>): string {

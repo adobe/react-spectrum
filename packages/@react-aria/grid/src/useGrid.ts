@@ -27,6 +27,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -48,7 +53,18 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** Handler that is called when a user performs an action on the cell. */
-  onCellAction?: (key: Key) => void
+  onCellAction?: (key: Key) => void,
+  /**
+   * Whether pressing the escape key should clear selection in the grid or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface GridAria {
@@ -66,12 +82,15 @@ export interface GridAria {
 export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     isVirtualized,
+    disallowTypeAhead,
     keyboardDelegate,
     focusMode,
     scrollRef,
     getRowText,
     onRowAction,
-    onCellAction
+    onCellAction,
+    escapeKeyBehavior = 'clearSelection',
+    shouldSelectOnPressUp
   } = props;
   let {selectionManager: manager} = state;
 
@@ -99,11 +118,13 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
-    scrollRef
+    scrollRef,
+    disallowTypeAhead,
+    escapeKeyBehavior
   });
 
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,

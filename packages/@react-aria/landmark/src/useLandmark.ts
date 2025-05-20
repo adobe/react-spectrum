@@ -164,7 +164,7 @@ class LandmarkManager implements LandmarkManagerApi {
       return;
     }
 
-    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1) {
+    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1 && process.env.NODE_ENV !== 'production') {
       console.error('Page can contain no more than one landmark with the role "main".');
     }
 
@@ -218,12 +218,12 @@ class LandmarkManager implements LandmarkManagerApi {
     let landmarksWithRole = this.getLandmarksByRole(role);
     if (landmarksWithRole.size > 1) {
       let duplicatesWithoutLabel = [...landmarksWithRole].filter(landmark => !landmark.label);
-      if (duplicatesWithoutLabel.length > 0) {
+      if (duplicatesWithoutLabel.length > 0 && process.env.NODE_ENV !== 'production') {
         console.warn(
           `Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: `,
           duplicatesWithoutLabel.map(landmark => landmark.ref.current)
         );
-      } else {
+      } else if (process.env.NODE_ENV !== 'production') {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
 
@@ -436,7 +436,7 @@ class LandmarkManager implements LandmarkManagerApi {
 }
 
 /** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
-export function createLandmarkController(): LandmarkController {
+export function UNSTABLE_createLandmarkController(): LandmarkController {
   // Get the current landmark manager and create a controller using it.
   let instance: LandmarkManagerApi | null = getLandmarkManager();
   let controller = instance?.createLandmarkController();

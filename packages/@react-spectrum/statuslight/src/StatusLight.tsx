@@ -33,11 +33,11 @@ export const StatusLight = forwardRef(function StatusLight(props: SpectrumStatus
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  if (!children && !props['aria-label']) {
+  if (!children && !props['aria-label'] && process.env.NODE_ENV !== 'production') {
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
     console.warn('A labelled StatusLight must have a role.');
   }
 

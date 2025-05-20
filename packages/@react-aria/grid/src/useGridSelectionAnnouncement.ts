@@ -15,9 +15,9 @@ import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SelectionManager} from '@react-stately/selection';
+import {useEffectEvent, useUpdateEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
-import {useUpdateEffect} from '@react-aria/utils';
 
 export interface GridSelectionAnnouncementProps {
   /**
@@ -36,7 +36,7 @@ interface GridSelectionState<T> {
   selectionManager: SelectionManager
 }
 
-export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>) {
+export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>): void {
   let {
     getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;
@@ -46,8 +46,8 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   // We do this using an ARIA live region.
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
-  useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
+  let announceSelectionChange = useEffectEvent(() => {
+    if (!state.selectionManager.isFocused || selection === lastSelection.current) {
       lastSelection.current = selection;
 
       return;
@@ -61,20 +61,25 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
     let messages: string[] = [];
 
     if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
-      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
-        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
+      let firstKey = state.selectionManager.selectedKeys.keys().next().value;
+      if (firstKey != null && state.collection.getItem(firstKey)) {
+        let currentSelectionText = getRowText(firstKey);
         if (currentSelectionText) {
           messages.push(stringFormatter.format('selectedItem', {item: currentSelectionText}));
         }
       }
     } else if (addedKeys.size === 1 && removedKeys.size === 0) {
-      let addedText = getRowText(addedKeys.keys().next().value);
-      if (addedText) {
-        messages.push(stringFormatter.format('selectedItem', {item: addedText}));
+      let firstKey = addedKeys.keys().next().value;
+      if (firstKey != null) {
+        let addedText = getRowText(firstKey);
+        if (addedText) {
+          messages.push(stringFormatter.format('selectedItem', {item: addedText}));
+        }
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      if (state.collection.getItem(removedKeys.keys().next().value)) {
-        let removedText = getRowText(removedKeys.keys().next().value);
+      let firstKey = removedKeys.keys().next().value;
+      if (firstKey != null && state.collection.getItem(firstKey)) {
+        let removedText = getRowText(firstKey);
         if (removedText) {
           messages.push(stringFormatter.format('deselectedItem', {item: removedText}));
         }
@@ -96,7 +101,17 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
     }
 
     lastSelection.current = selection;
-  }, [selection]);
+  });
+
+  useUpdateEffect(() => {
+    if (state.selectionManager.isFocused) {
+      announceSelectionChange();
+    } else {
+      // Wait a frame in case the collection is about to become focused (e.g. on mouse down).
+      let raf = requestAnimationFrame(announceSelectionChange);
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [selection, state.selectionManager.isFocused]);
 }
 
 function diffSelection(a: Selection, b: Selection): Set<Key> {

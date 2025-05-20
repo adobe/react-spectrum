@@ -16,13 +16,13 @@ import {
   ContextValue,
   Provider
 } from 'react-aria-components';
+import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -40,7 +40,7 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, TextFieldRef>>(null);
+export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
 
 /**
  * A SearchField is a text field designed for searches.
@@ -89,7 +89,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
           value: fontRelative(-2)
         },
         color: {
-          default: 'neutral',
+          default: baseColor('neutral'),
           isDisabled: {
             default: 'disabled',
             forcedColors: 'GrayText'

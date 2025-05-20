@@ -30,7 +30,7 @@ export default meta;
 let states = [
   {size: ['S', 'M', 'L', 'XL']},
   {fillStyle: ['bold', 'subtle', 'outline']},
-  {variant: ['accent', 'informative', 'neutral', 'positive', 'notice', 'negative', 'gray', 'red', 'orange', 'yellow', 'charteuse', 'celery', 'green', 'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'brown', 'cinnamon', 'silver']}
+  {variant: ['accent', 'informative', 'neutral', 'positive', 'notice', 'negative', 'gray', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green', 'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'brown', 'cinnamon', 'silver']}
 ];
 
 let combinations = generatePowerset(states);
@@ -38,7 +38,7 @@ let chunkSize = Math.ceil(combinations.length / 3);
 
 const Template = ({combos, ...args}) => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combos.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');

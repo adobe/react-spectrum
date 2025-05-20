@@ -15,9 +15,10 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {createSyntheticEvent, setEventTarget, useSyntheticBlurEvent} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
-import {useSyntheticBlurEvent} from './utils';
+import {getActiveElement, getEventTarget, getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
 
 export interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */
@@ -49,12 +50,20 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     isFocusWithin: false
   });
 
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+
   let onBlur = useCallback((e: FocusEvent) => {
+    // Ignore events bubbling through portals.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
     if (state.current.isFocusWithin && !(e.currentTarget as Element).contains(e.relatedTarget as Element)) {
       state.current.isFocusWithin = false;
+      removeAllGlobalListeners();
 
       if (onBlurWithin) {
         onBlurWithin(e);
@@ -64,13 +73,20 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
         onFocusWithinChange(false);
       }
     }
-  }, [onBlurWithin, onFocusWithinChange, state]);
+  }, [onBlurWithin, onFocusWithinChange, state, removeAllGlobalListeners]);
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
+    // Ignore events bubbling through portals.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
     // Double check that document.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
-    if (!state.current.isFocusWithin && document.activeElement === e.target) {
+    const ownerDocument = getOwnerDocument(e.target);
+    const activeElement = getActiveElement(ownerDocument);
+    if (!state.current.isFocusWithin && activeElement === getEventTarget(e.nativeEvent)) {
       if (onFocusWithin) {
         onFocusWithin(e);
       }
@@ -81,13 +97,26 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
       state.current.isFocusWithin = true;
       onSyntheticFocus(e);
+
+      // Browsers don't fire blur events when elements are removed from the DOM.
+      // However, if a focus event occurs outside the element we're tracking, we
+      // can manually fire onBlur.
+      let currentTarget = e.currentTarget;
+      addGlobalListener(ownerDocument, 'focus', e => {
+        if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target as Element)) {
+          let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target});
+          setEventTarget(nativeEvent, currentTarget);
+          let event = createSyntheticEvent<FocusEvent>(nativeEvent);
+          onBlur(event);
+        }
+      }, {capture: true});
     }
-  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus]);
+  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus, addGlobalListener, onBlur]);
 
   if (isDisabled) {
     return {
       focusWithinProps: {
-        // These should not have been null, that would conflict in mergeProps
+        // These cannot be null, that would conflict in mergeProps
         onFocus: undefined,
         onBlur: undefined
       }

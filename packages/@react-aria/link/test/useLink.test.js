@@ -23,7 +23,7 @@ describe('useLink', function () {
   it('handles defaults', function () {
     let {linkProps} = renderLinkHook({children: 'Test Link'});
     expect(linkProps.role).toBeUndefined();
-    expect(linkProps.tabIndex).toBeUndefined();
+    expect(linkProps.tabIndex).toBe(0);
     expect(typeof linkProps.onKeyDown).toBe('function');
   });
 
@@ -39,12 +39,5 @@ describe('useLink', function () {
     expect(linkProps['aria-disabled']).toBe(true);
     expect(linkProps.tabIndex).toBeUndefined();
     expect(typeof linkProps.onKeyDown).toBe('function');
-  });
-
-  it('handles onClick warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {linkProps} = renderLinkHook({children: 'Test Link', onClick: () => {}});
-    linkProps.onClick();
-    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
 });

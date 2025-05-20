@@ -29,6 +29,11 @@ export interface TabListState<T> extends SingleSelectListState<T> {
 export function useTabListState<T extends object>(props: TabListStateOptions<T>): TabListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
+    onSelectionChange: props.onSelectionChange ? (key => {
+      if (key != null) {
+        props.onSelectionChange?.(key);
+      }
+    }) : undefined,
     suppressTextValueWarning: true,
     defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set()) ?? undefined
   });
@@ -43,7 +48,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey = currentSelectedKey;
-    if (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey)) {
+    if (props.selectedKey == null && (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey))) {
       selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
       if (selectedKey != null) {
         // directly set selection because replace/toggle selection won't consider disabled keys

@@ -24,7 +24,6 @@ import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './styl
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
@@ -45,52 +44,6 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arro
   /** The type of overlay that should be rendered when on a mobile device. */
   // mobileType?: 'modal' | 'fullscreen' | 'fullscreenTakeover' // TODO: add tray back in
 }
-
-const fadeKeyframes = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-const slideUpKeyframes = keyframes(`
-  from {
-    transform: translateY(-4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideDownKeyframes = keyframes(`
-  from {
-    transform: translateY(4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideRightKeyframes = keyframes(`
-  from {
-    transform: translateX(4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
-const slideLeftKeyframes = keyframes(`
-  from {
-    transform: translateX(-4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
 
 let popover = style({
   ...colorScheme(),
@@ -124,65 +77,44 @@ let popover = style({
     }
   },
   // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: '[calc(100vw - 24px)]',
+  maxWidth: 'calc(100vw - 24px)',
   boxSizing: 'border-box',
+  display: 'flex',
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  },
   translateY: {
     placement: {
-      bottom: {
-        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
-      },
       top: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
+      },
+      bottom: {
+        isEntering: -4,
+        isExiting: -4
       }
-    }
+    },
+    isSubmenu: 0
   },
   translateX: {
     placement: {
       left: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
       },
       right: {
-        isArrowShown: 8
-      }
-    }
-  },
-  animation: {
-    placement: {
-      top: {
-        isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
-      },
-      bottom: {
-        isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
-      },
-      left: {
-        isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
-      },
-      right: {
-        isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
+        isEntering: -4,
+        isExiting: -4
       }
     },
-    isSubmenu: {
-      isEntering: fadeKeyframes,
-      isExiting: fadeKeyframes
-    }
+    isSubmenu: 0
   },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
+  transition: '[opacity, translate]',
+  transitionDuration: 200,
+  transitionTimingFunction: {
     isExiting: 'in'
   },
-  transition: '[opacity, transform]',
-  willChange: '[opacity, transform]',
   isolation: 'isolate',
   pointerEvents: {
     isExiting: 'none'
@@ -193,6 +125,8 @@ let popover = style({
 let arrow = style({
   display: 'block',
   fill: '--s2-container-bg',
+  width: 18,
+  height: 9,
   rotate: {
     default: 180,
     placement: {
@@ -262,6 +196,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   return (
     <AriaPopover
       {...props}
+      offset={(props.offset ?? 8) + (hideArrow ? 0 : 8)}
       ref={popoverRef}
       style={{
         ...UNSAFE_style,
@@ -273,7 +208,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
         <>
           {!hideArrow && (
             <OverlayArrow>
-              <svg width={18} height={9} viewBox="0 0 18 10" className={arrow(renderProps)}>
+              <svg viewBox="0 0 18 10" className={arrow(renderProps)}>
                 <path transform="translate(0 -1)" d="M1 1L7.93799 8.52588C8.07224 8.67448 8.23607 8.79362 8.41895 8.87524C8.60182 8.95687 8.79973 8.9993 9 9C9.19984 8.99882 9.39724 8.95606 9.57959 8.87427C9.76193 8.79248 9.9253 8.67336 10.0591 8.5249L17 1" />
               </svg>
             </OverlayArrow>
@@ -285,17 +220,19 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
+export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {
+}
+
 
 const dialogStyle = style({
   padding: 8,
   boxSizing: 'border-box',
   outlineStyle: 'none',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto',
   position: 'relative',
-  size: 'full',
-  maxSize: '[inherit]'
+  width: 'full',
+  maxSize: 'inherit'
 }, getAllowedOverrides({height: true}));
 
 /**
@@ -303,11 +240,13 @@ const dialogStyle = style({
  */
 export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
+  const {triggerRef, isOpen, onOpenChange, ...otherProps} = props;
+
 
   return (
-    <PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+    <PopoverBase  isOpen={isOpen} onOpenChange={onOpenChange} triggerRef={triggerRef} size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
       <Dialog
-        {...props}
+        {...otherProps}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogStyle(null, props.styles)}>

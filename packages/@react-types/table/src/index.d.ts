@@ -29,7 +29,18 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
-  disabledKeys?: Iterable<Key>
+  disabledKeys?: Iterable<Key>,
+  /**
+   * Whether pressing the escape key should clear selection in the table or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 /**
@@ -153,7 +164,9 @@ export interface CellProps {
   /** The contents of the cell. */
   children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
 }
 
 export type CellElement = ReactElement<CellProps>;

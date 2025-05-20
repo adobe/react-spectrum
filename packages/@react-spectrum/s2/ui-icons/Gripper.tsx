@@ -11,12 +11,26 @@
  */
 
 import Gripper_M from './S2_GripperSize100.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 24
+    }
+  },
+  height: {
+    size: {
+      M: 4
+    }
+  }
+});
+
+export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Gripper_M {...otherProps} />;
+      return <Gripper_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

@@ -28,7 +28,7 @@ export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' |
   /**
    * The Radios contained within the RadioGroup.
    */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The size of the RadioGroup.
    *
@@ -47,7 +47,7 @@ export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' |
   isEmphasized?: boolean
 }
 
-export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+export const RadioGroupContext = createContext<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.
@@ -85,7 +85,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: 'calc(var(--field-height) - 1lh)'
         }
       }, getAllowedOverrides())({
         size,

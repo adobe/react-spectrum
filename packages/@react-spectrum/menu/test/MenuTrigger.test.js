@@ -29,7 +29,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -117,15 +117,15 @@ describe('MenuTrigger', function () {
     act(() => {jest.runAllTimers();});
 
     let menu = menuTester.menu;
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
     let menuItem3 = within(menu).getByText('Baz');
-    expect(menuItem1).toBeTruthy();
-    expect(menuItem2).toBeTruthy();
-    expect(menuItem3).toBeTruthy();
+    expect(menuItem1).toBeInTheDocument();
+    expect(menuItem2).toBeInTheDocument();
+    expect(menuItem3).toBeInTheDocument();
 
     expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
     expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
@@ -160,13 +160,13 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
     await user.click(triggerButton);
     act(() => {jest.runAllTimers();});
 
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
   });
 
@@ -180,7 +180,7 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
     await user.click(triggerButton);
@@ -202,7 +202,7 @@ describe('MenuTrigger', function () {
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
       let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
-      let menuItems = menuTester.options;
+      let menuItems = menuTester.options();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
@@ -228,7 +228,7 @@ describe('MenuTrigger', function () {
         expect(onSelect).toBeCalledTimes(0);
       }
 
-      await menuTester.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
       if (Component === MenuTrigger) {
         expect(onSelectionChange).toBeCalledTimes(1);
@@ -260,11 +260,35 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onSelectionChange).toBeCalledTimes(0);
       menuTester.setInteractionType('keyboard');
-      await menuTester.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
       expect(menuTester.menu).toBeInTheDocument();
       expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
       expect(onOpenChange).toBeCalledTimes(1);
+    });
+
+    it.each`
+      Name               | Component        | props
+      ${'MenuTrigger'}   | ${MenuTrigger}   | ${{onOpenChange}}
+    `('$Name should prevent Esc from clearing selection and close the menu if escapeKeyBehavior is "none"', async function ({Component, props}) {
+      tree = renderComponent(Component, props, {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container, interactionType: 'keyboard'});
+      expect(onOpenChange).toBeCalledTimes(0);
+      await menuTester.open();
+
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
+      await menuTester.selectOption({option: 'Bar', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+
+      await menuTester.close();
+      expect(menuTester.menu).not.toBeInTheDocument();
+      expect(onOpenChange).toBeCalledTimes(2);
     });
 
     it.each`
@@ -345,7 +369,7 @@ describe('MenuTrigger', function () {
     const getMenuOrThrow = (tree, button) => {
       try {
         let menu = tree.getByRole('menu');
-        expect(menu).toBeTruthy();
+        expect(menu).toBeInTheDocument();
         expect(menu).toHaveAttribute('aria-labelledby', button.id);
       } catch {
         throw ERROR_MENU_NOT_FOUND;
@@ -435,7 +459,7 @@ describe('MenuTrigger', function () {
         menuItemRole = 'menuitemradio';
       }
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       let menuItems = within(menu).getAllByRole(menuItemRole);
       let selectedItem = menuItems[idx < 0 ? menuItems.length + idx : idx];
       expect(selectedItem).toBe(document.activeElement);
@@ -735,7 +759,7 @@ describe('MenuTrigger', function () {
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
-          <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <UNSAFE_PortalProvider getContainer={() => props.container.current}>
             <MenuTrigger>
               <ActionButton aria-label="trigger" />
               <Menu>
@@ -744,7 +768,7 @@ describe('MenuTrigger', function () {
                 <Item key="3">Three</Item>
               </Menu>
             </MenuTrigger>
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         </Provider>
       );
     }
@@ -783,6 +807,36 @@ describe('MenuTrigger', function () {
 
       expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
     });
+  });
+
+  it('closes if menu is tabbed away from', async function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button variant="primary">
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    menuTester.setInteractionType('keyboard');
+
+    await menuTester.open();
+    act(() => {jest.runAllTimers();});
+
+    let menu = menuTester.menu;
+
+    await user.tab();
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    expect(menu).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(menuTester.trigger);
   });
 });
 

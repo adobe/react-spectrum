@@ -13,16 +13,34 @@
 import Asterisk_L from './S2_AsteriskSize200.svg';
 import Asterisk_M from './S2_AsteriskSize100.svg';
 import Asterisk_XL from './S2_AsteriskSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 8,
+      L: 10,
+      XL: 10
+    }
+  },
+  height: {
+    size: {
+      M: 8,
+      L: 10,
+      XL: 10
+    }
+  }
+});
+
+export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Asterisk_M {...otherProps} />;
+      return <Asterisk_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <Asterisk_L {...otherProps} />;
+      return <Asterisk_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <Asterisk_XL {...otherProps} />;
+      return <Asterisk_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate} from '../types';
+import {AnyCalendarDate, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -70,7 +70,7 @@ function toGregorian(date: AnyCalendarDate) {
  * Note that eras before 1868 (Gregorian) are not currently supported by this implementation.
  */
 export class JapaneseCalendar extends GregorianCalendar {
-  identifier = 'japanese';
+  identifier: CalendarIdentifier = 'japanese';
 
   fromJulianDay(jd: number): CalendarDate {
     let date = super.fromJulianDay(jd);
@@ -85,11 +85,11 @@ export class JapaneseCalendar extends GregorianCalendar {
     );
   }
 
-  toJulianDay(date: AnyCalendarDate) {
+  toJulianDay(date: AnyCalendarDate): number {
     return super.toJulianDay(toGregorian(date));
   }
 
-  balanceDate(date: Mutable<AnyCalendarDate>) {
+  balanceDate(date: Mutable<AnyCalendarDate>): void {
     let gregorianDate = toGregorian(date);
     let era = findEraFromGregorianDate(gregorianDate);
 
@@ -102,7 +102,7 @@ export class JapaneseCalendar extends GregorianCalendar {
     this.constrainDate(date);
   }
 
-  constrainDate(date: Mutable<AnyCalendarDate>) {
+  constrainDate(date: Mutable<AnyCalendarDate>): void {
     let idx = ERA_NAMES.indexOf(date.era);
     let end = ERA_END_DATES[idx];
     if (end != null) {
@@ -131,7 +131,7 @@ export class JapaneseCalendar extends GregorianCalendar {
     }
   }
 
-  getEras() {
+  getEras(): string[] {
     return ERA_NAMES;
   }
 

@@ -24,7 +24,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumTreeViewProps, TreeView, TreeViewItem} from '../src';
+import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../src';
 
 let states = [
   {selectionMode: ['multiple', 'single']},
@@ -78,34 +78,8 @@ const Template = ({combos}) => (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
           <TreeView {...c} disabledKeys={['projects-1']} defaultExpandedKeys={['Photos', 'projects', 'projects-1']} aria-label="test static tree">
             <TreeViewItem href="https://adobe.com/" id="Photos" textValue="Photos">
-              <Text>Photos</Text>
-              <Folder />
-              <ActionGroup>
-                <Item key="edit">
-                  <Edit />
-                  <Text>Edit</Text>
-                </Item>
-                <Item key="delete">
-                  <Delete />
-                  <Text>Delete</Text>
-                </Item>
-              </ActionGroup>
-            </TreeViewItem>
-            <TreeViewItem id="projects" textValue="Projects">
-              <Text>Projects</Text>
-              <Folder />
-              <ActionMenu>
-                <Item key="add">
-                  <Add />
-                  <Text>Add</Text>
-                </Item>
-                <Item key="delete">
-                  <Delete />
-                  <Text>Delete</Text>
-                </Item>
-              </ActionMenu>
-              <TreeViewItem id="projects-1" textValue="Projects-1">
-                <Text>Projects-1</Text>
+              <TreeViewItemContent>
+                <Text>Photos</Text>
                 <Folder />
                 <ActionGroup>
                   <Item key="edit">
@@ -117,38 +91,76 @@ const Template = ({combos}) => (
                     <Text>Delete</Text>
                   </Item>
                 </ActionGroup>
-                <TreeViewItem id="projects-1A" textValue="Projects-1A">
-                  <Text>Projects-1A</Text>
-                  <FileTxt />
-                  <ActionMenu>
-                    <Item key="add">
-                      <Add />
-                      <Text>Add</Text>
-                    </Item>
-                    <Item key="delete">
-                      <Delete />
-                      <Text>Delete</Text>
-                    </Item>
-                  </ActionMenu>
-                </TreeViewItem>
-              </TreeViewItem>
-              <TreeViewItem id="projects-2" textValue="Projects-2">
-                <Text>Projects-2</Text>
-                <FileTxt />
-                <ActionGroup>
-                  <Item key="edit">
-                    <Edit />
-                    <Text>Edit</Text>
+              </TreeViewItemContent>
+            </TreeViewItem>
+            <TreeViewItem id="projects" textValue="Projects">
+              <TreeViewItemContent>
+                <Text>Projects</Text>
+                <Folder />
+                <ActionMenu>
+                  <Item key="add">
+                    <Add />
+                    <Text>Add</Text>
                   </Item>
                   <Item key="delete">
                     <Delete />
                     <Text>Delete</Text>
                   </Item>
-                </ActionGroup>
+                </ActionMenu>
+              </TreeViewItemContent>
+              <TreeViewItem id="projects-1" textValue="Projects-1">
+                <TreeViewItemContent>
+                  <Text>Projects-1</Text>
+                  <Folder />
+                  <ActionGroup>
+                    <Item key="edit">
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item key="delete">
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </ActionGroup>
+                </TreeViewItemContent>
+                <TreeViewItem id="projects-1A" textValue="Projects-1A">
+                  <TreeViewItemContent>
+                    <Text>Projects-1A</Text>
+                    <FileTxt />
+                    <ActionMenu>
+                      <Item key="add">
+                        <Add />
+                        <Text>Add</Text>
+                      </Item>
+                      <Item key="delete">
+                        <Delete />
+                        <Text>Delete</Text>
+                      </Item>
+                    </ActionMenu>
+                  </TreeViewItemContent>
+                </TreeViewItem>
+              </TreeViewItem>
+              <TreeViewItem id="projects-2" textValue="Projects-2">
+                <TreeViewItemContent>
+                  <Text>Projects-2</Text>
+                  <FileTxt />
+                  <ActionGroup>
+                    <Item key="edit">
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item key="delete">
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </ActionGroup>
+                </TreeViewItemContent>
               </TreeViewItem>
               <TreeViewItem id="projects-3" textValue="Projects-3">
-                <Text>Projects-3</Text>
-                <FileTxt />
+                <TreeViewItemContent>
+                  <Text>Projects-3</Text>
+                  <FileTxt />
+                </TreeViewItemContent>
               </TreeViewItem>
             </TreeViewItem>
           </TreeView>
@@ -178,7 +190,9 @@ const EmptyTemplate = () =>
       renderEmptyState={renderEmptyState}>
       {() => (
         <TreeViewItem textValue="dummy value">
-          <Text>dummy content</Text>
+          <TreeViewItemContent>
+            <Text>dummy content</Text>
+          </TreeViewItemContent>
         </TreeViewItem>
       )}
     </TreeView>

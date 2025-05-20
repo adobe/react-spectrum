@@ -2,9 +2,11 @@
   "actionbar.actions": "Åtgärder",
   "actionbar.actionsAvailable": "Åtgärder finns.",
   "actionbar.clearSelection": "Rensa markering",
-  "actionbar.selected": "{count, plural, =0 {Inga valda} one {# vald} other {# valda}}",
+  "actionbar.selected": "{count, plural, =0 {Inga valda} other {# valda}}",
   "actionbar.selectedAll": "Alla markerade",
+  "breadcrumbs.more": "Fler artiklar",
   "button.pending": "väntande",
+  "combobox.noResults": "Inga resultat",
   "contextualhelp.help": "Hjälp",
   "contextualhelp.info": "Information",
   "dialog.alert": "Varning",
@@ -17,6 +19,8 @@
   "label.(optional)": "(valfritt)",
   "label.(required)": "(krävs)",
   "menu.moreActions": "Fler åtgärder",
+  "notificationbadge.indicatorOnly": "Ny aktivitet",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Välj…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "Visa mindre",
   "tag.noTags": "Ingen",
   "tag.showAllButtonLabel": "Visa alla ({tagCount, number})",
-  "breadcrumbs.more": "Fler alternativ"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

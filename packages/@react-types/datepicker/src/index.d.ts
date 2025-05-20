@@ -25,7 +25,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, CalendarIdentifier, Calendar as ICalendar, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
 import {PageBehavior} from '@react-types/calendar';
 
@@ -37,7 +37,7 @@ type MappedDateValue<T> =
   never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DateFieldBase<T extends DateValue> extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
+interface DateFieldBase<T extends DateValue> extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
@@ -124,7 +124,13 @@ interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldB
    * Whether the calendar popover should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the 
+   * `createCalendar` function from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
 export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase<T> {}

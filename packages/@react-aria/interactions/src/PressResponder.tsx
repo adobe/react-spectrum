@@ -14,7 +14,7 @@ import {FocusableElement} from '@react-types/shared';
 import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
-import React, {ForwardedRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ForwardedRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 interface PressResponderProps extends PressProps {
   children: ReactNode
@@ -39,10 +39,12 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
 
   useEffect(() => {
     if (!isRegistered.current) {
-      console.warn(
-        'A PressResponder was rendered without a pressable child. ' +
-        'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
-      );
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          'A PressResponder was rendered without a pressable child. ' +
+          'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
+        );
+      }
       isRegistered.current = true; // only warn once in strict mode.
     }
   }, []);
@@ -54,7 +56,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
   );
 });
 
-export function ClearPressResponder({children}: {children: ReactNode}) {
+export function ClearPressResponder({children}: {children: ReactNode}): JSX.Element {
   let context = useMemo(() => ({register: () => {}}), []);
   return (
     <PressResponderContext.Provider value={context}>

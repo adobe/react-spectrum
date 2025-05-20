@@ -19,23 +19,12 @@ import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useExitAnimation, useResizeObserver} from '@react-aria/utils';
+import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-const slideIn = keyframes(`
-  from { transform: translateY(100%); opacity: 0 }
-  to { transform: translateY(0px); opacity: 1 }
-`);
-
-const slideOut = keyframes(`
-  from { transform: translateY(0px); opacity: 1 }
-  to { transform: translateY(100%); opacity: 0 }
-`);
 
 const actionBarStyles = style({
   borderRadius: 'lg',
@@ -65,7 +54,7 @@ const actionBarStyles = style({
   position: {
     isInContainer: 'absolute'
   },
-  bottom: 8,
+  bottom: 0,
   insetStart: 8,
   '--insetEnd': {
     type: 'insetEnd',
@@ -77,11 +66,13 @@ const actionBarStyles = style({
   },
   marginX: 'auto',
   maxWidth: 960,
-  animation: {
-    isInContainer: slideIn,
-    isExiting: slideOut
-  },
-  animationDuration: 200
+  transition: 'transform',
+  transitionDuration: 200,
+  translateY: {
+    default: -8,
+    isEntering: 'full',
+    isExiting: 'full'
+  }
 });
 
 export interface ActionBarProps extends SlotProps {
@@ -121,7 +112,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
     setLastCount(selectedItemCount);
   }
-    
+
   // Measure the width of the collection's scrollbar and offset the action bar by that amount.
   let scrollRef = props.scrollRef;
   let [scrollbarWidth, setScrollbarWidth] = useState(0);
@@ -158,12 +149,15 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
     }
   }, [stringFormatter, scrollRef]);
 
+  let objectRef = useObjectRef(ref);
+  let isEntering = useEnterAnimation(objectRef, !!scrollRef);
+
   return (
     <FocusScope restoreFocus>
       <div
-        ref={ref}
+        ref={objectRef}
         {...keyboardProps}
-        className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isExiting})}
+        className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
         style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>
         <div className={style({order: 1, marginStart: 'auto'})}>
           <ActionButtonGroup
@@ -197,7 +191,14 @@ interface ActionBarContainerHookProps {
   scrollRef?: RefObject<HTMLElement | null>
 }
 
-export function useActionBarContainer(props: ActionBarContainerHookProps) {
+interface ActionBarContainerHookResult {
+  selectedKeys: 'all' | Iterable<Key>,
+  onSelectionChange: (keys: 'all' | Iterable<Key>) => void,
+  actionBar: ReactElement,
+  actionBarHeight: number
+}
+
+export function useActionBarContainer(props: ActionBarContainerHookProps): ActionBarContainerHookResult {
   let {renderActionBar, scrollRef} = props;
   let [selectedKeys, setSelectedKeys] = useControlledState(props.selectedKeys, props.defaultSelectedKeys || new Set(), props.onSelectionChange);
   let selectedKeysSet = useMemo(() => selectedKeys === 'all' ? selectedKeys as 'all' : new Set(selectedKeys), [selectedKeys]);

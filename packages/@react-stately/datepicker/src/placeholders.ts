@@ -57,7 +57,7 @@ const placeholders = new LocalizedStringDictionary({
   ia: {year: 'aaaa', month: 'mm', day: 'dd'},
   id: {year: 'tttt', month: 'bb', day: 'hh'},
   it: {year: 'aaaa', month: 'mm', day: 'gg'},
-  ja: {year: ' 年 ', month: '月', day: '日'},
+  ja: {year: '年', month: '月', day: '日'},
   ka: {year: 'წწწწ', month: 'თთ', day: 'რრ'},
   kk: {year: 'жжжж', month: 'аа', day: 'кк'},
   kn: {year: 'ವವವವ', month: 'ಮಿಮೀ', day: 'ದಿದಿ'},
@@ -93,7 +93,7 @@ const placeholders = new LocalizedStringDictionary({
   'zh-TW': {year: '年', month: '月', day: '日'}
 }, 'en');
 
-export function getPlaceholder(field: string, value: string, locale: string) {
+export function getPlaceholder(field: string, value: string, locale: string): string {
   // Use the actual placeholder value for the era and day period fields.
   if (field === 'era' || field === 'dayPeriod') {
     return value;

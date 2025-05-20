@@ -11,12 +11,14 @@
  */
 
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
+import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
+import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useKeyboard} from '@react-aria/interactions';
+import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -30,66 +32,85 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string) => boolean
+  filter?: (textValue: string, inputValue: string) => boolean,
+
+  /**
+   * Whether or not to focus the first item in the collection after a filter is performed.
+   * @default false
+   */
+  disableAutoFocusFirst?: boolean
 }
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the wrapped collection element. */
-  collectionRef: RefObject<HTMLElement | null>,
-  /** The ref for the wrapped input element. */
-  inputRef: RefObject<HTMLInputElement | null>
+  inputRef: RefObject<HTMLInputElement | null>,
+  /** The ref for the wrapped collection element. */
+  collectionRef: RefObject<HTMLElement | null>
 }
 
 export interface AutocompleteAria {
-  /** Props for the autocomplete input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
+  textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
   collectionProps: CollectionOptions,
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filterFn?: (nodeTextValue: string) => boolean
+  filter?: (nodeTextValue: string) => boolean
 }
 
 /**
- * Provides the behavior and accessibility implementation for a autocomplete component.
- * A autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
+ * Provides the behavior and accessibility implementation for an autocomplete component.
+ * An autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
+    inputRef,
     collectionRef,
     filter,
-    inputRef
+    disableAutoFocusFirst = false
   } = props;
 
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
-  let queuedActiveDescendant = useRef(null);
+  let queuedActiveDescendant = useRef<string | null>(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
 
-  let updateActiveDescendant = useEffectEvent((e) => {
-    let {target} = e;
-    if (queuedActiveDescendant.current === target.id) {
+  // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
+  // moving focus back to the subtriggers
+  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual';
+
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
+  let updateActiveDescendant = useEffectEvent((e: Event) => {
+    // Ensure input is focused if the user clicks on the collection directly.
+    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
+      inputRef.current.focus();
+    }
+
+    let target = e.target as Element | null;
+    if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
     }
 
     clearTimeout(timeout.current);
-    e.stopPropagation();
-
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
-          queuedActiveDescendant.current = null;
         }, 500);
       } else {
+        queuedActiveDescendant.current = target.id;
         state.setFocusedNodeId(target.id);
       }
     } else {
+      queuedActiveDescendant.current = null;
       state.setFocusedNodeId(null);
     }
 
@@ -99,14 +120,14 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
       // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-      // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
+      // of the letter you just typed. If we recieve another focus event then we clear the queued update
       // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
       // React 19's extra call of the callback ref in strict mode
-      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
       lastCollectionNode.current = collectionNode;
-      collectionNode.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      collectionNode.addEventListener('focusin', updateActiveDescendant);
     } else {
-      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
     }
   }, [updateActiveDescendant]);
 
@@ -126,11 +147,16 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     );
   });
 
-  let clearVirtualFocus = useEffectEvent(() => {
+  let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
+    moveVirtualFocus(getActiveElement());
+    queuedActiveDescendant.current = null;
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
-      bubbles: true
+      bubbles: true,
+      detail: {
+        clearFocusKey
+      }
     });
     clearTimeout(timeout.current);
     delayNextActiveDescendant.current = false;
@@ -138,24 +164,28 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   });
 
   // TODO: update to see if we can tell what kind of event (paste vs backspace vs typing) is happening instead
-  let onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
     // for screen reader announcements
-    if (state.inputValue !== e.target.value && state.inputValue.length <= e.target.value.length) {
+    if (state.inputValue !== value && state.inputValue.length <= value.length && !disableAutoFocusFirst) {
       focusFirstItem();
     } else {
-      clearVirtualFocus();
+      // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
+      clearVirtualFocus(true);
     }
 
-    state.setInputValue(e.target.value);
+    state.setInputValue(value);
   };
 
+  let keyDownTarget = useRef<Element | null>(null);
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
+    keyDownTarget.current = e.target as Element;
     if (e.nativeEvent.isComposing) {
       return;
     }
 
+    let focusedNodeId = queuedActiveDescendant.current;
     switch (e.key) {
       case 'a':
         if (isCtrlKeyPressed(e)) {
@@ -166,18 +196,19 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
-        // Also set the inputValue to '' to cover Firefox case where Esc doesn't actually clear searchfields. Normally we already
-        // handle this in useSearchField, but we are directly setting the inputValue on the input element in RAC Autocomplete instead of
-        // passing it to the SearchField via props. This means that a controlled value set on the Autocomplete isn't synced up with the
-        // SearchField until the user makes a change to the field's value via typing
-        if (e.isPropagationStopped()) {
-          state.setInputValue('');
+        if (e.isDefaultPrevented()) {
           return;
         }
         break;
       case ' ':
         // Space shouldn't trigger onAction so early return.
-
+        return;
+      case 'Tab':
+        // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
+        // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
+        if ('continuePropagation' in e) {
+          e.continuePropagation();
+        }
         return;
       case 'Home':
       case 'End':
@@ -185,7 +216,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       case 'PageUp':
       case 'ArrowUp':
       case 'ArrowDown': {
-        if ((e.key === 'Home' || e.key === 'End') && state.focusedNodeId == null && e.shiftKey) {
+        if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
         }
 
@@ -200,26 +231,38 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         collectionRef.current?.dispatchEvent(focusCollection);
         break;
       }
-      case 'ArrowLeft':
-      case 'ArrowRight':
-        // TODO: will need to special case this so it doesn't clear the focused key if we are currently
-        // focused on a submenutrigger? May not need to since focus would
-        // But what about wrapped grids where ArrowLeft and ArrowRight should navigate left/right
-        clearVirtualFocus();
-        break;
     }
 
     // Emulate the keyboard events that happen in the input field in the wrapped collection. This is for triggering things like onAction via Enter
-    // or moving focus from one item to another
-    if (state.focusedNodeId == null) {
-      collectionRef.current?.dispatchEvent(
+    // or moving focus from one item to another. Stop propagation on the input event if it isn't already stopped so it doesn't leak out. For events
+    // like ESC, the dispatched event below will bubble out of the collection and be stopped if handled by useSelectableCollection, otherwise will bubble
+    // as expected
+    if (!e.isPropagationStopped()) {
+      e.stopPropagation();
+    }
+
+    let shouldPerformDefaultAction = true;
+    if (focusedNodeId == null) {
+      shouldPerformDefaultAction = collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
+      ) || false;
     } else {
-      let item = document.getElementById(state.focusedNodeId);
-      item?.dispatchEvent(
+      let item = document.getElementById(focusedNodeId);
+      shouldPerformDefaultAction = item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
+      ) || false;
+    }
+
+    if (shouldPerformDefaultAction) {
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight': {
+          // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
+          // user's keyboard navigation restarts from where they left off
+          clearVirtualFocus();
+          break;
+        }
+      }
     }
   };
 
@@ -227,14 +270,15 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     // Dispatch simulated key up events for things like triggering links in listbox
     // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
     // is detected by usePress instead of the original keyup originating from the input
-    if (e.target === inputRef.current) {
+    if (e.target === keyDownTarget.current) {
       e.stopImmediatePropagation();
-      if (state.focusedNodeId == null) {
+      let focusedNodeId = queuedActiveDescendant.current;
+      if (focusedNodeId == null) {
         collectionRef.current?.dispatchEvent(
           new KeyboardEvent(e.type, e)
         );
       } else {
-        let item = document.getElementById(state.focusedNodeId);
+        let item = document.getElementById(focusedNodeId);
         item?.dispatchEvent(
           new KeyboardEvent(e.type, e)
         );
@@ -247,9 +291,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     return () => {
       document.removeEventListener('keyup', onKeyUpCapture, true);
     };
-  }, [inputRef, onKeyUpCapture]);
-
-  let {keyboardProps} = useKeyboard({onKeyDown});
+  }, [onKeyUpCapture]);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({
@@ -265,11 +307,39 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     return true;
   }, [state.inputValue, filter]);
 
+  // Be sure to clear/restore the virtual + collection focus when blurring/refocusing the field so we only show the
+  // focus ring on the virtually focused collection when are actually interacting with the Autocomplete
+  let onBlur = (e: ReactFocusEvent) => {
+    if (!e.isTrusted) {
+      return;
+    }
+
+    let lastFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
+    if (lastFocusedNode) {
+      dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);
+    }
+  };
+
+  let onFocus = (e: ReactFocusEvent) => {
+    if (!e.isTrusted) {
+      return;
+    }
+
+    let curFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
+    if (curFocusedNode) {
+      let target = e.target;
+      queueMicrotask(() => {
+        dispatchVirtualBlur(target, curFocusedNode);
+        dispatchVirtualFocus(curFocusedNode, target);
+      });
+    }
+  };
+
   return {
-    inputProps: {
+    textFieldProps: {
       value: state.inputValue,
       onChange,
-      ...keyboardProps,
+      onKeyDown,
       autoComplete: 'off',
       'aria-haspopup': 'listbox',
       'aria-controls': collectionId,
@@ -279,17 +349,16 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
-      spellCheck: 'false'
+      spellCheck: 'false',
+      enterKeyHint: 'go',
+      onBlur,
+      onFocus
     },
     collectionProps: mergeProps(collectionProps, {
-      // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
-      shouldUseVirtualFocus: true,
-      disallowTypeAhead: true,
-      // Prevent the emulated keyboard events that were dispatched on the wrapped collection from propagating outside of the autocomplete since techincally
-      // they've been handled by the input already
-      onKeyDown: (e) => e.stopPropagation()
+      shouldUseVirtualFocus,
+      disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
-    filterFn: filter != null ? filterFn : undefined
+    filter: filter != null ? filterFn : undefined
   };
 }

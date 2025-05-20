@@ -12,10 +12,10 @@
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps, ContextValue} from 'react-aria-components';
+import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
@@ -39,13 +39,13 @@ const hoverBackground = {
   isStaticColor: 'transparent-overlay-200'
 } as const;
 
-const styles = style({
+const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boolean, isPressed: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  size: 'control',
+  size: controlSize(),
   flexShrink: 0,
   borderRadius: 'full',
   padding: 0,
@@ -60,7 +60,7 @@ const styles = style({
   '--iconPrimary': {
     type: 'color',
     value: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isDisabled: 'disabled',
       isStaticColor: {
         default: baseColor('transparent-overlay-800'),
@@ -79,7 +79,7 @@ const styles = style({
   }
 }, getAllowedOverrides());
 
-export const CloseButtonContext = createContext<ContextValue<CloseButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const CloseButtonContext = createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * A CloseButton allows a user to dismiss a dialog.

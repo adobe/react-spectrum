@@ -32,10 +32,17 @@ export function createEventHandler<T extends SyntheticEvent>(handler?: (e: BaseE
         return e.isDefaultPrevented();
       },
       stopPropagation() {
-        console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
+        if (shouldStopPropagation && process.env.NODE_ENV !== 'production') {
+          console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
+        } else {
+          shouldStopPropagation = true;
+        }
       },
       continuePropagation() {
         shouldStopPropagation = false;
+      },
+      isPropagationStopped() {
+        return shouldStopPropagation;
       }
     };
 

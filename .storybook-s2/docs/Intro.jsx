@@ -13,7 +13,7 @@ import {H2, H3, H4, P, Pre, Code, Strong, Link} from './typography';
 
 export function Docs() {
   return (
-    <div className={style({marginX: 'auto', marginY: 48})}>
+    <div className={'sb-unstyled ' + style({marginX: 'auto', marginY: 48})}>
       <header
         style={{
           backgroundImage: `url(${new URL('wallpaper_collaborative_S2_desktop.webp', import.meta.url).toString()})`,
@@ -176,6 +176,8 @@ function App() {
 <Provider background="base">
   {/* your app */}
 </Provider>`)}</Pre>
+        <H3>Usage with older React Spectrum versions</H3>
+        <P>See Adobe internal documentation.</P>
         <H2>Styling</H2>
         <P>React Spectrum v3 supported a limited set of <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html" target="_blank">style props</Link> for layout and positioning using Spectrum-defined values. In Spectrum 2, we’re improving on this by offering a much more flexible style macro. This offers additional Spectrum tokens, improves performance by generating CSS at build time rather than runtime, and works with any DOM element for use in custom components.</P>
         <P><Link href="https://parceljs.org/features/macros/" target="_blank">Macros</Link> are a new bundler feature that enable functions to run at build time. The React Spectrum <Code>style</Code> macro uses this to generate CSS that can be applied to any DOM element or component. Import the <Code>style</Code> macro using the with <Code>{`{type: 'macro'}`}</Code> <Link href="https://github.com/tc39/proposal-import-attributes" target="_blank">import attribute</Link>, and pass the result to the <Code>styles</Code> prop of any React Spectrum component to provide it with styles.</P>
@@ -191,7 +193,7 @@ import {ActionButton} from '@react-spectrum/s2';
           <Content>See the <Link href="?path=/docs/style-macro--docs" variant="secondary" target="_top">full docs</Link> to learn about using the style macro to build custom components.</Content>
         </InlineAlert>
         <H3>Supported CSS properties on Spectrum components</H3>
-        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', columns: 3, padding: 0, listStyleType: 'none'})}>
+        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', padding: 0, listStyleType: 'none'})} style={{columns: 3}}>
           <li><Code>margin</Code></li>
           <li><Code>marginStart</Code></li>
           <li><Code>marginEnd</Code></li>
@@ -202,7 +204,6 @@ import {ActionButton} from '@react-spectrum/s2';
           <li><Code>width</Code></li>
           <li><Code>minWidth</Code></li>
           <li><Code>maxWidth</Code></li>
-          <li><Code>flex</Code></li>
           <li><Code>flexGrow</Code></li>
           <li><Code>flexShrink</Code></li>
           <li><Code>flexBasis</Code></li>
@@ -228,7 +229,7 @@ import {ActionButton} from '@react-spectrum/s2';
         </ul>
         <H3>UNSAFE Style Overrides</H3>
         <P>We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using <Link href="https://react-spectrum.adobe.com/react-aria/" target="_blank">React Aria Components</Link> with our <Link href="?path=/docs/style-macro--docs" target="_top">style macro</Link> to build a custom component with Spectrum styles instead.</P>
-        <P>That said, just like in React Spectrum v3, the <Code>UNSAFE_className</Code> and <Code>UNSAFE_style</Code> props are supported on Spectrum 2 components as last-resort escape hatches. However, unlike in v3, UNSAFE_classNames must be placed in a special <Code>UNSAFE_overrides</Code> <Link href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers" target="_blank">CSS cascade layer</Link>. This guarentees that your overrides will always win over other styles on the page, no matter the order or specificity of the selector.</P>
+        <P>That said, just like in React Spectrum v3, the <Code>UNSAFE_className</Code> and <Code>UNSAFE_style</Code> props are supported on Spectrum 2 components as last-resort escape hatches.</P>
         <Pre>{highlight(`/* YourComponent.tsx */
 import {Button} from '@react-spectrum/s2';
 import './YourComponent.css';
@@ -237,12 +238,14 @@ function YourComponent() {
   return <Button UNSAFE_className="your-unsafe-class">Button</Button>;
 }`)}</Pre>
         <Pre>{highlight(`/* YourComponent.css */
-@layer UNSAFE_overrides {
-  /* Wrap all UNSAFE_className rules in this layer. */
-  .your-unsafe-class {
-    background: red;
-  }
+.your-unsafe-class {
+  background: red;
 }`, 'CSS')}</Pre>
+        <H3>CSS Resets</H3>
+        <P>CSS resets are strongly discouraged. Global CSS selectors can unintentionally affect elements that were not intended, leading to style clashes. Since Spectrum 2 uses <Link href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers" target="_blank">CSS cascade layers</Link>, global CSS outside a <Code>@layer</Code> will override S2's CSS. Therefore, if you cannot remove your CSS reset, it must be placed in a lower layer. This can be done by declaring your reset layer before the <Code>_</Code> layer used by S2.</P>
+        <Pre>{highlight(`/* App.css */
+@layer reset, _;
+@import "reset.css" layer(reset);`)}</Pre>
       </main>
     </div>
   )

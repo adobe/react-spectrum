@@ -18,10 +18,10 @@ import {
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
+import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -45,17 +45,17 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style'
   children?: ReactNode
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, FocusableRefValue<HTMLLabelElement>>>(null);
+export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  font: 'control',
+  font: controlFont(),
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -76,7 +76,7 @@ const track = style<RenderProps>({
   },
   '--trackHeight': {
     type: 'height',
-    value: 'control-sm'
+    value: controlSize('sm')
   },
   width: '--trackWidth',
   height: '--trackHeight',
@@ -97,7 +97,7 @@ const track = style<RenderProps>({
   backgroundColor: {
     default: 'gray-25',
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: baseColor('accent-900'),
       forcedColors: 'Highlight',
       isDisabled: {
@@ -113,7 +113,7 @@ const handle = style<RenderProps>({
   aspectRatio: 'square',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'

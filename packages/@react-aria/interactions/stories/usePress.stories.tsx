@@ -10,8 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from 'react-aria-components';
-import React from 'react';
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Link,
+  Modal,
+  ModalOverlay
+} from 'react-aria-components';
+import React, {useState} from 'react';
 import styles from './usePress-stories.css';
 import {usePress} from '@react-aria/interactions';
 
@@ -112,3 +120,184 @@ export const linkOnPress = {
     }
   }
 };
+
+export function ClickOutsideIssue() {
+  const handleClick = () => {
+    alert('Clicked!');
+  };
+
+  return (
+    <div style={{alignSelf: 'start'}}>
+      <h2 style={{fontSize: 16}}>
+        before clicking the button please make sure 'desktop(touch)' mode is
+        active in the responsive dev tools
+      </h2>
+      <div
+        style={{
+          position: 'fixed',
+          display: 'flex',
+          backgroundColor: 'black',
+          top: 150,
+          width: '100%',
+          height: 200
+        }}>
+        {/* eslint-disable-next-line */}
+        <div
+          onClick={handleClick}
+          style={{
+            marginLeft: 'auto',
+            color: '#fff',
+            border: '1px solid #fff',
+            width: 400,
+            backgroundColor: 'red'
+          }}>
+          Help
+        </div>
+      </div>
+      <DialogTrigger>
+        <Button>Open drawer</Button>
+        <ModalOverlay
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(45 0 0 / 0.3)'
+          }}>
+          <Modal
+            style={{
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              right: 0,
+              width: 300,
+              background: '#fff',
+              outline: 'none',
+              borderLeft: '1px solid gray',
+              boxShadow: '-8px 0 20px rgba(0 0 0 / 0.1)',
+              paddingTop: 50
+            }}>
+            <Dialog>
+              <Heading slot="title">Notice</Heading>
+              <p>This is a modal with a custom modal overlay.</p>
+
+              <Button slot="close">Close</Button>
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+export function SoftwareKeyboardIssue() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        padding: '12px',
+        maxWidth: '256px',
+        height: '100vh'
+      }}>
+      <p>Focus the input to show the software keyboard, then press the buttons below.</p>
+      <input type="text" style={{fontSize: 16}} />
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          marginTop: 'auto'
+        }}>
+        {/* eslint-disable-next-line */}
+        <a
+          onClick={() => {
+            alert('I told you not to click me');
+          }}
+          style={{fontSize: '64px'}}>
+          Don't click me
+        </a>
+
+        <div style={{display: 'flex', gap: '8px', marginTop: '110px'}}>
+          <Button
+            style={{height: '36px'}}
+            onPress={() => alert('Hello world, Aria!')}>
+            Aria press me
+          </Button>
+          <button
+            style={{height: '36px'}}
+            onClick={() => alert('Hello world, native!')}>
+            native press me
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function AndroidUnmountIssue() {
+  let [showButton, setShowButton] = useState(true);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <p>This story tests an Android issue where tapping a button that unmounts causes the element behind it to receive onClick.</p>
+      <div style={{position: 'relative', width: 100, height: 100}}>
+        <button
+          type="button"
+          onClick={() => {
+            alert('button underneath was pressed');
+          }}
+          style={{position: 'absolute', top: 0}}>
+          Test 2
+        </button>
+        {showButton && (
+          <Button
+            className="foo"
+            style={{position: 'absolute', top: 0}}
+            onPress={() => {
+              console.log('ra Button pressed');
+              setShowButton(false);
+            }}>
+            Test
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function IOSScrollIssue() {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <p>This story tests an iOS Safari issue that causes onPointerCancel not to be fired with touch-action: manipulation. Scrolling the list should not trigger onPress.</p>
+      <div
+        style={{
+          marginTop: 10,
+          width: 500,
+          height: 100,
+          overflowY: 'hidden',
+          overflowX: 'auto',
+          border: '1px solid black',
+          display: 'flex',
+          gap: 8
+        }}>
+        {Array.from({length: 10}).map((_, i) => (
+          <Card key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Card() {
+  return (
+    <Button
+      className="foo"
+      style={{height: 80, width: 150, flexShrink: 0}}
+      onPress={() => {
+        alert('pressed');
+      }}>
+      Test
+    </Button>
+  );
+}

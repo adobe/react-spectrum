@@ -3,7 +3,7 @@ import {P, Code, Pre, H3, H2, Link} from './typography';
 
 export function Migrating() {
   return (
-    <div className={style({marginX: 'auto', fontFamily: 'sans'})}>
+    <div className={'sb-unstyled ' + style({marginX: 'auto', fontFamily: 'sans'})}>
       <div className={style({marginX: 48})}>
         <h1 className={style({font: 'heading-2xl', marginBottom: 48})}>
           Migrating to Spectrum 2
@@ -42,6 +42,17 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>disabledKeys</Code> and add <Code>isDisabled</Code> to individual <Code>Disclosure</Code> components</li>
           <li className={style({font: 'body', marginY: 8})}>Add <Code>allowsMultipleExpanded</Code> to allow multiple <Code>Disclosure</Code> components to be expanded at once (previously default behavior)</li>
+        </ul>
+
+        <H3>ActionBar</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>ActionBarContainer</Code> and move <Code>ActionBar</Code> to <Code>renderActionBar</Code> prop of <Code>TableView</Code> or <Code>CardView</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to be called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> or <Code>ToggleButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>ActionButton</H3>
@@ -95,7 +106,6 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="cta"</Code> to <Code>variant="accent"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>variant="primary" staticColor="white"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>style</Code> to <Code>fillStyle</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isPending</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>If <Code>href</Code> is present, the <Code>Button</Code> should be converted to a <Code>LinkButton</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>elementType</Code> (it is no longer supported in Spectrum 2)</li>
@@ -142,11 +152,9 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>loadingState</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
         </ul>
 
@@ -268,9 +276,8 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isLoading</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>isLoading</Code> to <Code>loadingState</Code> and provide the appropriate loading state.</li>
         </ul>
 
         <H3>ProgressBar</H3>
@@ -343,6 +350,7 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>For <Code>Column</Code> and <Code>Row</Code>: Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>For dynamic tables, pass a <Code>columns</Code> prop into <Code>Row</Code></li>
           <li className={style({font: 'body', marginY: 8})}>For <Code>Row</Code>: Update dynamic render function to pass in <Code>column</Code> instead of <Code>columnKey</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Move <Code>loadingState</Code> and <Code>onLoadMore</Code> from <Code>TableBody</Code> to <Code>TableView</Code></li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_allowsExpandableRows</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_onExpandedChange</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_expandedKeys</Code> (it has not been implemented yet)</li>
@@ -398,6 +406,12 @@ export function Migrating() {
         <H3>TooltipTrigger</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update placement prop to be have one value (i.e. Update <Code>placement="bottom left"</Code> to be <Code>placement="bottom"</Code>)</li>
+        </ul>
+
+        <H3>TreeView</H3>
+        <P>If migrating from TreeView version 3.0.0-beta.3 or before, please do the following. Otherwise, no updates needed.</P>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}> Update content within <Code>TreeViewItem</Code> to be wrapped in <Code>TreeViewContentItem</Code></li>
         </ul>
 
         <H3>View</H3>

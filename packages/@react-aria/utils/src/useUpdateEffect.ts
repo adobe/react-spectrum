@@ -13,7 +13,7 @@
 import {EffectCallback, useEffect, useRef} from 'react';
 
 // Like useEffect, but only called for updates after the initial render.
-export function useUpdateEffect(effect: EffectCallback, dependencies: any[]) {
+export function useUpdateEffect(effect: EffectCallback, dependencies: any[]): void {
   const isInitialMount = useRef(true);
   const lastDeps = useRef<any[] | null>(null);
 
@@ -25,9 +25,10 @@ export function useUpdateEffect(effect: EffectCallback, dependencies: any[]) {
   }, []);
 
   useEffect(() => {
+    let prevDeps = lastDeps.current;
     if (isInitialMount.current) {
       isInitialMount.current = false;
-    } else if (!lastDeps.current || dependencies.some((dep, i) => !Object.is(dep, lastDeps[i]))) {
+    } else if (!prevDeps || dependencies.some((dep, i) => !Object.is(dep, prevDeps[i]))) {
       effect();
     }
     lastDeps.current = dependencies;

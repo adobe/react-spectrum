@@ -16,22 +16,46 @@ import Checkmark_S from './S2_CheckmarkSize75.svg';
 import Checkmark_XL from './S2_CheckmarkSize300.svg';
 import Checkmark_XS from './S2_CheckmarkSize50.svg';
 import Checkmark_XXL from './S2_CheckmarkSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function Checkmark(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      XXL: 16,
+      XS: 10,
+      S: 10
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      XXL: 16,
+      XS: 10,
+      S: 10
+    }
+  }
+});
+
+export default function Checkmark(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Checkmark_M {...otherProps} />;
+      return <Checkmark_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <Checkmark_L {...otherProps} />;
+      return <Checkmark_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <Checkmark_XL {...otherProps} />;
+      return <Checkmark_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XXL':
-      return <Checkmark_XXL {...otherProps} />;
+      return <Checkmark_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XS':
-      return <Checkmark_XS {...otherProps} />;
+      return <Checkmark_XS {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'S':
-      return <Checkmark_S {...otherProps} />;
+      return <Checkmark_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

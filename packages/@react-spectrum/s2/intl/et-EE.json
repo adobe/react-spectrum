@@ -4,7 +4,9 @@
   "actionbar.clearSelection": "Puhasta valik",
   "actionbar.selected": "{count, plural, =0 {Pole valitud} other {# valitud}}",
   "actionbar.selectedAll": "Kõik valitud",
+  "breadcrumbs.more": "Veel üksusi",
   "button.pending": "ootel",
+  "combobox.noResults": "Tulemusi pole",
   "contextualhelp.help": "Spikker",
   "contextualhelp.info": "Teave",
   "dialog.alert": "Teade",
@@ -17,6 +19,8 @@
   "label.(optional)": "(valikuline)",
   "label.(required)": "(nõutav)",
   "menu.moreActions": "Veel toiminguid",
+  "notificationbadge.indicatorOnly": "Uus tegevus",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Valige…",
   "slider.maximum": "Maksimaalne",
   "slider.minimum": "Minimaalne",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "Kuva vähem",
   "tag.noTags": "Puudub",
   "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})",
-  "breadcrumbs.more": "Veel üksusi"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

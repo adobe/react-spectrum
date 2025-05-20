@@ -15,8 +15,7 @@ import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
-import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {useFocusable, usePress} from '@react-aria/interactions';
 
 export interface ToggleAria {
   /** Props to be spread on the label element. */
@@ -60,21 +59,22 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
+  if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
-  // This handles focusing the input on pointer down, which Safari does not do by default.
+  // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
-  // iOS does not toggle checkboxes if you drag off and back onto the label, so handle it ourselves.
+  // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
-    isDisabled: isDisabled || isReadOnly,
     onPress() {
       state.toggle();
-    }
+      ref.current?.focus();
+    },
+    isDisabled: isDisabled || isReadOnly
   });
 
   let {focusableProps} = useFocusable(props, ref);

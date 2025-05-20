@@ -5,6 +5,7 @@ port=4000
 original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
+touch $output
 ci=false
 commit_to_revert="HEAD"
 

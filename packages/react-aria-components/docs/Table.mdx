@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import tableUtil from 'docs:@react-aria/test-utils/src/table.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './TableAnatomy.svg';
@@ -92,6 +93,7 @@ import {MyCheckbox} from './Checkbox';
 ```css hidden
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
+@import './CheckboxGroup.mdx' layer(checkboxgroup);
 @import './Checkbox.mdx' layer(checkbox);
 @import './Popover.mdx' layer(popover);
 @import './Menu.mdx' layer(menu);
@@ -233,6 +235,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 * **Async loading** – Support for loading and sorting items asynchronously.
 * **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Drag and drop** – Tables support drag and drop to reorder, insert, or update rows via mouse, touch, keyboard, and screen reader interactions.
+* **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large tables by rendering only the visible rows.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -344,7 +347,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-function MyColumn(props: ColumnProps) {
+export function MyColumn(props: Omit<ColumnProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -366,7 +369,7 @@ The TableHeader and Row components can also be wrapped to automatically include 
 import type {TableHeaderProps, RowProps} from 'react-aria-components';
 import {Collection, useTableOptions} from 'react-aria-components';
 
-function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
+export function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
@@ -381,7 +384,7 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
   );
 }
 
-function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
@@ -429,44 +432,74 @@ Now we can render a table with a default selection column built in.
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
-In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
-only the rows dynamic.
+In the example below, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns
+and add additional rows. You can also make the columns static and only the rows dynamic.
+
+**Note**: Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example). See the [collections](collections.html#dependencies) guide for more details.
 
 ```tsx example export=true
 import type {TableProps} from 'react-aria-components';
+import {MyCheckboxGroup} from './CheckboxGroup';
+import {MyCheckbox} from './Checkbox';
 
 function FileTable(props: TableProps) {
+  let [showColumns, setShowColumns] = React.useState(['name', 'type', 'date']);
   let columns = [
     {name: 'Name', id: 'name', isRowHeader: true},
     {name: 'Type', id: 'type'},
     {name: 'Date Modified', id: 'date'}
-  ];
+  ].filter(column => showColumns.includes(column.id));
 
-  let rows = [
+  let [rows, setRows] = React.useState([
     {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
     {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
     {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
     {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
+  ]);
+
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
 
   return (
-    <Table aria-label="Files" {...props}>
-      <MyTableHeader columns={columns}>
-        {column => (
-          <Column isRowHeader={column.isRowHeader}>
-            {column.name}
-          </Column>
-        )}
-      </MyTableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <MyRow columns={columns}>
-            {column => <Cell>{item[column.id]}</Cell>}
-          </MyRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="flex-col">
+      <MyCheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} style={{flexDirection: 'row'}}>
+        <MyCheckbox value="type">Type</MyCheckbox>
+        <MyCheckbox value="date">Date Modified</MyCheckbox>
+      </MyCheckboxGroup>
+      <Table aria-label="Files" {...props}>
+        <MyTableHeader columns={columns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows} dependencies={[columns]}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+      <Button onPress={addRow}>Add row</Button>
+    </div>
   );
+}
+```
+
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8;
+  align-items: start;
 }
 ```
 
@@ -724,7 +757,7 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
 
 ```tsx example
-<Table 
+<Table
   aria-label="Table with disabled rows"
   selectionMode="multiple"
   /*- begin highlight -*/
@@ -2475,3 +2508,47 @@ Now you can use `MyCustomCheckbox` within a `Table`, in place of the builtin Rea
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTable](useTable.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.
+
+```ts
+// Table.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('Table can toggle row selection', async function () {
+  // Render your test component/app and initialize the table tester
+  let {getByTestId} = render(
+    <Table data-testid="test-table" selectionMode="multiple">
+     ...
+    </Table>
+  );
+  let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
+  expect(tableTester.selectedRows).toHaveLength(0);
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+
+  await tableTester.toggleRowSelection({row: 2});
+  expect(tableTester.selectedRows).toHaveLength(9);
+  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(checkbox).not.toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(checkbox).toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={tableUtil.links} class={tableUtil.exports.TableTester} />

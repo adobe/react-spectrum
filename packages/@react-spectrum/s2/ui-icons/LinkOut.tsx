@@ -14,18 +14,38 @@ import LinkOut_L from './S2_LinkOutSize200.svg';
 import LinkOut_M from './S2_LinkOutSize100.svg';
 import LinkOut_XL from './S2_LinkOutSize300.svg';
 import LinkOut_XXL from './S2_LinkOutSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function LinkOut(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      XXL: 16
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      XXL: 16
+    }
+  }
+});
+
+export default function LinkOut(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <LinkOut_M {...otherProps} />;
+      return <LinkOut_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <LinkOut_L {...otherProps} />;
+      return <LinkOut_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <LinkOut_XL {...otherProps} />;
+      return <LinkOut_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XXL':
-      return <LinkOut_XXL {...otherProps} />;
+      return <LinkOut_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }
