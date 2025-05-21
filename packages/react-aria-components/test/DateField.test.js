@@ -338,4 +338,21 @@ describe('DateField', () => {
     await user.keyboard('{backspace}');
     expect(document.activeElement).toBe(segments[0]);
   });
+
+  it('should do nothing when pressing enter', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+  
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    expect(segments[2]).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(segments[2]).toHaveFocus();
+  });
 });
