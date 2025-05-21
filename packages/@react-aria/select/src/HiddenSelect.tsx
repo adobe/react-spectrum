@@ -141,13 +141,19 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
       </div>
     );
   } else if (name) {
+    let data = selectData.get(state) || {};
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
     return (
       <input
-        type="hidden"
+        type="text"
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
+        value={state.selectedKey ?? ''}
+        onChange={() => {/** Ignore react warning. */}}
+        required={data.isRequired}
+        hidden />
     );
   }
 
