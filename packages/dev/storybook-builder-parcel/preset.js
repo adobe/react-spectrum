@@ -1,16 +1,10 @@
 const { Parcel } = require("@parcel/core");
 const path = require("path");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const {
-  normalizeStories,
-  loadPreviewOrConfigFile,
-} = require("@storybook/core-common");
 const fs = require("fs");
 
 const { generateIframeModern } = require("./gen-iframe-modern.js");
-const { generateIframe } = require("./gen-iframe.js");
 const { generatePreviewModern } = require("./gen-preview-modern.js");
-const { generatePreview } = require("./gen-preview.js");
 
 const generatedEntries = path.join(__dirname, "generated-entries");
 
@@ -79,25 +73,14 @@ exports.bail = async () => {};
 
 async function createParcel(options, isDev = false) {
   fs.mkdirSync(generatedEntries, { recursive: true });
-  if (options.features?.storyStoreV7) {
-    fs.writeFileSync(
-      path.join(generatedEntries, "iframe.html"),
-      await generateIframeModern(options, generatedEntries)
-    );
-    fs.writeFileSync(
-      path.join(generatedEntries, "preview.js"),
-      await generatePreviewModern(options, generatedEntries)
-    );
-  } else {
-    fs.writeFileSync(
-      path.join(generatedEntries, "iframe.html"),
-      await generateIframe(options, generatedEntries)
-    );
-    fs.writeFileSync(
-      path.join(generatedEntries, "preview.js"),
-      await generatePreview(options, generatedEntries)
-    );
-  }
+  fs.writeFileSync(
+    path.join(generatedEntries, "iframe.html"),
+    await generateIframeModern(options, generatedEntries)
+  );
+  fs.writeFileSync(
+    path.join(generatedEntries, "preview.js"),
+    await generatePreviewModern(options, generatedEntries)
+  );
 
   return new Parcel({
     entries: path.join(generatedEntries, "iframe.html"),
@@ -119,10 +102,14 @@ async function createParcel(options, isDev = false) {
         resolveFrom: __filename,
       },
     ],
-    defaultTargetOptions: {
-      distDir: options.outputDir,
-      publicUrl: "./",
-      shouldScopeHoist: isDev ? false : true,
-    },
+    targets: {
+      storybook: {
+        distDir: options.outputDir,
+        publicUrl: "./",
+        engines: {
+          browsers: ['last 2 Chrome version', 'last 2 Safari versions', 'last 2 Edge version', 'last 2 Firefox versions']
+        }
+      }
+    }
   });
 }

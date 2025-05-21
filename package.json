@@ -263,6 +263,9 @@
   "alias": {
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
   },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {

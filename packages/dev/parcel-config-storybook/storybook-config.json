@@ -1,0 +1,15 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-storybook", "..."],
+  "transformers": {
+    "story:*": ["..."],
+    "*.stories.{ts,tsx,js,mjs,jsm,jsx,es6,cjs}": [
+      "@parcel/transformer-storybook",
+      "@parcel/transformer-js"
+    ],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  }
+}
