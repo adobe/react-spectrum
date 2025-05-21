@@ -67,6 +67,14 @@ export interface FocusManager {
   focusFirst(opts?: FocusManagerOptions): FocusableElement | null,
   /** Moves focus to the last focusable or tabbable element in the focus scope. */
   focusLast(opts?: FocusManagerOptions): FocusableElement | null
+  /** Finds the next focusable or tabbable element in the focus scope. */
+  findNext(opts?: FocusManagerOptions): FocusableElement | null,
+  /** Finds the previous focusable or tabbable element in the focus scope. */
+  findPrevious(opts?: FocusManagerOptions): FocusableElement | null,
+  /** Finds the first focusable or tabbable element in the focus scope. */
+  findFirst(opts?: FocusManagerOptions): FocusableElement | null,
+  /** Finds the last focusable or tabbable element in the focus scope. */
+  findLast(opts?: FocusManagerOptions): FocusableElement | null
 }
 
 type ScopeRef = RefObject<Element[] | null> | null;
@@ -214,67 +222,89 @@ export function useFocusManager(): FocusManager | undefined {
 }
 
 function createFocusManagerForScope(scopeRef: React.RefObject<Element[] | null>): FocusManager {
+  let findNext = (opts: FocusManagerOptions = {}) => {
+    let scope = scopeRef.current!;
+    let {from, tabbable, wrap, accept} = opts;
+    let node = from || getActiveElement(getOwnerDocument(scope[0] ?? undefined))!;
+    let sentinel = scope[0].previousElementSibling!;
+    let scopeRoot = getScopeRoot(scope);
+    let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
+    walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
+    let nextNode = walker.nextNode() as FocusableElement;
+    if (!nextNode && wrap) {
+      walker.currentNode = sentinel;
+      nextNode = walker.nextNode() as FocusableElement;
+    }
+    return nextNode;
+  }
+
+  let findPrevious = (opts: FocusManagerOptions = {}) => {
+    let scope = scopeRef.current!;
+    let {from, tabbable, wrap, accept} = opts;
+    let node = from || getActiveElement(getOwnerDocument(scope[0] ?? undefined))!;
+    let sentinel = scope[scope.length - 1].nextElementSibling!;
+    let scopeRoot = getScopeRoot(scope);
+    let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
+    walker.currentNode = isElementInScope(node, scope) ? node  : sentinel;
+    let previousNode = walker.previousNode() as FocusableElement;
+    if (!previousNode && wrap) {
+      walker.currentNode = sentinel;
+      previousNode = walker.previousNode() as FocusableElement;
+    }
+    return previousNode
+  }
+  
+  let findFirst = (opts: FocusManagerOptions = {}) => {
+    let scope = scopeRef.current!;
+    let {tabbable, accept} = opts;
+    let scopeRoot = getScopeRoot(scope);
+    let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
+    walker.currentNode = scope[0].previousElementSibling!;
+    return walker.nextNode() as FocusableElement;
+  }
+
+  let findLast = (opts: FocusManagerOptions = {}) => {
+    let scope = scopeRef.current!;
+    let {tabbable, accept} = opts;
+    let scopeRoot = getScopeRoot(scope);
+    let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
+    walker.currentNode = scope[scope.length - 1].nextElementSibling!;
+    return walker.previousNode() as FocusableElement;
+  }
+
   return {
     focusNext(opts: FocusManagerOptions = {}) {
-      let scope = scopeRef.current!;
-      let {from, tabbable, wrap, accept} = opts;
-      let node = from || getActiveElement(getOwnerDocument(scope[0] ?? undefined))!;
-      let sentinel = scope[0].previousElementSibling!;
-      let scopeRoot = getScopeRoot(scope);
-      let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
-      walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
-      let nextNode = walker.nextNode() as FocusableElement;
-      if (!nextNode && wrap) {
-        walker.currentNode = sentinel;
-        nextNode = walker.nextNode() as FocusableElement;
-      }
+      let nextNode = findNext(opts);
       if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
     },
     focusPrevious(opts: FocusManagerOptions = {}) {
-      let scope = scopeRef.current!;
-      let {from, tabbable, wrap, accept} = opts;
-      let node = from || getActiveElement(getOwnerDocument(scope[0] ?? undefined))!;
-      let sentinel = scope[scope.length - 1].nextElementSibling!;
-      let scopeRoot = getScopeRoot(scope);
-      let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
-      walker.currentNode = isElementInScope(node, scope) ? node  : sentinel;
-      let previousNode = walker.previousNode() as FocusableElement;
-      if (!previousNode && wrap) {
-        walker.currentNode = sentinel;
-        previousNode = walker.previousNode() as FocusableElement;
-      }
+      let previousNode = findPrevious(opts);
       if (previousNode) {
         focusElement(previousNode, true);
       }
       return previousNode;
     },
     focusFirst(opts = {}) {
-      let scope = scopeRef.current!;
-      let {tabbable, accept} = opts;
-      let scopeRoot = getScopeRoot(scope);
-      let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
-      walker.currentNode = scope[0].previousElementSibling!;
-      let nextNode = walker.nextNode() as FocusableElement;
+      let nextNode = findFirst(opts);
       if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
     },
     focusLast(opts = {}) {
-      let scope = scopeRef.current!;
-      let {tabbable, accept} = opts;
-      let scopeRoot = getScopeRoot(scope);
-      let walker = getFocusableTreeWalker(scopeRoot, {tabbable, accept}, scope);
-      walker.currentNode = scope[scope.length - 1].nextElementSibling!;
-      let previousNode = walker.previousNode() as FocusableElement;
+      let previousNode = findLast(opts);
       if (previousNode) {
         focusElement(previousNode, true);
       }
       return previousNode;
-    }
+    },
+    findNext,
+    findPrevious,
+    findFirst,
+    findLast,
   };
 }
 
