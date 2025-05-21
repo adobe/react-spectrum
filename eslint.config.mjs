@@ -53,7 +53,12 @@ export default [{
         "examples/**/*",
         "starters/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
-        "packages/@react-spectrum/s2/spectrum-illustrations"
+        "packages/@react-spectrum/s2/spectrum-illustrations",
+        "packages/dev/parcel-config-storybook/*",
+        "packages/dev/parcel-resolver-storybook/*",
+        "packages/dev/parcel-transformer-storybook/*",
+        "packages/dev/storybook-builder-parcel/*",
+        "packages/dev/storybook-react-parcel/*"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {

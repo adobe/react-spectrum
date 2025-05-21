@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var Refresh = require('react-refresh/runtime');
 function debounce(func, delay) {

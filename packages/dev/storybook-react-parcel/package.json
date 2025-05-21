@@ -4,10 +4,17 @@
   "main": "preset.js",
   "dependencies": {
     "@storybook/react": "^8.6.7",
+    "storybook-builder-parcel": "^0.0.1"
+  },
+  "devDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^8.6.7",
-    "storybook-builder-parcel": "^0.0.1"
+    "storybook": "^8.6.7"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^8.6.7"
   },
   "scripts": {
     "build": "true",

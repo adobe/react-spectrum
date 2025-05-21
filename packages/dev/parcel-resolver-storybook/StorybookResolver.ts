@@ -1,21 +1,22 @@
-// @ts-ignore
-import {glob, normalizeSeparators, relativePath} from '@parcel/utils';
 import path from 'path';
-import {Resolver} from '@parcel/plugin';
-const reactVersion = require('react-dom/package.json').version;
+import { Resolver } from "@parcel/plugin";
+const reactVersion = require("react-dom/package.json").version;
+import { default as NodeResolver } from "@parcel/node-resolver-core";
+// @ts-ignore
+import { isGlob, glob, normalizeSeparators, relativePath } from '@parcel/utils';
 
 const REACT_MAJOR_VERSION = parseInt(reactVersion.split('.')[0], 10);
 
 module.exports = new Resolver({
-  async resolve({dependency, options, specifier, pipeline}) {
+  async resolve({ dependency, options, specifier, pipeline, logger }) {
     // Workaround for interop issue
-    if (specifier === 'react-dom/client' && REACT_MAJOR_VERSION < 18) {
+    if (specifier === "react-dom/client" && REACT_MAJOR_VERSION < 18) {
       return {
-        filePath: __dirname + '/react.js',
+        filePath: __dirname + "/react.js",
         code: `
         export * from 'react-dom';
         export * as default from 'react-dom'
-        `
+        `,
       };
     }
 
@@ -25,7 +26,7 @@ module.exports = new Resolver({
       let sourceFile = dependency.resolveFrom ?? dependency.sourcePath!;
       let normalized = normalizeSeparators(path.resolve(path.dirname(sourceFile), atob(specifier)));
       let files = await glob(normalized, options.inputFS, {
-        onlyFiles: true
+        onlyFiles: true,
       });
 
       let cwd = process.cwd();
@@ -46,8 +47,8 @@ module.exports = new Resolver({
           {glob: normalized}
         ],
         pipeline: null,
-        priority: 'sync'
+        priority: 'sync',
       };
     }
-  }
+  },
 });
