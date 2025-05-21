@@ -6208,6 +6208,7 @@ __metadata:
     "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/overlays": "npm:^3.27.1"
     "@react-aria/utils": "npm:^3.29.0"
+    "@react-stately/collections": "npm:^3.12.4"
     "@react-stately/dnd": "npm:^3.5.4"
     "@react-types/button": "npm:^3.12.1"
     "@react-types/shared": "npm:^3.29.1"
