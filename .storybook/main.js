@@ -26,5 +26,9 @@ module.exports = {
   framework: {
     name: "storybook-react-parcel",
     options: {},
+  },
+
+  core: {
+    disableWhatsNewNotifications: true
   }
 };

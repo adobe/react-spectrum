@@ -14,11 +14,11 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
 import {Key} from '@react-types/shared';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
 enableTableNestedRows();
@@ -26,7 +26,7 @@ enableTableNestedRows();
 export default {
   ...defaultConfig,
   title: 'TableView/Expandable rows'
-} as ComponentMeta<typeof TableView>;
+} as Meta<typeof TableView>;
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const StaticExpandableRows: TableStory = {
@@ -179,7 +179,7 @@ function generateRows(count = 5) {
   for (let i = 1; i <= count; i++) {
     let row = generateRow(1, 3, i);
     manyRows.push(row);
-  }  
+  }
   return manyRows;
 }
 
@@ -216,7 +216,7 @@ function ManyExpandableRows(props: ManyExpandableRowsProps) {
   );
 }
 
-export const ManyExpandableRowsStory: ComponentStoryObj<typeof ManyExpandableRows> = {
+export const ManyExpandableRowsStory: StoryObj<typeof ManyExpandableRows> = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
     width: 500,

@@ -15,9 +15,9 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
-import {ComponentStoryObj, Meta} from '@storybook/react';
 import {Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
@@ -131,7 +131,7 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export type DefaultStory = ComponentStoryObj<typeof DefaultSubmenu>;
+export type DefaultStory = StoryObj<typeof DefaultSubmenu>;
 
 export const Default: DefaultStory = {
   render: () => <DefaultSubmenu />,

@@ -14,11 +14,11 @@ import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Text} from '@react-spectrum/text';
 
-export type ButtonGroupStory = ComponentStoryObj<typeof ButtonGroup>;
+export type ButtonGroupStory = StoryObj<typeof ButtonGroup>;
 
 export default {
   title: 'ButtonGroup',
@@ -36,7 +36,7 @@ export default {
       options: ['start', 'end', 'center']
     }
   }
-} as ComponentMeta<typeof ButtonGroup>;
+} as Meta<typeof ButtonGroup>;
 
 export const Default: ButtonGroupStory = {
   render: (args) => (

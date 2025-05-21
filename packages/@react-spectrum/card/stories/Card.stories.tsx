@@ -15,11 +15,11 @@ import {Avatar} from '@react-spectrum/avatar';
 import {Card} from '..';
 import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
 import {usePress} from '@react-aria/interactions';
@@ -40,9 +40,9 @@ export default {
       }
     }
   }
-} as ComponentMeta<typeof Card>;
+} as Meta<typeof Card>;
 
-export type CardStory = ComponentStoryObj<typeof Card>;
+export type CardStory = StoryObj<typeof Card>;
 
 export const Default: CardStory = {
   args: {

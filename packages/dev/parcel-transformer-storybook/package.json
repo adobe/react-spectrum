@@ -12,10 +12,12 @@
   "dependencies": {
     "@babel/parser": "^7.23.0",
     "@babel/types": "^7.23.0",
-    "@parcel/plugin": "^2.10.2",
-    "@storybook/csf-tools": "^7",
-    "@storybook/docs-tools": "^7",
+    "@parcel/plugin": "^2.13.1",
+    "@parcel/source-map": "^2.1.1",
+    "@storybook/csf-tools": "^8",
+    "@storybook/docs-tools": "^8",
     "react-docgen-typescript": "^2.2.2",
+    "storybook": "^8.6.7",
     "typescript": "^5.5.0"
   },
   "scripts": {

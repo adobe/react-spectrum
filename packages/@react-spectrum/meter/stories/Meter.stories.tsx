@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../';
 import {NumberFormatOptions} from '@internationalized/number';
 import React from 'react';
 
-type MeterStory = ComponentStoryObj<typeof Meter>;
+type MeterStory = StoryObj<typeof Meter>;
 
 const formatOptions = {
   style: 'currency',
@@ -56,7 +56,7 @@ export default {
       options: ['top', 'side']
     }
   }
-}as ComponentMeta<typeof Meter>;
+}as Meta<typeof Meter>;
 
 export const Default: MeterStory = {
   args: {label: 'Meter', value: 50},

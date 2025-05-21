@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
-import {ComponentStoryObj, Meta, StoryFn} from '@storybook/react';
 import {Flex, Grid, useLocale, View} from '@adobe/react-spectrum';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
@@ -133,7 +133,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   );
 }
 
-type ColorAreaStory = ComponentStoryObj<typeof ColorArea>;
+type ColorAreaStory = StoryObj<typeof ColorArea>;
 
 export const XBlueYGreen: ColorAreaStory = {
   render: Template,

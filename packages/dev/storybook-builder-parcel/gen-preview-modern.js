@@ -1,19 +1,19 @@
-const path = require("path");
+const path = require('path');
 const {
   loadPreviewOrConfigFile,
   normalizeStories,
-  stripAbsNodeModulesPath,
-} = require("@storybook/core-common");
+  stripAbsNodeModulesPath
+} = require('@storybook/core-common');
 const {relativePath} = require('@parcel/utils');
 
 module.exports.generatePreviewModern = async function generatePreviewModern(
   options,
   generatedEntries
 ) {
-  const { presets, configDir } = options;
+  const {presets, configDir} = options;
 
   const previewAnnotations = await presets.apply(
-    "previewAnnotations",
+    'previewAnnotations',
     [],
     options
   );
@@ -21,8 +21,8 @@ module.exports.generatePreviewModern = async function generatePreviewModern(
     ...previewAnnotations.map(processPreviewAnnotation),
     relativePath(
       generatedEntries,
-      loadPreviewOrConfigFile({ configDir })
-    ),
+      loadPreviewOrConfigFile({configDir})
+    )
   ].filter(Boolean);
 
   /**
@@ -32,46 +32,43 @@ module.exports.generatePreviewModern = async function generatePreviewModern(
    * @todo Inline variable and remove `noinspection`
    */
   const code = `
-  import { setup } from 'storybook/internal/preview/runtime';
+import {addons, composeConfigs, PreviewWeb} from 'storybook/internal/preview-api';
+import {createBrowserChannel} from 'storybook/internal/channels';
+import {setup} from 'storybook/internal/preview/runtime';
 
-  setup();
+setup();
 
-  import { createBrowserChannel } from 'storybook/internal/channels';
-  import { addons } from 'storybook/internal/preview-api';
+const channel = createBrowserChannel({page: 'preview'});
+addons.setChannel(channel);
+window.__STORYBOOK_ADDONS_CHANNEL__ = channel;
 
-  const channel = createBrowserChannel({ page: 'preview' });
-  addons.setChannel(channel);
-  window.__STORYBOOK_ADDONS_CHANNEL__ = channel;
-
-  if (window.CONFIG_TYPE === 'DEVELOPMENT'){
-    window.__STORYBOOK_SERVER_CHANNEL__ = channel;
-  }
-
-  import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
-  import { isPreview } from 'storybook/internal/csf';
-
-  ${await generateImportFnScriptCode(options, generatedEntries)}
-
-  const getProjectAnnotations = async () => {
-    const configs = await Promise.all([${relativePreviewAnnotations
-      .map((previewAnnotation) => `import('${previewAnnotation}')`)
-      .join(",\n")}])
-    return composeConfigs(configs);
-  }
+if (window.CONFIG_TYPE === 'DEVELOPMENT'){
+  window.__STORYBOOK_SERVER_CHANNEL__ = channel;
+}
 
 
-  window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
+${await generateImportFnScriptCode(options, generatedEntries)}
 
-  window.__STORYBOOK_STORY_STORE__ = window.__STORYBOOK_STORY_STORE__ || window.__STORYBOOK_PREVIEW__.storyStore;
+const getProjectAnnotations = async () => {
+  const configs = await Promise.all([${relativePreviewAnnotations
+    .map((previewAnnotation) => `import('${previewAnnotation}')`)
+    .join(',\n')}])
+  return composeConfigs(configs);
+}
 
 
-  module.hot.accept(() => {
-    // importFn has changed so we need to patch the new one in
-    window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
+window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
 
-    // getProjectAnnotations has changed so we need to patch the new one in
-    window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
-  });
+window.__STORYBOOK_STORY_STORE__ = window.__STORYBOOK_STORY_STORE__ || window.__STORYBOOK_PREVIEW__.storyStore;
+
+
+module.hot.accept(() => {
+  // importFn has changed so we need to patch the new one in
+  window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
+
+  // getProjectAnnotations has changed so we need to patch the new one in
+  window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
+});
  `;
   // ${generateHMRHandler(frameworkName)};
   return code;
@@ -84,26 +81,26 @@ function processPreviewAnnotation(path) {
   // continue supporting super-addons in pnp/pnpm without
   // requiring them to re-export their sub-addons as we do
   // in addon-essentials.
-  if (typeof path === "object") {
+  if (typeof path === 'object') {
     return path.bare;
   }
   // resolve relative paths into absolute paths, but don't resolve "bare" imports
-  if (path?.startsWith("./") || path?.startsWith("../")) {
-    return /*slash*/ path.resolve(path);
+  if (path?.startsWith('./') || path?.startsWith('../')) {
+    return /* slash*/ path.resolve(path);
   }
   // This should not occur, since we use `.filter(Boolean)` prior to
   // calling this function, but this makes typescript happy
   if (!path) {
-    throw new Error("Could not determine path for previewAnnotation");
+    throw new Error('Could not determine path for previewAnnotation');
   }
 
   // For addon dependencies that use require.resolve(), we need to convert to a bare path
   // so that vite will process it as a dependency (cjs -> esm, etc).
-  if (path.includes("node_modules")) {
+  if (path.includes('node_modules')) {
     return stripAbsNodeModulesPath(path);
   }
 
-  return /*slash*/ path;
+  return /* slash*/ path;
 }
 
 /**
@@ -144,10 +141,10 @@ async function generateImportFnScriptCode(options, generatedEntries) {
 async function listStories(options) {
   return (
     await Promise.all(
-      normalizeStories(await options.presets.apply("stories", [], options), {
+      normalizeStories(await options.presets.apply('stories', [], options), {
         configDir: options.configDir,
-        workingDir: options.configDir,
-      }).map(({ directory, files }) => {
+        workingDir: options.configDir
+      }).map(({directory, files}) => {
         let pattern = path.join(directory, files);
         return path.isAbsolute(pattern)
           ? pattern

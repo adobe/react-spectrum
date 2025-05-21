@@ -14,12 +14,12 @@
 import {Card} from '../index';
 import {CardStory} from './Card.stories';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {File} from '../chromatic/Card.stories';
 import {getDescription, getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
+import {Meta} from '@storybook/react';
 import {Quiet} from '../chromatic/QuietCard.stories';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
@@ -47,7 +47,7 @@ export default {
       }
     }
   }
-} as ComponentMeta<typeof Card>;
+} as Meta<typeof Card>;
 
 export const CardGrid: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
