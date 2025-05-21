@@ -1,10 +1,9 @@
 import {addons, types} from '@storybook/manager-api';
-import {useParameter} from '@storybook/preview-api';
 import React, {useEffect, useState} from 'react';
 
 const StrictModeToolBar = ({api}) => {
   let channel = addons.getChannel();
-  let strictParam = useParameter('strict');
+  let strictParam = api.getQueryParam('strict');
   let [isStrict, setStrict] = useState(strictParam !== 'false');
   let onChange = () => {
     setStrict((old) => {

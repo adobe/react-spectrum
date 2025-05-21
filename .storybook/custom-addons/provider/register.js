@@ -1,5 +1,4 @@
 import {addons, types} from '@storybook/manager-api';
-import {useParameter} from '@storybook/preview-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
@@ -30,12 +29,16 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
+  let localeParam = api.getQueryParam('providerSwitcher-locale') || undefined;
+  let themeParam = api.getQueryParam('providerSwitcher-theme') || undefined;
+  let scaleParam = api.getQueryParam('providerSwitcher-scale') || undefined;
+  let expressParam = api.getQueryParam('providerSwitcher-express') || undefined;
 
   let [values, setValues] = useState({
-    locale: useParameter('providerSwitcher-locale') || undefined,
-    theme: useParameter('providerSwitcher-theme') || undefined,
-    scale: useParameter('providerSwitcher-scale') || undefined,
-    express: useParameter('providerSwitcher-express') === 'true'
+    locale: localeParam,
+    theme: themeParam,
+    scale: scaleParam,
+    express: expressParam === 'true'
   });
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
@@ -72,6 +75,7 @@ function ProviderFieldSetter({api}) {
   };
   useEffect(() => {
     let storySwapped = () => {
+      console.log('storySwapped', values);
       channel.emit('provider/updated', values);
     };
     channel.on('rsp/ready-for-update', storySwapped);
@@ -118,6 +122,7 @@ function ProviderFieldSetter({api}) {
 }
 
 addons.register('ProviderSwitcher', (api) => {
+  console.log('ProviderSwitcher registering');
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,

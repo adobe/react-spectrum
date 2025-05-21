@@ -232,6 +232,8 @@
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
     "@types/node@npm:*": "^22",
     "@types/node@npm:^18.0.0": "^22",
@@ -259,9 +261,6 @@
       "focusVisible": "focus-ring",
       "hover": "is-hovered"
     }
-  },
-  "alias": {
-    "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
   },
   "@parcel/resolver-default": {
     "packageExports": true

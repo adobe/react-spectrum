@@ -5152,17 +5152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/resolver-storybook@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@parcel/resolver-storybook@npm:0.0.0"
-  dependencies:
-    "@parcel/node-resolver-core": "npm:^3.1.2"
-    "@parcel/plugin": "npm:^2.10.2"
-  checksum: 10c0/730b440fef53e6c1817d0dec1b72c8f127cde5c4fd3e37ecd129c9f47101bbd23184c01d32d1553e0a4d2388d27d978d5346eb8d6fe52a2db2a74c6250c9a67a
-  languageName: node
-  linkType: hard
-
-"@parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook":
+"@parcel/resolver-storybook@npm:^0.0.0, @parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook":
   version: 0.0.0-use.local
   resolution: "@parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook"
   dependencies:
@@ -5504,22 +5494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook@npm:0.0.2"
-  dependencies:
-    "@babel/parser": "npm:^7.23.0"
-    "@babel/types": "npm:^7.23.0"
-    "@parcel/plugin": "npm:^2.10.2"
-    "@storybook/csf-tools": "npm:^7"
-    "@storybook/docs-tools": "npm:^7"
-    react-docgen-typescript: "npm:^2.2.2"
-    typescript: "npm:^5.5.0"
-  checksum: 10c0/9c612e1c1965048f75a4d0404d7fbaf89a0be800642558be105721e7eb48d22a294204e3148874de594b2cafe15719c8b31ed103c92405ab059ad672ea67b3f3
-  languageName: node
-  linkType: hard
-
-"@parcel/transformer-storybook@workspace:packages/dev/parcel-transformer-storybook":
+"@parcel/transformer-storybook@npm:^0.0.2, @parcel/transformer-storybook@workspace:packages/dev/parcel-transformer-storybook":
   version: 0.0.0-use.local
   resolution: "@parcel/transformer-storybook@workspace:packages/dev/parcel-transformer-storybook"
   dependencies:
@@ -26933,18 +26908,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
-  dependencies:
-    scheduler: "npm:^0.26.0"
-  peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
+"react-dom@npm:18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -27236,14 +27200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
-  version: 19.1.0
-  resolution: "react@npm:19.1.0"
-  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
-  languageName: node
-  linkType: hard
-
-"react@npm:^18.2.0":
+"react@npm:18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -28237,13 +28194,6 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "scheduler@npm:0.26.0"
-  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
   languageName: node
   linkType: hard
 

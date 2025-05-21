@@ -1,10 +1,11 @@
 import {addons, makeDecorator} from '@storybook/preview-api';
-import {getQueryParams} from '@storybook/preview-api';
 import React, {StrictMode, useEffect, useState} from 'react';
 
 function StrictModeDecorator(props) {
   let {children} = props;
-  let [isStrict, setStrict] = useState(getQueryParams()?.strict !== 'false');
+  let params = new URLSearchParams(document.location.search);
+  let strictParam = params.get("strict") || undefined;
+  let [isStrict, setStrict] = useState(strictParam !== 'false');
 
   useEffect(() => {
     let channel = addons.getChannel();
