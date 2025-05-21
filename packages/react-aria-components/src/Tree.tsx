@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -528,11 +528,12 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   let dropIndicator: DropIndicatorAria | null = null;
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let dropIndicatorRef = useRef<HTMLDivElement>(null);
+  let activateButtonRef = useRef<HTMLDivElement>(null);
   let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropState && dragAndDropHooks) {
     dropIndicator = dragAndDropHooks.useDropIndicator!({
       target: {type: 'item', key: item.key, dropPosition: 'on'},
-      activateButtonRef: expandButtonRef
+      activateButtonRef
     }, dropState, dropIndicatorRef);
   }
 
@@ -609,12 +610,29 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   });
 
+  let activateButtonId = useId();
+
   return (
     <>
       {dropIndicator && !dropIndicator.isHidden && (
-        <div role="row" style={{height: 0}}>
-          <div role="gridcell" style={{padding: 0}}>
+        <div
+          role="row"
+          aria-level={rowProps['aria-level']}
+          aria-expanded={rowProps['aria-expanded']}
+          aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
+          <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
             <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+            {rowProps['aria-expanded'] != null ? (
+              // Button to allow touch screen reader users to expand the item while dragging.
+              <div
+                role="button"
+                {...visuallyHiddenProps}
+                id={activateButtonId}
+                aria-label={expandButtonProps['aria-label']}
+                aria-labelledby={`${activateButtonId} ${rowProps.id}`}
+                tabIndex={-1}
+                ref={activateButtonRef} />
+            ) : null}
           </div>
         </div>
       )}
@@ -805,7 +823,6 @@ function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<H
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
-  let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -815,8 +832,17 @@ function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<H
   if (isHidden) {
     return null;
   }
+
+  let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
+
   return (
-    <TreeDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} buttonRef={buttonRef} level={level} />
+    <TreeDropIndicatorForwardRef 
+      {...props}
+      dropIndicatorProps={dropIndicatorProps}
+      isDropTarget={isDropTarget}
+      ref={ref}
+      buttonRef={buttonRef}
+      level={level} />
   );
 }
 
@@ -852,6 +878,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
     <div
       {...renderProps}
       role="row"
+      aria-level={level}
       ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined}>
       <div role="gridcell">
