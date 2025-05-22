@@ -87,6 +87,11 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 .react-aria-ComboBox {
   color: var(--text-color);
 
+  > div:has(.react-aria-Input) {
+    display: flex;
+    align-items: center;
+  }
+
   .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
@@ -97,6 +102,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
     outline: none;
+    min-width: 0;
 
     &[data-focused] {
       outline: 2px solid var(--focus-ring-color);
@@ -116,6 +122,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     padding: 0;
     font-size: 0.857rem;
     cursor: default;
+    flex-shrink: 0;
 
     &[data-pressed] {
       box-shadow: none;
