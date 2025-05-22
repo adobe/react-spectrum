@@ -178,7 +178,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',

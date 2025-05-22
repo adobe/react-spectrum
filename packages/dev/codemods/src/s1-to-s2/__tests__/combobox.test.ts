@@ -223,3 +223,17 @@ import {ComboBox, Section, Item} from '@adobe/react-spectrum';
   </Section>
 </ComboBox>
 `);
+
+test('Keeps loadingState and onLoadMore', `
+  import {ComboBox, Section, Item} from '@adobe/react-spectrum';
+  <>
+    <ComboBox loadingState="loading" onLoadMore={() => {}}>
+      <Item>Red Panda</Item>
+      <Item>Cat</Item>
+    </ComboBox>
+    <ComboBox loadingState={true ? 'loading' : 'idle'} onLoadMore={() => {}}>
+      <Item>Red Panda</Item>
+      <Item>Cat</Item>
+    </ComboBox>
+  </>
+  `);
