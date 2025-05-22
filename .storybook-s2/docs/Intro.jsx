@@ -193,7 +193,7 @@ import {ActionButton} from '@react-spectrum/s2';
           <Content>See the <Link href="?path=/docs/style-macro--docs" variant="secondary" target="_top">full docs</Link> to learn about using the style macro to build custom components.</Content>
         </InlineAlert>
         <H3>Supported CSS properties on Spectrum components</H3>
-        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', columns: 3, padding: 0, listStyleType: 'none'})}>
+        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', padding: 0, listStyleType: 'none'})} style={{columns: 3}}>
           <li><Code>margin</Code></li>
           <li><Code>marginStart</Code></li>
           <li><Code>marginEnd</Code></li>

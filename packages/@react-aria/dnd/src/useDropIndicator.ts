@@ -12,7 +12,7 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget, Key, RefObject} from '@react-types/shared';
+import {DropTarget, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
@@ -23,7 +23,9 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget
+  target: DropTarget,
+  /** The ref to the activate button. */
+  activateButtonRef?: RefObject<FocusableElement | null>
 }
 
 export interface DropIndicatorAria {

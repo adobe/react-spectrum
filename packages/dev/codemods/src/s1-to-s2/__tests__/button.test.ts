@@ -24,7 +24,7 @@ import {Button as RSPButton} from '@adobe/react-spectrum';
 </div>
 `);
 
-test('Comments out isPending', `
+test('Keeps isPending', `
 import {Button} from '@adobe/react-spectrum';
 
 <div>

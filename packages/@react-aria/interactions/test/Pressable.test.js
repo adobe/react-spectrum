@@ -117,6 +117,19 @@ describe('Pressable', function () {
     expect(spy).toHaveBeenCalledWith('<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.');
   });
 
+  it('supports isDisabled', async function () {
+    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByRole} = render(
+      <Pressable isDisabled>
+        <span role="button">Button</span>
+      </Pressable>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('tabindex');
+    expect(spy).not.toHaveBeenCalled();
+  });
+
   it('should warn if child does not have a role', async function () {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(
