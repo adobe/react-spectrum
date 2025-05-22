@@ -84,7 +84,10 @@ async function build() {
       postinstall: 'patch-package',
       createRssFeed: "node scripts/createFeed.mjs"
     },
-    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css'],
+    '@parcel/resolver-default': {
+      packageExports: true
+    }
   };
 
 
