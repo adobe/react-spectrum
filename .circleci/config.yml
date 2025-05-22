@@ -865,9 +865,6 @@ workflows:
           requires:
             - install
       - verdaccio:
-          filters:
-            branches:
-              only: main
           requires:
             - install
       - v-docs:
