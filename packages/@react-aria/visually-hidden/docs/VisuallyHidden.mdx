@@ -59,3 +59,17 @@ let {visuallyHiddenProps} = useVisuallyHidden();
 
 <div {...visuallyHiddenProps}>I am hidden</div>
 ```
+
+## Gotchas
+
+VisuallyHidden is positioned absolutely, so it needs a positioned ancestor. Otherwise, it will be positioned relative to the nearest positioned ancestor, which may be the body, causing undesired scroll bars to appear.
+
+```tsx rendered=false
+<label style={{position: 'relative'}}>
+  <VisuallyHidden>
+    <input type="checkbox" />
+  </VisuallyHidden>
+  <span>Subscribe to our newsletter</span>
+</label>
+```
+

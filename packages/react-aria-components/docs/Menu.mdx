@@ -227,7 +227,7 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
   );
 }
 
-export function MyItem(props: MenuItemProps) {
+export function MyItem(props: Omit<MenuItemProps, 'children'> & {children?: React.ReactNode}) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <MenuItem

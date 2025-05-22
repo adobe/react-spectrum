@@ -15,7 +15,7 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
@@ -62,6 +62,7 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
   });
 
   let [isFocused, setFocused] = useState(false);
+  let isEmpty = useMemo(() => listState.collection.size === 0 || (listState.collection.size === 1 && listState.collection.getItem(listState.collection.getFirstKey()!)?.type === 'loader'), [listState.collection]);
 
   return {
     ...validationState,
@@ -70,13 +71,13 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (listState.collection.size !== 0) {
+      if (!isEmpty) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
     toggle(focusStrategy: FocusStrategy | null = null) {
-      if (listState.collection.size !== 0) {
+      if (!isEmpty) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
       }

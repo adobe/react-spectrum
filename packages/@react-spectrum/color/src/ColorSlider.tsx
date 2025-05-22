@@ -92,7 +92,8 @@ export const ColorSlider = React.forwardRef(function ColorSlider(props: Spectrum
         {
           'spectrum-ColorSlider-container--horizontal': !vertical,
           'spectrum-ColorSlider-container--vertical': vertical
-        }
+        },
+        styleProps.className
       )}>
       {label &&
         <div className={classNames(styles, 'spectrum-ColorSlider-labelContainer')}>

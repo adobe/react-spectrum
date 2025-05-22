@@ -33,17 +33,17 @@ let options = [
   {id: 2, name: 'Vanilla'}
 ];
 <div>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <Item id={item.id}>{item.name}</Item>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <Item key={item.id}>{item.name}</Item>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <Item>{item.name}</Item>}
@@ -147,4 +147,18 @@ import {Picker, Section, Item} from '@adobe/react-spectrum';
     <Item>Item two</Item>
   </Section>
 </Picker>
+`);
+
+test('replaces isLoading with loadingState and keeps onLoadMore', `
+  import {Picker, Section, Item} from '@adobe/react-spectrum';
+    <>
+      <Picker label="Ice Cream" isLoading onLoadMore={() => {}}>
+        <Item>Red Panda</Item>
+        <Item>Cat</Item>
+      </Picker>
+      <Picker label="Ice Cream" isLoading={false} onLoadMore={() => {}}>
+        <Item>Red Panda</Item>
+        <Item>Cat</Item>
+      </Picker>
+    </>
 `);
