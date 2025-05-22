@@ -3990,19 +3990,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "@mdx-js/react@npm:3.1.0"
-  dependencies:
-    "@types/mdx": "npm:^2.0.0"
-  peerDependencies:
-    "@types/react": ">=16"
-    react: ">=16"
-  checksum: 10c0/381ed1211ba2b8491bf0ad9ef0d8d1badcdd114e1931d55d44019d4b827cc2752586708f9c7d2f9c3244150ed81f1f671a6ca95fae0edd5797fb47a22e06ceca
-  languageName: node
-  linkType: hard
-
-"@mdx-js/react@npm:next":
+"@mdx-js/react@npm:2.0.0-rc.2":
   version: 2.0.0-rc.2
   resolution: "@mdx-js/react@npm:2.0.0-rc.2"
   dependencies:
@@ -7571,6 +7559,7 @@ __metadata:
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
     "@svgr/plugin-svgo": "npm:^8.1.0"
+    prettier: "npm:^3.3.3"
   languageName: unknown
   linkType: soft
 
@@ -9275,6 +9264,7 @@ __metadata:
   dependencies:
     "@svgr/core": "npm:^8.1.0"
     fs-extra: "npm:^11.0.0"
+    prettier: "npm:^3.3.3"
   languageName: unknown
   linkType: soft
 
@@ -9426,6 +9416,23 @@ __metadata:
   peerDependencies:
     storybook: ^8.6.14
   checksum: 10c0/1668d40977624e3495b0cd3f009957994db04cec6de39645311e892cc1de99bf5a98bea9e9783d8063627c27b9545d222b1fdc490c23c6fadeead42ce0605fcb
+  languageName: node
+  linkType: hard
+
+"@storybook/addon-docs@patch:@storybook/addon-docs@npm%3A8.6.14#~/.yarn/patches/@storybook-addon-docs-npm-8.6.14-12ab3f55f8.patch":
+  version: 8.6.14
+  resolution: "@storybook/addon-docs@patch:@storybook/addon-docs@npm%3A8.6.14#~/.yarn/patches/@storybook-addon-docs-npm-8.6.14-12ab3f55f8.patch::version=8.6.14&hash=c42830"
+  dependencies:
+    "@mdx-js/react": "npm:^3.0.0"
+    "@storybook/blocks": "npm:8.6.14"
+    "@storybook/csf-plugin": "npm:8.6.14"
+    "@storybook/react-dom-shim": "npm:8.6.14"
+    react: "npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    react-dom: "npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    ts-dedent: "npm:^2.0.0"
+  peerDependencies:
+    storybook: ^8.6.14
+  checksum: 10c0/995af4c056ad37bf9f6cd75106d7789da3f452b1b87cf08e4bfab4d1e331611d238e2f355e67f451fff5016b11712ea8edde1f7edc3fa27ff793a52f6c46cd86
   languageName: node
   linkType: hard
 
@@ -25816,6 +25823,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:^3.3.3":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10c0/3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
+  languageName: node
+  linkType: hard
+
 "pretty-format@npm:^25.1.0":
   version: 25.1.0
   resolution: "pretty-format@npm:25.1.0"
@@ -26531,6 +26547,7 @@ __metadata:
     postcss: "npm:^8.4.24"
     postcss-custom-properties: "npm:^13.2.0"
     postcss-import: "npm:^15.1.0"
+    prettier: "npm:^3.3.3"
     prop-types: "npm:^15.6.0"
     raf: "npm:^3.4.0"
     react: "npm:^18.2.0"

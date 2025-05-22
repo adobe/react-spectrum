@@ -1,12 +1,13 @@
 import { Transformer } from '@parcel/plugin';
-import { enrichCsf, formatCsf, babelParse, CsfFile } from '@storybook/csf-tools';
+import { enrichCsf, formatCsf, loadCsf } from '@storybook/csf-tools';
 import * as t from '@babel/types';
-import {parse} from '@babel/parser';
 import path from 'path';
 import crypto from 'crypto';
 import { getClient, getCacheDir } from './react-docgen-typescript';
 import {ComponentDoc} from 'react-docgen-typescript';
 import SourceMap from '@parcel/source-map';
+
+// There's a lot of 'any' in this file. This is because the types in storybook/core are a copy and derivative of the equivalent babel types.
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -33,14 +34,7 @@ module.exports = new Transformer({
 });
 
 function processCsf(code: string, filePath: string, docs: ComponentDoc | null, refreshName: string | null) {
-  let ast = parse(code, {
-    sourceFilename: filePath,
-    sourceType: 'module',
-    plugins: ['typescript', 'jsx', 'importAttributes', 'classProperties'],
-    tokens: true
-  });
-
-  let csf = new CsfFile(ast, {
+  let csf = loadCsf(code, {
     fileName: filePath,
     makeTitle: title => title || 'default'
   }).parse();
@@ -54,7 +48,7 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
       t.identifier(name),
       node.params.map(p => t.cloneNode(p)),
       t.isExpression(node.body) ? t.blockStatement([t.returnStatement(node.body)]) : node.body
-    ));
+    ) as any);
     node.body = t.blockStatement([
       t.returnStatement(
         t.jsxElement(
@@ -116,16 +110,16 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
         storyHash = hash.digest('hex');
       }
 
-      if (t.isFunction(node)) {
+      if (t.isFunction(node as any)) {
         // CSF 2 style function story.
-        let c = addComponent(node);
+        let c = addComponent(node as any);
         csf._ast.program.body.push(t.expressionStatement(
           t.assignmentExpression(
             '=',
             t.memberExpression(t.identifier(name), t.identifier('_internalComponent')),
             t.identifier(c)
           )
-        ));
+        ) as any);
 
         if (storyHash) {
           csf._ast.program.body.push(t.expressionStatement(
@@ -134,12 +128,12 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
               t.memberExpression(t.identifier(name), t.identifier('_hash')),
               t.stringLiteral(storyHash)
             )
-          ));
+          ) as any);
         }
       } else if (node.type === 'ObjectExpression') {
-        handleRenderProperty(node);
+        handleRenderProperty(node as any);
         if (storyHash) {
-          node.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)));
+          node.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)) as any);
         }
       }
     }
@@ -148,7 +142,7 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
   // Hash the default export to invalidate Fast Refresh.
   if (csf._metaNode?.type === 'ObjectExpression') {
     if (docs) {
-      let component = csf._metaNode.properties.find(p => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component');
+      let component: any = csf._metaNode.properties.find((p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component');
       if (t.isObjectProperty(component) && t.isExpression(component.value)) {
         component.value = t.sequenceExpression([
           t.assignmentExpression('=', t.memberExpression(component.value, t.identifier('__docgenInfo')), t.valueToNode(docs)),
@@ -157,20 +151,20 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
       }
     }
 
-    
+
     if (refreshName) {
-      handleRenderProperty(csf._metaNode);
+      handleRenderProperty(csf._metaNode as any);
 
       let hash = crypto.createHash('md5');
       hash.update(code.slice(csf._metaNode.start!, csf._metaNode.end!));
       hash.update(JSON.stringify(docs));
       let metaHash = hash.digest('hex');
-      csf._metaNode.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)));
+      csf._metaNode.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)) as any);
     }
   }
 
   if (refreshName) {
-    wrapRefresh(csf._ast.program, filePath, refreshName);
+    wrapRefresh(csf._ast.program as any, filePath, refreshName);
   }
 
   // @ts-ignore
@@ -261,14 +255,14 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
       t.blockStatement([
         t.expressionStatement(
           t.assignmentExpression(
-            '=', 
+            '=',
             t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$')),
             t.identifier(refreshName + '$PrevRefreshReg')
           ),
         ),
         t.expressionStatement(
           t.assignmentExpression(
-            '=', 
+            '=',
             t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$')),
             t.identifier(refreshName + '$PrevRefreshSig')
           ),

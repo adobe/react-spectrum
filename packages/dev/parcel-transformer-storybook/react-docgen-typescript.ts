@@ -47,7 +47,7 @@ async function createService(options: PluginOptions) {
 
     socket.on('error', () => {});
   });
-  
+
   await new Promise<void>((resolve, reject) => {
     let sock = getSocketPath(options);
     server.listen(sock, () => resolve());
@@ -68,7 +68,7 @@ async function createService(options: PluginOptions) {
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.Latest
   };
-  
+
   let program: ts.Program;
   if (options.hmrOptions) {
     let host = ts.createWatchCompilerHost(
@@ -134,7 +134,7 @@ function parseStory(program: ts.Program, filePath: string) {
     'onFocusChange',
     'onScroll'
   ]);
-  
+
   let parser = new Parser(program, {
     shouldExtractLiteralValuesFromEnum: true,
     shouldRemoveUndefinedFromOptional: true,
@@ -272,6 +272,7 @@ export async function getClient(options: PluginOptions): Promise<Client> {
   try {
     await createService(options);
   } catch (err) {
+    // @ts-ignore
     if (err.code !== 'EADDRINUSE') {
       throw err;
     }
