@@ -14,7 +14,7 @@ import docs from 'docs:@react-aria/color';
 import statelyDocs from 'docs:@react-stately/color';
 import typesDocs from 'docs:@react-types/color';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/color/package.json';
+import packageData from '../package.json';
 import Anatomy from './ColorSliderAnatomy.svg';
 
 ---
@@ -92,7 +92,7 @@ get a localized string for the channel name using the `getChannelName` method. I
 to display the current channel value as text. This is formatted using the Color object's `formatChannelValue` method, which
 formats the value according to the channel type and locale settings.
 
-The visually hidden `<input>` element inside the thumb is used to represent the color slider to assistive technology. 
+The visually hidden `<input>` element inside the thumb is used to represent the color slider to assistive technology.
 The thumb also uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
