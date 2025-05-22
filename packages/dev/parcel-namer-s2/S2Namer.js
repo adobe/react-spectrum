@@ -17,7 +17,7 @@ module.exports = new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
 
-    if (mainAsset?.filePath.includes('@react-spectrum/s2') && !mainAsset?.filePath.includes('react-spectrum/packages')) {
+    if (mainAsset?.filePath.includes('@react-spectrum/s2') || !mainAsset?.filePath.includes('react-spectrum/packages')) {
       if (bundle.needsStableName && bundle.target.distEntry) {
         return bundle.target.distEntry;
       }
@@ -28,7 +28,7 @@ module.exports = new Namer({
       let originalExt = path.extname(mainAsset.filePath);
       let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
       let m = mainAsset.filePath.match(/spectrum-illustrations\/(linear|gradient\/generic\d)/);
-      if (m && !mainAsset?.filePath.includes('react-spectrum/packages')) {
+      if (m) {
         if (originalExt === '.svg') {
           return m[1] + '/internal/' + name + ext;
         }
