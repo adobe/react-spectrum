@@ -567,9 +567,15 @@ function TreeDragAndDropExample(args) {
 
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
+    
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: [...nodeItem.children].map(serializeItem)
+    });
+        
     return {
       'text/plain': item.value.name,
-      'tree-item': JSON.stringify(item.value)
+      'tree-item': JSON.stringify(serializeItem(item))
     };
   });
 
