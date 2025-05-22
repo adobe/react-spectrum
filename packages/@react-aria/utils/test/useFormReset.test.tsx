@@ -51,6 +51,29 @@ describe('useFormReset', () => {
     expect(onReset).toHaveBeenCalled();
   });
 
+  it('should call every onReset on reset', () => {
+    const onReset1 = jest.fn();
+    const onReset2 = jest.fn();
+    const Form = () => {
+      const ref1 = useRef<HTMLInputElement>(null);
+      useFormReset(ref1, '', onReset1);
+      const ref2 = useRef<HTMLInputElement>(null);
+      useFormReset(ref2, '', onReset2);
+      return (
+        <form>
+          <input ref={ref1} type="text" />
+          <input ref={ref2} type="text" />
+          <button type="reset">Reset</button>
+        </form>
+      );
+    };
+    const {getByRole} = render(<Form />);
+    const button = getByRole('button');
+    fireEvent.click(button);
+    expect(onReset1).toHaveBeenCalled();
+    expect(onReset2).toHaveBeenCalled();
+  });
+
   it('should not call onReset if reset is cancelled', async () => {
     const onReset = jest.fn();
     const Form = () => {
@@ -85,5 +108,28 @@ describe('useFormReset', () => {
     const button = getByRole('button');
     fireEvent.click(button);
     expect(onReset).not.toHaveBeenCalled();
+  });
+
+  it('should not call any onReset if reset is cancelled', () => {
+    const onReset1 = jest.fn();
+    const onReset2 = jest.fn();
+    const Form = () => {
+      const ref1 = useRef<HTMLInputElement>(null);
+      useFormReset(ref1, '', onReset1);
+      const ref2 = useRef<HTMLInputElement>(null);
+      useFormReset(ref2, '', onReset2);
+      return (
+        <form onReset={(e) => e.preventDefault()}>
+          <input ref={ref1} type="text" />
+          <input ref={ref2} type="text" />
+          <button type="reset">Reset</button>
+        </form>
+      );
+    };
+    const {getByRole} = render(<Form />);
+    const button = getByRole('button');
+    fireEvent.click(button);
+    expect(onReset1).not.toHaveBeenCalled();
+    expect(onReset2).not.toHaveBeenCalled();
   });
 });

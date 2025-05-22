@@ -14,61 +14,50 @@ import {RefObject} from '@react-types/shared';
 import {useEffect, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
+type ResetEvent = Event & {
+  reactAriaReDispatched?: boolean,
+  reactAriaShouldReset?: boolean
+};
+
 export function useFormReset<T>(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null> | undefined,
   initialValue: T,
   onReset: (value: T) => void
 ): void {
-  let currEvent = useRef<Event | null>(null);
   let resetValue = useRef(initialValue);
-
-  let handleReset = useEffectEvent((e: Event) => {
-    currEvent.current = null;
-    if (
-      e.target === ref?.current?.form
-      && onReset
-      && !e.defaultPrevented
-    ) {
-      onReset(resetValue.current);
-    }
-  });
 
   /**
    * Because event.stopPropagation() does not preventDefault and because we attach directly to the form element unlike React
    * we need to create a new event which lets us monitor stopPropagation and preventDefault. This allows us to call onReset
    * as the browser would natively.
    */
-  let formListener = useEffectEvent((e: Event) => {
-    if (currEvent.current !== null || e.target !== ref?.current?.form) {
+  let formListener = useEffectEvent((e: ResetEvent) => {
+    if (e.reactAriaReDispatched || e.target !== ref?.current?.form) {
        // This is the re-dispatched event. Or it's for a different form.
       return;
     }
-    let alreadyPrevented = e.defaultPrevented;
-    e.stopPropagation();
-    e.preventDefault();
-    let event = new Event('reset', {bubbles: true, cancelable: true});
-    currEvent.current = event;
-    let originalStopPropagation = event.stopPropagation;
-    let stopPropagation = () => {
-      currEvent.current = null;
-      originalStopPropagation.call(event);
-      if (!alreadyPrevented && !event.defaultPrevented && onReset) {
-        onReset(resetValue.current);
+    if (e.reactAriaShouldReset === undefined) {
+      let event: ResetEvent = new Event('reset', {bubbles: true, cancelable: true});
+      event.reactAriaReDispatched = true;
+      if (e.defaultPrevented) {
+        event.preventDefault();
       }
-    };
-    event.stopPropagation = stopPropagation;
+      e.stopPropagation();
+      e.preventDefault();
 
-    e.target?.dispatchEvent(event);
+      e.reactAriaShouldReset = e.target?.dispatchEvent(event) ?? false;
+    };
+    if (onReset && e.reactAriaShouldReset) {
+      onReset(resetValue.current);
+    }
   });
 
   useEffect(() => {
     let form = ref?.current?.form;
     let document = form?.ownerDocument;
     document?.addEventListener('reset', formListener, true);
-    document?.addEventListener('reset', handleReset);
     return () => {
       document?.removeEventListener('reset', formListener, true);
-      document?.removeEventListener('reset', handleReset);
     };
-  }, [ref, handleReset, formListener]);
+  }, [ref, formListener]);
 }
