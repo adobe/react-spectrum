@@ -8,7 +8,10 @@
   "types": "dist/types.d.ts",
   "exports": {
     "source": "./src/index.ts",
-    "types": ["./dist/types.d.ts", "./src/index.ts"],
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },

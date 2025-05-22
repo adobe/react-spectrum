@@ -18,7 +18,10 @@
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": ["./dist/types.d.ts", "./src/index.ts"],
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
       "module": "./dist/module.mjs",
       "import": "./dist/module.mjs",
       "require": "./dist/main.cjs"
@@ -29,21 +32,30 @@
     },
     "./style": {
       "source": "./style/index.ts",
-      "types": ["./style/dist/types.d.ts", "./style/index.ts"],
+      "types": [
+        "./style/dist/types.d.ts",
+        "./style/index.ts"
+      ],
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"
     },
     "./icons/*": {
       "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
-      "types": ["./icons/*.d.ts", "./icon.d.ts"],
+      "types": [
+        "./icons/*.d.ts",
+        "./icon.d.ts"
+      ],
       "module": "./icons/*.mjs",
       "import": "./icons/*.mjs",
       "require": "./icons/*.cjs"
     },
     "./illustrations/*": {
       "source": "./spectrum-illustrations/*.tsx",
-      "types": ["./illustrations/*.d.ts", "./icon.d.ts"],
+      "types": [
+        "./illustrations/*.d.ts",
+        "./icon.d.ts"
+      ],
       "module": "./illustrations/*.mjs",
       "import": "./illustrations/*.mjs",
       "require": "./illustrations/*.cjs"
