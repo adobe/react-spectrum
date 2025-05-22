@@ -28,7 +28,7 @@ module.exports = new Namer({
       let originalExt = path.extname(mainAsset.filePath);
       let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
       let m = mainAsset.filePath.match(/spectrum-illustrations\/(linear|gradient\/generic\d)/);
-      if (m) {
+      if (m && !mainAsset?.filePath.includes('react-spectrum/packages')) {
         if (originalExt === '.svg') {
           return m[1] + '/internal/' + name + ext;
         }
