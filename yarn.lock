@@ -4946,7 +4946,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/rsc@npm:^2.14.1":
+"@parcel/rsc@npm:2.14.4":
   version: 2.14.4
   resolution: "@parcel/rsc@npm:2.14.4"
   dependencies:
@@ -4956,6 +4956,19 @@ __metadata:
     react: ^19.1.0
     react-dom: ^19.1.0
   checksum: 10c0/c64c332db107e7c88fad631ca58dcb89077148987d20bca8b77c3c8cd3789d9a6f82a751404be7c5b6b2d9678514c3b4603cdc669fad5d6d34567320a8296e79
+  languageName: node
+  linkType: hard
+
+"@parcel/rsc@patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch":
+  version: 2.14.4
+  resolution: "@parcel/rsc@patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch::version=2.14.4&hash=6ccf69"
+  dependencies:
+    react-server-dom-parcel: "npm:^19.1.0"
+    rsc-html-stream: "npm:^0.0.5"
+  peerDependencies:
+    react: ^19.1.0
+    react-dom: ^19.1.0
+  checksum: 10c0/d283e73f765b2393f3183b4c799c6210084ed5298b09463de626f5d595274a540256f6e70c699689beeeb9afa52f2e634f0d200a163b9b0051f85d4a1b588c69
   languageName: node
   linkType: hard
 
@@ -29548,7 +29561,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "s2-docs@workspace:packages/dev/s2-docs"
   dependencies:
-    "@parcel/rsc": "npm:^2.14.1"
+    "@parcel/rsc": "patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch"
     "@react-aria/interactions": "npm:^3.25.1"
     "@react-aria/utils": "npm:^3.29.0"
     "@react-spectrum/s2": "npm:^0.9.0"
