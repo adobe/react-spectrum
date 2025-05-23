@@ -57,8 +57,8 @@ export class GridListTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, avoidSelectionOnNav?: boolean}) {
-    let {row, avoidSelectionOnNav} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+    let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
@@ -71,7 +71,7 @@ export class GridListTester {
     }
 
     if (document.activeElement === this._gridlist) {
-      await this.user.keyboard(`${avoidSelectionOnNav ? `[${altKey}>]` : ''}[ArrowDown]${avoidSelectionOnNav ? `[/${altKey}]` : ''}`);
+      await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
@@ -83,13 +83,13 @@ export class GridListTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
-    if (avoidSelectionOnNav) {
+    if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-    if (avoidSelectionOnNav) {
+    if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
   };
@@ -129,7 +129,7 @@ export class GridListTester {
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: selectionBehavior === 'replace'});
+      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -189,7 +189,7 @@ export class GridListTester {
         return;
       }
 
-      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: true});
+      await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

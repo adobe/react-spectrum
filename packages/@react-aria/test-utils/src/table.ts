@@ -55,8 +55,8 @@ export class TableTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, avoidSelectionOnNav?: boolean}) {
-    let {row, avoidSelectionOnNav} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+    let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
@@ -92,13 +92,13 @@ export class TableTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
-    if (avoidSelectionOnNav) {
+    if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-    if (avoidSelectionOnNav) {
+    if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
   };
@@ -129,7 +129,7 @@ export class TableTester {
     let rowCheckbox = within(row).queryByRole('checkbox');
 
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: selectionBehavior === 'replace'});
+      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -359,7 +359,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      await this.keyboardNavigateToRow({row, avoidSelectionOnNav: true});
+      await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);
