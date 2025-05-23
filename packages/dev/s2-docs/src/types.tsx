@@ -10,78 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
-// import Asterisk from '@react-spectrum/s2/icons/Asterisk';
-// import clsx from 'clsx';
+import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
-import {getAnchorProps, getUsedLinks} from './utils';
-// import Lowlight from 'react-lowlight';
 import {getDoc} from 'globals-docs';
-import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import Markdown from 'markdown-to-jsx';
-import React, {ReactNode, useContext} from 'react';
+import React, {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
-import {TypeLink} from './TypeLink';
-// import styles from './docs.css';
-// import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
-// import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import {TypePopover} from './TypePopover';
 
-const DOC_LINKS = {
-  'React.Component': 'https://reactjs.org/docs/react-component.html',
-  ReactElement: 'https://reactjs.org/docs/rendering-elements.html',
-  ReactNode: 'https://reactjs.org/docs/rendering-elements.html',
-  Generator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator',
-  Iterator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
-  Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
-  DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
-  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
-  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
-  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
-  'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
-  'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
-  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
-  'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
-  'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
-  'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
-  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
-  'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
-  'Key': 'https://reactjs.org/docs/lists-and-keys.html',
-  'HTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes',
-  'InputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes',
-  'TextareaHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#attributes',
-  'LabelHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label#attributes',
-  'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
-};
-
-type TParameter = {type: 'parameter', name: string, value: TType, optional: boolean, rest: boolean, description: string | null, default?: string};
-type Property = {type: 'property', name: string, indexType: TType | null, value: TType, optional: boolean, description: string | null, access: string | null, selector: string | null, default: string | null};
-type TTypeParameter = {type: 'typeParameter', name: string, constraint: TType | null, default: TType | null};
-type TKeyword = {type: 'any' | 'null' | 'undefined' | 'void' | 'unknown' | 'never' | 'this' | 'symbol' | 'string' | 'number' | 'boolean'};
-type TIdentifier = {type: 'identifier', name: string};
-type TString = {type: 'string', value?: string};
-type TNumber = {type: 'number', value?: number};
-type TBoolean = {type: 'boolean', value?: boolean};
-type TUnion = {type: 'union', elements: TType[]};
-type TIntersection = {type: 'intersection', types: TType[]};
-type TApplication = {type: 'application', base: TType, typeParameters: TType[]};
-type TTypeOperator = {type: 'typeOperator', operator: string, value: TType};
-type TFunction = {type: 'function', id?: string, name?: string, parameters: TParameter[], return: TType, typeParameters: TTypeParameter[], description: string | null, access: string | null};
-type TMethod = {type: 'method', name: string, value: TType, optional: boolean, access: string | null, description: string | null, default: string | null};
-type TAlias = {type: 'alias', id: string, name: string, value: TType, typeParameters: TTypeParameter[], description: string | null, access?: string};
-type TInterface = {type: 'interface', id: string, name: string, extends: TType[], properties: {[name: string]: Property | TMethod}, typeParameters: TTypeParameter[], description: string | null, access: string | null};
-type TObject = {type: 'object', properties: {[name: string]: Property | TMethod} | null, description: string | null, access: string | null};
-type TArray = {type: 'array', elementType: TType};
-type TTuple = {type: 'tuple', elements: TType[]};
-type TTemplate = {type: 'template', elements: TType[]};
-type TComponent = {type: 'component', id: string, name: string, props: TType | null, typeParameters: TTypeParameter[], ref: TType | null, description: string | null, access: string | null};
-type TConditional = {type: 'conditional', checkType: TType, extendsType: TType, trueType: TType, falseType: TType};
-type TIndexedAccess = {type: 'indexedAccess', objectType: TType, indexType: TType};
-type TKeyof = {type: 'keyof', keyof: TType};
-type TLink = {type: 'link', id: string};
-type TReference =  {type: 'reference', local: string, imported: string, specifier: string};
-type TMapped = {type: 'mapped', readonly: boolean | '+' | '-', typeParameter: TTypeParameter, typeAnnotation: TType};
-type TType = 
+export type TParameter = {type: 'parameter', name: string, value: TType, optional: boolean, rest: boolean, description: string | null, default?: string};
+export type TProperty = {type: 'property', name: string, indexType: TType | null, value: TType, optional: boolean, description: string | null, access: string | null, selector: string | null, default: string | null};
+export type TTypeParameter = {type: 'typeParameter', name: string, constraint: TType | null, default: TType | null};
+export type TKeyword = {type: 'any' | 'null' | 'undefined' | 'void' | 'unknown' | 'never' | 'this' | 'symbol' | 'string' | 'number' | 'boolean'};
+export type TIdentifier = {type: 'identifier', name: string};
+export type TString = {type: 'string', value?: string};
+export type TNumber = {type: 'number', value?: number};
+export type TBoolean = {type: 'boolean', value?: boolean};
+export type TUnion = {type: 'union', elements: TType[]};
+export type TIntersection = {type: 'intersection', types: TType[]};
+export type TApplication = {type: 'application', base: TType, typeParameters: TType[]};
+export type TTypeOperator = {type: 'typeOperator', operator: string, value: TType};
+export type TFunction = {type: 'function', id?: string, name?: string, parameters: TParameter[], return: TType, typeParameters: TTypeParameter[], description: string | null, access: string | null};
+export type TMethod = {type: 'method', name: string, value: TFunction, optional: boolean, access: string | null, description: string | null, default: string | null};
+export type TAlias = {type: 'alias', id: string, name: string, value: TType, typeParameters: TTypeParameter[], description: string | null, access?: string};
+export type TInterface = {type: 'interface', id: string, name: string, extends: TType[], properties: {[name: string]: TProperty | TMethod}, typeParameters: TTypeParameter[], description: string | null, access: string | null};
+export type TObject = {type: 'object', properties: {[name: string]: TProperty | TMethod} | null, description: string | null, access: string | null};
+export type TArray = {type: 'array', elementType: TType};
+export type TTuple = {type: 'tuple', elements: TType[]};
+export type TTemplate = {type: 'template', elements: TType[]};
+export type TComponent = {type: 'component', id: string, name: string, props: TType | null, typeParameters: TTypeParameter[], ref: TType | null, description: string | null, access: string | null};
+export type TConditional = {type: 'conditional', checkType: TType, extendsType: TType, trueType: TType, falseType: TType};
+export type TIndexedAccess = {type: 'indexedAccess', objectType: TType, indexType: TType};
+export type TKeyof = {type: 'keyof', keyof: TType};
+export type TLink = {type: 'link', id: string};
+export type TReference =  {type: 'reference', local: string, imported: string, specifier: string};
+export type TMapped = {type: 'mapped', readonly: boolean | '+' | '-', typeParameter: TTypeParameter, typeAnnotation: TType};
+export type TType = 
   | TKeyword
   | TIdentifier
   | TString
@@ -97,7 +63,7 @@ type TType =
   | TAlias
   | TInterface
   | TObject
-  | Property
+  | TProperty
   | TArray
   | TTuple
   | TTemplate
@@ -112,20 +78,12 @@ type TType =
 
 const codeStyle = style({font: 'code-sm'});
 
-const styles = {};
-function Asterisk() {return null;}
-
-// export const TypeContext = React.createContext();
-// export const LinkContext = React.createContext();
-
 let LINKS = {};
 export function setLinks(links) {
   LINKS = links;
 }
 
-export function Type({type, links}: {type: TType}) {
-  // let links = useContext(TypeContext);
-
+export function Type({type}: {type: TType}) {
   if (!type) {
     return null;
   }
@@ -252,6 +210,33 @@ function Keyword({type}: {type: string}) {
   return <span className={codeStyles.keyword}>{type}</span>;
 }
 
+const DOC_LINKS = {
+  'React.Component': 'https://reactjs.org/docs/react-component.html',
+  ReactElement: 'https://reactjs.org/docs/rendering-elements.html',
+  ReactNode: 'https://reactjs.org/docs/rendering-elements.html',
+  Generator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator',
+  Iterator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
+  Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
+  DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
+  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
+  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
+  'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
+  'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
+  'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
+  'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
+  'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
+  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
+  'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
+  'Key': 'https://reactjs.org/docs/lists-and-keys.html',
+  'HTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes',
+  'InputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes',
+  'TextareaHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#attributes',
+  'LabelHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label#attributes',
+  'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
+};
+
 function Identifier({name}: TIdentifier) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
@@ -348,11 +333,11 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
       ...acc,
       <span
         className="token punctuation"
-        key={`join${v.name || v.raw}${i}`}>
+        key={`join${i}`}>
         {contents}
       </span>,
       <React.Fragment
-        key={`type${v.name || v.raw}${i}`}>
+        key={`type${i}`}>
         <Type type={v} />
       </React.Fragment>
     ], []).slice(1);
@@ -447,34 +432,6 @@ function Parameter({name, value, default: defaultValue, optional, rest}: TParame
   );
 }
 
-// export function LinkProvider({children}) {
-//   let links = new Map();
-//   return (
-//     <LinkContext.Provider value={links}>
-//       {children}
-//       <LinkRenderer />
-//     </LinkContext.Provider>
-//   );
-// }
-
-// export function LinkRenderer() {
-//   let links = useContext(LinkContext);
-//   return [...links.values()].map(({type, links}) => (
-//     <section key={type.id} id={type.id} data-title={type.name} hidden>
-//       {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} /*className={styles['type-description']}*/>{type.description}</Markdown>}
-//       {type.type === 'interface' && type.extends?.length > 0 &&
-//         <p style={{paddingLeft: 'var(--spectrum-global-dimension-size-200)'}}><strong>Extends</strong>: <code className={codeStyle}><JoinList elements={type.extends} joiner=", " /></code></p>
-//       }
-//       <TypeContext.Provider value={links}>
-//         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
-//           ? <Type type={type} />
-//           : <code className={codeStyle}><Type type={type} /></code>
-//         }
-//       </TypeContext.Provider>
-//     </section>
-//   ));
-// }
-
 const cache = new Map();
 
 export function LinkType({id}: TLink) {
@@ -487,16 +444,16 @@ export function LinkType({id}: TLink) {
     return <Identifier type="identifier" name={type.name} />;
   }
 
-  return <InlineLink type={type} />;
+  return <TypeLink type={type} />;
 }
 
-export function InlineLink({type}: {type: TType}) {
+export function TypeLink({type}: {type: Extract<TType, {id: string, name: string}>}) {
   if (cache.has(type.id)) {
     return cache.get(type.id);
   }
 
   let res = (
-    <TypeLink name={type.name}>
+    <TypePopover name={type.name}>
       {'description' in type && type.description && <Markdown  className={style({font: 'body'})} options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}}>{type.description}</Markdown>}
       {type.type === 'interface' && type.extends?.length > 0 &&
         <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}><JoinList elements={type.extends} joiner=", " /></code></p>
@@ -506,24 +463,31 @@ export function InlineLink({type}: {type: TType}) {
         ? <Type type={type} />
         : <code className={codeStyle}><Type type={type} /></code>
       }
-    </TypeLink>
+    </TypePopover>
   );
 
   cache.set(type.id, res);
   return res;
 }
 
-export function renderHTMLfromMarkdown(description: string, opts: object) {
+export function renderHTMLfromMarkdown(description: string | null | undefined, opts: object): ReactNode {
   if (description) {
     const options = {forceInline: true, overrides: {a: {component: SpectrumLink}, code: {component: Code}}, disableParsingRawHTML: true, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
-  return '';
+  return null;
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}: TInterface) {
+interface InterfaceTypeProps extends TInterface {
+  showRequired?: boolean,
+  showDefault?: boolean,
+  isComponent?: boolean,
+  hideType?: boolean
+}
+
+export function InterfaceType({properties: props, showRequired, showDefault, isComponent, hideType}: InterfaceTypeProps) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected').reverse();
-  let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
+  let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected') as TMethod[];
 
   // Default to showing required indicators if some properties are optional but not all.
   showRequired = showRequired || (!properties.every(p => p.optional) && !properties.every(p => !p.optional));
@@ -558,7 +522,6 @@ export function InterfaceType({description, properties: props, typeParameters, s
               <TableColumn>Name</TableColumn>
               {!hideType && <TableColumn>Type</TableColumn>}
               {showDefault && <TableColumn>Default</TableColumn>}
-              {/* <TableColumn>Description</TableColumn> */}
             </tr>
           </TableHeader>
           <TableBody>
@@ -570,7 +533,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
                       <span className={isComponent ? codeStyles.attribute : codeStyles.variable}>{prop.name}</span>
                     </code>
                     {!prop.optional && showRequired
-                      ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} aria-label="Required" />
+                      ? <Asterisk size="M" className={style({marginStart: 8})} aria-label="Required" />
                       : null
                     }
                   </TableCell>
@@ -582,7 +545,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
                     </TableCell>
                   }
                   {showDefault &&
-                    <TableCell hideBorder={!!prop.description} styles={prop.default ? null : style({display: {default: 'none', sm: '[table-cell]'}})}>
+                    <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
                       <strong className={style({font: 'body', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
                       {prop.default
                         ? <Code lang="tsx">{prop.default}</Code>
@@ -590,7 +553,6 @@ export function InterfaceType({description, properties: props, typeParameters, s
                       }
                     </TableCell>
                   }
-                  {/* <TableCell>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell> */}
                 </TableRow>
                 {prop.description && <TableRow>
                   <TableCell colSpan={3}>{renderHTMLfromMarkdown(prop.description, {forceInline: true})}</TableCell>
@@ -605,11 +567,6 @@ export function InterfaceType({description, properties: props, typeParameters, s
       }
       {methods.length > 0 &&
         <Table>
-          {/* <TableHeader>
-            <TableRow>
-              <TableColumn>Method</TableColumn>
-            </TableRow>
-          </TableHeader> */}
           <TableBody>
             {methods.map((prop, index) => (
               <React.Fragment key={index}>

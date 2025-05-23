@@ -136,7 +136,7 @@ tailwind-starter:
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 
 s2-docs:
-	yarn build:s2-docs -o dist/production/docs/s2
+	yarn build:s2-storybook-docs -o dist/production/docs/s2
 
 s2-api-diff:
 	node scripts/buildBranchAPI.js

@@ -1,4 +1,4 @@
-<svg style="max-height: 145px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 325 145">
+<svg style="max-height: 145px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 325 145">
   <g id="Group_22773" data-name="Group 22773" transform="translate(-4 -56)">
     <g id="Rectangle_136479" data-name="Rectangle 136479" transform="translate(4 87)" fill="none" stroke="#4a6cc2" stroke-width="1" stroke-dasharray="3">
       <rect width="324" height="88" rx="8" stroke="none"/>

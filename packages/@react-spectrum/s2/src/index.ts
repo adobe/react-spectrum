@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-"use client";
+'use client';
 
 export {Accordion, AccordionContext} from './Accordion';
 export {ActionBar, ActionBarContext} from './ActionBar';

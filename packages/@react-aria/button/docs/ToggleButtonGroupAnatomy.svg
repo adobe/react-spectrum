@@ -1,4 +1,4 @@
-<svg style="max-height: 138px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 214 138">
+<svg style="max-height: 138px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 214 138">
   <g id="Group_151250" data-name="Group 151250" transform="translate(-57 -40)">
     <g id="Group_151239" data-name="Group 151239" transform="translate(12 69)">
       <g id="Group_151237" data-name="Group 151237" transform="translate(18 -41)">

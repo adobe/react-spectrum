@@ -1,9 +1,9 @@
 'use client';
 
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import React from 'react';
-import { focusRing, style } from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export function Link({href, ...props}: LinkProps) {
   return (
@@ -40,6 +40,6 @@ const colorLink = style({
   cursor: 'pointer'
 });
 
-export function ColorLink({type, ...props}: RACLinkProps & {type: 'keyword' | 'variable'}) {
-  return <RACLink {...props} className={r => colorLink({...r, type})} />
+export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | 'variable'}) {
+  return <RACLink {...props} className={r => colorLink({...r, type})} />;
 }

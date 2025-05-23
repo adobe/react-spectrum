@@ -1,11 +1,8 @@
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
-import React, {ReactElement, ReactNode} from 'react';
-import {highlightHast, HastNode, HastTextNode, Language} from 'tree-sitter-highlight';
-import flatMap from 'unist-util-flatmap';
-import { Collapse } from './Collapse';
-import docs from 'docs:@react-spectrum/s2';
-import { InlineLink, LinkType } from './types';
-import { CodeProps } from './VisualExampleClient';
+import {CodeProps} from './VisualExampleClient';
+import {Collapse} from './Collapse';
+import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
+import React, {ReactNode} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const property = style({color: 'indigo-1000'});
 const fn = style({color: 'red-1000'});
@@ -31,7 +28,7 @@ const mark = style({
   borderStyle: 'solid',
   marginX: -32,
   paddingX: 32,
-  color: '[inherit]'
+  color: 'inherit'
 });
 
 function Highlight({children}) {
@@ -42,13 +39,25 @@ const groupings = {
   highlight: Highlight,
   collapse: Collapse
 };
+
+export interface ICodeProps {
+  children: string,
+  lang?: string,
+  hideImports?: boolean
+}
  
-export function Code({children, className, lang, hideImports}) {
+export function Code({children, lang, hideImports}: ICodeProps) {
   if (lang) {
+    // @ts-ignore
     let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
     let lineNodes = lines(highlighted);
     if (hideImports) {
       let idx = lineNodes.findIndex(line => !/^("use client"|import|(\s*$))/.test(text(line)));
+      if (idx >= 0) {
+        lineNodes = lineNodes.slice(idx);
+      }
+    } else {
+      let idx = lineNodes.findIndex(line => !/^("use client"|(\s*$))/.test(text(line)));
       if (idx >= 0) {
         lineNodes = lineNodes.slice(idx);
       }
@@ -74,7 +83,7 @@ function lines(node: HastNode) {
       type: 'element',
       tagName: 'div',
       children: [{...node, children: currentLine}]
-    };
+    } as HastNode;
     if (grouping) {
       grouping.children.push(childNode);
     } else {
@@ -104,7 +113,7 @@ function lines(node: HastNode) {
           type: 'element',
           tagName: comment.slice('///- begin '.length, -(' -///'.length)),
           children: []
-        };
+        } as any;
         currentLine = [];
         skip = true;
         continue;
@@ -117,7 +126,7 @@ function lines(node: HastNode) {
       }
     }
 
-    let result = lines(child);
+    let result = lines(child as HastNode);
     if (result.length) {
       currentLine.push(...result[0].children);
     }
@@ -127,7 +136,7 @@ function lines(node: HastNode) {
         currentLine = result[i].children;
         endLine();
       }
-      currentLine = result.at(-1).children;
+      currentLine = result.at(-1)!.children;
     }
   }
 
@@ -156,10 +165,9 @@ function renderHast(node: HastNode | HastTextNode, key: number): ReactNode {
 
     let children = childArray.length === 1 ? childArray[0] : childArray;
     let className = node.properties?.className.split(' ').map(c => styles[c]).filter(Boolean).join(' ') || undefined;
-    if (/function|constructor|tag/.test(node.properties?.className) && !/method/.test(node.properties?.className) && text(node) === 'Switch') {
-      // return <a href={'/' + text(node)} {...node.properties} className={className} key={key}>{children}</a>;
-      return <InlineLink key={key} type={docs.exports.Switch} />;
-    }
+    // if (/function|constructor|tag/.test(node.properties?.className) && !/method/.test(node.properties?.className) && text(node) === 'Switch') {
+    //   return <InlineLink key={key} type={docs.exports.Switch} />;
+    // }
     if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
       return <CodeProps key={key} />;
     }
@@ -172,6 +180,7 @@ function renderHast(node: HastNode | HastTextNode, key: number): ReactNode {
     let type = groupings[node.tagName] || node.tagName;
     return React.createElement(type, {...node.properties, className, key}, children);
   } else {
+    // @ts-ignore
     return node.value;
   }
 }

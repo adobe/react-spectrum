@@ -9788,7 +9788,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@spectrum-icons/workflow@npm:^4.0.0, @spectrum-icons/workflow@npm:^4.2.16, @spectrum-icons/workflow@npm:^4.2.21, @spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow":
+"@spectrum-icons/workflow@npm:^4.0.0, @spectrum-icons/workflow@npm:^4.2.21, @spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow":
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow"
   dependencies:
@@ -11967,9 +11967,9 @@ __metadata:
   linkType: hard
 
 "@types/webpack-env@npm:*":
-  version: 1.18.4
-  resolution: "@types/webpack-env@npm:1.18.4"
-  checksum: 10c0/3fa77dbff0ed71685404576b0a1cf74587567fe2ee1cfd11d56d6eefcab7a61e4c9ead0eced264e289d2cf0fc74296dbd55ed6c95774fe0fd6264d156c5a59f0
+  version: 1.18.8
+  resolution: "@types/webpack-env@npm:1.18.8"
+  checksum: 10c0/527a5d1eb75c5243e4f3665d956c7c340f899955dd25d16c9fd9750406f32e95a3a17d207640295038e8235c0c2a2daf084f420e088e58b965d82fc74f6012d7
   languageName: node
   linkType: hard
 
@@ -29548,13 +29548,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "s2-docs@workspace:packages/dev/s2-docs"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@parcel/rsc": "npm:^2.14.1"
+    "@react-aria/interactions": "npm:^3.25.1"
+    "@react-aria/utils": "npm:^3.29.0"
     "@react-spectrum/s2": "npm:^0.9.0"
-    "@spectrum-icons/workflow": "npm:^4.2.16"
+    globals-docs: "npm:^2.4.1"
+    markdown-to-jsx: "npm:^6.11.0"
     react: "npm:^19"
+    react-aria: "npm:^3.40.0"
     react-aria-components: "npm:^1.7.1"
     react-dom: "npm:^19"
+    react-stately: "npm:^3.38.0"
+    tree-sitter-highlight: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 

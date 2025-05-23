@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { pressScale } from '@react-spectrum/s2';
-import { baseColor, style } from '@react-spectrum/s2/style' with {type: 'macro'};
-import { useRef } from 'react';
-import {Button as RACButton, ButtonProps} from 'react-aria-components';
+import {baseColor, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ButtonProps, Button as RACButton} from 'react-aria-components';
+import {pressScale} from '@react-spectrum/s2';
+import {useRef} from 'react';
 
 const buttonStyle = style({
   borderRadius: 'default',

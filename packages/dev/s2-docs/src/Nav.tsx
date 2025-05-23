@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
+import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-aria-components';
-import { style, size, focusRing } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {pressScale} from '@react-spectrum/s2'
-// import { centerPadding } from '@react-spectrum/s2/src/style-utils' with {type: 'macro'};
+import {pressScale} from '@react-spectrum/s2';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
   let sections = new Map();
@@ -37,29 +36,30 @@ function SideNavSection({title, children}) {
       <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>{title}</div>
       {children}
     </section>
-  )
+  );
 }
 
 const SideNavContext = createContext('');
 
 export function SideNav({children}) {
   return (
-    <ul className={style({
-      listStyleType: 'none',
-      padding: 0,
-      paddingStart: {
-        default: 0,
-        ':is(li > ul)': 16
-      },
-      margin: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 8,
-      minWidth: 160,
-      width: 192,
-      maxWidth: 240,
-      boxSizing: 'border-box'
-    })}>
+    <ul
+      className={style({
+        listStyleType: 'none',
+        padding: 0,
+        paddingStart: {
+          default: 0,
+          ':is(li > ul)': 16
+        },
+        margin: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        minWidth: 160,
+        width: 192,
+        maxWidth: 240,
+        boxSizing: 'border-box'
+      })}>
       {children}
     </ul>
   );
@@ -101,17 +101,18 @@ export function SideNavLink(props) {
         transition: 'default'
       })}>
       {(renderProps) => (<>
-        <span className={style({
-          width: 2,
-          height: '[1lh]',
-          borderRadius: 'full',
-          transition: 'default',
-          backgroundColor: {
-            default: 'transparent',
-            isHovered: 'gray-400',
-            isCurrent: 'gray-800'
-          }
-        })(renderProps)} />
+        <span
+          className={style({
+            width: 2,
+            height: '[1lh]',
+            borderRadius: 'full',
+            transition: 'default',
+            backgroundColor: {
+              default: 'transparent',
+              isHovered: 'gray-400',
+              isCurrent: 'gray-800'
+            }
+          })(renderProps)} />
         {props.children}
       </>)}
     </Link>
@@ -150,5 +151,5 @@ export function OnPageNav({children}) {
     <SideNavContext.Provider value={selected}>
       {children}
     </SideNavContext.Provider>
-  )
+  );
 }

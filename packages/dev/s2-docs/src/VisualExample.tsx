@@ -1,8 +1,8 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
-import {Files} from './Example';
+import {Files} from './CodeBlock';
 import path from 'path';
-import React from 'react';
-import {renderHTMLfromMarkdown, Type} from './types';
+import React, {ReactNode} from 'react';
+import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
@@ -12,14 +12,16 @@ const exampleStyle = style({
   borderRadius: 'xl',
   display: 'grid',
   gridTemplateAreas: {
-    default: [
-      'example controls',
-      'files controls'
-    ],
-    isFiles: [
-      'example controls',
-      'files files'
-    ]
+    layout: {
+      narrow: [
+        'example controls',
+        'files controls'
+      ],
+      wide: [
+        'example controls',
+        'files files'
+      ]
+    }
   },
   gridTemplateColumns: ['1fr', 'auto'],
   gridTemplateRows: ['1fr', 'auto'],
@@ -28,10 +30,50 @@ const exampleStyle = style({
   boxSizing: 'border-box'
 });
 
-export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots, iconSlot}) {
-  let controls = Object.fromEntries(props.map(name => {
-    let prop = docs.props.properties[name];
+export interface VisualExampleProps {
+  /** The component to render. */
+  component: any,
+  /** The TS docs for this component. */
+  docs: TComponent,
+  links: any,
+  /** The props to display as controls. */
+  props: string[],
+  /** Component children slots that should have controls. */
+  slots?: {[slot: string]: boolean},
+  /** Initial values for the prop controls. */
+  initialProps?: {[prop: string]: any},
+  importSource?: string,
+  /** When provided, the source code for the listed filenames will be included as tabs. */
+  files?: string[],
+  code?: ReactNode,
+  wide?: boolean
+}
 
+export interface PropControl extends Omit<TProperty, 'description'> {
+  description: ReactNode,
+  default: any,
+  valueType: ReactNode,
+  slots?: {[slot: string]: boolean}
+}
+
+/**
+ * Displays a component example with controls for changing the props.
+ */
+export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots}: VisualExampleProps) {
+  let componentProps = docs.props;
+  if (componentProps?.type !== 'interface') {
+    return null;
+  }
+
+  // Filter down the list of controls from the TS docs to only the ones we want to display.
+  // This reduces the amount of data we need to send to the client.
+  let controls = Object.fromEntries(props.map(name => {
+    let prop = componentProps.properties[name];
+    if (prop.type === 'method') {
+      throw new Error('Unexpected method in props.');
+    }
+
+    // Resolve the value type if it is a type alias.
     if (prop.value?.type === 'link' && links?.[prop.value.id]) {
       let value = links[prop.value.id];
       if (value?.type === 'alias') {
@@ -40,6 +82,7 @@ export function VisualExample({component, docs, links, importSource, props, init
       prop = {...prop, value};
     }
 
+    // Try to parse the default value from the JSDocs as JSON.
     let defaultValue = prop.default ?? undefined;
     if (typeof defaultValue === 'string') {
       defaultValue = defaultValue.replace(/^['"](.+)['"]$/, '"$1"');
@@ -49,39 +92,34 @@ export function VisualExample({component, docs, links, importSource, props, init
         // ignore
       }
     }
-    prop = {
+
+    let renderedProp: PropControl = {
       ...prop,
       description: renderHTMLfromMarkdown(prop.description, {forceInline: true}),
       default: defaultValue,
-      valueType: <Type type={prop.value} links={links} />
+      valueType: <Type type={prop.value} />,
+      slots: name === 'children' ? slots : undefined
     };
 
-    if (iconSlot && name === 'children') {
-      prop.icon = true;
-    }
-
-    if (name === 'children') {
-      Object.assign(prop, slots);
-    }
-
-    return [name, prop];
+    return [name, renderedProp];
   }));
 
   if (!importSource && files) {
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
+  let output = <CodeOutput code={code} />;
+
+  // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
-      <div className={exampleStyle({isFiles: !!files || wide})}>
+      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output />
         <div className={style({display: 'flex', flexDirection: 'column', gap: 16, gridArea: 'controls'})}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
         <div style={{gridArea: 'files'}}>
-          <Files files={files}>
-            <CodeOutput code={code} />
-          </Files>
+          {files ? <Files files={files}>{output}</Files> : output}
         </div>
       </div>
     </VisualExampleClient>
@@ -89,19 +127,3 @@ export function VisualExample({component, docs, links, importSource, props, init
 }
 
 export {StylingExamples} from './VisualExampleClient';
-// export function StylingExamples({children}) {
-//   return (
-//     <Tabs aria-label="Examples" defaultSelectedKey="vanilla">
-//       <TabList>
-//         <Tab id="vanilla">Vanilla CSS</Tab>
-//         <Tab id="tailwind">Tailwind</Tab>
-//       </TabList>
-//       <TabPanel id="vanilla">
-//         {children[0]}
-//       </TabPanel>
-//       <TabPanel id="tailwind">
-//         {children[1]}
-//       </TabPanel>
-//     </Tabs>
-//   )
-// }

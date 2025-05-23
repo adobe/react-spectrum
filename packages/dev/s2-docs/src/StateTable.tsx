@@ -1,16 +1,23 @@
 import {Code, styles as codeStyles} from './Code';
-import {renderHTMLfromMarkdown} from './types';
+import {renderHTMLfromMarkdown, TInterface} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
 const codeStyle = style({font: 'code-sm'});
 
-export function StateTable({properties, showOptional, hideSelector, defaultClassName}) {
+interface StateTableProps {
+  properties: TInterface['properties'],
+  showOptional?: boolean,
+  hideSelector?: boolean,
+  defaultClassName?: string
+}
+
+export function StateTable({properties, showOptional, hideSelector, defaultClassName}: StateTableProps) {
   let props = Object.values(properties);
   if (!showOptional) {
     props = props.filter(prop => !prop.optional);
   }
-  let showSelector = !hideSelector && props.some(prop => prop.selector);
+  let showSelector = !hideSelector && props.some(prop => prop.type === 'property' && prop.selector);
 
   let table =  (
     <Table>
@@ -30,12 +37,9 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
               </code>
             </TableCell>
             {showSelector && <TableCell role="rowheader">
-              {/* <code className={codeStyle}>
-                <span className={prop.selector ? codeStyles.string : null}>{prop.selector || '—'}</span>
-              </code> */}
-              {prop.selector ? <Code lang="css">{prop.selector}</Code> : <code className={codeStyle}>—</code>}
+              {prop.type === 'property' && prop.selector ? <Code lang="css">{prop.selector}</Code> : <code className={codeStyle}>—</code>}
             </TableCell>}
-            <TableCell>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell>
+            <TableCell>{prop.description && renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -54,7 +58,7 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
   return table;
 }
 
-export function DefaultClassName({defaultClassName}) {
+export function DefaultClassName({defaultClassName}: {defaultClassName: string}) {
   return (
     <p className={style({font: 'ui'})}>
       <span className={style({fontWeight: 'bold'})}>Default className: </span>

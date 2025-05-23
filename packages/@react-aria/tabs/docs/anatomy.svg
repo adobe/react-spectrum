@@ -1,4 +1,4 @@
-<svg style="max-height: 232px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="86 40 365 236">
+<svg style="max-height: 232px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="86 40 365 236">
   <title>Tabs anatomy diagram</title>
   <desc>Shows a tabs component with labels for each tab, a selection state, and the tab panel.</desc>
   <g id="tabs_anatomy_desktop">

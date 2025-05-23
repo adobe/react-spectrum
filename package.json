@@ -22,11 +22,11 @@
     "build:chromatic-fc": "CHROMATIC=1 storybook build -c .chromatic-fc -o dist/$(git rev-parse HEAD)/chromatic-fc",
     "start:s2": "NODE_ENV=storybook storybook dev -p 6006 --ci -c '.storybook-s2'",
     "build:storybook-s2": "NODE_ENV=storybook storybook build -c .storybook-s2 -o dist/$(git rev-parse HEAD)/storybook-s2",
-    "build:s2-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
+    "build:s2-storybook-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
-    "start:s2-docs": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs 'packages/dev/s2-docs/pages/**/*.mdx'",
-    "build:s2-docs2": "DOCS_ENV=dev parcel build --config .parcelrc-s2-docs 'packages/dev/s2-docs/pages/**/*.mdx'",
+    "start:s2-docs": "yarn workspace s2-docs start",
+    "build:s2-docs": "yarn workspace s2-docs build",
     "test": "cross-env STRICT_MODE=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
@@ -289,20 +289,5 @@
         ]
       }
     ]
-  },
-  "targets": {
-    "react-static": {
-      "context": "react-server",
-      "engines": {
-        "browsers": [
-          "last 2 Chrome versions",
-          "last 2 Safari versions",
-          "last 2 Firefox versions"
-        ]
-      },
-      "includeNodeModules": {
-        "tree-sitter-highlight": false
-      }
-    }
   }
 }

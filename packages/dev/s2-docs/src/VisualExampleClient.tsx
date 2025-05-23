@@ -1,33 +1,54 @@
-"use client";
+'use client';
 
-import { Children, cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { LinkButton, Text, Button, ToggleButtonGroup, ToggleButton, Divider, ActionButtonGroup, ActionButton, TooltipTrigger, Tooltip, MenuTrigger, Menu, MenuItem, Picker, PickerItem, ContextualHelp, Heading, Content, Switch, NumberField, Footer, TextField, SegmentedControl, SegmentedControlItem, NotificationBadge, Avatar } from '@react-spectrum/s2';
-import { style } from '@react-spectrum/s2/style' with { type: 'macro' };
+import {ActionButton, ActionButtonGroup, Avatar, Content, ContextualHelp, Footer, Heading, Menu, MenuItem, MenuTrigger, NotificationBadge, NumberField, Picker, PickerItem, SegmentedControl, SegmentedControlItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
 import Copy from '@react-spectrum/s2/icons/Copy';
+import ExportTo from '@react-spectrum/s2/icons/ExportTo';
+import {IconPicker} from './IconPicker';
+import {Key} from 'react-aria-components';
 import Link from '@react-spectrum/s2/icons/Link';
 import More from '@react-spectrum/s2/icons/More';
-import ExportTo from '@react-spectrum/s2/icons/ExportTo';
-import { Key } from "react-aria-components";
-import { IconPicker } from "./IconPicker";
+import type {PropControl} from './VisualExample';
+import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
-const Context = createContext({
+type Props = {[name: string]: any};
+type Controls = {[name: string]: PropControl};
+interface ContextValue {
+  component: any,
+  name: string,
+  importSource?: string,
+  controls: Controls,
+  props: Props,
+  setProps(v: Props): void
+}
+
+const Context = createContext<ContextValue>({
   component: 'div',
   name: 'Button',
-  importSource: '',
   controls: {},
   props: {},
-  setProps: (v: any) => {}
+  setProps: () => {}
 });
 
-export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}}) {
+interface VisualExampleClientProps {
+  component: any,
+  name: string,
+  importSource?: string,
+  controls: Controls,
+  children: ReactNode,
+  initialProps?: {[prop: string]: any}
+}
+
+export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}}: VisualExampleClientProps) {
   let [props, setProps] = useState(() => {
-    let props = {};
+    let props = {...initialProps};
     for (let name in controls) {
       let defaultValue = controls[name].default;
-      props[name] = defaultValue;
+      if (!(name in initialProps)) {
+        props[name] = defaultValue;
+      }
     }
 
-    Object.assign(props, initialProps);
     return props;
   });
 
@@ -48,7 +69,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   }, []);
 
   return (
-    <Context.Provider value={{component: component || Button, name, importSource: importSource, controls, props, setProps}}>
+    <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
       {children}
     </Context.Provider>
   );
@@ -72,7 +93,7 @@ export function Output() {
   );
 }
 
-function renderComponent(Component, props) {
+function renderComponent(Component, props: Props) {
   let children = props.children;
   if (children?.iconJSX || children?.avatar || children?.badge) {
     children = (
@@ -86,10 +107,10 @@ function renderComponent(Component, props) {
     children = children.text;
   }
 
-  return <Component {...props}>{children}</Component>
+  return <Component {...props}>{children}</Component>;
 }
 
-export function CodeOutput({code}) {
+export function CodeOutput({code}: {code?: ReactNode}) {
   let {name, importSource, props, controls} = useContext(Context);
   let codeRef = useRef<HTMLPreElement | null>(null);
   return (
@@ -109,36 +130,37 @@ export function CodeOutput({code}) {
             </Tooltip>
           </TooltipTrigger>
           <MenuTrigger>
-          <TooltipTrigger placement="end">
-            <ActionButton aria-label="Share">
-              <More />
-            </ActionButton>
-            <Tooltip>
-              Share
-            </Tooltip>
-          </TooltipTrigger>
-          <Menu>
-            <MenuItem onAction={() => {
-              let url = new URL(location.href);
-              for (let prop in props) {
-                if (props[prop] != null) {
-                  url.searchParams.set(prop, JSON.stringify(props[prop]));
-                }
-              }
-              navigator.clipboard.writeText(url.toString());
-            }}>
-              <Link />
-              <Text slot="label">Copy Link</Text>
-            </MenuItem>
-            <MenuItem>
-              <ExportTo />
-              <Text slot="label">Open in CodeSandbox</Text>
-            </MenuItem>
-            <MenuItem>
-              <ExportTo />
-              <Text slot="label">Open in StackBlitz</Text>
-            </MenuItem>
-          </Menu>
+            <TooltipTrigger placement="end">
+              <ActionButton aria-label="Share">
+                <More />
+              </ActionButton>
+              <Tooltip>
+                Share
+              </Tooltip>
+            </TooltipTrigger>
+            <Menu>
+              <MenuItem
+                onAction={() => {
+                  let url = new URL(location.href);
+                  for (let prop in props) {
+                    if (props[prop] != null) {
+                      url.searchParams.set(prop, JSON.stringify(props[prop]));
+                    }
+                  }
+                  navigator.clipboard.writeText(url.toString());
+                }}>
+                <Link />
+                <Text slot="label">Copy Link</Text>
+              </MenuItem>
+              <MenuItem>
+                <ExportTo />
+                <Text slot="label">Open in CodeSandbox</Text>
+              </MenuItem>
+              <MenuItem>
+                <ExportTo />
+                <Text slot="label">Open in StackBlitz</Text>
+              </MenuItem>
+            </Menu>
           </MenuTrigger>
         </ActionButtonGroup>
       </div>
@@ -155,10 +177,14 @@ export function CodeOutput({code}) {
 export function CodeProps() {
   let {props, controls} = useContext(Context);
   let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  let newlines = countChars(renderedProps) > 40;
+  if (newlines) {
+    renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{'\n '}{p}</Fragment>);
+  }
   return renderedProps;
 }
 
-function renderElement(name, props, controls) {
+function renderElement(name: string, props: Props, controls?: Controls) {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
   let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop])).filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
@@ -171,7 +197,7 @@ function renderElement(name, props, controls) {
     if (typeof children !== 'string') {
       newlines = true;
     }
-    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' : null}{children}{newlines ? '\n' : null}{end}</>
+    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' : null}{children}{newlines ? '\n' : null}{end}</>;
   }
 
   return <>{start}{renderedProps} /&gt;</>;
@@ -181,22 +207,22 @@ function renderChildren(children) {
   if (children?.icon || children?.avatar || children?.badge) {
     let result: ReactNode = null;
     if (children.avatar) {
-      result = renderElement('Avatar', {src: 'https://i.imgur.com/xIe7Wlb.png'}, null);
+      result = renderElement('Avatar', {src: 'https://i.imgur.com/xIe7Wlb.png'});
     } else if (children.icon) {
-      result = renderElement(children.icon.replace(/^(\d)/, '_$1'), {}, null);
+      result = renderElement(children.icon.replace(/^(\d)/, '_$1'), {});
     }
 
     if (children.text) {
-      let text = renderElement('Text', {children: children.text}, null);
+      let text = renderElement('Text', {children: children.text});
       result = <>{result}{result ? '\n  ' : null}{text}</>;
     }
 
     if (children.badge) {
-      let badge = renderElement('NotificationBadge', {value: 12}, null);
+      let badge = renderElement('NotificationBadge', {value: 12});
       result = <>{result}{result ? '\n  ' : null}{badge}</>;
     }
     
-    return result
+    return result;
   } else if (children?.text) {
     return children.text;
   }
@@ -204,18 +230,18 @@ function renderChildren(children) {
   return children;
 }
 
-function countChars(element) {
+function countChars(element: ReactNode) {
   if (typeof element === 'string') {
     return element.length;
   } else if (Array.isArray(element)) {
     return element.reduce((p, i) => p + countChars(i), 0);
-  } else if (element && typeof element === 'object' && element.props) {
-    return countChars(element.props.children);
+  } else if (element && typeof element === 'object' && 'props' in element && element.props) {
+    return countChars((element.props as any).children);
   }
   return 0;
 }
 
-function renderProp(name, value, control) {
+function renderProp(name: string, value: any, control?: PropControl) {
   if (value === control?.default) {
     return null;
   }
@@ -241,10 +267,10 @@ function renderProp(name, value, control) {
     propValue = <>={propValue}</>;
   }
 
-  return <Fragment key={name}> {propName}{propValue}</Fragment>
+  return <Fragment key={name}> {propName}{propValue}</Fragment>;
 }
 
-function renderValue(value) {
+function renderValue(value: any) {
   switch (typeof value) {
     case 'string':
       return <span className={style({color: 'green-1000'})}>"{value}"</span>;
@@ -252,22 +278,23 @@ function renderValue(value) {
       return <span className={style({color: 'pink-1000'})}>{String(value)}</span>;
     case 'boolean':
       return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
-    case 'object':
+    case 'object': {
       if (value == null) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
       let entries = Object.entries(value);
-      return <>{'{'}{entries.map(([name, value], i) => {
+      return (<>{'{'}{entries.map(([name, value], i) => {
         let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
         return <Fragment key={i}>{result}</Fragment>;
-      })}{'}'}</>;
+      })}{'}'}</>);
+    }
   }
 }
 
-function renderImports(name, importSource, props) {
+function renderImports(name: string, importSource: string, props: Props) {
   let imports: ReactNode[] = [];
   let components = [name];
   if (props.children?.avatar) {
@@ -292,10 +319,10 @@ function renderImports(name, importSource, props) {
 }
 
 function renderImport(name, from, isDefault = false) {
-  return <Fragment key={from}><span className={style({color: 'magenta-1000'})}>import</span> {isDefault ? null : '{'}{name}{isDefault ? null : '}'} <span className={style({color: 'magenta-1000'})}>from</span> <span className={style({color: 'green-1000'})}>'{from}'</span>;</Fragment>
+  return <Fragment key={from}><span className={style({color: 'magenta-1000'})}>import</span> {isDefault ? null : '{'}{name}{isDefault ? null : '}'} <span className={style({color: 'magenta-1000'})}>from</span> <span className={style({color: 'green-1000'})}>'{from}'</span>;</Fragment>;
 }
 
-export function Control({name}) {
+export function Control({name}: {name: string}) {
   let {controls, props, setProps} = useContext(Context);
   let control = controls[name];
   let value = props[name];
@@ -324,21 +351,22 @@ export function Control({name}) {
     case 'string':
       return <StringControl control={control} value={value} onChange={onChange} />;
     default:
-      console.warn(control)
+      console.warn(control);
   }
 }
 
-function BooleanControl({control, value, onChange}) {
+interface ControlProps {
+  control: PropControl,
+  value: any,
+  onChange: (v: any) => void
+}
+
+function BooleanControl({control, value, onChange}: ControlProps) {
   return (
     <Wrapper control={control}>
       <Switch isSelected={value || false} onChange={onChange} aria-label={control.name} />
     </Wrapper>
   );
-  // return (
-  //   <Wrapper control={control}>
-  //     <ToggleButton isSelected={value || false} onChange={onChange} styles={style({width: 'fit'})}>{String(value || false)}</ToggleButton>
-  //   </Wrapper>
-  // );
 }
 
 function UnionControl({control, value, onChange}) {
@@ -363,7 +391,7 @@ function UnionControl({control, value, onChange}) {
   );
 }
 
-function Wrapper({control, children}) {
+function Wrapper({control, children}: {control: PropControl, children: ReactNode}) {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
       <span className={style({font: 'ui', color: 'neutral-subdued'})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
@@ -386,7 +414,7 @@ function PropContextualHelp({control}) {
   );
 }
 
-function NumberControl({control, value, onChange}) {
+function NumberControl({control, value, onChange}: ControlProps) {
   return (
     <NumberField
       label={control.name}
@@ -397,7 +425,7 @@ function NumberControl({control, value, onChange}) {
   );
 }
 
-function NumberFormatControl({control, value, onChange}) {
+function NumberFormatControl({control, value, onChange}: ControlProps) {
   return (
     <Picker
       label={control.name}
@@ -425,10 +453,10 @@ function NumberFormatControl({control, value, onChange}) {
       <PickerItem id="currency">Currency</PickerItem>
       <PickerItem id="unit">Unit</PickerItem>
     </Picker>
-  )
+  );
 }
 
-function StringControl({control, value, onChange}) {
+function StringControl({control, value, onChange}: ControlProps) {
   return (
     <TextField
       label={control.name}
@@ -436,34 +464,36 @@ function StringControl({control, value, onChange}) {
       value={value || ''}
       onChange={onChange}
       styles={style({width: 160})} />
-  )
+  );
 }
 
-function ChildrenControl({control, value, onChange}) {
-  if (control.icon) {
+function ChildrenControl({control, value, onChange}: ControlProps) {
+  if (control.slots) {
     let objectValue = typeof value === 'string' ? {text: value} : value;
     return (
       <Wrapper control={control}>
-        <div className={style({display: 'flex', gap: 4})}>
-          <TextField
-            aria-label={control.name}
-            value={objectValue?.text || ''}
-            onChange={text => onChange({...objectValue, text})}
-            styles={style({width: 80, flexGrow: 1})} />
-          <IconPicker
-            value={value}
-            onChange={onChange} />
-        </div>
-        {(control.avatar || control.badge) &&
+        {control.slots.icon && (
+          <div className={style({display: 'flex', gap: 4})}>
+            <TextField
+              aria-label={control.name}
+              value={objectValue?.text || ''}
+              onChange={text => onChange({...objectValue, text})}
+              styles={style({width: 80, flexGrow: 1})} />
+            <IconPicker
+              value={value}
+              onChange={onChange} />
+          </div>
+        )}
+        {(control.slots.avatar || control.slots.badge) &&
           <ToggleButtonGroup density="compact" isJustified>
-            {control.avatar && 
+            {control.slots.avatar && 
               <ToggleButton
                 isSelected={objectValue?.avatar ?? false}
                 onChange={avatar => onChange({...objectValue, avatar})}>
                 Avatar
               </ToggleButton>
             }
-            {control.badge && 
+            {control.slots.badge && 
               <ToggleButton
                 isSelected={objectValue?.badge ?? false}
                 onChange={badge => onChange({...objectValue, badge})}>
@@ -479,10 +509,10 @@ function ChildrenControl({control, value, onChange}) {
   return <StringControl control={control} value={value} onChange={onChange} />;
 }
 
-function ContextualHelpControl({control, value, onChange}) {
+function ContextualHelpControl({control, value, onChange}: ControlProps) {
   return (
     <Wrapper control={control}>
-      <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heeading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
+      <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
     </Wrapper>
   );
 }
@@ -499,7 +529,7 @@ const childIndex = {
   vanilla: 0,
   tailwind: 1,
   macro: 2
-}
+};
 
 export function StylingExamples({children}) {
   let [selected, setSelected] = useState<Key>('vanilla');

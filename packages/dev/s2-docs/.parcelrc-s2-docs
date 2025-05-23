@@ -8,6 +8,7 @@
     "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],
+    "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-postcss", "..."],
     // Disable PostCSS from running over style macro output
     "*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],
@@ -16,7 +17,6 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
-  "runtimes": ["...", "@parcel/runtime-rsc"],
   "packagers": {
     "*.json": "parcel-packager-docs"
   }

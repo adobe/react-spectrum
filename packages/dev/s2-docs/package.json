@@ -2,13 +2,42 @@
   "name": "s2-docs",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
+    "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs"
+  },
+  "targets": {
+    "react-static": {
+      "source": "pages/**/*.mdx",
+      "context": "react-server",
+      "engines": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Safari versions",
+          "last 2 Firefox versions"
+        ]
+      },
+      "includeNodeModules": {
+        "tree-sitter-highlight": false
+      }
+    }
+  },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@parcel/rsc": "^2.14.1",
+    "@parcel/rsc": "patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch",
+    "@react-aria/interactions": "^3.25.1",
+    "@react-aria/utils": "^3.29.0",
     "@react-spectrum/s2": "^0.9.0",
-    "@spectrum-icons/workflow": "^4.2.16",
+    "globals-docs": "^2.4.1",
+    "markdown-to-jsx": "^6.11.0",
     "react": "^19",
+    "react-aria": "^3.40.0",
     "react-aria-components": "^1.7.1",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-stately": "^3.38.0",
+    "tree-sitter-highlight": "^1.0.1"
+  },
+  "alias": {
+    "tailwind-starter": "../../../starters/tailwind",
+    "vanilla-starter": "../../../starters/docs"
   }
 }

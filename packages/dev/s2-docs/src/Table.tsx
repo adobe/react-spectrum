@@ -1,5 +1,5 @@
-import React from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import React, {HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes} from 'react';
+import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const table = style({
   font: 'ui',
@@ -38,9 +38,6 @@ const tableColumn = style({
   boxSizing: 'border-box'
 });
 
-const tableRow = style({
-});
-
 const tableCell = style({
   paddingX: 16,
   height: {
@@ -77,27 +74,32 @@ const tableCell = style({
   }
 });
 
-export function Table(props) {
+export function Table(props: TableHTMLAttributes<HTMLTableElement>) {
   return <table {...props} className={table} />;
 }
 
-export function TableHeader(props) {
+export function TableHeader(props: HTMLAttributes<HTMLTableSectionElement>) {
   return <thead {...props} className={tableHeader} />;
 }
 
-export function TableColumn(props) {
+export function TableColumn(props: ThHTMLAttributes<HTMLTableHeaderCellElement>) {
   return <th {...props} className={tableColumn} />;
 }
 
-export function TableBody(props) {
+export function TableBody(props: HTMLAttributes<HTMLTableSectionElement>) {
   return <tbody {...props} className={tableBody} />;
 }
 
-export function TableRow(props) {
-  return <tr {...props} className={tableRow} />;
+export function TableRow(props: HTMLAttributes<HTMLTableRowElement>) {
+  return <tr {...props} />;
 }
 
-export function TableCell({hideBorder, styles, ...props}) {
+interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {
+  hideBorder?: boolean,
+  styles?: StyleString
+}
+
+export function TableCell({hideBorder, styles, ...props}: TableCellProps) {
   let align = 'center';
   if (hideBorder) {
     align = 'bottom';

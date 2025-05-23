@@ -1,12 +1,12 @@
 'use client';
 
-import { useDisclosureState } from 'react-stately';
-import {TableBody, TableCell, TableRow} from './Table';
-import { useRef } from 'react';
-import { useDisclosure } from 'react-aria';
-import { Button } from 'react-aria-components';
-import { baseColor, focusRing, style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from 'react-aria-components';
 import Chevron from '@react-spectrum/s2/icons/ChevronRight';
+import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TableBody, TableRow} from './Table';
+import {useDisclosure} from 'react-aria';
+import {useDisclosureState} from 'react-stately';
+import {useRef} from 'react';
 
 const tableCell = style({
   padding: 0,
@@ -53,31 +53,31 @@ const buttonStyles = style({
   disableTapHighlight: true
 });
 
-const chevronStyles = style({
-  size: 16,
+const chevronStyles = iconStyle({
+  size: 'S',
+  color: 'neutral',
+  // @ts-ignore - TODO: support conditions in iconStyle types?
   rotate: {
     isRTL: 180,
     isExpanded: 90
   },
   transition: 'default',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
   flexShrink: 0
 });
 
 export function DisclosureRow({title, children, defaultExpanded}) {
   let state = useDisclosureState({defaultExpanded});
   let ref = useRef(null);
-  let {buttonProps, panelProps} = useDisclosure({}, state, ref);
+  let {buttonProps} = useDisclosure({}, state, ref);
+  delete buttonProps['aria-controls']; // there is no panel element in this implementation
 
   return (
     <TableBody>
       <TableRow>
         <td colSpan={3} className={tableCell}>
           <Button {...buttonProps} className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
-            <Chevron UNSAFE_className={chevronStyles({isExpanded: state.isExpanded})} />
+            {/* @ts-ignore */}
+            <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
             {title}
           </Button>
         </td>

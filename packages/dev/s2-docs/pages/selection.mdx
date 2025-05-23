@@ -1,17 +1,10 @@
 import {Layout} from '../src/Layout';
 export default Layout;
 
-import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
-import {PropTable} from '../src/PropTable';
-import {StateTable, DefaultClassName} from '../src/StateTable';
 import {Tabs, TabPanel, Tab, TabList} from '@react-spectrum/s2';
-import {File} from '../src/Example';
 import docs from 'docs:react-aria-components';
-import {StylingExamples} from '../src/VisualExample';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineLink} from '../src/types';
-import '../../../../starters/docs/src/ListBox.css';
-import '../../../../starters/docs/src/GridList.css';
+import 'vanilla-starter/src/ListBox.css';
+import 'vanilla-starter/src/GridList.css';
 
 export const section = 'Guides';
 
@@ -39,8 +32,7 @@ behavior on a static collection, but could be applied to a dynamic collection th
 
 <Tabs aria-label="Component">
   <TabList>
-    <Tab id="listbox">ListBox</Tab>
-    <Tab id="gridlist">GridList</Tab>
+    <Tab id="listbox">ListBox</Tab><Tab id="gridlist">GridList</Tab>
   </TabList>
   <TabPanel id="listbox">
 

@@ -1,13 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {PropTable} from '../../src/PropTable';
-import {StateTable} from '../../src/StateTable';
-import {File} from '../../src/Example';
 import docs from 'docs:@react-spectrum/s2';
-import {StylingExamples} from '../../src/VisualExample';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineLink} from '../../src/types';
 
 export const section = 'S2';
 
@@ -15,11 +9,10 @@ export const section = 'S2';
 
 <PageDescription>{docs.exports.Picker.description}</PageDescription>
 
-```tsx render docs={docs.exports.Picker} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isQuiet', 'isDisabled', 'isInvalid']}
-"use client";
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isQuiet', 'isDisabled', 'isInvalid']} initialProps={{label: 'Ice cream flavor'}}
 import {Picker, PickerItem} from '@react-spectrum/s2';
 
-<Picker label="Ice cream flavor"/* PROPS */>
+<Picker/* PROPS */>
   <PickerItem>Chocolate</PickerItem>
   <PickerItem>Mint</PickerItem>
   <PickerItem>Strawberry</PickerItem>
@@ -202,8 +195,7 @@ function Example(props) {
     <div>
       <p>Select is {open ? 'open' : 'closed'}</p>
       <Picker
-        {...props}
-        /* PROPS */
+        {...props}/* PROPS */
         label="Choose frequency"
         isOpen={open}
         onOpenChange={setOpen}>

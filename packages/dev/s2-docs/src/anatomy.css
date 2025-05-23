@@ -1,4 +1,5 @@
 :root {
+  /* TODO: update these with S2 values */
   --anatomy-gray-900: light-dark(#486EC2, #8ca4d9);
   --anatomy-gray-800: light-dark(#496EC2, #8ca4d9);
   --anatomy-gray-700: light-dark(#4a6fc3, #8ba3d8);
@@ -10,4 +11,5 @@
   --anatomy-gray-100: light-dark(#f4f6fc, #141e35);
   --anatomy-gray-75: light-dark(#FDFDFE, #0e1525);
   --anatomy-gray-50: light-dark(#FFFFFF, #0c1220);
+  --anatomy-radius: 16px;
 }

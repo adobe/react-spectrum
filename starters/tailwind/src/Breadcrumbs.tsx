@@ -1,3 +1,4 @@
+'use client';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import { Breadcrumb as AriaBreadcrumb, Breadcrumbs as AriaBreadcrumbs, BreadcrumbProps, BreadcrumbsProps, LinkProps } from 'react-aria-components';

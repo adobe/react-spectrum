@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { ToggleButton as RACToggleButton, ToggleButtonProps, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';

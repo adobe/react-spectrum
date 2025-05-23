@@ -1,4 +1,4 @@
-<svg style="max-height: 187px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 460 188">
+<svg style="max-height: 187px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 460 188">
   <defs>
     <clipPath id="clip-gridlist_anatomy">
       <rect width="460" height="188"/>

@@ -1,53 +1,9 @@
 import {Layout} from '../src/Layout';
 export default Layout;
 
-import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
-import {PropTable} from '../src/PropTable';
-import {Switch, Slider, Badge, ActionButton} from '@react-spectrum/s2';
-import {File} from '../src/Example';
-import docs from 'docs:@react-spectrum/s2';
-import {Button as TailwindButton} from '../../../../starters/tailwind/src/Button';
-import tailwindDocs from 'docs:../../../../starters/tailwind/src/Button';
-
 export const section = 'Getting started';
 
 # Test page
-
-<VisualExample
-  docs={docs.exports.Button}
-  props={['variant', 'staticColor', 'fillStyle', 'size', 'isDisabled', 'isPending']}
-  initialProps={{children: 'Save'}}
-  importSource="@react-spectrum/s2" />
-
-<VisualExample
-  component={Switch}
-  docs={docs.exports.Switch}
-  props={['size', 'isEmphasized', 'isDisabled']}
-  initialProps={{children: 'Wi-Fi'}}
-  importSource="@react-spectrum/s2" />
-
-<VisualExample
-  component={Badge}
-  docs={docs.exports.Badge}
-  props={['children', 'variant', 'fillStyle', 'size', 'overflowMode']}
-  initialProps={{children: 'Wi-Fi'}}
-  iconSlot
-  importSource="@react-spectrum/s2" />
-
-<VisualExample
-  component={ActionButton}
-  docs={docs.exports.ActionButton}
-  props={['children', 'size', 'staticColor', 'isQuiet', 'isDisabled']}
-  initialProps={{children: 'Action'}}
-  slots={{icon: true, avatar: true, badge: true}}
-  importSource="@react-spectrum/s2" />
-
-<VisualExample
-  component={Slider}
-  docs={docs.exports.Slider}
-  links={docs.links}
-  props={['trackStyle', 'size', 'labelPosition', 'labelAlign', 'isEmphasized', 'isDisabled', 'minValue', 'maxValue', 'step', 'fillOffset']}
-  initialProps={{label: 'Cookies'}} />
 
 Hello world! some `inline code` and **bold** stuff...
 
@@ -62,64 +18,6 @@ Numbered list:
 1. Do this
 2. Then that
 3. Then this other thing
-
-```tsx render
-"use client";
-
-import {Switch} from '@react-spectrum/s2';
-
-///- begin collapse -///
-function someFunction() {
-  console.log('some collapsed code');
-}
-///- end collapse -///
-
-function Example() {
-  let foo = 4;
-  let test = 2;
-  return <Switch>Wi-Fi</Switch>
-}
-```
-
-```tsx render
-"use client";
-
-import {Button} from '@react-spectrum/s2';
-
-<Button variant="accent">Hello Spectrum 2!</Button>
-```
-
-```tsx render files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]}
-"use client";
-
-import {Button} from '../../../../starters/tailwind/src/Button';
-import '../../../../starters/tailwind/src/index.css';
-
-<Button variant="primary">Hello Spectrum 2!</Button>
-```
-
-```tsx render files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css", "starters/docs/src/theme.css"]}
-"use client";
-
-import {Button} from '../../../../starters/docs/src/Button';
-import '../../../../starters/docs/src/Button.css';
-
-<Button>Test</Button>
-```
-
-<VisualExample
-  component={TailwindButton}
-  docs={tailwindDocs.exports.Button}
-  links={tailwindDocs.links}
-  props={['variant', 'isDisabled']}
-  initialProps={{children: 'Tailwind'}}
-  files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]} />
-
-ho
-
-## Props
-
-<PropTable component={docs.exports.Button} links={docs.links} />
 
 ## H2
 

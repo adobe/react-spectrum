@@ -1,4 +1,4 @@
-<svg style="max-height: 293px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 435.862 293">
+<svg style="max-height: 293px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 435.862 293">
   <title>Table anatomy diagram</title>
   <desc>Shows a table component with labels pointing to its parts, including the row, column, column header, and cell elements.</desc>
   <g transform="translate(-272.277 -86)">

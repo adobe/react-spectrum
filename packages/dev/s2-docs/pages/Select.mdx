@@ -1,22 +1,12 @@
 import {Layout} from '../src/Layout';
 export default Layout;
 
-import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
-import {PropTable} from '../src/PropTable';
-import {StateTable, DefaultClassName} from '../src/StateTable';
-import {File} from '../src/Example';
-import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
-import {Select as VanillaSelect, SelectItem} from '../../../../starters/docs/src/Select';
-import vanillaDocs from 'docs:../../../../starters/docs/src/Select';
-// import {Slider as TailwindSlider} from '../../../../starters/tailwind/src/Slider';
-// import tailwindDocs from 'docs:../../../../starters/tailwind/src/Slider';
-import '../../../../starters/tailwind/src/index.css';
-import '../../../../starters/docs/src/Select.css';
-import {StylingExamples} from '../src/VisualExample';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineLink} from '../src/types';
-import Anatomy from '../../../../packages/react-aria-components/docs/SelectAnatomy.svg';
+import {Select as VanillaSelect, SelectItem} from 'vanilla-starter/src/Select';
+import vanillaDocs from 'docs:vanilla-starter/src/Select';
+import '../tailwind/tailwind.css';
+import 'vanilla-starter/src/Select.css';
+import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 # Select
 
@@ -25,7 +15,7 @@ import Anatomy from '../../../../packages/react-aria-components/docs/SelectAnato
 <StylingExamples>
   ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
   "use client";
-  import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+  import {Select, SelectItem} from 'vanilla-starter/src/Select';
 
   <Select label="Select"/* PROPS */>
     <SelectItem>Test</SelectItem>
@@ -34,7 +24,7 @@ import Anatomy from '../../../../packages/react-aria-components/docs/SelectAnato
 
   ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/tailwind/src/Select.tsx"]}
   "use client";
-  import {Select, SelectItem} from '../../../../starters/tailwind/src/Select';
+  import {Select, SelectItem} from 'tailwind-starter/src/Select';
 
   <Select label="Select"/* PROPS */>
     <SelectItem>Test</SelectItem>
@@ -102,7 +92,7 @@ The following example shows a dynamic collection of items, grouped into sections
 
 ```tsx render hideImports
 "use client";
-import {Select} from '../../../../starters/docs/src/Select';
+import {Select} from 'vanilla-starter/src/Select';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
 
 function Example() {
@@ -152,7 +142,7 @@ See the Selection guide for more details.
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+import {Select, SelectItem} from 'vanilla-starter/src/Select';
 import {useState} from 'react';
 import type {Key} from 'react-aria-components';
 
@@ -187,8 +177,8 @@ To display validation errors, add a `<FieldError>` element as a child of the Sel
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from '../../../../starters/docs/src/Select';
-import {Button} from '../../../../starters/docs/src/Button';
+import {Select, SelectItem} from 'vanilla-starter/src/Select';
+import {Button} from 'vanilla-starter/src/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
@@ -210,7 +200,7 @@ The open state of the select can be controlled via the `defaultOpen` and `isOpen
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+import {Select, SelectItem} from 'vanilla-starter/src/Select';
 import {useState} from 'react';
 
 function Example() {

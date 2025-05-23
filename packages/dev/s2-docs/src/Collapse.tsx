@@ -1,11 +1,11 @@
 'use client';
 
-import { style, space, focusRing, baseColor } from "@react-spectrum/s2/style" with {type: 'macro'};
-import Chevron from "../../../@react-spectrum/s2/ui-icons/Chevron";
-import { Button, Disclosure, DisclosurePanel } from "react-aria-components";
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button, Disclosure, DisclosurePanel} from 'react-aria-components';
+import Chevron from '../../../@react-spectrum/s2/ui-icons/Chevron';
 import More from '@react-spectrum/s2/icons/More';
-import { pressScale } from "@react-spectrum/s2";
-import { useRef } from "react";
+import {pressScale} from '@react-spectrum/s2';
+import {useRef} from 'react';
 
 const trigger = style({
   ...focusRing(),
@@ -15,8 +15,8 @@ const trigger = style({
   backgroundColor: 'transparent',
   borderStyle: 'none',
   whiteSpace: 'normal',
-  fontFamily: '[inherit]',
-  fontSize: '[inherit]'
+  fontFamily: 'inherit',
+  fontSize: 'inherit'
 });
 
 const chevronStyles = style({
@@ -54,19 +54,19 @@ export function Collapse({children}) {
   let ref = useRef(null);
   return (
     <Disclosure>
-      {({isExpanded}) => <>
+      {({isExpanded}) => (<>
         <Button
           slot="trigger"
           className={trigger}>
-          {({isHovered, isPressed, isFocusVisible}) => <>
+          {({isHovered, isPressed, isFocusVisible}) => (<>
             <Chevron size="M" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
             {children[0]}{!isExpanded 
               ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span>{' '}{children.at(-1)}</> 
               : null}
-          </>}
+          </>)}
         </Button>
         <DisclosurePanel>{children.slice(1)}</DisclosurePanel>
-      </>}
+      </>)}
     </Disclosure>
   );
 }

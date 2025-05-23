@@ -1,12 +1,13 @@
 'use client';
 
-import { ActionButton, Popover, pressScale, SearchField, Text } from '@react-spectrum/s2';
+import {ActionButton, Popover, pressScale, SearchField} from '@react-spectrum/s2';
+import {Autocomplete, GridLayout, Label, ListBox, ListBoxItem, Select, SelectValue, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {createElement, ReactNode, useRef, useState} from 'react';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// eslint-disable-next-line
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
-import { Autocomplete, GridLayout, Label, ListBox, ListBoxItem, Select, SelectValue, Size, useFilter, Virtualizer } from 'react-aria-components';
-import { focusRing, style } from '@react-spectrum/s2/style' with {type: 'macro'};
-import { createElement, useRef, useState } from 'react';
-import { PressResponder } from '@react-aria/interactions';
-import { useGlobalListeners } from '@react-aria/utils';
+import {PressResponder} from '@react-aria/interactions';
+import {useGlobalListeners} from '@react-aria/utils';
 
 const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
 const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
@@ -32,7 +33,15 @@ const itemStyle = style({
   justifyContent: 'center'
 });
 
-export function IconPicker({value, onChange, label, contextualHelp}) {
+type IconValue = string | {text?: string, icon?: string | null, iconJSX?: ReactNode} | null;
+interface IconPickerProps {
+  value: IconValue,
+  onChange: (value: IconValue) => void,
+  label?: string,
+  contextualHelp?: ReactNode
+}
+
+export function IconPicker({value, onChange, label, contextualHelp}: IconPickerProps) {
   let {contains} = useFilter({sensitivity: 'base'});
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
@@ -50,17 +59,17 @@ export function IconPicker({value, onChange, label, contextualHelp}) {
     }, {once: true, capture: true});
   };
 
-  let valueObject = typeof value === 'string' ? {text: value} : value;
+  let valueObject: IconValue = typeof value === 'string' ? {text: value} : value;
 
   return (
     <Select
       aria-label="Icon"
-      selectedKey={value?.icon ?? null}
+      selectedKey={valueObject?.icon ?? null}
       onSelectionChange={icon => {
-        if (!icon || icon === value?.icon) {
+        if (!icon || icon === valueObject?.icon) {
           onChange({...valueObject, icon: null, iconJSX: null});
         } else if (icon) {
-          onChange({...valueObject, icon, iconJSX: createElement(iconMap[icon])});
+          onChange({...valueObject, icon: icon as string, iconJSX: createElement(iconMap[icon])});
         }
       }}
       className={style({display: 'flex', flexDirection: 'column', gap: 2, width: 'fit'})}>
@@ -78,7 +87,6 @@ export function IconPicker({value, onChange, label, contextualHelp}) {
             {({isPlaceholder, selectedItem}) => (
               isPlaceholder ? 'No icon' : (<>
                 {createElement(selectedItem?.icon, {'aria-label': selectedItem?.id})}
-                {/* <Text>{selectedItem?.id}</Text> */}
               </>)
             )}
           </SelectValue>
@@ -89,7 +97,7 @@ export function IconPicker({value, onChange, label, contextualHelp}) {
           <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
             <SearchField autoFocus />
             <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(32, 32), maxItemSize: new Size(32, 32), minSpace: new Size(4, 4), preserveAspectRatio: true}}>
-              <ListBox items={iconList} layout="grid" className={style({height: 300, width: 300, maxHeight: '[100%]', overflow: 'auto', scrollPaddingY: 4})}>
+              <ListBox items={iconList} layout="grid" className={style({height: 300, width: 300, maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
                 {item => <IconItem item={item} />}
               </ListBox>
             </Virtualizer>

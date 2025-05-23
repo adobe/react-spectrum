@@ -1,20 +1,12 @@
 import {Layout} from '../src/Layout';
 export default Layout;
 
-import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
-import {PropTable} from '../src/PropTable';
-import {StateTable, DefaultClassName} from '../src/StateTable';
-import {File} from '../src/Example';
-import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
-import {ListBox as VanillaListBox, ListBoxItem} from '../../../../starters/docs/src/ListBox';
-import vanillaDocs from 'docs:../../../../starters/docs/src/ListBox';
-import '../../../../starters/tailwind/src/index.css';
-import '../../../../starters/docs/src/ListBox.css';
-import {StylingExamples} from '../src/VisualExample';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineLink} from '../src/types';
-import Anatomy from '../../../../packages/react-aria-components/docs/ListBoxAnatomy.svg';
+import {ListBox as VanillaListBox, ListBoxItem} from 'vanilla-starter/src/ListBox';
+import vanillaDocs from 'docs:vanilla-starter/src/ListBox';
+import '../tailwind/tailwind.css';
+import 'vanilla-starter/src/ListBox.css';
+import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
 
 # ListBox
 
@@ -23,7 +15,7 @@ import Anatomy from '../../../../packages/react-aria-components/docs/ListBoxAnat
 <StylingExamples>
   ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css", "starters/docs/src/theme.css"]}
   "use client";
-  import {ListBox, ListBoxItem} from '../../../../starters/docs/src/ListBox';
+  import {ListBox, ListBoxItem} from 'vanilla-starter/src/ListBox';
 
   <ListBox aria-label="Favorite animal"/* PROPS */>
     <ListBoxItem>Aardvark</ListBoxItem>
@@ -37,7 +29,7 @@ import Anatomy from '../../../../packages/react-aria-components/docs/ListBoxAnat
 
   ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} files={["starters/tailwind/src/ListBox.tsx"]}
   "use client";
-  import {ListBox, ListBoxItem} from '../../../../starters/tailwind/src/ListBox';
+  import {ListBox, ListBoxItem} from 'tailwind-starter/src/ListBox';
 
   <ListBox aria-label="Favorite animal"/* PROPS */>
     <ListBoxItem>Aardvark</ListBoxItem>
@@ -335,7 +327,7 @@ let albums = [
 
 ## Drag and drop
 
-ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <InlineLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions.
+ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions.
 
 See the **drag and drop guide** to learn more.
 

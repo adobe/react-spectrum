@@ -1,20 +1,12 @@
 import {Layout} from '../src/Layout';
 export default Layout;
 
-import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
-import {PropTable} from '../src/PropTable';
-import {StateTable, DefaultClassName} from '../src/StateTable';
-import {File} from '../src/Example';
-import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
-import {Slider as VanillaSlider} from '../../../../starters/docs/src/Slider';
-import {Slider as TailwindSlider} from '../../../../starters/tailwind/src/Slider';
-import tailwindDocs from 'docs:../../../../starters/tailwind/src/Slider';
-import '../../../../starters/tailwind/src/index.css';
-import '../../../../starters/docs/src/Slider.css';
-import {StylingExamples} from '../src/VisualExample';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineLink} from '../src/types';
+import {Slider as VanillaSlider} from 'vanilla-starter/src/Slider';
+import {Slider as TailwindSlider} from 'tailwind-starter/src/Slider';
+import tailwindDocs from 'docs:tailwind-starter/src/Slider';
+import '../tailwind/tailwind.css';
+import 'vanilla-starter/src/Slider.css';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
 
 # Slider
@@ -84,7 +76,7 @@ to identify the slider and thumbs to screen readers.
 
 ```tsx render expanded
 "use client";
-import {Slider} from '../../../../starters/docs/src/Slider';
+import {Slider} from 'vanilla-starter/src/Slider';
 import {useState} from 'react';
 
 function Example() {
@@ -104,7 +96,7 @@ function Example() {
 ## Multi-thumb
 
 ```tsx render
-import {Slider} from '../../../../starters/docs/src/Slider';
+import {Slider} from 'vanilla-starter/src/Slider';
 
 <Slider
   label="Range"

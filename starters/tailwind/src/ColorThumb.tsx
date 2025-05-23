@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {ColorThumb as AriaColorThumb, ColorThumbProps} from 'react-aria-components';
 import { tv } from 'tailwind-variants';

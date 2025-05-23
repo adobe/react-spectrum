@@ -1,7 +1,7 @@
 import {Code, styles as codeStyles} from './Code';
 import {DisclosureRow} from './DisclosureRow';
 import React from 'react';
-import {renderHTMLfromMarkdown, setLinks, Type} from './types';
+import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, Type} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
@@ -52,10 +52,21 @@ const DEFAULT_EXPANDED = new Set([
 
 const codeStyle = style({font: 'code-sm'});
 
-export function PropTable({component, links, showDescription}) {
+interface PropTableProps {
+  component: TComponent,
+  links: any,
+  showDescription?: boolean
+}
+
+export function PropTable({component, links, showDescription}: PropTableProps) {
   setLinks(links);
 
-  let [props, groups] = groupProps(component.props.properties);
+  let properties = component?.props?.type === 'interface' ? component.props.properties : null;
+  if (!properties) {
+    return null;
+  }
+
+  let [props, groups] = groupProps(properties);
   // let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected').reverse();
 
   // properties.sort((a, b) => a.name.localeCompare(b.name));
@@ -82,9 +93,8 @@ export function PropTable({component, links, showDescription}) {
         <TableBody>
           <Rows props={props} showDefault={showDefault} />
         </TableBody>
-        {Object.keys(groups).map((group, i) => (
+        {Object.keys(groups).map((group) => (
           <DisclosureRow key={group} title={group} defaultExpanded={DEFAULT_EXPANDED.has(group)}>
-            {/* <InterfaceType properties={groups[group]} showRequired isComponent name={component.name} /> */}
             <Rows props={groups[group]} showDefault={showDefault} />
           </DisclosureRow>
         ))}
@@ -93,10 +103,8 @@ export function PropTable({component, links, showDescription}) {
   );
 }
 
-function Rows({props, showDefault}) {
+function Rows({props, showDefault}: {props: TInterface['properties'], showDefault?: boolean}) {
   let properties = Object.values(props);
-
-  // properties.sort((a, b) => a.name.localeCompare(b.name));
 
   return properties.map((prop, index) => (
     <React.Fragment key={index}>
@@ -116,7 +124,7 @@ function Rows({props, showDefault}) {
           </code>
         </TableCell>
         {showDefault &&
-          <TableCell hideBorder={!!prop.description} styles={prop.default ? null : style({display: {default: 'none', sm: '[table-cell]'}})}>
+          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
             <strong className={style({font: 'body', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
             {prop.default
               ? <Code lang="tsx">{prop.default}</Code>
@@ -133,7 +141,7 @@ function Rows({props, showDefault}) {
   ));
 }
 
-function groupProps(props) {
+function groupProps(props: TInterface['properties']): [TInterface['properties'], {[name: string]: TInterface['properties']}] {
   props = Object.fromEntries(Object.entries(props).filter(([, prop]) => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'));
   let groups = {};
 
@@ -162,7 +170,7 @@ function groupProps(props) {
           continue;
         }
 
-        if (propName === 'type' && group === 'Forms' && !props[propName].description.includes('form')) {
+        if (propName === 'type' && group === 'Forms' && !props[propName].description?.includes('form')) {
           continue;
         }
 

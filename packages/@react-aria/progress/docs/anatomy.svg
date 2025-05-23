@@ -1,4 +1,4 @@
-<svg style="max-height: 119px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 241 119">
+<svg style="max-height: 119px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 241 119">
   <title>Progress bar anatomy diagram</title>
   <desc>Shows a progress bar with labels pointing to its parts, including the label, fill, track, and value label elements.</desc>
   <defs>
