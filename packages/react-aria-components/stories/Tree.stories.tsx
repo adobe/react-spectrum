@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
+import {UNSTABLE_TreeLoadingSentinel} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 
 export default {
@@ -209,7 +209,7 @@ let rows = [
 const MyTreeLoader = (props) => {
   let {omitChildren} = props;
   return (
-    <UNSTABLE_TreeLoadingIndicator {...props}>
+    <UNSTABLE_TreeLoadingSentinel {...props}>
       {({level}) => {
         if (omitChildren) {
           return;
@@ -225,7 +225,7 @@ const MyTreeLoader = (props) => {
           </span>
         );
       }}
-    </UNSTABLE_TreeLoadingIndicator>
+    </UNSTABLE_TreeLoadingSentinel>
   );
 };
 
@@ -819,7 +819,8 @@ function MultiLoaderTreeMockAsync(args) {
       <Tree
         aria-label="multi loader tree"
         className={styles.tree}>
-        <Collection items={rootData.items} dependencies={[isProjectsLoading, isDocumentsLoading]}>
+        {/* TODO: wonder if there is something we can do to ensure that these depenedcies are provided, need to dig to make sure if there is an alternative */}
+        <Collection items={rootData.items} dependencies={[isProjectsLoading, isDocumentsLoading, isProjectsLevel3Loading]}>
           {(item: any) => {
             if (item.id === 'projects') {
               return (
