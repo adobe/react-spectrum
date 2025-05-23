@@ -820,13 +820,14 @@ function MultiLoaderTreeMockAsync(args) {
         aria-label="multi loader tree"
         className={styles.tree}>
         {/* TODO: wonder if there is something we can do to ensure that these depenedcies are provided, need to dig to make sure if there is an alternative */}
+        {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
         <Collection items={rootData.items} dependencies={[isProjectsLoading, isDocumentsLoading, isProjectsLevel3Loading]}>
           {(item: any) => {
             if (item.id === 'projects') {
               return (
                 <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-                  {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
-                  <Collection items={projectsData.items} dependencies={[isProjectsLevel3Loading]}>
+
+                  <Collection items={projectsData.items}>
                     {(item: any) => {
                       return item.id !== 'projects-1' ?
                         (
