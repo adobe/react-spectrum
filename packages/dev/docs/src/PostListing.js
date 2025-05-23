@@ -11,11 +11,11 @@
  */
 
 import clsx from 'clsx';
-import docStyles from '@react-spectrum/docs/src/docs.css';
+import docStyles from '../src/docs.css';
 import {Flex, Link} from '@adobe/react-spectrum';
 import {getAnchorProps} from './utils';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
-import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
+import {PageContext, renderHTMLfromMarkdown, Time} from '../src';
 import React from 'react';
 import RSS from '@spectrum-icons/workflow/RSS';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';

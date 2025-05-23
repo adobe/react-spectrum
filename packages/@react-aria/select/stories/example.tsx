@@ -12,7 +12,7 @@
 
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
-import {HiddenSelect, useSelect} from '@react-aria/select';
+import {HiddenSelect, useSelect} from '../src';
 import React from 'react';
 import {useButton} from '@react-aria/button';
 import {useListBox, useOption} from '@react-aria/listbox';

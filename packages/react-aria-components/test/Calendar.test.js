@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from '../src';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React, {useContext} from 'react';
 import userEvent from '@testing-library/user-event';

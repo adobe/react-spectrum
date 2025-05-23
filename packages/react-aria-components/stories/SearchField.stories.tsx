@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Input, Label, SearchField} from 'react-aria-components';
+import {Button, Input, Label, SearchField} from '../src';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';

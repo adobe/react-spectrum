@@ -22,7 +22,7 @@ import {
   useTableRowGroup,
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
-} from '@react-aria/table';
+} from '../src';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';

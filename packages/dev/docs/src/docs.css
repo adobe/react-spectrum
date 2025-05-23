@@ -151,6 +151,7 @@ html, body {
   --anatomy-gray-75: #FDFDFE;
   --anatomy-gray-50: #FFFFFF;
   --docsearch-logo-color: #5468FF;
+  --anatomy-radius: 4px;
 }
 
 .dark {

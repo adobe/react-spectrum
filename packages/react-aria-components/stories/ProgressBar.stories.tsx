@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, ProgressBar} from 'react-aria-components';
+import {Label, ProgressBar} from '../src';
 import React from 'react';
 
 export default {

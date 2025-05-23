@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumb, Breadcrumbs, Link} from 'react-aria-components';
+import {Breadcrumb, Breadcrumbs, Link} from '../src';
 import React from 'react';
 
 export default {

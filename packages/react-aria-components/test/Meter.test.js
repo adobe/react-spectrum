@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Meter, MeterContext} from 'react-aria-components';
+import {Label, Meter, MeterContext} from '../src';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 

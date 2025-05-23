@@ -1,4 +1,4 @@
-<svg style="max-height: 304px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 402 304">
+<svg style="max-height: 304px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 402 304">
   <title>Listbox anatomy diagram</title>
   <desc>Shows a listbox with labels pointing to its parts, including the label, listbox, group, section heading, option, option label, and option description elements.</desc>
   <g transform="translate(-376 -35)">

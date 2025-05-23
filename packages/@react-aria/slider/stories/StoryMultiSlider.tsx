@@ -17,7 +17,7 @@ import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useSlider, useSliderThumb} from '../src';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 

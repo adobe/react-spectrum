@@ -18,7 +18,7 @@ import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
-import {ListDropTargetDelegate} from '@react-aria/dnd';
+import {ListDropTargetDelegate} from '../src';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';

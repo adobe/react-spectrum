@@ -1,5 +1,5 @@
 import {classNames} from '@react-spectrum/utils';
-import {ListBoxItem, ListBoxItemProps, MenuItem, MenuItemProps, ProgressBar} from 'react-aria-components';
+import {ListBoxItem, ListBoxItemProps, MenuItem, MenuItemProps, ProgressBar} from '../src';
 import React from 'react';
 import styles from '../example/index.css';
 

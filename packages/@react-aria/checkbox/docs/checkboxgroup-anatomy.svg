@@ -1,4 +1,4 @@
-<svg style="max-height: 246px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 260.139 246">
+<svg style="max-height: 246px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 260.139 246">
   <title>Checkbox group anatomy diagram</title>
   <desc>Shows a checkbox group component with labels pointing to its parts, including the checkbox group label, and group element containing three checkboxes with input and label elements.</desc>
   <g transform="translate(-138 -76)">

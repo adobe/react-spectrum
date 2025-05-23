@@ -11,7 +11,7 @@
  */
 
 import Add from '../Add';
-import Alert from '@spectrum-icons/express/Alert';
+import Alert from '../src/Alert';
 import React from 'react';
 import {Flex} from '@react-spectrum/layout';
 
