@@ -570,7 +570,7 @@ function TreeDragAndDropExample(args) {
     
     let serializeItem = (nodeItem) => ({
       ...nodeItem.value,
-      childItems: [...nodeItem.children].map(serializeItem)
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
     });
         
     return {
@@ -649,7 +649,7 @@ function SecondTree(args) {
     
     let serializeItem = (nodeItem) => ({
       ...nodeItem.value,
-      childItems: [...nodeItem.children].map(serializeItem)
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
     });
         
     return {
