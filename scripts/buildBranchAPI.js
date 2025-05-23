@@ -86,6 +86,9 @@ async function build() {
     scripts: {
       build: 'yarn parcel build packages/@react-spectrum/actiongroup',
       postinstall: 'patch-package'
+    },
+    '@parcel/resolver-default': {
+      packageExports: true
     }
   };
 

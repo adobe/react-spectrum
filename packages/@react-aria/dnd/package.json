@@ -6,7 +6,11 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -28,6 +32,7 @@
     "@react-aria/live-announcer": "^3.4.2",
     "@react-aria/overlays": "^3.27.1",
     "@react-aria/utils": "^3.29.0",
+    "@react-stately/collections": "^3.12.4",
     "@react-stately/dnd": "^3.5.4",
     "@react-types/button": "^3.12.1",
     "@react-types/shared": "^3.29.1",
