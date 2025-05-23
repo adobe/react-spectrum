@@ -608,7 +608,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
-      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -635,6 +635,7 @@ describe('TagGroup', function () {
     expect(buttons[1]).toHaveTextContent('Clear');
 
     await user.tab();
+    act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(tags[0]);
 
     await user.tab();
