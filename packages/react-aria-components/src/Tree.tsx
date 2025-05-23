@@ -185,6 +185,24 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
+  
+  // Track pointer movement for handling ambiguous drop positions
+  let pointerTrackingRef = useRef<{
+    lastY: number,
+    movementDirection: 'up' | 'down' | null,
+    boundaryContext: {
+      parentKey: Key,
+      lastChildKey: Key,
+      preferredPosition: 'inside' | 'after',
+      lastSwitchY: number,
+      entryDirection: 'up' | 'down' | null
+    } | null
+  }>({
+    lastY: 0,
+    movementDirection: null,
+    boundaryContext: null
+  });
+
   useEffect(() => {
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
@@ -273,7 +291,87 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         dropTargetDelegate: {
           getDropTargetFromPoint(x, y, isValidDropTarget) {
             let target = dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
+            let tracking = pointerTrackingRef.current;
+            
+            // Calculate movement direction
+            let deltaY = y - tracking.lastY;
+            let currentMovement: 'up' | 'down' | null = null;
+            
+            if (Math.abs(deltaY) > 3) {
+              currentMovement = deltaY > 0 ? 'down' : 'up';
+              tracking.movementDirection = currentMovement;
+            }
+            
+            // Handle ambiguous drop position: 'after last child' or 'after parent'
             if (target?.type === 'item' && target.dropPosition === 'after') {
+              let item = state.collection.getItem(target.key);
+              let parentKey = item?.parentKey;
+              
+              if (parentKey) {
+                let parentItem = state.collection.getItem(parentKey);
+                let isParentExpanded = parentItem && state.expandedKeys.has(parentKey);
+                
+                if (isParentExpanded) {
+                  let nextKey = state.collection.getKeyAfter(target.key);
+                  let nextItem = nextKey ? state.collection.getItem(nextKey) : null;
+                  let isLastChild = !nextItem || nextItem.parentKey !== parentKey;
+                  
+                  if (isLastChild) {                    
+                    let afterParentTarget = {
+                      type: 'item',
+                      key: parentKey,
+                      dropPosition: 'after'
+                    } as const;
+                    
+                    // eslint-disable-next-line max-depth
+                    if (!tracking.boundaryContext || tracking.boundaryContext.parentKey !== parentKey) {
+                      let initialPreference: 'inside' | 'after' = 'inside';
+                      // eslint-disable-next-line max-depth
+                      if (tracking.movementDirection === 'up') {
+                        initialPreference = 'after';
+                      } else if (tracking.movementDirection === 'down') {
+                        initialPreference = 'inside';
+                      }
+                      
+                      tracking.boundaryContext = {
+                        parentKey,
+                        lastChildKey: target.key,
+                        preferredPosition: initialPreference,
+                        lastSwitchY: y,
+                        entryDirection: tracking.movementDirection
+                      };
+                    }
+                    
+                    let context = tracking.boundaryContext;
+                    let distanceFromLastSwitch = Math.abs(y - context.lastSwitchY);
+                    
+                    // Switch logic based on continued movement direction
+                    if (distanceFromLastSwitch > 12) { // Threshold for smooth switching
+                      // eslint-disable-next-line max-depth
+                      if (context.preferredPosition === 'inside' && currentMovement === 'down') {
+                        context.preferredPosition = 'after';
+                        context.lastSwitchY = y;
+                      } else if (context.preferredPosition === 'after' && currentMovement === 'up') {
+                        context.preferredPosition = 'inside';
+                        context.lastSwitchY = y;
+                      }
+                    }
+                    
+                    // Apply the preferred position
+                    if (context.preferredPosition === 'after' && isValidDropTarget(afterParentTarget)) {
+                      target = afterParentTarget;
+                    }
+                    // If preferredPosition is 'inside', keep original target (after last child)
+                    
+                    tracking.lastY = y;
+                    return target;
+                  }
+                }
+              }
+              
+              // Reset boundary context since we're not in a boundary case
+              tracking.boundaryContext = null;
+              
               let nextKey = state.collection.getKeyAfter(target.key);
               if (nextKey != null) {
                 let beforeTarget = {
@@ -282,11 +380,15 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
                   dropPosition: 'before'
                 } as const;
                 if (isValidDropTarget(beforeTarget)) {
-                  return beforeTarget;
+                  target = beforeTarget;
                 }
               }
+            } else {
+              // Reset boundary context if target is not 'after' an item
+              tracking.boundaryContext = null;
             }
 
+            tracking.lastY = y;
             return target;
           }
         },
