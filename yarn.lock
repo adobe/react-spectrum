@@ -28448,6 +28448,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"remark-parse@patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch":
+  version: 10.0.1
+  resolution: "remark-parse@patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch::version=10.0.1&hash=53e21c"
+  dependencies:
+    "@types/mdast": "npm:^3.0.0"
+    mdast-util-from-markdown: "npm:^1.0.0"
+    unified: "npm:^10.0.0"
+  checksum: 10c0/a35712b4edc27af4b81b5697c3c259e3e45743dc9a41bbf53b5960eefebe0c8199bc21639dd0acaeec2c040d7dab8b66f35ef93ff6cf84168143eeefc76be910
+  languageName: node
+  linkType: hard
+
 "remark-rehype@npm:^10.0.0":
   version: 10.1.0
   resolution: "remark-rehype@npm:10.1.0"

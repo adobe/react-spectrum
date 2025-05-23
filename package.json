@@ -227,7 +227,6 @@
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
     "react-refresh": "0.9.0",
-    "remark-parse": "10.0.1",
     "browserslist": "4.24.0",
     "caniuse-lite": "1.0.30001563",
     "@types/react": "npm:types-react@19.0.0-rc.0",
@@ -239,9 +238,9 @@
     "@types/node@npm:*": "^22",
     "@types/node@npm:^18.0.0": "^22",
     "@types/node@npm:>= 8": "^22",
-    "micromark-extension-mdxjs@npm:^1.0.0": "patch:micromark-extension-mdxjs@npm%3A1.0.0#~/.yarn/patches/micromark-extension-mdxjs-npm-1.0.0-d2b6b69e4a.patch",
-    "remark-mdx@npm:^2.0.0-rc.2": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
-    "remark-parse@npm:^10.0.0": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch"
+    "micromark-extension-mdxjs": "patch:micromark-extension-mdxjs@npm%3A1.0.0#~/.yarn/patches/micromark-extension-mdxjs-npm-1.0.0-d2b6b69e4a.patch",
+    "remark-mdx": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
+    "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {
