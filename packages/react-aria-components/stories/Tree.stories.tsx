@@ -14,10 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useCallback, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
-import {useListData, useTreeData} from '@react-stately/data';
+import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 
 export default {
   title: 'React Aria Components'
@@ -207,9 +207,14 @@ let rows = [
 ];
 
 const MyTreeLoader = (props) => {
+  let {omitChildren} = props;
   return (
     <UNSTABLE_TreeLoadingIndicator {...props}>
       {({level}) => {
+        if (omitChildren) {
+          return;
+        }
+
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
           message = 'Load more spinner';
@@ -228,12 +233,15 @@ interface DynamicTreeItemProps extends TreeItemProps<object> {
   children: ReactNode,
   childItems?: Iterable<object>,
   isLoading?: boolean,
+  onLoadMore?: () => void,
   renderLoader?: (id: Key | undefined) => boolean,
-  supportsDragging?: boolean
+  supportsDragging?: boolean,
+  isLastInRoot?: boolean
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   let {childItems, renderLoader, supportsDragging} = props;
+
   return (
     <>
       <TreeItem
@@ -278,21 +286,16 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
             </>
           )}
         </TreeItemContent>
-        {/* TODO: can make this have loaders by adding making the childItems=asyncList.items + another prop that is isLoading: asyncList.loadingState in rows above.
-        Will need to refactor the below to then render the loader after the collection */}
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
-              {item.value.name}
+            <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key ?? item.name} childItems={item.children} textValue={item.name ?? item.value.name} href={props.href}>
+              {item.name ?? item.value.name}
             </DynamicTreeItem>
           )}
         </Collection>
+        {renderLoader?.(props.id) && <MyTreeLoader isLoading={props.isLoading} onLoadMore={props.onLoadMore} /> }
       </TreeItem>
-      {/* TODO this would need to check if the parent was loading and then the user would insert this tree loader after last row of that section.
-        theoretically this would look like (loadingKeys.includes(parentKey) && props.id === last key of parent) &&....
-        both the parentKey of a given item as well as checking if the current tree item is the last item of said parent would need to be done by the user outside of this tree item?
-      */}
-      {props.isLoading && renderLoader?.(props.id) && <MyTreeLoader /> }
+      {props.isLastInRoot && <MyTreeLoader isLoading={props.isLoading} onLoadMore={props.onLoadMore} /> }
     </>
   );
 };
@@ -372,7 +375,7 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
     renderEmptyState={() => renderEmptyLoader({isLoading: args.isLoading})}>
     <Collection items={[]} dependencies={[args.isLoading]}>
       {(item: any) => (
-        <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+        <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}
         </DynamicTreeItem>
       )}
@@ -399,12 +402,12 @@ function LoadingStoryDepOnCollection(args) {
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
         {(item) => (
-          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
             {item.value.name}
           </DynamicTreeItem>
         )}
       </Collection>
-      {args.isLoading && <MyTreeLoader />}
+      <MyTreeLoader isLoading={args.isLoading} />
     </Tree>
   );
 }
@@ -432,7 +435,7 @@ function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   return (
     <Tree {...args} dependencies={[args.isLoading]} items={treeData.items} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+        <DynamicTreeItem isLastInRoot={item.key === 'reports'} renderLoader={(id) => (id === 'root' || id === 'project-2')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItem>
       )}
@@ -514,6 +517,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
           )}
         </Collection>
       </TreeItem>
+      {renderLoader?.(props.id) && <MyTreeLoader isLoading={isLoading} omitChildren /> }
     </>
   );
 };
@@ -713,8 +717,22 @@ for (let i = 0; i < 10; i++) {
   projectsLevel3.push({id: `project-1-${i}`, value: `Projects-1-${i}`});
   documents.push({id: `document-${i}`, value: `Document-${i}`});
 }
+let root = [
+  {id: 'photos-1', value: 'Photos 1'},
+  {id: 'photos-2', value: 'Photos 2'},
+  {id: 'projects', value: 'Projects'},
+  {id: 'photos-3', value: 'Photos 3'},
+  {id: 'photos-4', value: 'Photos 4'},
+  {id: 'documents', value: 'Documents'},
+  {id: 'photos-5', value: 'Photos 5'},
+  {id: 'photos-6', value: 'Photos 6'}
+];
 
-function MultiLoaderTreeStatic(args) {
+function MultiLoaderTreeMockAsync(args) {
+  let rootData = useListData({
+    initialItems: root
+  });
+
   let projectsData = useListData({
     initialItems: projects
   });
@@ -737,10 +755,16 @@ function MultiLoaderTreeStatic(args) {
       action('root loading')();
       setRootLoading(true);
       setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        let rootLength = rootData.items.length - 1;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `photos-${i + rootLength}`, value: `Photos-${i + rootLength}`});
+        }
+        rootData.append(...dataToAppend);
         setRootLoading(false);
       }, args.delay);
     }
-  }, [isRootLoading, args.delay]);
+  }, [isRootLoading, rootData, args.delay]);
 
   let onProjectsLoadMore = useCallback(() => {
     if (!isProjectsLoading) {
@@ -795,57 +819,176 @@ function MultiLoaderTreeStatic(args) {
       <Tree
         aria-label="multi loader tree"
         className={styles.tree}>
-        <StaticTreeItem id="Photos1" textValue="Photos 1">Photos 1</StaticTreeItem>
-        <StaticTreeItem id="Photos2" textValue="Photos 2">Photos 2</StaticTreeItem>
-        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-          {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
-          <Collection items={projectsData.items} dependencies={[isProjectsLevel3Loading]}>
-            {(item: any) => {
-              return item.id !== 'projects-1' ?
-                (
-                  <StaticTreeItem id={item.id} textValue={item.value}>
-                    {item.value}
-                  </StaticTreeItem>
-                ) : (
-                  <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-                    <Collection items={projects3Data.items}>
-                      {(item: any) => (
-                        <StaticTreeItem id={item.id} textValue={item.value}>
-                          {item.value}
-                        </StaticTreeItem>
-                      )}
-                    </Collection>
-                    <MyTreeLoader isLoading={isProjectsLevel3Loading} onLoadMore={onProjectsLevel3LoadMore} />
-                  </StaticTreeItem>
-                );
+        <Collection items={rootData.items} dependencies={[isProjectsLoading, isDocumentsLoading]}>
+          {(item: any) => {
+            if (item.id === 'projects') {
+              return (
+                <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+                  {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
+                  <Collection items={projectsData.items} dependencies={[isProjectsLevel3Loading]}>
+                    {(item: any) => {
+                      return item.id !== 'projects-1' ?
+                        (
+                          <StaticTreeItem id={item.id} textValue={item.value}>
+                            {item.value}
+                          </StaticTreeItem>
+                        ) : (
+                          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+                            <Collection items={projects3Data.items}>
+                              {(item: any) => (
+                                <StaticTreeItem id={item.id} textValue={item.value}>
+                                  {item.value}
+                                </StaticTreeItem>
+                              )}
+                            </Collection>
+                            <MyTreeLoader isLoading={isProjectsLevel3Loading} onLoadMore={onProjectsLevel3LoadMore} />
+                          </StaticTreeItem>
+                        );
+                    }
+                  }
+                  </Collection>
+                  <MyTreeLoader isLoading={isProjectsLoading} onLoadMore={onProjectsLoadMore} />
+                </StaticTreeItem>
+              );
+            } else if (item.id === 'documents') {
+              return (
+                <StaticTreeItem id="documents" textValue="Documents" title="Documents">
+                  <Collection items={documentsData.items}>
+                    {(item: any) => (
+                      <StaticTreeItem id={item.id} textValue={item.value}>
+                        {item.value}
+                      </StaticTreeItem>
+                    )}
+                  </Collection>
+                  <MyTreeLoader isLoading={isDocumentsLoading} onLoadMore={onDocumentsLoadMore} />
+                </StaticTreeItem>
+              );
+            } else {
+              return (
+                <StaticTreeItem id={item.id} textValue={item.value}>{item.value}</StaticTreeItem>
+              );
             }
-          }
-          </Collection>
-          <MyTreeLoader isLoading={isProjectsLoading} onLoadMore={onProjectsLoadMore} />
-        </StaticTreeItem>
-        <StaticTreeItem id="Photos3" textValue="Photos 3">Photos 3</StaticTreeItem>
-        <StaticTreeItem id="Photos4" textValue="Photos 4">Photos 4</StaticTreeItem>
-        <StaticTreeItem id="documents" textValue="Documents" title="Documents">
-          <Collection items={documentsData.items}>
-            {(item: any) => (
-              <StaticTreeItem id={item.id} textValue={item.value}>
-                {item.value}
-              </StaticTreeItem>
-            )}
-          </Collection>
-          <MyTreeLoader isLoading={isDocumentsLoading} onLoadMore={onDocumentsLoadMore} />
-        </StaticTreeItem>
-        <StaticTreeItem id="Photos5" textValue="Photos 5">Photos 5</StaticTreeItem>
-        <StaticTreeItem id="Photos6" textValue="Photos 6">Photos 6</StaticTreeItem>
+          }}
+        </Collection>
         <MyTreeLoader isLoading={isRootLoading} onLoadMore={onRootLoadMore} />
       </Tree>
     </Virtualizer>
   );
 }
 
-export const VirtualizedTreeMultiLoader = {
-  render: MultiLoaderTreeStatic,
+export const VirtualizedTreeMultiLoaderMockAsync = {
+  render: MultiLoaderTreeMockAsync,
   args: {
     delay: 2000
   }
 };
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+function MultiLoaderTreeUseAsyncList(args) {
+  let root = [
+    {id: 'photos-1', name: 'Photos 1'},
+    {id: 'photos-2', name: 'Photos 2'},
+    {id: 'photos-3', name: 'Photos 3'},
+    {id: 'photos-4', name: 'Photos 4'},
+    {id: 'starwars', name: 'Star Wars'},
+    {id: 'photos-5', name: 'Photos 5'},
+    {id: 'photos-6', name: 'Photos 6'}
+  ];
+
+  let rootData = useListData({
+    initialItems: root
+  });
+
+  let starWarsList = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      action('starwars loading')();
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let [isRootLoading, setRootLoading] = useState(false);
+  let onRootLoadMore = useCallback(() => {
+    if (!isRootLoading) {
+      action('root loading')();
+      setRootLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, name: string}[] = [];
+        let rootLength = rootData.items.length;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `photos-${i + rootLength}`, name: `Photos-${i + rootLength}`});
+        }
+        rootData.append(...dataToAppend);
+        setRootLoading(false);
+      }, args.delay);
+    }
+  }, [isRootLoading, rootData, args.delay]);
+
+  return (
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+      <Tree
+        aria-label="multi loader tree"
+        className={styles.tree}>
+        <Collection items={rootData.items} dependencies={[starWarsList.isLoading]}>
+          {(item: any) => (
+            <DynamicTreeItem
+              renderLoader={(id) => id === 'starwars'}
+              isLoading={item.id === 'starwars' ? starWarsList.isLoading : undefined}
+              onLoadMore={item.id === 'starwars' ? starWarsList.loadMore : undefined}
+              id={item.id}
+              childItems={item.id === 'starwars' ? starWarsList.items : []}
+              textValue={item.name}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+        <MyTreeLoader isLoading={isRootLoading} onLoadMore={onRootLoadMore} />
+      </Tree>
+    </Virtualizer>
+  );
+}
+
+export const VirtualizedTreeMultiLoaderUseAsyncList = {
+  render: MultiLoaderTreeUseAsyncList,
+  args: {
+    delay: 2000
+  }
+};
+
+// TODO: A fully dynamic render case like below seems to have problems with dupe keys for some reason
+// Either way it feels more ergonomic to use Collection and place your loading sentinel after it anyways
+{/* <Tree
+items={rootData.items}
+aria-label="multi loader tree"
+className={styles.tree}
+dependencies={[isRootLoading]}>
+{(item) => {
+  return (
+    <DynamicTreeItem
+      isLastInRoot={item.id === rootData.items.at(-1)!.id}
+      renderLoader={(id) => id === 'starwars'}
+      isLoading={item.id === 'starwars' ? starWarsList.isLoading : isRootLoading}
+      onLoadMore={item.id === 'starwars' ? starWarsList.loadMore : onRootLoadMore}
+      id={item.id}
+      childItems={item.id === 'starwars' ? starWarsList.items : []}
+      textValue={item.name}>
+      {item.name}
+    </DynamicTreeItem>
+  );
+}} */}
