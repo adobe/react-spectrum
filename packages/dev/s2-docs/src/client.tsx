@@ -1,7 +1,7 @@
-"use client-entry";
+'use client-entry';
 
-import type {ReactElement} from 'react';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
+import type {ReactElement} from 'react';
 
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({

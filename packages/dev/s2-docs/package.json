@@ -1,5 +1,5 @@
 {
-  "name": "s2-docs",
+  "name": "@react-spectrum/s2-docs",
   "version": "1.0.0",
   "private": true,
   "scripts": {

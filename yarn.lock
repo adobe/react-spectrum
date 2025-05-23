@@ -8027,6 +8027,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/s2-docs@workspace:packages/dev/s2-docs":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/s2-docs@workspace:packages/dev/s2-docs"
+  dependencies:
+    "@parcel/rsc": "patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch"
+    "@react-aria/interactions": "npm:^3.25.1"
+    "@react-aria/utils": "npm:^3.29.0"
+    "@react-spectrum/s2": "npm:^0.9.0"
+    globals-docs: "npm:^2.4.1"
+    markdown-to-jsx: "npm:^6.11.0"
+    react: "npm:^19"
+    react-aria: "npm:^3.40.0"
+    react-aria-components: "npm:^1.7.1"
+    react-dom: "npm:^19"
+    react-stately: "npm:^3.38.0"
+    tree-sitter-highlight: "npm:^1.0.1"
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/s2-icon-builder@npm:^0.2.0, @react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder"
@@ -28899,25 +28918,6 @@ __metadata:
   checksum: 10c0/3c49c1ecd66170b175c9cacf5cef67f8914dcbc7cd0162855538d365c83fea631167cacb644b3ce533b2ea0e9a4d0b12175186985f89d75abe73dbd8f7f06f68
   languageName: node
   linkType: hard
-
-"s2-docs@workspace:packages/dev/s2-docs":
-  version: 0.0.0-use.local
-  resolution: "s2-docs@workspace:packages/dev/s2-docs"
-  dependencies:
-    "@parcel/rsc": "patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch"
-    "@react-aria/interactions": "npm:^3.25.1"
-    "@react-aria/utils": "npm:^3.29.0"
-    "@react-spectrum/s2": "npm:^0.9.0"
-    globals-docs: "npm:^2.4.1"
-    markdown-to-jsx: "npm:^6.11.0"
-    react: "npm:^19"
-    react-aria: "npm:^3.40.0"
-    react-aria-components: "npm:^1.7.1"
-    react-dom: "npm:^19"
-    react-stately: "npm:^3.38.0"
-    tree-sitter-highlight: "npm:^1.0.1"
-  languageName: unknown
-  linkType: soft
 
 "s3-deleter@npm:0.x":
   version: 0.1.2
