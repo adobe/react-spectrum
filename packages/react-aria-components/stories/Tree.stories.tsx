@@ -14,10 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useCallback, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
-import {useTreeData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 
 export default {
   title: 'React Aria Components'
@@ -206,9 +206,9 @@ let rows = [
   ]}
 ];
 
-const MyTreeLoader = () => {
+const MyTreeLoader = (props) => {
   return (
-    <UNSTABLE_TreeLoadingIndicator>
+    <UNSTABLE_TreeLoadingIndicator {...props}>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -278,6 +278,8 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
             </>
           )}
         </TreeItemContent>
+        {/* TODO: can make this have loaders by adding making the childItems=asyncList.items + another prop that is isLoading: asyncList.loadingState in rows above.
+        Will need to refactor the below to then render the loader after the collection */}
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
@@ -392,7 +394,7 @@ function LoadingStoryDepOnCollection(args) {
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
-  
+
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
@@ -659,11 +661,11 @@ function SecondTree(args) {
   });
 
   return (
-    <Tree 
-      dragAndDropHooks={dragAndDropHooks} 
-      {...args} 
-      className={styles.tree} 
-      aria-label="Tree with drag and drop" 
+    <Tree
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}
+      className={styles.tree}
+      aria-label="Tree with drag and drop"
       items={treeData.items}
       renderEmptyState={() => 'Drop items here'}>
       {(item: any) => (
@@ -700,5 +702,150 @@ export const TreeWithDragAndDrop = {
       options: ['all', 'folders']
     },
     ...TreeExampleDynamic.argTypes
+  }
+};
+
+let projects: {id: string, value: string}[] = [];
+let projectsLevel3: {id: string, value: string}[] = [];
+let documents: {id: string, value: string}[] = [];
+for (let i = 0; i < 10; i++) {
+  projects.push({id: `projects-${i}`, value: `Projects-${i}`});
+  projectsLevel3.push({id: `project-1-${i}`, value: `Projects-1-${i}`});
+  documents.push({id: `document-${i}`, value: `Document-${i}`});
+}
+
+function MultiLoaderTreeStatic(args) {
+  let projectsData = useListData({
+    initialItems: projects
+  });
+
+  let projects3Data = useListData({
+    initialItems: projectsLevel3
+  });
+
+  let documentsData = useListData({
+    initialItems: documents
+  });
+
+  let [isRootLoading, setRootLoading] = useState(false);
+  let [isProjectsLoading, setProjectsLoading] = useState(false);
+  let [isProjectsLevel3Loading, setProjects3Loading] = useState(false);
+  let [isDocumentsLoading, setDocumentsLoading] = useState(false);
+
+  let onRootLoadMore = useCallback(() => {
+    if (!isRootLoading) {
+      action('root loading')();
+      setRootLoading(true);
+      setTimeout(() => {
+        setRootLoading(false);
+      }, args.delay);
+    }
+  }, [isRootLoading, args.delay]);
+
+  let onProjectsLoadMore = useCallback(() => {
+    if (!isProjectsLoading) {
+      action('projects loading')();
+      setProjectsLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        let projectsLength = projectsData.items.length;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `projects-${i + projectsLength}`, value: `Projects-${i + projectsLength}`});
+        }
+        projectsData.append(...dataToAppend);
+        setProjectsLoading(false);
+      }, args.delay);
+    }
+  }, [isProjectsLoading, projectsData, args.delay]);
+
+  let onProjectsLevel3LoadMore = useCallback(() => {
+    if (!isProjectsLevel3Loading) {
+      action('projects level 3 loading')();
+      setProjects3Loading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        let projects3Length = projects3Data.items.length;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `project-1-${i + projects3Length}`, value: `Project-1-${i + projects3Length}`});
+        }
+        projects3Data.append(...dataToAppend);
+        setProjects3Loading(false);
+      }, args.delay);
+    }
+  }, [isProjectsLevel3Loading, projects3Data, args.delay]);
+
+  let onDocumentsLoadMore = useCallback(() => {
+    if (!isDocumentsLoading) {
+      action('documents loading')();
+      setDocumentsLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        let documentsLength = documentsData.items.length;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `document-${i + documentsLength}`, value: `Document-${i + documentsLength}`});
+        }
+        documentsData.append(...dataToAppend);
+        setDocumentsLoading(false);
+      }, args.delay);
+    }
+  }, [isDocumentsLoading, documentsData, args.delay]);
+
+  return (
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+      <Tree
+        aria-label="multi loader tree"
+        className={styles.tree}>
+        <StaticTreeItem id="Photos1" textValue="Photos 1">Photos 1</StaticTreeItem>
+        <StaticTreeItem id="Photos2" textValue="Photos 2">Photos 2</StaticTreeItem>
+        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+          {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
+          <Collection items={projectsData.items} dependencies={[isProjectsLevel3Loading]}>
+            {(item: any) => {
+              return item.id !== 'projects-1' ?
+                (
+                  <StaticTreeItem id={item.id} textValue={item.value}>
+                    {item.value}
+                  </StaticTreeItem>
+                ) : (
+                  <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+                    <Collection items={projects3Data.items}>
+                      {(item: any) => (
+                        <StaticTreeItem id={item.id} textValue={item.value}>
+                          {item.value}
+                        </StaticTreeItem>
+                      )}
+                    </Collection>
+                    <MyTreeLoader isLoading={isProjectsLevel3Loading} onLoadMore={onProjectsLevel3LoadMore} />
+                  </StaticTreeItem>
+                );
+            }
+          }
+          </Collection>
+          <MyTreeLoader isLoading={isProjectsLoading} onLoadMore={onProjectsLoadMore} />
+        </StaticTreeItem>
+        <StaticTreeItem id="Photos3" textValue="Photos 3">Photos 3</StaticTreeItem>
+        <StaticTreeItem id="Photos4" textValue="Photos 4">Photos 4</StaticTreeItem>
+        <StaticTreeItem id="documents" textValue="Documents" title="Documents">
+          <Collection items={documentsData.items}>
+            {(item: any) => (
+              <StaticTreeItem id={item.id} textValue={item.value}>
+                {item.value}
+              </StaticTreeItem>
+            )}
+          </Collection>
+          <MyTreeLoader isLoading={isDocumentsLoading} onLoadMore={onDocumentsLoadMore} />
+        </StaticTreeItem>
+        <StaticTreeItem id="Photos5" textValue="Photos 5">Photos 5</StaticTreeItem>
+        <StaticTreeItem id="Photos6" textValue="Photos 6">Photos 6</StaticTreeItem>
+        <MyTreeLoader isLoading={isRootLoading} onLoadMore={onRootLoadMore} />
+      </Tree>
+    </Virtualizer>
+  );
+}
+
+export const VirtualizedTreeMultiLoader = {
+  render: MultiLoaderTreeStatic,
+  args: {
+    delay: 2000
   }
 };
