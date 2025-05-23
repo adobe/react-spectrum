@@ -299,7 +299,7 @@ describe('Table', () => {
     }
   });
 
-  it('should support onScroll props', async () => {
+  it('should support DOM props', async () => {
     const onScrollHeader = jest.fn();
     const onScrollBody = jest.fn();
     let {getByRole, getAllByRole} = renderTable({
