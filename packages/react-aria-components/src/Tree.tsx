@@ -924,6 +924,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
 function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  let state = useContext(TreeStateContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -936,7 +937,7 @@ function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<H
   }
 
   let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
-
+  let isExpanded = props.target.type === 'item' && state.expandedKeys.has(props.target.key);
   return (
     <TreeDropIndicatorForwardRef 
       {...props}
@@ -944,7 +945,8 @@ function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<H
       isDropTarget={isDropTarget}
       ref={ref}
       buttonRef={buttonRef}
-      level={level} />
+      level={level}
+      isExpanded={isExpanded} />
   );
 }
 
@@ -952,7 +954,8 @@ interface TreeDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
   isDropTarget: boolean,
   buttonRef: RefObject<HTMLDivElement | null>,
-  level: number
+  level: number,
+  isExpanded: boolean
 }
 
 function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -961,6 +964,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
     isDropTarget,
     buttonRef,
     level,
+    isExpanded,
     ...otherProps
   } = props;
   let {visuallyHiddenProps} = useVisuallyHidden();
@@ -981,6 +985,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
       {...renderProps}
       role="row"
       aria-level={level}
+      aria-expanded={isExpanded}
       ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined}
       style={{position: 'relative'}}>
