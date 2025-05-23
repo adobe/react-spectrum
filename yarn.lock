@@ -4759,7 +4759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/plugin@npm:2.15.1, @parcel/plugin@npm:^2.10.2, @parcel/plugin@npm:^2.15.1":
+"@parcel/plugin@npm:2.15.1, @parcel/plugin@npm:^2.0.0, @parcel/plugin@npm:^2.10.2, @parcel/plugin@npm:^2.15.1":
   version: 2.15.1
   resolution: "@parcel/plugin@npm:2.15.1"
   dependencies:
@@ -6586,7 +6586,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/parcel-resolver-optimize-locales@workspace:packages/dev/parcel-resolver-optimize-locales"
   dependencies:
-    "@parcel/plugin": "npm:^2.15.1"
+    "@parcel/plugin": "npm:^2.0.0"
   languageName: unknown
   linkType: soft
 
@@ -7931,7 +7931,7 @@ __metadata:
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
-    "@parcel/plugin": "npm:^2.15.1"
+    "@parcel/plugin": "npm:^2.0.0"
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
     "@svgr/plugin-svgo": "npm:^8.1.0"
