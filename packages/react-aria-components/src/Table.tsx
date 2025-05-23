@@ -591,6 +591,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
       <THead
         {...mergeProps(filterDOMProps(props as any, {propNames: tableHeaderPropNames}), rowGroupProps, hoverProps)}
         {...renderProps}
+        onScroll={props.onScroll}
         ref={ref}
         data-hovered={isHovered || undefined}>
         {headerRows}
@@ -904,9 +905,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
   );
 });
 
-const tableBodyPropNames = new Set(['onScroll']);
-
-export interface TableBodyRenderProps extends Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
+export interface TableBodyRenderProps {
   /**
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
@@ -919,7 +918,7 @@ export interface TableBodyRenderProps extends Pick<React.HTMLAttributes<HTMLTabl
   isDropTarget: boolean
 }
 
-export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps> {
+export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps>, Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
@@ -981,8 +980,9 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
     <TBody
-      {...mergeProps(filterDOMProps(props as any, {propNames: tableBodyPropNames}), rowGroupProps)}
+      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
+      onScroll={props.onScroll}
       ref={ref}
       data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
@@ -995,8 +995,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   );
 });
 
-const rowPropNames = new Set(['onContextMenu']);
-
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
   isFocusVisibleWithin: boolean,
@@ -1004,7 +1002,7 @@ export interface RowRenderProps extends ItemRenderProps {
   id?: Key
 }
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents, Pick<React.HTMLAttributes<HTMLTableRowElement>, 'onContextMenu'> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
@@ -1118,7 +1116,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </TR>
         )}
         <TR
-          {...mergeProps(filterDOMProps(props as any, {propNames: rowPropNames}), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
+          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           {...renderProps}
           ref={ref}
           data-disabled={states.isDisabled || undefined}

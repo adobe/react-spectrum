@@ -299,8 +299,7 @@ describe('Table', () => {
     }
   });
 
-  it('should support DOM props', async () => {
-    const onContextMenu = jest.fn();
+  it('should support onScroll props', async () => {
     const onScrollHeader = jest.fn();
     const onScrollBody = jest.fn();
     let {getByRole, getAllByRole} = renderTable({
@@ -308,7 +307,7 @@ describe('Table', () => {
       tableHeaderProps: {'data-testid': 'table-header', onScroll: onScrollHeader},
       columnProps: {'data-testid': 'column'},
       tableBodyProps: {'data-testid': 'table-body', onScroll: onScrollBody},
-      rowProps: {'data-testid': 'row', onContextMenu},
+      rowProps: {'data-testid': 'row'},
       cellProps: {'data-testid': 'cell'}
     });
     let table = getByRole('grid');
@@ -340,9 +339,6 @@ describe('Table', () => {
     fireEvent.scroll(rowGroups[1]);
     expect(onScrollHeader).toBeCalledTimes(1);
     expect(onScrollBody).toBeCalledTimes(1);
-    const row = getAllByRole('row')[1];
-    fireEvent.contextMenu(row);
-    expect(onContextMenu).toBeCalledTimes(1);
   });
 
   it('should render checkboxes for selection', async () => {
