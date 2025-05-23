@@ -532,8 +532,6 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-const tableHeaderPropNames = new Set(['onScroll']);
-
 export interface TableHeaderRenderProps {
   /**
    * Whether the table header is currently hovered with a mouse.
@@ -589,7 +587,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
 
     return (
       <THead
-        {...mergeProps(filterDOMProps(props as any, {propNames: tableHeaderPropNames}), rowGroupProps, hoverProps)}
+        {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
         {...renderProps}
         onScroll={props.onScroll}
         ref={ref}
