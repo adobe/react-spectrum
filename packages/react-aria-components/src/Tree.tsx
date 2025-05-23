@@ -982,7 +982,8 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
       role="row"
       aria-level={level}
       ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined}>
+      data-drop-target={isDropTarget || undefined}
+      style={{position: 'relative'}}>
       <div role="gridcell">
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
