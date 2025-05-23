@@ -11,12 +11,12 @@
  */
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
-import Error from '@spectrum-icons/illustrations/src/Error';
+import Error from '@spectrum-icons/illustrations/Error';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import {Link} from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import NotFound from '@spectrum-icons/illustrations/src/NotFound';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React from 'react';
 import Timeout from '@spectrum-icons/illustrations/Timeout';
 import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';

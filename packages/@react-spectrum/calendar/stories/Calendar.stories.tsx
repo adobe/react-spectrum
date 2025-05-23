@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -289,7 +289,7 @@ function ControlledFocus(props) {
   );
 }
 
-function CustomCalendar(props) { 
+function CustomCalendar(props) {
   return (
     <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
   );
