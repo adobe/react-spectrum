@@ -7,7 +7,7 @@
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.14.4"
+    "@parcel/plugin": "^2.15.1"
   },
   "rsp": {
     "type": "cli"
