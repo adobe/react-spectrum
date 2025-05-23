@@ -16,7 +16,7 @@ import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
-import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
+import {Item, SearchAutocomplete} from '../src';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {Text} from '@react-spectrum/text';

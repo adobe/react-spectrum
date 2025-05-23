@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from 'react-aria-components';
+import {Link} from '../src';
 import React from 'react';
 
 export default {

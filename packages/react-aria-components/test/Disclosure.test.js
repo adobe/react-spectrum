@@ -20,7 +20,7 @@ import {
   MenuItem,
   MenuTrigger,
   Popover
-} from 'react-aria-components';
+} from '../src';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';

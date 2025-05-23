@@ -7,7 +7,7 @@ import {
 } from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import React, {useRef} from 'react';
-import {useSelectableItem, useSelectableList} from '@react-aria/selection';
+import {useSelectableItem, useSelectableList} from '../src';
 
 function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
   const ref = useRef(null);

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Meter} from 'react-aria-components';
+import {Label, Meter} from '../src';
 import React from 'react';
 
 export default {

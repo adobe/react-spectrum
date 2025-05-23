@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Heading} from 'react-aria-components';
+import {Button, Heading} from '../src';
 import {Disclosure, DisclosurePanel} from '../src/Disclosure';
 import React from 'react';
 import './styles.css';

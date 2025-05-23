@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {classNames} from '@react-spectrum/utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {ToggleButton} from 'react-aria-components';
+import {ToggleButton} from '../src';
 
 export default {
   title: 'React Aria Components'

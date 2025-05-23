@@ -1,4 +1,4 @@
-import {Checkbox} from 'react-aria-components';
+import {Checkbox} from '../src';
 import React from 'react';
 import './styles.css';
 

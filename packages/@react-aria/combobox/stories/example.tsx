@@ -14,7 +14,7 @@ import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import React from 'react';
 import {useButton} from '@react-aria/button';
-import {useComboBox} from '@react-aria/combobox';
+import {useComboBox} from '../src';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useListBox, useOption} from '@react-aria/listbox';

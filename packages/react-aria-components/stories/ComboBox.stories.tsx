@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from '../src';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';

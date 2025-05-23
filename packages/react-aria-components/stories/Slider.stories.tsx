@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Slider, SliderOutput, SliderProps, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label, Slider, SliderOutput, SliderProps, SliderThumb, SliderTrack} from '../src';
 import React from 'react';
 import styles from '../example/index.css';
 

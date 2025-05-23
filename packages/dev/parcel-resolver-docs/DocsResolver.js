@@ -16,16 +16,25 @@ const path = require('path');
 
 module.exports = new Resolver({
   loadConfig({options}) {
-    return new NodeResolver({
+    let typesResolver = new NodeResolver({
       fs: options.inputFS,
       projectRoot: options.projectRoot,
       extensions: ['ts', 'tsx', 'd.ts', 'js'],
       mainFields: ['source', 'types', 'main']
     });
+
+    let srcResolver = new NodeResolver({
+      fs: options.inputFS,
+      projectRoot: options.projectRoot,
+      extensions: ['ts', 'tsx', 'js'],
+      mainFields: ['source', 'main', 'module']
+    });
+
+    return {typesResolver, srcResolver};
   },
-  async resolve({dependency, options, specifier, config: resolver}) {
+  async resolve({dependency, options, specifier, config: {typesResolver, srcResolver}}) {
     if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
-      let resolved = await resolver.resolve({
+      let resolved = await typesResolver.resolve({
         filename: specifier,
         specifierType: dependency.specifierType,
         parent: dependency.resolveFrom,
@@ -55,8 +64,8 @@ module.exports = new Resolver({
       return {filePath: path.join(options.projectRoot, baseDir, specifier)};
     }
 
-    if (/^((@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum))|react-aria-components|react-aria|react-stately)\/.*package.json$/.test(specifier)) {
-      let resolved = await resolver.resolve({
+    if (/^((@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum))|react-aria-components|react-aria|react-stately)/.test(specifier)) {
+      let resolved = await srcResolver.resolve({
         filename: specifier,
         specifierType: dependency.specifierType,
         parent: dependency.resolveFrom,

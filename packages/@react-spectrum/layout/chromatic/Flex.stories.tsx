@@ -11,7 +11,7 @@
  */
 
 import {BackgroundColorValue, Responsive} from '@react-types/shared';
-import {Flex} from '@react-spectrum/layout';
+import {Flex} from '../src';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 

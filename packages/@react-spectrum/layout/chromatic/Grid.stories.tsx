@@ -11,7 +11,7 @@
  */
 
 import {BackgroundColorValue, Responsive} from '@react-types/shared';
-import {Grid, repeat} from '@react-spectrum/layout';
+import {Grid, repeat} from '../src';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 

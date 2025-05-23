@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {Switch} from 'react-aria-components';
+import {Switch} from '../src';
 
 export default {
   title: 'React Aria Components'

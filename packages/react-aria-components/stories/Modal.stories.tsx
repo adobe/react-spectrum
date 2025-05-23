@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from 'react-aria-components';
+import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from '../src';
 import React, {useEffect} from 'react';
 
 export default {

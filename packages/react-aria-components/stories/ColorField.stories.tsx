@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, Input, Label} from 'react-aria-components';
+import {ColorField, Input, Label} from '../src';
 import React from 'react';
 
 export default {

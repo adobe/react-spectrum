@@ -21,7 +21,7 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import {ItemDropTarget, Key} from '@react-types/shared';
-import {ListDropTargetDelegate} from '@react-aria/dnd';
+import {ListDropTargetDelegate} from '../src';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';

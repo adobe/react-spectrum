@@ -15,7 +15,7 @@ import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {Form} from '@react-spectrum/form';
+import {Form} from '../src';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from './intlMessages.json';

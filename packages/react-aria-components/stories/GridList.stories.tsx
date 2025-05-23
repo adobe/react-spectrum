@@ -34,7 +34,7 @@ import {
   TagList,
   useDragAndDrop,
   Virtualizer
-} from 'react-aria-components';
+} from '../src';
 import {classNames} from '@react-spectrum/utils';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';

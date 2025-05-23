@@ -21,7 +21,7 @@ import {
 } from 'react-aria-components';
 import React, {useState} from 'react';
 import styles from './usePress-stories.css';
-import {usePress} from '@react-aria/interactions';
+import {usePress} from '../src';
 
 export default {
   title: 'usePress'
