@@ -541,7 +541,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     lastFocusedKey.current = manager.focusedKey;
     didAutoFocusRef.current = false;
-  }, [manager.focusedKey, manager.isFocused, ref, scrollRef]);
+  });
 
   useEffect(() => {
     return () => {
