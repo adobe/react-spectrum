@@ -16,6 +16,10 @@ html {
     margin-left: calc(var(--tree-item-level) * 15px);
   }
 
+  :global(.react-aria-DropIndicator[data-drop-target]) {
+    outline: 1px solid slateblue;
+  }
+
   &[data-drop-target] {
     outline: 2px solid purple;
     outline-offset: -2px;
