@@ -15,15 +15,16 @@ const NodeResolver = require('@parcel/node-resolver-core').default;
 const path = require('path');
 
 module.exports = new Resolver({
-  async resolve({dependency, options, specifier}) {
+  loadConfig({options}) {
+    return new NodeResolver({
+      fs: options.inputFS,
+      projectRoot: options.projectRoot,
+      extensions: ['ts', 'tsx', 'd.ts', 'js'],
+      mainFields: ['source', 'types', 'main']
+    });
+  },
+  async resolve({dependency, options, specifier, config: resolver}) {
     if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
-      const resolver = new NodeResolver({
-        fs: options.inputFS,
-        projectRoot: options.projectRoot,
-        extensions: ['ts', 'tsx', 'd.ts', 'js'],
-        mainFields: ['source', 'types', 'main']
-      });
-
       let resolved = await resolver.resolve({
         filename: specifier,
         specifierType: dependency.specifierType,
@@ -52,6 +53,18 @@ module.exports = new Resolver({
     if (/^@(react-spectrum|react-aria)\/(.*?)\/docs\/(.*)$/.test(specifier)) {
       let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
       return {filePath: path.join(options.projectRoot, baseDir, specifier)};
+    }
+
+    if (/^((@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum))|react-aria-components|react-aria|react-stately)\/.*package.json$/.test(specifier)) {
+      let resolved = await resolver.resolve({
+        filename: specifier,
+        specifierType: dependency.specifierType,
+        parent: dependency.resolveFrom,
+        env: dependency.env,
+        sourcePath: dependency.sourcePath
+      });
+
+      return resolved;
     }
   }
 });

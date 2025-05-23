@@ -312,6 +312,7 @@ export default [{
                 "@spectrum-icons/ui",
                 "@spectrum-icons/workflow",
                 "@spectrum-icons/illustrations",
+                "@react-spectrum/s2/icons"
             ],
         }],
 
