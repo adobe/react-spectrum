@@ -12,7 +12,7 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, I18nProvider, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -337,5 +337,22 @@ describe('DateField', () => {
     expect(document.activeElement).toBe(segments[1]);
     await user.keyboard('{backspace}');
     expect(document.activeElement).toBe(segments[0]);
+  });
+
+  it('does not crash on unknown segment types', async () => {
+    let {getByRole} = render(
+      <I18nProvider locale="zh-CN-u-ca-chinese">
+        <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let segments = Array.from(getByRole('group').querySelectorAll('.react-aria-DateSegment'));
+    let segmentTypes = segments.map(s => s.getAttribute('data-type'));
+    expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 });
