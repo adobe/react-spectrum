@@ -11,8 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button, DateField, DateInput, DateSegment, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import clsx from 'clsx';
-import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
 import styles from '../example/index.css';
@@ -64,4 +64,31 @@ export const DateFieldExample = (props) => (
     </DateInput>
     <FieldError style={{display: 'block'}} />
   </DateField>
+);
+
+export const DateFieldAutoFill = (props) => (
+  <Form
+    onSubmit={e => {
+      action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+      e.preventDefault();
+    }}>
+    <TextField>
+      <Label>Name</Label>
+      <Input name="name" type="text" id="name" autoComplete="name" />
+    </TextField>
+    <DateField
+      {...props}
+      name="bday"
+      autoComplete="bday"
+      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')
+    }
+      data-testid="date-field-example">
+      <Label style={{display: 'block'}}>Date</Label>
+      <DateInput className={styles.field} data-testid2="date-input">
+        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      </DateInput>
+      <FieldError style={{display: 'block'}} />
+    </DateField>
+    <Button type="submit">Submit</Button>
+  </Form>
 );
