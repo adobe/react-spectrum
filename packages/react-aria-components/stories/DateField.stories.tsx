@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import clsx from 'clsx';
-import {DateField, DateInput, DateSegment, FieldError, Label} from '../src';
+import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
 import styles from '../example/index.css';

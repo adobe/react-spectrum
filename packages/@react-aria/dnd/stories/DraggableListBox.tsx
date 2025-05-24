@@ -2,7 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {useDraggableCollection, useDraggableItem} from '../src';
+import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {useFocusRing} from '@react-aria/focus';
 import {useListBox, useOption} from '@react-aria/listbox';

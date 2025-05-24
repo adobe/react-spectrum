@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, ProgressBar, Text} from '../src';
+import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';

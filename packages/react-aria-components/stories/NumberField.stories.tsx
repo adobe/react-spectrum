@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField} from '../src';
+import {Button, Group, Input, Label, NumberField} from 'react-aria-components';
 import React from 'react';
 
 export default {

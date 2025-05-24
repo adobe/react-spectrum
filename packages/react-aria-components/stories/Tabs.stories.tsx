@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, TabsProps, Tooltip, TooltipTrigger} from '../src';
+import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, TabsProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React, {useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 

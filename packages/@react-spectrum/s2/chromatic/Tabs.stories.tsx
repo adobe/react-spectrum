@@ -16,7 +16,7 @@ import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
-import {Text} from '../src';
+import {Text} from '@react-spectrum/s2';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

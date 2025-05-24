@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from '../src';
+import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
 import React, {useEffect, useRef, useState} from 'react';
 
 export default {

@@ -6,7 +6,7 @@ import {
   Heading,
   Modal,
   ModalOverlay
-} from '../src';
+} from 'react-aria-components';
 import React from 'react';
 import styles from './styles.css';
 

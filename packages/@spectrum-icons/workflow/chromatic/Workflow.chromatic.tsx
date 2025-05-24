@@ -11,7 +11,7 @@
  */
 
 import Add from '../Add';
-import Alert from '../src/Alert';
+import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
 import {Flex} from '@react-spectrum/layout';
 import * as AllIcons from '../src';

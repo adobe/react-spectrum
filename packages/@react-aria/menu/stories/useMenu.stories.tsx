@@ -18,7 +18,7 @@ import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useButton} from '@react-aria/button';
 import {useFocus, useInteractOutside} from '@react-aria/interactions';
-import {useMenu, useMenuItem, useMenuTrigger} from '../src';
+import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useTreeState} from '@react-stately/tree';
 

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ExampleCard} from '../src/ExampleCard';
-import {PageContext} from '../src';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {PageContext} from '@react-spectrum/docs';
 import React from 'react';
-import styles from '../src/docs.css';
+import styles from '@react-spectrum/docs/src/docs.css';
 
 export function ExampleList({tag, style}) {
   let {pages} = React.useContext(PageContext);

@@ -16,7 +16,7 @@ import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '@react-aria/utils';
 import ReactDOM from 'react-dom';
-import {setInteractionModality} from '../src';
+import {setInteractionModality} from '@react-aria/interactions';
 
 jest.mock('@react-aria/utils', () => {
   let original = jest.requireActual('@react-aria/utils');

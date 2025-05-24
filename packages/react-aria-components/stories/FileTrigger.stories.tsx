@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, FileTrigger, Link} from '../src';
+import {Button, FileTrigger, Link} from 'react-aria-components';
 import React from 'react';
 
 export default {

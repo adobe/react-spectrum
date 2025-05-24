@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '../src';
+import {Key} from '@react-types/shared';
 import {LinkDOMProps} from './dom';
 import {ReactElement, ReactNode} from 'react';
 

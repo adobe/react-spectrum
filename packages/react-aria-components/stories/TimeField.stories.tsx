@@ -11,7 +11,7 @@
  */
 
 import clsx from 'clsx';
-import {DateInput, DateSegment, Label, TimeField} from '../src';
+import {DateInput, DateSegment, Label, TimeField} from 'react-aria-components';
 import React from 'react';
 import styles from '../example/index.css';
 

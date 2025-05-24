@@ -16,7 +16,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useCallback, useRef} from 'react';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
-import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '../src';
+import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 
 export function Table(props) {

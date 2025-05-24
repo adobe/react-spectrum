@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, ProgressBar, ProgressBarContext} from '../src';
+import {Label, ProgressBar, ProgressBarContext} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 

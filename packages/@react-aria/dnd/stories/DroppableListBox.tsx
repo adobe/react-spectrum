@@ -19,7 +19,7 @@ import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
-import {ListDropTargetDelegate} from '../src';
+import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import React from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';

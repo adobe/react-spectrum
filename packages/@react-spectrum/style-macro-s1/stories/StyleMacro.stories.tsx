@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {style} from '../src' with {type: 'macro'};
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 
 export default {
   title: 'S1 Style Macro'

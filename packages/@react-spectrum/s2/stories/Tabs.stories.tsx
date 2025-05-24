@@ -11,7 +11,7 @@
  */
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
-import {Collection, Text} from '../src';
+import {Collection, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';

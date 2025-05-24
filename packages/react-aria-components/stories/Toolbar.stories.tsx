@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from '../src';
+import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Orientation} from 'react-stately';
 import React from 'react';
