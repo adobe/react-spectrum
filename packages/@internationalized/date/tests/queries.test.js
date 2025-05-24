@@ -17,6 +17,7 @@ import {
   endOfYear,
   EthiopicCalendar,
   getDayOfWeek,
+  getLocalTimeZone,
   getMinimumDayInMonth,
   getMinimumMonthInYear,
   getWeeksInMonth,
@@ -31,6 +32,8 @@ import {
   maxDate,
   minDate,
   PersianCalendar,
+  resetLocalTimeZone,
+  setLocalTimeZone,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -341,6 +344,17 @@ describe('queries', function () {
       let b = new CalendarDate('AD', 1, 1, 1);
       expect(a.compare(b)).toBeLessThan(0);
       expect(b.compare(a)).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getLocalTimeZone', function () {
+    it('gets local time zone', function () {
+      const systemTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
+      setLocalTimeZone('America/Denver');
+      expect(getLocalTimeZone()).toBe('America/Denver');
+      resetLocalTimeZone();
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
     });
   });
 });
