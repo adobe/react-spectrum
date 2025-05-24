@@ -14,7 +14,7 @@ import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/color';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
+import packageData from '../package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
@@ -107,7 +107,7 @@ import type {ColorSwatchProps} from 'react-aria-components';
 
 export function MyColorSwatch(props: ColorSwatchProps) {
   return (
-    <ColorSwatch 
+    <ColorSwatch
       {...props}
       style={({color}) => ({
         background: `linear-gradient(${color}, ${color}),

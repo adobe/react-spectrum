@@ -12,9 +12,9 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-// import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
+// import {Heading} from '@react-spectrum/text';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 let styles = {
@@ -22,7 +22,7 @@ let styles = {
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
-export type BreadcrumbsStory = ComponentStoryObj<typeof Breadcrumbs>;
+export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
 
 export default {
   title: 'Breadcrumbs',
@@ -54,7 +54,7 @@ export default {
       options: ['S', 'M', 'L']
     }
   }
-} as ComponentMeta<typeof Breadcrumbs>;
+} as Meta<typeof Breadcrumbs>;
 
 export const Default: BreadcrumbsStory = {
   render: (args) => render(args),

@@ -15,14 +15,14 @@ import statelyDocs from 'docs:@react-stately/toggle';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
+import packageData from '../package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 import ToggleButton from '@react-spectrum/docs/pages/assets/component-illustrations/ToggleButton.svg';
-import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
+import Anatomy from '../../@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
 
 ---
 category: Buttons
@@ -86,7 +86,7 @@ import {ToggleButtonGroup, ToggleButton} from 'react-aria-components';
 
   > button {
     margin-inline-start: -1px;
-    
+
     &:first-child {
       border-radius: 4px 0 0 4px;
       margin-inline-start: 0;
@@ -231,7 +231,7 @@ By default, toggle button groups are horizontally oriented. The orientation prop
 
   > button {
     margin-block-start: -1px;
-    
+
     &:first-child {
       border-radius: 4px 4px 0 0;
       margin-block-start: 0;

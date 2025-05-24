@@ -1,10 +1,10 @@
 import {addons, types} from '@storybook/manager-api';
-import {getQueryParams} from '@storybook/preview-api';
 import React, {useEffect, useState} from 'react';
 
 const ScrollingToolbar = ({api}) => {
   let channel = addons.getChannel();
-  let [isScrolling, setScrolling] = useState(getQueryParams()?.scrolling === 'true' || false);
+  let scrolling = api.getQueryParam('scrolling');
+  let [isScrolling, setScrolling] = useState(scrolling === 'true' || false);
   let onChange = () => {
     setScrolling((old) => {
       channel.emit('scrolling/updated', !old);

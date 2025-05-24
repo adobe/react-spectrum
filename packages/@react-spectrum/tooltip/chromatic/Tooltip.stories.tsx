@@ -9,11 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Tooltip} from '../';
 
-type TooltipStory = ComponentStoryObj<typeof Tooltip>;
+type TooltipStory = StoryObj<typeof Tooltip>;
 
 export default {
   title: 'Tooltip',
@@ -22,7 +22,7 @@ export default {
     isOpen: true,
     children: 'Tooltip content'
   }
-} as ComponentMeta<typeof Tooltip>;
+} as Meta<typeof Tooltip>;
 
 export const Default: TooltipStory = {};
 

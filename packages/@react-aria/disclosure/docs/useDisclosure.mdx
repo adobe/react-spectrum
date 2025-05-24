@@ -15,7 +15,7 @@ import utilsDocs from 'docs:@react-aria/utils';
 import statelyDocs from 'docs:@react-stately/disclosure';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/disclosure/package.json';
+import packageData from '../package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import Anatomy from './anatomy.svg';
 
@@ -52,7 +52,7 @@ A disclosure is a collapsible section of content. It is composed of a trigger bu
 
 <Anatomy />
 
-A disclosure consists of a trigger button and a panel. Clicking on or pressing <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> while the trigger button is focused toggles the visibility of the panel. 
+A disclosure consists of a trigger button and a panel. Clicking on or pressing <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> while the trigger button is focused toggles the visibility of the panel.
 
 `useDisclosure` returns props to spread onto the trigger button and panel.
 
@@ -85,8 +85,8 @@ function Disclosure(props) {
   return (
     <div className="disclosure">
       <h3>
-        <button 
-          className="trigger" 
+        <button
+          className="trigger"
           ref={triggerRef}
           {...mergeProps(buttonProps, focusProps)}
           style={{outline: isFocusVisible ? '2px solid dodgerblue' : 'none'}}>
@@ -248,8 +248,8 @@ function DisclosureItem(props) {
   return (
     <div className="disclosure">
       <h3>
-        <button 
-          className="trigger" 
+        <button
+          className="trigger"
           ref={triggerRef}
           {...mergeProps(buttonProps, focusProps)}
           style={{outline: isFocusVisible ? '2px solid dodgerblue' : 'none'}}>
