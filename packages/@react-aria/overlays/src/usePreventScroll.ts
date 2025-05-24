@@ -71,7 +71,10 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
 // add some padding to prevent the page from shifting when the scrollbar is hidden.
 function preventScrollStandard() {
   return chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
+    // Use scrollbar-gutter when supported because it also works for fixed positioned elements.
+    'scrollbarGutter' in document.documentElement.style
+      ? setStyle(document.documentElement, 'scrollbarGutter', 'stable')
+      : setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
     setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
