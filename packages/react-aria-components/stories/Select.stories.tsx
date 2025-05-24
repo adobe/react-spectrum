@@ -64,7 +64,11 @@ export const SelectRenderProps = () => (
   </Select>
 );
 
-let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
+let makeItems = (length: number) => Array.from({length}, (_, i) => ({
+  id: i,
+  name: `Item ${i}`
+}));
+let manyItems = makeItems(100);
 
 export const SelectManyItems = () => (
   <Select>
@@ -174,3 +178,25 @@ AsyncVirtualizedCollectionRenderSelect.story = {
     delay: 50
   }
 };
+
+// Test case for https://github.com/adobe/react-spectrum/issues/8034
+// Required select validation cannot currently be tested in the jsdom environment.
+// In jsdom, forms are submitted even when required fields are empty.
+// See: https://github.com/jsdom/jsdom/issues/2898
+export const RequiredSelectWithManyItems = () => (
+  <form>
+    <Select name="select" isRequired>
+      <Label style={{display: 'block'}}>Required Select with many items</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      <Popover>
+        <ListBox items={makeItems(301)} className={styles.menu}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </Select>
+    <Button type="submit">Submit</Button>
+  </form>
+);
