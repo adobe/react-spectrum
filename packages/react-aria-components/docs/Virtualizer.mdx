@@ -14,7 +14,7 @@ import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge, InterfaceType, TypeContext} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from '../package.json';
+import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -71,7 +71,7 @@ for (let i = 0; i < 5000; i++) {
 
 function Example() {
   return (
-    <Virtualizer
+    <Virtualizer 
       layout={ListLayout}
       layoutOptions={{
         rowHeight: 32,
@@ -143,7 +143,7 @@ import {MyGridList, MyItem} from './GridList';
 
 function Example() {
   return (
-    <Virtualizer
+    <Virtualizer 
       /*- begin highlight -*/
       layout={ListLayout}
       layoutOptions={{
@@ -496,7 +496,7 @@ import {WaterfallLayout, Size, Text} from 'react-aria-components';
 
 function Example() {
   return (
-    <Virtualizer
+    <Virtualizer 
       /*- begin highlight -*/
       layout={WaterfallLayout}
       layoutOptions={{
@@ -655,7 +655,7 @@ class HorizontalLayout extends Layout {
         layoutInfos.push(this.getLayoutInfo(key));
       }
     }
-
+    
     return layoutInfos;
   }
 

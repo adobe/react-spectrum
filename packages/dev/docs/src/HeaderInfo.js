@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-// eslint-disable-next-line monorepo/no-relative-import
-import ariaMonopackage from '../../../react-aria/package.json';
+import ariaMonopackage from 'react-aria/package.json';
 import {Flex} from '@react-spectrum/layout';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
 import {ResourceCard} from './ResourceCard';
-// eslint-disable-next-line monorepo/no-relative-import
-import rspMonopackage from '../../../@adobe/react-spectrum/package.json';
-// eslint-disable-next-line monorepo/no-relative-import
-import statelyMonopackage from '../../../react-stately/package.json';
+import rspMonopackage from '@adobe/react-spectrum/package.json';
+import statelyMonopackage from 'react-stately/package.json';
 import styles from './headerInfo.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 

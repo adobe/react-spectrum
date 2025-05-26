@@ -14,7 +14,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-aria/color';
 import statelyDocs from 'docs:@react-stately/color';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorAreaAnatomy.svg';
 
 ---
@@ -436,7 +436,7 @@ function ColorSwatch(props) {
   let {colorSwatchProps, color} = useColorSwatch(props);
 
   return (
-    <span
+    <span 
       {...colorSwatchProps}
       style={{
         ...colorSwatchProps.style,

@@ -14,7 +14,7 @@ import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/disclosure';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from '../package.json';
+import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -81,7 +81,7 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
 
 ## Features
 
-Disclosure groups can be built by combining multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `DisclosureGroup` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy.
+Disclosure groups can be built by combining multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `DisclosureGroup` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
 * **Accessible** - Disclosure group is exposed to assistive technology via ARIA. Uses hidden="until-found" in supported browsers, enabling find-in-page search support and improved search engine visibility for collapsed content.
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
@@ -188,7 +188,7 @@ function ControlledExpanded(){
 ```
 ### Multiple expanded
 
-By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop.
+By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop. 
 
 ```tsx example
 <DisclosureGroup defaultExpandedKeys={["system", "personal"]} allowsMultipleExpanded>
@@ -203,7 +203,7 @@ By default, only one disclosure will be open at a time. To allow multiple disclo
 
 ## Disabled
 
-A DisclosureGroup can be disabled using the `isDisabled` prop.
+A DisclosureGroup can be disabled using the `isDisabled` prop. 
 
 ```tsx example
 <DisclosureGroup isDisabled>
