@@ -679,7 +679,7 @@ export const TreeWithDragAndDrop = {
   ...TreeExampleDynamic,
   render: function TreeDndExample(args) {
     return (
-      <div style={{display: 'flex', gap: 12}}>
+      <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
         <TreeDragAndDropExample {...args} />
         <SecondTree {...args} />
       </div>

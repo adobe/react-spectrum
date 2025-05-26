@@ -64,7 +64,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
-      let onPointerUp = (e) => {
+      let onClick = (e) => {
         if (state.isPointerDown && isValidEvent(e, ref)) {
           triggerInteractOutside(e);
         }
@@ -72,12 +72,14 @@ export function useInteractOutside(props: InteractOutsideProps): void {
       };
 
       // changing these to capture phase fixed combobox
+      // Use click instead of pointerup to avoid Android Chrome issue
+      // https://issues.chromium.org/issues/40732224
       documentObject.addEventListener('pointerdown', onPointerDown, true);
-      documentObject.addEventListener('pointerup', onPointerUp, true);
+      documentObject.addEventListener('click', onClick, true);
 
       return () => {
         documentObject.removeEventListener('pointerdown', onPointerDown, true);
-        documentObject.removeEventListener('pointerup', onPointerUp, true);
+        documentObject.removeEventListener('click', onClick, true);
       };
     } else if (process.env.NODE_ENV === 'test') {
       let onMouseUp = (e) => {

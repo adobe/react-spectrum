@@ -55,7 +55,7 @@ export function parseDate(value: string): CalendarDate {
     1
   );
 
-  date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
+  date.day = parseNumber(m[3], 1, date.calendar.getDaysInMonth(date));
   return date as CalendarDate;
 }
 
@@ -194,7 +194,7 @@ export function dateToString(date: CalendarDate): string {
   let gregorianDate = toCalendar(date, new GregorianCalendar());
   let year: string;
   if (gregorianDate.era === 'BC') {
-    year = gregorianDate.year === 1 
+    year = gregorianDate.year === 1
       ? '0000'
       : '-' + String(Math.abs(1 - gregorianDate.year)).padStart(6, '00');
   } else {
