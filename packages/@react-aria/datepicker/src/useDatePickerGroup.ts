@@ -110,7 +110,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       }
     },
     onPress(e) {
-      if (e.pointerType !== 'mouse') {
+      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
         focusLast();
       }
     }
