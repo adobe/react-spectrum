@@ -1592,6 +1592,27 @@ describe('Tree', () => {
         expect(documentLoader1ParentStyles.top).toBe('900px');
         expect(documentLoader1ParentStyles.height).toBe('30px');
       });
+
+      it('should restore focus to the tree if the loader is keyboard focused when loading finishes', async () => {
+        let tree = render(
+          <VirtualizedLoadingSentinelTree rootIsLoading />
+        );
+        let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
+        let rows = treeTester.rows;
+        expect(rows).toHaveLength(8);
+        let rootLoaderRow = rows[7];
+        expect(rootLoaderRow).toHaveTextContent('Loading...');
+
+        await user.tab();
+        await user.keyboard('{End}');
+        expect(document.activeElement).toBe(rootLoaderRow);
+
+        tree.rerender(
+          <VirtualizedLoadingSentinelTree />
+        );
+
+        expect(document.activeElement).toBe(treeTester.tree);
+      });
     });
   });
 
