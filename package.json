@@ -221,6 +221,7 @@
     "@babel/preset-env": "7.24.4",
     "@babel/traverse": "7.24.1",
     "@babel/types": "7.24.0",
+    "@parcel/config-webextension": "2.14.0",
     "postcss": "8.4.24",
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",

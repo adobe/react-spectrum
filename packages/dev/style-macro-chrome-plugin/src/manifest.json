@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Style Macro DevTools",
+  "version": "0.0.1",
+  "devtools_page": "devtools.html",
+  "content_scripts": [{
+    "matches": ["*://*/*"],
+    "js": ["content-script.js"]
+  }]
+}
