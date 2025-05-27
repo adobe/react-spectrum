@@ -5041,7 +5041,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-js@npm:2.14.0, @parcel/transformer-js@npm:^2.13.1":
+"@parcel/transformer-js@npm:2.14.0":
   version: 2.14.0
   resolution: "@parcel/transformer-js@npm:2.14.0"
   dependencies:
@@ -30449,6 +30449,7 @@ __metadata:
   dependencies:
     "@parcel/config-default": "npm:^2.14.0"
     "@parcel/config-webextension": "npm:^2.14.0"
+    "@parcel/core": "npm:^2.14.0"
     parcel: "npm:^2.14.0"
   languageName: unknown
   linkType: soft
