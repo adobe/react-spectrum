@@ -39,16 +39,23 @@ import {StyleString} from './types';
 export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
   let definedStyles = styles.filter(Boolean) as StyleString[];
   if (definedStyles.length === 1) {
-    return definedStyles[0];
+    let first = definedStyles[0];
+    if (typeof first !== 'string') {
+      // static macro has a toString method so that we generate the style macro map for the entry
+      // it's automatically called in other places, but for our merging, we have to call it ourselves
+      return (first as StyleString).toString() as StyleString;
+    }
+    return first;
   }
 
-  let map = new Map();
+  let map = new Map<string, string>();
   for (let style of definedStyles) {
-    for (let [k, v] of parse(style)) {
+    // must call toString here for the static macro
+    for (let [k, v] of parse(style.toString())) {
       map.set(k, v);
     }
   }
-  
+
   let res = '';
   for (let value of map.values()) {
     res += value;

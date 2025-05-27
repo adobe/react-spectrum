@@ -9,13 +9,13 @@ let injectScript = () => {
 };
 
 injectScript();
-chrome.tabs.onUpdated.addListener((tabId) => {
-  if (tabId === chrome.devtools.inspectedWindow.tabId) {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tabId === chrome.devtools.inspectedWindow.tabId && changeInfo.status === 'complete' && tab.active) {
     injectScript();
   }
-})
+});
 
-chrome.devtools.panels.elements.createSidebarPane("Style Macros", (sidebar) => {
+chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   sidebar.setObject({});
   let update = () => {
     chrome.devtools.inspectedWindow.eval('$0.getAttribute("class")', async (className) => {

@@ -1,10 +1,16 @@
-window.addEventListener('message', function(event) {
+
+if (window.__macrosLoaded) {
+  return;
+}
+window.__macrosLoaded = true;
+
+window.addEventListener('message', function (event) {
   // Only accept messages from the same frame
   if (event.source !== window) {
     return;
   }
 
-  console.log(event)
+  // console.log(event)
   var message = event.data;
 
   // Only accept messages that we know are ours. Note that this is not foolproof
@@ -12,6 +18,9 @@ window.addEventListener('message', function(event) {
   if (message !== 'update-macros') {
     return;
   }
+  // if this script is run multiple times on the page, then only handle it once
+  event.stopImmediatePropagation();
+  event.stopPropagation();
 
   chrome.runtime.sendMessage(message);
 });

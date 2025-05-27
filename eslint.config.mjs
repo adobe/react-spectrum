@@ -499,7 +499,10 @@ export default [{
     },
 }, {
     files: ["packages/dev/style-macro-chrome-plugin/**"],
-    env: {
-        webextensions: true
+    languageOptions: {
+        globals: {
+            ...globals.webextensions,
+            ...globals.browser
+        }
     }
 }];
