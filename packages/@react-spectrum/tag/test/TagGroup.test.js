@@ -635,6 +635,7 @@ describe('TagGroup', function () {
     expect(buttons[1]).toHaveTextContent('Clear');
 
     await user.tab();
+    act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(tags[0]);
 
     await user.tab();
