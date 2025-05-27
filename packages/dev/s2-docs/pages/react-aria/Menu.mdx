@@ -1,0 +1,304 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {Menu as VanillaMenu, MenuItem} from 'vanilla-starter/src/Menu';
+import vanillaDocs from 'docs:vanilla-starter/src/Menu';
+import '../../tailwind/tailwind.css';
+import 'vanilla-starter/src/Menu.css';
+import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+# Menu
+
+<PageDescription>{docs.exports.Menu.description}</PageDescription>
+
+<StylingExamples>
+  ```tsx render files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css", "starters/docs/src/theme.css"]}
+  "use client";
+  import {MenuTrigger, Popover} from 'react-aria-components';
+  import {Button} from 'vanilla-starter/src/Button';
+  import {Menu, MenuItem} from 'vanilla-starter/src/Menu';
+
+  <MenuTrigger>
+    <Button>Menu</Button>
+    <Popover>
+      <Menu /* PROPS */>
+        <MenuItem>Test</MenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+  ```
+
+  ```tsx render docs={docs.exports.Menu} links={docs.links} props={[]} files={["starters/tailwind/src/Menu.tsx"]}
+  "use client";
+  import {Menu, MenuItem} from 'tailwind-starter/src/Menu';
+
+  <Menu label="Menu"/* PROPS */>
+    <MenuItem>Test</MenuItem>
+  </Menu>
+  ```
+
+</StylingExamples>
+
+## Anatomy
+
+<Anatomy />
+
+## Content
+
+`Menu` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    <MenuTrigger>
+      <Button>Menu</Button>
+      <Popover>
+        <Menu aria-label="Animals" items={options} selectionMode="single">
+          {(item) => <MenuItem>{item.name}</MenuItem>}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+### Text slots
+
+Use the `"label"` and `"description"` slots to separate primary and secondary content within a `<MenuItem>`. This improves screen reader announcements and can also be used for styling purposes. Use the `<Keyboard>` component to display a keyboard shortcut.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, Text, Keyboard, Button, Popover} from 'react-aria-components';
+
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Popover>
+    <Menu aria-label="Permissions">
+      <MenuItem textValue="Copy">
+        <Text slot="label">Copy</Text>
+        <Text slot="description">Copy the selected text</Text>
+        <Keyboard>⌘C</Keyboard>
+      </MenuItem>
+      <MenuItem textValue="Cut">
+        <Text slot="label">Cut</Text>
+        <Text slot="description">Cut the selected text</Text>
+        <Keyboard>⌘X</Keyboard>
+      </MenuItem>
+      <MenuItem textValue="Paste">
+        <Text slot="label">Paste</Text>
+        <Text slot="description">Paste the copied text</Text>
+        <Keyboard>⌘V</Keyboard>
+      </MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility warning</Heading>
+  <Content>Interactive elements (e.g. buttons) within menu items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<MenuSection>` component to group options. A `<Header>` element may also be included to label the section. Sections without a header must have an `aria-label`.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header, Button, Popover} from 'react-aria-components';
+
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Popover>
+    <Menu aria-label="Sandwich contents">
+      <MenuSection>
+        <Header>Veggies</Header>
+        <MenuItem id="lettuce">Lettuce</MenuItem>
+        <MenuItem id="tomato">Tomato</MenuItem>
+        <MenuItem id="onion">Onion</MenuItem>
+      </MenuSection>
+      <MenuSection>
+        <Header>Protein</Header>
+        <MenuItem id="ham">Ham</MenuItem>
+        <MenuItem id="tuna">Tuna</MenuItem>
+        <MenuItem id="tofu">Tofu</MenuItem>
+      </MenuSection>
+      <MenuSection>
+        <Header>Condiments</Header>
+        <MenuItem id="mayo">Mayonaise</MenuItem>
+        <MenuItem id="mustard">Mustard</MenuItem>
+        <MenuItem id="ranch">Ranch</MenuItem>
+      </MenuSection>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Separators
+
+Separators may be added between menu items or sections in order to create non-labeled groupings.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, Separator, Button, Popover} from 'react-aria-components';
+
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Popover>
+    <Menu label="Actions">
+      <MenuItem>New…</MenuItem>
+      <MenuItem>Open…</MenuItem>
+      <Separator />
+      <MenuItem>Save</MenuItem>
+      <MenuItem>Save as…</MenuItem>
+      <MenuItem>Rename…</MenuItem>
+      <Separator />
+      <MenuItem>Page setup…</MenuItem>
+      <MenuItem>Print…</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Links
+
+Use the `href` prop on a `<MenuItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-components';
+
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Popover>
+    <Menu aria-label="Links">
+      <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
+      <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
+      <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
+      <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the Selection guide for more details.
+
+```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Selection} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <MenuTrigger>
+        <Button>Menu</Button>
+        <Popover>
+          <Menu
+            aria-label="Sandwich contents"
+            {...props}
+            ///- begin highlight -///
+            /* PROPS */
+            selectedKeys={selected}
+            onSelectionChange={setSelected}
+            ///- end highlight -///
+          >
+            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem id="tomato">Tomato</MenuItem>
+            <MenuItem id="cheese">Cheese</MenuItem>
+            <MenuItem id="tuna" isDisabled>Tuna Salad</MenuItem>
+            <MenuItem id="egg">Egg Salad</MenuItem>
+            <MenuItem id="ham">Ham</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+### Section-level selection
+
+Each section in a menu may have independent selection states by passing `selectionMode` and `selectedKeys` to the `MenuSection`.
+
+```tsx render hideImports
+"use client";
+import type {Selection} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header, Button, Popover} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [style, setStyle] = useState<Selection>(new Set(['bold']));
+  let [align, setAlign] = useState<Selection>(new Set(['left']));
+  return (
+    <MenuTrigger>
+      <Button>Edit</Button>
+      <Popover>
+        <Menu>
+          <MenuSection>
+            <Header>Actions</Header>
+            <MenuItem>Cut</MenuItem>
+            <MenuItem>Copy</MenuItem>
+            <MenuItem>Paste</MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="multiple" selectedKeys={style} onSelectionChange={setStyle}>
+            <Header>Text style</Header>
+            <MenuItem id="bold">Bold</MenuItem>
+            <MenuItem id="italic">Italic</MenuItem>
+            <MenuItem id="underline">Underline</MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="single" selectedKeys={align} onSelectionChange={setAlign}>
+            <Header>Text alignment</Header>
+            <MenuItem id="left">Left</MenuItem>
+            <MenuItem id="center">Center</MenuItem>
+            <MenuItem id="right">Right</MenuItem>
+          </MenuSection>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+## API
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} />
+
+{/* <StateTable defaultClassName="react-aria-Menu" properties={docs.exports.MenuRenderProps.properties} /> */}
+
+### MenuItem
+
+<PropTable component={docs.exports.MenuItem} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-MenuItem" properties={docs.exports.MenuItemRenderProps.properties} />
+
+### MenuSection
+
+<PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-MenuSection" properties={docs.exports.MenuSectionRenderProps.properties} /> */}

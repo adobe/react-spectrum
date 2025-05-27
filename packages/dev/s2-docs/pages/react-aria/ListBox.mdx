@@ -1,12 +1,13 @@
-import {Layout} from '../src/Layout';
+import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
 import {ListBox as VanillaListBox, ListBoxItem} from 'vanilla-starter/src/ListBox';
 import vanillaDocs from 'docs:vanilla-starter/src/ListBox';
-import '../tailwind/tailwind.css';
+import '../../tailwind/tailwind.css';
 import 'vanilla-starter/src/ListBox.css';
 import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 # ListBox
 
@@ -108,6 +109,35 @@ function Example() {
 }
 ```
 
+### Text slots
+
+Use the `"label"` and `"description"` slots to separate primary and secondary content within a `<ListBoxItem>`. This improves screen reader announcements and can also be used for styling purposes.
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem, Text} from 'react-aria-components';
+
+<ListBox aria-label="Permissions" selectionMode="single">
+  <ListBoxItem textValue="Read">
+    <Text slot="label">Read</Text>
+    <Text slot="description">Read only</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Write">
+    <Text slot="label">Write</Text>
+    <Text slot="description">Read and write only</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Admin">
+    <Text slot="label">Admin</Text>
+    <Text slot="description">Full access</Text>
+  </ListBoxItem>
+</ListBox>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility warning</Heading>
+  <Content>Interactive elements (e.g. buttons) within listbox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children. Use [GridList](GridList.html) if interactive children are needed.</Content>
+</InlineAlert>
+
 ### Sections
 
 Use the `<ListBoxSection>` component to group options. A `<Header>` element may also be included to label the section. Sections without a header must have an `aria-label`.
@@ -135,30 +165,6 @@ import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-component
     <ListBoxItem id="mustard">Mustard</ListBoxItem>
     <ListBoxItem id="ranch">Ranch</ListBoxItem>
   </ListBoxSection>
-</ListBox>
-```
-
-### Text slots
-
-Use the `"label"` and `"description"` slots to separate primary and secondary content. This improves screen reader announcements and can also be used for styling purposes.
-
-```tsx render
-"use client";
-import {ListBox, ListBoxItem, Text} from 'react-aria-components';
-
-<ListBox aria-label="Permissions" selectionMode="single">
-  <ListBoxItem textValue="Read">
-    <Text slot="label">Read</Text>
-    <Text slot="description">Read only</Text>
-  </ListBoxItem>
-  <ListBoxItem textValue="Write">
-    <Text slot="label">Write</Text>
-    <Text slot="description">Read and write only</Text>
-  </ListBoxItem>
-  <ListBoxItem textValue="Admin">
-    <Text slot="label">Admin</Text>
-    <Text slot="description">Full access</Text>
-  </ListBoxItem>
 </ListBox>
 ```
 

@@ -1,10 +1,10 @@
-import {Layout} from '../src/Layout';
+import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
 import {Select as VanillaSelect, SelectItem} from 'vanilla-starter/src/Select';
 import vanillaDocs from 'docs:vanilla-starter/src/Select';
-import '../tailwind/tailwind.css';
+import '../../tailwind/tailwind.css';
 import 'vanilla-starter/src/Select.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
@@ -50,12 +50,11 @@ select components that can be styled as needed without compromising on high qual
 
 <Anatomy />
 
-A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
-popover. Users can click, touch, or use the keyboard on the button to open the listbox popover.
+A select consists of a label, a [Button](Button.html) which displays a selected value, and a [ListBox](ListBox.html) displayed in a
+[Popover](Popover.html). Users can click, touch, or use the keyboard to open the popover.
 
-`Select` also supports optional description and error message elements, which can be used
-to provide more context about the field, and any validation messages. These are linked with the
-input via the `aria-describedby` attribute.
+`Select` also supports optional description and error message slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
+
 
 ```tsx
 import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
@@ -81,8 +80,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListB
   </Popover>
 </Select>
 ```
-
-If a select does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
 
 ## Content
 
@@ -136,9 +133,9 @@ function Example() {
 
 ## Selection
 
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item.
 When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the Selection guide for more details.
+See the [Selection](selection.html) guide for more details.
 
 ```tsx render hideImports
 "use client";
@@ -169,11 +166,9 @@ function Example() {
 }
 ```
 
-## Validation
+## Forms
 
-Select supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the Forms guide to learn more.
-
-To display validation errors, add a `<FieldError>` element as a child of the Select. This allows you to render error messages from all of the above sources with consistent custom styles.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
 ```tsx render hideImports
 "use client";
@@ -196,7 +191,7 @@ import {Form} from 'react-aria-components';
 
 ## Controlled open state
 
-The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
+Use the `defaultOpen` or `isOpen` prop to set the popover open state.
 
 ```tsx render hideImports
 "use client";
