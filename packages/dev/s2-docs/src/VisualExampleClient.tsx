@@ -1,13 +1,10 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Avatar, Content, ContextualHelp, Footer, Heading, Menu, MenuItem, MenuTrigger, NotificationBadge, NumberField, Picker, PickerItem, SegmentedControl, SegmentedControlItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
-import {cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
-import Copy from '@react-spectrum/s2/icons/Copy';
-import ExportTo from '@react-spectrum/s2/icons/ExportTo';
+import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, SegmentedControl, SegmentedControlItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
+import {CodePlatter} from './CodePlatter';
 import {IconPicker} from './IconPicker';
 import {Key} from 'react-aria-components';
-import Link from '@react-spectrum/s2/icons/Link';
-import More from '@react-spectrum/s2/icons/More';
 import type {PropControl} from './VisualExample';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
@@ -112,63 +109,21 @@ function renderComponent(Component, props: Props) {
 
 export function CodeOutput({code}: {code?: ReactNode}) {
   let {name, importSource, props, controls} = useContext(Context);
-  let codeRef = useRef<HTMLPreElement | null>(null);
+  let url;
+  if (typeof location !== 'undefined') {
+    url = new URL(location.href);
+    for (let prop in props) {
+      if (props[prop] != null) {
+        url.searchParams.set(prop, JSON.stringify(props[prop]));
+      }
+    }
+  }
   return (
-    <div className={style({backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, position: 'relative'})}>
-      <div className={style({display: 'flex', justifyContent: 'end', position: 'absolute', right: 0, paddingX: 16})}>
-        <ActionButtonGroup
-          orientation="vertical"
-          isQuiet
-          density="regular"
-          size="S">
-          <TooltipTrigger placement="end">
-            <ActionButton aria-label="Copy code" onPress={() => navigator.clipboard.writeText(codeRef.current!.textContent!)}>
-              <Copy />
-            </ActionButton>
-            <Tooltip>
-              Copy code
-            </Tooltip>
-          </TooltipTrigger>
-          <MenuTrigger>
-            <TooltipTrigger placement="end">
-              <ActionButton aria-label="Share">
-                <More />
-              </ActionButton>
-              <Tooltip>
-                Share
-              </Tooltip>
-            </TooltipTrigger>
-            <Menu>
-              <MenuItem
-                onAction={() => {
-                  let url = new URL(location.href);
-                  for (let prop in props) {
-                    if (props[prop] != null) {
-                      url.searchParams.set(prop, JSON.stringify(props[prop]));
-                    }
-                  }
-                  navigator.clipboard.writeText(url.toString());
-                }}>
-                <Link />
-                <Text slot="label">Copy Link</Text>
-              </MenuItem>
-              <MenuItem>
-                <ExportTo />
-                <Text slot="label">Open in CodeSandbox</Text>
-              </MenuItem>
-              <MenuItem>
-                <ExportTo />
-                <Text slot="label">Open in StackBlitz</Text>
-              </MenuItem>
-            </Menu>
-          </MenuTrigger>
-        </ActionButtonGroup>
-      </div>
-      <pre ref={codeRef} className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
-        <code>
-          {importSource ? renderImports(name, importSource, props) : null}
-          {code || renderElement(name, props, controls)}
-        </code>
+    <CodePlatter shareUrl={url?.toString()}>
+      <code>
+        {importSource ? renderImports(name, importSource, props) : null}
+        {code || renderElement(name, props, controls)}
+      </code>
     </CodePlatter>
   );
 }
@@ -263,7 +218,7 @@ function renderProp(name: string, value: any, control?: PropControl) {
     propValue = <>={propValue}</>;
   }
 
-  return <Fragment key={name}> {propName}{propValue}</Fragment>;
+  return <Fragment key={name}>{propName}{propValue}</Fragment>;
 }
 
 function renderValue(value: any) {

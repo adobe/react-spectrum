@@ -1,4 +1,5 @@
 import {Code, ICodeProps} from './Code';
+import {CodePlatter} from './CodePlatter';
 import {ExpandableCode} from './ExpandableCode';
 import fs from 'fs';
 import path from 'path';
@@ -78,15 +79,6 @@ export function CodeBlock({render, children, files, expanded, ...props}: CodeBlo
   );
 }
 
-const preStyle = style({
-  padding: 16,
-  margin: 0,
-  backgroundColor: 'layer-2',
-  borderRadius: 'lg',
-  font: 'code-sm',
-  whiteSpace: 'pre-wrap'
-});
-
 interface TruncatedCodeProps extends ICodeProps {
   children: string,
   maxLines?: number
@@ -97,15 +89,15 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   return lines > maxLines
   ? (
     <ExpandableCode>
-      <pre className={preStyle}>
+      <CodePlatter>
         <Code {...props}>{children}</Code>
-      </pre>
+      </CodePlatter>
     </ExpandableCode>
   )
   : (
-    <pre className={preStyle}>
+    <CodePlatter>
       <Code {...props}>{children}</Code>
-    </pre>
+    </CodePlatter>
   );
 }
 
