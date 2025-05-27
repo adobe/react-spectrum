@@ -147,9 +147,14 @@ function lines(node: HastNode) {
   return resultLines;
 }
 
-function renderHast(node: HastNode | HastTextNode, key: number): ReactNode {
+function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): ReactNode {
   if (node.type === 'element' && 'children' in node) {
-    let childArray = node.children.map((child, i) => renderHast(child, i));
+    let childArray: ReactNode[] = [];
+    for (let [i, child] of node.children.entries()) {
+      let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
+      childArray.push(renderHast(child, i, indent));
+    }
+    
     if (node.tagName === 'div') {
       childArray.push('\n');
     }
@@ -169,7 +174,7 @@ function renderHast(node: HastNode | HastTextNode, key: number): ReactNode {
     //   return <InlineLink key={key} type={docs.exports.Switch} />;
     // }
     if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
-      return <CodeProps key={key} />;
+      return <CodeProps key={key} indent={indent} />;
     }
     if (node.tagName === 'span' && !className) {
       return children;

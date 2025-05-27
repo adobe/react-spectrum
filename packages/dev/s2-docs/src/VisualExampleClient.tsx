@@ -169,18 +169,16 @@ export function CodeOutput({code}: {code?: ReactNode}) {
           {importSource ? renderImports(name, importSource, props) : null}
           {code || renderElement(name, props, controls)}
         </code>
-      </pre>
-    </div>
+    </CodePlatter>
   );
 }
 
-export function CodeProps() {
+export function CodeProps({indent = ''}) {
   let {props, controls} = useContext(Context);
   let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
-  let newlines = countChars(renderedProps) > 40;
-  if (newlines) {
-    renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{'\n '}{p}</Fragment>);
-  }
+  let newlines = indent.length > 0 || countChars(renderedProps) > 40;
+  let separator = newlines ? '\n' + (indent || '  ') : ' ';
+  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines && indent && i === 0 ? '' : separator}{p}</Fragment>);
   return renderedProps;
 }
 
@@ -188,9 +186,7 @@ function renderElement(name: string, props: Props, controls?: Controls) {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
   let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop])).filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
-  if (newlines) {
-    renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{'\n '}{p}</Fragment>);
-  }
+  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' : ' '}{p}</Fragment>);
   if (props.children) {
     let end = <>&lt;/<span className={style({color: 'red-1000'})}>{name}</span>&gt;</>;
     let children = renderChildren(props.children);
