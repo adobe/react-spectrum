@@ -810,7 +810,7 @@ function Example() {
       {id: 'videos', name: 'Videos', children: []}
     ],
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   ///- begin highlight -///
@@ -934,7 +934,7 @@ function Example() {
       {id: 'videos', name: 'Videos', children: []}
     ],
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1026,7 +1026,7 @@ function Example() {
       {id: 'videos', name: 'Videos', children: []}
     ],
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1153,7 +1153,7 @@ function DraggableTree() {
       {id: 'videos', name: 'Videos', type: 'folder', children: []}
     ],
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1251,7 +1251,7 @@ Dropping on the Tree as a whole can be enabled using the `onRootDrop` event. Whe
 import {isTextDropItem} from 'react-aria-components';
 
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<any[]>([]);
 
   let {dragAndDropHooks} = useDragAndDrop({
     /*- begin highlight -*/
@@ -1344,13 +1344,13 @@ function Example() {
   let tree = useTreeData({
     initialItems: [
       {id: 'folder1', name: 'Folder 1', children: [
-        {id: 'file1', name: 'File 1'},
-        {id: 'file2', name: 'File 2'}
+        {id: 'file1', name: 'File 1', children: []},
+        {id: 'file2', name: 'File 2', children: []}
       ]},
       {id: 'folder2', name: 'Folder 2', children: []}
     ],
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1424,7 +1424,7 @@ The example below uses the `acceptedDragTypes` prop to accept items that include
 import {isTextDropItem} from 'react-aria-components';
 
 function DroppableTree() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<any[]>([]);
 
   let {dragAndDropHooks} = useDragAndDrop({
     /*- begin highlight -*/
@@ -1619,11 +1619,11 @@ This example removes the dragged items from the UI when a move operation is comp
 function Example() {
   let tree = useTreeData({
     initialItems: [
-      {id: 1, name: 'Adobe Photoshop'},
-      {id: 2, name: 'Adobe XD'},
-      {id: 3, name: 'Adobe Dreamweaver'},
-      {id: 4, name: 'Adobe InDesign'},
-      {id: 5, name: 'Adobe Connect'}
+      {id: 1, name: 'Adobe Photoshop', children: []},
+      {id: 2, name: 'Adobe XD', children: []},
+      {id: 3, name: 'Adobe Dreamweaver', children: []},
+      {id: 4, name: 'Adobe InDesign', children: []},
+      {id: 5, name: 'Adobe Connect', children: []}
     ],
     getKey: item => item.id,
     getChildren: item => item.children || []
@@ -1692,11 +1692,11 @@ function Example() {
   ///- begin collapse -///
   let tree = useTreeData({
     initialItems: [
-      {id: 1, name: 'Adobe Photoshop'},
-      {id: 2, name: 'Adobe XD'},
-      {id: 3, name: 'Adobe Dreamweaver'},
-      {id: 4, name: 'Adobe InDesign'},
-      {id: 5, name: 'Adobe Connect'}
+      {id: 1, name: 'Adobe Photoshop', children: []},
+      {id: 2, name: 'Adobe XD', children: []},
+      {id: 3, name: 'Adobe Dreamweaver', children: []},
+      {id: 4, name: 'Adobe InDesign', children: []},
+      {id: 5, name: 'Adobe Connect', children: []}
     ],
     getKey: item => item.id,
     getChildren: item => item.children || []
@@ -1857,7 +1857,7 @@ function DndTree(props: DndTreeProps) {
   let tree = useTreeData({
     initialItems: props.initialItems,
     getKey: item => item.id,
-    getChildren: item => item.children
+    getChildren: item => item.children || []
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
