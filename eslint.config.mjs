@@ -497,4 +497,9 @@ export default [{
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/dev/style-macro-chrome-plugin/**"],
+    env: {
+        webextensions: true
+    }
 }];

@@ -41,7 +41,7 @@ const cardViewStyles = style({
   }
 });
 
-export const Empty = (args: CardViewProps<any>, {viewMode}) => {
+export const Empty = (args: CardViewProps<any>, {viewMode} = {viewMode: ''}) => {
   return (
     <CardView
       aria-label="Assets"
