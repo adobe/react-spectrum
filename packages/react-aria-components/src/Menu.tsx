@@ -350,7 +350,12 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** Whether the item is disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the item is selected. */
-  onAction?: () => void
+  onAction?: () => void,
+  /**
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
+  closeOnSelect?: boolean
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
