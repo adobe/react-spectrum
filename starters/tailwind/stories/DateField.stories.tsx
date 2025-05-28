@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React from 'react';
 import { Form } from 'react-aria-components';
 import { Button } from '../src/Button';

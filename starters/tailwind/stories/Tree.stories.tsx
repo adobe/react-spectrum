@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import { Tree, TreeItem, TreeItemContent } from '../src/Tree';
 import React from 'react';
 
