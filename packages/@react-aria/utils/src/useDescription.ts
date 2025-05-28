@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
-import {useState} from 'react';
 
 let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: Element}>();
@@ -53,4 +53,45 @@ export function useDescription(description?: string): AriaLabelingProps {
   return {
     'aria-describedby': description ? id : undefined
   };
+}
+
+let dynamicDescriptionIdCounter = 0;
+
+interface DynamicDescriptionResult {
+  updateDescription: (text: string) => void,
+  descriptionProps: AriaLabelingProps
+}
+
+export function useDynamicDescription(): DynamicDescriptionResult {
+  let [id] = useState(() => `react-aria-dynamic-description-${dynamicDescriptionIdCounter++}`);
+  let [currentText, setCurrentText] = useState<string | undefined>(undefined);
+  let elementRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    let node = document.createElement('div');
+    node.id = id;
+    node.style.display = 'none';
+    document.body.appendChild(node);
+    elementRef.current = node;
+
+    return () => {
+      if (elementRef.current) {
+        elementRef.current.remove();
+        elementRef.current = null;
+      }
+    };
+  }, [id]);
+
+  let updateDescription = useCallback((text: string) => {
+    setCurrentText(text);
+    if (elementRef.current) {
+      elementRef.current.textContent = text;
+    }
+  }, []);
+
+  let descriptionProps: AriaLabelingProps = useMemo(() => ({
+    'aria-describedby': (currentText != null && currentText !== '') ? id : undefined
+  }), [currentText, id]);
+
+  return {updateDescription, descriptionProps};
 }

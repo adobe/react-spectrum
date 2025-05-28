@@ -18,7 +18,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, useDynamicDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
@@ -278,9 +278,12 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
+  let {updateDescription, descriptionProps} = useDynamicDescription();
 
-  let descriptionProps = useDescription(stringFormatter.format(message));
+  useLayoutEffect(() => {
+    let message = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
+    updateDescription(stringFormatter.format(message));
+  }, [isDragging, modality, stringFormatter, updateDescription]);
 
   let interactions: HTMLAttributes<HTMLElement> = {};
   if (!hasDragButton) {

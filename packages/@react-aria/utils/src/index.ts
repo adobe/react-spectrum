@@ -34,7 +34,7 @@ export {getScrollParent} from './getScrollParent';
 export {getScrollParents} from './getScrollParents';
 export {isScrollable} from './isScrollable';
 export {useViewportSize} from './useViewportSize';
-export {useDescription} from './useDescription';
+export {useDescription, useDynamicDescription} from './useDescription';
 export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid, isFirefox} from './platform';
 export {useEvent} from './useEvent';
 export {useValueEffect} from './useValueEffect';
