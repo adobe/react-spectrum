@@ -1,5 +1,5 @@
+import {CodeFold} from './CodeFold';
 import {CodeProps} from './VisualExampleClient';
-import {Collapse} from './Collapse';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
 import React, {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -26,8 +26,8 @@ const mark = style({
   borderWidth: 0,
   borderStartWidth: 2,
   borderStyle: 'solid',
-  marginX: -32,
-  paddingX: 32,
+  marginX: 'calc(var(--code-padding) * -1)',
+  paddingX: 'calc(var(--code-padding) - self(borderStartWidth))',
   color: 'inherit'
 });
 
@@ -37,7 +37,7 @@ function Highlight({children}) {
 
 const groupings = {
   highlight: Highlight,
-  collapse: Collapse
+  collapse: CodeFold
 };
 
 export interface ICodeProps {
@@ -154,7 +154,7 @@ function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): Re
       let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
       childArray.push(renderHast(child, i, indent));
     }
-    
+
     if (node.tagName === 'div') {
       childArray.push('\n');
     }

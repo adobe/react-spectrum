@@ -13,7 +13,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 <PageDescription>{docs.exports.ListBox.description}</PageDescription>
 
-<StylingExamples>
+<ExampleSwitcher>
   ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css", "starters/docs/src/theme.css"]}
   "use client";
   import {ListBox, ListBoxItem} from 'vanilla-starter/src/ListBox';
@@ -42,7 +42,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   </ListBox>
   ```
 
-</StylingExamples>
+</ExampleSwitcher>
 
 ## Features
 
@@ -238,7 +238,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the Selection guide for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [Selection](selection.html) guide for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -253,9 +253,9 @@ function Example(props) {
     <div>
       <ListBox
         aria-label="Sandwich contents"
+        {...props}
         ///- begin highlight -///
         /* PROPS */
-        {...props}
         selectedKeys={selected}
         onSelectionChange={setSelected}
         ///- end highlight -///

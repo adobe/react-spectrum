@@ -7,10 +7,10 @@ import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '.
 
 const GROUPS = {
   Content: [
-    'children', 'items', 'dependencies', 'renderEmptyState'
+    'children', 'items', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
   ],
   Selection: [
-    'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disallowEmptySelection', 'disabledKeys', 'shouldFocusWrap'
+    'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
   ],
   Value: [
     'value', 'defaultValue', 'onChange', 'onChangeEnd', 'formatOptions'

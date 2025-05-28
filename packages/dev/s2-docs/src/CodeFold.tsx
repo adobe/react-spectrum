@@ -11,10 +11,10 @@ const trigger = style({
   ...focusRing(),
   borderRadius: 'sm',
   padding: 0,
-  marginStart: space(-16),
+  marginStart: space(-12),
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  whiteSpace: 'normal',
+  whiteSpace: 'inherit',
   fontFamily: 'inherit',
   fontSize: 'inherit'
 });
@@ -31,7 +31,7 @@ const chevronStyles = style({
     value: 'currentColor'
   },
   flexShrink: 0,
-  marginEnd: 8
+  marginEnd: 4
 });
 
 const more = style({
@@ -39,19 +39,29 @@ const more = style({
   transition: 'default',
   borderRadius: 'sm',
   paddingX: 4,
-  marginStart: 4,
+  marginX: 4,
   height: 16,
   display: 'inline-flex',
   alignItems: 'center',
-  verticalAlign: 'middle',
+  verticalAlign: 'top',
+  userSelect: 'none',
   '--iconPrimary': {
     type: 'fill',
     value: 'gray-1000'
   }
 });
 
-export function Collapse({children}) {
+export function CodeFold({children}) {
   let ref = useRef(null);
+  let firstChild = children[0];
+  if (Array.isArray(firstChild) && firstChild.at(-1) === '\n') {
+    firstChild = firstChild.slice(0, -1);
+  }
+  let lastChild = children.at(-1);
+  if (typeof lastChild === 'string') {
+    lastChild = lastChild.trim().split('\n').at(-1)?.trim();
+  }
+
   return (
     <Disclosure>
       {({isExpanded}) => (<>
@@ -59,9 +69,9 @@ export function Collapse({children}) {
           slot="trigger"
           className={trigger}>
           {({isHovered, isPressed, isFocusVisible}) => (<>
-            <Chevron size="M" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
-            {children[0]}{!isExpanded 
-              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span>{' '}{children.at(-1)}</> 
+            <Chevron size="S" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
+            {firstChild}{!isExpanded 
+              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span>{lastChild}</> 
               : null}
           </>)}
         </Button>

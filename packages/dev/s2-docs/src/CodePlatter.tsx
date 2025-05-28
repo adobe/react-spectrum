@@ -8,11 +8,22 @@ import More from '@react-spectrum/s2/icons/More';
 import {ReactNode, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+const platterStyle = style({
+  backgroundColor: 'layer-2',
+  borderRadius: 'lg',
+  '--code-padding': {
+    type: 'paddingTop',
+    value: 16
+  },
+  padding: '--code-padding',
+  position: 'relative'
+});
+
 export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl?: string}) {
   let codeRef = useRef<HTMLPreElement | null>(null);
   return (
-    <div className={style({backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, position: 'relative'})}>
-      <div className={style({display: 'flex', justifyContent: 'end', position: 'absolute', right: 0, paddingX: 16})}>
+    <div className={platterStyle}>
+      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', paddingStart: 16})}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
@@ -51,7 +62,7 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
           </MenuTrigger>
         </ActionButtonGroup>
       </div>
-      <pre ref={codeRef} className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0})}>
+      <pre ref={codeRef} className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0})} style={{overflowWrap: 'break-word'}}>
         {children}
       </pre>
     </div>

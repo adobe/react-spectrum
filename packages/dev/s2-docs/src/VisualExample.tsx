@@ -125,5 +125,3 @@ export function VisualExample({component, docs, links, importSource, props, init
     </VisualExampleClient>
   );
 }
-
-export {StylingExamples} from './VisualExampleClient';

@@ -7,13 +7,14 @@ import './font.css';
 import './anatomy.css';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
+import {ExampleSwitcher} from './ExampleSwitcher';
 import {Link} from './Link';
 import {PropTable} from './PropTable';
 import {SearchField} from '@react-spectrum/s2';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {StylingExamples, VisualExample} from './VisualExample';
 import {TypeLink} from './types';
+import {VisualExample} from './VisualExample';
 
 const components = {
   h1: ({children, ...props}) => <h1 {...props} className={style({font: 'heading-3xl', marginY: 0})}>{children}</h1>,
@@ -27,12 +28,12 @@ const components = {
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
-  PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-lg'})}>{children}</p>,
+  PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-xl'})}>{children}</p>,
   VisualExample,
-  Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
+  Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
   PropTable,
   StateTable,
-  StylingExamples,
+  ExampleSwitcher,
   TypeLink
 };
 

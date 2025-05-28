@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 
 <PageDescription>{docs.exports.Button.description}</PageDescription>
 
-<StylingExamples>
+<ExampleSwitcher examples={['Vanilla CSS', 'Tailwind', 'Style Macro']}>
   <VisualExample
     component={VanillaButton}
     docs={docs.exports.Button}
@@ -37,7 +37,7 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
     props={['isDisabled']}
     initialProps={{children: 'Style Macro'}}
     files={["packages/dev/s2-docs/pages/ButtonExample.tsx"]} />
-</StylingExamples>
+</ExampleSwitcher>
 
 ## Features
 

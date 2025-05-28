@@ -11,7 +11,10 @@ import {VisualExample, VisualExampleProps} from './VisualExample';
 const example = style({
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
-  marginY: 32,
+  marginY: {
+    default: 32,
+    ':is([data-example-switcher] > *)': 0
+  },
   padding: 24
 });
 
@@ -29,7 +32,11 @@ const output = style({
 });
 
 const standaloneCode = style({
-  padding: 32,
+  '--code-padding': {
+    type: 'paddingTop',
+    value: 32
+  },
+  padding: '--code-padding',
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',

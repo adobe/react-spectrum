@@ -38,7 +38,10 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: Key) => void,
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  /**
+   * Whether `disabledKeys` applies to all interactions, or only selection.
+   * @default "all"
+   */
   disabledBehavior?: DisabledBehavior,
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean

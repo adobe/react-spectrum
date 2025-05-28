@@ -1,10 +1,9 @@
 'use client';
 
-import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, SegmentedControl, SegmentedControlItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
 import {CodePlatter} from './CodePlatter';
 import {IconPicker} from './IconPicker';
-import {Key} from 'react-aria-components';
 import type {PropControl} from './VisualExample';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
@@ -465,34 +464,5 @@ function ContextualHelpControl({control, value, onChange}: ControlProps) {
     <Wrapper control={control}>
       <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
     </Wrapper>
-  );
-}
-
-const exampleStyle = style({
-  backgroundColor: 'layer-1',
-  marginTop: 20,
-  borderRadius: 'xl',
-  display: 'flex',
-  flexDirection: 'column'
-});
-
-const childIndex = {
-  vanilla: 0,
-  tailwind: 1,
-  macro: 2
-};
-
-export function StylingExamples({children}) {
-  let [selected, setSelected] = useState<Key>('vanilla');
-
-  return (
-    <div className={exampleStyle}>
-      <SegmentedControl selectedKey={selected} onSelectionChange={setSelected} styles={style({marginTop: 20, marginStart: 20})}>
-        <SegmentedControlItem id="vanilla">Vanilla CSS</SegmentedControlItem>
-        <SegmentedControlItem id="tailwind">Tailwind</SegmentedControlItem>
-        {children.length >= 3 ? <SegmentedControlItem id="macro">Style Macro</SegmentedControlItem> : null}
-      </SegmentedControl>
-      {children[childIndex[selected]]}
-    </div>
   );
 }
