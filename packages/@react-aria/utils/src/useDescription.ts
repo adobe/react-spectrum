@@ -56,42 +56,130 @@ export function useDescription(description?: string): AriaLabelingProps {
 }
 
 let dynamicDescriptionIdCounter = 0;
+const dynamicDescriptionNodes = new Map<string, { refCount: number, element: HTMLDivElement, id: string }>();
 
 interface DynamicDescriptionResult {
-  updateDescription: (text: string) => void,
+  updateDescription: (text: string | null | undefined) => void,
   descriptionProps: AriaLabelingProps
 }
 
 export function useDynamicDescription(): DynamicDescriptionResult {
-  let [id] = useState(() => `react-aria-dynamic-description-${dynamicDescriptionIdCounter++}`);
-  let [currentText, setCurrentText] = useState<string | undefined>(undefined);
-  let elementRef = useRef<HTMLDivElement | null>(null);
+  let [id, setId] = useState<string | undefined>(undefined);
+  let currentTextRef = useRef<string | null>(null);
+  let instanceManagedElementRef = useRef<HTMLDivElement | null>(null);
+  let instanceManagedIdRef = useRef<string | null>(null);
+
+  let updateDescription = useCallback((text: string | null | undefined) => {
+    let newText = (text == null || text.trim() === '') ? null : text;
+    let oldText = currentTextRef.current;
+
+    if (oldText === newText) {
+      return;
+    }
+
+    let canReclaimOldElement = false;
+    if (oldText != null) {
+      let oldTextInfo = dynamicDescriptionNodes.get(oldText);
+      if (oldTextInfo) {
+        oldTextInfo.refCount--;
+        if (oldTextInfo.refCount === 0) {
+          if (instanceManagedElementRef.current === oldTextInfo.element) {
+            // This instance's managed element was for oldText, and no one else uses oldText.
+            // Reclaim element for newText.
+            canReclaimOldElement = true;
+          } else {
+            // oldText's refCount is 0, but it wasn't this instance's managed element
+            // Remove it as it's now unused.
+            oldTextInfo.element.remove();
+            dynamicDescriptionNodes.delete(oldText);
+          }
+        }
+      }
+    }
+
+    if (newText == null) {
+      setId(undefined);
+      if (canReclaimOldElement && instanceManagedElementRef.current) {
+        // oldText's element was managed by this instance and is now free. Remove it.
+        instanceManagedElementRef.current.remove();
+        dynamicDescriptionNodes.delete(oldText!);
+        instanceManagedElementRef.current = null;
+        instanceManagedIdRef.current = null;
+      }
+    } else {
+      let existingEntryForNewText = dynamicDescriptionNodes.get(newText);
+      if (existingEntryForNewText) {
+        // newText is already managed by someone. Use that.
+        existingEntryForNewText.refCount++;
+        setId(existingEntryForNewText.id);
+
+        // If this instance had a reclaimable element for oldText, it's no longer needed. Clean it up.
+        if (canReclaimOldElement && instanceManagedElementRef.current) {
+          instanceManagedElementRef.current.remove();
+          dynamicDescriptionNodes.delete(oldText!);
+          instanceManagedElementRef.current = null;
+          instanceManagedIdRef.current = null;
+        }
+      } else {
+        // newText is not in dynamicDescriptionNodes. This instance will manage it.
+        if (canReclaimOldElement && instanceManagedElementRef.current && instanceManagedIdRef.current) {
+          // Reuse this instance's element.
+          if (oldText != null) { // oldText should have been deleted from dynamicDescriptionNodes if canReclaimOldElement
+            dynamicDescriptionNodes.delete(oldText);
+          }
+          instanceManagedElementRef.current.textContent = newText;
+          dynamicDescriptionNodes.set(newText, {refCount: 1, element: instanceManagedElementRef.current, id: instanceManagedIdRef.current});
+          setId(instanceManagedIdRef.current);
+        } else {
+          // Create a new element for newText.
+          // This also handles the case where instanceManagedElementRef existed but was not reclaimable
+          // (e.g., it's still in use for oldText by others).
+          let newGeneratedId = `react-aria-dynamic-description-${dynamicDescriptionIdCounter++}`;
+          let newNode = document.createElement('div');
+          newNode.id = newGeneratedId;
+          newNode.style.display = 'none';
+          newNode.textContent = newText;
+          document.body.appendChild(newNode);
+
+          // If this instance *was* managing an element that couldn't be reclaimed,
+          // and we are creating a new one, the old instanceManagedElementRef is now abandoned by this instance.
+          // Its cleanup is handled by its own text's refCount (if it was in textMap).
+          // This new node becomes the instance's managed node.
+          instanceManagedElementRef.current = newNode;
+          instanceManagedIdRef.current = newGeneratedId;
+          dynamicDescriptionNodes.set(newText, {refCount: 1, element: newNode, id: newGeneratedId});
+          setId(newGeneratedId);
+        }
+      }
+    }
+    currentTextRef.current = newText;
+  }, []);
 
   useLayoutEffect(() => {
-    let node = document.createElement('div');
-    node.id = id;
-    node.style.display = 'none';
-    document.body.appendChild(node);
-    elementRef.current = node;
-
     return () => {
-      if (elementRef.current) {
-        elementRef.current.remove();
-        elementRef.current = null;
+      const textToCleanOnUnmount = currentTextRef.current;
+
+      if (textToCleanOnUnmount != null) {
+        let nodeInfo = dynamicDescriptionNodes.get(textToCleanOnUnmount);
+        if (nodeInfo) {
+          nodeInfo.refCount--;
+          if (nodeInfo.refCount === 0) {
+            nodeInfo.element.remove();
+            dynamicDescriptionNodes.delete(textToCleanOnUnmount);
+            // If the removed element was this instance's managed one, clear the refs (optional, as instance is gone)
+            if (instanceManagedElementRef.current === nodeInfo.element) {
+              instanceManagedElementRef.current = null;
+              instanceManagedIdRef.current = null;
+            }
+          }
+        }
       }
     };
-  }, [id]);
-
-  let updateDescription = useCallback((text: string) => {
-    setCurrentText(text);
-    if (elementRef.current) {
-      elementRef.current.textContent = text;
-    }
   }, []);
 
   let descriptionProps: AriaLabelingProps = useMemo(() => ({
-    'aria-describedby': (currentText != null && currentText !== '') ? id : undefined
-  }), [currentText, id]);
+    'aria-describedby': id
+  }), [id]);
 
   return {updateDescription, descriptionProps};
 }
