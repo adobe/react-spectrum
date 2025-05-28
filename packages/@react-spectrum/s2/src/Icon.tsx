@@ -89,7 +89,7 @@ export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, co
     let ctx;
     // TODO: remove this default once we release RAC and use DEFAULT_SLOT.
     [ctx, ref] = useSpectrumContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, context);
-    let {styles: ctxStyles} = ctx;
+    let {render, styles: ctxStyles} = ctx;
     let {
       UNSAFE_className,
       UNSAFE_style,
@@ -97,9 +97,6 @@ export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, co
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden,
       styles,
-      // props are already merged with context via rac's useContextProps in generateS2IconIndex
-      // @ts-ignore
-      render,
       ...otherProps
     } = props;
 
@@ -145,7 +142,7 @@ export function createIllustration(Component: ComponentType<SVGProps<SVGSVGEleme
     let ref = useRef<SVGElement>(null);
     let ctx;
     [ctx, ref] = useSpectrumContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, IllustrationContext);
-    let {render, styles: ctxStyles} = ctx;
+    let {styles: ctxStyles} = ctx;
     let {
       UNSAFE_className,
       UNSAFE_style,
@@ -154,6 +151,8 @@ export function createIllustration(Component: ComponentType<SVGProps<SVGSVGEleme
       'aria-hidden': ariaHidden,
       size = ctx.size || 'M',
       styles,
+      // @ts-ignore
+      render,
       ...otherProps
     } = props;
 

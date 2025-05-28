@@ -10,9 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Heading, IllustratedMessage, Image, MenuItem, SkeletonCollection, Text} from '../src';
+import {
+  ActionMenu,
+  Avatar,
+  Card,
+  CardPreview,
+  CardView,
+  CardViewProps,
+  Collection,
+  CollectionCardPreview,
+  Content,
+  Heading,
+  IllustratedMessage,
+  Image,
+  MenuItem,
+  SkeletonCollection,
+  Text
+} from '../src';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
+import {fn} from '@storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -23,7 +40,10 @@ const meta: Meta<typeof CardView> = {
   parameters: {
     layout: 'fullscreen'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  args: {
+    onLoadMore: fn()
+  }
 };
 
 export default meta;
