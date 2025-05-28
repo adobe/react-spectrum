@@ -33,7 +33,7 @@ let TestDateRangePicker = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <Dialog>
-        <RangeCalendar>
+        <RangeCalendar focusedValue={props.focusedValue}>
           <header>
             <Button slot="previous">◀</Button>
             <Heading />
@@ -278,6 +278,26 @@ describe('DateRangePicker', () => {
     await user.click(selected.nextSibling.children[0]);
     await user.click(selected.nextSibling.children[1]);
     expect(dialog).toBeInTheDocument();
+  });
+
+  it('should set a placeholder time when closing', async () => {
+    let {getByRole, getAllByRole} = render(<TestDateRangePicker granularity="second" focusedValue={new CalendarDate(2023, 1, 10)} />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    let cells = getAllByRole('gridcell');
+
+    await user.click(cells[5].children[0]);
+    await user.click(cells[10].children[0]);
+    expect(dialog).not.toBeInTheDocument();
+
+    let group = getByRole('group');
+    let inputs = group.querySelectorAll('.react-aria-DateInput');
+    let normalize = (s) => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
+    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString()));
+    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString()));
   });
 
   it('should disable button and date input when DatePicker is disabled', () => {

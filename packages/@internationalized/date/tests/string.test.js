@@ -109,6 +109,7 @@ describe('string conversion', function () {
       expect(() => parseDate('2020-13-03')).toThrow();
       expect(() => parseDate('2020-01-32')).toThrow();
       expect(() => parseDate('2020-02-30')).toThrow();
+      expect(() => parseDate('2024-01-00')).toThrow();
     });
   });
 

@@ -22,7 +22,7 @@ import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {resizingTests} from '../../../@react-aria/table/test/tableResizingTests';
 import {Scale} from '@react-types/provider';
 import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
