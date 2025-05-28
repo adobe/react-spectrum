@@ -59,7 +59,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key) || (item.type === 'loader' && !item.props.isLoading));
   }
 
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean): Key | null {
@@ -148,10 +148,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key, (item => item.type === 'item'));
+    key = this.findNextKey(key, (item => item.type === 'item' || item.type === 'loader'));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
-      if (this.isCell(startItem)) {
+      if (this.isCell(startItem) && this.collection.getItem(key)?.type === 'item') {
         let startIndex = startItem.colIndex ? startItem.colIndex : startItem.index;
         return this.getKeyForItemInRowByIndex(key, startIndex);
       }
@@ -334,7 +334,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the last row
-    key = this.findPreviousKey(undefined, item => item.type === 'item');
+    key = this.findPreviousKey(undefined, item => item.type === 'item' || item.type === 'loader');
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
     if (key != null && ((item && this.isCell(item) && global) || this.focusMode === 'cell')) {

@@ -1684,7 +1684,7 @@ describe('Table', () => {
       expect(spinner).toBeFalsy();
     });
 
-    it('should not focus the load more row when using ArrowDown', async () => {
+    it('should focus the load more row when using ArrowDown', async () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
@@ -1699,15 +1699,15 @@ describe('Table', () => {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[4]);
 
+      // Note that this is 6 because rows[5] is the inert sentinel and rows[6] is the actually spinner row
       await user.keyboard('{ArrowDown}');
-      expect(document.activeElement).toBe(rows[4]);
+      expect(document.activeElement).toBe(rows[6]);
 
-      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
       await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[3]);
+      expect(document.activeElement).toBe(rows[4]);
     });
 
-    it('should not focus the load more row when using End', async () => {
+    it('should focus the load more row when using End', async () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
@@ -1718,14 +1718,13 @@ describe('Table', () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
       await user.keyboard('{End}');
-      expect(document.activeElement).toBe(rows[4]);
+      expect(document.activeElement).toBe(rows[6]);
 
-      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
       await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[3]);
+      expect(document.activeElement).toBe(rows[4]);
     });
 
-    it('should not focus the load more row when using PageDown', async () => {
+    it('should focus the load more row when using PageDown', async () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
@@ -1736,19 +1735,10 @@ describe('Table', () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
       await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(rows[6]);
+
+      await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(rows[4]);
-
-      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
-      await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[3]);
-
-      // Check that the same when cell is focused
-      await user.keyboard('{ArrowRight}');
-      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
-      await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(within(rows[2]).getByRole('rowheader'));
-      await user.keyboard('{PageDown}');
-      expect(document.activeElement).toBe(within(rows[4]).getByRole('rowheader'));
     });
 
     it('should disable the select all checkbox and column focusablity when the table is empty and loading', async () => {
@@ -1986,6 +1976,36 @@ describe('Table', () => {
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('shouldn\'t try to keyboard focus the loading sentinel if it isn\'t loading', async () => {
+      let tree = render(<LoadMoreTable items={items} />);
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let rows = tableTester.rows;
+      expect(rows).toHaveLength(11);
+
+      await user.tab();
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(rows[9]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[8]);
+    });
+
+    it('should move focus to the nearest row if the spinner was focused and loading finishes', async () => {
+      let tree = render(<LoadMoreTable isLoading items={items} />);
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let rows = tableTester.rows;
+      expect(rows).toHaveLength(12);
+      let loaderRow = rows[11];
+      expect(loaderRow).toHaveTextContent('spinner');
+
+      await user.tab();
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(loaderRow);
+      tree.rerender(<LoadMoreTable items={items} />);
+      rows = tableTester.rows;
+      expect(document.activeElement).toBe(rows[9]);
     });
 
     // TODO: this test doesn't work due to the TableBody not being rendered immediately, hence scrollRef.current is undef when

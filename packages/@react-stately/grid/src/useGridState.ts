@@ -59,55 +59,60 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<C | null>(null);
   useEffect(() => {
-    if (selectionState.focusedKey != null && cachedCollection.current && !collection.getItem(selectionState.focusedKey)) {
-      const node = cachedCollection.current.getItem(selectionState.focusedKey);
-      const parentNode =
-        node?.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
-        cachedCollection.current.getItem(node.parentKey) :
-        node;
-      if (!parentNode) {
-        selectionState.setFocusedKey(null);
-        return;
-      }
-      const cachedRows = cachedCollection.current.rows;
-      const rows = collection.rows;
-      const diff = cachedRows.length - rows.length;
-      let index = Math.min(
-        (
-          diff > 1 ?
-          Math.max(parentNode.index - diff + 1, 0) :
-          parentNode.index
-        ),
-        rows.length - 1);
-      let newRow: GridNode<T> | null = null;
-      while (index >= 0) {
-        if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
-          newRow = rows[index];
-          break;
+    if (selectionState.focusedKey != null && cachedCollection.current) {
+      let item = collection.getItem(selectionState.focusedKey);
+      if (!item || (item.type === 'loader' && !item.props.isLoading)) {
+        const node = cachedCollection.current.getItem(selectionState.focusedKey);
+        const parentNode =
+          node?.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
+          cachedCollection.current.getItem(node.parentKey) :
+          node;
+        if (!parentNode) {
+          selectionState.setFocusedKey(null);
+          return;
         }
-        // Find next, not disabled row.
-        if (index < rows.length - 1) {
-          index++;
-        // Otherwise, find previous, not disabled row.
-        } else {
-          if (index > parentNode.index) {
-            index = parentNode.index;
+        const cachedRows = cachedCollection.current.rows;
+        const rows = collection.rows;
+        const diff = cachedRows.length - rows.length;
+        let index = Math.min(
+          (
+            diff > 1 ?
+            Math.max(parentNode.index - diff + 1, 0) :
+            parentNode.index
+          ),
+          rows.length - 1);
+        let newRow: GridNode<T> | null = null;
+        while (index >= 0) {
+          // Find a row that is not disabled, nor is a header row, nor is a loader sentinel that isn't loading
+          if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow' && !(rows[index].type === 'loader' && !rows[index].props.isLoading)) {
+            newRow = rows[index];
+            break;
           }
-          index--;
+          // Find next, not disabled row.
+          if (index < rows.length - 1) {
+            index++;
+          // Otherwise, find previous, not disabled row.
+          } else {
+            // eslint-disable-next-line max-depth
+            if (index > parentNode.index) {
+              index = parentNode.index;
+            }
+            index--;
+          }
         }
-      }
-      if (newRow) {
-        const childNodes = newRow.hasChildNodes ? [...getChildNodes(newRow, collection)] : [];
-        const keyToFocus =
-          newRow.hasChildNodes &&
-          parentNode !== node &&
-          node &&
-          node.index < childNodes.length ?
-          childNodes[node.index].key :
-          newRow.key;
-        selectionState.setFocusedKey(keyToFocus);
-      } else {
-        selectionState.setFocusedKey(null);
+        if (newRow) {
+          const childNodes = newRow.hasChildNodes ? [...getChildNodes(newRow, collection)] : [];
+          const keyToFocus =
+            newRow.hasChildNodes &&
+            parentNode !== node &&
+            node &&
+            node.index < childNodes.length ?
+            childNodes[node.index].key :
+            newRow.key;
+          selectionState.setFocusedKey(keyToFocus);
+        } else {
+          selectionState.setFocusedKey(null);
+        }
       }
     }
     cachedCollection.current = collection;

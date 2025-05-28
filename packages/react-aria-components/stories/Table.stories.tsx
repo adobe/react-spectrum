@@ -590,7 +590,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      <MyTableLoadingIndicator isLoading={props.isLoadingMore} />
+      {props.shouldRenderLoader && <MyTableLoadingIndicator isLoading={props.isLoadingMore} /> }
     </>
   );
 }
@@ -605,7 +605,7 @@ const TableLoadingRowRenderWrapper = (args: {isLoadingMore: boolean}) => {
       </TableHeader>
       <TableBody items={rows} dependencies={[args.isLoadingMore]}>
         {(item) => (
-          <MyRow columns={columns} isLoadingMore={item.id === 4 && args.isLoadingMore}>
+          <MyRow columns={columns} shouldRenderLoader={item.id === 4} isLoadingMore={args.isLoadingMore}>
             {(column) => {
               return <Cell>{item[column.id]}</Cell>;
             }}

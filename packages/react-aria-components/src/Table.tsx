@@ -5,7 +5,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
@@ -1348,7 +1348,9 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+export interface UNSTABLE_TableLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
+
+export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_TableLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -1373,17 +1375,37 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  ref = useObjectRef<HTMLTableRowElement>(ref);
+  let {rowProps: hookRowProps, ...states} = useTableRow(
+    {
+      node: item,
+      isVirtualized
+    },
+    state,
+    ref
+  );
 
   let renderProps = useRenderProps({
     ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoadingIndicator',
-    values: null
+    values: {
+      isFocused: states.isFocused,
+      isFocusVisible
+    }
   });
   let TR = useElementType('tr');
   let TD = useElementType('td');
-  let rowProps = {};
+  let rowProps = {
+    'data-key': hookRowProps['data-key'],
+    'data-collection': hookRowProps['data-collection'],
+    tabIndex: hookRowProps.tabIndex,
+    'data-focused': states.isFocused || undefined,
+    'data-focus-visible': isFocusVisible || undefined,
+    role: 'row'
+  };
   let rowHeaderProps = {};
   let style = {};
 
@@ -1406,9 +1428,8 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
       </TR>
       {isLoading && renderProps.children && (
         <TR
-          {...mergeProps(filterDOMProps(props as any), rowProps)}
+          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps)}
           {...renderProps}
-          role="row"
           ref={ref}>
           <TD role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
