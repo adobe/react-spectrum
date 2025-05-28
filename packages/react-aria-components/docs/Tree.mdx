@@ -800,12 +800,12 @@ function Example() {
     initialItems: [
       {id: 'documents', name: 'Documents', children: [
         {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report'}
+          {id: 'report', name: 'Weekly Report', children: []}
         ]}
       ]},
       {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1'},
-        {id: 'image2', name: 'Image 2'}
+        {id: 'image1', name: 'Image 1', children: []},
+        {id: 'image2', name: 'Image 2', children: []}
       ]},
       {id: 'videos', name: 'Videos', children: []}
     ],
@@ -924,12 +924,12 @@ function Example() {
     initialItems: [
       {id: 'documents', name: 'Documents', children: [
         {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report'}
+          {id: 'report', name: 'Weekly Report', children: []}
         ]}
       ]},
       {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1'},
-        {id: 'image2', name: 'Image 2'}
+        {id: 'image1', name: 'Image 1', children: []},
+        {id: 'image2', name: 'Image 2', children: []}
       ]},
       {id: 'videos', name: 'Videos', children: []}
     ],
@@ -1016,12 +1016,12 @@ function Example() {
     initialItems: [
       {id: 'documents', name: 'Documents', children: [
         {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report'}
+          {id: 'report', name: 'Weekly Report', children: []}
         ]}
       ]},
       {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1'},
-        {id: 'image2', name: 'Image 2'}
+        {id: 'image1', name: 'Image 1', children: []},
+        {id: 'image2', name: 'Image 2', children: []}
       ]},
       {id: 'videos', name: 'Videos', children: []}
     ],
@@ -1143,12 +1143,12 @@ function DraggableTree() {
     initialItems: [
       {id: 'documents', name: 'Documents', type: 'folder', children: [
         {id: 'project', name: 'Project', type: 'folder', children: [
-          {id: 'report', name: 'Weekly Report', type: 'document'}
+          {id: 'report', name: 'Weekly Report', type: 'document', children: []}
         ]}
       ]},
       {id: 'photos', name: 'Photos', type: 'folder', children: [
-        {id: 'image1', name: 'Image 1', type: 'image'},
-        {id: 'image2', name: 'Image 2', type: 'image'}
+        {id: 'image1', name: 'Image 1', type: 'image', children: []},
+        {id: 'image2', name: 'Image 2', type: 'image', children: []}
       ]},
       {id: 'videos', name: 'Videos', type: 'folder', children: []}
     ],
@@ -1250,6 +1250,12 @@ Dropping on the Tree as a whole can be enabled using the `onRootDrop` event. Whe
 ```tsx example
 import {isTextDropItem} from 'react-aria-components';
 
+interface DroppableItem {
+  id: string | number;
+  name: string;
+  children?: DroppableItem[];
+}
+
 function Example() {
   let [items, setItems] = React.useState<any[]>([]);
 
@@ -1281,7 +1287,7 @@ function Example() {
               {item.name}
             </TreeItemContent>
             <Collection items={item.children}>
-              {(child) => (
+              {(child: DroppableItem) => (
                 <TreeItem textValue={child.name}>
                   <TreeItemContent>
                     {child.name}
@@ -1423,6 +1429,12 @@ The example below uses the `acceptedDragTypes` prop to accept items that include
 ```tsx example export=true
 import {isTextDropItem} from 'react-aria-components';
 
+interface DroppableItem {
+  id: string | number;
+  name: string;
+  children?: DroppableItem[];
+}
+
 function DroppableTree() {
   let [items, setItems] = React.useState<any[]>([]);
 
@@ -1458,7 +1470,7 @@ function DroppableTree() {
             {item.name}
           </TreeItemContent>
           <Collection items={item.children}>
-            {(child) => (
+            {(child: DroppableItem) => (
               <TreeItem textValue={child.name}>
                 <TreeItemContent>
                   {child.name}
