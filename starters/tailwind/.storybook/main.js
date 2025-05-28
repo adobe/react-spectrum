@@ -21,8 +21,7 @@ const config = {
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-onboarding",
-    "@storybook/addon-interactions",
-    "@storybook/addon-webpack5-compiler-swc"
+    "@storybook/addon-interactions"
   ],
   framework: {
     name: "@storybook/react-vite",
