@@ -16,6 +16,7 @@ import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {iconStyle} from '../style' with { type: 'macro' };
 import {useEffect, useRef, useState} from 'react';
 
 const meta: Meta<typeof Button> = {
@@ -39,7 +40,7 @@ export const Example: Story = {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <Button {...args}>Press me</Button>
-        <Button {...args}><NewIcon /><Text>Test</Text></Button>
+        <Button {...args}><NewIcon styles={iconStyle({color: 'accent'})} /><Text>Test</Text></Button>
         <Button {...args}><Text>Test</Text><NewIcon /></Button>
         <Button aria-label="Press me" {...args}><NewIcon /></Button>
         <Button {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>

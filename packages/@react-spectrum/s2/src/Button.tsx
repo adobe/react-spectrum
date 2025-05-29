@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, iconStyle, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -27,6 +27,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {mergeStyles} from '../style/runtime';
 
 interface ButtonStyleProps {
   /**
@@ -347,7 +348,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({
@@ -376,7 +377,9 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
             }],
             [IconContext, {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({
+              styles: mergeStyles(iconStyle({
+                color: 'inherit'
+              }), style({
                 size: fontRelative(20),
                 marginStart: '--iconMargin',
                 flexShrink: 0,
@@ -384,7 +387,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                   default: 1,
                   isProgressVisible: 0
                 }
-              })({isProgressVisible})
+              })({isProgressVisible}))
             }]
           ]}>
           {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
