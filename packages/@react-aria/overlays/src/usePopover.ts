@@ -119,7 +119,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       if (isNonModal) {
         return keepVisible(groupRef?.current ?? popoverRef.current);
       } else {
-        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {useInert: true});
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
       }
     }
   }, [isNonModal, state.isOpen, popoverRef, groupRef]);

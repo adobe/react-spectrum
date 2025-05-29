@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from '@react-aria/utils';
+
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
   root?: Element,
-  useInert?: boolean
+  shouldUseInert?: boolean
 }
 
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
@@ -37,18 +39,19 @@ let observerStack: Array<ObserverWrapper> = [];
  * @returns - A function to restore all hidden elements.
  */
 export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
-  let opts = options instanceof Element ? {root: options} : options;
+  let windowObj = getOwnerWindow(targets?.[0]);
+  let opts = options instanceof windowObj.Element ? {root: options} : options;
   let root = opts?.root ?? document.body;
-  let useInert = opts?.useInert && supportsInert;
+  let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
 
   let getHidden = (element: Element) => {
-    return useInert && element instanceof HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
+    return shouldUseInert && element instanceof HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
   };
 
   let setHidden = (element: Element, hidden: boolean) => {
-    if (useInert && element instanceof HTMLElement) {
+    if (shouldUseInert && element instanceof HTMLElement) {
       element.inert = hidden;
     } else if (hidden) {
       element.setAttribute('aria-hidden', 'true');
