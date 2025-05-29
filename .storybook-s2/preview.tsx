@@ -3,10 +3,9 @@ import { themes } from 'storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from 'storybook/preview-api';
-import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
-import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
+import {DocsContainer, Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -29,8 +28,10 @@ const preview = {
           return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
         }, []);
         var style = getComputedStyle(document.body)
+        console.log('got here');
         return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
+      codePanel: true,
       source: {
         // code: null, // Will disable code button, and show "No code available"
         transform: (code: string, ctx) => {
@@ -44,7 +45,9 @@ const preview = {
           return code;
         }
       },
-      page: () => (
+      page: () => {
+        console.log('got here 2');
+        return (
         <>
           <Title />
           <Subtitle />
@@ -53,7 +56,7 @@ const preview = {
           <Controls />
           <Stories includePrimary={false} />
         </>
-      )
+      )}
     },
     darkMode: {
       light: {
