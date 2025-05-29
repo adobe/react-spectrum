@@ -1,14 +1,11 @@
 {
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
-    "@storybook/addon-interactions": "^8.6.14",
-    "@storybook/addon-links": "^8.6.14",
     "@storybook/addon-onboarding": "^1.0.8",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/react": "^8.6.14",
-    "@storybook/react-webpack5": "^8.6.14",
-    "@storybook/test": "^8.6.14",
+    "@storybook/blocks": "^9.0.0",
+    "@storybook/react": "^9.0.0",
+    "@storybook/react-webpack5": "^9.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "lightningcss-loader": "^2.1.0",
@@ -16,7 +13,7 @@
     "react": "^18.2.0",
     "react-aria-components": "latest",
     "react-dom": "^18.2.0",
-    "storybook": "^8.6.14",
+    "storybook": "^9.0.0",
     "storybook-dark-mode": "^4.0.2",
     "typescript": "5.3.3"
   },

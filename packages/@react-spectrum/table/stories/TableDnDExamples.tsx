@@ -1,5 +1,5 @@
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';

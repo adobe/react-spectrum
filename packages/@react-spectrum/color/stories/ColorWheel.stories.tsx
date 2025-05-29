@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ColorSwatch, ColorWheel} from '../';
 import {Flex, useLocale} from '@adobe/react-spectrum';
 import {Meta, StoryObj} from '@storybook/react';

@@ -1,5 +1,5 @@
 import { Transformer } from '@parcel/plugin';
-import { enrichCsf, formatCsf, loadCsf } from '@storybook/csf-tools';
+import { enrichCsf, formatCsf, loadCsf } from 'storybook/internal/csf-tools';
 import * as t from '@babel/types';
 import path from 'path';
 import crypto from 'crypto';

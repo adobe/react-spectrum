@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned} from '@internationalized/date';
 import React from 'react';
 import {TimeField} from '../';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Cell, Column, Content, Heading, IllustratedMessage, Link, Row, TableBody, TableHeader, TableView} from '../src';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';

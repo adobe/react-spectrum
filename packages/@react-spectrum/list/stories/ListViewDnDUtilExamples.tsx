@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/illustrations/Folder';

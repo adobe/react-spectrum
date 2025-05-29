@@ -1,5 +1,5 @@
 const {configureAxe, checkA11y, injectAxe} = require('axe-playwright');
-const {getStoryContext} = require('@storybook/test-runner');
+const {getStoryContext} = require('storybook/test-runner');
 
 
 /*

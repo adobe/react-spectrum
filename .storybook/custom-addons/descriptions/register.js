@@ -1,5 +1,5 @@
-import {addons, types, useParameter} from '@storybook/manager-api';
-import { AddonPanel } from '@storybook/components';
+import {addons, types, useParameter} from 'storybook/manager-api';
+import { AddonPanel } from 'storybook/internal/components';
 import React from 'react';
 
 const ADDON_ID = 'descriptionAddon';

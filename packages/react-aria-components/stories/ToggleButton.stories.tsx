@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {classNames} from '@react-spectrum/utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
@@ -26,9 +26,9 @@ export const ToggleButtonExample = () => {
 
   return (
     <ToggleButton
-      className={classNames(styles, 'toggleButtonExample')} 
-      data-testid="toggle-button-example" 
-      onKeyUp={action('keyup')} 
+      className={classNames(styles, 'toggleButtonExample')}
+      data-testid="toggle-button-example"
+      onKeyUp={action('keyup')}
       onPress={action('press')}
       onHoverStart={() => setTextColor('red')}
       onHoverEnd={() => setTextColor('black')}

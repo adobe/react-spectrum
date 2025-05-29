@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '../src';
 import type {Meta} from '@storybook/react';
 import {SpectrumToast} from '../src/Toast';

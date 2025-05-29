@@ -1,4 +1,4 @@
-import type { StorybookConfig } from "@storybook/types";
+import type { StorybookConfig } from "storybook/internal/types";
 
 // const excludedProps = new Set([
 //   'id',
@@ -20,9 +20,6 @@ const config: StorybookConfig = {
     "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
     './custom-addons/provider/register',
     // "@storybook/addon-styling-webpack",
     "storybook-dark-mode",

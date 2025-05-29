@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 // import {Heading} from '@react-spectrum/text';

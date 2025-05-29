@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {chain, mergeProps, useId} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';

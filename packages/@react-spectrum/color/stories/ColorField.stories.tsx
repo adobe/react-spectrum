@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
 import {Content, View} from '@react-spectrum/view';

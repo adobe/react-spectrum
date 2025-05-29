@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';

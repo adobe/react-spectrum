@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, Text} from '../src';
 import {categorizeArgTypes} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';

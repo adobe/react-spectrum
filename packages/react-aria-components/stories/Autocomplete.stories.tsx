@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';

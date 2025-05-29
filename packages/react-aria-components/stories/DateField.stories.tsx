@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import clsx from 'clsx';
 import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';

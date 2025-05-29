@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
@@ -212,7 +212,7 @@ const MyTreeLoader = () => {
       className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
         focused: isFocused,
         'focus-visible': isFocusVisible
-      })}>      
+      })}>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -396,7 +396,7 @@ function LoadingStoryDepOnCollection(args) {
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
-  
+
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
@@ -663,11 +663,11 @@ function SecondTree(args) {
   });
 
   return (
-    <Tree 
-      dragAndDropHooks={dragAndDropHooks} 
-      {...args} 
-      className={styles.tree} 
-      aria-label="Tree with drag and drop" 
+    <Tree
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}
+      className={styles.tree}
+      aria-label="Tree with drag and drop"
       items={treeData.items}
       renderEmptyState={() => 'Drop items here'}>
       {(item: any) => (

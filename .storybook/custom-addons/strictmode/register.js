@@ -1,4 +1,4 @@
-import {addons, types} from '@storybook/manager-api';
+import {addons, types} from 'storybook/manager-api';
 import React, {useEffect, useState} from 'react';
 
 const StrictModeToolBar = ({api}) => {

@@ -1,4 +1,4 @@
-const { normalizeStories } = require("@storybook/core-common");
+const { normalizeStories } = require("storybook/internal/common");
 
 const TEMPLATE = `<!DOCTYPE html>
 <html lang="en">

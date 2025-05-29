@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import defaultConfig, {TableStory} from './Table.stories';
 import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
 import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';

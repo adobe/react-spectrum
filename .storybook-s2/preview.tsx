@@ -1,12 +1,12 @@
 import '@react-spectrum/s2/page.css';
-import { themes } from '@storybook/theming';
+import { themes } from 'storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
-import { addons } from '@storybook/preview-api';
+import { addons } from 'storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
-import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/blocks';
+import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
 import './global.css';
 
 const channel = addons.getChannel();

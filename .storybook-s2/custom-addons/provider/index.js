@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {addons} from '@storybook/preview-api';
-import {makeDecorator} from '@storybook/preview-api';
+import {addons, makeDecorator} from 'storybook/preview-api';
 // Importing from src so that HMR works.
 // Without this, all HMR updates will bubble through the index.ts and up
 // to the root instead of stopping at the story files.

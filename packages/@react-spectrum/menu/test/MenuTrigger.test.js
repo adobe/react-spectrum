@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, screen, within} from '@testing-library/react';
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AriaMenuTests} from 'react-aria-components/test/AriaMenu.test-util';
 import {Content, Footer} from '@react-spectrum/view';

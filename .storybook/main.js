@@ -7,9 +7,8 @@ module.exports = {
   ],
 
   addons: [
-    "@storybook/addon-actions",
+    "storybook/actions",
     "@storybook/addon-a11y",
-    "@storybook/addon-controls",
     "storybook-dark-mode",
     './custom-addons/provider/register.js',
     './custom-addons/descriptions/register.js',
