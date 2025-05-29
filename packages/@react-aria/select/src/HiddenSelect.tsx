@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {JSX, ReactNode, useRef} from 'react';
+import React, {InputHTMLAttributes, JSX, ReactNode, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -142,19 +142,29 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
     );
   } else if (name) {
     let data = selectData.get(state) || {};
-    // Use a hidden <input type="text"> rather than <input type="hidden">
-    // so that an empty value blocks HTML form submission when the field is required.
+    let {validationBehavior} = data;
+
+    let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+      type: 'hidden',
+      autoComplete: selectProps.autoComplete,
+      name,
+      disabled: isDisabled,
+      value: state.selectedKey ?? ''
+    };
+
+    if (validationBehavior === "native") {
+      // Use a hidden <input type="text"> rather than <input type="hidden">
+      // so that an empty value blocks HTML form submission when the field is required.
+      inputProps.type = 'text';
+      inputProps.hidden = true;
+      inputProps.required = selectProps.required;
+      // Ignore react warning.
+      inputProps.onChange = () => {};
+    }
+
     return (
-      <input
-        type="text"
-        autoComplete={selectProps.autoComplete}
-        name={name}
-        disabled={isDisabled}
-        value={state.selectedKey ?? ''}
-        onChange={() => {/** Ignore react warning. */}}
-        required={data.isRequired}
-        hidden />
-    );
+      <input {...inputProps} />
+    )
   }
 
   return null;

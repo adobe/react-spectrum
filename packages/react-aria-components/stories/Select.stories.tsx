@@ -18,7 +18,13 @@ import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components',
+  argTypes: {
+    validationBehavior: {
+      control: 'select',
+      options: ['native', 'aria']
+    }
+  }
 };
 
 export const SelectExample = () => (
@@ -183,9 +189,9 @@ AsyncVirtualizedCollectionRenderSelect.story = {
 // Required select validation cannot currently be tested in the jsdom environment.
 // In jsdom, forms are submitted even when required fields are empty.
 // See: https://github.com/jsdom/jsdom/issues/2898
-export const RequiredSelectWithManyItems = () => (
+export const RequiredSelectWithManyItems = (props) => (
   <form>
-    <Select name="select" isRequired>
+    <Select {...props} name="select" isRequired>
       <Label style={{display: 'block'}}>Required Select with many items</Label>
       <Button>
         <SelectValue />
