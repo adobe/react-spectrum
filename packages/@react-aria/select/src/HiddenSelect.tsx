@@ -153,13 +153,21 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
     };
 
     if (validationBehavior === 'native') {
-      // Use a hidden <input type="text"> rather than <input type="hidden">
+      // Use a visually hidden <input type="text"> rather than <input type="hidden">
       // so that an empty value blocks HTML form submission when the field is required.
-      inputProps.type = 'text';
-      inputProps.hidden = true;
-      inputProps.required = selectProps.required;
-      // Ignore react warning.
-      inputProps.onChange = () => {};
+      return (
+        <input
+          {...containerProps}
+          {...inputProps}
+          type="text"
+          required={selectProps.required}
+          onChange={() => {/** Ignore react warning. */}}
+          onInvalid={(e) => {
+            // Prevent native browser error popup from appearing.
+            e.preventDefault();
+            triggerRef.current?.focus();
+          }} />
+      );
     }
 
     return (
