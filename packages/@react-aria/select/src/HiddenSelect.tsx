@@ -152,7 +152,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
       value: state.selectedKey ?? ''
     };
 
-    if (validationBehavior === "native") {
+    if (validationBehavior === 'native') {
       // Use a hidden <input type="text"> rather than <input type="hidden">
       // so that an empty value blocks HTML form submission when the field is required.
       inputProps.type = 'text';
@@ -164,7 +164,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
 
     return (
       <input {...inputProps} />
-    )
+    );
   }
 
   return null;
