@@ -244,10 +244,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       }
     }
   },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
   outlineColor: {
     default: 'focus-ring',
     isStaticColor: 'transparent-overlay-1000',
@@ -378,7 +374,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
             [IconContext, {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
               styles: mergeStyles(iconStyle({
-                color: 'inherit'
+                color: 'currentColor'
               }), style({
                 size: fontRelative(20),
                 marginStart: '--iconMargin',
