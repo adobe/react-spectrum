@@ -1,4 +1,4 @@
-<svg style="max-height: 342px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 311.999 342">
+<svg style="max-height: 342px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 311.999 342">
   <title>Color wheel anatomy diagram</title>
   <desc>Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements.</desc>
   <g transform="translate(-16 -40)">

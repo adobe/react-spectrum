@@ -13,6 +13,7 @@
 import {ActionButton} from './ActionButton';
 import {
   Breadcrumb as AriaBreadcrumb,
+  BreadcrumbProps as AriaBreadcrumbItemProps,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   CollectionRenderer,
   CollectionRendererContext,
@@ -24,7 +25,6 @@ import {
   Provider,
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
-import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
@@ -38,6 +38,7 @@ import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
+import {useLocale} from 'react-aria';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 651 315">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 651 315">
   <defs>
     <filter id="rectangle-12" x="68.36" y="46.592" width="47.253" height="256" filterUnits="userSpaceOnUse">
       <feOffset dy="1" input="SourceAlpha"/>
