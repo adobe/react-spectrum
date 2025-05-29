@@ -304,9 +304,36 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
             
             // Handle ambiguous drop position: 'after last child' or 'after parent'
             if (target?.type === 'item' && target.dropPosition === 'after') {
-              let item = state.collection.getItem(target.key);
-              let parentKey = item?.parentKey;
-              
+              let currentItem = state.collection.getItem(target.key);
+
+              // If dropping "after" an expanded item with children,
+              // change target to be "before" its first actual child item.
+              if (currentItem && currentItem.hasChildNodes && state.expandedKeys.has(currentItem.key) && state.collection.getChildren) {
+                let firstChildItemNode: Node<any> | null = null;
+                for (let child of state.collection.getChildren(currentItem.key)) {
+                  if (child.type === 'item' || child.type === 'loader') {
+                    firstChildItemNode = child;
+                    break;
+                  }
+                }
+
+                if (firstChildItemNode) {
+                  const newTarget = {
+                    type: 'item',
+                    key: firstChildItemNode.key,
+                    dropPosition: 'before'
+                  } as const;
+
+                  if (isValidDropTarget(newTarget)) {
+                    tracking.boundaryContext = null;
+                    tracking.lastY = y;
+                    return newTarget;
+                  }
+                }
+              }
+
+              let parentKey = currentItem?.parentKey;
+
               if (parentKey) {
                 let parentItem = state.collection.getItem(parentKey);
                 let isParentExpanded = parentItem && state.expandedKeys.has(parentKey);
