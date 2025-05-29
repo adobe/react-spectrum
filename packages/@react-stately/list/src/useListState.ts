@@ -88,48 +88,53 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
-    if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
-      const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
-      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
-        key => {
-          const itemNode = cachedCollection.current!.getItem(key);
-          return itemNode?.type === 'item' ? itemNode : null;
-        }
-      ).filter(node => node !== null);
-      const itemNodes = [...collection.getKeys()].map(
-        key => {
-          const itemNode = collection.getItem(key);
-          return itemNode?.type === 'item' ? itemNode : null;
-        }
-      ).filter(node => node !== null);
-      const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
-      let index = Math.min(
-        (
-          diff > 1 ?
-          Math.max((startItem?.index ?? 0) - diff + 1, 0) :
-          startItem?.index ?? 0
-        ),
-        (itemNodes?.length ?? 0) - 1);
-      let newNode: Node<T> | null = null;
-      let isReverseSearching = false;
-      while (index >= 0) {
-        if (!selectionManager.isDisabled(itemNodes[index].key)) {
-          newNode = itemNodes[index];
-          break;
-        }
-        // Find next, not disabled item.
-        if (index < itemNodes.length - 1 && !isReverseSearching) {
-          index++;
-        // Otherwise, find previous, not disabled item.
-        } else {
-          isReverseSearching = true;
-          if (index > (startItem?.index ?? 0)) {
-            index = (startItem?.index ?? 0);
+    if (selectionManager.focusedKey != null && cachedCollection.current) {
+      let item = collection.getItem(selectionManager.focusedKey);
+      if (!item || (item.type === 'loader' && !item.props.isLoading)) {
+        const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
+        const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
+          key => {
+            const itemNode = cachedCollection.current!.getItem(key);
+            return itemNode?.type === 'item' ? itemNode : null;
           }
-          index--;
+        ).filter(node => node !== null);
+        const itemNodes = [...collection.getKeys()].map(
+          key => {
+            const itemNode = collection.getItem(key);
+            return itemNode?.type === 'item' ? itemNode : null;
+          }
+        ).filter(node => node !== null);
+        const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
+        let index = Math.min(
+          (
+            diff > 1 ?
+            Math.max((startItem?.index ?? 0) - diff + 1, 0) :
+            startItem?.index ?? 0
+          ),
+          (itemNodes?.length ?? 0) - 1);
+        let newNode: Node<T> | null = null;
+        let isReverseSearching = false;
+        while (index >= 0) {
+          // Find a row that is not disabled, nor is a loader sentinel that isn't loading
+          if (!selectionManager.isDisabled(itemNodes[index].key) && !(itemNodes[index].type === 'loader' && !itemNodes[index].props.isLoading)) {
+            newNode = itemNodes[index];
+            break;
+          }
+          // Find next, not disabled item.
+          if (index < itemNodes.length - 1 && !isReverseSearching) {
+            index++;
+          // Otherwise, find previous, not disabled item.
+          } else {
+            isReverseSearching = true;
+            // eslint-disable-next-line max-depth
+            if (index > (startItem?.index ?? 0)) {
+              index = (startItem?.index ?? 0);
+            }
+            index--;
+          }
         }
+        selectionManager.setFocusedKey(newNode ? newNode.key : null);
       }
-      selectionManager.setFocusedKey(newNode ? newNode.key : null);
     }
     cachedCollection.current = collection;
   }, [collection, selectionManager]);

@@ -1404,13 +1404,13 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
     tabIndex: hookRowProps.tabIndex,
     'data-focused': states.isFocused || undefined,
     'data-focus-visible': isFocusVisible || undefined,
-    role: 'row'
+    role: hookRowProps.role,
+    'aria-rowindex': hookRowProps['aria-rowindex']
   };
   let rowHeaderProps = {};
   let style = {};
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = item.index + 1 + state.collection.headerRows.length;
     rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {

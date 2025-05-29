@@ -125,11 +125,13 @@ html {
   opacity: 0.4;
 }
 
+.loader.focused,
 .item.focused {
   background: gray;
   color: white;
 }
 
+.loader.focusVisible,
 .item.focusVisible{
   outline: 3px solid black;
   outline-offset: -2px;

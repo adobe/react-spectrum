@@ -1691,6 +1691,8 @@ describe('Table', () => {
       let loader = rows[6];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
+      expect(loader).not.toHaveAttribute('data-focused');
+      expect(loader).not.toHaveAttribute('data-focus-visible');
 
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
@@ -1702,6 +1704,8 @@ describe('Table', () => {
       // Note that this is 6 because rows[5] is the inert sentinel and rows[6] is the actually spinner row
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[6]);
+      expect(loader).toHaveAttribute('data-focused', 'true');
+      expect(loader).toHaveAttribute('data-focus-visible', 'true');
 
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(rows[4]);
@@ -1882,6 +1886,9 @@ describe('Table', () => {
       expect(rows).toHaveLength(12);
       let loaderRow = rows[11];
       expect(loaderRow).toHaveTextContent('spinner');
+      expect(loaderRow).toHaveAttribute('data-key');
+      expect(loaderRow).toHaveAttribute('data-collection');
+      expect(loaderRow).toHaveAttribute('tabindex', '-1');
 
       let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
       expect(sentinel.closest('[inert]')).toBeTruthy();

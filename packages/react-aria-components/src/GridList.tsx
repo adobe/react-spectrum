@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
@@ -497,7 +497,10 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+
+export interface UNSTABLE_GridListLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
+
+export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_GridListLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -521,13 +524,36 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {rowProps, gridCellProps, ...states} = useGridListItem(
+    {
+      node: item,
+      isVirtualized
+    },
+    state,
+    ref
+  );
+
+  let rowAriaProps = {
+    'data-key': rowProps['data-key'],
+    'data-collection': rowProps['data-collection'],
+    tabIndex: rowProps.tabIndex,
+    'data-focused': states.isFocused || undefined,
+    'data-focus-visible': isFocusVisible || undefined,
+    role: rowProps.role,
+    'aria-rowindex': rowProps['aria-rowindex']
+  };
 
   let renderProps = useRenderProps({
     ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-GridListLoadingIndicator',
-    values: null
+    values: {
+      isFocused: states.isFocused,
+      isFocusVisible
+    }
   });
 
   return (
@@ -540,13 +566,9 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
       {isLoading && renderProps.children && (
         <div
           {...renderProps}
-          {...mergeProps(filterDOMProps(props as any))}
-          role="row"
-          aria-rowindex={isVirtualized ? item.index + 1 : undefined}
+          {...mergeProps(filterDOMProps(props as any), focusProps, rowAriaProps)}
           ref={ref}>
-          <div
-            aria-colindex={isVirtualized ? 1 : undefined}
-            role="gridcell">
+          <div {...gridCellProps}>
             {renderProps.children}
           </div>
         </div>
