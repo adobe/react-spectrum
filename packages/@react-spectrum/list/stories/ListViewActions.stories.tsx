@@ -3,12 +3,12 @@ import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import RemoveCircle from '@spectrum-icons/workflow/RemoveCircle';
 import {Text} from '@react-spectrum/text';
@@ -53,9 +53,9 @@ export default {
       options: ['selection', 'all']
     }
   }
-} as ComponentMeta<typeof ListView>;
+} as Meta<typeof ListView>;
 
-export type ListViewStory = ComponentStoryObj<typeof ListView>;
+export type ListViewStory = StoryObj<typeof ListView>;
 
 export const ActionButtons: ListViewStory = {
   render: (args) => renderActionsExample(props => <ActionButton {...props} aria-label="copy"><Copy /></ActionButton>, args),

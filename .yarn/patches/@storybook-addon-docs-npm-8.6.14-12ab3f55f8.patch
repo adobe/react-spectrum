@@ -1,0 +1,12 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 73034b75e2303b40fee8898b973e28e216c90043..9aa139b8a225219f7f957cacc087c3185480f1c5 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -1,6 +1,7 @@
+ import * as core_dist_types from 'storybook/internal/types';
+ export * from '@storybook/blocks';
+ import { Renderer, DocsRenderFunction, ModuleExports, ModuleExport } from 'storybook/internal/types';
++import { JSX } from 'react';
+
+ declare class DocsRenderer<TRenderer extends Renderer> {
+     render: DocsRenderFunction<TRenderer>;

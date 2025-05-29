@@ -1,9 +1,9 @@
 import {action} from '@storybook/addon-actions';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DragBetweenListsComplex, DragBetweenListsOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './ListViewDnDUtilExamples';
 import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -42,9 +42,9 @@ export default {
       options: ['selection', 'all']
     }
   }
-} as ComponentMeta<typeof ListView>;
+} as Meta<typeof ListView>;
 
-export type ListViewStory = ComponentStoryObj<typeof ListView>;
+export type ListViewStory = StoryObj<typeof ListView>;
 
 export const DragOut: ListViewStory = {
   render: (args) => (
