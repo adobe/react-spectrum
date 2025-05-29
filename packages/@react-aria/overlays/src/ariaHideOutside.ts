@@ -47,11 +47,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   let hiddenNodes = new Set<Element>();
 
   let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
+    return shouldUseInert && element instanceof windowObj.HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
   };
 
   let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof HTMLElement) {
+    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
       element.inert = hidden;
     } else if (hidden) {
       element.setAttribute('aria-hidden', 'true');
