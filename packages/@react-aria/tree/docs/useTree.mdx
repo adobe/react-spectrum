@@ -1,0 +1,292 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/tree';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
+import selectionDocs from 'docs:@react-stately/selection';
+import gridlistDocs from 'docs:@react-aria/gridlist';
+import statelyDocs from 'docs:@react-stately/tree';
+import utilsDocs from 'docs:@react-aria/utils';
+import focusDocs from 'docs:@react-aria/focus';
+import {HeaderInfo, FunctionAPI, TypeContext, TypeLink, PageDescription, InterfaceType} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/tree/package.json';
+import Anatomy from './TreeAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+category: Collections
+keywords: [tree, aria, treegrid]
+---
+
+# useTree
+
+<PageDescription>{docs.exports.useTree.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTree', 'useTreeItem']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTree} links={docs.links} />
+<FunctionAPI function={docs.exports.useTreeItem} links={docs.links} />
+
+## Features
+
+A tree can be built using the [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul), [&lt;li&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li),
+ and [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol), but is very limited in functionality especially when it comes to user interactions.
+HTML lists are meant for static content, rather than heirarchies with rich interactions like focusable elements within items, keyboard navigation, item selection, sorting, etc.
+`useTree` helps achieve accessible and interactive tree components that can be styled as needed.
+
+* Exposed to assistive technology as a `treegrid` using ARIA
+* Keyboard navigation between items, and focusable elements within items via the arrow keys
+* Single, multiple, or no item selection via mouse, touch, or keyboard interactions
+* Support for disabled items, which cannot be selected
+* Optional support for checkboxes in each item for selection
+* Support for both `toggle` and `replace` selection behaviors
+* Support for item actions via double click, <Keyboard>Enter</Keyboard> key, or tapping
+* Long press to enter selection mode on touch when there is both selection and item actions
+* Expanding and collapsing tree branches via mouse, touch, or keyboard
+* Typeahead to allow focusing items by typing text
+* Automatic scrolling support during keyboard navigation
+* Labeling support for accessibility
+* Ensures that selections are announced using an ARIA live region
+* Support for using HTML list elements, or custom element types (e.g. `<div>`) for layout flexibility
+* Support for use with virtualized lists
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
+
+A Tree consists of a container element, with items containing data inside. The items within a tree may contain focusable elements or plain text content. Each item may also contain a button to toggle the expandable state of that item.
+
+If the tree supports item selection, each item can optionally include a selection checkbox.
+
+The <TypeLink links={docs.links} type={docs.exports.useTree} /> and <TypeLink links={docs.links} type={docs.exports.useTreeItem} /> hooks handle keyboard, mouse, and other interactions to support
+item selection, item expansion, and overall focus behavior. They also handle exposing the tree and its contents to assistive technology using ARIA.
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTreeState} />
+hook from `@react-stately/tree`. The state object should be passed as an option to each of the above hooks where applicable.
+
+Note that an `aria-label` or `aria-labelledby` must be passed to the tree to identify the element to assistive technology.
+
+## State management
+
+`useTree` requires knowledge of the items in the tree in order to handle keyboard
+navigation and other interactions. It does this using
+the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTreeState} /> from
+`@react-stately/tree` implements a JSX based interface for building collections instead.
+See [Collection Components](/react-stately/collections.html) for more information,
+and [Collection Interface](/react-stately/Collection.html) for internal details.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTreeState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+For more information, see [Selection](/react-stately/selection.html).
+
+## Example
+
+Trees are complex [collection components](../react-stately/collections.html) that are built up from many child elements
+including items and branches. In this example, we'll use HTML elements along with hooks from React Aria
+for each child. You may also use other elements like `<div>` to render these components as appropriate.
+
+The <TypeLink links={docs.links} type={docs.exports.useTree} /> hook will be used to render the outer most tree element. It uses
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTreeState} /> hook to construct the tree's collection of items,
+and manage state such as the focused item, selection, and expanded branches. We'll use the collection to iterate through
+the items of the tree and render the relevant components, which we'll define below.
+
+```tsx example export=true render=false
+// TODO
+```
+
+Now, let's implement the `TreeItem` component. Each item can be expanded to show its children, and can be selected.
+The <TypeLink links={docs.links} type={docs.exports.useTreeItem} /> hook handles these interactions and provides props
+for various elements, including the item, expand button, and the interactive content within the item.
+
+```tsx example export=true render=false
+// TODO
+```
+
+With these components in place, we can render an example of our Tree in action.
+This example shows a static collection of tree items, where all of the data is hard coded. 
+[See below](#dynamic-collections) for examples of using this Tree component with dynamic collections.
+
+Try tabbing into the tree and navigating using the arrow keys. You can expand/collapse items using the expand button
+or by pressing the right/left arrow keys.
+
+### Adding selection
+
+Next, let's add support for selection. For multiple selection, we'll want to add a checkbox to each item.
+{/* This is done using the <TypeLink links={docs.links} type={gridlistDocs.exports.useGridListSelectionCheckbox} /> */}
+hook. It is passed the `key` of the item. When the user checks or unchecks the checkbox, the item will be added or removed from the Tree's selection.
+
+The `Checkbox` component used in this example is independent and can be used separately from `Tree`. The code is
+available below. See [useCheckbox](useCheckbox.html) for documentation.
+
+```tsx example export=true render=false
+import {useGridListSelectionCheckbox} from 'react-aria';
+
+// Reuse the Checkbox from your component library. See below for details.
+import {Checkbox} from 'your-component-library';
+
+function TreeItemCheckbox({item, state}) {
+  let {checkboxProps} = useGridListSelectionCheckbox(
+    {key: item.key},
+    state
+  );
+
+  return <Checkbox {...checkboxProps} />;
+}
+```
+
+The following example shows how to enable multiple selection support using the Tree component we built above.
+It's as simple as setting the `selectionMode` prop to `"multiple"`.
+
+And that's it! We now have a fully interactive tree component that can support keyboard navigation, and single or multiple selection.
+In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+examples of how to use the Tree component that we've built.
+
+```tsx example
+// TODO
+```
+
+### Checkbox
+
+The `Checkbox` component used in the above example is used to implement item selection. It is built using the [useCheckbox](useCheckbox.html)
+hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useToggleState} from '@react-stately/toggle';
+import {useCheckbox} from '@react-aria/checkbox';
+
+function Checkbox(props) {
+  let ref = React.useRef<HTMLInputElement | null>(null);
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} style={props.style} />;
+}
+```
+
+</details>
+
+## Usage
+
+### Dynamic collections
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the tree data comes from an external data source such as an API, or updates over time.
+In the example below, the items are provided to the tree via a render function.
+
+```tsx
+// TODO
+```
+
+### Single selection
+
+By default, `useTreeState` doesn't allow item selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected items.
+Note that the value of the selected keys must match the `key` prop of the item.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the item with key equal to "project-a".
+A user can click on a different item to change the selection, or click on the same item again to deselect it entirely.
+
+```tsx
+// TODO
+```
+
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx
+// TODO
+```
+
+### Disallow empty selection
+
+Tree also supports a `disallowEmptySelection` prop which forces the user to have at least one item in the Tree selected at all times.
+In this mode, if a single item is selected and the user presses it, it will not be deselected.
+
+```tsx
+// TODO
+```
+
+### Controlled selection
+
+To programmatically control item selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected items will
+be passed into the callback when the item is pressed, allowing you to update state accordingly.
+
+```tsx
+// TODO
+```
+
+### Disabled items
+
+You can disable specific items by providing an array of keys to `useTreeState` via the `disabledKeys` prop. This will prevent items from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled items, however, the selection checkbox will be automatically disabled.
+
+```
+// TODO
+```
+
+### Selection behavior
+
+By default, `useTree` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused item. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with checkboxes in each item as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking an item with the mouse _replaces_ the selection with only that item. Using the arrow keys moves both focus and selection. To select multiple items, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused item, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each item are not desired.
+
+```tsx
+// TODO
+```
+
+### Item actions
+
+`useTree` supports item actions via the `onAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the item triggers the item action.
+When at least one item is selected, the tree is in selection mode, and clicking or tapping an item toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the item and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+### Links
+
+#### Client side routing
+
+The `<TreeItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+### Styled examples
+
+{/* TODO */}
+
+## Internationalization
+
+`useTree` handles some aspects of internationalization automatically.
+For example, typeahead is implemented with an
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching, and keyboard navigation is mirrored in right-to-left languages.
+You are responsible for localizing all text content within the tree.
+
+### RTL
+
+In right-to-left languages, the tree layout should be mirrored. The items should be indented from the right rather than the left,
+and the expand button should point left when collapsed and down when expanded. Ensure that your CSS accounts for this.
