@@ -109,6 +109,8 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     return target;
   }
 
+  // Returns potential targets for an ambiguous drop position (e.g. after the last child of a parent, or after the parent itself)
+  // Ordered by level, from innermost to outermost.
   private getPotentialTargets(originalTarget: ItemDropTarget, isValidDropTarget: (target: DropTarget) => boolean): ItemDropTarget[] {
     if (originalTarget.dropPosition === 'on') {
       return [originalTarget];
