@@ -236,7 +236,7 @@ describe('DateField', function () {
       );
       await user.tab();
       await user.keyboard('01011980');
-      expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
+      expect(tree.getAllByText('Date unavailable.')[0]).toBeInTheDocument();
     });
 
     it('does not crash on unknown segment types', async () => {
@@ -245,7 +245,7 @@ describe('DateField', function () {
           <DateField label="Date" showFormatHelpText />
         </Provider>
       );
-  
+
       let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
       let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
       expect(segmentTypes).toEqual(['year', 'month', 'day']);
