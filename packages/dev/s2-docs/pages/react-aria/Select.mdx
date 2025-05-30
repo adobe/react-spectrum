@@ -2,10 +2,9 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {Select as VanillaSelect, SelectItem} from 'vanilla-starter/src/Select';
-import vanillaDocs from 'docs:vanilla-starter/src/Select';
+import {Select as VanillaSelect, SelectItem} from 'vanilla-starter/Select';
+import vanillaDocs from 'docs:vanilla-starter/Select';
 import '../../tailwind/tailwind.css';
-import 'vanilla-starter/src/Select.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 # Select
@@ -15,7 +14,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 <ExampleSwitcher>
   ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
   "use client";
-  import {Select, SelectItem} from 'vanilla-starter/src/Select';
+  import {Select, SelectItem} from 'vanilla-starter/Select';
 
   <Select label="Select"/* PROPS */>
     <SelectItem>Test</SelectItem>
@@ -24,7 +23,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
   ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/tailwind/src/Select.tsx"]}
   "use client";
-  import {Select, SelectItem} from 'tailwind-starter/src/Select';
+  import {Select, SelectItem} from 'tailwind-starter/Select';
 
   <Select label="Select"/* PROPS */>
     <SelectItem>Test</SelectItem>
@@ -83,13 +82,13 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListB
 
 ## Content
 
-`Select` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the ListBox docs for more details.
+`Select` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
 ```tsx render hideImports
 "use client";
-import {Select} from 'vanilla-starter/src/Select';
+import {Select} from 'vanilla-starter/Select';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
 
 function Example() {
@@ -135,11 +134,11 @@ function Example() {
 
 Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item.
 When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the [Selection](selection.html) guide for more details.
+See the [selection guide](selection.html) for more details.
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from 'vanilla-starter/src/Select';
+import {Select, SelectItem} from 'vanilla-starter/Select';
 import {useState} from 'react';
 import type {Key} from 'react-aria-components';
 
@@ -172,8 +171,8 @@ Use the `name` prop to submit the `id` of the selected item to the server. Set t
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from 'vanilla-starter/src/Select';
-import {Button} from 'vanilla-starter/src/Button';
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {Button} from 'vanilla-starter/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
@@ -195,7 +194,7 @@ Use the `defaultOpen` or `isOpen` prop to set the popover open state.
 
 ```tsx render hideImports
 "use client";
-import {Select, SelectItem} from 'vanilla-starter/src/Select';
+import {Select, SelectItem} from 'vanilla-starter/Select';
 import {useState} from 'react';
 
 function Example() {

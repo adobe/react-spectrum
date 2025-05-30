@@ -10,7 +10,7 @@ const GROUPS = {
     'children', 'items', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
   ],
   Selection: [
-    'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
+    'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disabledBehavior', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
   ],
   Value: [
     'value', 'defaultValue', 'onChange', 'onChangeEnd', 'formatOptions'
@@ -59,14 +59,34 @@ interface PropTableProps {
 }
 
 export function PropTable({component, links, showDescription}: PropTableProps) {
-  setLinks(links);
-
   let properties = component?.props?.type === 'interface' ? component.props.properties : null;
   if (!properties) {
     return null;
   }
 
-  let [props, groups] = groupProps(properties);
+  return (
+    <>
+      {component.description && showDescription && <div className={style({font: 'body'})}>{renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}</div>}
+      <GroupedPropTable
+        properties={properties}
+        links={links}
+        propGroups={GROUPS}
+        defaultExpanded={DEFAULT_EXPANDED} />
+    </>
+  );
+}
+
+interface GroupedPropTableProps {
+  properties: TInterface['properties'],
+  links: any,
+  propGroups: {[name: string]: (string | RegExp)[]},
+  defaultExpanded?: Set<string>
+}
+
+export function GroupedPropTable({properties, links, propGroups, defaultExpanded}: GroupedPropTableProps) {
+  setLinks(links);
+
+  let [props, groups] = groupProps(properties, propGroups);
   // let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected').reverse();
 
   // properties.sort((a, b) => a.name.localeCompare(b.name));
@@ -78,28 +98,24 @@ export function PropTable({component, links, showDescription}: PropTableProps) {
   let showDefault = Object.values(props).some(p => !!p.default);
 
   return (
-    <>
-      {component.description && showDescription && <p className={style({font: 'body'})}>{renderHTMLfromMarkdown(component.description, {forceInline: false})}</p>}
-      {/* <InterfaceType properties={component.props.properties} showRequired isComponent name={component.name} /> */}
-      <Table>
-        <TableHeader>
-          <tr>
-            <TableColumn>Name</TableColumn>
-            <TableColumn>Type</TableColumn>
-            {showDefault && <TableColumn>Default</TableColumn>}
-            {/* <TableColumn>Description</TableColumn> */}
-          </tr>
-        </TableHeader>
-        <TableBody>
-          <Rows props={props} showDefault={showDefault} />
-        </TableBody>
-        {Object.keys(groups).map((group) => (
-          <DisclosureRow key={group} title={group} defaultExpanded={DEFAULT_EXPANDED.has(group)}>
-            <Rows props={groups[group]} showDefault={showDefault} />
-          </DisclosureRow>
-        ))}
-      </Table>
-    </>
+    <Table>
+      <TableHeader>
+        <tr>
+          <TableColumn>Name</TableColumn>
+          <TableColumn>Type</TableColumn>
+          {showDefault && <TableColumn>Default</TableColumn>}
+          {/* <TableColumn>Description</TableColumn> */}
+        </tr>
+      </TableHeader>
+      <TableBody>
+        <Rows props={props} showDefault={showDefault} />
+      </TableBody>
+      {Object.keys(groups).map((group) => (
+        <DisclosureRow key={group} title={group} defaultExpanded={defaultExpanded?.has(group)}>
+          <Rows props={groups[group]} showDefault={showDefault} />
+        </DisclosureRow>
+      ))}
+    </Table>
   );
 }
 
@@ -141,14 +157,17 @@ function Rows({props, showDefault}: {props: TInterface['properties'], showDefaul
   ));
 }
 
-function groupProps(props: TInterface['properties']): [TInterface['properties'], {[name: string]: TInterface['properties']}] {
+function groupProps(
+  props: TInterface['properties'],
+  propGroups: {[name: string]: (string | RegExp)[]} = GROUPS
+): [TInterface['properties'], {[name: string]: TInterface['properties']}] {
   props = Object.fromEntries(Object.entries(props).filter(([, prop]) => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'));
   let groups = {};
 
   // Default groups
-  for (let group in GROUPS) {
+  for (let group in propGroups) {
     let groupProps = {};
-    for (let propName of GROUPS[group]) {
+    for (let propName of propGroups[group]) {
       if (propName instanceof RegExp) {
         for (let key in props) {
           // eslint-disable-next-line max-depth
@@ -175,6 +194,10 @@ function groupProps(props: TInterface['properties']): [TInterface['properties'],
         }
 
         if (propName === 'children' && group === 'Content' && !props.items) {
+          continue;
+        }
+
+        if (propName === 'target' && props[propName].value.type !== 'string') {
           continue;
         }
 

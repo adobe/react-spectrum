@@ -2,11 +2,10 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {Slider as VanillaSlider} from 'vanilla-starter/src/Slider';
-import {Slider as TailwindSlider} from 'tailwind-starter/src/Slider';
-import tailwindDocs from 'docs:tailwind-starter/src/Slider';
+import {Slider as VanillaSlider} from 'vanilla-starter/Slider';
+import {Slider as TailwindSlider} from 'tailwind-starter/Slider';
+import tailwindDocs from 'docs:tailwind-starter/Slider';
 import '../../tailwind/tailwind.css';
-import 'vanilla-starter/src/Slider.css';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
 
 # Slider
@@ -76,7 +75,7 @@ to identify the slider and thumbs to screen readers.
 
 ```tsx render expanded
 "use client";
-import {Slider} from 'vanilla-starter/src/Slider';
+import {Slider} from 'vanilla-starter/Slider';
 import {useState} from 'react';
 
 function Example() {
@@ -96,7 +95,7 @@ function Example() {
 ## Multi-thumb
 
 ```tsx render
-import {Slider} from 'vanilla-starter/src/Slider';
+import {Slider} from 'vanilla-starter/Slider';
 
 <Slider
   label="Range"

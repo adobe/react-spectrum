@@ -1,5 +1,6 @@
 import {Code, ICodeProps} from './Code';
 import {CodePlatter} from './CodePlatter';
+import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode} from './ExpandableCode';
 import fs from 'fs';
 import path from 'path';
@@ -16,19 +17,6 @@ const example = style({
     ':is([data-example-switcher] > *)': 0
   },
   padding: 24
-});
-
-const output = style({
-  // padding: 32,
-  marginBottom: 32,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  // borderWidth: 0,
-  // borderBottomWidth: 2,
-  // borderColor: 'gray-25',
-  // borderStyle: 'solid',
-  font: 'ui'
 });
 
 const standaloneCode = style({
@@ -48,10 +36,15 @@ interface CodeBlockProps extends VisualExampleProps {
   render?: ReactNode,
   children: string,
   files?: string[],
-  expanded?: boolean
+  expanded?: boolean,
+  hidden?: boolean
 }
 
-export function CodeBlock({render, children, files, expanded, ...props}: CodeBlockProps) {
+export function CodeBlock({render, children, files, expanded, hidden, ...props}: CodeBlockProps) {
+  if (hidden) {
+    return null;
+  }
+
   if (!render) {
     return (
       <pre className={standaloneCode}>
@@ -74,9 +67,9 @@ export function CodeBlock({render, children, files, expanded, ...props}: CodeBlo
 
   return (
     <div className={example}>
-      <div className={output}>
-        <div>{render}</div>
-      </div>
+      <ExampleOutput
+        component={render}
+        align={props.align} />
       <div>
         {files 
           ? <Files files={files}>{content}</Files>

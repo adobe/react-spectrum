@@ -62,7 +62,7 @@ const tableCell = style({
   borderWidth: 0,
   borderBottomWidth: {
     default: 1,
-    ':is(tbody:last-child > tr:last-child > &)': 0,
+    ':is(tbody:last-child > tr:last-child > *)': 0,
     isBorderHidden: 0
   },
   borderStyle: 'solid',

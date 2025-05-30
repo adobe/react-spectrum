@@ -46,7 +46,8 @@ export interface VisualExampleProps {
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
   code?: ReactNode,
-  wide?: boolean
+  wide?: boolean,
+  align?: 'center' | 'start' | 'end'
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -59,7 +60,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots, align}: VisualExampleProps) {
   let componentProps = docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -114,7 +115,7 @@ export function VisualExample({component, docs, links, importSource, props, init
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
       <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
-        <Output />
+        <Output align={align} />
         <div className={style({display: 'flex', flexDirection: 'column', gap: 16, gridArea: 'controls'})}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>

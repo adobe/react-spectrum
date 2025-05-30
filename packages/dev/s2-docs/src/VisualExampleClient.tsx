@@ -1,8 +1,9 @@
 'use client';
 
 import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
-import {cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
 import {CodePlatter} from './CodePlatter';
+import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
+import {ExampleOutput} from './ExampleOutput';
 import {IconPicker} from './IconPicker';
 import type {PropControl} from './VisualExample';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
@@ -71,39 +72,32 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   );
 }
 
-function getBackgroundColor(staticColor: 'black' | 'white' | undefined) {
-  if (staticColor === 'black') {
-    return 'linear-gradient(to right,#ddd6fe,#fbcfe8)';
-  } else if (staticColor === 'white') {
-    return 'linear-gradient(to right,#0f172a,#334155)';
-  }
-  return undefined;
-}
+export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'}) {
+  let {component, props} = useContext(Context);
 
-export function Output() {
-  let {component: Component, props} = useContext(Context);
+  if (!isValidElement(component)) {
+    let children = props.children;
+    if (children?.iconJSX || children?.avatar || children?.badge) {
+      children = (
+        <>
+          {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
+          {children.text && <Text>{children.text}</Text>}
+          {children.badge && <NotificationBadge value={12} />}
+        </>
+      );
+    } else if (children?.text != null) {
+      children = children.text;
+    }
+
+    props = {...props, children};
+  }
+
   return (
-    <div className={style({display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'full', overflow: 'auto', gridArea: 'example', borderRadius: 'lg', font: 'ui', padding: 24, boxSizing: 'border-box'})} style={{background: getBackgroundColor(props.staticColor)}}>
-      {isValidElement(Component) ? cloneElement(Component, props) : renderComponent(Component, props)}
-    </div>
+    <ExampleOutput
+      component={component}
+      props={props}
+      align={align} />
   );
-}
-
-function renderComponent(Component, props: Props) {
-  let children = props.children;
-  if (children?.iconJSX || children?.avatar || children?.badge) {
-    children = (
-      <>
-        {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
-        {children.text && <Text>{children.text}</Text>}
-        {children.badge && <NotificationBadge value={12} />}
-      </>
-    );
-  } else if (children?.text != null) {
-    children = children.text;
-  }
-
-  return <Component {...props}>{children}</Component>;
 }
 
 export function CodeOutput({code}: {code?: ReactNode}) {

@@ -56,6 +56,10 @@ module.exports = {
         return;
       }
 
+      if (pkgName === 'vanilla-starter' || pkgName === 'tailwind-starter') {
+        return;
+      }
+
       if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName) && pkgName !== pkg.name) {
         context.report({
           node,

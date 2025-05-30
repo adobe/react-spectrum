@@ -37,7 +37,7 @@
     "tree-sitter-highlight": "^1.0.1"
   },
   "alias": {
-    "tailwind-starter": "../../../starters/tailwind",
-    "vanilla-starter": "../../../starters/docs"
+    "tailwind-starter": "../../../starters/tailwind/src",
+    "vanilla-starter": "../../../starters/docs/src"
   }
 }
