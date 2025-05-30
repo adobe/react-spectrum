@@ -699,7 +699,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingSentinelRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
+export interface TreeLoadingSentinelRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -707,11 +707,11 @@ export interface UNSTABLE_TreeLoadingSentinelRenderProps extends Pick<TreeItemRe
   level: number
 }
 
-export interface TreeLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_TreeLoadingSentinelRenderProps> {
+export interface TreeLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */
-  children?: ReactNode | ((values: UNSTABLE_TreeLoadingSentinelRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
+  children?: ReactNode | ((values: TreeLoadingSentinelRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
   /**
    * Whether or not the loading spinner should be rendered or not.
    */

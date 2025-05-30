@@ -262,7 +262,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       y = 0;
     }
 
-    for (let node of collection) {
+    for (let node of collectionNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
@@ -279,12 +279,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       }
 
       // Build each loader that exists in the collection that is outside the visible rect so that they are persisted
-      // at the proper estimated location
-      if (y > this.requestedRect.maxY) {
+      // at the proper estimated location. If the node.type is "section" then we don't do this shortcut since we have to
+      // build the sections to see how tall they are.
+      if ((node.type === 'item' || node.type === 'loader') && y > this.requestedRect.maxY) {
         let lastProcessedIndex = collectionNodes.indexOf(node);
         for (let loaderNode of loaderNodes) {
           let loaderNodeIndex = collectionNodes.indexOf(loaderNode);
-          // Subtract by an addition 1 since we've already added the current item's height to y
+          // Subtract by an additional 1 since we've already added the current item's height to y
           y += (loaderNodeIndex - lastProcessedIndex - 1) * rowHeight;
           let loader = this.buildChild(loaderNode, this.padding, y, null);
           nodes.push(loader);
