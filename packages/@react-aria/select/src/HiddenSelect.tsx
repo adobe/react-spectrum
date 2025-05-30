@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {JSX, ReactNode, useRef} from 'react';
+import React, {InputHTMLAttributes, JSX, ReactNode, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -141,13 +141,37 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
       </div>
     );
   } else if (name) {
+    let data = selectData.get(state) || {};
+    let {validationBehavior} = data;
+
+    let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+      type: 'hidden',
+      autoComplete: selectProps.autoComplete,
+      name,
+      disabled: isDisabled,
+      value: state.selectedKey ?? ''
+    };
+
+    if (validationBehavior === 'native') {
+      // Use a visually hidden <input type="text"> rather than <input type="hidden">
+      // so that an empty value blocks HTML form submission when the field is required.
+      return (
+        <input
+          {...containerProps}
+          {...inputProps}
+          type="text"
+          required={selectProps.required}
+          onChange={() => {/** Ignore react warning. */}}
+          onInvalid={(e) => {
+            // Prevent native browser error popup from appearing.
+            e.preventDefault();
+            triggerRef.current?.focus();
+          }} />
+      );
+    }
+
     return (
-      <input
-        type="hidden"
-        autoComplete={selectProps.autoComplete}
-        name={name}
-        disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
+      <input {...inputProps} />
     );
   }
 
