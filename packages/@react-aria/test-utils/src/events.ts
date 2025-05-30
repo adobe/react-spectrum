@@ -14,6 +14,37 @@ import {act, fireEvent} from '@testing-library/react';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
+function testPlatform(re: RegExp) {
+  return typeof window !== 'undefined' && window.navigator != null
+    ? re.test(window.navigator['userAgentData']?.platform || window.navigator.platform)
+    : false;
+}
+
+function cached(fn: () => boolean) {
+  if (process.env.NODE_ENV === 'test') {
+    return fn;
+  }
+
+  let res: boolean | null = null;
+  return () => {
+    if (res == null) {
+      res = fn();
+    }
+    return res;
+  };
+}
+
+const isMac = cached(function () {
+  return testPlatform(/^Mac/i);
+});
+
+export function getAltKey(): 'Alt' | 'ControlLeft' {
+  return isMac() ? 'Alt' : 'ControlLeft';
+}
+
+export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
+  return isMac() ? 'MetaLeft' : 'ControlLeft';
+}
 
 /**
  * Simulates a "long press" event on a element.
@@ -58,9 +89,10 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
 }
 
 // Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
-export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
+export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string, coords?: any}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
   if (interactionType === 'mouse') {
-    await user.click(element);
+    // Add coords with pressure so this isn't detected as a virtual click
+    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: .5}});
   } else if (interactionType === 'keyboard') {
     // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
     // stick to simulting an actual user's keyboard operations as closely as possible
