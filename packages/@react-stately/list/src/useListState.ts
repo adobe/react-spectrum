@@ -105,9 +105,21 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
           }
         ).filter(node => node !== null);
         const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
-        // Look up the start item's index in the cached node array. We can't rely in the node's index
-        // because it may be in a section and thus have a index relative to that section
-        let startItemIndex = startItem ? cachedItemNodes.indexOf(startItem) : 0;
+        // Look up the start item's index in the cached node array. We can't rely on the node's index
+        // because it maybe in a section and thus have a index relative to that section
+        // TODO: the collection keys/item are not guarenteed to be in order
+        // (aka the loader will be the first node in the keymap if the collection was empty and then loaded items)
+        // this means we should ideally traverse through the key's prevKey until we find a focusable node but
+        // that is a bigger refactor, will handle later. For now continue assuming that the loader is the last element
+        let startItemIndex = 0;
+        if (startItem) {
+          if (startItem.type === 'loader') {
+            startItemIndex = cachedItemNodes.length - 1;
+          } else {
+            startItemIndex = cachedItemNodes.indexOf(startItem);
+          }
+        }
+
         let index = Math.min(
           (
             diff > 1 ?
