@@ -457,7 +457,10 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
           }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: mergeStyles(
+              iconStyle({color: 'currentColor'}),
+              style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            )
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

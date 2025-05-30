@@ -509,6 +509,10 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                         direction: {
                           rtl: -1
                         }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
                     })({direction})} />
                 </div>
@@ -522,6 +526,10 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                         direction: {
                           rtl: -1
                         }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
                     })({direction})} />
                 </div>
