@@ -29,6 +29,7 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
@@ -65,7 +66,7 @@ export interface ButtonRenderProps {
   isPending: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
    * The `<form>` element to associate the button with.
    * The value of this attribute must be the id of a `<form>` in the same document.
@@ -157,13 +158,13 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
-  // We do this by changing the button's type to button.
+  let DOMProps = filterDOMProps(props, {global: true, propNames: additionalButtonHTMLAttributes});
+
   return (
     <button
-      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
+      // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+      // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
       id={buttonId}
       ref={ref}

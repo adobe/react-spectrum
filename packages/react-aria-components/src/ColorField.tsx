@@ -15,8 +15,8 @@ import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, us
 import {ColorFieldContext} from './RSPContexts';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {InputContext} from './Input';
-import {InputDOMProps, ValidationResult} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
@@ -44,7 +44,7 @@ export interface ColorFieldRenderProps {
   state: ColorFieldState
 }
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The color channel that this field edits. If not provided, 
    * the color is edited as a hex value.
@@ -181,7 +181,7 @@ function useChildren(
     defaultClassName: 'react-aria-ColorField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (

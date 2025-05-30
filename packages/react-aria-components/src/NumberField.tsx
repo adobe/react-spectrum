@@ -16,7 +16,7 @@ import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, InputDOMProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -46,7 +46,7 @@ export interface NumberFieldRenderProps {
   state: NumberFieldState
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
@@ -95,7 +95,7 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     defaultClassName: 'react-aria-NumberField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
