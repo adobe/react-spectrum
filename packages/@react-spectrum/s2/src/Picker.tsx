@@ -32,7 +32,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, iconStyle, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -64,6 +64,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
@@ -514,7 +515,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                         slots: {
                           icon: {
                             render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                            styles: icon
+                            styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)
                           }
                         }
                       }],
@@ -580,7 +581,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
           <DefaultProvider
             context={IconContext}
             value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)}
             }}}>
             <DefaultProvider
               context={TextContext}

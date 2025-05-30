@@ -33,7 +33,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
-import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, iconStyle, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -57,6 +57,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
+import {mergeStyles} from '../style/runtime';
 import {Node} from 'react-stately';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
@@ -389,7 +390,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)}
                   }
                 }],
                 [TextContext, {
