@@ -37,7 +37,7 @@ interface PointerTracking {
 }
 
 const X_SWITCH_THRESHOLD = 3;
-const Y_SWITCH_THRESHOLD = 4;
+const Y_SWITCH_THRESHOLD = 2;
 
 export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
   private state: TreeState<T>;
@@ -66,6 +66,7 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     }
 
     let target = this.resolveDropTarget(baseTarget, x, y, isValidDropTarget);
+    console.log(target);
     
     return target;
   }
@@ -162,6 +163,10 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
       }
     }
 
+    if (currentItem?.nextKey != null) {
+      return [originalTarget];
+    }
+
     // Walk up the parent chain to find ancestors that are the last child at their level
     let parentKey = currentItem?.parentKey;
     let ancestorTargets: ItemDropTarget[] = [];
@@ -236,7 +241,7 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     if (potentialTargets.length === 2) {
       // Initialize boundary context if needed
       if (!tracking.boundaryContext || tracking.boundaryContext.parentKey !== parentKey) {
-        let initialTargetIndex = tracking.yDirection === 'up' ? 1 : 0;
+        let initialTargetIndex = currentYMovement === 'up' ? 1 : 0;
         
         tracking.boundaryContext = {
           parentKey,
