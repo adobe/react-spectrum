@@ -238,6 +238,18 @@ describe('DateField', function () {
       await user.keyboard('01011980');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
+
+    it('does not crash on unknown segment types', async () => {
+      let {getByRole} = render(
+        <Provider theme={theme} locale="zh-CN-u-ca-chinese">
+          <DateField label="Date" showFormatHelpText />
+        </Provider>
+      );
+  
+      let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
+      let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
+      expect(segmentTypes).toEqual(['year', 'month', 'day']);
+    });
   });
 
   describe('events', function () {

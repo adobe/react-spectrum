@@ -12,7 +12,7 @@
 
 import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useRef} from 'react';
-import ReactDOM, {createPortal, render as ReactDOMRender} from 'react-dom';
+import ReactDOM, {createPortal} from 'react-dom';
 import {useInteractOutside} from '../';
 
 function Example(props) {
@@ -42,10 +42,12 @@ describe('useInteractOutside', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown'));
       fireEvent(el, pointerEvent('pointerup'));
+      fireEvent.click(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
 
       fireEvent(document.body, pointerEvent('pointerdown'));
       fireEvent(document.body, pointerEvent('pointerup'));
+      fireEvent.click(document.body);
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -57,10 +59,12 @@ describe('useInteractOutside', function () {
 
       fireEvent(document.body, pointerEvent('pointerdown', {button: 1}));
       fireEvent(document.body, pointerEvent('pointerup', {button: 1}));
+      fireEvent.click(document.body, {button: 1});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
       fireEvent(document.body, pointerEvent('pointerdown', {button: 0}));
       fireEvent(document.body, pointerEvent('pointerup', {button: 0}));
+      fireEvent.click(document.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -74,6 +78,7 @@ describe('useInteractOutside', function () {
       );
 
       fireEvent(document.body, pointerEvent('pointerup'));
+      fireEvent.click(document.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
@@ -246,10 +251,12 @@ describe('useInteractOutside (iframes)', function () {
       const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
       fireEvent(el, pointerEvent('pointerdown'));
       fireEvent(el, pointerEvent('pointerup'));
+      fireEvent.click(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
 
       fireEvent(iframeDocument.body, pointerEvent('pointerdown'));
       fireEvent(iframeDocument.body, pointerEvent('pointerup'));
+      fireEvent.click(iframeDocument.body);
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -265,10 +272,12 @@ describe('useInteractOutside (iframes)', function () {
 
       fireEvent(iframeDocument.body, pointerEvent('pointerdown', {button: 1}));
       fireEvent(iframeDocument.body, pointerEvent('pointerup', {button: 1}));
+      fireEvent.click(iframeDocument.body, {button: 0});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
       fireEvent(iframeDocument.body, pointerEvent('pointerdown', {button: 0}));
       fireEvent(iframeDocument.body, pointerEvent('pointerup', {button: 0}));
+      fireEvent.click(iframeDocument.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
@@ -285,6 +294,7 @@ describe('useInteractOutside (iframes)', function () {
         expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
       });
       fireEvent(iframeDocument.body, pointerEvent('pointerup'));
+      fireEvent.click(iframeDocument.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });

@@ -1124,7 +1124,7 @@ describe('Tree', () => {
       expect(cell).toHaveAttribute('aria-colindex', '1');
     });
 
-    it('should not focus the load more row when using ArrowDown/ArrowUp', async () => {
+    it('should focus the load more row when using ArrowDown/ArrowUp', async () => {
       let {getAllByRole} = render(<LoadingMoreTree isLoading />);
 
       let rows = getAllByRole('row');
@@ -1133,19 +1133,18 @@ describe('Tree', () => {
 
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
-      for (let i = 0; i < 5; i++) {
+      for (let i = 1; i < 8; i++) {
         await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[i]);
       }
-      expect(document.activeElement).toBe(rows[5]);
 
-      await user.keyboard('{ArrowDown}');
-      expect(document.activeElement).toBe(rows[7]);
-
-      await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[5]);
+      for (let i = 6; i >= 0; i--) {
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(rows[i]);
+      }
     });
 
-    it('should not focus the load more row when using End', async () => {
+    it('should focus the load more row when using End', async () => {
       let {getAllByRole} = render(<LoadingMoreTree isLoading />);
 
       let rows = getAllByRole('row');
@@ -1155,14 +1154,14 @@ describe('Tree', () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
       await user.keyboard('{End}');
-      expect(document.activeElement).toBe(rows[20]);
+      expect(document.activeElement).toBe(rows[21]);
 
       // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
       await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[19]);
+      expect(document.activeElement).toBe(rows[20]);
     });
 
-    it('should not focus the load more row when using PageDown', async () => {
+    it('should focus the load more row when using PageDown', async () => {
       let {getAllByRole} = render(<LoadingMoreTree isLoading />);
 
       let rows = getAllByRole('row');
@@ -1172,11 +1171,11 @@ describe('Tree', () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
       await user.keyboard('{PageDown}');
-      expect(document.activeElement).toBe(rows[20]);
+      expect(document.activeElement).toBe(rows[21]);
 
       // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
       await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[19]);
+      expect(document.activeElement).toBe(rows[20]);
     });
 
     it('should not render no results state and the loader at the same time', () => {
