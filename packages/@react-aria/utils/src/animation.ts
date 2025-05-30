@@ -26,7 +26,7 @@ export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: b
   // This can happen when isReady starts as false (e.g. popovers prior to placement calculation).
   useLayoutEffect(() => {
     if (isAnimationReady && ref.current && 'getAnimations' in ref.current) {
-      for (let animation of ref.current.getAnimations()) {
+      for (let animation of ref.current.getAnimations({subtree: true})) {
         if (animation instanceof CSSTransition) {
           animation.cancel();
         }
@@ -80,7 +80,7 @@ function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onE
         return;
       }
 
-      let animations = ref.current.getAnimations();
+      let animations = ref.current.getAnimations({subtree: true});
       if (animations.length === 0) {
         onEnd();
         return;
