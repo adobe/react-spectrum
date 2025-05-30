@@ -157,6 +157,8 @@ class PressEvent implements IPressEvent {
 }
 
 const LINK_CLICKED = Symbol('linkClicked');
+const STYLE_ID = 'react-aria-pressable-style';
+const PRESSABLE_ATTRIBUTE = 'data-react-aria-pressable';
 
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
@@ -815,17 +817,28 @@ export function usePress(props: PressHookProps): PressResult {
 
   // Avoid onClick delay for double tap to zoom by default.
   useEffect(() => {
-    let element = domRef?.current;
-    if (element && (element instanceof getOwnerWindow(element).Element)) {
-      // Only apply touch-action if not already set by another CSS rule.
-      let style = getOwnerWindow(element).getComputedStyle(element);
-      if (style.touchAction === 'auto') {
-        // touchAction: 'manipulation' is supposed to be equivalent, but in 
-        // Safari it causes onPointerCancel not to fire on scroll.
-        // https://bugs.webkit.org/show_bug.cgi?id=240917
-        (element as HTMLElement).style.touchAction = 'pan-x pan-y pinch-zoom';
-      }
+    if (!domRef || process.env.NODE_ENV === 'test') {
+      return;
     }
+
+    const ownerDocument = getOwnerDocument(domRef.current);
+    if (!ownerDocument || !ownerDocument.head || ownerDocument.getElementById(STYLE_ID)) {
+      return;
+    }
+
+    const style = ownerDocument.createElement('style');
+    style.id = STYLE_ID;
+    // touchAction: 'manipulation' is supposed to be equivalent, but in
+    // Safari it causes onPointerCancel not to fire on scroll.
+    // https://bugs.webkit.org/show_bug.cgi?id=240917
+    style.textContent = `
+@layer {
+  [${PRESSABLE_ATTRIBUTE}] {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+}
+    `.trim();
+    ownerDocument.head.prepend(style);
   }, [domRef]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
@@ -844,7 +857,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps)
+    pressProps: mergeProps(domProps, pressProps, {[PRESSABLE_ATTRIBUTE]: true})
   };
 }
 

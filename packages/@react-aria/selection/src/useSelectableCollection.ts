@@ -505,6 +505,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
+  let raf = useRef<number | null>(null);
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || didAutoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
@@ -516,12 +517,20 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
 
       if (modality === 'keyboard' || didAutoFocusRef.current) {
-        scrollIntoView(scrollRef.current, element);
 
-        // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
-        if (modality !== 'virtual') {
-          scrollIntoViewport(element, {containingElement: ref.current});
+        if (raf.current) {
+          cancelAnimationFrame(raf.current);
         }
+
+        raf.current = requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollIntoView(scrollRef.current, element);
+            // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
+            if (modality !== 'virtual') {
+              scrollIntoViewport(element, {containingElement: ref.current});
+            }
+          }
+        });
       }
     }
 
@@ -533,6 +542,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     lastFocusedKey.current = manager.focusedKey;
     didAutoFocusRef.current = false;
   });
+
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
   useEvent(ref, 'react-aria-focus-scope-restore', e => {

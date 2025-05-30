@@ -13,7 +13,7 @@
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
 import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad} from './platform';
-import React, {createContext, DOMAttributes, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, DOMAttributes, JSX, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
   isNative: boolean,
@@ -37,7 +37,7 @@ interface RouterProviderProps {
  * A RouterProvider accepts a `navigate` function from a framework or client side router,
  * and provides it to all nested React Aria links to enable client side navigation.
  */
-export function RouterProvider(props: RouterProviderProps): ReactNode {
+export function RouterProvider(props: RouterProviderProps): JSX.Element {
   let {children, navigate, useHref} = props;
 
   let ctx = useMemo(() => ({

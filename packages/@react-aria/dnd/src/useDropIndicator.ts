@@ -12,7 +12,7 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget, Key, RefObject} from '@react-types/shared';
+import {DropTarget, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
@@ -23,7 +23,9 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget
+  target: DropTarget,
+  /** The ref to the activate button. */
+  activateButtonRef?: RefObject<FocusableElement | null>
 }
 
 export interface DropIndicatorAria {
@@ -69,28 +71,32 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   } else {
     let before: Key | null | undefined;
     let after: Key | null | undefined;
-    if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
-      before = null;
+    if (target.dropPosition === 'before') {
+      let prevKey = collection.getItem(target.key)?.prevKey;
+      let prevNode = prevKey != null ? collection.getItem(prevKey) : null;
+      before = prevNode?.type === 'item' ? prevNode.key : null;
     } else {
-      before = target.dropPosition === 'before' ? collection.getKeyBefore(target.key) : target.key;
+      before = target.key;
     }
 
-    if (collection.getLastKey() === target.key && target.dropPosition === 'after') {
-      after = null;
+    if (target.dropPosition === 'after') {
+      let nextKey = collection.getItem(target.key)?.nextKey;
+      let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
+      after = nextNode?.type === 'item' ? nextNode.key : null;
     } else {
-      after = target.dropPosition === 'after' ? collection.getKeyAfter(target.key) : target.key;
+      after = target.key;
     }
 
-    if (before && after) {
+    if (before != null && after != null) {
       label = stringFormatter.format('insertBetween', {
         beforeItemText: getText(before),
         afterItemText: getText(after)
       });
-    } else if (before) {
+    } else if (before != null) {
       label = stringFormatter.format('insertAfter', {
         itemText: getText(before)
       });
-    } else if (after) {
+    } else if (after != null) {
       label = stringFormatter.format('insertBefore', {
         itemText: getText(after)
       });

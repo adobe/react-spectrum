@@ -49,7 +49,7 @@ function Example(){
     <>
       <FileTrigger
         onSelect={(e) => {
-          let files = Array.from(e);
+          let files = e ? Array.from(e) : [];
           let filenames = files.map((file) => file.name);
           setFile(filenames);
         }}>

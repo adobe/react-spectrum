@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorProps, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -160,6 +160,17 @@ export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T
   );
 });
 
+const EXPANSION_KEYS = {
+  'expand': {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
+
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
   collection: ICollection<unknown>,
@@ -259,46 +270,45 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
-        dropTargetDelegate,
+        dropTargetDelegate: {
+          getDropTargetFromPoint(x, y, isValidDropTarget) {
+            let target = dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
+            if (target?.type === 'item' && target.dropPosition === 'after') {
+              let nextKey = state.collection.getKeyAfter(target.key);
+              if (nextKey != null) {
+                let beforeTarget = {
+                  type: 'item',
+                  key: nextKey,
+                  dropPosition: 'before'
+                } as const;
+                if (isValidDropTarget(beforeTarget)) {
+                  return beforeTarget;
+                }
+              }
+            }
+
+            return target;
+          }
+        },
         onDropActivate: (e) => {
-          // Expand collapsed item when dragging over
+          // Expand collapsed item when dragging over. For keyboard, allow collapsing.
           if (e.target.type === 'item') {
             let key = e.target.key;
             let item = state.collection.getItem(key);
-            if (item && item.hasChildNodes && expandedKeys !== 'all' && !expandedKeys.has(key)) {
+            let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
+            if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {
               state.toggleKey(key);
             }
           }
         },
         onKeyDown: e => {
-          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-            // Toggle expansion when drop target is after expandable item
-            let target = dropState?.target;
-            if (target && target.type === 'item') {
-              let keyToToggle = target.dropPosition === 'after' ? target.key : state.collection.getKeyBefore(target.key);
-              if (keyToToggle) {
-                let item = state.collection.getItem(keyToToggle);
-                let isExpanded = state.expandedKeys.has(keyToToggle);
-                if (item && item.hasChildNodes) {
-                  state.toggleKey(keyToToggle);
-                  // eslint-disable-next-line max-depth
-                  if (isExpanded) {
-                    // When collapsing, set drop target to the item itself
-                    dropState?.setTarget({type: 'item', key: keyToToggle, dropPosition: 'before'});
-                  } else {
-                    // When expanding, set drop target to first child
-                    let children = [...state.collection.getChildren!(keyToToggle)];
-                    // eslint-disable-next-line max-depth
-                    if (children.length > 0) {
-                      let firstChildKey = children[0].nextKey;
-                      // eslint-disable-next-line max-depth
-                      if (firstChildKey) {
-                        dropState?.setTarget({type: 'item', key: firstChildKey, dropPosition: 'before'});
-                      }
-                    }
-                  }
-                }
-              }
+          let target = dropState?.target;
+          if (target && target.type === 'item' && target.dropPosition === 'on') {
+            let item = state.collection.getItem(target.key);
+            if ((e.key === EXPANSION_KEYS['expand'][direction]) && item?.hasChildNodes && !state.expandedKeys.has(target.key)) {
+              state.toggleKey(target.key);
+            } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && item?.hasChildNodes && state.expandedKeys.has(target.key)) {
+              state.toggleKey(target.key);
             }
           }
         }
@@ -391,6 +401,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
+            {hasDropHooks && <RootDropIndicator />}
             <CollectionRoot
               collection={state.collection}
               persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
@@ -406,7 +417,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 }
 
 // TODO: readd the rest of the render props when tree supports them
-export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
+export interface TreeItemRenderProps extends ItemRenderProps {
   /**
    * Whether the tree item is expanded.
    * @selector [data-expanded]
@@ -514,13 +525,20 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
   }
 
-  let droppableItem: DroppableItemResult | null = null;
+  let dropIndicator: DropIndicatorAria | null = null;
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
+  let dropIndicatorRef = useRef<HTMLDivElement>(null);
+  let activateButtonRef = useRef<HTMLDivElement>(null);
+  let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropState && dragAndDropHooks) {
-    droppableItem = dragAndDropHooks.useDroppableItem!({target: {type: 'item', key: item.key, dropPosition: 'on'}}, dropState, ref);
+    dropIndicator = dragAndDropHooks.useDropIndicator!({
+      target: {type: 'item', key: item.key, dropPosition: 'on'},
+      activateButtonRef
+    }, dropState, dropIndicatorRef);
   }
 
   let isDragging = dragState && dragState.isDragging(item.key);
-  let isDropTarget = droppableItem?.isDropTarget;
+  let isDropTarget = dropIndicator?.isDropTarget;
 
   let selectionMode = state.selectionManager.selectionMode;
   let selectionBehavior = state.selectionManager.selectionBehavior;
@@ -539,7 +557,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     allowsDragging: !!dragState,
     isDragging,
     isDropTarget
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode]);
+  }), [states, isHovered, isFocusVisible, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -559,7 +577,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   }, [item.textValue]);
 
-  let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
@@ -570,7 +587,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
+      console.warn('Draggable items in a Tree must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
     }
   // eslint-disable-next-line
   }, []);
@@ -593,8 +610,32 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   });
 
+  let activateButtonId = useId();
+
   return (
     <>
+      {dropIndicator && !dropIndicator.isHidden && (
+        <div
+          role="row"
+          aria-level={rowProps['aria-level']}
+          aria-expanded={rowProps['aria-expanded']}
+          aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
+          <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
+            <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+            {rowProps['aria-expanded'] != null ? (
+              // Button to allow touch screen reader users to expand the item while dragging.
+              <div
+                role="button"
+                {...visuallyHiddenProps}
+                id={activateButtonId}
+                aria-label={expandButtonProps['aria-label']}
+                aria-labelledby={`${activateButtonId} ${rowProps.id}`}
+                tabIndex={-1}
+                ref={activateButtonRef} />
+            ) : null}
+          </div>
+        </div>
+      )}
       <div
         {...mergeProps(
           filterDOMProps(props as any),
@@ -602,8 +643,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
           focusProps,
           hoverProps,
           focusWithinProps,
-          draggableItem?.dragProps,
-          droppableItem?.dropProps
+          draggableItem?.dragProps
         )}
         {...renderProps}
         ref={ref}
@@ -659,7 +699,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
+export interface UNSTABLE_TreeLoadingIndicatorRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -671,16 +711,19 @@ export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicat
 
 export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
-  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
-  // @ts-ignore
-  let {rowProps} = useTreeItem({node: item}, state, ref);
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {rowProps, gridCellProps, ...states} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
   let ariaProps = {
+    role: 'row',
     'aria-level': rowProps['aria-level'],
     'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize']
+    'aria-setsize': rowProps['aria-setsize'],
+    tabIndex: rowProps.tabIndex
   };
+
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   let renderProps = useRenderProps({
     ...props,
@@ -688,19 +731,24 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
     values: {
-      level
+      level,
+      isFocused: states.isFocused,
+      isFocusVisible
     }
   });
 
   return (
     <>
       <div
-        role="row"
         ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps)}
+        {...mergeProps(filterDOMProps(props as any), ariaProps, focusProps)}
         {...renderProps}
+        data-key={rowProps['data-key']}
+        data-collection={rowProps['data-collection']}
+        data-focused={states.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
         data-level={level}>
-        <div role="gridcell" aria-colindex={1}>
+        <div {...gridCellProps}>
           {renderProps.children}
         </div>
       </div>
@@ -779,50 +827,96 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   };
 }
 
-export function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
+function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
-    ref
+    buttonRef
   );
 
   if (isHidden) {
     return null;
   }
+
+  let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
+
   return (
-    <TreeDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+    <TreeDropIndicatorForwardRef 
+      {...props}
+      dropIndicatorProps={dropIndicatorProps}
+      isDropTarget={isDropTarget}
+      ref={ref}
+      buttonRef={buttonRef}
+      level={level} />
   );
 }
 
 interface TreeDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  buttonRef: RefObject<HTMLDivElement | null>,
+  level: number
 }
 
 function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   let {
     dropIndicatorProps,
     isDropTarget,
+    buttonRef,
+    level,
     ...otherProps
   } = props;
+  let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
     ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
+    defaultStyle: {
+      // @ts-ignore
+      '--tree-item-level': level
+    },
     values: {
       isDropTarget
     }
   });
+
   return (
     <div
-      {...dropIndicatorProps}
       {...renderProps}
-      // eslint-disable-next-line
-      role="option"
+      role="row"
+      aria-level={level}
       ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined} />
+      data-drop-target={isDropTarget || undefined}>
+      <div role="gridcell">
+        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+        {renderProps.children}
+      </div>
+    </div>
   );
 }
 
 const TreeDropIndicatorForwardRef = forwardRef(TreeDropIndicator);
+
+function RootDropIndicator() {
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
+  let ref = useRef<HTMLDivElement>(null);
+  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
+    target: {type: 'root'}
+  }, dropState!, ref);
+  let isDropTarget = dropState!.isDropTarget({type: 'root'});
+  let {visuallyHiddenProps} = useVisuallyHidden();
+
+  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
+
+  return (
+    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']} style={{position: 'absolute'}}>
+      <div role="gridcell">
+        <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
+      </div>
+    </div>
+  );
+}
