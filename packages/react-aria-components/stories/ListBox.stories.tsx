@@ -257,7 +257,8 @@ export function VirtualizedListBox(args) {
     <Virtualizer
       layout={new ListLayout({
         estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26
+        estimatedHeadingHeight: 26,
+        loaderHeight: 30
       })}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
         <Collection items={sections}>
@@ -469,8 +470,9 @@ const MyListBoxLoaderIndicator = (props) => {
         alignItems: 'center',
         justifyContent: 'center'
       }}
-      className={({isFocused}) => classNames(styles, 'loader', {
-        focused: isFocused
+      className={({isFocused, isFocusVisible}) => classNames(styles, 'loader', {
+        focused: isFocused,
+        focusVisible: isFocusVisible
       })}
       {...otherProps}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
