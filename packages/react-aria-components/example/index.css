@@ -13,7 +13,7 @@ html {
   overflow: auto;
 
   :global(.react-aria-DropIndicator) {
-    margin-left: calc(var(--tree-item-level) * 15px);
+    margin-inline-start: calc(var(--tree-item-level) * 15px);
   }
 
   :global(.react-aria-DropIndicator[data-drop-target]) {

@@ -1,13 +1,4 @@
-import {Direction, DropTarget, ItemDropTarget, Key, Node, RefObject} from '@react-types/shared';
-import {ListDropTargetDelegate} from './ListDropTargetDelegate';
-
-interface TreeDropTargetDelegateOptions {
-  /**
-   * The horizontal layout direction.
-   * @default 'ltr'
-   */
-  direction?: Direction
-}
+import {Direction, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 
 interface TreeCollection<T> extends Iterable<Node<T>> {
   getItem(key: Key): Node<T> | null,
@@ -36,11 +27,12 @@ interface PointerTracking {
   } | null
 }
 
-const X_SWITCH_THRESHOLD = 3;
-const Y_SWITCH_THRESHOLD = 2;
-
-export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
-  private state: TreeState<T>;
+const X_SWITCH_THRESHOLD = 5;
+const Y_SWITCH_THRESHOLD = 5;
+export class TreeDropTargetDelegate<T> {
+  private delegate: DropTargetDelegate | null = null;
+  private state: TreeState<T> | null = null;
+  private direction: Direction = 'ltr';
   private pointerTracking: PointerTracking = {
     lastY: 0,
     lastX: 0,
@@ -49,26 +41,20 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     boundaryContext: null
   };
 
-  constructor(state: TreeState<T>, ref: RefObject<HTMLElement | null>, options?: TreeDropTargetDelegateOptions) {
-    super(state.collection as Iterable<Node<unknown>>, ref, {
-      direction: options?.direction || 'ltr',
-      orientation: 'vertical',
-      layout: 'stack'
-    });
+  setup(delegate: DropTargetDelegate, state: TreeState<T>, direction: Direction): void {
+    this.delegate = delegate;
     this.state = state;
+    this.direction = direction;
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    let baseTarget = super.getDropTargetFromPoint(x, y, isValidDropTarget);
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {
+    let baseTarget = this.delegate!.getDropTargetFromPoint(x, y, isValidDropTarget);
     
     if (!baseTarget || baseTarget.type === 'root') {
       return baseTarget;
     }
 
-    let target = this.resolveDropTarget(baseTarget, x, y, isValidDropTarget);
-    console.log(target);
-    
-    return target;
+    return this.resolveDropTarget(baseTarget, x, y, isValidDropTarget);    
   }
 
   private resolveDropTarget(
@@ -82,19 +68,31 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     // Calculate movement directions
     let deltaY = y - tracking.lastY;
     let deltaX = x - tracking.lastX;
-    let currentYMovement: 'up' | 'down' | null = null;
-    let currentXMovement: 'left' | 'right' | null = null;
+    let currentYMovement: 'up' | 'down' | null = tracking.yDirection;
+    let currentXMovement: 'left' | 'right' | null = tracking.xDirection;
     
-    if (Math.abs(deltaY) > 2) {
+    if (Math.abs(deltaY) > Y_SWITCH_THRESHOLD) {
       currentYMovement = deltaY > 0 ? 'down' : 'up';
       tracking.yDirection = currentYMovement;
       tracking.lastY = y;
     }
     
-    if (Math.abs(deltaX) > 2) {
+    if (Math.abs(deltaX) > X_SWITCH_THRESHOLD) {
       currentXMovement = deltaX > 0 ? 'right' : 'left';
       tracking.xDirection = currentXMovement;
       tracking.lastX = x;
+    }
+
+    // Normalize to 'after'
+    if (target.dropPosition === 'before') {
+      let keyBefore = this.state!.collection.getKeyBefore(target.key);
+      if (keyBefore != null) {
+        target = {
+          type: 'item',
+          key: keyBefore,
+          dropPosition: 'after'
+        } as const;
+      }
     }
 
     let potentialTargets = this.getPotentialTargets(target, isValidDropTarget);
@@ -118,32 +116,20 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     }
     
     let target = originalTarget;
+    let collection = this.state!.collection;
 
-    // Normalize to 'after'
-    if (originalTarget.dropPosition === 'before') {
-      let keyBefore = this.state.collection.getKeyBefore(originalTarget.key);
-      if (keyBefore == null) {
-        return [originalTarget];
-      }
-      target = {
-        type: 'item',
-        key: keyBefore,
-        dropPosition: 'after'
-      } as const;
-    }
-
-    let currentItem = this.state.collection.getItem(target.key);
+    let currentItem = collection.getItem(target.key);
     while (currentItem && currentItem?.type !== 'item' && currentItem.nextKey != null) {
       target.key = currentItem.nextKey;
-      currentItem = this.state.collection.getItem(currentItem.nextKey);
+      currentItem = collection.getItem(currentItem.nextKey);
     }
 
     let potentialTargets = [target];
 
     // If target has children and is expanded, use "before first child"
-    if (currentItem && currentItem.hasChildNodes && this.state.expandedKeys.has(currentItem.key) && this.state.collection.getChildren) {
+    if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren) {
       let firstChildItemNode: Node<any> | null = null;
-      for (let child of this.state.collection.getChildren(currentItem.key)) {
+      for (let child of collection.getChildren(currentItem.key)) {
         if (child.type === 'item') {
           firstChildItemNode = child;
           break;
@@ -172,8 +158,8 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     let ancestorTargets: ItemDropTarget[] = [];
     
     while (parentKey) {
-      let parentItem = this.state.collection.getItem(parentKey);                
-      let nextItem = parentItem?.nextKey ? this.state.collection.getItem(parentItem.nextKey) : null;
+      let parentItem = collection.getItem(parentKey);                
+      let nextItem = parentItem?.nextKey ? collection.getItem(parentItem.nextKey) : null;
       let isLastChildAtLevel = !nextItem || nextItem.parentKey !== parentKey;
       
       if (isLastChildAtLevel) {
@@ -200,8 +186,8 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
 
     // Handle converting "after" to "before next" for non-ambiguous cases
     if (potentialTargets.length === 1) {
-      let nextKey = this.state.collection.getKeyAfter(target.key);
-      let nextNode = nextKey ? this.state.collection.getItem(nextKey) : null;
+      let nextKey = collection.getKeyAfter(target.key);
+      let nextNode = nextKey ? collection.getItem(nextKey) : null;
       if (nextKey != null && nextNode && currentItem && nextNode.level != null && currentItem.level != null && nextNode.level > currentItem.level) {
         let beforeTarget = {
           type: 'item',
@@ -230,67 +216,18 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     }
     
     let tracking = this.pointerTracking;
-    let currentItem = this.state.collection.getItem(originalTarget.key);
+    let currentItem = this.state!.collection.getItem(originalTarget.key);
     let parentKey = currentItem?.parentKey;
 
     if (!parentKey) {
       return potentialTargets[0];
     }
-
-    // Case 1: Exactly 2 potential targets - use Y movement only
-    if (potentialTargets.length === 2) {
-      // Initialize boundary context if needed
-      if (!tracking.boundaryContext || tracking.boundaryContext.parentKey !== parentKey) {
-        let initialTargetIndex = currentYMovement === 'up' ? 1 : 0;
-        
-        tracking.boundaryContext = {
-          parentKey,
-          lastChildKey: originalTarget.key,
-          preferredTargetIndex: initialTargetIndex,
-          lastSwitchY: y,
-          lastSwitchX: x,
-          entryDirection: tracking.yDirection
-        };
-      }
-      
-      let boundaryContext = tracking.boundaryContext;
-      let distanceFromLastYSwitch = Math.abs(y - boundaryContext.lastSwitchY);
-      
-      // Toggle between targets based on Y movement
-      if (distanceFromLastYSwitch > Y_SWITCH_THRESHOLD && currentYMovement) {
-        let currentIndex = boundaryContext.preferredTargetIndex || 0;
-        
-        if (currentYMovement === 'down' && currentIndex === 0) {
-          // Moving down from inner-most, switch to outer-most
-          boundaryContext.preferredTargetIndex = 1;
-          boundaryContext.lastSwitchY = y;
-        } else if (currentYMovement === 'down' && currentIndex === 1) {
-          // Moving down from outer-most, switch back to inner-most
-          boundaryContext.preferredTargetIndex = 0;
-          boundaryContext.lastSwitchY = y;
-        } else if (currentYMovement === 'up' && currentIndex === 1) {
-          // Moving up from outer-most, switch to inner-most
-          boundaryContext.preferredTargetIndex = 0;
-          boundaryContext.lastSwitchY = y;
-        } else if (currentYMovement === 'up' && currentIndex === 0) {
-          // Moving up from inner-most, switch to outer-most
-          boundaryContext.preferredTargetIndex = 1;
-          boundaryContext.lastSwitchY = y;
-        }
-      }
-      
-      return potentialTargets[boundaryContext.preferredTargetIndex || 0];
-    }
     
-    // Case 2: More than 2 potential targets - use Y for initial target, then X for switching levels
+    // More than 1 potential target - use Y for initial target, then X for switching levels
     // Initialize boundary context if needed
     if (!tracking.boundaryContext || tracking.boundaryContext.parentKey !== parentKey) {
-      let initialTargetIndex = 0; // Default to inner-most
-      if (tracking.yDirection === 'up') {
-        // If entering from below, start with outer-most
-        initialTargetIndex = potentialTargets.length - 1;
-      }
-      
+      // If entering from below, start with outer-most
+      let initialTargetIndex = tracking.yDirection === 'up' ? potentialTargets.length - 1 : 0;      
       tracking.boundaryContext = {
         parentKey,
         lastChildKey: originalTarget.key,
@@ -303,6 +240,23 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
     
     let boundaryContext = tracking.boundaryContext;
     let distanceFromLastXSwitch = Math.abs(x - boundaryContext.lastSwitchX);
+    let distanceFromLastYSwitch = Math.abs(y - boundaryContext.lastSwitchY);
+
+    // Toggle between targets based on Y movement
+    if (distanceFromLastYSwitch > Y_SWITCH_THRESHOLD && currentYMovement) {
+      let currentIndex = boundaryContext.preferredTargetIndex || 0;
+      
+      if (currentYMovement === 'down' && currentIndex === 0) {
+        // Moving down from inner-most, switch to outer-most
+        boundaryContext.preferredTargetIndex = potentialTargets.length - 1;
+      } else if (currentYMovement === 'up' && currentIndex === potentialTargets.length - 1) {
+        // Moving up from outer-most, switch to inner-most
+        boundaryContext.preferredTargetIndex = 0;
+      }
+
+      // Reset x tracking so that moving diagonally doesn't cause flickering.
+      tracking.xDirection = null;
+    }
     
     // X movement controls level selection
     if (distanceFromLastXSwitch > X_SWITCH_THRESHOLD && currentXMovement) {
@@ -337,6 +291,9 @@ export class TreeDropTargetDelegate<T> extends ListDropTargetDelegate {
           }
         }
       }
+
+      // Reset y tracking so that moving diagonally doesn't cause flickering.
+      tracking.yDirection = null;
     }
 
     let targetIndex = Math.max(0, Math.min(boundaryContext.preferredTargetIndex || 0, potentialTargets.length - 1));

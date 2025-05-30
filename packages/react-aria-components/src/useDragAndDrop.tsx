@@ -25,7 +25,6 @@ import {
   DropTarget,
   DropTargetDelegate,
   ListDropTargetDelegate,
-  TreeDropTargetDelegate,
   useDraggableCollection,
   useDraggableItem,
   useDropIndicator,
@@ -62,8 +61,7 @@ interface DropHooks {
   useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
-  ListDropTargetDelegate: typeof ListDropTargetDelegate,
-  TreeDropTargetDelegate: typeof TreeDropTargetDelegate
+  ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
 
 export type DragAndDropHooks = DragHooks & DropHooks
@@ -141,7 +139,6 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.renderDropIndicator = renderDropIndicator;
       hooks.dropTargetDelegate = dropTargetDelegate;
       hooks.ListDropTargetDelegate = ListDropTargetDelegate;
-      hooks.TreeDropTargetDelegate = TreeDropTargetDelegate;
     }
 
     return hooks;

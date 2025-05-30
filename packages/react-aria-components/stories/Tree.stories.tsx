@@ -582,6 +582,11 @@ function TreeDragAndDropExample(args) {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
     getAllowedDropOperations: () => ['move'],
+    renderDragPreview(items) {
+      return (
+        <div style={{background: 'blue', color: 'white', padding: '4px'}}>{items.length} items</div>
+      );
+    },
     shouldAcceptItemDrop: (target) => {
       if (args.shouldAcceptItemDrop === 'folders') {
         let item = treeData.getItem(target.key);

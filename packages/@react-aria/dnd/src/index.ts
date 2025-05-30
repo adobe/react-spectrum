@@ -64,6 +64,5 @@ export {useDraggableCollection} from './useDraggableCollection';
 export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
-export {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 export {isVirtualDragging} from './DragManager';
 export {isDirectoryDropItem, isFileDropItem, isTextDropItem} from './utils';

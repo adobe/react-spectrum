@@ -21,8 +21,8 @@ import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRender
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
-import {TreeDropTargetDelegate} from '@react-aria/dnd';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -253,12 +253,15 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       : null;
   }
 
+  let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
   if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new TreeDropTargetDelegate(state, ref, {direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
+    treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
+
     let keyboardDelegate = props.keyboardDelegate ||
       new ListKeyboardDelegate({
         collection: state.collection,
@@ -272,7 +275,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
-        dropTargetDelegate,
+        dropTargetDelegate: treeDropTargetDelegate,
         onDropActivate: (e) => {
           // Expand collapsed item when dragging over. For keyboard, allow collapsing.
           if (e.target.type === 'item') {
