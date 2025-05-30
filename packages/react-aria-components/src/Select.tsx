@@ -279,7 +279,7 @@ export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={!selectedItem || undefined}>

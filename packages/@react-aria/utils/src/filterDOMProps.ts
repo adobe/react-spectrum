@@ -43,6 +43,7 @@ const globalAttrs = new Set([
 ]);
 
 const globalEvents = new Set([
+  'onClick',
   'onAuxClick',
   'onContextMenu',
   'onDoubleClick',
