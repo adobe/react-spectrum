@@ -11,6 +11,7 @@
  */
 
 import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
+import {classNames} from '../../@react-spectrum/utils';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -113,7 +114,13 @@ interface Character {
 
 const MyListBoxLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+    <UNSTABLE_ListBoxLoadingSentinel
+      style={{height: 30, width: '100%'}}
+      className={({isFocused, isFocusVisible}) => classNames(styles, 'loader', {
+        focused: isFocused,
+        focusVisible: isFocusVisible
+      })}
+      {...props}>
       <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
     </UNSTABLE_ListBoxLoadingSentinel>
   );

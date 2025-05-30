@@ -492,7 +492,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
   ref = useObjectRef<HTMLDivElement>(ref);
   let {optionProps, ...states} = useOption(
-    {key: item.key, 'aria-label': props?.['aria-label']},
+    {key: item.key},
     state,
     ref
   );
@@ -505,12 +505,12 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
     role: optionProps.role,
     'aria-posinset': optionProps['aria-posinset'],
     'aria-setsize': optionProps['aria-setsize'],
-    tabIndex: optionProps.tabIndex
+    tabIndex: optionProps.tabIndex,
+    id: optionProps.id
   };
 
   let renderProps = useRenderProps({
     ...otherProps,
-    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-ListBoxLoadingIndicator',
     values: {
