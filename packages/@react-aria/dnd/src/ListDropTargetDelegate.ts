@@ -33,7 +33,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   private ref: RefObject<HTMLElement | null>;
   private layout: 'stack' | 'grid';
   private orientation: Orientation;
-  private direction: Direction;
+  protected direction: Direction;
 
   constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
     this.collection = collection;
