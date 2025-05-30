@@ -19,10 +19,8 @@ interface PointerTracking {
   xDirection: 'left' | 'right' | null,
   boundaryContext: {
     parentKey: Key,
-    lastChildKey: Key,
     lastSwitchY: number,
     lastSwitchX: number,
-    entryDirection: 'up' | 'down' | null,
     preferredTargetIndex?: number
   } | null
 }
@@ -128,7 +126,7 @@ export class TreeDropTargetDelegate<T> {
 
     // If target has children and is expanded, use "before first child"
     if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren) {
-      let firstChildItemNode: Node<any> | null = null;
+      let firstChildItemNode: Node<T> | null = null;
       for (let child of collection.getChildren(currentItem.key)) {
         if (child.type === 'item') {
           firstChildItemNode = child;
@@ -230,11 +228,9 @@ export class TreeDropTargetDelegate<T> {
       let initialTargetIndex = tracking.yDirection === 'up' ? potentialTargets.length - 1 : 0;      
       tracking.boundaryContext = {
         parentKey,
-        lastChildKey: originalTarget.key,
         preferredTargetIndex: initialTargetIndex,
         lastSwitchY: y,
-        lastSwitchX: x,
-        entryDirection: tracking.yDirection
+        lastSwitchX: x
       };
     }
     
@@ -242,7 +238,7 @@ export class TreeDropTargetDelegate<T> {
     let distanceFromLastXSwitch = Math.abs(x - boundaryContext.lastSwitchX);
     let distanceFromLastYSwitch = Math.abs(y - boundaryContext.lastSwitchY);
 
-    // Toggle between targets based on Y movement
+    // Switch between targets based on Y movement
     if (distanceFromLastYSwitch > Y_SWITCH_THRESHOLD && currentYMovement) {
       let currentIndex = boundaryContext.preferredTargetIndex || 0;
       
