@@ -114,7 +114,7 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
         let startItemIndex = 0;
         if (startItem) {
           if (startItem.type === 'loader') {
-            startItemIndex = cachedItemNodes.length - 1;
+            startItemIndex = cachedItemNodes.length;
           } else {
             startItemIndex = cachedItemNodes.indexOf(startItem);
           }
