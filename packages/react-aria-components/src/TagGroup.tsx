@@ -141,9 +141,7 @@ interface TagListInnerProps<T> {
 function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
   let state = useContext(ListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
-  let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
-  delete gridProps.items;
-  delete gridProps.renderEmptyState;
+  let [gridProps, ref] = useContextProps({}, forwardedRef, TagListContext);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
