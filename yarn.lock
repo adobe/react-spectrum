@@ -7588,6 +7588,7 @@ __metadata:
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/i18n": "npm:^3.12.9"
+    "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/utils": "npm:^3.29.0"
     "@react-spectrum/form": "npm:^3.7.15"
     "@react-spectrum/layout": "npm:^3.6.15"

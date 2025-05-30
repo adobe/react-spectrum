@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {announce} from '@react-aria/live-announcer';
 import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
+import {getActiveElement, mergeProps, useId} from '@react-aria/utils';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition, RefObject} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, useId} from '@react-aria/utils';
 import React, {ReactNode, Ref} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
@@ -64,8 +64,18 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
   } else {
     errorMessageString = errorMessage;
   }
-  let hasHelpText = !!description || errorMessageString && (isInvalid || validationState === 'invalid');
+  let hasErrorMessage = !!errorMessageString && (isInvalid || validationState === 'invalid');
+  let hasHelpText = !!description || hasErrorMessage;
   let contextualHelpId = useId();
+
+  React.useEffect(() => {
+    if (hasErrorMessage &&
+      (ref as RefObject<HTMLElement>)?.current?.contains(getActiveElement()) &&
+      typeof errorMessageString === 'string' &&
+      errorMessageString.length > 0) {
+      announce(errorMessageString, 'polite');
+    }
+  }, [errorMessageString, hasErrorMessage, ref]);
 
   let fallbackLabelPropsId = useId();
   if (label && contextualHelp && !labelProps.id) {
