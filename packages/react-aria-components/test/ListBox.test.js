@@ -1480,7 +1480,7 @@ describe('ListBox', () => {
     });
 
     it('should move focus to the nearest row if the spinner was focused and loading finishes', async () => {
-      let tree = render(<AsyncListbox items={items} />);
+      let tree = render(<AsyncListbox isLoading items={items} />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
       let options = listboxTester.options();
       expect(options).toHaveLength(4);
@@ -1491,12 +1491,12 @@ describe('ListBox', () => {
       await user.keyboard('{End}');
       expect(document.activeElement).toBe(loaderRow);
       tree.rerender(<AsyncListbox items={items} />);
-      options = listboxTester.rows;
+      options = listboxTester.options();
       expect(document.activeElement).toBe(options[2]);
     });
 
     it('should focus the load more row when using ArrowDown', async () => {
-      let tree = render(<AsyncListbox items={items} />);
+      let tree = render(<AsyncListbox isLoading items={items} />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
       let options = listboxTester.options();
       expect(options).toHaveLength(4);
@@ -1521,7 +1521,7 @@ describe('ListBox', () => {
     });
 
     it('should focus the load more row when using End', async () => {
-      let tree = render(<AsyncListbox items={items} />);
+      let tree = render(<AsyncListbox isLoading items={items} />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
       let options = listboxTester.options();
       expect(options).toHaveLength(4);
@@ -1537,7 +1537,7 @@ describe('ListBox', () => {
     });
 
     it('should focus the load more row when using PageDown', async () => {
-      let tree = render(<AsyncListbox items={items} />);
+      let tree = render(<AsyncListbox isLoading items={items} />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
       let options = listboxTester.options();
       expect(options).toHaveLength(4);

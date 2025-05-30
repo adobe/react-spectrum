@@ -15,7 +15,7 @@ import {getChildNodes} from './getChildNodes';
 
 const cache = new WeakMap<Iterable<unknown>, number>();
 
-export function getItemCount<T>(collection: Collection<Node<T>>): number {
+export function getItemCount<T>(collection: Collection<Node<T>>, isValidItem: ((node: Node<T>) => boolean) = (node) => node.type === 'item'): number {
   let count = cache.get(collection);
   if (count != null) {
     return count;
@@ -25,10 +25,15 @@ export function getItemCount<T>(collection: Collection<Node<T>>): number {
   let counter = 0;
   let countItems = (items: Iterable<Node<T>>) => {
     for (let item of items) {
-      if (item.type === 'section') {
-        countItems(getChildNodes(item, collection));
-      } else if (item.type === 'item') {
+      if (isValidItem(item)) {
         counter++;
+      }
+
+      // TODO: New collections vs old collection is different here. New collections for table will only return
+      // the header and body when the collection is iterated on, but old collections will return the body rows...
+      // I could forgo using getItemCount, but the collection.rows is different between old and new collection too... (old includes header row)
+      if (item.type === 'section' || item.type === 'tablebody') {
+        countItems(getChildNodes(item, collection));
       }
     }
   };

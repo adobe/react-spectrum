@@ -1100,6 +1100,7 @@ describe('GridList', () => {
         let tree = render(<VirtualizedAsyncGridList loadingState="loadingMore" items={items} />);
 
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        expect(gridListTester.gridlist).toHaveAttribute('aria-rowcount', '51');
         let rows = gridListTester.rows;
         expect(rows).toHaveLength(8);
         let loaderRow = rows[7];
@@ -1119,6 +1120,7 @@ describe('GridList', () => {
         let tree = render(<VirtualizedAsyncGridList items={items} />);
 
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        expect(gridListTester.gridlist).toHaveAttribute('aria-rowcount', '50');
         let rows = gridListTester.rows;
         expect(rows).toHaveLength(7);
         expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();

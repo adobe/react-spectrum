@@ -2112,6 +2112,7 @@ describe('Table', () => {
       it('should always render the sentinel even when virtualized', () => {
         let tree = render(<VirtualizedTableLoad loadingState="loadingMore" items={items} />);
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        expect(tableTester.table).toHaveAttribute('aria-rowcount', '52');
         let rows = tableTester.rows;
         expect(rows).toHaveLength(7);
         let loaderRow = rows[6];
@@ -2130,6 +2131,7 @@ describe('Table', () => {
       it('should not reserve room for the loader if isLoading is false', () => {
         let tree = render(<VirtualizedTableLoad items={items} />);
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        expect(tableTester.table).toHaveAttribute('aria-rowcount', '51');
         let rows = tableTester.rows;
         expect(rows).toHaveLength(6);
         expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();

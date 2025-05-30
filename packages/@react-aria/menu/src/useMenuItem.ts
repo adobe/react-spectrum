@@ -187,7 +187,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   if (isVirtualized) {
     ariaProps['aria-posinset'] = item?.index;
-    ariaProps['aria-setsize'] = getItemCount(state.collection);
+    ariaProps['aria-setsize'] = getItemCount(state.collection, (node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading));
   }
 
   let onPressStart = (e: PressEvent) => {
@@ -307,8 +307,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ...mergeProps(
         domProps,
         linkProps,
-        isTrigger 
-          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']} 
+        isTrigger
+          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']}
           : itemProps,
         pressProps,
         hoverProps,
