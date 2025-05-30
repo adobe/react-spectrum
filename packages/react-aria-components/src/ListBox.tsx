@@ -13,7 +13,7 @@
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
@@ -465,7 +465,9 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+export interface ListBoxLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
+
+export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<ListBoxLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -478,7 +480,6 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
 
 export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
   let sentinelRef = useRef<HTMLDivElement>(null);
@@ -489,23 +490,34 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {optionProps, ...states} = useOption(
+    {key: item.key, 'aria-label': props?.['aria-label']},
+    state,
+    ref
+  );
+
+  let optionAriaProps = {
+    'data-key': optionProps['data-key'],
+    'data-collection': optionProps['data-collection'],
+    'data-focused': states.isFocused || undefined,
+    'data-focus-visible': states.isFocusVisible || undefined,
+    role: optionProps.role,
+    'aria-posinset': optionProps['aria-posinset'],
+    'aria-setsize': optionProps['aria-setsize'],
+    tabIndex: optionProps.tabIndex
+  };
+
   let renderProps = useRenderProps({
     ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-ListBoxLoadingIndicator',
-    values: null
+    values: {
+      isFocused: states.isFocused,
+      isFocusVisible: states.isFocusVisible
+    }
   });
-
-  let optionProps = {
-    // For Android talkback
-    tabIndex: -1
-  };
-
-  if (isVirtualized) {
-    optionProps['aria-posinset'] = item.index + 1;
-    optionProps['aria-setsize'] = state.collection.size;
-  }
 
   return (
     <>
@@ -516,11 +528,8 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
       </div>
       {isLoading && renderProps.children && (
         <div
-          {...mergeProps(filterDOMProps(props as any), optionProps)}
+          {...mergeProps(filterDOMProps(props as any), optionAriaProps)}
           {...renderProps}
-          // aria-selected isn't needed here since this option is not selectable.
-          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-          role="option"
           ref={ref}>
           {renderProps.children}
         </div>

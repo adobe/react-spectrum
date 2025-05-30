@@ -498,9 +498,9 @@ function RootDropIndicator() {
 }
 
 
-export interface UNSTABLE_GridListLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
+export interface GridListLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
 
-export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_GridListLoadingSentinelRenderProps> {
+export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<GridListLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */

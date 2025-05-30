@@ -95,21 +95,24 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
         const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
           key => {
             const itemNode = cachedCollection.current!.getItem(key);
-            return itemNode?.type === 'item' ? itemNode : null;
+            return itemNode?.type === 'item' || itemNode?.type === 'loader' ? itemNode : null;
           }
         ).filter(node => node !== null);
         const itemNodes = [...collection.getKeys()].map(
           key => {
             const itemNode = collection.getItem(key);
-            return itemNode?.type === 'item' ? itemNode : null;
+            return itemNode?.type === 'item' || itemNode?.type === 'loader' ? itemNode : null;
           }
         ).filter(node => node !== null);
         const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
+        // Look up the start item's index in the cached node array. We can't rely in the node's index
+        // because it may be in a section and thus have a index relative to that section
+        let startItemIndex = startItem ? cachedItemNodes.indexOf(startItem) : 0;
         let index = Math.min(
           (
             diff > 1 ?
-            Math.max((startItem?.index ?? 0) - diff + 1, 0) :
-            startItem?.index ?? 0
+            Math.max((startItemIndex) - diff + 1, 0) :
+            startItemIndex
           ),
           (itemNodes?.length ?? 0) - 1);
         let newNode: Node<T> | null = null;
@@ -127,8 +130,8 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
           } else {
             isReverseSearching = true;
             // eslint-disable-next-line max-depth
-            if (index > (startItem?.index ?? 0)) {
-              index = (startItem?.index ?? 0);
+            if (index > startItemIndex) {
+              index = startItemIndex;
             }
             index--;
           }

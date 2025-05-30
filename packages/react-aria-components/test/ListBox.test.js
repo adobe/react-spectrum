@@ -1406,6 +1406,9 @@ describe('ListBox', () => {
       expect(options).toHaveLength(4);
       let loaderRow = options[3];
       expect(loaderRow).toHaveTextContent('Loading...');
+      expect(loaderRow).toHaveAttribute('data-key');
+      expect(loaderRow).toHaveAttribute('data-collection');
+      expect(loaderRow).toHaveAttribute('tabindex', '-1');
 
       let sentinel = tree.getByTestId('loadMoreSentinel');
       expect(sentinel.parentElement).toHaveAttribute('inert');
@@ -1460,6 +1463,93 @@ describe('ListBox', () => {
 
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       expect(onLoadMore).toHaveBeenCalledTimes(2);
+    });
+
+    it('shouldn\'t try to keyboard focus the loading sentinel if it isn\'t loading', async () => {
+      let tree = render(<AsyncListbox items={items} />);
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+      let options = listboxTester.options();
+      expect(options).toHaveLength(3);
+
+      await user.tab();
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(options[2]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(options[1]);
+    });
+
+    it('should move focus to the nearest row if the spinner was focused and loading finishes', async () => {
+      let tree = render(<AsyncListbox items={items} />);
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+      let options = listboxTester.options();
+      expect(options).toHaveLength(4);
+      let loaderRow = options[3];
+      expect(loaderRow).toHaveTextContent('Loading...');
+
+      await user.tab();
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(loaderRow);
+      tree.rerender(<AsyncListbox items={items} />);
+      options = listboxTester.rows;
+      expect(document.activeElement).toBe(options[2]);
+    });
+
+    it('should focus the load more row when using ArrowDown', async () => {
+      let tree = render(<AsyncListbox items={items} />);
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+      let options = listboxTester.options();
+      expect(options).toHaveLength(4);
+      let loaderRow = options[3];
+      expect(loaderRow).toHaveTextContent('Loading...');
+      expect(loaderRow).not.toHaveAttribute('data-focused');
+      expect(loaderRow).not.toHaveAttribute('data-focus-visible');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(options[2]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(loaderRow);
+      expect(loaderRow).toHaveAttribute('data-focused', 'true');
+      expect(loaderRow).toHaveAttribute('data-focus-visible', 'true');
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(options[2]);
+    });
+
+    it('should focus the load more row when using End', async () => {
+      let tree = render(<AsyncListbox items={items} />);
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+      let options = listboxTester.options();
+      expect(options).toHaveLength(4);
+      let loaderRow = options[3];
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(loaderRow);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(options[2]);
+    });
+
+    it('should focus the load more row when using PageDown', async () => {
+      let tree = render(<AsyncListbox items={items} />);
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+      let options = listboxTester.options();
+      expect(options).toHaveLength(4);
+      let loaderRow = options[3];
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(loaderRow);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(options[2]);
     });
 
     describe('virtualized', () => {

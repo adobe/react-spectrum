@@ -1348,9 +1348,9 @@ function RootDropIndicator() {
   );
 }
 
-export interface UNSTABLE_TableLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
+export interface TableLoadingSentinelRenderProps extends Pick<ItemRenderProps, 'isFocused' | 'isFocusVisible'> {}
 
-export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_TableLoadingSentinelRenderProps> {
+export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TableLoadingSentinelRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */

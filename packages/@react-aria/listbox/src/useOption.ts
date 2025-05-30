@@ -12,7 +12,6 @@
 
 import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
@@ -121,7 +120,9 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   if (isVirtualized) {
     let index = Number(item?.index);
     optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
-    optionProps['aria-setsize'] = getItemCount(state.collection);
+    // TODO: this is not great, but the loader sentinel is always in the collection even when loading isn't currently in progress.
+    // This same issue applies to the other collection elements, namely the row counts calculated for the top level parent element
+    optionProps['aria-setsize'] = [...state.collection].filter((node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading)).length;
   }
 
   let onAction = data?.onAction ? () => data?.onAction?.(key) : undefined;
