@@ -19,6 +19,7 @@ import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
@@ -27,7 +28,6 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {mergeStyles} from '../style/runtime';
 
 interface ButtonStyleProps {
   /**
@@ -373,17 +373,17 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
             }],
             [IconContext, {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: mergeStyles(iconStyle({
-                color: 'currentColor'
-              }), style({
-                size: fontRelative(20),
-                marginStart: '--iconMargin',
-                flexShrink: 0,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
-                }
-              })({isProgressVisible}))
+              styles: mergeStyles(
+                iconStyle({color: 'currentColor'}),
+                style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin',
+                  flexShrink: 0,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible}))
             }]
           ]}>
           {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

@@ -23,7 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, iconStyle, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -44,6 +44,7 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
+import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
@@ -207,7 +208,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                           slots: {
                             icon: {
                               render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
-                              styles: icon
+                              styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)
                             }
                           }
                         }],

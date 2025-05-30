@@ -28,7 +28,7 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, iconStyle, lightDark, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
@@ -44,6 +44,7 @@ import {ImageContext} from './Image';
 import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -473,10 +474,6 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
   cursor: {
     default: 'default',
     isLink: 'pointer'
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
   }
 });
 
@@ -530,7 +527,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
             [TextContext, {styles: style({order: 1, truncate: true})}],
             [IconContext, {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+              styles: mergeStyles(iconStyle({color: 'currentColor'}), style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0}))
             }],
             [AvatarContext, {
               size: avatarSize[size],
