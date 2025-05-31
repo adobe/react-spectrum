@@ -433,3 +433,41 @@ export const PopoverTriggerWidthExample = () => (
     </Popover>
   </DialogTrigger>
 );
+
+
+export const PopoverChildElementAnimationExample = () => (
+  <DialogTrigger>
+    <Button>
+      Open popover
+    </Button>
+    <Popover
+      placement="bottom start"
+      style={{
+        zIndex: 5
+      }}>
+      <Dialog>
+        <div
+          className="content"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30,
+            transition: 'opacity 0.5s'
+          }}>
+          <style>
+            {`
+              .react-aria-Popover[data-exiting] .content,
+              .react-aria-Popover[data-entering] .content {
+                opacity: 0;
+              }
+            `}
+          </style>
+          <p>
+            The popover waits for child element transitions to complete
+          </p>
+        </div>
+      </Dialog>
+    </Popover>
+  </DialogTrigger>
+);
