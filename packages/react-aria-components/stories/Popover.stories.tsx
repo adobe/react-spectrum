@@ -434,7 +434,6 @@ export const PopoverTriggerWidthExample = () => (
   </DialogTrigger>
 );
 
-
 export const PopoverChildElementAnimationExample = () => (
   <DialogTrigger>
     <Button>
