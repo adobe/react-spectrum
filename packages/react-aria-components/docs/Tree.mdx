@@ -1365,7 +1365,14 @@ function Example() {
       let items = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+          .map(async item => {
+            let parsed = JSON.parse(await item.getText('custom-app-type'));
+            return {
+              ...parsed,
+              // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+              id: Math.random().toString(36).slice(2)
+            };
+          })
       );
 
       if (e.target.dropPosition === 'before') {
