@@ -837,38 +837,28 @@ function Example() {
       dragAndDropHooks={dragAndDropHooks}
       ///- end highlight -///
     >
-      {(item) => (
-        <TreeItem textValue={item.value.name}>
-          <TreeItemContent>
-            <MyCheckbox slot="selection" />
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            {/*- begin highlight -*/}
-            <Button slot="drag">≡</Button>
-            {/*- end highlight -*/}
-            {item.value.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {(item) => (
-              <TreeItem textValue={item.value.name}>
-                <TreeItemContent>
-                  <MyCheckbox slot="selection" />
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  <Button slot="drag">≡</Button>
-                  {item.value.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
-          </Collection>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <TreeItem textValue={item.value.name}>
+            <TreeItemContent>
+              <MyCheckbox slot="selection" />
+              <Button slot="chevron">
+                <svg viewBox="0 0 24 24">
+                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </Button>
+              {/*- begin highlight -*/}
+              <Button slot="drag">≡</Button>
+              {/*- end highlight -*/}
+              {item.value.name}
+            </TreeItemContent>
+            <Collection items={item.children}>
+              {/* recursively render children */}
+              {renderItem}
+            </Collection>
+          </TreeItem>
+        );
+      }}
     </Tree>
   );
 }
@@ -969,36 +959,26 @@ function Example() {
       items={tree.items}
       dragAndDropHooks={dragAndDropHooks}
     >
-      {(item) => (
-        <TreeItem textValue={item.value.name}>
-          <TreeItemContent>
-            <MyCheckbox slot="selection" />
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            <Button slot="drag">≡</Button>
-            {item.value.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {(item) => (
-              <TreeItem textValue={item.value.name}>
-                <TreeItemContent>
-                  <MyCheckbox slot="selection" />
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  <Button slot="drag">≡</Button>
-                  {item.value.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
-          </Collection>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <TreeItem textValue={item.value.name}>
+            <TreeItemContent>
+              <MyCheckbox slot="selection" />
+              <Button slot="chevron">
+                <svg viewBox="0 0 24 24">
+                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </Button>
+              <Button slot="drag">≡</Button>
+              {item.value.name}
+            </TreeItemContent>
+            <Collection items={item.children}>
+              {/* recursively render children */}
+              {renderItem}
+            </Collection>
+          </TreeItem>
+        );
+      }}
     </Tree>
   );
 }
@@ -1068,36 +1048,26 @@ function Example() {
       items={tree.items}
       dragAndDropHooks={dragAndDropHooks}
     >
-      {(item) => (
-        <TreeItem textValue={item.value.name}>
-          <TreeItemContent>
-            <MyCheckbox slot="selection" />
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            <Button slot="drag">≡</Button>
-            {item.value.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {(item) => (
-              <TreeItem textValue={item.value.name}>
-                <TreeItemContent>
-                  <MyCheckbox slot="selection" />
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  <Button slot="drag">≡</Button>
-                  {item.value.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
-          </Collection>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <TreeItem textValue={item.value.name}>
+            <TreeItemContent>
+              <MyCheckbox slot="selection" />
+              <Button slot="chevron">
+                <svg viewBox="0 0 24 24">
+                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </Button>
+              <Button slot="drag">≡</Button>
+              {item.value.name}
+            </TreeItemContent>
+            <Collection items={item.children}>
+              {/* recursively render children */}
+              {renderItem}
+            </Collection>
+          </TreeItem>
+        );
+      }}
     </Tree>
   );
 }
@@ -1392,32 +1362,24 @@ function Example() {
         items={tree.items}
         dragAndDropHooks={dragAndDropHooks}
       >
-        {(item) => (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              {item.value.name}
-            </TreeItemContent>
-            <Collection items={item.children}>
-              {(item) => (
-                <TreeItem textValue={item.value.name}>
-                  <TreeItemContent>
-                    <Button slot="chevron">
-                      <svg viewBox="0 0 24 24">
-                        <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </Button>
-                    {item.value.name}
-                  </TreeItemContent>
-                </TreeItem>
-              )}
-            </Collection>
-          </TreeItem>
-        )}
+        {function renderItem(item) {
+          return (
+            <TreeItem textValue={item.value.name}>
+              <TreeItemContent>
+                <Button slot="chevron">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </Button>
+                {item.value.name}
+              </TreeItemContent>
+              <Collection items={item.children}>
+                {/* recursively render children */}
+                {renderItem}
+              </Collection>
+            </TreeItem>
+          );
+        }}
       </Tree>
     </div>
   );
@@ -1971,7 +1933,8 @@ function DndTree(props: DndTreeProps) {
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => 'Drop items here'}
     >
-      {(item) => (
+    {function renderItem(item) {
+      return (
         <TreeItem textValue={item.value.name}>
           <TreeItemContent>
             <MyCheckbox slot="selection" />
@@ -1984,23 +1947,12 @@ function DndTree(props: DndTreeProps) {
             {item.value.name}
           </TreeItemContent>
           <Collection items={item.children}>
-            {(item) => (
-              <TreeItem textValue={item.value.name}>
-                <TreeItemContent>
-                  <MyCheckbox slot="selection" />
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  <Button slot="drag">≡</Button>
-                  {item.value.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
+            {/* recursively render children */}
+            {renderItem}
           </Collection>
         </TreeItem>
-      )}
+      );
+    }}
     </Tree>
   );
 }
