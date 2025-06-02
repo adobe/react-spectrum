@@ -1,7 +1,7 @@
 'use client';
 
 import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
-import {CodePlatter} from './CodePlatter';
+import {CodePlatter, Pre} from './CodePlatter';
 import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {IconPicker} from './IconPicker';
@@ -111,12 +111,19 @@ export function CodeOutput({code}: {code?: ReactNode}) {
       }
     }
   }
-  return (
-    <CodePlatter shareUrl={url?.toString()}>
+
+  code ||= (
+    <Pre>
       <code>
         {importSource ? renderImports(name, importSource, props) : null}
-        {code || renderElement(name, props, controls)}
+        {renderElement(name, props, controls)}
       </code>
+    </Pre>
+  );
+
+  return (
+    <CodePlatter shareUrl={url?.toString()}>
+      {code}
     </CodePlatter>
   );
 }

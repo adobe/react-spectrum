@@ -15,15 +15,16 @@ const platterStyle = style({
     type: 'paddingTop',
     value: 16
   },
-  padding: '--code-padding',
-  position: 'relative'
+  position: 'relative',
+  maxHeight: 600,
+  overflow: 'auto'
 });
 
 export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl?: string}) {
-  let codeRef = useRef<HTMLPreElement | null>(null);
+  let codeRef = useRef<HTMLDivElement | null>(null);
   return (
     <div className={platterStyle}>
-      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', paddingStart: 16})}>
+      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', padding: 16, position: 'relative', zIndex: 1})}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
@@ -61,10 +62,18 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
             </Menu>
           </MenuTrigger>
         </ActionButtonGroup>
-      </div>
-      <pre ref={codeRef} className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0})} style={{overflowWrap: 'break-word'}}>
+      </div>     
+      <div ref={codeRef}> 
         {children}
-      </pre>
+      </div>
     </div>
+  );
+}
+
+export function Pre({children}) {
+  return (
+    <pre className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0, padding: '--code-padding'})} style={{overflowWrap: 'break-word'}}>
+      {children}
+    </pre>
   );
 }

@@ -1,5 +1,5 @@
 import {Code, ICodeProps} from './Code';
-import {CodePlatter} from './CodePlatter';
+import {CodePlatter, Pre} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode} from './ExpandableCode';
 import fs from 'fs';
@@ -53,17 +53,27 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
     );
   }
 
+  let code = (
+    <TruncatedCode maxLines={expanded ? Infinity : 6} {...props}>
+      {children}
+    </TruncatedCode>
+  );
+
   if (props.docs) {
     return (
       <VisualExample
         {...props}
         component={render}
         files={files}
-        code={<Code {...props} hideImports>{children}</Code>} />
+        code={code} />
     );
   }
 
-  let content = <TruncatedCode maxLines={expanded ? Infinity : 6} {...props}>{children}</TruncatedCode>;
+  let content = (
+    <CodePlatter>
+      {code}
+    </CodePlatter>
+  );
 
   return (
     <div className={example}>
@@ -89,15 +99,15 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   return lines > maxLines
   ? (
     <ExpandableCode>
-      <CodePlatter>
+      <Pre>
         <Code {...props}>{children}</Code>
-      </CodePlatter>
+      </Pre>
     </ExpandableCode>
   )
   : (
-    <CodePlatter>
+    <Pre>
       <Code {...props}>{children}</Code>
-    </CodePlatter>
+    </Pre>
   );
 }
 
@@ -116,5 +126,9 @@ export function Files({children, files}: {children?: ReactNode, files: string[]}
 
 export function File({filename}: {filename: string}) {
   let contents = fs.readFileSync('../../../' + filename, 'utf8');
-  return <TruncatedCode lang={path.extname(filename).slice(1)}>{contents}</TruncatedCode>;
+  return (
+    <CodePlatter>
+      <TruncatedCode lang={path.extname(filename).slice(1)}>{contents}</TruncatedCode>
+    </CodePlatter>
+  );
 }

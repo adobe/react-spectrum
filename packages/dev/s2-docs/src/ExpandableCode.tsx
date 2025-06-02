@@ -9,13 +9,14 @@ const example = style({
   font: 'code-lg',
   maxHeight: {
     default: '[6lh]',
-    isExpanded: 600
+    isExpanded: 'unset'
   },
   overflow: {
     default: 'clip',
-    isExpanded: 'auto'
+    isExpanded: 'visible'
   },
   position: 'relative',
+  width: 'full',
   borderBottomRadius: 'xl'
 });
 

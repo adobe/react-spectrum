@@ -167,24 +167,6 @@ import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-component
 </ListBox>
 ```
 
-### Links
-
-Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
-
-By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with `selectionBehavior="replace"`, items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
-
-```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} wide
-"use client";
-import {ListBox, ListBoxItem} from 'react-aria-components';
-
-<ListBox aria-label="Links" selectionMode="multiple">
-  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
-  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
-  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
-  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
-</ListBox>
-```
-
 ### Asynchronous loading
 
 This example uses the useAsyncList hook to handle asynchronous loading
@@ -220,6 +202,24 @@ function AsyncLoadingExample() {
     </ListBox>
   );
 }
+```
+
+### Links
+
+Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with `selectionBehavior="replace"`, items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
+
+```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} wide
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+
+<ListBox aria-label="Links" selectionMode="multiple">
+  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
+  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
+  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
+</ListBox>
 ```
 
 ### Empty state

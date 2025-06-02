@@ -7,7 +7,7 @@ import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '.
 
 const GROUPS = {
   Content: [
-    'children', 'items', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
+    'children', 'items', 'columns', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
   ],
   Selection: [
     'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disabledBehavior', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
@@ -193,11 +193,11 @@ function groupProps(
           continue;
         }
 
-        if (propName === 'children' && group === 'Content' && !props.items) {
+        if (propName === 'children' && group === 'Content' && !props.items && !props.columns) {
           continue;
         }
 
-        if (propName === 'target' && props[propName].value.type !== 'string') {
+        if (propName === 'target' && props[propName].value.type !== 'identifier') {
           continue;
         }
 
