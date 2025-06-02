@@ -898,6 +898,7 @@ function Example() {
 .react-aria-DropIndicator {
   &[data-drop-target] {
     outline: 1px solid var(--highlight-background);
+    margin-left: calc(62px + (var(--tree-item-level) - 1) * 8px);
   }
 }
 ```
@@ -1078,12 +1079,11 @@ function Example() {
 
 ```css
 .drag-preview {
-  width: 150px;
   padding: 4px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: 8px;
   background: var(--highlight-background);
   color: var(--highlight-foreground);
   border-radius: 4px;
