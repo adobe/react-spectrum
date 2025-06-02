@@ -25,7 +25,7 @@ interface PointerTracking {
   } | null
 }
 
-const X_SWITCH_THRESHOLD = 5;
+const X_SWITCH_THRESHOLD = 10;
 const Y_SWITCH_THRESHOLD = 5;
 export class TreeDropTargetDelegate<T> {
   private delegate: DropTargetDelegate | null = null;
