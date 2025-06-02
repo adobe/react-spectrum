@@ -1598,9 +1598,9 @@ function Example() {
       let files = [];
       for await (let entry of dir.getEntries()) {
         files.push({
+          id: Math.random().toString(36).slice(2),
           name: entry.name,
-          kind: entry.kind,
-          type: entry.kind === 'directory' ? 'Directory' : entry.type
+          kind: entry.kind
         });
       }
       setFiles(files);
