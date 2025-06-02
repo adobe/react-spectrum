@@ -9,7 +9,11 @@
   "source": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },

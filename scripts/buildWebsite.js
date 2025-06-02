@@ -84,7 +84,10 @@ async function build() {
       postinstall: 'patch-package',
       createRssFeed: "node scripts/createFeed.mjs"
     },
-    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css'],
+    '@parcel/resolver-default': {
+      packageExports: true
+    }
   };
 
 
@@ -161,19 +164,6 @@ async function build() {
 
   // Install dependencies from npm
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
-
-  // Copy package.json for each package into docs dir so we can find the correct version numbers
-  for (let p of packages) {
-    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
-      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
-    }
-  }
-
-  // Patch react-aria-components package.json for example CSS.
-  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
-  let json = JSON.parse(fs.readFileSync(p));
-  json.sideEffects = ['*.css'];
-  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});

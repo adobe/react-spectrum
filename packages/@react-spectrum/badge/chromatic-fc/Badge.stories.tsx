@@ -12,7 +12,7 @@
 
 import {Badge} from '..';
 import {BadgeStory, renderVariants} from '../chromatic/Badge.stories';
-import CheckmarkCircle from '@spectrum-icons/workflow/src/CheckmarkCircle';
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import {ComponentMeta} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
