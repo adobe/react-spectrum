@@ -16,16 +16,17 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ButtonContext,
+  ButtonRenderProps,
   ContextValue,
   InputContext,
   Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -54,39 +55,14 @@ export interface NumberFieldProps extends
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, TextFieldRef>>(null);
+export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
-const inputButton = style({
+const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
+  ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
-  borderTopRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    },
-    type: {
-      decrementStep: 'none'
-    }
-  },
-  borderBottomRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    },
-    type: {
-      incrementStep: 'none'
-    }
-  },
   alignItems: 'center',
   justifyContent: 'center',
   width: {
@@ -121,7 +97,7 @@ const inputButton = style({
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonFace'
@@ -132,13 +108,6 @@ const inputButton = style({
 
 const iconStyles = style({
   flexShrink: 0,
-  rotate: {
-    default: 0,
-    type: {
-      incrementStep: 270,
-      decrementStep: 90
-    }
-  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -156,7 +125,7 @@ const stepperContainerStyles = style({
       XL: 8
     }
   },
-  paddingEnd: {
+  marginEnd: {
     size: {
       S: 2,
       M: 4,
@@ -261,7 +230,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                         type: 'decrement',
                         size
                       })}>
-                      <Dash size={size} className={iconStyles({})} />
+                      <Dash size={size} className={iconStyles} />
                     </StepButton>
                     <StepButton
                       ref={incrementButtonRef}
@@ -272,7 +241,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                         type: 'increment',
                         size
                       })}>
-                      <Add size={size} className={iconStyles({})} />
+                      <Add size={size} className={iconStyles} />
                     </StepButton>
                   </div>}
                 </FieldGroup>

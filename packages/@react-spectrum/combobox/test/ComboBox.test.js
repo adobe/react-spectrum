@@ -227,7 +227,7 @@ describe('ComboBox', function () {
     expect(items[1]).toHaveTextContent('Two');
     expect(items[2]).toHaveTextContent('Three');
 
-    expect(listbox).toHaveAttribute('tabIndex', '-1');
+    expect(listbox).not.toHaveAttribute('tabIndex');
     for (let item of items) {
       expect(item).not.toHaveAttribute('tabIndex');
     }
@@ -257,6 +257,7 @@ describe('ComboBox', function () {
   });
 
   beforeEach(() => {
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     load = jest
       .fn()
       .mockImplementationOnce(getFilterItems)
@@ -505,7 +506,7 @@ describe('ComboBox', function () {
         expect(comboboxTester.listbox).toBeFalsy();
       });
 
-      it('resets the focused item when re-opening the menu', async function () {
+      it('it doesn\'t reset the focused item when re-opening the menu', async function () {
         let tree = renderComboBox({});
         let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
 
@@ -518,7 +519,7 @@ describe('ComboBox', function () {
         expect(comboboxTester.combobox.value).toBe('One');
 
         await comboboxTester.open();
-        expect(comboboxTester.combobox).not.toHaveAttribute('aria-activedescendant');
+        expect(comboboxTester.combobox).toHaveAttribute('aria-activedescendant', options[0].id);
       });
 
       it('shows all items', async function () {
@@ -713,7 +714,7 @@ describe('ComboBox', function () {
     });
   });
   describe('showing menu', function () {
-    it('doesn\'t moves to selected key', async function () {
+    it('moves to selected key', async function () {
       let {getByRole} = renderComboBox({selectedKey: '2'});
 
       let button = getByRole('button');
@@ -724,7 +725,9 @@ describe('ComboBox', function () {
       });
 
       expect(document.activeElement).toBe(combobox);
-      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
     });
 
     it('keeps the menu open if the user clears the input field if menuTrigger = focus', async function () {
@@ -880,28 +883,27 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
-    it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', async function () {
+    it('closes menu on Enter if allowsCustomValue=true and no item is focused', async function () {
       let {getByRole, queryByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" onKeyDown={onKeyDown} />);
 
       let combobox = getByRole('combobox');
-      act(() => combobox.focus());
+      await user.tab();
+      await user.keyboard('On');
+
       act(() => {
-        fireEvent.change(combobox, {target: {value: 'On'}});
         jest.runAllTimers();
       });
-
       let listbox = getByRole('listbox');
       expect(listbox).toBeTruthy();
 
       expect(document.activeElement).toBe(combobox);
-      expect(combobox).not.toHaveAttribute('aria-activedescendant');
       await user.keyboard('{Enter}');
       act(() => {
         jest.runAllTimers();
       });
 
       expect(queryByRole('listbox')).toBeNull();
-      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyDown).toHaveBeenCalledTimes(3);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
@@ -3411,7 +3413,7 @@ describe('ComboBox', function () {
 
         expect(combobox).toHaveAttribute('value', 'Two');
 
-        fireEvent.change(combobox, {target: {value: 'T'}});
+        await user.keyboard('{Backspace}{Backspace}');
         act(() => {
           jest.runAllTimers();
         });
@@ -4027,7 +4029,7 @@ describe('ComboBox', function () {
       items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
       expect(items[1].textContent).toBe('Two');
-      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput).toHaveAttribute('aria-activedescendant', items[1].id);
       expect(trayInput.value).toBe('Two');
       expect(items[1]).toHaveAttribute('aria-selected', 'true');
     });
@@ -4082,7 +4084,7 @@ describe('ComboBox', function () {
       let items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
       expect(items[2].textContent).toBe('Three');
-      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput).toHaveAttribute('aria-activedescendant', items[2].id);
       expect(trayInput.value).toBe('Three');
       expect(items[2]).toHaveAttribute('aria-selected', 'true');
     });

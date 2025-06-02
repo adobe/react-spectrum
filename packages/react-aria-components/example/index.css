@@ -11,8 +11,19 @@ html {
   width: 300px;
   height: 300px;
   overflow: auto;
+
+  :global(.react-aria-DropIndicator) {
+    margin-left: calc(var(--tree-item-level) * 15px);
+  }
+
+  &[data-drop-target] {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
+  }
 }
 
+.tree-loader,
 .tree-item {
   padding: 4px 5px;
   outline: none;
@@ -36,6 +47,11 @@ html {
   [slot=chevron] {
     width: 20px;
     height: 20px;
+    outline: none;
+
+    &[data-focus-visible] {
+      outline: 2px solid purple;
+    }
   }
 
   &.focus-visible {
@@ -51,6 +67,12 @@ html {
   &.selected {
     background: lightseagreen;
     color: white;
+  }
+
+  &.drop-target {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
   }
 }
 
@@ -72,6 +94,9 @@ html {
 
 .item {
   padding: 2px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   outline: none;
   cursor: default;
   color: black;
@@ -465,4 +490,18 @@ html {
   .errorMessage {
     padding-bottom: 10px;
   }
+}
+
+input {
+  outline: none;
+}
+
+[aria-autocomplete][data-focus-visible]{
+  outline: 3px solid blue;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }

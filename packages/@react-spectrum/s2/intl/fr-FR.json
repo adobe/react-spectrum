@@ -2,9 +2,11 @@
   "actionbar.actions": "Actions",
   "actionbar.actionsAvailable": "Actions disponibles.",
   "actionbar.clearSelection": "Supprimer la sélection",
-  "actionbar.selected": "{count, plural, =0 {Aucun élément sélectionné} one {# sélectionné} other {# sélectionnés}}",
+  "actionbar.selected": "{count, plural, =0 {Aucun élément sélectionné} other {# sélectionnés}}",
   "actionbar.selectedAll": "Toute la sélection",
+  "breadcrumbs.more": "Plus d’éléments",
   "button.pending": "En attente",
+  "combobox.noResults":  "Aucun résultat",
   "contextualhelp.help": "Aide",
   "contextualhelp.info": "Informations",
   "dialog.alert": "Alerte",
@@ -17,6 +19,8 @@
   "label.(optional)": "(facultatif)",
   "label.(required)": "(requis)",
   "menu.moreActions": "Autres actions",
+  "notificationbadge.indicatorOnly": "Nouvelle activité",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Sélectionner…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "Afficher moins",
   "tag.noTags": "Aucun",
   "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})",
-  "breadcrumbs.more": "Plus d'éléments"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

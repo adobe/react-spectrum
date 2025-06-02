@@ -30,7 +30,7 @@ export interface TimeFieldProps<T extends TimeValue>
 
 export function TimeField<T extends TimeValue>(
   {label, description, errorMessage, ...props}: TimeFieldProps<T>
-) {
+): ReactNode {
   return (
     <AriaTimeField {...props}>
       <Label>{label}</Label>

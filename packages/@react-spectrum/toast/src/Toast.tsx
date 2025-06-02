@@ -102,11 +102,7 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
           'spectrum-Toast',
           {'focus-ring': isFocusVisible}
         )
-      )}
-      style={{
-        ...styleProps.style,
-        zIndex: props.toast.priority
-      }}>
+      )}>
       <div
         {...contentProps}
         className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>

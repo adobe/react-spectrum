@@ -11,12 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
-import {MyListBoxItem} from './utils';
-import React, {useMemo} from 'react';
+import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {LoadingSpinner, MyListBoxItem} from './utils';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
-import {useListData} from 'react-stately';
+import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
+import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -35,7 +36,8 @@ ListBoxExample.story = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    shouldFocusOnHover: false
+    shouldFocusOnHover: false,
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     selectionMode: {
@@ -45,6 +47,10 @@ ListBoxExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   },
   parameters: {
@@ -246,15 +252,12 @@ export function VirtualizedListBox({variableHeight}) {
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, [variableHeight]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={new ListLayout({
+        estimatedRowHeight: 25,
+        estimatedHeadingHeight: 26
+      })}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
           <ListBoxSection className={styles.group}>
@@ -274,15 +277,13 @@ VirtualizedListBox.args = {
 };
 
 export function VirtualizedListBoxEmpty() {
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        estimatedHeadingHeight: 26
+      }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
         <></>
       </ListBox>
@@ -295,12 +296,6 @@ export function VirtualizedListBoxDnd() {
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
-
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
 
   let list = useListData({
     initialItems: items
@@ -324,7 +319,12 @@ export function VirtualizedListBoxDnd() {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          gap: 8
+        }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
@@ -340,18 +340,11 @@ export function VirtualizedListBoxDnd() {
   );
 }
 
-export function VirtualizedListBoxGrid({minSize, maxSize}) {
+function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
-
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(minSize, minSize),
-      maxItemSize: new Size(maxSize, maxSize)
-    });
-  }, [minSize, maxSize]);
 
   let list = useListData({
     initialItems: items
@@ -375,7 +368,13 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={GridLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize),
+          preserveAspectRatio
+        }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
@@ -392,7 +391,204 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
   );
 }
 
-VirtualizedListBoxGrid.args = {
-  minSize: 80,
-  maxSize: 100
+export const VirtualizedListBoxGrid = {
+  render(args) {
+    return <VirtualizedListBoxGridExample {...args} />;
+  },
+  args: {
+    minSize: 80,
+    maxSize: 100,
+    preserveAspectRatio: false
+  }
+};
+
+let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
+
+export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 1000; i++) {
+    let words = Math.max(2, Math.floor(Math.random() * 25));
+    let name = lorem.slice(0, words).join(' ');
+    items.push({id: i, name});
+  }
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer
+        layout={WaterfallLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize)
+        }}>
+        <ListBox
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          layout="grid"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={items}>
+          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}
+
+let renderEmptyState = ({isLoading}) => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+    </div>
+  );
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const MyListBoxLoaderIndicator = (props) => {
+  let {orientation, ...otherProps} = props;
+  return (
+    <UNSTABLE_ListBoxLoadingSentinel
+      style={{
+        height: orientation === 'horizontal' ? 100 : 30,
+        width: orientation === 'horizontal' ? 30 : '100%',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...otherProps}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_ListBoxLoadingSentinel>
+  );
+};
+
+export const AsyncListBox = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListBox
+      {...args}
+      style={{
+        height: args.orientation === 'horizontal' ? 'fit-content' : 400,
+        width: args.orientation === 'horizontal' ? 400 : 200,
+        overflow: 'auto'
+      }}
+      aria-label="async listbox"
+      renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+      <Collection items={list.items}>
+        {(item: Character) => (
+          <MyListBoxItem
+            style={{
+              minHeight: args.orientation === 'horizontal' ? 100 : 50,
+              minWidth: args.orientation === 'horizontal' ? 50 : 200,
+              backgroundColor: 'lightgrey',
+              border: '1px solid black',
+              boxSizing: 'border-box'
+            }}
+            id={item.name}>
+            {item.name}
+          </MyListBoxItem>
+        )}
+      </Collection>
+      <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+    </ListBox>
+  );
+};
+
+AsyncListBox.story = {
+  args: {
+    orientation: 'horizontal',
+    delay: 50
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
+
+export const AsyncListBoxVirtualized = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 50,
+        padding: 4,
+        loaderHeight: 30
+      }}>
+      <ListBox
+        {...args}
+        style={{
+          height: 400,
+          width: 100,
+          border: '1px solid gray',
+          background: 'lightgray',
+          overflow: 'auto',
+          padding: 'unset',
+          display: 'flex'
+        }}
+        aria-label="async virtualized listbox"
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+        <Collection items={list.items}>
+          {(item: Character) => (
+            <MyListBoxItem
+              style={{
+                backgroundColor: 'lightgrey',
+                border: '1px solid black',
+                boxSizing: 'border-box',
+                height: '100%',
+                width: '100%'
+              }}
+              id={item.name}>
+              {item.name}
+            </MyListBoxItem>
+          )}
+        </Collection>
+        <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+      </ListBox>
+    </Virtualizer>
+  );
+};
+
+AsyncListBoxVirtualized.story = {
+  args: {
+    delay: 50
+  }
 };

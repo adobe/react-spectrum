@@ -15,6 +15,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateField} from '../';
 import {Heading} from '@react-spectrum/text';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 
 export default {
@@ -108,3 +109,104 @@ let contextualHelp = (
 
 export const _ContextualHelp = () => <DateField label="Date" contextualHelp={contextualHelp} value={date} />;
 export const ContextualHelpSideLabel = () => <DateField label="Date" labelPosition="side" contextualHelp={contextualHelp} value={date} />;
+
+export const ArabicAlgeriaPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+ArabicAlgeriaPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['ar-DZ-u-ca-gregory', 'ar-DZ-u-ca-islamic', 'ar-DZ-u-ca-islamic-civil', 'ar-DZ-u-ca-islamic-tbla'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const ArabicUAEPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+ArabicUAEPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['ar-AE-u-ca-gregory', 'ar-AE-u-ca-islamic-umalqura', 'ar-AE-u-ca-islamic', 'ar-AE-u-ca-islamic-civil', 'ar-AE-u-ca-islamic-tbla'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const ArabicEgyptPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+ArabicEgyptPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG-u-ca-gregory', 'ar-EG-u-ca-coptic', 'ar-EG-u-ca-islamic', 'ar-EG-u-ca-islamic-civil', 'ar-EG-u-ca-islamic-tbla'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const ArabicSaudiPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+ArabicSaudiPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['ar-SA-u-ca-islamic-umalqura', 'ar-SA-u-ca-gregory', 'ar-SA-u-ca-islamic', 'ar-SA-u-ca-islamic-rgsa'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+
+export const HebrewPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+HebrewPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['he-IL-u-ca-gregory', 'he-IL-u-ca-hebrew', 'he-IL-u-ca-islamic-civil', 'he-IL-u-ca-islamic-tbla'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const JapanesePreferences = () =>  <Provider><DateField label="Date" value={dateTime} /></Provider>;
+JapanesePreferences.parameters = {
+  chromaticProvider: {
+    locales: ['ja-JP-u-ca-gregory', 'ja-JP-u-ca-japanese'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const ThaiPreferences = () =>  <Provider><DateField label="Date" value={dateTime} /></Provider>;
+ThaiPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['th-TH-u-ca-buddhist', 'th-TH-u-ca-gregory'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const PersianPreferences = () => <Provider><DateField label="Date" value={dateTime} /></Provider>;
+PersianPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['fa-AF-u-ca-persian', 'fa-AF-u-ca-gregory', 'fa-AF-u-ca-islamic-civil', 'fa-AF-u-ca-islamic-tbla'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const IndianPreferences = () =>  <Provider><DateField label="Date" value={dateTime} /></Provider>;
+IndianPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['hi-IN-u-ca-gregory', 'hi-IN-u-ca-indian'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const AmharicPreferences = () =>  <Provider><DateField label="Date" value={dateTime} /></Provider>;
+AmharicPreferences.parameters = {
+  chromaticProvider: {
+    locales: ['am-ET-u-ca-gregory', 'am-ET-u-ca-ethiopic', 'am-ET-u-ca-ethioaa'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};

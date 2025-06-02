@@ -167,7 +167,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
       id: descriptionId
     },
     isFocused,
-    isFocusVisible: isFocused && isFocusVisible(),
+    isFocusVisible: isFocused && state.selectionManager.isFocused && isFocusVisible(),
     isSelected,
     isDisabled,
     isPressed,

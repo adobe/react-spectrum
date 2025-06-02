@@ -34,6 +34,8 @@ export interface TagGroupAria {
 export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
   /** Handler that is called when a user deletes a tag.  */
   onRemove?: (keys: Set<Key>) => void,
   /** An error message for the field. */
@@ -80,7 +82,8 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     ...fieldProps,
     keyboardDelegate,
     shouldFocusWrap: true,
-    linkBehavior: 'override'
+    linkBehavior: 'override',
+    keyboardNavigationBehavior: 'tab'
   }, state, ref);
 
   let [isFocusWithin, setFocusWithin] = useState(false);

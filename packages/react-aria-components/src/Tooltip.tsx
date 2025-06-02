@@ -16,7 +16,7 @@ import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} fr
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
@@ -41,6 +41,7 @@ export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'ar
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   UNSTABLE_portalContainer?: Element,
   /**
@@ -80,7 +81,7 @@ export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivEl
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerComponentProps) {
+export function TooltipTrigger(props: TooltipTriggerComponentProps): JSX.Element {
   let state = useTooltipTriggerState(props);
   let ref = useRef<FocusableElement>(null);
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);

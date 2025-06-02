@@ -55,7 +55,7 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
   label?: ReactNode
 }
 
-export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressBarContext = createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const indeterminateLTR = keyframes(`
   0% {

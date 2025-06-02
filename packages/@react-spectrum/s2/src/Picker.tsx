@@ -18,38 +18,46 @@ import {
   SelectRenderProps as AriaSelectRenderProps,
   Button,
   ButtonRenderProps,
+  Collection,
   ContextValue,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
   ListBoxProps,
+  ListLayout,
   Provider,
   SectionProps,
-  SelectValue
+  SelectValue,
+  UNSTABLE_ListBoxLoadingSentinel,
+  Virtualizer
 } from 'react-aria-components';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
   description,
-  Divider,
   icon,
   iconCenterWrapper,
   label,
-  menuitem,
-  section,
-  sectionHeader,
   sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createHideableComponent} from '@react-aria/collections';
+import {
+  Divider,
+  listbox,
+  listboxHeader,
+  listboxItem,
+  LOADER_ROW_HEIGHTS
+} from './ComboBox';
 import {
   FieldErrorIcon,
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -58,13 +66,16 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 
 export interface PickerStyleProps {
   /**
@@ -87,7 +98,8 @@ export interface PickerProps<T extends object> extends
   SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
-  Pick<AriaPopoverProps, 'shouldFlip'> {
+  Pick<AriaPopoverProps, 'shouldFlip'>,
+  Pick<AsyncLoadable, 'onLoadMore'> {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -103,7 +115,9 @@ export interface PickerProps<T extends object> extends
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-    menuWidth?: number
+    menuWidth?: number,
+    /** The current loading state of the Picker. */
+    loadingState?: LoadingState
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -112,6 +126,7 @@ export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
+  ...control({shape: 'default', icon: true}),
   ...fieldInput(),
   outlineStyle: {
     default: 'none',
@@ -119,8 +134,6 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 'none'
   },
   position: 'relative',
-  font: 'control',
-  display: 'flex',
   textAlign: 'start',
   borderStyle: {
     default: 'none',
@@ -132,14 +145,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
       isDisabled: 'GrayText'
     }
   },
-  borderRadius: 'control',
-  alignItems: 'center',
-  height: 'control',
   transition: 'default',
-  columnGap: {
-    default: 'text-to-control',
-    isQuiet: 'text-to-visual'
-  },
   paddingX: {
     default: 'edge-to-text',
     isQuiet: 0
@@ -151,7 +157,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 'transparent'
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -186,24 +192,25 @@ export let menu = style({
     }
   },
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont(),
+  gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
+  ...controlBorderRadius(),
   position: 'absolute',
   top: 0,
   left: 0,
   bottom: 0,
   right: 0,
   pointerEvents: 'none',
-  borderRadius: 'control',
   borderStyle: 'solid',
   borderWidth: 2,
-  borderColor: 'negative',
+  borderColor: baseColor('negative'),
   transition: 'default'
 });
 
@@ -223,6 +230,29 @@ const iconStyles = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  color: {
+    isLoading: 'disabled'
+  }
+});
+
+const loadingWrapperStyles = style({
+  gridColumnStart: '1',
+  gridColumnEnd: '-1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginY: 8
+});
+
+const progressCircleStyles = style({
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
   }
 });
 
@@ -256,6 +286,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     UNSAFE_style,
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
+    loadingState,
+    onLoadMore,
     ...pickerProps
   } = props;
 
@@ -271,9 +303,42 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     menuOffset = 8;
   }
 
+  let renderer;
+  let showButtonSpinner = useMemo(() => loadingState === 'loading', [loadingState]);
+  let spinnerId = useSlotId([showButtonSpinner]);
+
+  let listBoxLoadingCircle = (
+    <UNSTABLE_ListBoxLoadingSentinel
+      className={loadingWrapperStyles}
+      isLoading={loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}>
+      <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
+    </UNSTABLE_ListBoxLoadingSentinel>
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items}>
+          {children}
+        </Collection>
+        {listBoxLoadingCircle}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {listBoxLoadingCircle}
+      </>
+    );
+  }
+  let scale = useScale();
+
   return (
     <AriaSelect
       {...pickerProps}
+      aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
@@ -295,64 +360,21 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
-            <Button
-              ref={domRef}
-              style={renderProps => pressScale(domRef)(renderProps)}
-              // Prevent press scale from sticking while Picker is open.
-              // @ts-ignore
-              isPressed={false}
-              className={renderProps => inputButton({
-                ...renderProps,
-                size: size,
-                isOpen,
-                isQuiet
-              })}>
-              {(renderProps) => (
-                <>
-                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-                    {({defaultChildren}) => {
-                      return (
-                        <Provider
-                          values={[
-                            [IconContext, {
-                              slots: {
-                                icon: {
-                                  render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                                  styles: icon
-                                }
-                              }
-                            }],
-                            [TextContext, {
-                              slots: {
-                                description: {},
-                                label: {styles: style({
-                                  display: 'block',
-                                  flexGrow: 1,
-                                  truncate: true
-                                })}
-                              }
-                            }],
-                            [InsideSelectValueContext, true]
-                          ]}>
-                          {defaultChildren}
-                        </Provider>
-                      );
-                    }}
-                  </SelectValue>
-                  {isInvalid && (
-                    <FieldErrorIcon isDisabled={isDisabled} />
-                  )}
-                  <ChevronIcon
-                    size={size}
-                    className={iconStyles} />
-                  {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                  {isInvalid && !isDisabled && !isQuiet &&
-                    // @ts-ignore known limitation detecting functions from the theme
-                    <div className={invalidBorder({...renderProps, size})} />
-                  }
-                </>
-              )}
-            </Button>
+            <PickerButton
+              loadingState={loadingState}
+              isOpen={isOpen}
+              isQuiet={isQuiet}
+              isFocusVisible={isFocusVisible}
+              size={size}
+              isInvalid={isInvalid}
+              isDisabled={isDisabled}
+              buttonRef={domRef}
+              loadingCircle={
+                <PickerProgressCircle
+                  id={spinnerId}
+                  size={size}
+                  aria-label={stringFormatter.format('table.loading')} />
+              } />
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -360,48 +382,173 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <PopoverBase
-              hideArrow
-              offset={menuOffset}
-              placement={`${direction} ${align}` as Placement}
-              shouldFlip={shouldFlip}
-              UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
-              }}
-              styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
-                minWidth: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: 192
-                },
-                width: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
-                }
-              })(props)}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <ListBox
-                  items={items}
-                  className={menu({size})}>
-                  {children}
-                </ListBox>
-              </Provider>
-            </PopoverBase>
+            <Virtualizer
+              layout={ListLayout}
+              layoutOptions={{
+                estimatedRowHeight: 32,
+                estimatedHeadingHeight: 50,
+                padding: 8,
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
+              <PopoverBase
+                hideArrow
+                offset={menuOffset}
+                placement={`${direction} ${align}` as Placement}
+                shouldFlip={shouldFlip}
+                UNSAFE_style={{
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                }}
+                styles={style({
+                  marginStart: {
+                    isQuiet: -12
+                  },
+                  minWidth: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: 192
+                  },
+                  width: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                  }
+                })(props)}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: listboxHeader({size})}],
+                    [HeadingContext, {
+                      // @ts-ignore
+                      role: 'presentation',
+                      styles: sectionHeading
+                    }],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
+                  <ListBox
+                    items={items}
+                    className={listbox({size})}>
+                    {renderer}
+                  </ListBox>
+                </Provider>
+              </PopoverBase>
+            </Virtualizer>
           </InternalPickerContext.Provider>
         </>
       )}
     </AriaSelect>
+  );
+});
+
+function PickerProgressCircle(props) {
+  let {
+    id,
+    size,
+    'aria-label': ariaLabel
+  } = props;
+  return (
+    <ProgressCircle
+      id={id}
+      isIndeterminate
+      size="S"
+      aria-label={ariaLabel}
+      styles={progressCircleStyles({size})} />
+  );
+}
+
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
+  loadingCircle: ReactNode,
+  buttonRef: RefObject<HTMLButtonElement | null>
+}
+
+// Needs to be hidable component or otherwise the PressResponder throws a warning when rendered in the fake DOM and tries to register
+const PickerButton = createHideableComponent(function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
+  let {
+    isOpen,
+    isQuiet,
+    isFocusVisible,
+    size,
+    isInvalid,
+    isDisabled,
+    loadingState,
+    loadingCircle,
+    buttonRef
+  } = props;
+
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
+  return (
+    <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+      <Button
+        ref={buttonRef}
+        style={renderProps => pressScale(buttonRef)(renderProps)}
+        // Prevent press scale from sticking while Picker is open.
+        // @ts-ignore
+        isPressed={false}
+        className={renderProps => inputButton({
+          ...renderProps,
+          size: size,
+          isOpen,
+          isQuiet
+        })}>
+        {(renderProps) => (
+          <>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+              {({defaultChildren}) => {
+                return (
+                  <Provider
+                    values={[
+                      [IconContext, {
+                        slots: {
+                          icon: {
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                            styles: icon
+                          }
+                        }
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {},
+                          label: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })}
+                        }
+                      }],
+                      [InsideSelectValueContext, true]
+                    ]}>
+                    {defaultChildren}
+                  </Provider>
+                );
+              }}
+            </SelectValue>
+            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+            {loadingState === 'loading' && !isOpen && loadingCircle}
+            <ChevronIcon
+              size={size}
+              className={iconStyles({isLoading: loadingState === 'loading'})} />
+            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+            {isInvalid && !isDisabled && !isQuiet &&
+              // @ts-ignore known limitation detecting functions from the theme
+              <div className={invalidBorder({...renderProps, size})} />
+            }
+          </>
+        )}
+      </Button>
+    </PressResponder>
   );
 });
 
@@ -416,7 +563,7 @@ const checkmarkIconSize = {
   XL: 'XL'
 } as const;
 
-export function PickerItem(props: PickerItemProps) {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
@@ -426,7 +573,7 @@ export function PickerItem(props: PickerItemProps) {
       ref={ref}
       textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, size, isLink}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
         return (
@@ -464,16 +611,15 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
 }
 
 export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
-export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
+export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (
     <>
       <AriaListBoxSection
-        {...props}
-        className={section({size})}>
+        {...props}>
         {props.children}
       </AriaListBoxSection>
-      <Divider />
+      <Divider size={size} />
     </>
   );
 }

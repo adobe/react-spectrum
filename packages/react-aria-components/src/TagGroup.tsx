@@ -202,7 +202,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
 export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
-  let {focusProps, isFocusVisible} = useFocusRing({within: true});
+  let {focusProps, isFocusVisible} = useFocusRing({within: false});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
@@ -227,7 +227,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
   });
 
   useEffect(() => {
-    if (!item.textValue) {
+    if (!item.textValue && process.env.NODE_ENV !== 'production') {
       console.warn('A `textValue` prop is required for <Tag> elements with non-plain text children for accessibility.');
     }
   }, [item.textValue]);

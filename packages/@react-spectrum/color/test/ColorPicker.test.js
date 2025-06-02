@@ -22,7 +22,12 @@ describe('ColorPicker', function () {
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     jest.useFakeTimers();
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {

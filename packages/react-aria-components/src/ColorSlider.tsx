@@ -1,14 +1,12 @@
-import {AriaColorSliderProps} from '@react-types/color';
+import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'react-aria';
 import {ColorSliderContext} from './RSPContexts';
-import {ColorSliderState, useColorSliderState} from '@react-stately/color';
+import {ColorSliderState, useColorSliderState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';
-import {Orientation, useLocale} from 'react-aria';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SliderOutputContext, SliderStateContext, SliderTrackContext} from './Slider';
-import {useColorSlider} from '@react-aria/color';
 
 export interface ColorSliderRenderProps {
   /**

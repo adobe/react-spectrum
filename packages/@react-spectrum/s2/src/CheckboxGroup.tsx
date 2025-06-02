@@ -41,7 +41,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * By default, checkboxes are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
@@ -49,7 +49,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   isEmphasized?: boolean
 }
 
-export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+export const CheckboxGroupContext = createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
@@ -85,7 +85,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: 'calc(var(--field-height) - 1lh)'
         }
       }, getAllowedOverrides())({
         size: props.size,

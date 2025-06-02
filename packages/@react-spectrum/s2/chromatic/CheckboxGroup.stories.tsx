@@ -65,7 +65,7 @@ export const Horizontal = {
   render: Template,
   args: {
     combos: chunks[0],
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
+    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
     orientation: 'horizontal'
   }
 };
@@ -106,7 +106,7 @@ export const Vertical = {
   render: Template,
   args: {
     combos: chunks[0],
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
+    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
     orientation: 'vertical'
   }
 };
@@ -157,7 +157,7 @@ export const ContextualHelpStories = {
   render: Template,
   args: {
     combos: contextualHelpChunks[0],
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
+    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
     orientation: 'horizontal',
     contextualHelp: (
       <ContextualHelp>
@@ -188,7 +188,7 @@ export const ContextualHelpVertical = {
   render: Template,
   args: {
     ...ContextualHelpStories.args,
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
+    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
     orientation: 'vertical'
   }
 };

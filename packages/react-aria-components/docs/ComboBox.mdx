@@ -87,6 +87,11 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 .react-aria-ComboBox {
   color: var(--text-color);
 
+  > div:has(.react-aria-Input) {
+    display: flex;
+    align-items: center;
+  }
+
   .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
@@ -96,9 +101,10 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     border-radius: 6px;
     padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
+    outline: none;
+    min-width: 0;
 
     &[data-focused] {
-      outline: none;
       outline: 2px solid var(--focus-ring-color);
       outline-offset: -1px;
     }
@@ -116,6 +122,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     padding: 0;
     font-size: 0.857rem;
     cursor: default;
+    flex-shrink: 0;
 
     &[data-pressed] {
       box-shadow: none;
@@ -140,7 +147,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
   }
 
   .react-aria-ListBoxItem {
-    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+    padding: 0 0.571rem 0 1.571rem;
 
     &[data-focus-visible] {
       outline: none;
@@ -183,6 +190,8 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `ComboBox`.
+
+For more flexibility when building patterns such as command palettes, searchable menus, or filterable selects, see the [Autocomplete](Autocomplete.html) component.
 
 ## Anatomy
 
@@ -1275,7 +1284,7 @@ A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector,
 
 <StateTable properties={docs.exports.ListBoxItemRenderProps.properties} />
 
-Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 

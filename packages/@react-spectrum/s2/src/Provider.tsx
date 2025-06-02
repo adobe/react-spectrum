@@ -50,7 +50,7 @@ export interface ProviderProps extends UnsafeStyles {
 
 export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | null>(null);
 
-export function Provider(props: ProviderProps) {
+export function Provider(props: ProviderProps): ReactNode {
   let result = <ProviderInner {...props} />;
   let parentColorScheme = useContext(ColorSchemeContext);
   let colorScheme = props.colorScheme || parentColorScheme;

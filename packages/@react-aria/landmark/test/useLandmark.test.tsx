@@ -15,11 +15,11 @@ import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {createLandmarkController, useLandmark} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_createLandmarkController, useLandmark} from '../';
 import {useFocusableRef} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1214,7 +1214,7 @@ describe('LandmarkManager', function () {
       await user.keyboard('{F6}');
       expect(onLandmarkNavigation).not.toHaveBeenCalled();
 
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
 
       await user.keyboard('{F6}');
       expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
@@ -1247,7 +1247,7 @@ describe('LandmarkManager', function () {
       await user.tab();
       expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
 
       act(() => {controller.focusNext();});
       expect(document.activeElement).toBe(tree.getByRole('main'));
@@ -1276,7 +1276,7 @@ describe('LandmarkManager', function () {
 
       act(() => tree.getByRole('textbox').focus());
 
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
 
       act(() => {controller.focusPrevious();});
       expect(document.activeElement).toBe(tree.getByRole('navigation'));
@@ -1305,7 +1305,7 @@ describe('LandmarkManager', function () {
 
       act(() => tree.getByRole('textbox').focus());
 
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
 
       act(() => {controller.focusMain();});
       expect(document.activeElement).toBe(tree.getByRole('main'));
@@ -1317,7 +1317,7 @@ describe('LandmarkManager', function () {
   describe('singleton', function () {
     it('should store the landmark manager on the document', function () {
       // ensure a manager exists.
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
       let manager = document[Symbol.for('react-aria-landmark-manager')];
       expect(manager).toBeDefined();
       expect(typeof manager.version).toBe('number');
@@ -1335,7 +1335,7 @@ describe('LandmarkManager', function () {
         </div>
       );
 
-      let controller = createLandmarkController();
+      let controller = UNSTABLE_createLandmarkController();
       let newController = {
         navigate: jest.fn(),
         focusNext: jest.fn(),

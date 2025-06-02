@@ -2,9 +2,11 @@
   "actionbar.actions": "Aktionen",
   "actionbar.actionsAvailable": "Aktionen verfügbar.",
   "actionbar.clearSelection": "Auswahl löschen",
-  "actionbar.selected": "{count, plural, =0 {Nichts ausgewählt} one {# ausgewählt} other {# ausgewählt}}",
+  "actionbar.selected": "{count, plural, =0 {Keine ausgewählt} other {# ausgewählt}}",
   "actionbar.selectedAll": "Alles ausgewählt",
+  "breadcrumbs.more": "Weitere Elemente",
   "button.pending": "Ausstehend",
+  "combobox.noResults": "Keine Ergebnisse",
   "contextualhelp.help": "Hilfe",
   "contextualhelp.info": "Informationen",
   "dialog.alert": "Warnhinweis",
@@ -17,6 +19,8 @@
   "label.(optional)": "(optional)",
   "label.(required)": "(erforderlich)",
   "menu.moreActions": "Mehr Aktionen",
+  "notificationbadge.indicatorOnly": "Neue Aktivität",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Auswählen…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "Weniger zeigen",
   "tag.noTags": "Keine",
   "tag.showAllButtonLabel": "Alle anzeigen ({tagCount, number})",
-  "breadcrumbs.more": "Weitere Elemente"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

@@ -93,6 +93,9 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
+// Contexts to clear inside the popover.
+const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
+
 interface ComboBoxInnerProps<T extends object> {
   props: ComboBoxProps<T>,
   collection: Collection<Node<T>>,
@@ -197,7 +200,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           placement: 'bottom start',
           isNonModal: true,
           trigger: 'ComboBox',
-          style: {'--trigger-width': menuWidth} as React.CSSProperties
+          style: {'--trigger-width': menuWidth} as React.CSSProperties,
+          clearContexts: CLEAR_CONTEXTS
         }],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
         [ListStateContext, state],

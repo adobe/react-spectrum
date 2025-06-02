@@ -2,9 +2,11 @@
   "actionbar.actions": "Toiminnot",
   "actionbar.actionsAvailable": "Toiminnot käytettävissä.",
   "actionbar.clearSelection": "Poista valinta",
-  "actionbar.selected": "{count, plural, =0 {Ei mitään valittu} other {# valittu}}",
+  "actionbar.selected": "{count, plural, =0 {Ei yhtään valittu} other {# valittu}}",
   "actionbar.selectedAll": "Kaikki valittu",
+  "breadcrumbs.more": "Lisää kohteita",
   "button.pending": "odottaa",
+  "combobox.noResults": "Ei tuloksia",
   "contextualhelp.help": "Ohje",
   "contextualhelp.info": "Tiedot",
   "dialog.alert": "Hälytys",
@@ -17,6 +19,8 @@
   "label.(optional)": "(valinnainen)",
   "label.(required)": "(pakollinen)",
   "menu.moreActions": "Lisää toimintoja",
+  "notificationbadge.indicatorOnly": "Uusi toiminta",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Valitse…",
   "slider.maximum": "Maksimi",
   "slider.minimum": "Minimi",
@@ -29,5 +33,7 @@
   "tag.hideButtonLabel": "Näytä vähemmän",
   "tag.noTags": "Ei mitään",
   "tag.showAllButtonLabel": "Näytä kaikki ({tagCount, number})",
-  "breadcrumbs.more": "Lisää kohteita"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

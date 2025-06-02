@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
-import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
+import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
+import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, rawColorToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -26,7 +26,7 @@ function pxToRem(px: string | number) {
   return px / 16 + 'rem';
 }
 
-const color = {
+const baseColors = {
   transparent: 'transparent',
   black: 'black',
   white: 'white',
@@ -74,41 +74,135 @@ const color = {
   LinkText: 'LinkText'
 };
 
-export function baseColor(base: keyof typeof color) {
-  let keys = Object.keys(color) as (keyof typeof color)[];
-  let index = keys.indexOf(base);
-  if (index === -1) {
-    throw new Error('Invalid base color ' + base);
+// Resolves a color to its most basic form, following all aliases.
+function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
+  if (typeof token === 'string') {
+    return {
+      type: 'color',
+      light: token,
+      dark: token
+    };
   }
 
+  if (token.type === 'color') {
+    return token;
+  }
+
+  let lightToken = baseColors[token.light];
+  if (!lightToken) {
+    throw new Error(`${token.light} is not a valid color reference`);
+  }
+  let darkToken = baseColors[token.dark];
+  if (!darkToken) {
+    throw new Error(`${token.dark} is not a valid color reference`);
+  }
+
+  let light = resolveColorToken(lightToken);
+  let dark = resolveColorToken(darkToken);
   return {
-    default: base,
-    isHovered: keys[index + 1],
-    isFocusVisible: keys[index + 1],
-    isPressed: keys[index + 1]
+    type: 'color',
+    light: light.light,
+    dark: dark.dark
   };
 }
 
-type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
-function parseColor(value: SpectrumColor) {
+function colorTokenToString(token: ColorToken, opacity?: string | number) {
+  let result = token.light === token.dark ? token.light : `light-dark(${token.light}, ${token.dark})`;
+  if (opacity) {
+    result = `rgb(from ${result} r g b / ${opacity}%)`;
+  }
+  return result;
+}
+
+// Bumps up a color token by one stop, e.g. for hover/press states.
+let colorList = Object.keys(baseColors);
+function nextColorStop(name: string, token: string | ColorToken | ColorRef): ColorToken {
+  if (typeof token === 'object' && token.type === 'ref') {
+    let light = nextColorStop(token.light, baseColors[token.light]);
+    let dark = nextColorStop(token.dark, baseColors[token.dark]);
+
+    return {
+      type: 'color',
+      light: light.light,
+      dark: dark.dark,
+      forcedColors: token.forcedColors
+    };
+  }
+
+  let index = colorList.indexOf(name);
+  if (index === -1) {
+    throw new Error(`${name} does not support states`);
+  }
+
+  let key = colorList[index + 1];
+  if (key.split('-')[0] !== name.split('-')[0]) {
+    throw new Error(`${name} does not support states`);
+  }
+
+  return resolveColorToken(baseColors[key]);
+}
+
+class SpectrumColorProperty<C extends string> extends ArbitraryProperty<C> {
+  mapping: {[name in C]: string | ColorToken | ColorRef};
+
+  constructor(property: string, mapping: {[name in C]: string | ColorToken | ColorRef}) {
+    super(property);
+    this.mapping = mapping;
+  }
+
+  toCSSValue(value: Color<C>): PropertyValueDefinition<Value> {
+    let [colorWithOpacity, state] = value.split(':');
+    let [color, opacity] = colorWithOpacity.split('/');
+    let token: string | ColorToken | ColorRef = this.mapping[color];
+    if (!token) {
+      throw new Error('Invalid color ' + value);
+    }
+
+    if (state === 'hovered' || state === 'pressed' || state === 'focused') {
+      token = nextColorStop(color, token);
+    } else {
+      token = resolveColorToken(token);
+    }
+
+    let result = colorTokenToString(token, opacity);
+    if (token.forcedColors) {
+      return {
+        default: result,
+        forcedColors: token.forcedColors
+      };
+    }
+
+    return result;
+  }
+}
+
+type BaseColor = keyof typeof baseColors;
+
+export function baseColor<C extends string = BaseColor>(base: BaseColor | C): {default: C, isHovered: C, isFocusVisible: C, isPressed: C} {
+  return {
+    default: base as C,
+    isHovered: `${base}:hovered` as C,
+    isFocusVisible: `${base}:focused` as C,
+    isPressed: `${base}:pressed` as C
+  };
+}
+
+type SpectrumColor = Color<BaseColor> | ArbitraryValue;
+export function color(value: SpectrumColor): string {
   let arbitrary = parseArbitraryValue(value);
   if (arbitrary) {
-    return arbitrary[0];
+    return arbitrary;
   }
   let [colorValue, opacity] = value.split('/');
-  colorValue = color[colorValue];
-  if (opacity) {
-    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
-  }
-  return colorValue;
+  return colorTokenToString(resolveColorToken(baseColors[colorValue]), opacity);
 }
 
 export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
-  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+  return `[light-dark(${color(light)}, ${color(dark)})]`;
 }
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
-  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+  return `[color-mix(in srgb, ${color(a)}, ${color(b)} ${percent}%)]`;
 }
 
 interface LinearGradient {
@@ -142,15 +236,18 @@ export function linearGradient(this: MacroContext | void, angle: string, ...toke
   }];
 }
 
-function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
-  let res: any = {};
+// Spacing uses rems, padding does not.
+function generateSpacing<K extends number[]>(px: K): {spacing: {[P in K[number]]: string}, padding: {[P in K[number]]: string}} {
+  let spacing: any = {};
+  let padding: any = {};
   for (let p of px) {
-    res[p] = pxToRem(p);
+    spacing[p] = pxToRem(p);
+    padding[p] = p + 'px';
   }
-  return res;
+  return {spacing, padding};
 }
 
-const baseSpacing = generateSpacing([
+const {spacing: baseSpacing, padding: basePadding} = generateSpacing([
   0,
   2, // spacing-50
   4, // spacing-75
@@ -169,27 +266,13 @@ const baseSpacing = generateSpacing([
   // From here onward the values are mostly spaced by 1rem (16px)
   64, // spacing-800
   80, // spacing-900
-  96, // spacing-1000
-  // TODO: should these only be available as sizes rather than spacing?
-  112,
-  128,
-  144,
-  160,
-  176,
-  192,
-  208,
-  224,
-  240,
-  256,
-  288,
-  320,
-  384
+  96 // spacing-1000
 ] as const);
 
 // This should match the above, but negative. There's no way to negate a number
 // type in typescript so this has to be done manually for now.
-const negativeSpacing = generateSpacing([
-  // -2, // spacing-50 !! TODO: should we support this?
+const {spacing: negativeSpacing, padding: negativePadding} = generateSpacing([
+  -2, // spacing-50
   -4, // spacing-75
   -8, // spacing-100
   -12, // spacing-200
@@ -206,38 +289,26 @@ const negativeSpacing = generateSpacing([
   // From here onward the values are mostly spaced by 1rem (16px)
   -64, // spacing-800
   -80, // spacing-900
-  -96, // spacing-1000
-  // TODO: should these only be available as sizes rather than spacing?
-  -112,
-  -128,
-  -144,
-  -160,
-  -176,
-  -192,
-  -208,
-  -224,
-  -240,
-  -256,
-  -288,
-  -320,
-  -384
+  -96 // spacing-1000
 ] as const);
 
-export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
+export type PositiveSpacing = keyof typeof baseSpacing;
+export type NegativeSpacing = keyof typeof negativeSpacing;
+export type Spacing = PositiveSpacing | NegativeSpacing;
+
+export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
   return (base / baseFontSize) + 'em';
 }
 
-export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
+export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing): string {
   return `calc(${baseSpacing[height]} * 3 / 8)`;
 }
 
-export function space(this: MacroContext | void, px: number) {
+export function space(this: MacroContext | void, px: number): string {
   return pxToRem(px);
 }
 
-const spacing = {
-  ...baseSpacing,
-
+const relativeSpacing = {
   // font-size relative values
   'text-to-control': fontRelative(10),
   'text-to-visual': {
@@ -247,9 +318,19 @@ const spacing = {
   // height relative values
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
   'pill': 'calc(self(height, self(minHeight)) / 2)'
+} as const;
+
+const spacing = {
+  ...baseSpacing,
+  ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number) {
+const padding = {
+  ...basePadding,
+  ...relativeSpacing
+};
+
+export function size(this: MacroContext | void, px: number): string {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
@@ -258,27 +339,7 @@ const sizing = {
   full: '100%',
   min: 'min-content',
   max: 'max-content',
-  fit: 'fit-content',
-
-  control: {
-    default: size(32),
-    size: {
-      XS: size(20),
-      S: size(24),
-      L: size(40),
-      XL: size(48)
-    }
-  },
-  // With browser support for round() we could do this:
-  // 'control-sm': `round(${16 / 14}em, 2px)`
-  'control-sm': {
-    default: size(16),
-    size: {
-      S: size(14),
-      L: size(18),
-      XL: size(20)
-    }
-  }
+  fit: 'fit-content'
 };
 
 const height = {
@@ -291,8 +352,8 @@ const width = {
   screen: '100vw'
 };
 
-function createSpectrumSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>) {
-  return createSizingProperty(values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
+function createSpectrumSizingProperty<T extends CSSValue>(property: string, values: PropertyValueMap<T>) {
+  return new SizingProperty(property, values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
 }
 
 const margin = {
@@ -302,16 +363,19 @@ const margin = {
 };
 
 const inset = {
-  ...baseSpacing,
+  ...basePadding,
+  ...negativePadding,
   auto: 'auto',
   full: '100%'
 };
 
+export type Inset = keyof typeof inset;
+
 const translate = {
-  ...baseSpacing,
-  ...negativeSpacing,
+  ...basePadding,
+  ...negativePadding,
   full: '100%'
-};
+} as const;
 
 const borderWidth = {
   0: '0px',
@@ -320,19 +384,6 @@ const borderWidth = {
   4: getToken('border-width-400')
 };
 
-const borderColor = createColorProperty({
-  ...color,
-  negative: {
-    default: colorToken('negative-border-color-default'),
-    isHovered: colorToken('negative-border-color-hover'),
-    isFocusVisible: colorToken('negative-border-color-key-focus'),
-    isPressed: colorToken('negative-border-color-down')
-  },
-  disabled: colorToken('disabled-border-color')
-    // forcedColors: 'GrayText'
-
-});
-
 const radius = {
   none: getToken('corner-radius-none'), // 0px
   sm: pxToRem(getToken('corner-radius-small-default')), // 4px
@@ -340,9 +391,7 @@ const radius = {
   lg: pxToRem(getToken('corner-radius-large-default')), // 10px
   xl: pxToRem(getToken('corner-radius-extra-large-default')), // 16px
   full: '9999px',
-  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
-  control: fontRelative(8), // automatic based on font size (e.g. t-shirt size logarithmic scale)
-  'control-sm': fontRelative(4)
+  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)'
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
@@ -362,8 +411,8 @@ let gridTrackSize = (value: GridTrackSize) => {
 const transitionProperty = {
   // var(--gp) is generated by the backgroundImage property when setting a gradient.
   // It includes a list of all of the custom properties used for each color stop.
-  default: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
-  colors: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke',
+  default: 'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
+  colors: 'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
   transform: 'transform, translate, scale, rotate',
@@ -380,19 +429,31 @@ const timingFunction = {
   'in-out': 'cubic-bezier(0.45, 0, 0.4, 1)'
 };
 
-// TODO: do these need tokens or are arbitrary values ok?
-let durationProperty = createArbitraryProperty((value: number | string, property) => ({[property]: typeof value === 'number' ? value + 'ms' : value}));
-
-// const colorWithAlpha = createColorProperty(color);
+let durationValue = (value: number | string) => typeof value === 'number' ? value + 'ms' : value;
 
 const fontWeightBase = {
   light: '300',
-  // TODO: spectrum calls this "regular" but CSS calls it "normal". We also call other properties "default". What do we want to match?
   normal: '400',
   medium: '500',
   bold: '700',
   'extra-bold': '800',
   black: '900'
+} as const;
+
+const fontWeight = {
+  ...fontWeightBase,
+  heading: {
+    default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
+  },
+  title: {
+    default: fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
+  },
+  detail: {
+    default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
+  }
 } as const;
 
 const i18nFonts = {
@@ -415,16 +476,6 @@ const fontSize = {
   'ui-xl': fontSizeToken('font-size-300'),
   'ui-2xl': fontSizeToken('font-size-400'),
   'ui-3xl': fontSizeToken('font-size-500'),
-
-  control: {
-    default: fontSizeToken('font-size-100'),
-    size: {
-      XS: fontSizeToken('font-size-50'),
-      S: fontSizeToken('font-size-75'),
-      L: fontSizeToken('font-size-200'),
-      XL: fontSizeToken('font-size-300')
-    }
-  },
 
   'heading-2xs': fontSizeToken('heading-size-xxs'),
   'heading-xs': fontSizeToken('heading-size-xs'),
@@ -468,39 +519,13 @@ const fontSize = {
 export const style = createTheme({
   properties: {
     // colors
-    color: createColorProperty({
-      ...color,
-      accent: {
-        default: colorToken('accent-content-color-default'),
-        isHovered: colorToken('accent-content-color-hover'),
-        isFocusVisible: colorToken('accent-content-color-key-focus'),
-        isPressed: colorToken('accent-content-color-down')
-        // isSelected: colorToken('accent-content-color-selected'), // same as pressed
-      },
-      neutral: {
-        default: colorToken('neutral-content-color-default'),
-        isHovered: colorToken('neutral-content-color-hover'),
-        isFocusVisible: colorToken('neutral-content-color-key-focus'),
-        isPressed: colorToken('neutral-content-color-down')
-        // isSelected: colorToken('neutral-subdued-content-color-selected'),
-      },
-      'neutral-subdued': {
-        default: colorToken('neutral-subdued-content-color-default'),
-        isHovered: colorToken('neutral-subdued-content-color-hover'),
-        isFocusVisible: colorToken('neutral-subdued-content-color-key-focus'),
-        isPressed: colorToken('neutral-subdued-content-color-down')
-        // isSelected: colorToken('neutral-subdued-content-color-selected'),
-      },
-      negative: {
-        default: colorToken('negative-content-color-default'),
-        isHovered: colorToken('negative-content-color-hover'),
-        isFocusVisible: colorToken('negative-content-color-key-focus'),
-        isPressed: colorToken('negative-content-color-down')
-      },
-      disabled: {
-        default: colorToken('disabled-content-color')
-        // forcedColors: 'GrayText'
-      },
+    color: new SpectrumColorProperty('color', {
+      ...baseColors,
+      accent: colorToken('accent-content-color-default'),
+      neutral: colorToken('neutral-content-color-default'),
+      'neutral-subdued': colorToken('neutral-subdued-content-color-default'),
+      negative: colorToken('negative-content-color-default'),
+      disabled: colorToken('disabled-content-color'),
       heading: colorToken('heading-color'),
       title: colorToken('title-color'),
       body: colorToken('body-color'),
@@ -508,48 +533,18 @@ export const style = createTheme({
       code: colorToken('code-color'),
       auto: autoStaticColor('self(backgroundColor, var(--s2-container-bg))')
     }),
-    backgroundColor: createColorProperty({
-      ...color,
-      accent: {
-        default: weirdColorToken('accent-background-color-default'),
-        isHovered: weirdColorToken('accent-background-color-hover'),
-        isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
-        isPressed: weirdColorToken('accent-background-color-down')
-      },
+    backgroundColor: new SpectrumColorProperty('backgroundColor', {
+      ...baseColors,
+      accent: weirdColorToken('accent-background-color-default'),
       'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
-      neutral: {
-        default: colorToken('neutral-background-color-default'),
-        isHovered: colorToken('neutral-background-color-hover'),
-        isFocusVisible: colorToken('neutral-background-color-key-focus'),
-        isPressed: colorToken('neutral-background-color-down')
-      },
-      'neutral-subdued': {
-        default: weirdColorToken('neutral-subdued-background-color-default'),
-        isHovered: weirdColorToken('neutral-subdued-background-color-hover'),
-        isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
-        isPressed: weirdColorToken('neutral-subdued-background-color-down')
-      },
+      neutral: colorToken('neutral-background-color-default'),
+      'neutral-subdued': weirdColorToken('neutral-subdued-background-color-default'),
       'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
-      negative: {
-        default: weirdColorToken('negative-background-color-default'),
-        isHovered: weirdColorToken('negative-background-color-hover'),
-        isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
-        isPressed: weirdColorToken('negative-background-color-down')
-      },
+      negative: weirdColorToken('negative-background-color-default'),
       'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
-      informative: {
-        default: weirdColorToken('informative-background-color-default'),
-        isHovered: weirdColorToken('informative-background-color-hover'),
-        isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
-        isPressed: weirdColorToken('informative-background-color-down')
-      },
+      informative: weirdColorToken('informative-background-color-default'),
       'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
-      positive: {
-        default: weirdColorToken('positive-background-color-default'),
-        isHovered: weirdColorToken('positive-background-color-hover'),
-        isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
-        isPressed: weirdColorToken('positive-background-color-down')
-      },
+      positive: weirdColorToken('positive-background-color-default'),
       'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
       'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
@@ -598,18 +593,19 @@ export const style = createTheme({
       pasteboard: weirdColorToken('background-pasteboard-color'),
       elevated: weirdColorToken('background-elevated-color')
     }),
-
-    outlineColor: createColorProperty({
-      ...color,
+    borderColor: new SpectrumColorProperty('borderColor', {
+      ...baseColors,
+      negative: colorToken('negative-border-color-default'),
+      disabled: colorToken('disabled-border-color')
+    }),
+    outlineColor: new SpectrumColorProperty('outlineColor', {
+      ...baseColors,
       'focus-ring': {
-        default: colorToken('focus-indicator-color'),
+        ...colorToken('focus-indicator-color'),
         forcedColors: 'Highlight'
       }
     }),
-    // textDecorationColor: colorWithAlpha,
-    // accentColor: colorWithAlpha,
-    // caretColor: colorWithAlpha,
-    fill: createColorProperty({
+    fill: new SpectrumColorProperty('fill', {
       none: 'none',
       currentColor: 'currentColor',
       accent: weirdColorToken('accent-visual-color'),
@@ -637,98 +633,100 @@ export const style = createTheme({
       cinnamon: weirdColorToken('cinnamon-visual-color'),
       brown: weirdColorToken('brown-visual-color'),
       silver: weirdColorToken('silver-visual-color'),
-      ...color
+      ...baseColors
     }),
-    stroke: createColorProperty({
+    stroke: new SpectrumColorProperty('stroke', {
       none: 'none',
       currentColor: 'currentColor',
-      ...color
+      ...baseColors
     }),
 
     // dimensions
     borderSpacing: baseSpacing, // TODO: separate x and y
-    flexBasis: {
+    flexBasis: createSpectrumSizingProperty('flexBasis', {
       auto: 'auto',
-      full: '100%',
-      ...baseSpacing
-    },
+      full: '100%'
+    }),
     rowGap: spacing,
     columnGap: spacing,
-    height: createSpectrumSizingProperty(height),
-    width: createSpectrumSizingProperty(width),
-    containIntrinsicWidth: createSpectrumSizingProperty(width),
-    containIntrinsicHeight: createSpectrumSizingProperty(height),
-    minHeight: createSpectrumSizingProperty(height),
-    maxHeight: createSpectrumSizingProperty({
+    height: createSpectrumSizingProperty('height', height),
+    width: createSpectrumSizingProperty('width', width),
+    containIntrinsicWidth: createSpectrumSizingProperty('containIntrinsicWidth', width),
+    containIntrinsicHeight: createSpectrumSizingProperty('containIntrinsicHeight', height),
+    minHeight: createSpectrumSizingProperty('minHeight', height),
+    maxHeight: createSpectrumSizingProperty('maxHeight', {
       ...height,
       none: 'none'
     }),
-    minWidth: createSpectrumSizingProperty(width),
-    maxWidth: createSpectrumSizingProperty({
+    minWidth: createSpectrumSizingProperty('minWidth', width),
+    maxWidth: createSpectrumSizingProperty('maxWidth', {
       ...width,
       none: 'none'
     }),
-    borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
-    borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
+    borderStartWidth: new MappedProperty('borderInlineStartWidth', borderWidth),
+    borderEndWidth: new MappedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
     borderBottomWidth: borderWidth,
-    borderInlineStartColor: borderColor, // don't know why i can't use renamed
-    borderInlineEndColor: borderColor,
-    borderTopColor: borderColor,
-    borderBottomColor: borderColor,
     borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
     strokeWidth: {
       0: '0',
       1: '1',
       2: '2'
     },
-    marginStart: createRenamedProperty('marginInlineStart', margin),
-    marginEnd: createRenamedProperty('marginInlineEnd', margin),
-    marginTop: margin,
-    marginBottom: margin,
-    paddingStart: createRenamedProperty('paddingInlineStart', spacing),
-    paddingEnd: createRenamedProperty('paddingInlineEnd', spacing),
-    paddingTop: spacing,
-    paddingBottom: spacing,
-    scrollMarginStart: createRenamedProperty('scrollMarginInlineStart', baseSpacing),
-    scrollMarginEnd: createRenamedProperty('scrollMarginInlineEnd', baseSpacing),
+    marginStart: new PercentageProperty('marginInlineStart', margin),
+    marginEnd: new PercentageProperty('marginInlineEnd', margin),
+    marginTop: new PercentageProperty('marginTop', margin),
+    marginBottom: new PercentageProperty('marginBottom', margin),
+    paddingStart: new PercentageProperty('paddingInlineStart', padding),
+    paddingEnd: new PercentageProperty('paddingInlineEnd', padding),
+    paddingTop: new PercentageProperty('paddingTop', padding),
+    paddingBottom: new PercentageProperty('paddingBottom', padding),
+    scrollMarginStart: new MappedProperty('scrollMarginInlineStart', baseSpacing),
+    scrollMarginEnd: new MappedProperty('scrollMarginInlineEnd', baseSpacing),
     scrollMarginTop: baseSpacing,
     scrollMarginBottom: baseSpacing,
-    scrollPaddingStart: createRenamedProperty('scrollPaddingInlineStart', baseSpacing),
-    scrollPaddingEnd: createRenamedProperty('scrollPaddingInlineEnd', baseSpacing),
+    // Using rems instead of px here (unlike regular padding) because this often needs to match the height of something.
+    scrollPaddingStart: new MappedProperty('scrollPaddingInlineStart', baseSpacing),
+    scrollPaddingEnd: new MappedProperty('scrollPaddingInlineEnd', baseSpacing),
     scrollPaddingTop: baseSpacing,
     scrollPaddingBottom: baseSpacing,
-    textIndent: baseSpacing,
-    translateX: createMappedProperty(value => ({
-      '--translateX': value,
+    textIndent: new PercentageProperty('textIndent', baseSpacing),
+    translateX: new ExpandedProperty(['--translateX', 'translate'], value => ({
+      '--translateX': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), translate),
-    translateY: createMappedProperty(value => ({
-      '--translateY': value,
+    }), new PercentageProperty('--translateX', translate)),
+    translateY: new ExpandedProperty(['--translateY', 'translate'], value => ({
+      '--translateY': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), translate),
-    rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`, property) => ({[property]: typeof value === 'number' ? `${value}deg` : value})),
-    scaleX: createArbitraryProperty<number>(value => ({
-      '--scaleX': value,
+    }), new PercentageProperty('--translateY', translate)),
+    rotate: new ArbitraryProperty('rotate', (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => typeof value === 'number' ? `${value}deg` : value),
+    scaleX: new ExpandedProperty<number | `${number}%`>(['--scaleX', 'scale'], value => ({
+      '--scaleX': String(value),
       scale: 'var(--scaleX, 1) var(--scaleY, 1)'
     })),
-    scaleY: createArbitraryProperty<number>(value => ({
-      '--scaleY': value,
+    scaleY: new ExpandedProperty<number | `${number}%`>(['--scaleY', 'scale'], value => ({
+      '--scaleY': String(value),
       scale: 'var(--scaleX, 1) var(--scaleY, 1)'
     })),
-    transform: createArbitraryProperty<string>(),
+    transform: new ArbitraryProperty<string>('transform'),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
-    insetStart: createRenamedProperty('insetInlineStart', inset),
-    insetEnd: createRenamedProperty('insetInlineEnd', inset),
-    top: inset,
-    left: inset,
-    bottom: inset,
-    right: inset,
-    aspectRatio: {
-      auto: 'auto',
-      square: '1 / 1',
-      video: '16 / 9'
-    },
+    insetStart: new PercentageProperty('insetInlineStart', inset),
+    insetEnd: new PercentageProperty('insetInlineEnd', inset),
+    top: new PercentageProperty('top', inset),
+    left: new PercentageProperty('left', inset),
+    bottom: new PercentageProperty('bottom', inset),
+    right: new PercentageProperty('right', inset),
+    aspectRatio: new ArbitraryProperty<'auto' | 'square' | 'video' | `${number}/${number}`>('aspectRatio', value => {
+      if (value === 'square') {
+        return '1/1';
+      }
+
+      if (value === 'video') {
+        return '16/9';
+      }
+
+      return value;
+    }),
 
     // text
     fontFamily: {
@@ -743,32 +741,14 @@ export const style = createTheme({
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
     fontSize,
-    fontWeight: createMappedProperty((value, property) => {
-      if (property === 'fontWeight') {
-        return {
-          // Set font-variation-settings in addition to font-weight to work around typekit issue.
-          fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
-          fontWeight: value as any,
-          fontSynthesisWeight: 'none'
-        };
-      }
-
-      return {[property]: value};
-    }, {
-      ...fontWeightBase,
-      heading: {
-        default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
-      },
-      title: {
-        default: fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
-      },
-      detail: {
-        default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
-      }
-    }),
+    fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
+      return {
+        // Set font-variation-settings in addition to font-weight to work around typekit issue.
+        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
+        fontWeight: value as any,
+        fontSynthesisWeight: 'none'
+      };
+    }, fontWeight),
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
@@ -796,21 +776,21 @@ export const style = createTheme({
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
       }
     },
-    listStyleType: ['none', 'dist', 'decimal'] as const,
+    listStyleType: ['none', 'disc', 'decimal'] as const,
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
     verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'] as const,
-    textDecoration: createMappedProperty((value) => ({
+    textDecoration: new ExpandedProperty<'underline' | 'overline' | 'line-through' | 'none'>(['textDecoration', 'textUnderlineOffset'], (value) => ({
       textDecoration: value === 'none' ? 'none' : `${value} ${getToken('text-underline-thickness')}`,
       textUnderlineOffset: value === 'underline' ? getToken('text-underline-gap') : undefined
-    }), ['underline', 'overline', 'line-through', 'none'] as const),
+    })),
     textOverflow: ['ellipsis', 'clip'] as const,
-    lineClamp: createArbitraryProperty((value: number) => ({
+    lineClamp: new ExpandedProperty<number>(['overflow', 'display', '-webkit-box-orient', '-webkit-line-clamp'], (value) => ({
       overflow: 'hidden',
       display: '-webkit-box',
       '-webkit-box-orient': 'vertical',
-      '-webkit-line-clamp': value
+      '-webkit-line-clamp': String(value)
     })),
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
@@ -820,37 +800,37 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')}`,
+      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')}`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')})`,
+      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')})`,
+      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
-    borderTopStartRadius: createRenamedProperty('borderStartStartRadius', radius),
-    borderTopEndRadius: createRenamedProperty('borderStartEndRadius', radius),
-    borderBottomStartRadius: createRenamedProperty('borderEndStartRadius', radius),
-    borderBottomEndRadius: createRenamedProperty('borderEndEndRadius', radius),
+    borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
+    borderTopEndRadius: new MappedProperty('borderStartEndRadius', radius),
+    borderBottomStartRadius: new MappedProperty('borderEndStartRadius', radius),
+    borderBottomEndRadius: new MappedProperty('borderEndEndRadius', radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundImage: createArbitraryProperty<string | [LinearGradient]>((value, property) => {
+    backgroundImage: new ExpandedProperty<string | [LinearGradient]>(['backgroundImage', '--g0', '--g1', '--g2', '--gp'], (value) => {
       if (typeof value === 'string') {
-        return {[property]: value};
+        return {backgroundImage: value};
       } else if (Array.isArray(value) && value[0]?.type === 'linear-gradient') {
         let values: CSSProperties = {
-          [property]: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
+          backgroundImage: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
         };
 
         // Create a CSS var for each color stop so the gradient can be transitioned.
         // These are registered via @property in the `linearGradient` macro.
         let properties: string[] = [];
-        value[0].stops.forEach(([color], i) => {
+        value[0].stops.forEach(([colorValue], i) => {
           properties.push(`--g${i}`);
-          values[`--g${i}`] = parseColor(color);
+          values[`--g${i}`] = color(colorValue);
         });
 
         // This is used by transition-property so we automatically transition all of the color stops.
@@ -869,22 +849,22 @@ export const style = createTheme({
     backgroundOrigin: ['border-box', 'padding-box', 'content-box'] as const,
     backgroundBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'] as const,
     mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'] as const,
-    opacity: createArbitraryProperty<number>(),
+    opacity: new ArbitraryProperty<number>('opacity'),
 
     outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'] as const,
-    outlineOffset: createArbitraryProperty<number>((v, property) => ({[property]: `${v}px`})),
+    outlineOffset: new ArbitraryProperty<number>('outlineOffset', v => `${v}px`),
     outlineWidth: borderWidth,
 
-    transition: createRenamedProperty('transitionProperty', transitionProperty),
-    transitionDelay: durationProperty,
-    transitionDuration: durationProperty,
+    transition: new MappedProperty('transitionProperty', transitionProperty),
+    transitionDelay: new ArbitraryProperty('transitionDelay', durationValue),
+    transitionDuration: new ArbitraryProperty('transitionDuration', durationValue),
     transitionTimingFunction: timingFunction,
-    animation: createArbitraryProperty((value: string, property) => ({[property === 'animation' ? 'animationName' : property]: value})),
-    animationDuration: durationProperty,
-    animationDelay: durationProperty,
+    animation: new ArbitraryProperty<string>('animationName'),
+    animationDuration: new ArbitraryProperty('animationDuration', durationValue),
+    animationDelay: new ArbitraryProperty('animationDelay', durationValue),
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
-    animationIterationCount: createArbitraryProperty<string>(),
+    animationIterationCount: new ArbitraryProperty<number | string>('animationIterationCount'),
     animationTimingFunction: timingFunction,
 
     // layout
@@ -897,18 +877,18 @@ export const style = createTheme({
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
     flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'] as const,
     flexWrap: ['wrap', 'wrap-reverse', 'nowrap'] as const,
-    flexShrink: createArbitraryProperty<CSS.Property.FlexShrink>(),
-    flexGrow: createArbitraryProperty<CSS.Property.FlexGrow>(),
-    gridColumnStart: createArbitraryProperty<CSS.Property.GridColumnStart>(),
-    gridColumnEnd: createArbitraryProperty<CSS.Property.GridColumnEnd>(),
-    gridRowStart: createArbitraryProperty<CSS.Property.GridRowStart>(),
-    gridRowEnd: createArbitraryProperty<CSS.Property.GridRowEnd>(),
+    flexShrink: new ArbitraryProperty<CSS.Property.FlexShrink>('flexShrink'),
+    flexGrow: new ArbitraryProperty<CSS.Property.FlexGrow>('flexGrow'),
+    gridColumnStart: new ArbitraryProperty<CSS.Property.GridColumnStart>('gridColumnStart'),
+    gridColumnEnd: new ArbitraryProperty<CSS.Property.GridColumnEnd>('gridColumnEnd'),
+    gridRowStart: new ArbitraryProperty<CSS.Property.GridRowStart>('gridRowStart'),
+    gridRowEnd: new ArbitraryProperty<CSS.Property.GridRowEnd>('gridRowEnd'),
     gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'] as const,
-    gridAutoRows: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
-    gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
-    gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
-    gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
-    gridTemplateAreas: createArbitraryProperty((value: readonly string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
+    gridAutoRows: new ArbitraryProperty('gridAutoRows', gridTrackSize),
+    gridAutoColumns: new ArbitraryProperty('gridAutoColumns', gridTrackSize),
+    gridTemplateColumns: new ArbitraryProperty('gridTemplateColumns', gridTrack),
+    gridTemplateRows: new ArbitraryProperty('gridTemplateRows', gridTrack),
+    gridTemplateAreas: new ArbitraryProperty('gridTemplateAreas', (value: readonly string[]) => value.map(v => `"${v}"`).join('')),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
     contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
@@ -916,35 +896,6 @@ export const style = createTheme({
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,
     borderCollapse: ['collapse', 'separate'] as const,
-    columns: {
-      auto: 'auto',
-      1: '1',
-      2: '2',
-      3: '3',
-      4: '4',
-      5: '5',
-      6: '6',
-      7: '7',
-      8: '8',
-      9: '9',
-      10: '10',
-      11: '11',
-      12: '12',
-      // TODO: what should these sizes be?
-      '3xs': '16rem',
-      '2xs': '18rem',
-      xs: '20rem',
-      sm: '24rem',
-      md: '28rem',
-      lg: '32rem',
-      xl: '36rem',
-      '2xl': '42rem',
-      '3xl': '48rem',
-      '4xl': '56rem',
-      '5xl': '64rem',
-      '6xl': '72rem',
-      '7xl': '80rem'
-    },
     breakBefore: ['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'] as const,
     breakInside: ['auto', 'avoid', 'avoid-page', 'avoid-column'] as const,
     breakAfter: ['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'] as const,
@@ -953,7 +904,7 @@ export const style = createTheme({
     overscrollBehaviorX: ['auto', 'contain', 'none'] as const,
     overscrollBehaviorY: ['auto', 'contain', 'none'] as const,
     scrollBehavior: ['auto', 'smooth'] as const,
-    order: createArbitraryProperty<number>(),
+    order: new ArbitraryProperty<number>('order'),
 
     pointerEvents: ['none', 'auto'] as const,
     touchAction: ['auto', 'none', 'pan-x', 'pan-y', 'manipulation', 'pinch-zoom'] as const,
@@ -970,11 +921,10 @@ export const style = createTheme({
     objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'] as const,
     objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
-    zIndex: createArbitraryProperty<number>(),
+    zIndex: new ArbitraryProperty<number>('zIndex'),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    disableTapHighlight: createArbitraryProperty((_value: true) => ({
-      '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-    }))
+    disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)'),
+    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,
@@ -990,7 +940,6 @@ export const style = createTheme({
     scrollMarginX: ['scrollMarginStart', 'scrollMarginEnd'] as const,
     scrollMarginY: ['scrollMarginTop', 'scrollMarginBottom'] as const,
     borderWidth: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'] as const,
-    borderColor: ['borderTopColor', 'borderBottomColor', 'borderInlineStartColor', 'borderInlineEndColor'] as const,
     borderXWidth: ['borderStartWidth', 'borderEndWidth'] as const,
     borderYWidth: ['borderTopWidth', 'borderBottomWidth'] as const,
     borderRadius: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'] as const,
@@ -1032,9 +981,6 @@ export const style = createTheme({
     }),
     font: (value: keyof typeof fontSize) => {
       let type = value.split('-')[0];
-      if (type === 'control') {
-        type = 'ui';
-      }
       return {
         fontFamily: type === 'code' ? 'code' : 'sans',
         fontSize: value,
@@ -1055,11 +1001,10 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
-    // TODO
-    sm: '@media (min-width: 640px)',
-    md: '@media (min-width: 768px)',
-    lg: '@media (min-width: 1024px)',
-    xl: '@media (min-width: 1280px)',
-    '2xl': '@media (min-width: 1536px)'
+    sm: `@media (min-width: ${pxToRem(640)})`,
+    md: `@media (min-width: ${pxToRem(768)})`,
+    lg: `@media (min-width: ${pxToRem(1024)})`,
+    xl: `@media (min-width: ${pxToRem(1280)})`,
+    '2xl': `@media (min-width: ${pxToRem(1536)})`
   }
 });

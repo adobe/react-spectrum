@@ -39,7 +39,9 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
    */
   onAction?: (key: Key) => void,
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {
@@ -48,12 +50,26 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * via the left/right arrow keys or the tab key.
    * @default 'arrow'
    */
-  keyboardNavigationBehavior?: 'arrow' | 'tab'
+  keyboardNavigationBehavior?: 'arrow' | 'tab',
+  /**
+   * Whether pressing the escape key should clear selection in the grid list or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
 }
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean,
+  /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -98,8 +114,11 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate,
     layoutDelegate,
     onAction,
+    disallowTypeAhead,
     linkBehavior = 'action',
-    keyboardNavigationBehavior = 'arrow'
+    keyboardNavigationBehavior = 'arrow',
+    escapeKeyBehavior = 'clearSelection',
+    shouldSelectOnPressUp
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -117,11 +136,13 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
-    autoFocus: props.autoFocus
+    disallowTypeAhead,
+    autoFocus: props.autoFocus,
+    escapeKeyBehavior
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,

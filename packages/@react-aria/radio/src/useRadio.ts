@@ -16,9 +16,8 @@ import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RefObject} from '@react-types/shared';
-import {useFocusable} from '@react-aria/focus';
+import {useFocusable, usePress} from '@react-aria/interactions';
 import {useFormValidation} from '@react-aria/form';
-import {usePress} from '@react-aria/interactions';
 
 export interface RadioAria {
   /** Props for the label wrapper element. */
@@ -52,7 +51,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
+  if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
@@ -70,7 +69,11 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
-    isDisabled
+    isDisabled,
+    onPress() {
+      state.setSelectedValue(value);
+      ref.current?.focus();
+    }
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
@@ -95,7 +98,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormValidation({validationBehavior}, state, ref);
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',

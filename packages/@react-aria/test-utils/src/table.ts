@@ -25,6 +25,12 @@ interface TableToggleSortOpts {
    */
   interactionType?: UserOpts['interactionType']
 }
+interface TableColumnHeaderActionOpts extends TableToggleSortOpts {
+  /**
+   * The index of the column header action to trigger.
+   */
+  action: number
+}
 interface TableRowActionOpts extends GridRowActionOpts {}
 
 export class TableTester {
@@ -44,14 +50,14 @@ export class TableTester {
   /**
    * Set the interaction type used by the table tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async toggleRowSelection(opts: TableToggleRowOpts) {
+  async toggleRowSelection(opts: TableToggleRowOpts): Promise<void> {
     let {
       row,
       needsLongPress,
@@ -97,7 +103,7 @@ export class TableTester {
   /**
    * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
    */
-  async toggleSort(opts: TableToggleSortOpts) {
+  async toggleSort(opts: TableToggleSortOpts): Promise<void> {
     let {
       column,
       interactionType = this._interactionType
@@ -185,9 +191,95 @@ export class TableTester {
   }
 
   /**
+   * Triggers an action for the specified table column menu. Defaults to using the interaction type set on the table tester.
+   */
+  async triggerColumnHeaderAction(opts: TableColumnHeaderActionOpts): Promise<void> {
+    let {
+      column,
+      interactionType = this._interactionType,
+      action
+    } = opts;
+
+    let columnheader;
+    if (typeof column === 'number') {
+      columnheader = this.columns[column];
+    } else if (typeof column === 'string') {
+      columnheader = within(this.rowGroups[0]).getByText(column);
+      while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
+        columnheader = columnheader.parentElement;
+      }
+    } else {
+      columnheader = column;
+    }
+
+    let menuButton = within(columnheader).queryByRole('button');
+    if (menuButton) {
+      // TODO: Focus management is all kinda of messed up if I just use .focus and Space to open the sort menu. Seems like
+      // the focused key doesn't get properly set to the desired column header. Have to do this strange flow where I focus the
+      // column header except if the active element is already the menu button within the column header
+      if (interactionType === 'keyboard' && document.activeElement !== menuButton) {
+        await pressElement(this.user, columnheader, interactionType);
+      } else {
+        await pressElement(this.user, menuButton, interactionType);
+      }
+
+      await waitFor(() => {
+        if (menuButton.getAttribute('aria-controls') == null) {
+          throw new Error('No aria-controls found on table column dropdown menu trigger element.');
+        } else {
+          return true;
+        }
+      });
+
+      let menuId = menuButton.getAttribute('aria-controls');
+      await waitFor(() => {
+        if (!menuId || document.getElementById(menuId) == null) {
+          throw new Error(`Table column header menu with id of ${menuId} not found in document.`);
+        } else {
+          return true;
+        }
+      });
+
+      if (menuId) {
+        let menu = document.getElementById(menuId);
+        if (menu) {
+          await pressElement(this.user, within(menu).getAllByRole('menuitem')[action], interactionType);
+
+          await waitFor(() => {
+            if (document.contains(menu)) {
+              throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+            } else {
+              return true;
+            }
+          });
+        }
+      }
+
+      // Handle cases where the table may transition in response to the row selection/deselection
+      if (!this._advanceTimer) {
+        throw new Error('No advanceTimers provided for table transition.');
+      }
+
+      await act(async () => {
+        await this._advanceTimer?.(200);
+      });
+
+      await waitFor(() => {
+        if (document.activeElement !== menuButton) {
+          throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
+        } else {
+          return true;
+        }
+      });
+    } else {
+      throw new Error('No menu button found on table column header.');
+    }
+  }
+
+  /**
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async triggerRowAction(opts: TableRowActionOpts) {
+  async triggerRowAction(opts: TableRowActionOpts): Promise<void> {
     let {
       row,
       needsDoubleClick,
@@ -221,7 +313,7 @@ export class TableTester {
   /**
    * Toggle selection for all rows in the table. Defaults to using the interaction type set on the table tester.
    */
-  async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}) {
+  async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}): Promise<void> {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -260,7 +352,7 @@ export class TableTester {
   /**
    * Returns a cell matching the specified text content.
    */
-  findCell(opts: {text: string}) {
+  findCell(opts: {text: string}): HTMLElement {
     let {
       text
     } = opts;

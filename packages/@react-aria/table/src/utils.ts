@@ -32,7 +32,7 @@ export function getColumnHeaderId<T>(state: TableState<T>, columnKey: Key): stri
   return `${gridId}-${normalizeKey(columnKey)}`;
 }
 
-export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key) {
+export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key): string {
   let gridId = gridIds.get(state);
   if (!gridId) {
     throw new Error('Unknown grid');

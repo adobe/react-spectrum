@@ -39,6 +39,7 @@ module.exports = new Namer({
           name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
           return 'gradient/' + style + '/' + name;
         })
+        .replace(/\.module$/, '_module')
         + ext;
     }
   }

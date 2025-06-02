@@ -10,12 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, Tag, TagGroup, TagList, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {
+  Button,
+  Checkbox,
+  CheckboxProps,
+  Collection,
+  Dialog,
+  DialogTrigger,
+  DropIndicator,
+  GridLayout,
+  GridList,
+  GridListItem,
+  GridListItemProps,
+  Heading,
+  ListLayout,
+  Modal,
+  ModalOverlay,
+  Popover,
+  Size,
+  Tag,
+  TagGroup,
+  TagList,
+  useDragAndDrop,
+  Virtualizer
+} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React, {useMemo} from 'react';
-import {Size} from '@react-stately/virtualizer';
+import {Key, useAsyncList, useListData} from 'react-stately';
+import {LoadingSpinner} from './utils';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {useListData} from 'react-stately';
+import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
   title: 'React Aria Components'
@@ -66,7 +91,9 @@ const MyGridListItem = (props: GridListItemProps) => {
 
 GridListExample.story = {
   args: {
-    layout: 'stack'
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
   },
   argTypes: {
     layout: {
@@ -84,6 +111,10 @@ GridListExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };
@@ -113,12 +144,6 @@ export function VirtualizedGridList() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
@@ -140,7 +165,11 @@ export function VirtualizedGridList() {
   });
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
       <GridList
         className={styles.menu}
         selectionMode="multiple"
@@ -160,14 +189,12 @@ export function VirtualizedGridListGrid() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(40, 40)
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={GridLayout}
+      layoutOptions={{
+        minItemSize: new Size(40, 40)
+      }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
@@ -175,17 +202,153 @@ export function VirtualizedGridListGrid() {
   );
 }
 
+let renderEmptyState = ({isLoading}) => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+    </div>
+  );
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const MyGridListLoaderIndicator = (props) => {
+  return (
+    <UNSTABLE_GridListLoadingSentinel
+      style={{
+        height: 30,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_GridListLoadingSentinel>
+  );
+};
+
+export const AsyncGridList = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <GridList
+      className={styles.menu}
+      style={{height: 200}}
+      aria-label="async gridlist"
+      renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+      <Collection items={list.items}>
+        {(item: Character) => (
+          <MyGridListItem id={item.name}>{item.name}</MyGridListItem>
+        )}
+      </Collection>
+      <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+    </GridList>
+  );
+};
+
+AsyncGridList.story = {
+  args: {
+    delay: 50
+  }
+};
+
+export const AsyncGridListVirtualized = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        loaderHeight: 30
+      }}>
+      <GridList
+        className={styles.menu}
+        style={{height: 200}}
+        aria-label="async virtualized gridlist"
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+        <Collection items={list.items}>
+          {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+      </GridList>
+    </Virtualizer>
+  );
+};
+
+AsyncGridListVirtualized.story = {
+  args: {
+    delay: 50
+  }
+};
+
 export function TagGroupInsideGridList() {
   return (
     <GridList
       className={styles.menu}
       aria-label="Grid list with tag group"
+      keyboardNavigationBehavior="tab"
       style={{
         width: 300,
         height: 300
       }}>
       <MyGridListItem textValue="Tags">
         1,1
+        <TagGroup aria-label="Tag group 1" onRemove={action('onRemove')}>
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
+          </TagList>
+        </TagGroup>
+        <TagGroup aria-label="Tag group 2" onRemove={action('onRemove')}>
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
+          </TagList>
+        </TagGroup>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,2 <Button>Actions</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3
         <TagGroup aria-label="Tag group">
           <TagList style={{display: 'flex', gap: 10}}>
             <Tag key="1">Tag 1</Tag>
@@ -194,8 +357,103 @@ export function TagGroupInsideGridList() {
           </TagList>
         </TagGroup>
       </MyGridListItem>
-      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
     </GridList>
   );
 }
+
+const GridListDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Set<Key>>(new Set([]));
+
+  const handleSelectionChange = (e) => {
+    setSelectedItem(e);
+    setIsOpen(false);
+  };
+
+  return (
+    <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Button>Open GridList Options</Button>
+      <Popover>
+        <div>
+          <GridList
+            className={styles.menu}
+            selectedKeys={selectedItem}
+            aria-label="Favorite pokemon"
+            selectionMode="single"
+            onSelectionChange={handleSelectionChange}
+            shouldSelectOnPressUp
+            autoFocus>
+            <MyGridListItem textValue="Charizard">
+              Option 1 <Button>A</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Blastoise">
+              Option 2 <Button>B</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Venusaur">
+              Option 3 <Button>C</Button>
+            </MyGridListItem>
+            <MyGridListItem textValue="Pikachu">
+              Option 4 <Button>D</Button>
+            </MyGridListItem>
+          </GridList>
+        </div>
+      </Popover>
+    </DialogTrigger>
+  );
+};
+
+function GridListInModalPickerRender(props) {
+  const [mainModalOpen, setMainModalOpen] = useState(true);
+  return (
+    <>
+      <Button onPress={() => setMainModalOpen(true)}>
+        Open Modal
+      </Button>
+      <ModalOverlay
+        {...props}
+        isOpen={mainModalOpen}
+        onOpenChange={setMainModalOpen}
+        isDismissable
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.5)'
+        }}>
+        <Modal>
+          <Dialog>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: 8,
+                background: '#ccc',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%,-50%)',
+                width: 'max-content',
+                height: 'max-content'
+              }}>
+              <Heading slot="title">Open the GridList Picker</Heading>
+              <GridListDropdown />
+            </div>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </>
+  );
+}
+
+export const GridListInModalPicker = {
+  render: (args) => <GridListInModalPickerRender {...args} />,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Selecting an option from the grid list over the backdrop should not result in the modal closing.'
+      }
+    }
+  }
+};

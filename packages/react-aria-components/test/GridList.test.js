@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {
   Button,
   Checkbox,
+  Collection,
   Dialog,
   DialogTrigger,
   DropIndicator,
@@ -21,16 +22,18 @@ import {
   GridListContext,
   GridListItem,
   Label,
-  UNSTABLE_ListLayout as ListLayout,
+  ListLayout,
   Modal,
   RouterProvider,
   Tag,
   TagGroup,
   TagList,
   useDragAndDrop,
-  UNSTABLE_Virtualizer as Virtualizer
+  Virtualizer
 } from '../';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import React from 'react';
+import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -248,6 +251,23 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = renderGridList({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+
+    let row = gridListTester.rows[0];
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+
+    await gridListTester.toggleRowSelection({row: 0});
+    expect(gridListTester.selectedRows).toHaveLength(1);
+
+    await gridListTester.toggleRowSelection({row: 1});
+    expect(gridListTester.selectedRows).toHaveLength(2);
+
+    await user.keyboard('{Escape}');
+    expect(gridListTester.selectedRows).toHaveLength(2);
+  });
+
   it('should support disabled state', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let row = getAllByRole('row')[0];
@@ -393,10 +413,6 @@ describe('GridList', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -406,7 +422,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <GridList aria-label="Test" items={items}>
           {item => <GridListItem>{item.name}</GridListItem>}
         </GridList>
@@ -443,9 +459,9 @@ describe('GridList', () => {
         <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
           <TagGroup aria-label="Tag group">
             <TagList>
-              <Tag key="1">Tag 1</Tag>
-              <Tag key="2">Tag 2</Tag>
-              <Tag key="3">Tag 3</Tag>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
             </TagList>
           </TagGroup>
         </GridListItem>
@@ -476,6 +492,60 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(document.body);
   });
 
+  it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {
+    let buttonRef = React.createRef();
+    let onRemove = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
+        <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
+          <TagGroup aria-label="Tag group" onRemove={onRemove}>
+            <TagList>
+              <Tag id="1" textValue="Tag 1">Tag 1<Button slot="remove">X</Button></Tag>
+              <Tag id="2" textValue="Tag 2">Tag 2<Button slot="remove">X</Button></Tag>
+              <Tag id="3" textValue="Tag 3">Tag 3<Button slot="remove">X</Button></Tag>
+            </TagList>
+          </TagGroup>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('grid')[0].children;
+    let tags = within(items[0]).getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(within(tags[1]).getByRole('button'));
+
+    await user.keyboard(' ');
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['2']));
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(tags[1]);
+
+    // For some reason "await user.tab({shift: true});"" doesn't seem to follow the correct behavior when coercing focus to the collection before
+    // letting the browser handle the tab event so we simulate this
+    fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.previousNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+    expect(document.activeElement).toBe(items[0]);
+  });
+
   it('should not propagate the checkbox context from selection into other cells', async () => {
     let tree = render(
       <GridList aria-label="Test" selectionMode="multiple">
@@ -497,6 +567,29 @@ describe('GridList', () => {
     await user.click(tree.getByRole('button'));
     let checkbox = tree.getByRole('checkbox');
     expect(checkbox).toBeInTheDocument();
+  });
+
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(
+      <GridList aria-label="CardView" keyboardNavigationBehavior="Tab">
+        <GridListItem id="1" textValue="Card">
+          <GridList aria-label="Previews">
+            <GridListItem id="1">Paco de Lucia</GridListItem>
+          </GridList>
+        </GridListItem>
+      </GridList>
+    );
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
   });
 
   describe('drag and drop', () => {
@@ -726,6 +819,282 @@ describe('GridList', () => {
         }
         await trigger(items[0]);
         expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
+      });
+    });
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('async loading', () => {
+    let items = [
+      {name: 'Foo'},
+      {name: 'Bar'},
+      {name: 'Baz'}
+    ];
+    let renderEmptyState = (loadingState) => {
+      return (
+        loadingState === 'loading' ? <div>loading</div> : <div>empty state</div>
+      );
+    };
+    let AsyncGridList = (props) => {
+      let {items, isLoading, onLoadMore, ...listBoxProps} = props;
+      return (
+        <GridList
+          {...listBoxProps}
+          aria-label="async gridlist"
+          renderEmptyState={() => renderEmptyState()}>
+          <Collection items={items}>
+            {(item) => (
+              <GridListItem id={item.name}>{item.name}</GridListItem>
+            )}
+          </Collection>
+          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+            Loading...
+          </UNSTABLE_GridListLoadingSentinel>
+        </GridList>
+      );
+    };
+
+    let onLoadMore = jest.fn();
+    let observe = jest.fn();
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should render the loading element when loading', async () => {
+      let tree = render(<AsyncGridList isLoading items={items} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(4);
+      let loaderRow = rows[3];
+      expect(loaderRow).toHaveTextContent('Loading...');
+
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(sentinel.parentElement).toHaveAttribute('inert');
+    });
+
+    it('should render the sentinel but not the loading indicator when not loading', async () => {
+      let tree = render(<AsyncGridList items={items} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(3);
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should properly render the renderEmptyState if gridlist is empty', async () => {
+      let tree = render(<AsyncGridList items={[]} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+
+      // Even if the gridlist is empty, providing isLoading will render the loader
+      tree.rerender(<AsyncGridList items={[]} isLoading />);
+      rows = gridListTester.rows;
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeTruthy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should only fire loadMore when intersection is detected regardless of loading state', async () => {
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
+
+      let tree = render(<AsyncGridList items={items} onLoadMore={onLoadMore} isLoading />);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      observe.mockClear();
+
+      tree.rerender(<AsyncGridList items={items} onLoadMore={onLoadMore} />);
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
+    });
+
+    describe('virtualized', () => {
+      let items = [];
+      for (let i = 0; i < 50; i++) {
+        items.push({name: 'Foo' + i});
+      }
+      let clientWidth, clientHeight;
+
+      beforeAll(() => {
+        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+      });
+
+      afterAll(function () {
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      let VirtualizedAsyncGridList = (props) => {
+        let {items, loadingState, onLoadMore, ...listBoxProps} = props;
+        return (
+          <Virtualizer
+            layout={ListLayout}
+            layoutOptions={{
+              rowHeight: 25,
+              loaderHeight: 30
+            }}>
+            <GridList
+              {...listBoxProps}
+              aria-label="async virtualized gridlist"
+              renderEmptyState={() => renderEmptyState(loadingState)}>
+              <Collection items={items}>
+                {(item) => (
+                  <GridListItem id={item.name}>{item.name}</GridListItem>
+                )}
+              </Collection>
+              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                Loading...
+              </UNSTABLE_GridListLoadingSentinel>
+            </GridList>
+          </Virtualizer>
+        );
+      };
+
+      it('should always render the sentinel even when virtualized', async () => {
+        let tree = render(<VirtualizedAsyncGridList loadingState="loadingMore" items={items} />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(8);
+        let loaderRow = rows[7];
+        expect(loaderRow).toHaveTextContent('Loading...');
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        let loaderParentStyles = loaderRow.parentElement.style;
+
+        // 50 items * 25px = 1250
+        expect(loaderParentStyles.top).toBe('1250px');
+        expect(loaderParentStyles.height).toBe('30px');
+
+        let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
+      });
+
+      it('should not reserve room for the loader if isLoading is false', async () => {
+        let tree = render(<VirtualizedAsyncGridList items={items} />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(7);
+        expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();
+
+        let sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        let sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('1250px');
+        expect(sentinelParentStyles.height).toBe('0px');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
+
+        tree.rerender(<VirtualizedAsyncGridList items={[]} />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+        let emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('empty state');
+        expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();
+
+        sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('0px');
+
+        tree.rerender(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+        emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('loading');
+
+        sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('0px');
+      });
+
+      it('should have the correct row indicies after loading more items', async () => {
+        let tree = render(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+
+        let loaderRow = rows[0];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '1');
+        expect(loaderRow).toHaveTextContent('loading');
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(7);
+        expect(within(gridListTester.gridlist).queryByText('loading')).toBeFalsy();
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} loadingState="loadingMore" />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(8);
+        loaderRow = rows[7];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        for (let [index, row] of rows.entries()) {
+          if (index === 7) {
+            continue;
+          } else {
+            expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+          }
+        }
       });
     });
   });

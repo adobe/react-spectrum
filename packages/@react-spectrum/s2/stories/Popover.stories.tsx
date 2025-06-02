@@ -18,10 +18,11 @@ import Help from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
 import type {Meta} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
+import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {UNSTABLE_Autocomplete, useFilter} from 'react-aria-components';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
+import {useRef, useState} from 'react';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
 const meta: Meta<typeof Popover> = {
@@ -48,39 +49,41 @@ export const HelpCenter = (args: any) => (
           <Tab id="feedback">Feedback</Tab>
         </TabList>
         <TabPanel id="help">
-          <SearchField label="Search" styles={style({marginTop: 12, marginX: 12})} />
-          <Menu aria-label="Help" styles={style({marginTop: 12})}>
-            <MenuSection>
-              <MenuItem href="#">
-                <File />
-                <Text slot="label">Documentation</Text>
-              </MenuItem>
-            </MenuSection>
-            <MenuSection>
-              <MenuItem href="#">
-                <Education />
-                <Text slot="label">Learning</Text>
-              </MenuItem>
-              <MenuItem href="#">
-                <Users />
-                <Text slot="label">Community</Text>
-              </MenuItem>
-            </MenuSection>
-            <MenuSection>
-              <MenuItem href="#">
-                <User />
-                <Text slot="label">Customer Care</Text>
-              </MenuItem>
-              <MenuItem href="#">
-                <Cloud />
-                <Text slot="label">Status</Text>
-              </MenuItem>
-              <MenuItem href="#">
-                <Lightbulb />
-                <Text slot="label">Developer Connection</Text>
-              </MenuItem>
-            </MenuSection>
-          </Menu>
+          <div className={style({marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12})}>
+            <SearchField label="Search" styles={style({marginX: 12})} />
+            <Menu aria-label="Help">
+              <MenuSection>
+                <MenuItem href="#">
+                  <File />
+                  <Text slot="label">Documentation</Text>
+                </MenuItem>
+              </MenuSection>
+              <MenuSection>
+                <MenuItem href="#">
+                  <Education />
+                  <Text slot="label">Learning</Text>
+                </MenuItem>
+                <MenuItem href="#">
+                  <Users />
+                  <Text slot="label">Community</Text>
+                </MenuItem>
+              </MenuSection>
+              <MenuSection>
+                <MenuItem href="#">
+                  <User />
+                  <Text slot="label">Customer Care</Text>
+                </MenuItem>
+                <MenuItem href="#">
+                  <Cloud />
+                  <Text slot="label">Status</Text>
+                </MenuItem>
+                <MenuItem href="#">
+                  <Lightbulb />
+                  <Text slot="label">Developer Connection</Text>
+                </MenuItem>
+              </MenuSection>
+            </Menu>
+          </div>
         </TabPanel>
         <TabPanel id="support" styles={style({margin: 12})}>
           <Card size="L" styles={style({width: 'full'})}>
@@ -165,11 +168,10 @@ AccountMenu.argTypes = {
   placement: {table: {disable: true}}
 };
 
-
 function Autocomplete(props) {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
-    <UNSTABLE_Autocomplete filter={contains} {...props} />
+    <RACAutocomplete filter={contains} {...props} />
   );
 }
 
@@ -192,3 +194,25 @@ export const AutocompletePopover = (args: any) => (
     </DialogTrigger>
   </>
 );
+
+export const CustomTrigger = () => {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<any>(null);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+      <Button onPress={() => setOpen(!open)}>Open Popover</Button>
+      <div className={style({font: 'ui'})} ref={triggerRef}>Popover appears here</div>
+      <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={triggerRef}>
+        <span className={style({font: 'ui'})}>Popover with trigger on button</span>
+      </Popover>
+    </div>
+  );
+};
+

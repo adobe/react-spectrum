@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {ReactNode, useRef} from 'react';
+import React, {JSX, ReactNode, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -109,7 +109,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
  * Renders a hidden native `<select>` element, which can be used to support browser
  * form autofill, mobile form navigation, and native form submission.
  */
-export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
+export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);

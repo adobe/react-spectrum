@@ -41,7 +41,7 @@ export class TreeTester {
   /**
    * Set the interaction type used by the tree tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   };
 
@@ -71,6 +71,11 @@ export class TreeTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the tree');
     }
+
+    if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+      act(() => this._tree.focus());
+    }
+
     if (document.activeElement === this.tree) {
       await this.user.keyboard('[ArrowDown]');
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
@@ -92,7 +97,7 @@ export class TreeTester {
   /**
    * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
-  async toggleRowSelection(opts: TreeToggleRowOpts) {
+  async toggleRowSelection(opts: TreeToggleRowOpts): Promise<void> {
     let {
       row,
       needsLongPress,
@@ -143,7 +148,7 @@ export class TreeTester {
   /**
    * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
-  async toggleRowExpansion(opts: TreeToggleExpansionOpts) {
+  async toggleRowExpansion(opts: TreeToggleExpansionOpts): Promise<void> {
     let {
       row,
       interactionType = this._interactionType
@@ -184,7 +189,7 @@ export class TreeTester {
   /**
    * Triggers the action for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
-  async triggerRowAction(opts: TreeRowActionOpts) {
+  async triggerRowAction(opts: TreeRowActionOpts): Promise<void> {
     let {
       row,
       needsDoubleClick,
@@ -204,10 +209,6 @@ export class TreeTester {
     } else if (interactionType === 'keyboard') {
       if (row?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
-        act(() => this._tree.focus());
       }
 
       await this.keyboardNavigateToRow({row});

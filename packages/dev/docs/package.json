@@ -9,7 +9,7 @@
     "@react-aria/aria-modal-polyfill": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
     "@react-aria/visually-hidden": "^3.1.0",
-    "@react-spectrum/autocomplete": "3.0.0-alpha.39",
+    "@react-spectrum/autocomplete": "3.0.0-alpha.43",
     "@react-spectrum/breadcrumbs": "^3.1.0",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/dialog": "^3.1.0",
@@ -30,7 +30,7 @@
     "globals-docs": "^2.4.1",
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
-    "quicklink": "^2.3.0",
+    "quicklink": "^3.0.1",
     "react-lowlight": "^2.0.0"
   },
   "peerDependencies": {

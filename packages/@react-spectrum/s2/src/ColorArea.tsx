@@ -25,7 +25,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style'>, StyleProps {}
 
-export const ColorAreaContext = createContext<ContextValue<ColorAreaProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.

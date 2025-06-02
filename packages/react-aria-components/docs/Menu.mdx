@@ -29,7 +29,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
-keywords: [menu trigger, mutli-select menu, aria]
+keywords: [menu trigger, multi-select menu, aria]
 type: component
 ---
 
@@ -68,6 +68,7 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 ```css hidden
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
+@import './SearchField.mdx' layer(searchfield);
 ```
 
 ```css
@@ -226,7 +227,7 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
   );
 }
 
-function MyItem(props: MenuItemProps) {
+export function MyItem(props: Omit<MenuItemProps, 'children'> & {children?: React.ReactNode}) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <MenuItem
@@ -842,6 +843,84 @@ let items = [
 
 </details>
 
+### Complex content
+
+Submenu popovers can also include components other than menus. This example uses an [Autocomplete](Autocomplete.html) to make the submenu searchable.
+
+```tsx example
+import {Menu, Popover, SubmenuTrigger, Autocomplete, useFilter} from 'react-aria-components';
+import {MySearchField} from './SearchField';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <MyMenuButton label="Actions">
+      <MyItem>Cut</MyItem>
+      <MyItem>Copy</MyItem>
+      <MyItem>Delete</MyItem>
+      <SubmenuTrigger>
+        <MyItem>Add tag...</MyItem>
+        <Popover>
+          <Autocomplete filter={contains}>
+            <MySearchField label="Search tags" autoFocus />
+            <Menu>
+              <MyItem>News</MyItem>
+              <MyItem>Travel</MyItem>
+              <MyItem>Shopping</MyItem>
+              <MyItem>Business</MyItem>
+              <MyItem>Entertainment</MyItem>
+              <MyItem>Food</MyItem>
+              <MyItem>Technology</MyItem>
+              <MyItem>Health</MyItem>
+              <MyItem>Science</MyItem>
+            </Menu>
+          </Autocomplete>
+        </Popover>
+      </SubmenuTrigger>
+    </MyMenuButton>
+  );
+}
+```
+
+```css hidden
+.react-aria-Popover[data-trigger=SubmenuTrigger] .react-aria-SearchField {
+  margin: 4px 8px;
+}
+```
+
+## Custom trigger
+
+`MenuTrigger` works out of the box with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Custom trigger elements such as third party components and other DOM elements are also supported by wrapping them with the `<Pressable>` component, or using the [usePress](usePress.html) hook.
+
+```tsx example
+import {Pressable} from 'react-aria-components';
+
+<MenuTrigger>
+  {/*- begin highlight -*/}
+  <Pressable>
+    <span role="button">Custom trigger</span>
+  </Pressable>
+  {/*- end highlight -*/}
+  <Popover>
+    <Menu>
+      <MenuItem>Open</MenuItem>
+      <MenuItem>Rename…</MenuItem>
+      <MenuItem>Duplicate</MenuItem>
+      <MenuItem>Delete…</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+Note that any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
 ## Props
 
 ### MenuTrigger
@@ -1030,7 +1109,7 @@ A `MenuItem` can be targeted with the `.react-aria-MenuItem` CSS selector, or by
 
 <StateTable properties={docs.exports.MenuItemRenderProps.properties} />
 
-MenuItems also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+MenuItems also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 

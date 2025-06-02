@@ -57,7 +57,7 @@ interface ImageContextValue extends ImageProps {
   hidden?: boolean
 }
 
-export const ImageContext = createContext<ContextValue<ImageContextValue, HTMLDivElement>>(null);
+export const ImageContext = createContext<ContextValue<Partial<ImageContextValue>, HTMLDivElement>>(null);
 
 type ImageState = 'loading' | 'loaded' | 'revealed' | 'error';
 interface State {
@@ -120,8 +120,8 @@ const imgStyles = style({
   display: 'block',
   width: 'full',
   height: 'full',
-  objectFit: '[inherit]',
-  objectPosition: '[inherit]',
+  objectFit: 'inherit',
+  objectPosition: 'inherit',
   opacity: {
     default: 0,
     isRevealed: 1
@@ -207,7 +207,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     animation(domRef.current);
   });
 
-  if (props.alt == null) {
+  if (props.alt == null && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The `alt` prop was not provided to an image. ' +
       'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +

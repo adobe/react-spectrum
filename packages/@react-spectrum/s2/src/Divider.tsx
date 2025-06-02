@@ -40,7 +40,7 @@ interface DividerSpectrumProps {
 // TODO: allow overriding height (only when orientation is vertical)??
 export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
 
-export const DividerContext = createContext<ContextValue<DividerProps, DOMRefValue>>(null);
+export const DividerContext = createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
 
 export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
   ...staticColor(),
@@ -61,6 +61,8 @@ export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
   borderStyle: 'none',
   borderRadius: 'full',
   margin: 0,
+  flexGrow: 0,
+  flexShrink: 0,
   height: {
     orientation: {
       horizontal: {

@@ -41,6 +41,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>
 const image = style({
   width: 'full',
   height: 140,
+  flexShrink: 0,
   objectFit: 'cover'
 });
 
@@ -59,11 +60,11 @@ const content =  style({
   overflowY: {
     default: 'auto',
     // Make the whole dialog scroll rather than only the content when the height it small.
-    '@media (height < 400)': 'visible'
+    [`@media (height < ${400 / 16}rem)`]: 'visible'
   },
   font: 'body',
   // TODO: adjust margin on mobile?
-  marginX: {
+  paddingX: {
     default: 32
   }
 });
@@ -82,11 +83,11 @@ export const dialogInner = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto'
 });
 
@@ -129,14 +130,14 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                 display: 'flex',
                 alignItems: 'start',
                 columnGap: 12,
-                marginStart: {
+                paddingStart: {
                   default: 32
                 },
-                marginEnd: {
+                paddingEnd: {
                   default: 32,
                   isDismissible: 12
                 },
-                marginTop: {
+                paddingTop: {
                   default: 12 // margin to dismiss button
                 }
               })({isDismissible: props.isDismissible})}>

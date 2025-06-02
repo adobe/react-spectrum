@@ -23,6 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
+import {baseColor, edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -35,8 +36,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
@@ -107,7 +107,7 @@ const inputButton = style({
   paddingX: 0,
   backgroundColor: 'transparent',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -127,11 +127,11 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont()
 });
 const valueStyles = style({
   flexGrow: 0,
@@ -248,12 +248,16 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               styles={style({
                 marginStart: -12,
                 minWidth: 192,
-                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                width: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
               })}>
               <Provider
                 values={[
                   [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
+                  [HeadingContext, {
+                    // @ts-ignore
+                    role: 'presentation',
+                    styles: sectionHeading
+                  }],
                   [TextContext, {
                     slots: {
                       description: {styles: description({size})}
@@ -281,7 +285,7 @@ let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled?: boolean}>({
   backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
@@ -297,7 +301,7 @@ const selectedIndicator = style({
   transitionDuration: 130,
   transitionTimingFunction: 'in-out'
 });
-function TabLine(props) {
+function TabLine(props: {isDisabled?: boolean}) {
   return <div className={selectedIndicator(props)} />;
 }
 
@@ -305,7 +309,7 @@ function TabLine(props) {
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
-export function PickerItem(props: PickerItemProps) {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';

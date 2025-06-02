@@ -15,30 +15,31 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
-  Collection,
+  ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
-  UNSTABLE_ListLayout,
-  UNSTABLE_Tree,
-  UNSTABLE_TreeItem,
-  UNSTABLE_TreeItemContent,
-  UNSTABLE_Virtualizer,
-  useContextProps
+  Tree,
+  TreeItem,
+  TreeItemContent,
+  TreeItemContentProps,
+  useContextProps,
+  Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
-import {Text, TextContext} from './Content';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
+import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -53,21 +54,15 @@ export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'classN
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps<T extends object = object> extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  hasChildItems?: boolean
 }
 
 interface TreeRendererContextValue {
   renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
-
-function useTreeRendererContext(): TreeRendererContextValue {
-  return useContext(TreeRendererContext)!;
-}
 
 
 let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean}>({});
@@ -76,10 +71,13 @@ let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: bo
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
+  ...focusRing(),
+  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   width: 'full',
+  height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
   justifyContent: {
@@ -88,9 +86,6 @@ const tree = style({
   alignItems: {
     isEmpty: 'center'
   },
-  height: {
-    isEmpty: 'full'
-  },
   '--indent': {
     type: 'width',
     value: 16
@@ -98,7 +93,8 @@ const tree = style({
 }, getAllowedOverrides({height: true}));
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isDetached, isEmphasized} = props;
+  let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
+  let scale = useScale();
 
   let renderer;
   if (typeof children === 'function') {
@@ -107,26 +103,26 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let layout = useMemo(() => {
-    return new UNSTABLE_ListLayout({
-      rowHeight: isDetached ? 42 : 40
-    });
-  }, [isDetached]);
-
   return (
-    <UNSTABLE_Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: scale === 'large' ? 50 : 40,
+        gap: isDetached ? 2 : 0
+      }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
-          <UNSTABLE_Tree
+          <Tree
             {...props}
-            className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
+            style={UNSAFE_style}
+            className={renderProps => (UNSAFE_className ?? '') + tree({isDetached, ...renderProps}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
-          </UNSTABLE_Tree>
+          </Tree>
         </InternalTreeContext.Provider>
       </TreeRendererContext.Provider>
-    </UNSTABLE_Virtualizer>
+    </Virtualizer>
   );
 }
 
@@ -189,9 +185,11 @@ const treeRow = style({
 const treeCellGrid = style({
   display: 'grid',
   width: 'full',
+  height: 'full',
+  boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -219,66 +217,21 @@ const treeCellGrid = style({
       forcedColors: 'Highlight'
     }
   },
-  borderTopColor: {
-    default: 'transparent',
-    isSelected: {
-      isFirst: 'transparent'
-    },
+  borderColor: {
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
     }
   },
-  borderInlineEndColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderBottomColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isNextSelected: 'transparent',
-    isNextFocused: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderInlineStartColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderTopWidth: {
-    default: 0,
-    isFirst: {
-      default: 1,
-      forcedColors: 0
-    },
-    isDetached: 1
-  },
-  borderBottomWidth: {
-    default: 0,
-    isDetached: 1
-  },
-  borderStartWidth: {
-    default: 0,
-    isDetached: 1
-  },
-  borderEndWidth: {
-    default: 0,
+  borderWidth: {
     isDetached: 1
   },
   borderRadius: {
     isDetached: 'default'
   },
-  borderStyle: 'solid'
+  borderStyle: {
+    isDetached: 'solid'
+  }
 });
 
 const treeCheckbox = style({
@@ -306,8 +259,6 @@ const treeContent = style({
 
 const treeActions = style({
   gridArea: 'actions',
-  flexGrow: 0,
-  flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: 2,
   marginEnd: 4
@@ -343,104 +294,100 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
+export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
-    children,
-    childItems,
-    hasChildItems,
     href
   } = props;
-
-  let content;
-  let nestedRows;
-  let {renderer} = useTreeRendererContext();
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
 
-  if (typeof children === 'string') {
-    content = <Text>{children}</Text>;
-  } else {
-    content = [];
-    nestedRows = [];
-    React.Children.forEach(children, node => {
-      if (isValidElement(node) && node.type === TreeViewItem) {
-        nestedRows.push(node);
-      } else {
-        content.push(node);
-      }
-    });
-  }
+  return (
+    <TreeItem
+      {...props}
+      className={(renderProps) => treeRow({
+        ...renderProps,
+        isLink: !!href, isEmphasized
+      }) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')} />
+  );
+};
 
-  if (childItems != null && renderer) {
-    nestedRows = (
-      <Collection items={childItems}>
-        {renderer}
-      </Collection>
-    );
-  }
+export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
+
+export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode => {
+  let {
+    children
+  } = props;
+  let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let scale = useScale();
 
   return (
-    <UNSTABLE_TreeItem
-      {...props}
-      className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
-      <UNSTABLE_TreeItemContent>
-        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
-          let isNextSelected = false;
-          let isNextFocused = false;
-          let keyAfter = state.collection.getKeyAfter(id);
-          if (keyAfter != null) {
-            isNextSelected = state.selectionManager.isSelected(keyAfter);
-          }
-          let isFirst = state.collection.getFirstKey() === id;
-          return (
-            <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused, isDetached})}>
-              {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-                // TODO: add transition?
-                <div className={treeCheckbox}>
-                  <Checkbox
-                    isEmphasized={isEmphasized}
-                    slot="selection" />
-                </div>
-              )}
-              <div
-                className={style({
-                  gridArea: 'level-padding',
-                  width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
-                })} />
-              {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-              {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
-              <Provider
-                values={[
-                  [TextContext, {styles: treeContent}],
-                  [IconContext, {
-                    render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                    styles: style({size: fontRelative(20), flexShrink: 0})
-                  }],
-                  [ActionButtonGroupContext, {styles: treeActions}],
-                  [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
-                ]}>
-                {content}
-              </Provider>
-              {isFocusVisible && isDetached && <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />}
-            </div>
-          );
-        }}
-      </UNSTABLE_TreeItemContent>
-      {nestedRows}
-    </UNSTABLE_TreeItem>
+    <TreeItemContent>
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
+        let isNextSelected = false;
+        let isNextFocused = false;
+        let keyAfter = state.collection.getKeyAfter(id);
+        if (keyAfter != null) {
+          isNextSelected = state.selectionManager.isSelected(keyAfter);
+        }
+        let isFirst = state.collection.getFirstKey() === id;
+        return (
+          <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused, isDetached})}>
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              // TODO: add transition?
+              <div className={treeCheckbox}>
+                <Checkbox
+                  isEmphasized={isEmphasized}
+                  slot="selection" />
+              </div>
+            )}
+            <div
+              className={style({
+                gridArea: 'level-padding',
+                width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
+              })} />
+            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
+            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} isHidden={!(hasChildItems)} />
+            <Provider
+              values={[
+                [TextContext, {styles: treeContent}],
+                [IconContext, {
+                  render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                  styles: style({size: fontRelative(20), flexShrink: 0})
+                }],
+                [ActionButtonGroupContext, {styles: treeActions}],
+                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
+              ]}>
+              {children}
+            </Provider>
+            {isFocusVisible && isDetached && <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />}
+          </div>
+        );
+      }}
+    </TreeItemContent>
   );
 };
 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean,
   isDisabled?: boolean,
-  isRTL?: boolean
+  isRTL?: boolean,
+  scale: 'medium' | 'large',
+  isHidden?: boolean
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
-  height: 'full',
-  aspectRatio: 'square',
+  color: {
+    default: 'inherit',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  height: 40,
+  width: 40,
   display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
@@ -453,16 +400,22 @@ const expandButton = style<ExpandableRowChevronProps>({
       isRTL: 'rotate(-90deg)'
     }
   },
+  padding: 0,
   transition: 'default',
   backgroundColor: 'transparent',
-  borderStyle: 'none'
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled} = fullProps;
+  let {isExpanded, isDisabled, scale, isHidden} = fullProps;
   let {direction} = useLocale();
+  isDisabled = isDisabled || isHidden;
 
   return (
     <Button
@@ -472,7 +425,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       excludeFromTabOrder={isAndroid() && !isDisabled}
       preventFocusOnPress
-      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl'})}>
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
         className={style({
           scale: {

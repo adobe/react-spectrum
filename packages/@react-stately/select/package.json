@@ -1,12 +1,16 @@
 {
   "name": "@react-stately/select",
-  "version": "3.6.10",
+  "version": "3.6.13",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -22,11 +26,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/form": "^3.1.1",
-    "@react-stately/list": "^3.11.2",
-    "@react-stately/overlays": "^3.6.13",
-    "@react-types/select": "^3.9.9",
-    "@react-types/shared": "^3.27.0",
+    "@react-stately/form": "^3.1.4",
+    "@react-stately/list": "^3.12.2",
+    "@react-stately/overlays": "^3.6.16",
+    "@react-types/select": "^3.9.12",
+    "@react-types/shared": "^3.29.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

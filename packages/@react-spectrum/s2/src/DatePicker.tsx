@@ -38,7 +38,7 @@ export interface DatePickerProps<T extends DateValue>
 
 export function DatePicker<T extends DateValue>(
   {label, description, errorMessage, ...props}: DatePickerProps<T>
-) {
+): ReactNode {
   return (
     <AriaDatePicker {...props}>
       <Label>{label}</Label>

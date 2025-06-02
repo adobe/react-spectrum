@@ -12,6 +12,7 @@
 
 import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps} from 'react-aria-components';
 import {PressResponder} from '@react-aria/interactions';
+import {ReactNode} from 'react';
 
 export interface DialogTriggerProps extends AriaDialogTriggerProps {}
 
@@ -20,7 +21,7 @@ export interface DialogTriggerProps extends AriaDialogTriggerProps {}
  * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
-export function DialogTrigger(props: DialogTriggerProps) {
+export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   return (
     <AriaDialogTrigger {...props}>
       {/* RAC sets isPressed via PressResponder when the dialog is open.

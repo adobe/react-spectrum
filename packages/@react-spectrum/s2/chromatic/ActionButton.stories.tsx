@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Text} from '../src';
-import {Fonts, UnsafeClassName} from '../stories/ActionButton.stories';
+import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -41,7 +41,7 @@ let combinations = generatePowerset(states);
 const Template = (args) => {
   let {children, ...otherArgs} = args;
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combinations.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -52,7 +52,7 @@ const Template = (args) => {
         let button = <ActionButton key={key} data-testid={fullComboName} {...otherArgs} {...c}>{children ? children : key}</ActionButton>;
         if (c.staticColor != null) {
           return (
-            <StaticColorProvider staticColor={c.staticColor}>
+            <StaticColorProvider key={`static-${key}`} staticColor={c.staticColor}>
               {button}
             </StaticColorProvider>
           );
@@ -82,4 +82,4 @@ export const IconOnly = {
   }
 };
 
-export {Fonts, UnsafeClassName};
+export {Fonts, UnsafeClassName, NotificationBadges};

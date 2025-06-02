@@ -69,14 +69,14 @@ export class ComboBoxTester {
   /**
    * Set the interaction type used by the combobox tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
   /**
    * Opens the combobox dropdown. Defaults to using the interaction type set on the combobox tester.
    */
-  async open(opts: ComboBoxOpenOpts = {}) {
+  async open(opts: ComboBoxOpenOpts = {}): Promise<void> {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let combobox = this.combobox;
@@ -143,7 +143,7 @@ export class ComboBoxTester {
    * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: ComboBoxSelectOpts) {
+  async selectOption(opts: ComboBoxSelectOpts): Promise<void> {
     let {option, triggerBehavior, interactionType = this._interactionType} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
@@ -188,7 +188,7 @@ export class ComboBoxTester {
   /**
    * Closes the combobox dropdown.
    */
-  async close() {
+  async close(): Promise<void> {
     let listbox = this.listbox;
     if (listbox) {
       act(() => this.combobox.focus());

@@ -15,7 +15,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {useHover} from '../';
 
@@ -294,6 +294,63 @@ describe('useHover', function () {
         }
       ]);
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+    });
+
+    it('should trigger onHoverEnd after an element is removed', async function () {
+      function Test(props) {
+        let {hoverProps, isHovered} = useHover(props);
+        return <div {...hoverProps} data-testid="test" data-hovered={isHovered || undefined}>{props.children}</div>;
+      }
+
+      function Inner() {
+        let [show, setShow] = useState(true);
+        return show ? <button onClick={() => setShow(false)}>hide</button> : null;
+      }
+
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Test
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}>
+          <Inner />
+        </Test>
+      );
+
+      let el = res.getByTestId('test');
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      expect(el).toHaveAttribute('data-hovered', 'true');
+      
+      let button = res.getByRole('button');
+      act(() => button.click());
+      expect(button).not.toBeInTheDocument();
+
+      // browser does not fire pointerout/pointerleave here.
+      // but it does fire pointerover on the new target.
+      fireEvent(document.body, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      expect(el).not.toHaveAttribute('data-hovered');
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
     });
   });
 

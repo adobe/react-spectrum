@@ -45,7 +45,7 @@ export {DialogContainer, useDialogContainer} from './DialogContainer';
 export {Divider, DividerContext} from './Divider';
 export {DropZone, DropZoneContext} from './DropZone';
 export {Form} from './Form';
-export {createIcon, IconContext, IllustrationContext} from './Icon';
+export {createIcon, createIllustration, IconContext, IllustrationContext} from './Icon';
 export {IllustratedMessage, IllustratedMessageContext} from './IllustratedMessage';
 export {Image, ImageContext} from './Image';
 export {ImageCoordinator} from './ImageCoordinator';
@@ -53,6 +53,7 @@ export {InlineAlert, InlineAlertContext} from './InlineAlert';
 export {Link, LinkContext} from './Link';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, MenuContext} from './Menu';
 export {Meter, MeterContext} from './Meter';
+export {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
 export {NumberField, NumberFieldContext} from './NumberField';
 export {Picker, PickerItem, PickerSection, PickerContext} from './Picker';
 export {Popover} from './Popover';
@@ -73,13 +74,15 @@ export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
+export {ToastContainer as UNSTABLE_ToastContainer, ToastQueue as UNSTABLE_ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
-export {TreeView, TreeViewItem} from './TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent} from './TreeView';
 
 export {pressScale} from './pressScale';
 
+export {Autocomplete} from 'react-aria-components';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
@@ -123,6 +126,7 @@ export type {ImageCoordinatorProps} from './ImageCoordinator';
 export type {LinkProps} from './Link';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps} from './Menu';
 export type {MeterProps} from './Meter';
+export type {NotificationBadgeProps} from './NotificationBadge';
 export type {PickerProps, PickerItemProps, PickerSectionProps} from './Picker';
 export type {PopoverProps} from './Popover';
 export type {ProgressBarProps} from './ProgressBar';
@@ -142,8 +146,9 @@ export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellPro
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
+export type {ToastOptions, ToastContainerProps} from './Toast';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
-export type {TreeViewProps, TreeViewItemProps} from './TreeView';
-export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';
+export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps} from './TreeView';
+export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';

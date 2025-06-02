@@ -25,5 +25,5 @@ export {useColorFieldState} from './useColorFieldState';
 export {useColorChannelFieldState} from './useColorChannelFieldState';
 export {useColorPickerState} from './useColorPickerState';
 
-export type {Color, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
 export type {ColorSliderStateOptions} from './useColorSliderState';

@@ -291,23 +291,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       expect(menu).not.toBeInTheDocument();
     });
 
-    it('closes if menu is tabbed away from', async function () {
-      let tree = renderers.standard();
-      let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
-      menuTester.setInteractionType('keyboard');
-
-      await menuTester.open();
-      act(() => {jest.runAllTimers();});
-
-      let menu = menuTester.menu;
-
-      await user.tab();
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
-      expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(menuTester.trigger);
-    });
-
     it('has hidden dismiss buttons for screen readers', async function () {
       let tree = renderers.standard();
       let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
@@ -638,8 +621,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenu).toBeInTheDocument();
 
           await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger);
@@ -656,7 +637,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
@@ -665,13 +645,11 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
           await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();
@@ -712,10 +690,10 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(menu).not.toBeInTheDocument();
         });
 
-        it('should close nested submenus with Escape', async () => {
+        it('should close current submenu with Escape', async () => {
           let tree = (renderers.submenus!)();
 
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType: 'keyboard'});
           await menuTester.open();
           let menu = menuTester.menu;
 
@@ -732,10 +710,10 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await user.keyboard('[Escape]');
           act(() => {jest.runAllTimers();});
           act(() => {jest.runAllTimers();});
-          expect(menu).not.toBeInTheDocument();
-          expect(submenu).not.toBeInTheDocument();
+          expect(menu).toBeInTheDocument();
+          expect(submenu).toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();
-          expect(document.activeElement).toBe(menuTester.trigger);
+          expect(document.activeElement).toBe(nestedSubmenuTrigger);
         });
       });
     }

@@ -1,0 +1,18 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 48px) / 2) 10px" height="48" viewBox="0 0 214 48">
+  <rect width="214" height="48" fill="red" opacity="0" />
+  <rect width="214" height="48" rx="4" fill="var(--anatomy-gray-600)" />
+  <circle cx="16" cy="16" r="16" transform="translate(174 8)" fill="white" fill-opacity="0" />
+  <path
+    d="M7.343,6l3.4-3.4A.95.95,0,1,0,9.4,1.262L6,4.657l-3.4-3.4A.95.95,0,1,0,1.262,2.6L4.658,6l-3.4,3.4A.95.95,0,1,0,2.6,10.738L6,7.343l3.4,3.395A.95.95,0,1,0,10.739,9.4Z"
+    transform="translate(184 18)" fill="white" />
+  <rect width="12" height="12" transform="translate(184 18)" fill="none" />
+  <rect width="1" height="32" transform="translate(165 8)" fill="red" opacity="0" />
+  <rect width="1" height="32" rx="0.5" transform="translate(165 8)" fill="white" fill-opacity="0.25" />
+  <text transform="translate(42 14)" fill="white" font-size="14" font-family="Adobe-Clean">
+    <tspan x="0" y="14">Analysis complete!</tspan>
+  </text>
+  <path
+    d="M9,1a8,8,0,1,0,8,8A8,8,0,0,0,9,1Zm5.333,4.54L8.009,13.67a.6.6,0,0,1-.438.231H7.535a.6.6,0,0,1-.424-.175l-3.893-3.9a.6.6,0,0,1,0-.849h0l.663-.662a.6.6,0,0,1,.849,0v0L7.4,10.99l5.257-6.755a.6.6,0,0,1,.842-.1h0l.728.569a.6.6,0,0,1,.105.84Z"
+    transform="translate(16 15)" fill="white" />
+  <rect width="18" height="18" transform="translate(16 15)" fill="none" />
+</svg>

@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@react-aria/optimize-locales-plugin": "^1.1.4",
     "@remix-run/dev": "^2.3.1",
     "@remix-run/eslint-config": "^2.3.1",
     "@types/react": "^18",
@@ -29,7 +30,7 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "workspaces": [
     "../../packages/react-aria-components",

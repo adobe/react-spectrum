@@ -22,20 +22,21 @@ import {
   Tab as RACTab,
   TabList as RACTabList,
   Tabs as RACTabs,
-  TabListStateContext
+  TabListStateContext,
+  TabRenderProps
 } from 'react-aria-components';
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -44,7 +45,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The amount of space between the tabs.
    * @default 'regular'
@@ -63,17 +64,20 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {}
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {
+  /** The content to display in the tablist. */
+  children: ReactNode | ((item: T) => ReactNode)
+}
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<TabsProps>({});
+export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
+const InternalTabsContext = createContext<Partial<TabsProps>>({});
 const CollapseContext = createContext({
   showTabs: true,
   menuId: '',
@@ -165,26 +169,27 @@ const tablist = style({
       vertical: 'column'
     }
   },
-  paddingEnd: {
+  marginEnd: {
     orientation: {
       vertical: 20
     }
   },
-  paddingStart: {
+  marginStart: {
     orientation: {
       vertical: 12
     }
   },
   flexShrink: 0,
-  flexBasis: '[0%]'
+  flexBasis: '0%'
 });
 
-export function TabList<T extends object>(props: TabListProps<T>) {
+export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
   let {showTabs} = useContext(CollapseContext) ?? {};
 
   if (showTabs) {
     return <TabListInner {...props} />;
   }
+  return null;
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
@@ -208,7 +213,7 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
@@ -216,20 +221,21 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
       {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
     </div>
   );
 }
 
-interface TabLineProps {
+interface TabLineProps<T extends object> {
   disabledKeys: Iterable<Key> | undefined,
   isDisabled: boolean | undefined,
   selectedTab: HTMLElement | undefined,
   orientation?: Orientation,
+  tabList: TabListProps<T>,
   density?: 'compact' | 'regular'
 }
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}>({
   position: 'absolute',
   backgroundColor: {
     default: 'neutral',
@@ -260,12 +266,13 @@ const selectedIndicator = style({
   transitionTimingFunction: 'in-out'
 });
 
-function TabLine(props: TabLineProps) {
+function TabLine<T extends object>(props: TabLineProps<T>) {
   let {
     disabledKeys,
     isDisabled: isTabsDisabled,
     selectedTab,
     orientation,
+    tabList,
     density
   } = props;
   let {direction} = useLocale();
@@ -309,20 +316,19 @@ function TabLine(props: TabLineProps) {
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedItem?.key, density, direction, orientation]);
+  }, [onResize, state?.selectedItem?.key, density, direction, orientation, tabList]);
 
   return (
     <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
   );
 }
 
-const tab = style({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
   ...focusRing(),
   display: 'flex',
   color: {
-    default: 'neutral-subdued',
-    isSelected: 'neutral',
-    isHovered: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       isSelected: 'Highlight',
@@ -346,7 +352,8 @@ const tab = style({
     labelBehavior: {
       hide: size(6)
     }
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const icon = style({
@@ -358,7 +365,7 @@ const icon = style({
   }
 });
 
-export function Tab(props: TabProps) {
+export function Tab(props: TabProps): ReactNode {
   let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
   let contentId = useId();
@@ -409,20 +416,15 @@ export function Tab(props: TabProps) {
 
 const tabPanel = style({
   ...focusRing(),
-  display: 'flex',
   marginTop: 4,
-  marginX: -4,
-  paddingX: 4,
   color: 'gray-800',
   flexGrow: 1,
-  flexShrink: 1,
-  flexBasis: '[0%]',
+  flexBasis: '0%',
   minHeight: 0,
-  minWidth: 0,
-  overflow: 'auto'
+  minWidth: 0
 }, getAllowedOverrides({height: true}));
 
-export function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: TabPanelProps): ReactNode | null {
   let {showTabs} = useContext(CollapseContext);
   let {selectedKey} = useContext(InternalTabsContext);
   if (showTabs) {
@@ -489,13 +491,13 @@ let HiddenTabs = function (props: {
   return (
     <div
       // @ts-ignore
-      inert="true"
+      inert={inertValue(true)}
       ref={listRef}
       className={style({
-        display: '[inherit]',
-        flexDirection: '[inherit]',
-        gap: '[inherit]',
-        flexWrap: '[inherit]',
+        display: 'inherit',
+        flexDirection: 'inherit',
+        gap: 'inherit',
+        flexWrap: 'inherit',
         position: 'absolute',
         inset: 0,
         visibility: 'hidden',
@@ -518,9 +520,14 @@ let HiddenTabs = function (props: {
   );
 };
 
-let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & TabsProps) => {
+let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & Omit<TabsProps, 'children'>) => {
   let {id, items, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, valueId} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let {density, onSelectionChange: _onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let onSelectionChange = useCallback((key: Key | null) => {
+    if (key != null) {
+      _onSelectionChange?.(key);
+    }
+  }, [_onSelectionChange]);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
@@ -613,7 +620,8 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     }
   }, [collection.size, updateOverflow]);
 
-  let prevOrientation = useRef(orientation);
+  // start with null so that the first render won't have a flicker
+  let prevOrientation = useRef<Orientation | null>(null);
   useLayoutEffect(() => {
     if (collection.size > 0 && prevOrientation.current !== orientation) {
       updateOverflow();

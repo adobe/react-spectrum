@@ -23,10 +23,9 @@ import {
   useLayoutEffect
 } from '@react-aria/utils';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {focusSafely} from './focusSafely';
-import {getInteractionModality} from '@react-aria/interactions';
+import {focusSafely, getInteractionModality} from '@react-aria/interactions';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 export interface FocusScopeProps {
   /** The contents of the focus scope. */
@@ -91,7 +90,7 @@ let activeScope: ScopeRef = null;
  * management interface that can be used to move focus forward and back in response
  * to user events.
  */
-export function FocusScope(props: FocusScopeProps) {
+export function FocusScope(props: FocusScopeProps): JSX.Element {
   let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>(null);
   let endRef = useRef<HTMLSpanElement>(null);
@@ -444,7 +443,7 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
 }
 
 /** @private */
-export function isElementInChildOfActiveScope(element: Element) {
+export function isElementInChildOfActiveScope(element: Element): boolean {
   return isElementInChildScope(element, activeScope);
 }
 

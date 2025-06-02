@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ColorSwatchPicker, ColorSwatchPickerItem, Dialog, DialogTrigger, Input, Label, Popover} from '../src';
+import {Button, ColorSpace, ColorSwatchPicker, ColorSwatchPickerItem, Dialog, DialogTrigger, getColorChannels, Input, Label, Popover} from '../src';
 import {ColorAreaExample} from './ColorArea.stories';
 import {ColorField} from '../src/ColorField';
 import {ColorPicker} from '../src/ColorPicker';
 import {ColorSliderExample} from './ColorSlider.stories';
-import {ColorSpace} from '@react-types/color';
 import {ColorSwatchExample} from './ColorSwatch.stories';
-import {getColorChannels} from '@react-stately/color';
 import React, {useState} from 'react';
 
 export default {

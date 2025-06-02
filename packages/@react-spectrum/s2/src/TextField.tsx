@@ -20,7 +20,7 @@ import {
   InputContext,
   useSlottedContext
 } from 'react-aria-components';
-import {centerPadding, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -41,7 +41,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const TextFieldContext = createContext<ContextValue<TextFieldProps, TextFieldRef>>(null);
+export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
@@ -61,7 +61,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
-export const TextAreaContext = createContext<ContextValue<TextAreaProps, TextFieldRef<HTMLTextAreaElement>>>(null);
+export const TextAreaContext = createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
@@ -191,14 +191,14 @@ function TextAreaInput() {
       className={style({
         paddingX: 0,
         paddingY: centerPadding(),
-        minHeight: 'control',
+        minHeight: controlSize(),
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
-        color: '[inherit]',
-        fontFamily: '[inherit]',
-        fontSize: '[inherit]',
-        fontWeight: '[inherit]',
-        lineHeight: '[inherit]',
+        color: 'inherit',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        fontWeight: 'inherit',
+        lineHeight: 'inherit',
         flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',

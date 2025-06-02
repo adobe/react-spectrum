@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate} from '../types';
+import {AnyCalendarDate, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {fromExtendedYear, GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 
@@ -29,7 +29,7 @@ const INDIAN_YEAR_START = 80;
  * in each year, with either 30 or 31 days. Only one era identifier is supported: 'saka'.
  */
 export class IndianCalendar extends GregorianCalendar {
-  identifier = 'indian';
+  identifier: CalendarIdentifier = 'indian';
 
   fromJulianDay(jd: number): CalendarDate {
     // Gregorian date for Julian day
@@ -75,7 +75,7 @@ export class IndianCalendar extends GregorianCalendar {
     return new CalendarDate(this, indianYear, indianMonth, indianDay);
   }
 
-  toJulianDay(date: AnyCalendarDate) {
+  toJulianDay(date: AnyCalendarDate): number {
     let extendedYear = date.year + INDIAN_ERA_START;
     let [era, year] = fromExtendedYear(extendedYear);
 
@@ -121,9 +121,9 @@ export class IndianCalendar extends GregorianCalendar {
     return 9919;
   }
 
-  getEras() {
+  getEras(): string[] {
     return ['saka'];
   }
 
-  balanceDate() {}
+  balanceDate(): void {}
 }

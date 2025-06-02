@@ -29,7 +29,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The placement of the element with respect to its anchor element.
    *
@@ -40,7 +40,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
   /** The content of the tooltip. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
@@ -65,7 +65,7 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
     forcedColors: 'transparent'
   },
   backgroundColor: 'neutral',
-  borderRadius: 'control',
+  borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,
@@ -107,6 +107,8 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
 const arrowStyles = style<TooltipRenderProps>({
   display: 'block',
   fill: 'gray-800',
+  width: 10,
+  height: 5,
   rotate: {
     placement: {
       top: 0,
@@ -117,13 +119,13 @@ const arrowStyles = style<TooltipRenderProps>({
   },
   translateX: {
     placement: {
-      left: '[-25%]',
-      right: '[25%]'
+      left: '-25%',
+      right: '25%'
     }
   }
 });
 
-let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
+let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>({});
 
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
@@ -148,7 +150,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
     if (el) {
       el.lang = locale;
       el.dir = direction;
-      let spectrumBorderRadius = window.getComputedStyle(el).borderRadius;
+      let spectrumBorderRadius = typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
       if (spectrumBorderRadius !== '') {
         setBorderRadius(parseInt(spectrumBorderRadius, 10));
       }
@@ -170,7 +172,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       {renderProps => (
         <>
           <OverlayArrow>
-            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5">
+            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>
@@ -186,7 +188,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerProps) {
+export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
   let {
     containerPadding,
     crossOffset,
@@ -216,6 +218,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedTooltip(props: ICombined) {
+export function CombinedTooltip(props: ICombined): ReactNode {
   return <div />;
 }

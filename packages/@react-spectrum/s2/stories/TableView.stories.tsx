@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, Row, TableBody, TableHeader, TableView} from '../src';
+import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';
@@ -27,7 +28,8 @@ const onActionOptions = {onActionFunc, noOnAction};
 const meta: Meta<typeof TableView> = {
   component: TableView,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    controls: {exclude: ['onResize']}
   },
   tags: ['autodocs'],
   args: {
@@ -64,7 +66,7 @@ const StaticTable = (args: any) => (
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
       <Column>Date Modified</Column>
-      <Column>A</Column>
+      <Column>Size</Column>
       <Column>B</Column>
     </TableHeader>
     <TableBody>
@@ -72,21 +74,21 @@ const StaticTable = (args: any) => (
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>74 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>1.2 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>0.2 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
     </TableBody>
@@ -151,8 +153,144 @@ const DynamicTable = (args: any) => (
   </TableView>
 );
 
+export const DynamicColumns = {
+  render: function DynamicColumnsExample(args: any) {
+    let [cols, setColumns] = useState(columns);
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+        <ActionButton onPress={() => setColumns((prev) => prev.length > 3 ? [columns[0]].concat(columns.slice(2, 4)) : columns)}>Toggle columns</ActionButton>
+        <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
+          <TableHeader columns={cols}>
+            {(column) => (
+              <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={items} dependencies={[cols]}>
+            {item => (
+              <Row id={item.id} columns={cols}>
+                {(col) => {
+                  return <Cell>{item[col.id]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
+  },
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+const DynamicTableWithCustomMenus = (args: any) => (
+  <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
+    <TableHeader columns={columns}>
+      {(column) => (
+        <Column
+          width={150}
+          minWidth={150}
+          isRowHeader={column.isRowHeader}
+          menuItems={
+            <>
+              <MenuSection>
+                <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
+              </MenuSection>
+              <MenuSection>
+                <MenuItem onAction={action('hide column')}><Text slot="label">Hide column</Text></MenuItem>
+                <MenuItem onAction={action('manage columns')}><Text slot="label">Manage columns</Text></MenuItem>
+              </MenuSection>
+            </>
+          }>{column.name}</Column>
+      )}
+    </TableHeader>
+    <TableBody items={items}>
+      {item => (
+        <Row id={item.id} columns={columns}>
+          {(column) => {
+            return <Cell>{item[column.id]}</Cell>;
+          }}
+        </Row>
+      )}
+    </TableBody>
+  </TableView>
+);
+
+let sortItems = items;
+const DynamicSortableTableWithCustomMenus = (args: any) => {
+  let [items, setItems] = useState(sortItems);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
+  return (
+    <TableView aria-label="Dynamic table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column
+            allowsSorting
+            width={150}
+            minWidth={150}
+            isRowHeader={column.isRowHeader}
+            menuItems={
+              <>
+                <MenuSection>
+                  <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
+                </MenuSection>
+                <MenuSection>
+                  <MenuItem onAction={action('hide column')}><Text slot="label">Hide column</Text></MenuItem>
+                  <MenuItem onAction={action('manage columns')}><Text slot="label">Manage columns</Text></MenuItem>
+                </MenuSection>
+              </>
+            }>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+};
+
 export const Dynamic = {
   render: DynamicTable,
+  args: {
+    ...Example.args,
+    disabledKeys: ['Foo 5']
+  }
+};
+
+export const DynamicCustomMenus = {
+  render: DynamicTableWithCustomMenus,
+  args: {
+    ...Example.args,
+    disabledKeys: ['Foo 5']
+  }
+};
+
+export const DynamicSortableCustomMenus = {
+  render: DynamicSortableTableWithCustomMenus,
   args: {
     ...Example.args,
     disabledKeys: ['Foo 5']
@@ -322,7 +460,7 @@ const OnLoadMoreTable = (args: any) => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -358,7 +496,8 @@ const OnLoadMoreTable = (args: any) => {
 export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
   args: {
-    ...Example.args
+    ...Example.args,
+    delay: 50
   },
   name: 'async loading table'
 };
@@ -443,9 +582,9 @@ let resizeColumn = [
 ];
 
 let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, isSortable: true},
-  {name: 'Height', id: 'height', isSortable: true},
-  {name: 'Weight', id: 'weight', allowsResizing: true, isSortable: true}
+  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, allowsSorting: true},
+  {name: 'Height', id: 'height', allowsSorting: true},
+  {name: 'Weight', id: 'weight', allowsResizing: true, allowsSorting: true}
 ];
 
 const SortableResizableTable = (args: any) => {
@@ -471,7 +610,7 @@ const SortableResizableTable = (args: any) => {
     <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : null} onSortChange={isSortable ? onSortChange : null} styles={style({width: 384, height: 320})}>
       <TableHeader columns={args.columns}>
         {(column: any) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting={column.isSortable} allowsResizing={column.allowsResizing} align={column.align}>{column.name}</Column>
+          <Column {...column}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
@@ -490,7 +629,6 @@ const SortableResizableTable = (args: any) => {
 export const ResizingTable = {
   render: SortableResizableTable,
   args: {
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd'),
     columns: resizeColumn,
@@ -502,7 +640,6 @@ export const ResizingTable = {
 export const ResizingSortableTable = {
   render: SortableResizableTable,
   args: {
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd'),
     columns: sortResizeColumns,
@@ -586,7 +723,6 @@ export const ResizingUncontrolledSortableColumns = {
   render: (args) => <AsyncLoadingExample {...args} />,
   args: {
     ...Example.args,
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd')
   },
@@ -710,4 +846,62 @@ export const FlexWidth = {
     }
   },
   name: 'flex calculated height, flex direction row'
+};
+
+
+function ColSpanExample(args: any) {
+  let [hide, setHide] = useState(false);
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+      <ActionButton onPress={() => setHide(!hide)}>{hide ? 'Show' : 'Hide'}</ActionButton>
+      <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          {!hide && <Column>Date Modified</Column>}
+          <Column>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="1">
+            <Cell>Games</Cell>
+            <Cell>File folder</Cell>
+            {!hide && <Cell>6/7/2020</Cell>}
+            <Cell>74 GB</Cell>
+          </Row>
+          <Row id="2">
+            <Cell>Program Files</Cell>
+            <Cell>File folder</Cell>
+            {!hide && <Cell>4/7/2021</Cell>}
+            <Cell>1.2 GB</Cell>
+          </Row>
+          <Row id="3">
+            <Cell>bootmgr</Cell>
+            <Cell>System file</Cell>
+            {!hide && <Cell>11/20/2010</Cell>}
+            <Cell>0.2 GB</Cell>
+          </Row>
+          <Row id="4">
+            <Cell colSpan={hide ? 3 : 4}>Total size: 75.4 GB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    </div>
+  );
+}
+
+
+export const ColSpan = {
+  render: (args: any) => (
+    <ColSpanExample {...args} />
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
+  },
+  argTypes: {
+    selectionMode: {
+      control: false
+    }
+  }
 };

@@ -14,7 +14,7 @@ import {Content} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '..';
-import NotFound from '@spectrum-icons/illustrations/src/NotFound';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React from 'react';
 
 type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;

@@ -16,7 +16,7 @@
     // allows importing of json files, needed for locales as of right now
     "resolveJsonModule": true,
     // Search under node_modules for non-relative imports.
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "esnext",
     // Process & infer types from .js files.
     "allowJs": true,
@@ -45,7 +45,9 @@
   },
   "include": [
     "packages",
-    "lib/svg.d.ts"
+    "lib/svg.d.ts",
+    "lib/viewTransitions.d.ts",
+    "lib/css.d.ts"
   ],
   "exclude": [
     "**/node_modules",

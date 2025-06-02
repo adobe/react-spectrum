@@ -1,6 +1,6 @@
 import {version} from 'react';
 
-export function inertValue(value?: boolean) {
+export function inertValue(value?: boolean): string | boolean | undefined {
   const pieces = version.split('.');
   const major = parseInt(pieces[0], 10);
   if (major >= 19) {

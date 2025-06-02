@@ -52,7 +52,7 @@ const content =  style({
   overflowY: {
     default: 'auto',
     // Make the whole dialog scroll rather than only the content when the height it small.
-    '@media (height < 400)': 'visible'
+    [`@media (height < ${400 / 16}rem)`]: 'visible'
   },
   font: 'body'
 });
@@ -108,12 +108,12 @@ export const dialogInner = style({
     default: 16,
     sm: 24
   },
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   height: 'full',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto'
 });
 

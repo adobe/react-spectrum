@@ -16,11 +16,12 @@ import {
   ListBoxItemProps,
   ListBoxProps
 } from 'react-aria-components';
+import {ReactNode} from 'react';
 
 
 export function ListBox<T extends object>(
   {children, ...props}: ListBoxProps<T>
-) {
+): ReactNode {
   return (
     <AriaListBox {...props}>
       {children}
@@ -28,6 +29,6 @@ export function ListBox<T extends object>(
   );
 }
 
-export function ListBoxItem(props: ListBoxItemProps) {
+export function ListBoxItem(props: ListBoxItemProps): ReactNode {
   return <AriaListBoxItem {...props} />;
 }

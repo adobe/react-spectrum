@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, Input, Label, ListBox, Popover} from 'react-aria-components';
-import {MyListBoxItem} from './utils';
-import React from 'react';
+import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {LoadingSpinner, MyListBoxItem} from './utils';
+import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';
+import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
@@ -207,3 +208,105 @@ export const ComboBoxImeExample = () => (
     </Popover>
   </ComboBox>
 );
+
+let manyItems = [...Array(10000)].map((_, i) => ({id: i, name: `Item ${i}`}));
+
+export const VirtualizedComboBox = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const {contains} = useFilter({sensitivity: 'base'});
+  const filteredItems = useMemo(() => {
+    return manyItems.filter((item) => contains(item.name, searchTerm));
+  }, [searchTerm, contains]);
+
+  return (
+    <ComboBox items={filteredItems} inputValue={searchTerm} onInputChange={setSearchTerm}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover>
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
+          <ListBox className={styles.menu}>
+            {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </ComboBox>
+  );
+};
+
+let renderEmptyState = () => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      No results
+    </div>
+  );
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+export const AsyncVirtualizedDynamicCombobox = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox inputValue={list.filterText} onInputChange={list.setFilterText} allowsEmptyCollection>
+      <Label style={{display: 'block'}}>Async Virtualized Dynamic ComboBox</Label>
+      <div style={{display: 'flex', position: 'relative'}}>
+        <Input />
+        {list.isLoading && <LoadingSpinner style={{left: '130px', top: '0px', height: 20, width: 20}} />}
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{rowHeight: 25, loaderHeight: 30}}>
+          <ListBox<Character> className={styles.menu} renderEmptyState={renderEmptyState}>
+            <Collection items={list.items}>
+              {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </ComboBox>
+  );
+};
+
+AsyncVirtualizedDynamicCombobox.story = {
+  args: {
+    delay: 50
+  }
+};
+
+const MyListBoxLoaderIndicator = (props) => {
+  return (
+    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_ListBoxLoadingSentinel>
+  );
+};

@@ -12,7 +12,7 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, I18nProvider, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -179,11 +179,15 @@ describe('DateField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="aria">
+      <DateField
+        minValue={new CalendarDate(2023, 1, 1)}
+        defaultValue={new CalendarDate(2020, 2, 3)}
+        validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput data-validation-state={isInvalid ? 'invalid' : null}>
+            <DateInput
+              data-validation-state={isInvalid ? 'invalid' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -192,6 +196,24 @@ describe('DateField', () => {
     );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <DateField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )} 
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
   });
 
   it('should support form value', () => {
@@ -315,5 +337,39 @@ describe('DateField', () => {
     expect(document.activeElement).toBe(segments[1]);
     await user.keyboard('{backspace}');
     expect(document.activeElement).toBe(segments[0]);
+  });
+
+  it('should do nothing when pressing enter', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+  
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    expect(segments[2]).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(segments[2]).toHaveFocus();
+  });
+
+  it('does not crash on unknown segment types', async () => {
+    let {getByRole} = render(
+      <I18nProvider locale="zh-CN-u-ca-chinese">
+        <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let segments = Array.from(getByRole('group').querySelectorAll('.react-aria-DateSegment'));
+    let segmentTypes = segments.map(s => s.getAttribute('data-type'));
+    expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 });

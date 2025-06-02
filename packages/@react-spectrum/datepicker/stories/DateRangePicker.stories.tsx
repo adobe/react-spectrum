@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@react-types/datepicker';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
@@ -185,6 +186,8 @@ AllTheEvents.story = {
   name: 'all the events'
 };
 
+export const CustomCalendar = () => <CustomExample />;
+
 export function render(props = {}) {
   return (
     <div>
@@ -235,7 +238,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key | null>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
@@ -281,3 +284,19 @@ function ControlledExample(props) {
     </Flex>
   );
 }
+
+function CustomExample(props) {
+  let [value, setValue] = React.useState<DateRange | null>(null);
+
+  return (
+    <Flex direction="column" alignItems="center" gap="size-150">
+      <DateRangePicker
+        label="Custom 4-5-4 calendar"
+        {...props}
+        value={value}
+        onChange={chain(setValue, action('onChange'))}
+        createCalendar={() => new Custom454Calendar()}
+        maxVisibleMonths={3} />
+    </Flex>
+  );
+};

@@ -39,39 +39,37 @@ import './tailwind.global.css';
 ```
 
 ```tsx example standalone
-import {DialogTrigger, Button, Popover, Dialog, Menu, MenuItem, Separator, Switch, composeRenderProps} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator, Switch, composeRenderProps} from 'react-aria-components';
 import type {MenuItemProps, SwitchProps} from 'react-aria-components';
 
 function AccountMenuExample() {
   return (
     <div className="p-8 bg-gray-50 dark:bg-zinc-900 rounded-lg flex items-start justify-center">
-      <DialogTrigger>
+      <MenuTrigger>
         <Button aria-label="Account" className="inline-flex items-center justify-center rounded-md p-1.5 text-white bg-transparent border-none hover:bg-gray-200 pressed:bg-gray-300 dark:hover:bg-zinc-800 dark:pressed:bg-zinc-700 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-blue-600">
           <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-7 h-7 rounded-full" />
         </Button>
-        <Popover placement="bottom end" className="p-2 overflow-auto rounded-lg bg-white dark:bg-zinc-950 shadow-lg ring-1 ring-black/10 dark:ring-white/15 entering:animate-in entering:fade-in entering:placement-bottom:slide-in-from-top-1 entering:placement-top:slide-in-from-bottom-1 exiting:animate-out exiting:fade-out exiting:placement-bottom:slide-out-to-top-1 exiting:placement-top:slide-out-to-bottom-1 fill-mode-forwards origin-top-left">
-          <Dialog className="outline-hidden">
-            <div className="flex gap-2 items-center mx-3 mt-2">
-              <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-16 h-16 rounded-full" />
-              <div className="flex flex-col gap-1">
-                <div className="text-[15px] font-bold text-gray-900 dark:text-gray-100 leading-none">Marissa Whitaker</div>
-                <div className="text-base text-gray-900 dark:text-gray-100 leading-none mb-1">user@example.com</div>
-                <MySwitch>Dark Mode</MySwitch>
-              </div>
+        <Popover className="p-2 overflow-auto outline-hidden rounded-lg bg-white dark:bg-zinc-950 shadow-lg ring-1 ring-black/10 dark:ring-white/15 entering:animate-in entering:fade-in entering:placement-bottom:slide-in-from-top-1 entering:placement-top:slide-in-from-bottom-1 exiting:animate-out exiting:fade-out exiting:placement-bottom:slide-out-to-top-1 exiting:placement-top:slide-out-to-bottom-1 fill-mode-forwards origin-top-left">
+          <div className="flex gap-2 items-center mx-3 mt-2">
+            <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-16 h-16 rounded-full" />
+            <div className="flex flex-col gap-1">
+              <div className="text-[15px] font-bold text-gray-900 dark:text-gray-100 leading-none">Marissa Whitaker</div>
+              <div className="text-base text-gray-900 dark:text-gray-100 leading-none mb-1">user@example.com</div>
+              <MySwitch>Dark Mode</MySwitch>
             </div>
-            <Separator className="border-none bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 mt-4 mb-2" />
-            <Menu className="outline-hidden">
-              <MyMenuItem id="new">Account Settings</MyMenuItem>
-              <MyMenuItem id="open">Support</MyMenuItem>
-              <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
-              <MyMenuItem id="save">Legal notices</MyMenuItem>
-              <MyMenuItem id="save-as">About</MyMenuItem>
-              <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
-              <MyMenuItem id="print">Sign out</MyMenuItem>
-            </Menu>
-          </Dialog>
+          </div>
+          <Separator className="border-none bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 mt-4 mb-2" />
+          <Menu className="outline-hidden">
+            <MyMenuItem id="new">Account Settings</MyMenuItem>
+            <MyMenuItem id="open">Support</MyMenuItem>
+            <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
+            <MyMenuItem id="save">Legal notices</MyMenuItem>
+            <MyMenuItem id="save-as">About</MyMenuItem>
+            <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
+            <MyMenuItem id="print">Sign out</MyMenuItem>
+          </Menu>
         </Popover>
-      </DialogTrigger>
+      </MenuTrigger>
     </div>
   );
 }
@@ -82,7 +80,7 @@ function MyMenuItem(props: MenuItemProps) {
 
 function MySwitch(props: SwitchProps) {
   return (
-    <Switch className="group flex gap-2 items-center text-gray-800 dark:text-zinc-200 text-base transition">
+    <Switch className="group relative flex gap-2 items-center text-gray-800 dark:text-zinc-200 text-base transition">
       {composeRenderProps(props.children, children => <>
         <div className="flex h-3 w-6 p-[2px] items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300 group-selected:bg-gray-700 group-selected:dark:bg-zinc-300 group-selected:forced-colors:bg-[Highlight]! group-selected:group-pressed:bg-gray-800 group-selected:dark:group-pressed:bg-zinc-200 outline outline-0 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] outline-offset-2 group-focus-visible:outline-2">
           <div className="h-3 w-3 transform rounded-full bg-white dark:bg-zinc-900 outline outline-1 -outline-offset-1 outline-transparent shadow-sm transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />

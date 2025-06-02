@@ -35,6 +35,8 @@ export class CollectionNode<T> implements Node<T> {
   readonly lastChildKey: Key | null = null;
   readonly props: any = {};
   readonly render?: (node: Node<any>) => ReactElement;
+  readonly colSpan: number | null = null;
+  readonly colIndex: number | null = null;
 
   constructor(type: string, key: Key) {
     this.type = type;
@@ -61,6 +63,8 @@ export class CollectionNode<T> implements Node<T> {
     node.lastChildKey = this.lastChildKey;
     node.props = this.props;
     node.render = this.render;
+    node.colSpan = this.colSpan;
+    node.colIndex = this.colIndex;
     return node;
   }
 }
@@ -76,15 +80,15 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
 
-  get size() {
+  get size(): number {
     return this.keyMap.size;
   }
 
-  getKeys() {
+  getKeys(): IterableIterator<Key> {
     return this.keyMap.keys();
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): IterableIterator<Node<T>> {
     let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
     while (node) {
       yield node;
@@ -106,7 +110,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     };
   }
 
-  getKeyBefore(key: Key) {
+  getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -125,7 +129,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return node.parentKey;
   }
 
-  getKeyAfter(key: Key) {
+  getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -150,11 +154,11 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return this.firstKey;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
     while (node?.lastChildKey != null) {
       node = this.keyMap.get(node.lastChildKey);
@@ -183,7 +187,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return collection;
   }
 
-  addNode(node: CollectionNode<T>) {
+  addNode(node: CollectionNode<T>): void {
     if (this.frozen) {
       throw new Error('Cannot add a node to a frozen collection');
     }
@@ -191,7 +195,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.set(node.key, node);
   }
 
-  removeNode(key: Key) {
+  removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
     }
@@ -199,7 +203,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.delete(key);
   }
 
-  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false) {
+  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false): void {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }
@@ -213,7 +217,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
   // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
   // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
-  filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
+  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
     // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
     // for updating the next/prevKey for every non-filtered node.
@@ -224,7 +228,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
         let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
         let lastChildInSection: Mutable<CollectionNode<T>> | null = null;
         for (let child of this.getChildren(node.key)) {
-          if (filterFn(child.textValue) || child.type === 'header') {
+          if (shouldKeepNode(child, filterFn, this, newCollection)) {
             let clonedChild: Mutable<CollectionNode<T>> = (child as CollectionNode<T>).clone();
             // eslint-disable-next-line max-depth
             if (lastChildInSection == null) {
@@ -284,22 +288,25 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
           lastNode = clonedSeparator;
           newCollection.addNode(clonedSeparator);
         }
-      } else if (filterFn(node.textValue)) {
+      } else {
+        // At this point, the node is either a subdialogtrigger node or a standard row/item
         let clonedNode: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-        if (newCollection.firstKey == null) {
-          newCollection.firstKey = clonedNode.key;
-        }
+        if (shouldKeepNode(clonedNode, filterFn, this, newCollection)) {
+          if (newCollection.firstKey == null) {
+            newCollection.firstKey = clonedNode.key;
+          }
 
-        if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
-          lastNode.nextKey = clonedNode.key;
-          clonedNode.prevKey = lastNode.key;
-        } else {
-          clonedNode.prevKey = null;
-        }
+          if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
+            lastNode.nextKey = clonedNode.key;
+            clonedNode.prevKey = lastNode.key;
+          } else {
+            clonedNode.prevKey = null;
+          }
 
-        clonedNode.nextKey = null;
-        newCollection.addNode(clonedNode);
-        lastNode = clonedNode;
+          clonedNode.nextKey = null;
+          newCollection.addNode(clonedNode);
+          lastNode = clonedNode;
+        }
       }
     }
 
@@ -316,5 +323,24 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     newCollection.lastKey = lastNode?.key || null;
 
     return newCollection;
+  }
+}
+
+function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boolean, oldCollection: BaseCollection<T>, newCollection: BaseCollection<T>): boolean {
+  if (node.type === 'subdialogtrigger' || node.type === 'submenutrigger') {
+    // Subdialog wrapper should only have one child, if it passes the filter add it to the new collection since we don't need to
+    // do any extra handling for its first/next key
+    let triggerChild = [...oldCollection.getChildren(node.key)][0];
+    if (triggerChild && filterFn(triggerChild.textValue)) {
+      let clonedChild: Mutable<CollectionNode<T>> = (triggerChild as CollectionNode<T>).clone();
+      newCollection.addNode(clonedChild);
+      return true;
+    } else {
+      return false;
+    }
+  } else if (node.type === 'header') {
+    return true;
+  } else {
+    return filterFn(node.textValue);
   }
 }

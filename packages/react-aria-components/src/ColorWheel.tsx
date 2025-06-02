@@ -1,6 +1,6 @@
-import {AriaColorWheelOptions, useColorWheel} from '@react-aria/color';
+import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
 import {ColorWheelContext} from './RSPContexts';
-import {ColorWheelState, useColorWheelState} from '@react-stately/color';
+import {ColorWheelState, useColorWheelState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
@@ -77,6 +77,8 @@ export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrack
 export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorWheelTrackContext);
   let state = useContext(ColorWheelStateContext)!;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {className, style, ...rest} = props;
 
   let renderProps = useRenderProps({
     ...props,
@@ -89,7 +91,7 @@ export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorW
 
   return (
     <div
-      {...props}
+      {...rest}
       {...renderProps}
       ref={ref}
       data-disabled={state.isDisabled || undefined} />

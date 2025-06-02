@@ -2269,9 +2269,9 @@ describe('useDrag and useDrop', function () {
   });
 
   describe('screen reader', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // reset focus visible state
-      fireEvent.focus(document.body);
+      fireEvent.click(document.body, {detail: 0, pointerType: null});
     });
 
     afterEach(async () => {
