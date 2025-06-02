@@ -1399,6 +1399,11 @@ function Example() {
               {(item) => (
                 <TreeItem textValue={item.value.name}>
                   <TreeItemContent>
+                    <Button slot="chevron">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </Button>
                     {item.value.name}
                   </TreeItemContent>
                 </TreeItem>
@@ -1473,6 +1478,11 @@ function DroppableTree() {
             {(child: DroppableItem) => (
               <TreeItem textValue={child.name}>
                 <TreeItemContent>
+                  <Button slot="chevron">
+                    <svg viewBox="0 0 24 24">
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </Button>
                   {child.name}
                 </TreeItemContent>
               </TreeItem>
