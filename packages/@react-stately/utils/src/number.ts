@@ -22,14 +22,18 @@ export function roundToStepPrecision(value: number, step: number): number {
   let roundedValue = value;
   let precision = 0;
   let stepString = step.toString();
-  let pointIndex = stepString.indexOf('.');
-  if (pointIndex >= 0) {
-    precision = stepString.length - pointIndex;
+  // Handle negative exponents in exponential notation (e.g., "1e-7" → precision 8)
+  let eIndex = stepString.toLowerCase().indexOf('e-');
+  if (eIndex > 0) {
+    let significand = stepString.slice(0, eIndex);
+    let exponent = stepString.slice(eIndex + 1);
+    let pointIndex = significand.indexOf('.');
+    let decimals = pointIndex >= 0 ? significand.length - pointIndex : 0;
+    precision = Math.abs(Number(exponent)) + decimals + 1;
   } else {
-    // Handle negative exponents in exponential notation (e.g., "1e-7" → precision 8)
-    let eIndex = stepString.toLowerCase().indexOf('e-');
-    if (eIndex > 0) {
-      precision = Math.abs(Number(stepString.slice(eIndex + 1))) + 1;
+    let pointIndex = stepString.indexOf('.');
+    if (pointIndex >= 0) {
+      precision = stepString.length - pointIndex;
     }
   }
   if (precision > 0) {

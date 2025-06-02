@@ -16,6 +16,8 @@ describe('number utils', () => {
     it('should round to the correct decimal places for steps with decimals', () => {
       expect(roundToStepPrecision(1.24, 0.1)).toBe(1.24);
       expect(roundToStepPrecision(1.456, 0.01)).toBe(1.456);
+      expect(roundToStepPrecision(1.2345, 0.015)).toBe(1.2345);
+      expect(roundToStepPrecision(1.2345, 0.25)).toBe(1.235);
       // Should not overcount precision
       expect(roundToStepPrecision(2.349, 0.100)).toBe(2.35);
       expect(roundToStepPrecision(2.35, 0.100)).toBe(2.35);
@@ -27,6 +29,8 @@ describe('number utils', () => {
     it('should handle rounding for exponential step values', () => {
       expect(roundToStepPrecision(0.123456789, 1e-3)).toBe(0.1235);
       expect(roundToStepPrecision(0.123456789, 1e-7)).toBe(0.12345679);
+      expect(roundToStepPrecision(0.123456789, 1.5e-7)).toBe(0.123456789);
+      expect(roundToStepPrecision(0.123456789, 2.5e-6)).toBe(0.12345679);
       // Should handle exponential notation steps regardless of e/E case
       expect(roundToStepPrecision(0.123456789, 1E-8)).toBe(0.123456789);
     });
