@@ -160,6 +160,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
           {...containerProps}
           {...inputProps}
           type="text"
+          tabIndex={-1}
           required={selectProps.required}
           onChange={() => {/** Ignore react warning. */}}
           onInvalid={(e) => {
