@@ -422,8 +422,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       {...props}
       ref={ref}
       slot="chevron"
-      // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      excludeFromTabOrder={isAndroid() && !isDisabled}
+      excludeFromTabOrder={!isDisabled}
       preventFocusOnPress
       className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
