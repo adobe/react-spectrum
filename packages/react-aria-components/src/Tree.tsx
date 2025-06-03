@@ -320,7 +320,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       let currentDraggingKeys = dragState?.draggingKeys ?? new Set();
 
       if (isInternal && target.type === 'item' && currentDraggingKeys.size > 0) {
-        if (currentDraggingKeys.has(target.key)) {
+        if (currentDraggingKeys.has(target.key) && target.dropPosition === 'on') {
           return 'cancel';
         }
 
