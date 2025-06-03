@@ -28,7 +28,6 @@ import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
 category: Collections
@@ -432,12 +431,13 @@ import {MyCheckbox} from './Checkbox';
 let items = [
   {id: '1', title: 'Documents', type: 'directory', children: [
     {id: '2', title: 'Project', type: 'directory', children: [
-      {id: '3', title: 'Weekly Report', type: 'file', children: []}
+      {id: '3', title: 'Weekly Report', type: 'file', children: []},
+      {id: '4', title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: '4', title: 'Photos', type: 'directory', children: [
-    {id: '5', title: 'Image 1', type: 'file', children: []},
-    {id: '6', title: 'Image 2', type: 'file', children: []}
+  {id: '5', title: 'Photos', type: 'directory', children: [
+    {id: '6', title: 'Image 1', type: 'file', children: []},
+    {id: '7', title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 
@@ -779,18 +779,67 @@ Draggable tree items must include a focusable drag handle using a `<Button slot=
 
 See the [drag and drop introduction](dnd.html) to learn more.
 
-### Reorderable
+### Moving between levels
 
-This example shows a basic tree that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+The `onMove` event handler allows reordering items within a level, as well as moving items to a different level. It supports dropping both on and between items. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
 
 This uses [useTreeData](../react-stately/useTreeData.html) from React Stately to manage the tree data. Note that `useTreeData` is a convenience hook, not a requirement. You can manage your state however you wish.
 
-<InlineAlert variant="info" maxWidth={600}>
-  <Heading>Reordering vs. Moving</Heading>
-  <Content>
-    `onReorder` only allows reordering items within the same level of the tree hierarchy. To move items between different levels, use `onMove` instead (see [Moving between levels](#moving-between-levels)).
-  </Content>
-</InlineAlert>
+```tsx example
+function Example() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': tree.getItem(key).value.title
+    })),
+    ///- begin highlight -///
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        // Move items to become children of the target
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <Tree
+      aria-label="Tree with hierarchical drag and drop"
+      selectionMode="multiple"
+      items={tree.items}
+      dragAndDropHooks={dragAndDropHooks}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+### Reordering within a level
+
+The `onReorder` event handler allows reordering items within the same level. Unlike `onMove` it does not allow moving items to a different level.
 
 ```tsx example
 import {useTreeData} from '@react-stately/data';
@@ -888,62 +937,6 @@ function Example() {
 ```
 
 </details>
-
-### Moving between levels
-
-The `onMove` event handler allows moving items between different levels of the tree hierarchy, as well as within the same level. Unlike `onReorder`, which only works within the same parent, `onMove` can handle drops "on" items to make them children of the target item.
-
-```tsx example
-function Example() {
-  let tree = useTreeData({
-    initialItems: items
-  });
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': tree.getItem(key).value.title
-    })),
-    ///- begin highlight -///
-    onMove(e) {
-      if (e.target.dropPosition === 'before') {
-        tree.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        tree.moveAfter(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'on') {
-        // Move items to become children of the target
-        let targetNode = tree.getItem(e.target.key);
-        if (targetNode) {
-          let targetIndex = targetNode.children ? targetNode.children.length : 0;
-          let keyArray = Array.from(e.keys);
-          for (let i = 0; i < keyArray.length; i++) {
-            tree.move(keyArray[i], e.target.key, targetIndex + i);
-          }
-        }
-      }
-    }
-    ///- end highlight -///
-  });
-
-  return (
-    <Tree
-      aria-label="Tree with hierarchical drag and drop"
-      selectionMode="multiple"
-      items={tree.items}
-      dragAndDropHooks={dragAndDropHooks}
-    >
-      {function renderItem(item) {
-        return (
-          <MyTreeItem title={item.value.title}>
-            <Collection items={item.children}>
-              {renderItem}
-            </Collection>
-          </MyTreeItem>
-        )
-      }}
-    </Tree>
-  );
-}
-```
 
 ### Custom drag preview
 
