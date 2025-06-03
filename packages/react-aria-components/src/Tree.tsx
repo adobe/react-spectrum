@@ -16,7 +16,7 @@ import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
+import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -114,6 +114,16 @@ export interface TreeRenderProps {
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
+  /**
+   * The type of selection that is allowed in the collection.
+   * @selector [data-selection-mode="single | multiple"]
+   */
+  selectionMode: SelectionMode,
+  /**
+   * Whether the tree allows dragging.
+   * @selector [data-allows-dragging]
+   */
+  allowsDragging: boolean,
   /**
    * State of the tree.
    */
@@ -337,6 +347,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isFocused,
     isFocusVisible,
     isDropTarget: isRootDropTarget,
+    selectionMode: state.selectionManager.selectionMode,
+    allowsDragging: !!dragState,
     state
   };
 
@@ -380,7 +392,9 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           data-empty={state.collection.size === 0 || undefined}
           data-focused={isFocused || undefined}
           data-drop-target={isRootDropTarget || undefined}
-          data-focus-visible={isFocusVisible || undefined}>
+          data-focus-visible={isFocusVisible || undefined}
+          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+          data-allows-dragging={!!dragState || undefined}>
           <Provider
             values={[
               [TreeStateContext, state],

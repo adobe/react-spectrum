@@ -873,7 +873,6 @@ function Example() {
     all: unset;
     width: 15px;
     text-align: center;
-    margin-right: 8px;
 
     &[data-focus-visible] {
       border-radius: 4px;
@@ -882,10 +881,20 @@ function Example() {
   }
 }
 
+.react-aria-Tree {
+  &[data-selection-mode=multiple] {
+    --checkbox-width: 28px;
+  }
+
+  &[data-allows-dragging] {
+    --drag-button-width: 23px;
+  }
+
   .react-aria-DropIndicator {
     &[data-drop-target] {
       outline: 1px solid var(--highlight-background);
-    margin-left: calc(62px + (var(--tree-item-level) - 1) * 8px);
+      margin-left: calc(8px + var(--checkbox-width, 0px) + var(--drag-button-width, 0px) + 26px + (var(--tree-item-level) - 1) * 8px);
+    }
   }
 }
 ```
