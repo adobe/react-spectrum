@@ -60,6 +60,7 @@ export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, 
       }
     },
     excludeFromTabOrder: true,
+    preventFocusOnPress: true,
     'data-react-aria-prevent-focus': true,
     ...labelProps
   };

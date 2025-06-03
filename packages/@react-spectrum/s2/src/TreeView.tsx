@@ -412,17 +412,14 @@ const expandButton = style<ExpandableRowChevronProps>({
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled, scale, isHidden} = fullProps;
+  let {isExpanded, scale, isHidden} = fullProps;
   let {direction} = useLocale();
-  isDisabled = isDisabled || isHidden;
 
   return (
     <Button
       {...props}
       ref={ref}
       slot="chevron"
-      excludeFromTabOrder={!isDisabled}
-      preventFocusOnPress
       className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
         className={style({
