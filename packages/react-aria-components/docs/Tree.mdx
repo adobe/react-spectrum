@@ -839,25 +839,12 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <MyCheckbox slot="selection" />
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              {/*- begin highlight -*/}
-              <Button slot="drag">≡</Button>
-              {/*- end highlight -*/}
-              {item.value.name}
-            </TreeItemContent>
+          <MyTreeItem title={item.value.name}>
             <Collection items={item.children}>
-              {/* recursively render children */}
               {renderItem}
             </Collection>
-          </TreeItem>
-        );
+          </MyTreeItem>
+        )
       }}
     </Tree>
   );
@@ -895,9 +882,9 @@ function Example() {
   }
 }
 
-.react-aria-DropIndicator {
-  &[data-drop-target] {
-    outline: 1px solid var(--highlight-background);
+  .react-aria-DropIndicator {
+    &[data-drop-target] {
+      outline: 1px solid var(--highlight-background);
     margin-left: calc(62px + (var(--tree-item-level) - 1) * 8px);
   }
 }
@@ -962,23 +949,12 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <MyCheckbox slot="selection" />
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              <Button slot="drag">≡</Button>
-              {item.value.name}
-            </TreeItemContent>
+          <MyTreeItem title={item.value.name}>
             <Collection items={item.children}>
-              {/* recursively render children */}
               {renderItem}
             </Collection>
-          </TreeItem>
-        );
+          </MyTreeItem>
+        )
       }}
     </Tree>
   );
@@ -1014,22 +990,6 @@ function Example() {
     getItems: (keys) => [...keys].map(key => ({
       'text/plain': tree.getItem(key).value.name
     })),
-    onMove(e) {
-      if (e.target.dropPosition === 'before') {
-        tree.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        tree.moveAfter(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'on') {
-        let targetNode = tree.getItem(e.target.key);
-        if (targetNode) {
-          let targetIndex = targetNode.children ? targetNode.children.length : 0;
-          let keyArray = Array.from(e.keys);
-          for (let i = 0; i < keyArray.length; i++) {
-            tree.move(keyArray[i], e.target.key, targetIndex + i);
-          }
-        }
-      }
-    },
     ///- begin highlight -///
     renderDragPreview(items) {
       return (
@@ -1051,23 +1011,12 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <MyCheckbox slot="selection" />
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              <Button slot="drag">≡</Button>
-              {item.value.name}
-            </TreeItemContent>
+          <MyTreeItem title={item.value.name}>
             <Collection items={item.children}>
-              {/* recursively render children */}
               {renderItem}
             </Collection>
-          </TreeItem>
-        );
+          </MyTreeItem>
+        )
       }}
     </Tree>
   );
@@ -1139,22 +1088,6 @@ function DraggableTree() {
       });
     },
     ///- end highlight -///
-    onMove(e) {
-      if (e.target.dropPosition === 'before') {
-        tree.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        tree.moveAfter(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'on') {
-        let targetNode = tree.getItem(e.target.key);
-        if (targetNode) {
-          let targetIndex = targetNode.children ? targetNode.children.length : 0;
-          let keyArray = Array.from(e.keys);
-          for (let i = 0; i < keyArray.length; i++) {
-            tree.move(keyArray[i], e.target.key, targetIndex + i);
-          }
-        }
-      }
-    },
     renderDragPreview(items) {
       return (
         <div className="drag-preview">
@@ -1172,36 +1105,15 @@ function DraggableTree() {
       items={tree.items}
       dragAndDropHooks={dragAndDropHooks}
     >
-      {(item) => (
-        <TreeItem textValue={item.value.name}>
-          <TreeItemContent>
-            <MyCheckbox slot="selection" />
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            <Button slot="drag">≡</Button>
-            {item.value.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {(item) => (
-              <TreeItem textValue={item.value.name}>
-                <TreeItemContent>
-                  <MyCheckbox slot="selection" />
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  <Button slot="drag">≡</Button>
-                  {item.value.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
-          </Collection>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.name}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
     </Tree>
   );
 }
@@ -1251,22 +1163,15 @@ function Example() {
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'Drop items here'}
       >
-        {(item) => (
-          <TreeItem textValue={item.name}>
-            <TreeItemContent>
-              {item.name}
-            </TreeItemContent>
-            <Collection items={item.children}>
-              {(child: DroppableItem) => (
-                <TreeItem textValue={child.name}>
-                  <TreeItemContent>
-                    {child.name}
-                  </TreeItemContent>
-                </TreeItem>
-              )}
-            </Collection>
-          </TreeItem>
-        )}
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.name}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
       </Tree>
     </div>
   );
@@ -1292,10 +1197,35 @@ Dropping on items can be enabled using the `onItemDrop` event. When a valid drag
 
 ```tsx example
 function Example() {
+  let tree = useTreeData({
+    initialItems: [
+      {id: 'folder1', name: 'Folder 1', children: [
+        {id: 'file1', name: 'File 1', children: []},
+        {id: 'file2', name: 'File 2', children: []}
+      ]},
+      {id: 'folder2', name: 'Folder 2', children: []}
+    ],
+    getKey: item => item.id,
+    getChildren: item => item.children || []
+  });
+
   let {dragAndDropHooks} = useDragAndDrop({
     ///- begin highlight -///
-    onItemDrop(e) {
-      alert(`Dropped on ${e.target.key}`);
+    async onItemDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => {
+            let parsed = JSON.parse(await item.getText('custom-app-type'));
+            return {
+              ...parsed,
+              // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+              id: Math.random().toString(36).slice(2)
+            };
+          })
+      );
+
+      tree.insert(e.target.key, 0, ...items);
     }
     ///- end highlight -///
   });
@@ -1303,7 +1233,20 @@ function Example() {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableTree />
-      <PokemonEvolutionTree dragAndDropHooks={dragAndDropHooks} />
+      <Tree
+        aria-label="Tree with item drop targets"
+        items={tree.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.name}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
     </div>
   );
 }
@@ -1360,25 +1303,15 @@ function Example() {
       <Tree
         aria-label="Tree with insertion"
         items={tree.items}
-        dragAndDropHooks={dragAndDropHooks}
-      >
+        dragAndDropHooks={dragAndDropHooks}>
         {function renderItem(item) {
           return (
-            <TreeItem textValue={item.value.name}>
-              <TreeItemContent>
-                <Button slot="chevron">
-                  <svg viewBox="0 0 24 24">
-                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                  </svg>
-                </Button>
-                {item.value.name}
-              </TreeItemContent>
+            <MyTreeItem title={item.value.name}>
               <Collection items={item.children}>
-                {/* recursively render children */}
                 {renderItem}
               </Collection>
-            </TreeItem>
-          );
+            </MyTreeItem>
+          )
         }}
       </Tree>
     </div>
@@ -1440,32 +1373,15 @@ function DroppableTree() {
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => 'Drop items here'}
     >
-      {(item) => (
-        <TreeItem textValue={item.name}>
-          <TreeItemContent>
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            {item.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {(child: DroppableItem) => (
-              <TreeItem textValue={child.name}>
-                <TreeItemContent>
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  {child.name}
-                </TreeItemContent>
-              </TreeItem>
-            )}
-          </Collection>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.name}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
     </Tree>
   );
 }
@@ -1563,16 +1479,23 @@ function Example() {
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
+      let getFiles = async (dir) => {
+        let files = [];
+        for await (let entry of dir.getEntries()) {
+          files.push({
+            id: Math.random().toString(36).slice(2),
+            name: entry.name,
+            kind: entry.kind,
+            children: entry.kind === 'directory' 
+              ? await getFiles(entry) 
+              : []
+          });
+        }
+        return files;
+      };
+
       let dir = e.items.find(isDirectoryDropItem)!;
-      let files = [];
-      for await (let entry of dir.getEntries()) {
-        files.push({
-          id: Math.random().toString(36).slice(2),
-          name: entry.name,
-          kind: entry.kind
-        });
-      }
-      setFiles(files);
+      setFiles(await getFiles(dir));
     }
     /*- end highlight -*/
   });
@@ -1584,13 +1507,15 @@ function Example() {
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => 'Drop directory here'}
     >
-      {(item) => (
-        <TreeItem textValue={item.name}>
-          <TreeItemContent>
-            {item.kind === 'directory' ? '📁' : '📄'} {item.name}
-          </TreeItemContent>
-        </TreeItem>
-      )}
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={`${item.kind === 'directory' ? '📁' : '📄'} ${item.name}`}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
     </Tree>
   );
 }
@@ -1660,20 +1585,15 @@ function Example() {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <MyCheckbox slot="selection" />
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              <Button slot="drag">≡</Button>
-              {item.value.name}
-            </TreeItemContent>
-          </TreeItem>
-        )}
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.name}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
       </Tree>
       <DroppableTree />
     </div>
@@ -1731,20 +1651,15 @@ function Example() {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => (
-          <TreeItem textValue={item.value.name}>
-            <TreeItemContent>
-              <MyCheckbox slot="selection" />
-              <Button slot="chevron">
-                <svg viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Button>
-              <Button slot="drag">≡</Button>
-              {item.value.name}
-            </TreeItemContent>
-          </TreeItem>
-        )}
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.name}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
       </Tree>
       <DroppableTree />
     </div>
@@ -1940,26 +1855,15 @@ function DndTree(props: DndTreeProps) {
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => 'Drop items here'}
     >
-    {function renderItem(item) {
-      return (
-        <TreeItem textValue={item.value.name}>
-          <TreeItemContent>
-            <MyCheckbox slot="selection" />
-            <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </Button>
-            <Button slot="drag">≡</Button>
-            {item.value.name}
-          </TreeItemContent>
-          <Collection items={item.children}>
-            {/* recursively render children */}
-            {renderItem}
-          </Collection>
-        </TreeItem>
-      );
-    }}
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.name}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
     </Tree>
   );
 }
