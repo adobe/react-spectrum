@@ -22,7 +22,8 @@ function testStyle(...args) {
     },
     args
   );
-  return {css, js};
+
+  return {css, js: typeof js === 'function' ? js : js.toString()};
 }
 
 describe('style-macro', () => {
@@ -55,7 +56,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" Jbs9 Jbpv9"');
+    expect(js).toMatchInlineSnapshot('" Jbs9 Jbpv9 -macro$M74Bxe"');
   });
 
   it('should support self references', () => {
@@ -118,7 +119,7 @@ describe('style-macro', () => {
     `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _kc9 hc9 mCPFGYc9 lc9 SMBFGYc9 Rv9 ZjUQgKd9 -m_-mc9 -S_-Sv9"'
+      '" _kc9 hc9 mCPFGYc9 lc9 SMBFGYc9 Rv9 ZjUQgKd9 -m_-mc9 -S_-Sv9 -macro$wNXlmc"'
     );
   });
 
@@ -136,9 +137,13 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw9 pg9"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb9 pHJ3AUd9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb9 pg9"');
+    expect(js()).toMatchInlineSnapshot('"  gw9 pg9 -macro$7ucvu4"');
+    expect(overrides).toMatchInlineSnapshot(
+      '" g8tmWqb9 pHJ3AUd9 -macro$sFRgme"'
+    );
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  g8tmWqb9 -macro$sFRgme pg9 -macro$nt261r"'
+    );
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -153,9 +158,13 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B9 __Ya9"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D9 __Ya9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D9 __Ya9"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B9 __Ya9 -macro$hzmozh"');
+    expect(overrides).toMatchInlineSnapshot(
+      '" -_7PloMd-D9 __Ya9 -macro$f5PRU"'
+    );
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  -_7PloMd-D9 __Ya9 -macro$f5PRU -macro$1vw5vro"'
+    );
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -170,9 +179,11 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk9 Qk9 Sk9 Rk9"');
-    expect(overrides).toMatchInlineSnapshot('" Tm9 Qm9 Sm9 Rm9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm9 Qm9 Sm9 Rm9"');
+    expect(js()).toMatchInlineSnapshot('"  Tk9 Qk9 Sk9 Rk9 -macro$1jmmjz3"');
+    expect(overrides).toMatchInlineSnapshot('" Tm9 Qm9 Sm9 Rm9 -macro$hWyGab"');
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  Tm9 Qm9 Sm9 Rm9 -macro$hWyGab -macro$vku4y4"'
+    );
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -187,9 +198,11 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE9"');
-    expect(overrides).toMatchInlineSnapshot('" Nk9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk9 gE9"');
+    expect(js()).toMatchInlineSnapshot('"  gE9 -macro$2v7u7e"');
+    expect(overrides).toMatchInlineSnapshot('" Nk9 -macro$hsZrrc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  Nk9 -macro$hsZrrc gE9 -macro$emy58b"'
+    );
   });
 
   it('should support runtime conditions', () => {
@@ -243,9 +256,13 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH9 pt9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9 po9"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE9 pm9"');
+    expect(js({})).toMatchInlineSnapshot('"  gH9 pt9 -macro$1cgd07e"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot(
+      '"  gF9 po9 -macro$1b5rdyb"'
+    );
+    expect(js({isPressed: true})).toMatchInlineSnapshot(
+      '"  gE9 pm9 -macro$1aigku8"'
+    );
   });
 
   it('should support nested runtime conditions', () => {
@@ -286,11 +303,15 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js({})).toMatchInlineSnapshot('"  gH9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h9"');
+    expect(js({})).toMatchInlineSnapshot('"  gH9 -macro$2v7ua5"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot(
+      '"  gF9 -macro$2v7u8b"'
+    );
+    expect(js({isSelected: true})).toMatchInlineSnapshot(
+      '"  g_h9 -macro$nl39vw"'
+    );
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  g39"'
+      '"  g39 -macro$2v7tqw"'
     );
   });
 
@@ -305,9 +326,15 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY9"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe9"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw9"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(
+      '"  gY9 -macro$2v7upq"'
+    );
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(
+      '"  gjQquMe9 -macro$1xbmgag"'
+    );
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(
+      '"  gw9 -macro$2v7vh8"'
+    );
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -341,8 +368,10 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple9"');
+    expect(js({})).toMatchInlineSnapshot('"  plb9 -macro$nlai7w"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot(
+      '"  ple9 -macro$nlaian"'
+    );
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -350,7 +379,7 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th9 Qh9 Sh9 Rh9"');
+    expect(js).toMatchInlineSnapshot('" Th9 Qh9 Sh9 Rh9 -macro$tgBsxe"');
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a;
 

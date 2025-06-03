@@ -101,7 +101,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
   );
 }
 
-export const Example = (args: CardViewProps<any>, {viewMode}) => {
+export const Example = (args: CardViewProps<any>, {viewMode} = {viewMode: ''}) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -157,7 +157,7 @@ Example.args = {
   selectionMode: 'multiple'
 };
 
-export const Empty = (args: CardViewProps<any>, {viewMode}) => {
+export const Empty = (args: CardViewProps<any>, {viewMode} = {viewMode: ''}) => {
   return (
     <CardView
       aria-label="Assets"
@@ -202,7 +202,7 @@ function TopicCard({topic}: {topic: Topic}) {
   );
 }
 
-export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
+export const CollectionCards = (args: CardViewProps<any>, {viewMode} = {viewMode: ''}) => {
   let list = useAsyncList<Topic, number | null>({
     async load({signal, cursor}) {
       let page = cursor || 1;

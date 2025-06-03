@@ -1,0 +1,24 @@
+{
+  "name": "style-macro-chrome-plugin",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "parcel watch src/manifest.json --host localhost --config .parcelrc",
+    "build": "parcel build src/manifest.json --config .parcelrc"
+  },
+  "devDependencies": {
+    "@parcel/config-default": "^2.14.0",
+    "@parcel/config-webextension": "^2.14.0",
+    "@parcel/core": "^2.14.0",
+    "parcel": "^2.14.0"
+  },
+  "rsp": {
+    "type": "cli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
