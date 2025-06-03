@@ -1892,18 +1892,58 @@ function DndTree(props: DndTreeProps) {
   let {dragAndDropHooks} = useDragAndDrop({
     // Provide drag data in a custom format as well as plain text.
     getItems(keys) {
-      return [...keys].map((key) => {
-        let item = tree.getItem(key);
-        let serializeItem = (nodeItem) => ({
-          ...nodeItem.value,
-          children: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
-        });
-        
-        return {
-          'custom-app-type': JSON.stringify(serializeItem(item)),
-          'text/plain': item.value.name
-        };
-      });
+      let draggedKeys = new Map();
+      for (let key of keys) {
+        let treeNode = tree.getItem(key);
+        draggedKeys.set(key, treeNode);
+      }
+
+      let isChildOfNode = (node, potentialParent) => {
+        if (node.parentKey == null) {
+          return false;
+        } else {
+          let isChild = false;
+          let parentKey = node.parentKey;
+          while (parentKey && !isChild) {
+            let parentNode = tree.getItem(parentKey)!;
+            isChild = potentialParent.key === parentNode.key;
+            parentKey = parentNode.parentKey;
+          }
+
+          return isChild;
+        }
+      };
+
+      // Get rid of any keys that would already be included by a selected parent key
+      for (let key of draggedKeys.keys()) {
+        let node = tree.getItem(key)!;
+        let keysToCheck = [...draggedKeys.keys()];
+        for (let potentialParentKey of keysToCheck) {
+          if (node.key === potentialParentKey) {
+            continue;
+          } else {
+            if (isChildOfNode(node, tree.getItem(potentialParentKey)!)) {
+              draggedKeys.delete(node.key);
+            }
+          }
+        }
+      }
+
+      return (
+        [...draggedKeys.keys()].map(key => {
+          let item = draggedKeys.get(key);
+
+          let serializeItem = (nodeItem) => ({
+            ...nodeItem.value,
+            children: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+          });
+
+          return {
+            'custom-app-type': JSON.stringify(serializeItem(item)),
+            'text/plain': item.value.name
+          };
+        })
+      );
     },
 
     // Accept drops with the custom format.
