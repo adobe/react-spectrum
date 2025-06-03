@@ -28,7 +28,9 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
 
   let timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   function announceErrorMessage(errorMessage: string = ''): void {
-    clearTimeout(timeoutId.current!);
+    if (timeoutId.current != null) {
+      clearTimeout(timeoutId.current);
+    }
     if (ref?.current &&
       errorMessage !== '' &&
       ref.current.contains(getActiveElement(getOwnerDocument(ref.current)))) {
