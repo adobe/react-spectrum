@@ -78,16 +78,19 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     let keys = new Set<Key>();
     if (selectionManager.isSelected(key)) {
       for (let key of selectionManager.selectedKeys) {
+        let node = collection.getItem(key);
         let isChild = false;
-
-        for (let potentialParentKey of selectionManager.selectedKeys) {
-          if (key !== potentialParentKey && isChildOfNode(key, potentialParentKey, collection)) {
-            isChild = true;
-            break;
+        if (node && node?.parentKey) {
+          for (let potentialParentKey of selectionManager.selectedKeys) {
+            // eslint-disable-next-line max-depth
+            if (key !== potentialParentKey && isChildOfNode(key, potentialParentKey, collection)) {
+              isChild = true;
+              break;
+            }
           }
         }
 
-        if (!isChild) {
+        if (node && !isChild) {
           keys.add(key);
         }
       }
@@ -169,8 +172,8 @@ function isChildOfNode(key: Key, potentialParentKey: Key, collection: Collection
       let parentNode = collection.getItem(parentKey);
       if (parentNode) {
         isChild = potentialParentKey === parentNode.key;
-        parentKey = parentNode.parentKey;
       }
+      parentKey = parentNode?.parentKey;
     }
 
     return isChild;

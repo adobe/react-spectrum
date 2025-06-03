@@ -12,11 +12,14 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, ListLayout, Text, Tree, TreeItem, TreeItemContent, Virtualizer} from '../';
+import {Button, Checkbox, Collection, ListLayout, Text, Tree, TreeItem, TreeItemContent, useDragAndDrop, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
+// @ts-ignore
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
 import userEvent from '@testing-library/user-event';
+import {useTreeData} from 'react-stately';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
@@ -107,6 +110,7 @@ let DynamicTreeItem = (props) => {
               <Checkbox slot="selection" />
             )}
             {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+            {props.supportsDragging && <Button slot="drag">≡</Button>}
             <Text>{props.title || props.children}</Text>
             <Button aria-label="Info">ⓘ</Button>
             <Button aria-label="Menu">☰</Button>
@@ -115,7 +119,7 @@ let DynamicTreeItem = (props) => {
       </TreeItemContent>
       <Collection items={props.childItems}>
         {(item: any) => (
-          <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+          <DynamicTreeItem supportsDragging={props.supportsDragging} childItems={item.childItems} textValue={item.name} href={props.href}>
             {item.name}
           </DynamicTreeItem>
         )}
@@ -1204,9 +1208,9 @@ describe('Tree', () => {
       let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1216,9 +1220,9 @@ describe('Tree', () => {
       let {getAllByRole} =  render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1228,15 +1232,69 @@ describe('Tree', () => {
       let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
-});
 
+  describe('tree drag and drop', () => {
+    let getItems = jest.fn();
+    function DnDTree(props) {
+      let treeData = useTreeData<any>({
+        initialItems: rows,
+        getKey: item => item.id,
+        getChildren: item => item.childItems
+      });
+
+      let {dragAndDropHooks} = useDragAndDrop({
+        getItems: (keys) => {
+          getItems(keys);
+          return [...keys].map((key) => ({
+            'text/plain': treeData.getItem(key)?.value.name
+          }));
+        },
+        getAllowedDropOperations: () => ['move']
+      });
+
+      return (
+        <Tree dragAndDropHooks={dragAndDropHooks} aria-label="Tree with drag and drop" items={treeData.items} {...props}>
+          {(item: any) => (
+            <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name} supportsDragging>
+              {item.value.name}
+            </DynamicTreeItem>
+          )}
+        </Tree>
+      );
+    }
+
+    afterEach(() => {
+      act(() => {jest.runAllTimers();});
+      jest.clearAllMocks();
+    });
+
+    it('should filter out selected child keys in getItems if a parent is also selected', async () => {
+      let {getAllByRole} = render(
+        <DnDTree selectionMode="multiple" selectedKeys={new Set(['projects', 'project-1', 'reports', 'reports-1AB', 'reports-2'])} />
+      );
+
+      let rows = getAllByRole('row');
+      let projectsRow = rows[0];
+      expect(projectsRow).toHaveAttribute('aria-selected', 'true');
+
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(projectsRow, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+      fireEvent(projectsRow, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      fireEvent.pointerUp(projectsRow, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
+      fireEvent(projectsRow, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
+      expect(getItems).toHaveBeenCalledTimes(1);
+      expect(getItems).toHaveBeenCalledWith(new Set(['projects', 'reports']));
+    });
+  });
+});
 
 AriaTreeTests({
   prefix: 'rac-static',
