@@ -130,7 +130,7 @@ export class TreeDropTargetDelegate<T> {
     let potentialTargets = [target];
 
     // If target has children and is expanded, use "before first child"
-    if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren) {
+    if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren && target.dropPosition === 'after') {
       let firstChildItemNode: Node<T> | null = null;
       for (let child of collection.getChildren(currentItem.key)) {
         if (child.type === 'item') {
@@ -147,9 +147,9 @@ export class TreeDropTargetDelegate<T> {
         } as const;
 
         if (isValidDropTarget(beforeFirstChildTarget)) {
-          if (!(target.dropPosition === 'before' && target.key === currentItem.key)) {
-            return [beforeFirstChildTarget];
-          }
+          return [beforeFirstChildTarget];
+        } else {
+          return [];
         }
       }
     }
