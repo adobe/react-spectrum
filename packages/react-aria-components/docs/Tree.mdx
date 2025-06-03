@@ -797,26 +797,13 @@ import {useDragAndDrop, Button} from 'react-aria-components';
 
 function Example() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'documents', name: 'Documents', children: [
-        {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report', children: []}
-        ]}
-      ]},
-      {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1', children: []},
-        {id: 'image2', name: 'Image 2', children: []}
-      ]},
-      {id: 'videos', name: 'Videos', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({
-      'text/plain': tree.getItem(key).value.name
+      'text/plain': tree.getItem(key).value.title
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -839,7 +826,7 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.value.name}>
+          <MyTreeItem title={item.value.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -908,25 +895,12 @@ The `onMove` event handler allows moving items between different levels of the t
 ```tsx example
 function Example() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'documents', name: 'Documents', children: [
-        {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report', children: []}
-        ]}
-      ]},
-      {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1', children: []},
-        {id: 'image2', name: 'Image 2', children: []}
-      ]},
-      {id: 'videos', name: 'Videos', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({
-      'text/plain': tree.getItem(key).value.name
+      'text/plain': tree.getItem(key).value.title
     })),
     ///- begin highlight -///
     onMove(e) {
@@ -958,7 +932,7 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.value.name}>
+          <MyTreeItem title={item.value.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -979,25 +953,12 @@ This example renders a custom drag preview which shows the number of items being
 ```tsx example
 function Example() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'documents', name: 'Documents', children: [
-        {id: 'project', name: 'Project', children: [
-          {id: 'report', name: 'Weekly Report', children: []}
-        ]}
-      ]},
-      {id: 'photos', name: 'Photos', children: [
-        {id: 'image1', name: 'Image 1', children: []},
-        {id: 'image2', name: 'Image 2', children: []}
-      ]},
-      {id: 'videos', name: 'Videos', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({
-      'text/plain': tree.getItem(key).value.name
+      'text/plain': tree.getItem(key).value.title
     })),
     ///- begin highlight -///
     renderDragPreview(items) {
@@ -1020,7 +981,7 @@ function Example() {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.value.name}>
+          <MyTreeItem title={item.value.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -1068,20 +1029,7 @@ This example provides representations of each item as plain text, HTML, and a cu
 ```tsx example export=true
 function DraggableTree() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'documents', name: 'Documents', type: 'folder', children: [
-        {id: 'project', name: 'Project', type: 'folder', children: [
-          {id: 'report', name: 'Weekly Report', type: 'document', children: []}
-        ]}
-      ]},
-      {id: 'photos', name: 'Photos', type: 'folder', children: [
-        {id: 'image1', name: 'Image 1', type: 'image', children: []},
-        {id: 'image2', name: 'Image 2', type: 'image', children: []}
-      ]},
-      {id: 'videos', name: 'Videos', type: 'folder', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1090,8 +1038,8 @@ function DraggableTree() {
       return [...keys].map(key => {
         let item = tree.getItem(key).value;
         return {
-          'text/plain': `${item.name} (${item.type})`,
-          'text/html': `<strong>${item.name}</strong> <em>(${item.type})</em>`,
+          'text/plain': `${item.title}`,
+          'text/html': `<strong>${item.title}</strong>`,
           'custom-app-type': JSON.stringify(item)
         };
       });
@@ -1116,7 +1064,7 @@ function DraggableTree() {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.value.name}>
+          <MyTreeItem title={item.value.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -1143,7 +1091,7 @@ import {isTextDropItem} from 'react-aria-components';
 
 interface DroppableItem {
   id: string | number;
-  name: string;
+  title: string;
   children?: DroppableItem[];
 }
 
@@ -1174,7 +1122,7 @@ function Example() {
       >
         {function renderItem(item) {
           return (
-            <MyTreeItem title={item.name}>
+            <MyTreeItem title={item.title}>
               <Collection items={item.children}>
                 {renderItem}
               </Collection>
@@ -1204,18 +1152,25 @@ function Example() {
 
 Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
-```tsx example
-function Example() {
+```tsx example export=true
+const droppableItems = [
+  {id: '8', title: 'Videos', children: [
+    {id: '9', title: 'Movie.mp4', type: 'file'}
+  ]},
+  // ...
+  ///- begin collapse -///
+  {id: '10', title: 'Music', children: [
+    {id: '11', title: 'Song.mp3', type: 'file'},
+    {id: '12', title: 'Album', children: [
+      {id: '13', title: 'Track1.mp3', type: 'file'}
+    ]}
+  ]}
+  ///- end collapse -///
+];
+
+function DroppableTreeExample() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'folder1', name: 'Folder 1', children: [
-        {id: 'file1', name: 'File 1', children: []},
-        {id: 'file2', name: 'File 2', children: []}
-      ]},
-      {id: 'folder2', name: 'Folder 2', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: droppableItems
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1248,7 +1203,7 @@ function Example() {
         dragAndDropHooks={dragAndDropHooks}>
         {function renderItem(item) {
           return (
-            <MyTreeItem title={item.value.name}>
+            <MyTreeItem title={item.value.title}>
               <Collection items={item.children}>
                 {renderItem}
               </Collection>
@@ -1270,15 +1225,7 @@ import {isTextDropItem} from 'react-aria-components';
 
 function Example() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 'folder1', name: 'Folder 1', children: [
-        {id: 'file1', name: 'File 1', children: []},
-        {id: 'file2', name: 'File 2', children: []}
-      ]},
-      {id: 'folder2', name: 'Folder 2', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: droppableItems
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -1315,7 +1262,7 @@ function Example() {
         dragAndDropHooks={dragAndDropHooks}>
         {function renderItem(item) {
           return (
-            <MyTreeItem title={item.value.name}>
+            <MyTreeItem title={item.value.title}>
               <Collection items={item.children}>
                 {renderItem}
               </Collection>
@@ -1347,7 +1294,7 @@ import {isTextDropItem} from 'react-aria-components';
 
 interface DroppableItem {
   id: string | number;
-  name: string;
+  title: string;
   children?: DroppableItem[];
 }
 
@@ -1384,7 +1331,7 @@ function DroppableTree() {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.name}>
+          <MyTreeItem title={item.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -1550,15 +1497,7 @@ This example removes the dragged items from the UI when a move operation is comp
 ```tsx example
 function Example() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 1, name: 'Adobe Photoshop', children: []},
-      {id: 2, name: 'Adobe XD', children: []},
-      {id: 3, name: 'Adobe Dreamweaver', children: []},
-      {id: 4, name: 'Adobe InDesign', children: []},
-      {id: 5, name: 'Adobe Connect', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
 
   let { dragAndDropHooks } = useDragAndDrop({
@@ -1575,7 +1514,7 @@ function Example() {
       return [...keys].map(key => {
         let item = tree.getItem(key).value;
         return {
-          'text/plain': item.name,
+          'text/plain': item.title,
           'custom-app-type': JSON.stringify(item)
         };
       });
@@ -1596,7 +1535,7 @@ function Example() {
       <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
         {function renderItem(item) {
           return (
-            <MyTreeItem title={item.value.name}>
+            <MyTreeItem title={item.value.title}>
               <Collection items={item.children}>
                 {renderItem}
               </Collection>
@@ -1618,15 +1557,7 @@ The drag source can also control which drop operations are allowed for the data.
 function Example() {
   ///- begin collapse -///
   let tree = useTreeData({
-    initialItems: [
-      {id: 1, name: 'Adobe Photoshop', children: []},
-      {id: 2, name: 'Adobe XD', children: []},
-      {id: 3, name: 'Adobe Dreamweaver', children: []},
-      {id: 4, name: 'Adobe InDesign', children: []},
-      {id: 5, name: 'Adobe Connect', children: []}
-    ],
-    getKey: item => item.id,
-    getChildren: item => item.children || []
+    initialItems: items
   });
   ///- end collapse -///
   // ...
@@ -1645,7 +1576,7 @@ function Example() {
       return [...keys].map(key => {
         let item = tree.getItem(key).value;
         return {
-          'text/plain': item.name,
+          'text/plain': item.title,
           'custom-app-type': JSON.stringify(item)
         };
       });
@@ -1662,7 +1593,7 @@ function Example() {
       <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
         {function renderItem(item) {
           return (
-            <MyTreeItem title={item.value.name}>
+            <MyTreeItem title={item.value.title}>
               <Collection items={item.children}>
                 {renderItem}
               </Collection>
@@ -1794,7 +1725,7 @@ function DndTree(props: DndTreeProps) {
         
         return {
           'custom-app-type': JSON.stringify(serializeItem(item)),
-          'text/plain': item.value.name
+          'text/plain': item.value.title
         };
       });
     },
@@ -1866,7 +1797,7 @@ function DndTree(props: DndTreeProps) {
     >
       {function renderItem(item) {
         return (
-          <MyTreeItem title={item.value.name}>
+          <MyTreeItem title={item.value.title}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
@@ -1879,32 +1810,11 @@ function DndTree(props: DndTreeProps) {
 
 <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
   <DndTree
-    initialItems={[
-      {id: '1', name: 'Documents', type: 'folder', children: [
-        {id: '2', name: 'Project', type: 'folder', children: [
-          {id: '3', name: 'Report.pdf', type: 'file'}
-        ]},
-        {id: '4', name: 'Presentation.pptx', type: 'file'}
-      ]},
-      {id: '5', name: 'Images', type: 'folder', children: [
-        {id: '6', name: 'Photo1.jpg', type: 'file'},
-        {id: '7', name: 'Photo2.jpg', type: 'file'}
-      ]}
-    ]}
+    initialItems={items}
     aria-label="First Tree"
   />
   <DndTree
-    initialItems={[
-      {id: '8', name: 'Videos', type: 'folder', children: [
-        {id: '9', name: 'Movie.mp4', type: 'file'}
-      ]},
-      {id: '10', name: 'Music', type: 'folder', children: [
-        {id: '11', name: 'Song.mp3', type: 'file'},
-        {id: '12', name: 'Album', type: 'folder', children: [
-          {id: '13', name: 'Track1.mp3', type: 'file'}
-        ]}
-      ]}
-    ]}
+    initialItems={droppableItems}
     aria-label="Second Tree"
   />
 </div>
