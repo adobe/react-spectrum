@@ -1167,6 +1167,13 @@ function DroppableTreeExample() {
     initialItems: droppableItems
   });
 
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
   let {dragAndDropHooks} = useDragAndDrop({
     ///- begin highlight -///
     async onItemDrop(e) {
@@ -1175,11 +1182,7 @@ function DroppableTreeExample() {
           .filter(isTextDropItem)
           .map(async item => {
             let parsed = JSON.parse(await item.getText('custom-app-type'));
-            return {
-              ...parsed,
-              // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
-              id: Math.random().toString(36).slice(2)
-            };
+            return serializeItem(parsed);
           })
       );
 
@@ -1222,6 +1225,13 @@ function Example() {
     initialItems: droppableItems
   });
 
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
   let {dragAndDropHooks} = useDragAndDrop({
     ///- begin highlight -///
     async onInsert(e) {
@@ -1230,11 +1240,7 @@ function Example() {
           .filter(isTextDropItem)
           .map(async item => {
             let parsed = JSON.parse(await item.getText('custom-app-type'));
-            return {
-              ...parsed,
-              // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
-              id: Math.random().toString(36).slice(2)
-            };
+            return serializeItem(parsed);
           })
       );
 
@@ -1295,6 +1301,13 @@ interface DroppableItem {
 function DroppableTree() {
   let [items, setItems] = React.useState<any[]>([]);
 
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
   let {dragAndDropHooks} = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: ['custom-app-type'],
@@ -1304,11 +1317,7 @@ function DroppableTree() {
           .filter(isTextDropItem)
           .map(async item => {
             let parsed = JSON.parse(await item.getText('custom-app-type'));
-            return {
-              ...parsed,
-              // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
-              id: Math.random().toString(36).slice(2)
-            };
+            return serializeItem(parsed);
           })
       );
       setItems(items);
