@@ -1,4 +1,4 @@
-import {pointerKey} from '@testing-library/user-event/system/pointer/shared';
+import {pointerKey} from '@testing-library/user-event';
 
 export let pointerMap: pointerKey[] = [
   {name: 'MouseLeft', pointerType: 'mouse', button: 'primary', height: 1, width: 1, pressure: 0.5},

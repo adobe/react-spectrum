@@ -36,7 +36,6 @@ export interface DropOptions {
   /**
    * Handler that is called after a valid drag is held over the drop target for a period of time.
    * This typically opens the item so that the user can drop within it.
-   * @private
    */
   onDropActivate?: (e: DropActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */

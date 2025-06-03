@@ -1514,6 +1514,35 @@ describe('ListBox', () => {
     });
   });
 
+  describe('shouldFocusOnHover', () => {
+    it('should focus options on hovering with shouldFocusOnHover', async () => {
+      let {getAllByRole} = renderListbox({shouldFocusOnHover: true});
+      let options = getAllByRole('option');
+      let option1 = options[0];
+      let option2 = options[1];
+
+      expect(option1).not.toHaveFocus();
+      expect(option2).not.toHaveFocus();
+
+      await user.hover(option1);
+      expect(option1).toHaveFocus();
+
+      keyPress('ArrowDown');
+      expect(option1).not.toHaveFocus();
+      expect(option2).toHaveFocus();
+    });
+
+    it.each([false, undefined])('should not focus options on hovering when shouldFocusOnHover is not true', async (shouldFocusOnHover) => {
+      let {getAllByRole} = renderListbox({shouldFocusOnHover});
+      let option = getAllByRole('option')[0];
+
+      expect(option).not.toHaveFocus();
+
+      await user.hover(option);
+      expect(option).not.toHaveFocus();
+    });
+  });
+
   describe('async loading', () => {
     let items = [
       {name: 'Foo'},

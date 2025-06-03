@@ -389,17 +389,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.24.1":
-  version: 7.24.1
-  resolution: "@babel/eslint-parser@npm:7.24.1"
+"@babel/eslint-parser@npm:^7.27.1":
+  version: 7.27.1
+  resolution: "@babel/eslint-parser@npm:7.27.1"
   dependencies:
     "@nicolo-ribaudo/eslint-scope-5-internals": "npm:5.1.1-v1"
     eslint-visitor-keys: "npm:^2.1.0"
     semver: "npm:^6.3.1"
   peerDependencies:
     "@babel/core": ^7.11.0
-    eslint: ^7.5.0 || ^8.0.0
-  checksum: 10c0/76b066be5245fa24ea5726bea24ceca75811599dce43db5e120e91283f3a27be150a2b0559a8472bec2824f6abc66fb29e90b3f1889c596ec855a811fc83dc90
+    eslint: ^7.5.0 || ^8.0.0 || ^9.0.0
+  checksum: 10c0/dedb2bc7ef00307eaf8e40d5ec7f1e8ae4649838fa2e7ec5e1b47eaf9bd8708949503b05175de922e2431ce69a5f3b5fab1c1202003b1d9457d3c0b2c3bdc4ec
   languageName: node
   linkType: hard
 
@@ -5004,7 +5004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-js@npm:2.14.0, @parcel/transformer-js@npm:^2.13.1":
+"@parcel/transformer-js@npm:2.14.0":
   version: 2.14.0
   resolution: "@parcel/transformer-js@npm:2.14.0"
   dependencies:
@@ -5084,7 +5084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-react-refresh-wrap@npm:2.14.0, @parcel/transformer-react-refresh-wrap@npm:^2.13.1":
+"@parcel/transformer-react-refresh-wrap@npm:2.14.0":
   version: 2.14.0
   resolution: "@parcel/transformer-react-refresh-wrap@npm:2.14.0"
   dependencies:
@@ -6208,6 +6208,7 @@ __metadata:
     "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/overlays": "npm:^3.27.1"
     "@react-aria/utils": "npm:^3.29.0"
+    "@react-stately/collections": "npm:^3.12.4"
     "@react-stately/dnd": "npm:^3.5.4"
     "@react-types/button": "npm:^3.12.1"
     "@react-types/shared": "npm:^3.29.1"
@@ -7449,7 +7450,7 @@ __metadata:
     globals-docs: "npm:^2.4.1"
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
-    quicklink: "npm:^2.3.0"
+    quicklink: "npm:^3.0.1"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7830,6 +7831,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/parcel-namer-s2@npm:^1.0.0, @react-spectrum/parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/parcel-namer-s2@workspace:packages/dev/parcel-namer-s2"
+  dependencies:
+    "@parcel/plugin": "npm:^2.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/parcel-transformer-s2-icon@npm:^0.3.0, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
@@ -7937,13 +7946,24 @@ __metadata:
   dependencies:
     "@parcel/bundler-library": "npm:^2.14.0"
     "@parcel/compressor-raw": "npm:^2.14.0"
+    "@parcel/config-default": "npm:^2.14.0"
     "@parcel/core": "npm:^2.14.0"
     "@parcel/namer-default": "npm:^2.14.0"
     "@parcel/packager-raw": "npm:^2.14.0"
+    "@parcel/plugin": "npm:^2.14.0"
     "@parcel/reporter-cli": "npm:^2.14.0"
     "@parcel/resolver-default": "npm:^2.14.0"
+    "@parcel/transformer-js": "npm:^2.14.0"
     "@parcel/transformer-raw": "npm:^2.14.0"
+    "@parcel/transformer-react-refresh-wrap": "npm:^2.14.0"
+    "@react-spectrum/parcel-namer-s2": "npm:^1.0.0"
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.3.0"
+    "@swc/helpers": "npm:^0.5.0"
+    glob: "npm:^8.0.3"
+  peerDependencies:
+    "@react-spectrum/s2": ">=0.8.0"
+    react: ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^18.0.0 || ^19.0.0-rc.1
   bin:
     transform-icons: index.js
   languageName: unknown
@@ -24016,7 +24036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromark-extension-mdxjs@npm:^1.0.0":
+"micromark-extension-mdxjs@npm:1.0.0":
   version: 1.0.0
   resolution: "micromark-extension-mdxjs@npm:1.0.0"
   dependencies:
@@ -24029,6 +24049,22 @@ __metadata:
     micromark-util-combine-extensions: "npm:^1.0.0"
     micromark-util-types: "npm:^1.0.0"
   checksum: 10c0/51de1f7e8cadfe601ae4180d7a2402de40a02fec04d5f4deaa65061dbf39d81e3e56f0fcd55a43343c24593e371945a73a0a47fe723d02d99168b08c8945697d
+  languageName: node
+  linkType: hard
+
+"micromark-extension-mdxjs@patch:micromark-extension-mdxjs@npm%3A1.0.0#~/.yarn/patches/micromark-extension-mdxjs-npm-1.0.0-d2b6b69e4a.patch":
+  version: 1.0.0
+  resolution: "micromark-extension-mdxjs@patch:micromark-extension-mdxjs@npm%3A1.0.0#~/.yarn/patches/micromark-extension-mdxjs-npm-1.0.0-d2b6b69e4a.patch::version=1.0.0&hash=5369db"
+  dependencies:
+    acorn: "npm:^8.0.0"
+    acorn-jsx: "npm:^5.0.0"
+    micromark-extension-mdx-expression: "npm:^1.0.0"
+    micromark-extension-mdx-jsx: "npm:^1.0.0"
+    micromark-extension-mdx-md: "npm:^1.0.0"
+    micromark-extension-mdxjs-esm: "npm:^1.0.0"
+    micromark-util-combine-extensions: "npm:^1.0.0"
+    micromark-util-types: "npm:^1.0.0"
+  checksum: 10c0/642b86dffa985c1ed3f128b45b8837f1b068fa9382cee827ca2c892b4fa368aab38ebae605490a584092fbfeaaddb8e4c09c2c5cf7371cc0221c75ed00f27134
   languageName: node
   linkType: hard
 
@@ -26104,14 +26140,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
-  version: 0.0.0-use.local
-  resolution: "parcel-namer-s2@workspace:packages/dev/parcel-namer-s2"
-  dependencies:
-    "@parcel/plugin": "npm:^2.14.0"
-  languageName: unknown
-  linkType: soft
-
 "parcel-optimizer-strict-mode@workspace:^, parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode":
   version: 0.0.0-use.local
   resolution: "parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode"
@@ -27355,16 +27383,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quicklink@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "quicklink@npm:2.3.0"
+"quicklink@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "quicklink@npm:3.0.1"
   dependencies:
     route-manifest: "npm:^1.0.0"
-    throttles: "npm:^1.0.0"
+    throttles: "npm:^1.0.1"
   peerDependencies:
-    react: ^16.8.0
-    react-dom: ^16.8.0
-  checksum: 10c0/1b7b1e680004174f32b2c15d9a357ceec34e238ce7982d91ae4b7de202733997818bfe0b0b7b05500a24664e2c907b62b8ac81cbd566595564268ea3b79ff84c
+    react: ^16.8.0 || ^17 || ^18 || ^19
+    react-dom: ^16.8.0 || ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/40d14dd77ea2d002fbd975fefd94c74a8f6d60c687ecdeead0621e2378ccacb652e051f4cdb17d428d4a18d41670cd632a8b85210dab9dafe83c0fb095acbbb9
   languageName: node
   linkType: hard
 
@@ -27561,15 +27594,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
-  version: 18.3.1
-  resolution: "react-dom@npm:18.3.1"
+"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
   dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.2"
+    scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^18.3.1
-  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+    react: ^19.1.0
+  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
   languageName: node
   linkType: hard
 
@@ -27701,7 +27733,7 @@ __metadata:
     "@actions/github": "npm:^1.1.0"
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
-    "@babel/eslint-parser": "npm:^7.24.1"
+    "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/node": "npm:^7.23.9"
     "@babel/plugin-proposal-decorators": "npm:^7.24.1"
     "@babel/plugin-syntax-decorators": "npm:7.24.1"
@@ -27730,6 +27762,7 @@ __metadata:
     "@parcel/transformer-inline-string": "npm:^2.14.0"
     "@parcel/transformer-svg-react": "npm:^2.14.0"
     "@parcel/transformer-typescript-types": "npm:^2.14.0"
+    "@react-spectrum/parcel-namer-s2": "npm:^1.0.0"
     "@react-spectrum/s2-icon-builder": "npm:^0.2.0"
     "@spectrum-css/component-builder": "workspace:^"
     "@spectrum-css/vars": "npm:^2.3.0"
@@ -27819,9 +27852,9 @@ __metadata:
     postcss-import: "npm:^15.1.0"
     prop-types: "npm:^15.6.0"
     raf: "npm:^3.4.0"
-    react: "npm:^18.2.0"
+    react: "npm:^19.1.0"
     react-axe: "npm:^3.0.2"
-    react-dom: "npm:^18.2.0"
+    react-dom: "npm:^19.1.0"
     react-frame-component: "npm:^5.0.0"
     react-test-renderer: "npm:^18.3.1"
     recast: "npm:^0.23"
@@ -27929,12 +27962,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.2.0":
-  version: 18.3.1
-  resolution: "react@npm:18.3.1"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+"react@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react@npm:19.1.0"
+  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
   languageName: node
   linkType: hard
 
@@ -28395,13 +28426,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remark-mdx@npm:^2.0.0-rc.2":
+"remark-mdx@npm:2.0.0-rc.2":
   version: 2.0.0-rc.2
   resolution: "remark-mdx@npm:2.0.0-rc.2"
   dependencies:
     mdast-util-mdx: "npm:^1.0.0"
     micromark-extension-mdxjs: "npm:^1.0.0"
   checksum: 10c0/7f8f9e858ae3bfbe1143c2d71ce85f67aaf18206f4be24e5e3988e884a2202cd0c7ae1621a3054af86e3c1346f219a5126029f44b59b05702f1f2e406660c6e4
+  languageName: node
+  linkType: hard
+
+"remark-mdx@patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch":
+  version: 2.0.0-rc.2
+  resolution: "remark-mdx@patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch::version=2.0.0-rc.2&hash=c7e3eb"
+  dependencies:
+    mdast-util-mdx: "npm:^1.0.0"
+    micromark-extension-mdxjs: "npm:^1.0.0"
+  checksum: 10c0/a4ec91b738d0609c88b6d565474770f268e461d5b0a27f258640f3d74273c715386a43d052313a58f6624b8349bd054ef9a3a4b957afbcafd5bd710714daaeb6
   languageName: node
   linkType: hard
 
@@ -28413,6 +28454,17 @@ __metadata:
     mdast-util-from-markdown: "npm:^1.0.0"
     unified: "npm:^10.0.0"
   checksum: 10c0/1ca6e9b2f8e628d260c68a0367cb6dc92f20e6dd70c195a79584d09b237133ddf96e6398733e53bfbf379a3c4ad6168caa5792a6d83870b7cc014b259531f772
+  languageName: node
+  linkType: hard
+
+"remark-parse@patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch":
+  version: 10.0.1
+  resolution: "remark-parse@patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch::version=10.0.1&hash=53e21c"
+  dependencies:
+    "@types/mdast": "npm:^3.0.0"
+    mdast-util-from-markdown: "npm:^1.0.0"
+    unified: "npm:^10.0.0"
+  checksum: 10c0/a35712b4edc27af4b81b5697c3c259e3e45743dc9a41bbf53b5960eefebe0c8199bc21639dd0acaeec2c040d7dab8b66f35ef93ff6cf84168143eeefc76be910
   languageName: node
   linkType: hard
 
@@ -28968,6 +29020,13 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "scheduler@npm:0.26.0"
+  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
   languageName: node
   linkType: hard
 
@@ -30804,10 +30863,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"throttles@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "throttles@npm:1.0.0"
-  checksum: 10c0/9c1d980520e9e4c0706d4997b748b387a34dea5e8871e1d8a5c881e5391f3318693e5b6ff561f2d0e3d91f19dd29e198fa0af317a591797dd53aec453b524eae
+"throttles@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "throttles@npm:1.0.1"
+  checksum: 10c0/a9427aa198473d0edc50d58ffddc832bf68144661e8a0e87d58800d77d988e35a07eccfb5668180f0147929f009d51f39a5eac3ea3b0ad6fb74213fbc981a4b4
   languageName: node
   linkType: hard
 

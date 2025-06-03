@@ -100,6 +100,9 @@ export const Select = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sele
   );
 });
 
+// Contexts to clear inside the popover.
+const CLEAR_CONTEXTS = [LabelContext, ButtonContext, TextContext];
+
 interface SelectInnerProps<T extends object> {
   props: SelectProps<T>,
   selectRef: ForwardedRef<HTMLDivElement>,
@@ -178,7 +181,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',
@@ -186,7 +189,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties,
-          'aria-labelledby': menuProps['aria-labelledby']
+          'aria-labelledby': menuProps['aria-labelledby'],
+          clearContexts: CLEAR_CONTEXTS
         }],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],
