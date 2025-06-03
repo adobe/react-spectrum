@@ -49,7 +49,7 @@ function RenderSearchWithin(props: SearchWithinProps = {}) {
 function RenderReverse(props: SearchWithinProps = {}) {
   let {searchFieldProps, pickerProps, ...rest} = props;
   return (
-    <SearchWithin label="Test label" {...props}>
+    <SearchWithin label="Test label" {...rest}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
