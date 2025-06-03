@@ -330,4 +330,57 @@ describe('DateRangePicker', () => {
       expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
     }
   });
+
+  it('should clear contexts inside popover', async () => {
+    let {getByRole, getByTestId} = render(
+      <DateRangePicker data-foo="bar">
+        <Label>Birth date</Label>
+        <Group>
+          <DateInput slot="start">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <span aria-hidden="true">–</span>
+          <DateInput slot="end">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <Button>▼</Button>
+        </Group>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover data-testid="popover">
+          <Dialog>
+            <Label>Hi</Label>
+            <Group>Yo</Group>
+            <Button>Hi</Button>
+            <Text>test</Text>
+            <RangeCalendar>
+              <header>
+                <Button slot="previous">◀</Button>
+                <Heading />
+                <Button slot="next">▶</Button>
+              </header>
+              <CalendarGrid>
+                {(date) => <CalendarCell date={date} />}
+              </CalendarGrid>
+            </RangeCalendar>
+          </Dialog>
+        </Popover>
+      </DateRangePicker>
+    );
+
+    await user.click(getByRole('button'));
+
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('id');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let group = popover.querySelector('.react-aria-Group');
+    expect(group).not.toHaveAttribute('id');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
+  });
 });
