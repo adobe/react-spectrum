@@ -60,7 +60,7 @@ export class TreeDropTargetDelegate<T> {
     x: number, 
     y: number, 
     isValidDropTarget: (target: DropTarget) => boolean
-  ): ItemDropTarget {
+  ): ItemDropTarget | null {
     let tracking = this.pointerTracking;
     
     // Calculate movement directions
@@ -95,15 +95,20 @@ export class TreeDropTargetDelegate<T> {
 
     let potentialTargets = this.getPotentialTargets(target, isValidDropTarget);
 
+    if (potentialTargets.length === 0) {
+      return null;
+    }
+
+    let resolvedItemTarget: ItemDropTarget;
     if (potentialTargets.length > 1) {
-      target = this.selectTarget(potentialTargets, target, x, y, currentYMovement, currentXMovement);
+      resolvedItemTarget = this.selectTarget(potentialTargets, target, x, y, currentYMovement, currentXMovement);
     } else {
-      target = potentialTargets[0];
+      resolvedItemTarget = potentialTargets[0];
       // Reset boundary context since we're not in a boundary case
       tracking.boundaryContext = null;
     }
 
-    return target;
+    return resolvedItemTarget;
   }
 
   // Returns potential targets for an ambiguous drop position (e.g. after the last child of a parent, or after the parent itself)
@@ -200,7 +205,7 @@ export class TreeDropTargetDelegate<T> {
       }
     }
 
-    return potentialTargets;
+    return potentialTargets.filter(isValidDropTarget);
   }
 
   private selectTarget(
