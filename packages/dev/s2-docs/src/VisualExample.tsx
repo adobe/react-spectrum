@@ -86,7 +86,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     // Try to parse the default value from the JSDocs as JSON.
     let defaultValue = prop.default ?? undefined;
     if (typeof defaultValue === 'string') {
-      defaultValue = defaultValue.replace(/^['"](.+)['"]$/, '"$1"');
+      defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
       try {
         defaultValue = JSON.parse(defaultValue);
       } catch {

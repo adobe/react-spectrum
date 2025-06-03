@@ -2,7 +2,6 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {Select as VanillaSelect, SelectItem} from 'vanilla-starter/Select';
 import vanillaDocs from 'docs:vanilla-starter/Select';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
@@ -12,21 +11,31 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 <PageDescription>{docs.exports.Select.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
   "use client";
   import {Select, SelectItem} from 'vanilla-starter/Select';
 
-  <Select label="Select"/* PROPS */>
-    <SelectItem>Test</SelectItem>
+  <Select/* PROPS */>
+    <SelectItem>Aardvark</SelectItem>
+    <SelectItem>Cat</SelectItem>
+    <SelectItem>Dog</SelectItem>
+    <SelectItem>Kangaroo</SelectItem>
+    <SelectItem>Panda</SelectItem>
+    <SelectItem>Snake</SelectItem>
   </Select>
   ```
 
-  ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/tailwind/src/Select.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} files={["starters/tailwind/src/Select.tsx"]}
   "use client";
   import {Select, SelectItem} from 'tailwind-starter/Select';
 
-  <Select label="Select"/* PROPS */>
-    <SelectItem>Test</SelectItem>
+  <Select/* PROPS */>
+    <SelectItem>Aardvark</SelectItem>
+    <SelectItem>Cat</SelectItem>
+    <SelectItem>Dog</SelectItem>
+    <SelectItem>Kangaroo</SelectItem>
+    <SelectItem>Panda</SelectItem>
+    <SelectItem>Snake</SelectItem>
   </Select>
   ```
 
@@ -49,10 +58,9 @@ select components that can be styled as needed without compromising on high qual
 
 <Anatomy />
 
-A select consists of a label, a [Button](Button.html) which displays a selected value, and a [ListBox](ListBox.html) displayed in a
-[Popover](Popover.html). Users can click, touch, or use the keyboard to open the popover.
+A select consists of a label, a [Button](Button.html) which displays a selected value, and a [ListBox](ListBox.html) displayed in a [Popover](Popover.html). Users can press the button to open the popover and select a value.
 
-`Select` also supports optional description and error message slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
+`Select` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
 
 
 ```tsx
@@ -86,7 +94,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListB
 
 The following example shows a dynamic collection of items, grouped into sections.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Select} from 'vanilla-starter/Select';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
@@ -130,37 +138,77 @@ function Example() {
 }
 ```
 
-## Selection
+### Autocomplete
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item.
-When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the [selection guide](selection.html) for more details.
+`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Select, SelectItem} from 'vanilla-starter/Select';
-import {useState} from 'react';
-import type {Key} from 'react-aria-components';
+import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem, Autocomplete, useFilter} from 'react-aria-components';
+import {SearchField} from 'vanilla-starter/SearchField';
 
 function Example() {
-  let options = [
-    {name: 'Koala'},
-    {name: 'Kangaroo'},
-    {name: 'Platypus'},
-    {name: 'Bald Eagle'},
-    {name: 'Bison'},
-    {name: 'Skunk'}
-  ];
-  let [animal, setAnimal] = useState<Key>("Bison");
+  let {contains} = useFilter({sensitivity: 'base'});
 
   return (
-    <Select
-      label="Pick an animal (controlled)"
-      items={options}
-      selectedKey={animal}
-      onSelectionChange={selected => setAnimal(selected)}>
-      {item => <SelectItem id={item.name}>{item.name}</SelectItem>}
+    <Select>
+      <Label>Add tag...</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true">▼</span>
+      </Button>
+      <Popover>
+        <Autocomplete filter={contains}>
+          <SearchField label="Search tags" autoFocus />
+          <ListBox>
+            <ListBoxItem>News</ListBoxItem>
+            <ListBoxItem>Travel</ListBoxItem>
+            <ListBoxItem>Shopping</ListBoxItem>
+            <ListBoxItem>Business</ListBoxItem>
+            <ListBoxItem>Entertainment</ListBoxItem>
+            <ListBoxItem>Food</ListBoxItem>
+            <ListBoxItem>Technology</ListBoxItem>
+            <ListBoxItem>Health</ListBoxItem>
+            <ListBoxItem>Science</ListBoxItem>
+          </ListBox>
+        </Autocomplete>
+      </Popover>
     </Select>
+  );
+}
+```
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {useState} from 'react';
+
+function Example() {
+  let [animal, setAnimal] = useState<Key>("bison");
+
+  return (
+    <div>
+      <Select
+        label="Pick an animal"
+        ///- begin highlight -///
+        selectedKey={animal}
+        onSelectionChange={setAnimal}
+        ///- end highlight -///
+      >
+        <SelectItem id="koala">Koala</SelectItem>
+        <SelectItem id="kangaroo">Kangaroo</SelectItem>
+        <SelectItem id="platypus" isDisabled>Platypus</SelectItem>
+        <SelectItem id="eagle">Bald Eagle</SelectItem>
+        <SelectItem id="bison">Bison</SelectItem>
+        <SelectItem id="skunk">Skunk</SelectItem>
+      </Select>
+      <p>Current selection: {animal}</p>
+    </div>
   );
 }
 ```
@@ -177,12 +225,12 @@ import {Form} from 'react-aria-components';
 
 <Form>
   <Select name="animal" isRequired description="Please select an animal.">
-    <SelectItem>Aardvark</SelectItem>
-    <SelectItem>Cat</SelectItem>
-    <SelectItem>Dog</SelectItem>
-    <SelectItem>Kangaroo</SelectItem>
-    <SelectItem>Panda</SelectItem>
-    <SelectItem>Snake</SelectItem>
+    <SelectItem id="aardvark">Aardvark</SelectItem>
+    <SelectItem id="cat">Cat</SelectItem>
+    <SelectItem id="dog">Dog</SelectItem>
+    <SelectItem id="kangaroo">Kangaroo</SelectItem>
+    <SelectItem id="panda">Panda</SelectItem>
+    <SelectItem id="snake">Snake</SelectItem>
   </Select>
   <Button type="submit">Submit</Button>
 </Form>

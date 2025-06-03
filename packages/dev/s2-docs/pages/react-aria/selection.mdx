@@ -17,7 +17,7 @@ Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web
 
 <ExampleSwitcher examples={['ListBox', 'GridList', 'Table']}>
 
-```tsx render expanded
+```tsx render
 "use client";
 import {ListBox, ListBoxItem, type Selection} from 'react-aria-components';
 import {useState} from 'react';
@@ -48,7 +48,7 @@ function Example() {
 }
 ```
 
-```tsx render expanded
+```tsx render
 "use client";
 import {Button} from 'react-aria-components';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
@@ -91,7 +91,7 @@ function SandwichItem(props: GridListItemProps) {
 ///- end collapse -///
 ```
 
-```tsx render expanded
+```tsx render
 "use client";
 import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
 import {TableBody, Cell} from 'react-aria-components';
@@ -151,7 +151,7 @@ Some components support a checkbox to select all items in the collection, or a k
 When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
 and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. The application must adjust its handling of bulk actions in this case to apply to the entire collection rather than only the keys available to it locally.
 
-```tsx render hideImports expanded
+```tsx render
 "use client";
 import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
 import {Checkbox} from 'vanilla-starter/Checkbox';
@@ -221,7 +221,7 @@ To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Win
 
 These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
 
-```tsx render expanded wide hideImports docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
 "use client";
 import {ListBox, ListBoxItem} from 'react-aria-components';
 import {useState} from 'react';
@@ -248,7 +248,7 @@ function Example(props) {
 
 In some components, like a [Select](Select.html) or [ComboBox](ComboBox.html), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
 
-```tsx render expanded
+```tsx render
 "use client";
 import type {Key} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
@@ -285,7 +285,7 @@ In addition to selection, collection items support actions via the `onAction` pr
 
 In the `"replace"` selection behavior, selection is the primary interaction. Clicking an item with a mouse selects it, and double clicking performs the action. On touch devices, actions remain the primary tap interaction. Long pressing enters selection mode, which temporarily swaps the selection behavior to `"toggle"`. Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
-```tsx render expanded hideImports wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}}
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
@@ -304,7 +304,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 In dynamic collections, it may be more convenient to use the `onAction` prop at the collection level instead of on individual items. This receives the id of the pressed item.
 
-```tsx render expanded hideImports wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
@@ -329,7 +329,7 @@ const files = [
 
 An item can be disabled with the `isDisabled` prop. By default, disabled items are not focusable, selectable, or actionable. When `disabledBehavior="selection"`, only selection is disabled.
 
-```tsx render expanded hideImports wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple'}}
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
@@ -345,7 +345,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `GridList` level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
 
-```tsx render expanded hideImports wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{selectionMode: 'multiple'}}
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 

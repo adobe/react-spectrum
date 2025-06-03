@@ -7,13 +7,13 @@ import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '.
 
 const GROUPS = {
   Content: [
-    'children', 'items', 'columns', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
+    'children', 'items', 'defaultItems', 'columns', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
   ],
   Selection: [
     'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disabledBehavior', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
   ],
   Value: [
-    'value', 'defaultValue', 'onChange', 'onChangeEnd', 'formatOptions'
+    'value', 'defaultValue', 'onChange', 'onChangeEnd', 'inputValue', 'defaultInputValue', 'onInputChange', 'formatOptions'
   ],
   Labeling: [
     'label', 'labelPosition', 'labelAlign', 'contextualHelp'
@@ -34,7 +34,7 @@ const GROUPS = {
     'style', 'className'
   ],
   Forms: [
-    'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction', 'name', 'value', 'type', 'autoComplete'
+    'name', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
   ],
   Accessibility: [
     'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
