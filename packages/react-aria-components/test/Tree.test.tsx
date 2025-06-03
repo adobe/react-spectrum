@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, ListLayout, Text, Tree, TreeItem, TreeItemContent, Virtualizer} from '../';
+import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeItem, TreeItemContent, useDragAndDrop, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
@@ -101,10 +101,13 @@ let DynamicTreeItem = (props) => {
   return (
     <TreeItem {...props}>
       <TreeItemContent>
-        {({isExpanded, hasChildItems, selectionMode, selectionBehavior}) => (
+        {({isExpanded, hasChildItems, selectionMode, selectionBehavior, allowsDragging}) => (
           <>
             {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
+            )}
+            {allowsDragging && (
+              <Button slot="drag">≡</Button>
             )}
             {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             <Text>{props.title || props.children}</Text>
@@ -133,6 +136,24 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
     )}
   </Tree>
 );
+
+let DraggableTree = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <DynamicTree treeProps={{dragAndDropHooks}} />;
+};
+
+let DraggableTreeWithSelection = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <DynamicTree treeProps={{dragAndDropHooks, selectionMode: 'multiple'}} />;
+};
 
 describe('Tree', () => {
   let user;
@@ -1233,6 +1254,144 @@ describe('Tree', () => {
   
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('drag and drop', () => {
+    it('should support drag button slot', () => {
+      let {getAllByRole} = render(<DraggableTree />);
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('aria-label', 'Drag Projects');
+    });
+
+    it('should render drop indicators', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableTree onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveTextContent('Test');
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Projects');
+      expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[2]).toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Projects and Reports');
+      expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[3]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[3]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after Reports');
+
+      await user.keyboard('{ArrowDown}');
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Reports');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on items', async () => {
+      let onItemDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableTree />
+        <DraggableTree onItemDrop={onItemDrop} />
+      </>);
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      let tree = getAllByRole('treegrid')[1];
+      let rows = within(tree).getAllByRole('row');
+      expect(rows).toHaveLength(20);
+      expect(within(rows[0]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Projects');
+      expect(rows[0].nextElementSibling).toHaveAttribute('data-drop-target', 'true');
+      expect(within(rows[1]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Project 1');
+      expect(rows[1].nextElementSibling).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Project 2');
+      expect(rows[2].nextElementSibling).not.toHaveAttribute('data-drop-target');
+
+      expect(document.activeElement).toBe(within(rows[0]).getAllByRole('button')[0]);
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(onItemDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on the root', async () => {
+      let onRootDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableTree />
+        <DraggableTree onRootDrop={onRootDrop} />
+      </>);
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      let tree = getAllByRole('treegrid')[1];
+      let rows = within(tree).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      expect(within(rows[0]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on');
+      expect(document.activeElement).toBe(within(rows[0]).getAllByRole('button')[0]);
+      expect(tree).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support disabled drag and drop', async () => {
+      let {getByRole, queryAllByRole} = render(
+        <DraggableTree isDisabled />
+      );
+
+      let dragButtons = queryAllByRole('button').filter(button => button.getAttribute('slot') === 'drag');
+      dragButtons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
+
+      let tree = getByRole('treegrid');
+      expect(tree).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(tree).not.toHaveAttribute('draggable', 'true');
+
+      let rows = within(tree).getAllByRole('row');
+      rows.forEach(row => {
+        expect(row).not.toHaveAttribute('draggable', 'true');
+      });
+    });
+
+    it('should allow selection even when drag and drop is disabled', async () => {
+      let {getByRole, getAllByRole} = render(
+        <DraggableTreeWithSelection isDisabled />
+    );
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let checkbox = getAllByRole('checkbox')[0];
+      expect(checkbox).toHaveAttribute('aria-label', 'Select');
+
+      await user.click(checkbox);
+
+      let tree = getByRole('treegrid');
+      let rows = within(tree).getAllByRole('row');
+      expect(rows[0]).toHaveAttribute('data-selected', 'true');
+      expect(checkbox).toBeChecked();
     });
   });
 });
