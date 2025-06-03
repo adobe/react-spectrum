@@ -38,3 +38,4 @@ If the extension doesn't appear to have the latest code, try closing the dev too
 - [ ] Link to file on the side instead of grouping by filename?
 - [ ] Add classname that is applying style?
 - [ ] Work in MFE's
+- [ ] Don't memory leak the global object
