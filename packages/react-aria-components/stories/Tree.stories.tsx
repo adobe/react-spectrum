@@ -212,7 +212,7 @@ const MyTreeLoader = () => {
       className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
         focused: isFocused,
         'focus-visible': isFocusVisible
-      })}>      
+      })}>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -396,7 +396,7 @@ function LoadingStoryDepOnCollection(args) {
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
-  
+
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
@@ -571,12 +571,12 @@ function TreeDragAndDropExample(args) {
 
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
-    
+
     let serializeItem = (nodeItem) => ({
       ...nodeItem.value,
       childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
     });
-        
+
     return {
       'text/plain': item.value.name,
       'tree-item': JSON.stringify(serializeItem(item))
@@ -655,30 +655,32 @@ function SecondTree(args) {
 
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
-    
+
     let serializeItem = (nodeItem) => ({
       ...nodeItem.value,
       childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
     });
-        
+
     return {
       'text/plain': item.value.name,
       'tree-item': JSON.stringify(serializeItem(item))
     };
   });
 
+  let onInsert = async (e)  => {
+    let items = await processIncomingItems(e);
+    if (e.target.dropPosition === 'before') {
+      treeData.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      treeData.insertAfter(e.target.key, ...items);
+    }
+  };
+
   let {dragAndDropHooks} = useDragAndDrop({
     getItems, // Enable dragging FROM this tree
     getAllowedDropOperations: () => ['move'],
     acceptedDragTypes: ['tree-item'],
-    async onInsert(e) {
-      let items = await processIncomingItems(e);
-      if (e.target.dropPosition === 'before') {
-        treeData.insertBefore(e.target.key, ...items);
-      } else if (e.target.dropPosition === 'after') {
-        treeData.insertAfter(e.target.key, ...items);
-      }
-    },
+    onInsert: args.shouldAllowInsert ? onInsert : undefined,
     async onItemDrop(e) {
       let items = await processIncomingItems(e);
       treeData.insert(e.target.key, 0, ...items);
@@ -686,6 +688,13 @@ function SecondTree(args) {
     async onRootDrop(e) {
       let items = await processIncomingItems(e);
       treeData.insert(null, 0, ...items);
+    },
+    shouldAcceptItemDrop: (target) => {
+      if (args.shouldAcceptItemDrop === 'folders') {
+        let item = treeData.getItem(target.key);
+        return item?.value?.childItems?.length > 0;
+      }
+      return true;
     },
     [args.dropFunction]: (e: DroppableCollectionReorderEvent) => {
       console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key} in SecondTree`);
@@ -713,11 +722,11 @@ function SecondTree(args) {
   });
 
   return (
-    <Tree 
-      dragAndDropHooks={dragAndDropHooks} 
-      {...args} 
-      className={styles.tree} 
-      aria-label="Tree with drag and drop" 
+    <Tree
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}
+      className={styles.tree}
+      aria-label="Tree with drag and drop"
       items={treeData.items}
       renderEmptyState={() => 'Drop items here'}>
       {(item: any) => (
@@ -742,6 +751,7 @@ export const TreeWithDragAndDrop = {
   args: {
     dropFunction: 'onMove',
     shouldAcceptItemDrop: 'all',
+    shouldAllowInsert: true,
     ...TreeExampleDynamic.args
   },
   argTypes: {
