@@ -6299,7 +6299,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.12.9, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.9, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
@@ -6332,7 +6332,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/label@npm:^3.4.4, @react-aria/label@npm:^3.7.18, @react-aria/label@workspace:packages/@react-aria/label":
+"@react-aria/label@npm:^3.7.18, @react-aria/label@workspace:packages/@react-aria/label":
   version: 0.0.0-use.local
   resolution: "@react-aria/label@workspace:packages/@react-aria/label"
   dependencies:
@@ -6858,7 +6858,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.14.2, @react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
@@ -6890,7 +6890,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/visually-hidden@npm:^3.1.0, @react-aria/visually-hidden@npm:^3.6.1, @react-aria/visually-hidden@npm:^3.8.23, @react-aria/visually-hidden@workspace:packages/@react-aria/visually-hidden":
+"@react-aria/visually-hidden@npm:^3.1.0, @react-aria/visually-hidden@npm:^3.8.23, @react-aria/visually-hidden@workspace:packages/@react-aria/visually-hidden":
   version: 0.0.0-use.local
   resolution: "@react-aria/visually-hidden@workspace:packages/@react-aria/visually-hidden"
   dependencies:
@@ -7493,7 +7493,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/form@npm:^3.5.2, @react-spectrum/form@npm:^3.7.15, @react-spectrum/form@workspace:packages/@react-spectrum/form":
+"@react-spectrum/form@npm:^3.7.15, @react-spectrum/form@workspace:packages/@react-spectrum/form":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/form@workspace:packages/@react-spectrum/form"
   dependencies:
@@ -7582,7 +7582,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/label@npm:^3.10.0, @react-spectrum/label@npm:^3.16.15, @react-spectrum/label@workspace:packages/@react-spectrum/label":
+"@react-spectrum/label@npm:^3.16.15, @react-spectrum/label@workspace:packages/@react-spectrum/label":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/label@workspace:packages/@react-spectrum/label"
   dependencies:
@@ -8011,28 +8011,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/searchwithin@workspace:packages/@react-spectrum/searchwithin":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/searchwithin@workspace:packages/@react-spectrum/searchwithin"
-  dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/i18n": "npm:^3.6.3"
-    "@react-aria/label": "npm:^3.4.4"
-    "@react-aria/utils": "npm:^3.14.2"
-    "@react-aria/visually-hidden": "npm:^3.6.1"
-    "@react-spectrum/form": "npm:^3.5.2"
-    "@react-spectrum/label": "npm:^3.10.0"
-    "@react-spectrum/utils": "npm:^3.8.1"
-    "@react-types/searchwithin": "npm:3.0.0-alpha.10"
-    "@react-types/shared": "npm:^3.16.0"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    "@react-spectrum/provider": ^3.0.0-rc.1
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  languageName: unknown
-  linkType: soft
-
 "@react-spectrum/slider@npm:^3.7.5, @react-spectrum/slider@workspace:packages/@react-spectrum/slider":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/slider@workspace:packages/@react-spectrum/slider"
@@ -8441,7 +8419,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/utils@npm:^3.12.5, @react-spectrum/utils@npm:^3.8.1, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
+"@react-spectrum/utils@npm:^3.12.5, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
   dependencies:
@@ -9274,16 +9252,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/searchwithin@npm:3.0.0-alpha.10, @react-types/searchwithin@workspace:packages/@react-types/searchwithin":
-  version: 0.0.0-use.local
-  resolution: "@react-types/searchwithin@workspace:packages/@react-types/searchwithin"
-  dependencies:
-    "@react-types/shared": "npm:^3.16.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  languageName: unknown
-  linkType: soft
-
 "@react-types/select@npm:^3.9.12, @react-types/select@workspace:packages/@react-types/select":
   version: 0.0.0-use.local
   resolution: "@react-types/select@workspace:packages/@react-types/select"
@@ -9294,7 +9262,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.16.0, @react-types/shared@npm:^3.29.1, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.29.1, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
