@@ -430,20 +430,21 @@ import type {TreeProps} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
 
 let items = [
-  {id: 1, title: 'Documents', children: [
-    {id: 2, title: 'Project', children: [
-      {id: 3, title: 'Weekly Report', children: []}
+  {id: '1', title: 'Documents', type: 'directory', children: [
+    {id: '2', title: 'Project', type: 'directory', children: [
+      {id: '3', title: 'Weekly Report', type: 'file', children: []}
     ]}
   ]},
-  {id: 4, title: 'Photos', children: [
-    {id: 5, title: 'Image 1', children: []},
-    {id: 6, title: 'Image 2', children: []}
+  {id: '4', title: 'Photos', type: 'directory', children: [
+    {id: '5', title: 'Image 1', type: 'file', children: []},
+    {id: '6', title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 
 interface FileType {
-  id: number,
+  id: string,
   title: string,
+  type: 'directory' | 'file',
   children: FileType[]
 }
 
@@ -1120,7 +1121,7 @@ function Example() {
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'Drop items here'}
       >
-        {function renderItem(item) {
+        {function renderItem(item: DroppableItem) {
           return (
             <MyTreeItem title={item.title}>
               <Collection items={item.children}>
@@ -1154,14 +1155,14 @@ Dropping on items can be enabled using the `onItemDrop` event. When a valid drag
 
 ```tsx example export=true
 const droppableItems = [
-  {id: '8', title: 'Videos', children: [
+  {id: '8', title: 'Videos', type: 'directory', children: [
     {id: '9', title: 'Movie.mp4', type: 'file'}
   ]},
   // ...
   ///- begin collapse -///
-  {id: '10', title: 'Music', children: [
+  {id: '10', title: 'Music', type: 'directory', children: [
     {id: '11', title: 'Song.mp3', type: 'file'},
-    {id: '12', title: 'Album', children: [
+    {id: '12', title: 'Album', type: 'directory', children: [
       {id: '13', title: 'Track1.mp3', type: 'file'}
     ]}
   ]}
@@ -1329,7 +1330,7 @@ function DroppableTree() {
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => 'Drop items here'}
     >
-      {function renderItem(item) {
+      {function renderItem(item: DroppableItem) {
         return (
           <MyTreeItem title={item.title}>
             <Collection items={item.children}>
@@ -1696,7 +1697,7 @@ import {isTextDropItem} from 'react-aria-components';
 
 interface FileItem {
   id: string,
-  name: string,
+  title: string,
   type: string,
   children?: FileItem[]
 }
