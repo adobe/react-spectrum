@@ -100,6 +100,44 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   );
 };
 
+const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
+  return (
+    <TreeItem
+      {...props}
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior}) => (
+          <>
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              <MyCheckbox slot="selection" />
+            )}
+            <div
+              className={classNames(styles, 'content-wrapper')}
+              style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+              {hasChildItems && (
+                <Button className={styles.chevron} slot="chevron">
+                  <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+                    <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </div>
+                </Button>
+                )}
+              <Text className={styles.title}>{props.title || props.children}</Text>
+            </div>
+          </>
+        )}
+      </TreeItemContent>
+      {props.title && props.children}
+    </TreeItem>
+  );
+};
+
 const TreeExampleStaticRender = (args) => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
@@ -147,6 +185,53 @@ const TreeExampleStaticRender = (args) => (
   </Tree>
 );
 
+const TreeExampleStaticNoActionsRender = (args) => (
+  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <StaticTreeItemNoActions id="Photos" textValue="Photos">Photos</StaticTreeItemNoActions>
+    <StaticTreeItemNoActions id="projects" textValue="Projects" title="Projects">
+      <StaticTreeItemNoActions id="projects-1" textValue="Projects-1" title="Projects-1">
+        <StaticTreeItemNoActions id="projects-1A" textValue="Projects-1A">
+          Projects-1A
+        </StaticTreeItemNoActions>
+      </StaticTreeItemNoActions>
+      <StaticTreeItemNoActions id="projects-2" textValue="Projects-2">
+        Projects-2
+      </StaticTreeItemNoActions>
+      <StaticTreeItemNoActions id="projects-3" textValue="Projects-3">
+        Projects-3
+      </StaticTreeItemNoActions>
+    </StaticTreeItemNoActions>
+    <StaticTreeItemNoActions
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
+    </StaticTreeItemNoActions>
+    <StaticTreeItemNoActions
+      id="Tests"
+      textValue="Tests"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isFocused}) => (
+          <Text>{`${isFocused} Tests`}</Text>
+        )}
+      </TreeItemContent>
+    </StaticTreeItemNoActions>
+  </Tree>
+);
+
 export const TreeExampleStatic = {
   render: TreeExampleStaticRender,
   args: {
@@ -172,6 +257,35 @@ export const TreeExampleStatic = {
   parameters: {
     description: {
       data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
+    }
+  }
+};
+
+export const TreeExampleStaticNoActions = {
+  render: TreeExampleStaticNoActionsRender,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    disallowClearAll: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp. This story specifically tests tab behaviour when there are no additional actions in the tree.'
     }
   }
 };
@@ -392,7 +506,7 @@ function LoadingStoryDepOnCollection(args) {
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
-  
+
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
@@ -659,11 +773,11 @@ function SecondTree(args) {
   });
 
   return (
-    <Tree 
-      dragAndDropHooks={dragAndDropHooks} 
-      {...args} 
-      className={styles.tree} 
-      aria-label="Tree with drag and drop" 
+    <Tree
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}
+      className={styles.tree}
+      aria-label="Tree with drag and drop"
       items={treeData.items}
       renderEmptyState={() => 'Drop items here'}>
       {(item: any) => (
