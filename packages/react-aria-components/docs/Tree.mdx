@@ -1716,7 +1716,7 @@ function DndTree(props: DndTreeProps) {
           ...nodeItem.value,
           children: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
         });
-        
+
         return {
           'custom-app-type': JSON.stringify(serializeItem(item)),
           'text/plain': item.value.title
