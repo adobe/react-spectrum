@@ -142,7 +142,9 @@ export class TreeDropTargetDelegate<T> {
         } as const;
 
         if (isValidDropTarget(beforeFirstChildTarget)) {
-          return [beforeFirstChildTarget];
+          if (!(target.dropPosition === 'before' && target.key === currentItem.key)) {
+            return [beforeFirstChildTarget];
+          }
         }
       }
     }
