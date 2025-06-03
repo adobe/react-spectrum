@@ -26,3 +26,15 @@ Inspect an element on the page to open dev tools and go to the Style Macro panel
 If the panel isn't updating with styles, try closing the dev tools and reopening it.
 
 If the extension doesn't appear to have the latest code, try closing the dev tools and reopening it.
+
+## ToDos
+
+- [ ] Work with RSC
+- [ ] Would be pretty cool if we could match a style condition to trigger it, like hover
+- [ ] Eventually add to https://github.com/astahmer/atomic-css-devtools ??
+- [ ] Our own UI
+- [ ] Filtering
+- [ ] Resolve css variables inline
+- [ ] Link to file on the side instead of grouping by filename?
+- [ ] Add classname that is applying style?
+- [ ] Work in MFE's

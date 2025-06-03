@@ -389,9 +389,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
 
     // bug here, multiple calls to style may collide
-    // @ts-ignore
-    let loc = this.loc.filePath + ':' + this.loc.line + ':' + this.loc.col;
-    if (isStatic) {
+    // @ts-expect-error
+    let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
+    if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className));
       className += ` -macro$${id}`;
       return {toString: new Function(`
@@ -404,7 +404,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
     js += 'rules += " -macro$" + hash.toString(36);\n';
     // js += `console.log('dynamic macro', hash.toString(36), currentRules);\n`;
-    js += `(globalThis.__macros ??= {})[hash.toString(36)] = {loc: ${JSON.stringify(loc)}, style: currentRules};\n`;
+    // TODO: Why can't i move this inside the string? that way people can strip out the macro data in production?
+    if (process.env.NODE_ENV !== 'production') {
+      js += `(globalThis.__macros ??= {})[hash.toString(36)] = {loc: ${JSON.stringify(loc)}, style: currentRules};\n`;
+    }
     js += 'window.postMessage("update-macros", "*");\n';
     js += 'return rules;';
     // console.log(js)

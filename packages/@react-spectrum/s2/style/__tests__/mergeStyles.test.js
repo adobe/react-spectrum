@@ -13,13 +13,17 @@
 import {mergeStyles} from '../runtime';
 import {style} from '../spectrum-theme';
 
+function stripMacro(css) {
+  return css.replaceAll(/-macro\$[0-9a-zA-Z]{6}[ ]?/gi, '');
+}
+
 describe('mergeStyles', () => {
   it('should merge styles', () => {
     let a = style({backgroundColor: 'red-1000', color: 'pink-100'});
     let b = style({fontSize: 'body-xs', backgroundColor: 'gray-50'});
     let expected = style({backgroundColor: 'gray-50', color: 'pink-100', fontSize: 'body-xs'});
     let merged = mergeStyles(a, b);
-    expect(merged).toBe(expected);
+    expect(stripMacro(merged)).toBe(stripMacro(expected.toString()));
   });
 
   it('should merge with arbitrary values', () => {
@@ -27,6 +31,6 @@ describe('mergeStyles', () => {
     let b = style({fontSize: '[15px]', backgroundColor: 'gray-50'});
     let expected = style({backgroundColor: 'gray-50', color: '[hotpink]', fontSize: '[15px]'});
     let merged = mergeStyles(a, b);
-    expect(merged).toBe(expected);
+    expect(stripMacro(merged)).toBe(stripMacro(expected.toString()));
   });
 });
