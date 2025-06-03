@@ -341,6 +341,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let isTreeDraggable = !!(hasDragHooks && !dragState?.isDisabled);
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
     isEmpty: state.collection.size === 0,
@@ -348,7 +350,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isFocusVisible,
     isDropTarget: isRootDropTarget,
     selectionMode: state.selectionManager.selectionMode,
-    allowsDragging: !!dragState,
+    allowsDragging: !!isTreeDraggable,
     state
   };
 
@@ -394,7 +396,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           data-drop-target={isRootDropTarget || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
-          data-allows-dragging={!!dragState || undefined}>
+          data-allows-dragging={!!isTreeDraggable || undefined}>
           <Provider
             values={[
               [TreeStateContext, state],
