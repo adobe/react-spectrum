@@ -1,4 +1,4 @@
-import {Direction, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
+import {Direction, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node, RootDropTarget} from '@react-types/shared';
 
 interface TreeCollection<T> extends Iterable<Node<T>> {
   getItem(key: Key): Node<T> | null,
@@ -47,34 +47,33 @@ export class TreeDropTargetDelegate<T> {
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {
     let baseTarget = this.delegate!.getDropTargetFromPoint(x, y, isValidDropTarget);
-    
     if (!baseTarget || baseTarget.type === 'root') {
       return baseTarget;
     }
 
-    return this.resolveDropTarget(baseTarget, x, y, isValidDropTarget);    
+    return this.resolveDropTarget(baseTarget, x, y, isValidDropTarget);
   }
 
   private resolveDropTarget(
-    target: ItemDropTarget, 
-    x: number, 
-    y: number, 
+    target: ItemDropTarget,
+    x: number,
+    y: number,
     isValidDropTarget: (target: DropTarget) => boolean
-  ): ItemDropTarget | null {
+  ): RootDropTarget | ItemDropTarget | null {
     let tracking = this.pointerTracking;
-    
+
     // Calculate movement directions
     let deltaY = y - tracking.lastY;
     let deltaX = x - tracking.lastX;
     let currentYMovement: 'up' | 'down' | null = tracking.yDirection;
     let currentXMovement: 'left' | 'right' | null = tracking.xDirection;
-    
+
     if (Math.abs(deltaY) > Y_SWITCH_THRESHOLD) {
       currentYMovement = deltaY > 0 ? 'down' : 'up';
       tracking.yDirection = currentYMovement;
       tracking.lastY = y;
     }
-    
+
     if (Math.abs(deltaX) > X_SWITCH_THRESHOLD) {
       currentXMovement = deltaX > 0 ? 'right' : 'left';
       tracking.xDirection = currentXMovement;
@@ -96,7 +95,7 @@ export class TreeDropTargetDelegate<T> {
     let potentialTargets = this.getPotentialTargets(target, isValidDropTarget);
 
     if (potentialTargets.length === 0) {
-      return null;
+      return {type: 'root'};
     }
 
     let resolvedItemTarget: ItemDropTarget;
@@ -117,7 +116,7 @@ export class TreeDropTargetDelegate<T> {
     if (originalTarget.dropPosition === 'on') {
       return [originalTarget];
     }
-    
+
     let target = originalTarget;
     let collection = this.state!.collection;
 
@@ -161,12 +160,12 @@ export class TreeDropTargetDelegate<T> {
     // Walk up the parent chain to find ancestors that are the last child at their level
     let parentKey = currentItem?.parentKey;
     let ancestorTargets: ItemDropTarget[] = [];
-    
+
     while (parentKey) {
-      let parentItem = collection.getItem(parentKey);                
+      let parentItem = collection.getItem(parentKey);
       let nextItem = parentItem?.nextKey ? collection.getItem(parentItem.nextKey) : null;
       let isLastChildAtLevel = !nextItem || nextItem.parentKey !== parentKey;
-      
+
       if (isLastChildAtLevel) {
         let afterParentTarget = {
           type: 'item',
@@ -181,7 +180,7 @@ export class TreeDropTargetDelegate<T> {
           break;
         }
       }
-      
+
       parentKey = parentItem?.parentKey;
     }
 
@@ -219,7 +218,7 @@ export class TreeDropTargetDelegate<T> {
     if (potentialTargets.length < 2) {
       return potentialTargets[0];
     }
-    
+
     let tracking = this.pointerTracking;
     let currentItem = this.state!.collection.getItem(originalTarget.key);
     let parentKey = currentItem?.parentKey;
@@ -227,12 +226,12 @@ export class TreeDropTargetDelegate<T> {
     if (!parentKey) {
       return potentialTargets[0];
     }
-    
+
     // More than 1 potential target - use Y for initial target, then X for switching levels
     // Initialize boundary context if needed
     if (!tracking.boundaryContext || tracking.boundaryContext.parentKey !== parentKey) {
       // If entering from below, start with outer-most
-      let initialTargetIndex = tracking.yDirection === 'up' ? potentialTargets.length - 1 : 0;      
+      let initialTargetIndex = tracking.yDirection === 'up' ? potentialTargets.length - 1 : 0;
       tracking.boundaryContext = {
         parentKey,
         preferredTargetIndex: initialTargetIndex,
@@ -240,7 +239,7 @@ export class TreeDropTargetDelegate<T> {
         lastSwitchX: x
       };
     }
-    
+
     let boundaryContext = tracking.boundaryContext;
     let distanceFromLastXSwitch = Math.abs(x - boundaryContext.lastSwitchX);
     let distanceFromLastYSwitch = Math.abs(y - boundaryContext.lastSwitchY);
@@ -248,7 +247,7 @@ export class TreeDropTargetDelegate<T> {
     // Switch between targets based on Y movement
     if (distanceFromLastYSwitch > Y_SWITCH_THRESHOLD && currentYMovement) {
       let currentIndex = boundaryContext.preferredTargetIndex || 0;
-      
+
       if (currentYMovement === 'down' && currentIndex === 0) {
         // Moving down from inner-most, switch to outer-most
         boundaryContext.preferredTargetIndex = potentialTargets.length - 1;
@@ -260,11 +259,11 @@ export class TreeDropTargetDelegate<T> {
       // Reset x tracking so that moving diagonally doesn't cause flickering.
       tracking.xDirection = null;
     }
-    
+
     // X movement controls level selection
     if (distanceFromLastXSwitch > X_SWITCH_THRESHOLD && currentXMovement) {
       let currentTargetIndex = boundaryContext.preferredTargetIndex || 0;
-      
+
       if (currentXMovement === 'left') {
         if (this.direction === 'ltr') {
           // LTR: left = move to higher level in tree (increase index)
@@ -302,4 +301,4 @@ export class TreeDropTargetDelegate<T> {
     let targetIndex = Math.max(0, Math.min(boundaryContext.preferredTargetIndex || 0, potentialTargets.length - 1));
     return potentialTargets[targetIndex];
   }
-} 
+}
