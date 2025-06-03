@@ -6244,10 +6244,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/form@workspace:packages/@react-aria/form"
   dependencies:
-    "@react-aria/interactions": "npm:^3.25.2"
-    "@react-aria/utils": "npm:^3.29.1"
-    "@react-stately/form": "npm:^3.1.5"
-    "@react-types/shared": "npm:^3.30.0"
+    "@react-aria/interactions": "npm:^3.25.1"
+    "@react-aria/live-announcer": "npm:^3.4.3"
+    "@react-aria/utils": "npm:^3.29.0"
+    "@react-stately/form": "npm:^3.1.4"
+    "@react-types/shared": "npm:^3.29.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -6317,7 +6318,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.2, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.2, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
@@ -8653,7 +8654,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/form@npm:^3.1.5, @react-stately/form@workspace:packages/@react-stately/form":
+"@react-stately/form@npm:^3.1.4, @react-stately/form@npm:^3.1.5, @react-stately/form@workspace:packages/@react-stately/form":
   version: 0.0.0-use.local
   resolution: "@react-stately/form@workspace:packages/@react-stately/form"
   dependencies:

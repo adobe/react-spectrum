@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {FormValidationState} from '@react-stately/form';
+import {getActiveElement, getOwnerDocument, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '@react-aria/interactions';
-import {useEffect} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {useEffect, useRef} from 'react';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
@@ -25,11 +26,23 @@ interface FormValidationProps<T> extends Validation<T> {
 export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
   let {validationBehavior, focus} = props;
 
+  let timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function announceErrorMessage(errorMessage: string = ''): void {
+    clearTimeout(timeoutId.current!);
+    if (ref?.current &&
+      errorMessage !== '' &&
+      ref.current.contains(getActiveElement(getOwnerDocument(ref.current)))) {
+      timeoutId.current = setTimeout(() => announce(errorMessage, 'polite'), 250);
+    }
+  }
+
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
     if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
       let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
       ref.current.setCustomValidity(errorMessage);
+
+      announceErrorMessage(errorMessage);
 
       // Prevent default tooltip for validation message.
       // https://bugzilla.mozilla.org/show_bug.cgi?id=605277
@@ -56,11 +69,14 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
 
     // Auto focus the first invalid input in a form, unless the error already had its default prevented.
     let form = ref?.current?.form;
-    if (!e.defaultPrevented && ref && form && getFirstInvalidInput(form) === ref.current) {
-      if (focus) {
-        focus();
-      } else {
-        ref.current?.focus();
+    if (!e.defaultPrevented && ref && form) {
+      announceErrorMessage(ref?.current?.validationMessage || '');
+      if (getFirstInvalidInput(form) === ref.current) {
+        if (focus) {
+          focus();
+        } else {
+          ref.current?.focus();
+        }
       }
 
       // Always show focus ring.
@@ -86,6 +102,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
+      clearTimeout(timeoutId.current!);
       input!.removeEventListener('invalid', onInvalid);
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
