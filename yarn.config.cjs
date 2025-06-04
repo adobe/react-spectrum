@@ -23,7 +23,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods') {
+        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
