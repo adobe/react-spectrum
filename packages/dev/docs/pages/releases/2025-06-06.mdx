@@ -25,13 +25,43 @@ This release also includes some highly requested bug fixes, including scrollbar 
 As always, thank you to our community for their support and contributions!
 
 ## Enhancements
+Collections
+* Add `loadingState` to `useAsyncList`'s `load` function - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/7955)
+* Add `shouldFocusOnHover` prop for ListBox - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8171)
 
 
 ## Fixes
+Internationalized
+* Update number parsing in internationalized to handle 0 decimals parsing with exceptZero - [@shahbazianep](https://github.com/shahbazianep) - [PR](https://github.com/adobe/react-spectrum/pull/8236)
 
+
+TypeScript
+* Expose state types from react-stately in React Aria Components - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/8157)
+
+Form
+* Fix RadioGroup to not validate on form reset - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8212)
+
+ComboBox
+* Prevent ComboBox from closing when navigating through items with keyboard - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8301)
+
+Focus
+* Suppress focusable warning for disabled Pressable - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/8261)
+* Fix autofocus to React Aria Select - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8262)
+* fix: prevent combobox from closing when navigating through items with keyboard - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8301)
+
+Overlays
+* Fix additional scrollbar padding in usePreventScroll when an overlay is open - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8297)
+* Fix tapping outside overlay triggers elements behind underlay on Android issue - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8275)
+
+Date Time
+* Fix crashing on unknown segment types in DateField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8284)
+* Fix setting a placeholder time when closing a DateRangePicker with time granularity - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8278)
+* Fix invalid date parsing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8265)
+* Fix moving backward through DateField segments when pressing Enter - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8279)
 
 ## Docs
 - Clear up relative position documentation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8102)
+* Fix broken links in Menu/Combobox - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8292)
 
 
 ## Released packages
@@ -40,34 +70,17 @@ As always, thank you to our community for their support and contributions!
 
 ```
 
+??* fix: Remove @types/node patch - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8258)
+
+s2 * fix: Fix crash on defaultItems in S2 Combobox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8259)
+
+?? * Revert "fix: Revert "feat(RAC): Tree drag and drop (#7692)" (#8243)" - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8264)
+
+??* fix: Improve tree dnd keyboard navigation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8271)
+
+To Do...
 
 
-
-* fix: Remove @types/node patch - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8258)
-* Merge branch 'main' of github.com:adobe/react-spectrum - Devon Govett
-* fix: Fix crash on defaultItems in S2 Combobox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8259)
-* Merge branch 'main' of github.com:adobe/react-spectrum - Devon Govett
-* Update style-macro snapshots - Devon Govett
-* fix: 0 decimals treated as zero when parsing with exceptZero - [@shahbazianep](https://github.com/shahbazianep) - [PR](https://github.com/adobe/react-spectrum/pull/8236)
-* Revert "fix: Revert "feat(RAC): Tree drag and drop (#7692)" (#8243)" - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8264)
-* docs: clear up relative position confusion - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8102)
-* fix: suppress focusable warning for disabled Pressable - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/8261)
-* fix: pass `loadingState` to `useAsyncList`'s `load` function - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/7955)
-* fix: Expose State types from react-stately in react-aria-components - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/8157)
-* fix: RadioGroup should not validate on form reset - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8212)
-* Fix Select autoFocus - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8262)
-* feat: expose shouldFocusOnHover prop for ListBox - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8171)
-* fix: Improve tree dnd keyboard navigation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8271)
-* docs: fix broken links and styling - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8292)
-* chore: Enable package.json exports support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8294)
-* fix: Use scrollbar-gutter: stable instead of padding in usePreventScroll - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8297)
-* fix: Don't crash on unknown segment types in DateField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8284)
-* fix: Set a placeholder time when closing a DateRangePicker with time granularity - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8278)
-* fix: Tapping outside overlay triggers elements behind underlay on Android - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8275)
-* fix: invalid date parsing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8265)
-* fix: Do not move backward through DateField segments when pressing Enter - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8279)
-* feat: focus loading indicator in rac tree - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8270)
-* fix: prevent combobox from closing when navigating through items with keyboard - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8301)
 * fix: apply scrollbar-gutter only when scrollbar is present to prevent layout shift - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8303)
 * fix: Clear contexts inside popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8321)
 * fix: Virtualizer with useIsSSR - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8320)
