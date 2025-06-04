@@ -72,14 +72,14 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
   let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget | null => {
     if (target.dropPosition === 'before') {
-      let key = collection.getKeyBefore(target.key);
-      return key != null && collection.getItem(key)?.level === collection.getItem(target.key)?.level 
-        ? {type: 'item', key, dropPosition: 'after'} 
+      let node = collection.getItem(target.key);
+      return node && node.prevKey != null
+        ? {type: 'item', key: node.prevKey, dropPosition: 'after'} 
         : null;
     } else if (target.dropPosition === 'after') {
-      let key = collection.getKeyAfter(target.key);
-      return key != null && collection.getItem(key)?.level === collection.getItem(target.key)?.level
-        ? {type: 'item', key, dropPosition: 'before'} 
+      let node = collection.getItem(target.key);
+      return node && node.nextKey != null
+        ? {type: 'item', key: node.nextKey, dropPosition: 'before'} 
         : null;
     }
     return null;
