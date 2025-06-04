@@ -20,7 +20,7 @@ import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, Hover
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
@@ -196,7 +196,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
-  
+
   useEffect(() => {
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
@@ -701,7 +701,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingSentinelRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
+export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -709,79 +709,43 @@ export interface UNSTABLE_TreeLoadingSentinelRenderProps extends Pick<TreeItemRe
   level: number
 }
 
-export interface TreeLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<UNSTABLE_TreeLoadingSentinelRenderProps> {
-  /**
-   * The load more spinner to render when loading additional items.
-   */
-  children?: ReactNode | ((values: UNSTABLE_TreeLoadingSentinelRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
-  /**
-   * Whether or not the loading spinner should be rendered or not.
-   */
-  isLoading?: boolean
-}
+export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingSentinel = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadingSentinelProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
-  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
-  let sentinelRef = useRef(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    onLoadMore,
-    // TODO: this collection will update anytime a row is expanded/collapsed becaused the flattenedRows will change.
-    // This means onLoadMore will trigger but that might be ok cause the user should have logic to handle multiple loadMore calls
-    collection: state?.collection,
-    sentinelRef,
-    scrollOffset
-  }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
-
-  ref = useObjectRef<HTMLDivElement>(ref);
-  let {rowProps, gridCellProps, ...states} = useTreeItem({node: item}, state, ref);
+  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
+  // @ts-ignore
+  let {rowProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
   let ariaProps = {
-    role: 'row',
     'aria-level': rowProps['aria-level'],
     'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize'],
-    tabIndex: rowProps.tabIndex
+    'aria-setsize': rowProps['aria-setsize']
   };
 
-  let {isFocusVisible, focusProps} = useFocusRing();
-
   let renderProps = useRenderProps({
-    ...otherProps,
+    ...props,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
     values: {
-      level,
-      isFocused: states.isFocused,
-      isFocusVisible
+      level
     }
   });
 
   return (
     <>
-      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
-      {/* @ts-ignore - compatibility with React < 19 */}
-      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
-        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
-      </div>
-      {isLoading && renderProps.children && (
-        <div
-          ref={ref}
-          {...mergeProps(filterDOMProps(props as any), ariaProps, focusProps)}
-          {...renderProps}
-          data-key={rowProps['data-key']}
-          data-collection={rowProps['data-collection']}
-          data-focused={states.isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-level={level}>
-          <div {...gridCellProps}>
-            {renderProps.children}
-          </div>
+      <div
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), ariaProps)}
+        {...renderProps}
+        data-level={level}>
+        <div role="gridcell" aria-colindex={1}>
+          {renderProps.children}
         </div>
-      )}
+      </div>
     </>
   );
 });
@@ -834,10 +798,9 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         keyMap.set(node.key, node as CollectionNode<T>);
       }
 
-      // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
-      let modifiedNode = keyMap.get(node.key) || node;
-      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && flattenedRows.find(row => row.key === modifiedNode.parentKey))) {
-        flattenedRows.push(modifiedNode);
+      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
+        // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
+        flattenedRows.push(keyMap.get(node.key) || node);
       }
     } else if (node.type !== null) {
       keyMap.set(node.key, node as CollectionNode<T>);
@@ -951,5 +914,3 @@ function RootDropIndicator() {
     </div>
   );
 }
-
-
