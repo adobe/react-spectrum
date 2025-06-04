@@ -1594,7 +1594,8 @@ describe('Tree', () => {
         expect(documentLoader1ParentStyles.height).toBe('30px');
       });
 
-      it('should restore focus to the tree if the loader is keyboard focused when loading finishes', async () => {
+      // TODO: bring this back when we enable keyboard focus on tree loaders again
+      it.skip('should restore focus to the tree if the loader is keyboard focused when loading finishes', async () => {
         let tree = render(
           <VirtualizedLoadingSentinelTree rootIsLoading />
         );
