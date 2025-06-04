@@ -65,13 +65,8 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
-    if (selectionState.focusedKey != null) {
-      let focusedItem = tree.getItem(selectionState.focusedKey);
-      // TODO: do we want to have the same logic as useListState/useGridState where it tries to find the nearest row?
-      // We could possibly special case this loader case and have it try to find the item just before it/the parent
-      if (!focusedItem || focusedItem.type === 'loader' && !focusedItem.props.isLoading) {
-        selectionState.setFocusedKey(null);
-      }
+    if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tree, selectionState.focusedKey]);

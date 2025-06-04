@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, ListLayout, Text, Tree, TreeItem, TreeItemContent, UNSTABLE_TreeLoadingSentinel, Virtualizer} from '../';
+import {Button, Checkbox, Collection, ListLayout, Text, Tree, TreeItem, TreeItemContent, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -137,7 +136,6 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
 
 describe('Tree', () => {
   let user;
-  let testUtilUser = new User();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -1201,432 +1199,15 @@ describe('Tree', () => {
     });
   });
 
-  describe('loading sentinels', () => {
-    let LoadingSentinelTree = (props) => {
-      let {isLoading, onLoadMore, ...treeProps} = props;
-
-      return (
-        <Tree aria-label="test tree" {...treeProps}>
-          <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-          <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-            <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-              <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-                Projects-1A
-              </StaticTreeItem>
-              <UNSTABLE_TreeLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
-                Loading...
-              </UNSTABLE_TreeLoadingSentinel>
-            </StaticTreeItem>
-            <StaticTreeItem id="projects-2" textValue="Projects-2">
-              Projects-2
-            </StaticTreeItem>
-            <StaticTreeItem id="projects-3" textValue="Projects-3">
-              Projects-3
-            </StaticTreeItem>
-          </StaticTreeItem>
-          <UNSTABLE_TreeLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
-            Loading...
-          </UNSTABLE_TreeLoadingSentinel>
-        </Tree>
-      );
-    };
-
-    let onLoadMore = jest.fn();
-    let observe = jest.fn();
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('should render the loading elements when loading', async () => {
-      let tree = render(<LoadingSentinelTree isLoading expandedKeys={[]} />);
-
-      let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
-      expect(rows).toHaveLength(3);
-      let loaderRow = rows[2];
-      expect(loaderRow).toHaveTextContent('Loading...');
-
-      let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(sentinel.closest('[inert]')).toBeTruthy;
-
-      // Should render the second sentinel if the row is expanded
-      tree.rerender(<LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />);
-      rows = treeTester.rows;
-      expect(rows).toHaveLength(8);
-      let newLoaderRow = rows[4];
-      expect(newLoaderRow).toHaveTextContent('Loading...');
-
-      loaderRow = rows[7];
-      expect(loaderRow).toHaveTextContent('Loading...');
-      let sentinels = tree.queryAllByTestId('loadMoreSentinel');
-      expect(sentinels).toHaveLength(2);
-    });
-
-    it('should render the sentinel but not the loading indicator when not loading', async () => {
-      let tree = render(<LoadingSentinelTree />);
-
-      let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
-      expect(rows).toHaveLength(2);
-      expect(tree.queryByText('Loading...')).toBeFalsy();
-      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
-    });
-
-    it('should only fire loadMore when intersection is detected regardless of loading state', async () => {
-      let observer = setupIntersectionObserverMock({
-        observe
-      });
-
-      let tree = render(<LoadingSentinelTree onLoadMore={onLoadMore} isLoading />);
-      let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
-
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
-      observe.mockClear();
-
-      tree.rerender(<LoadingSentinelTree onLoadMore={onLoadMore} />);
-      expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
-
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
-    });
-
-    describe('virtualized', () => {
-      let projects: {id: string, value: string}[] = [];
-      let projectsLevel3: {id: string, value: string}[] = [];
-      let documents: {id: string, value: string}[] = [];
-      for (let i = 0; i < 10; i++) {
-        projects.push({id: `projects-${i}`, value: `Projects-${i}`});
-        projectsLevel3.push({id: `project-1-${i}`, value: `Projects-1-${i}`});
-        documents.push({id: `document-${i}`, value: `Document-${i}`});
-      }
-      let root = [
-        {id: 'photos-1', value: 'Photos 1'},
-        {id: 'photos-2', value: 'Photos 2'},
-        {id: 'projects', value: 'Projects'},
-        {id: 'photos-3', value: 'Photos 3'},
-        {id: 'photos-4', value: 'Photos 4'},
-        {id: 'documents', value: 'Documents'},
-        {id: 'photos-5', value: 'Photos 5'},
-        {id: 'photos-6', value: 'Photos 6'}
-      ];
-      let clientWidth, clientHeight;
-
-      beforeAll(() => {
-        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
-        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
-      });
-
-      afterAll(function () {
-        clientWidth.mockReset();
-        clientHeight.mockReset();
-      });
-
-      let VirtualizedLoadingSentinelTree = (props) => {
-        let {
-          rootData = root,
-          rootIsLoading,
-          projectsData = projects,
-          projectsIsLoading,
-          projects3Data = projectsLevel3,
-          projects3IsLoading,
-          documentData = documents,
-          documentsIsLoading,
-          ...treeProps
-        } = props;
-        return (
-          <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25, loaderHeight: 30}}>
-            <Tree
-              {...treeProps}
-              aria-label="multi loader tree">
-              <Collection items={rootData} dependencies={[projectsIsLoading, documentsIsLoading]}>
-                {(item: any) => {
-                  if (item.id === 'projects') {
-                    return (
-                      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-                        <Collection items={projectsData} dependencies={[projects3IsLoading]}>
-                          {(item: any) => {
-                            return item.id !== 'projects-1' ?
-                              (
-                                <StaticTreeItem id={item.id} textValue={item.value}>
-                                  {item.value}
-                                </StaticTreeItem>
-                              ) : (
-                                <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-                                  <Collection items={projects3Data}>
-                                    {(item: any) => (
-                                      <StaticTreeItem id={item.id} textValue={item.value}>
-                                        {item.value}
-                                      </StaticTreeItem>
-                                    )}
-                                  </Collection>
-                                  <UNSTABLE_TreeLoadingSentinel isLoading={projects3IsLoading}>
-                                    Loading...
-                                  </UNSTABLE_TreeLoadingSentinel>
-                                </StaticTreeItem>
-                              );
-                          }
-                        }
-                        </Collection>
-                        <UNSTABLE_TreeLoadingSentinel isLoading={projectsIsLoading}>
-                          Loading...
-                        </UNSTABLE_TreeLoadingSentinel>
-                      </StaticTreeItem>
-                    );
-                  } else if (item.id === 'documents') {
-                    return (
-                      <StaticTreeItem id="documents" textValue="Documents" title="Documents">
-                        <Collection items={documentData}>
-                          {(item: any) => (
-                            <StaticTreeItem id={item.id} textValue={item.value}>
-                              {item.value}
-                            </StaticTreeItem>
-                          )}
-                        </Collection>
-                        <UNSTABLE_TreeLoadingSentinel isLoading={documentsIsLoading}>
-                          Loading...
-                        </UNSTABLE_TreeLoadingSentinel>
-                      </StaticTreeItem>
-                    );
-                  } else {
-                    return (
-                      <StaticTreeItem id={item.id} textValue={item.value}>{item.value}</StaticTreeItem>
-                    );
-                  }
-                }}
-              </Collection>
-              <UNSTABLE_TreeLoadingSentinel isLoading={rootIsLoading}>
-                Loading...
-              </UNSTABLE_TreeLoadingSentinel>
-            </Tree>
-          </Virtualizer>
-        );
-      };
-
-      it('should always render the sentinel even when virtualized', async () => {
-        let tree = render(
-          <VirtualizedLoadingSentinelTree
-            expandedKeys={[]}
-            rootIsLoading
-            projectsIsLoading
-            projects3IsLoading
-            documentsIsLoading />
-        );
-        let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
-        expect(rows).toHaveLength(8);
-        let rootLoaderRow = rows[7];
-        expect(rootLoaderRow).toHaveTextContent('Loading...');
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
-        let rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
-        // 8 items * 25px
-        expect(rootLoaderParentStyles.top).toBe('200px');
-        expect(rootLoaderParentStyles.height).toBe('30px');
-        let sentinel = tree.getByTestId('loadMoreSentinel');
-        expect(sentinel.closest('[inert]')).toBeTruthy;
-        let sentinels = tree.queryAllByTestId('loadMoreSentinel');
-        expect(sentinels).toHaveLength(1);
-
-        // Expand projects, adding 10 rows to the tree
-        tree.rerender(
-          <VirtualizedLoadingSentinelTree
-            expandedKeys={['projects']}
-            rootIsLoading
-            projectsIsLoading
-            projects3IsLoading
-            documentsIsLoading />
-        );
-
-        rows = treeTester.rows;
-        expect(rows).toHaveLength(9);
-        rootLoaderRow = rows[8];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
-        rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
-        // 18 items * 25px + intermediate loader * 30px
-        expect(rootLoaderParentStyles.top).toBe('480px');
-        expect(rootLoaderParentStyles.height).toBe('30px');
-        let projectsLoader = rows[7];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
-        let projectsLoaderParentStyles = projectsLoader.parentElement!.style;
-        // 13 items * 25px
-        expect(projectsLoaderParentStyles.top).toBe('325px');
-        expect(projectsLoaderParentStyles.height).toBe('30px');
-        sentinels = tree.queryAllByTestId('loadMoreSentinel');
-        expect(sentinels).toHaveLength(2);
-        for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
-        }
-
-        // Expand projects-1, adding 10 rows to the tree
-        tree.rerender(
-          <VirtualizedLoadingSentinelTree
-            expandedKeys={['projects', 'projects-1']}
-            rootIsLoading
-            projectsIsLoading
-            projects3IsLoading
-            documentsIsLoading />
-        );
-
-        rows = treeTester.rows;
-        expect(rows).toHaveLength(10);
-        rootLoaderRow = rows[9];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
-        rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
-        // 28 items * 25px + 2 intermediate loaders * 30px
-        expect(rootLoaderParentStyles.top).toBe('760px');
-        expect(rootLoaderParentStyles.height).toBe('30px');
-        // Project loader is still the 2nd to last item that is preserved since the projects-1 is a child folder
-        projectsLoader = rows[8];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
-        projectsLoaderParentStyles = projectsLoader.parentElement!.style;
-        // 23 items * 25px + 1 intermediate loaders * 30px
-        expect(projectsLoaderParentStyles.top).toBe('605px');
-        expect(projectsLoaderParentStyles.height).toBe('30px');
-        // Project-1 loader is 3rd to last item that is preserved since it is in the child folder of projects
-        let projects1Loader = rows[7];
-        expect(projects1Loader).toHaveAttribute('aria-posinset', '11');
-        expect(projects1Loader).toHaveAttribute('aria-setsize', '11');
-        let projectsLoader1ParentStyles = projects1Loader.parentElement!.style;
-        // 15 items * 25px aka photos-1 -> 2 + projects + projects-0 -> 1 +  10 items in the folder
-        expect(projectsLoader1ParentStyles.top).toBe('375px');
-        expect(projectsLoader1ParentStyles.height).toBe('30px');
-        sentinels = tree.queryAllByTestId('loadMoreSentinel');
-        expect(sentinels).toHaveLength(3);
-        for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
-        }
-
-        // Expand projects-1, adding 10 rows to the tree
-        tree.rerender(
-          <VirtualizedLoadingSentinelTree
-            expandedKeys={['projects', 'projects-1', 'documents']}
-            rootIsLoading
-            projectsIsLoading
-            projects3IsLoading
-            documentsIsLoading />
-        );
-
-        rows = treeTester.rows;
-        expect(rows).toHaveLength(11);
-        rootLoaderRow = rows[10];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
-        rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
-        // 38 items * 25px + 3 intermediate loaders * 30px
-        expect(rootLoaderParentStyles.top).toBe('1040px');
-        expect(rootLoaderParentStyles.height).toBe('30px');
-        // Project loader is now the 3nd to last item since document's loader is after it
-        projectsLoader = rows[8];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
-        projectsLoaderParentStyles = projectsLoader.parentElement!.style;
-        // 23 items * 25px + 1 intermediate loaders * 30px
-        expect(projectsLoaderParentStyles.top).toBe('605px');
-        expect(projectsLoaderParentStyles.height).toBe('30px');
-        // Project-1 loader is 4th to last item
-        projects1Loader = rows[7];
-        expect(projects1Loader).toHaveAttribute('aria-posinset', '11');
-        expect(projects1Loader).toHaveAttribute('aria-setsize', '11');
-        projectsLoader1ParentStyles = projects1Loader.parentElement!.style;
-        // 15 items * 25px aka photos-1 -> 2 + projects + projects-0 -> 1 +  10 items in the folder
-        expect(projectsLoader1ParentStyles.top).toBe('375px');
-        expect(projectsLoader1ParentStyles.height).toBe('30px');
-        // Document loader is 2nd to last item
-        let documentLoader = rows[9];
-        expect(documentLoader).toHaveAttribute('aria-posinset', '11');
-        expect(documentLoader).toHaveAttribute('aria-setsize', '11');
-        let documentLoader1ParentStyles = documentLoader.parentElement!.style;
-        // 36 items * 25px + 2 intermediate loaders * 30px
-        expect(documentLoader1ParentStyles.top).toBe('960px');
-        expect(documentLoader1ParentStyles.height).toBe('30px');
-
-        sentinels = tree.queryAllByTestId('loadMoreSentinel');
-        expect(sentinels).toHaveLength(4);
-        for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
-        }
-      });
-
-      it('should not reserve room for the loader if isLoading is false', async () => {
-        let tree = render(
-          <VirtualizedLoadingSentinelTree
-            expandedKeys={['projects', 'projects-1', 'documents']}
-            rootIsLoading
-            documentsIsLoading />
-        );
-
-        let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
-        expect(rows).toHaveLength(9);
-        let rootLoaderRow = rows[8];
-        let rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
-        // 38 items * 25px + 1 intermediate loaders * 30px
-        expect(rootLoaderParentStyles.top).toBe('980px');
-        expect(rootLoaderParentStyles.height).toBe('30px');
-
-        // Sentinels that aren't in a loading state don't have a "row" rendered but still have a virtualizer node
-        let sentinels = tree.queryAllByTestId('loadMoreSentinel');
-        expect(sentinels).toHaveLength(4);
-        let projectsLoader = sentinels[1].closest('[inert]')!;
-        let projectsLoaderParentStyles = projectsLoader.parentElement!.style;
-        // 23 items * 25px
-        expect(projectsLoaderParentStyles.top).toBe('575px');
-        expect(projectsLoaderParentStyles.height).toBe('0px');
-
-        let projects1Loader = sentinels[0].closest('[inert]')!;
-        let projectsLoader1ParentStyles = projects1Loader.parentElement!.style;
-        // 15 items * 25px aka photos-1 -> 2 + projects + projects-0 -> 1 +  10 items in the folder
-        expect(projectsLoader1ParentStyles.top).toBe('375px');
-        expect(projectsLoader1ParentStyles.height).toBe('0px');
-
-        let documentLoader = rows[7];
-        let documentLoader1ParentStyles = documentLoader.parentElement!.style;
-        // 36 items * 25px
-        expect(documentLoader1ParentStyles.top).toBe('900px');
-        expect(documentLoader1ParentStyles.height).toBe('30px');
-      });
-
-      // TODO: bring this back when we enable keyboard focus on tree loaders again
-      it.skip('should restore focus to the tree if the loader is keyboard focused when loading finishes', async () => {
-        let tree = render(
-          <VirtualizedLoadingSentinelTree rootIsLoading />
-        );
-        let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
-        expect(rows).toHaveLength(8);
-        let rootLoaderRow = rows[7];
-        expect(rootLoaderRow).toHaveTextContent('Loading...');
-
-        await user.tab();
-        await user.keyboard('{End}');
-        expect(document.activeElement).toBe(rootLoaderRow);
-
-        tree.rerender(
-          <VirtualizedLoadingSentinelTree />
-        );
-
-        expect(document.activeElement).toBe(treeTester.tree);
-      });
-    });
-  });
-
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
       let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
       expect(onSelectionChange).toBeCalledTimes(1);
-
+  
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1636,9 +1217,9 @@ describe('Tree', () => {
       let {getAllByRole} =  render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
       expect(onSelectionChange).toBeCalledTimes(1);
-
+  
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -1648,9 +1229,9 @@ describe('Tree', () => {
       let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}} />);
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
       expect(onSelectionChange).toBeCalledTimes(0);
-
+  
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
