@@ -692,15 +692,26 @@ function TreeDragAndDropExample(args) {
 
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
     return {
       'text/plain': item.value.name,
-      'tree-item': JSON.stringify(item.value)
+      'tree-item': JSON.stringify(serializeItem(item))
     };
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
     getAllowedDropOperations: () => ['move'],
+    renderDragPreview(items) {
+      return (
+        <div style={{background: 'blue', color: 'white', padding: '4px'}}>{items.length} items</div>
+      );
+    },
     shouldAcceptItemDrop: (target) => {
       if (args.shouldAcceptItemDrop === 'folders') {
         let item = treeData.getItem(target.key);
@@ -751,7 +762,7 @@ function SecondTree(args) {
     getChildren: item => item.childItems
   });
 
-  let getItems = async (e) => {
+  let processIncomingItems = async (e) => {
     return await Promise.all(e.items.filter(isTextDropItem).map(async item => {
       let parsed = JSON.parse(await item.getText('tree-item'));
       let convertItem = item => ({
@@ -763,23 +774,71 @@ function SecondTree(args) {
     }));
   };
 
+  let getItems = (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
+    return {
+      'text/plain': item.value.name,
+      'tree-item': JSON.stringify(serializeItem(item))
+    };
+  });
+
+  let onInsert = async (e)  => {
+    let items = await processIncomingItems(e);
+    if (e.target.dropPosition === 'before') {
+      treeData.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      treeData.insertAfter(e.target.key, ...items);
+    }
+  };
+
   let {dragAndDropHooks} = useDragAndDrop({
+    getItems, // Enable dragging FROM this tree
+    getAllowedDropOperations: () => ['move'],
     acceptedDragTypes: ['tree-item'],
-    async onInsert(e) {
-      let items = await getItems(e);
-      if (e.target.dropPosition === 'before') {
-        treeData.insertBefore(e.target.key, ...items);
-      } else if (e.target.dropPosition === 'after') {
-        treeData.insertAfter(e.target.key, ...items);
-      }
-    },
+    onInsert: args.shouldAllowInsert ? onInsert : undefined,
     async onItemDrop(e) {
-      let items = await getItems(e);
+      let items = await processIncomingItems(e);
       treeData.insert(e.target.key, 0, ...items);
     },
     async onRootDrop(e) {
-      let items = await getItems(e);
+      let items = await processIncomingItems(e);
       treeData.insert(null, 0, ...items);
+    },
+    shouldAcceptItemDrop: (target) => {
+      if (args.shouldAcceptItemDrop === 'folders') {
+        let item = treeData.getItem(target.key);
+        return item?.value?.childItems?.length > 0;
+      }
+      return true;
+    },
+    [args.dropFunction]: (e: DroppableCollectionReorderEvent) => {
+      console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key} in SecondTree`);
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   });
 
@@ -813,6 +872,7 @@ export const TreeWithDragAndDrop = {
   args: {
     dropFunction: 'onMove',
     shouldAcceptItemDrop: 'all',
+    shouldAllowInsert: true,
     ...TreeExampleDynamic.args
   },
   argTypes: {
