@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AsyncLoadable, Collection, Node} from '@react-types/shared';
+import type {AsyncLoadable, Collection} from '@react-types/shared';
 import {getScrollParent} from './getScrollParent';
 import {RefObject, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> {
-  collection: Collection<Node<unknown>>,
+  collection: Collection<any>,
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
    * Uses a percentage value relative to the scroll body's client height. Load more is then triggered
