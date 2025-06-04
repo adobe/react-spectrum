@@ -12,10 +12,11 @@
 
 import {ContextValue, DOMProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends SharedFormProps, DOMProps {
+export interface FormProps extends SharedFormProps, DOMProps, GlobalDOMAttributes<HTMLFormElement> {
   /**
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required

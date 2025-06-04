@@ -13,13 +13,13 @@ import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, Key} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLOListElement> {
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
@@ -35,13 +35,14 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let {navProps} = useBreadcrumbs(props);
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => (
         <ol
           ref={ref}
-          {...navProps}
+          {...mergeProps(DOMProps, navProps)}
           slot={props.slot || undefined}
           style={props.style}
           className={props.className ?? 'react-aria-Breadcrumbs'}>
@@ -67,7 +68,7 @@ export interface BreadcrumbRenderProps {
   isDisabled: boolean
 }
 
-export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
+export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, GlobalDOMAttributes<HTMLLIElement>  {
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
   id?: Key
 }
@@ -92,9 +93,12 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Bre
     defaultClassName: 'react-aria-Breadcrumb'
   });
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
   return (
     <li
-      {...filterDOMProps(props as any)}
+      {...DOMProps}
       {...renderProps}
       ref={ref}
       data-disabled={isDisabled || isCurrent || undefined}
