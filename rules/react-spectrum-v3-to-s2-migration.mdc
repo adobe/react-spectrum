@@ -99,7 +99,6 @@ No updates needed.
 - Change `variant="cta"` to `variant="accent"`
 - Change `variant="overBackground"` to `variant="primary" staticColor="white"`
 - Change `style` to `fillStyle`
-- [PENDING] Comment out `isPending` (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
 - If `href` is present, the `Button` should be converted to a `LinkButton`
 - Remove `elementType` (it is no longer supported in Spectrum 2)
@@ -134,11 +133,9 @@ No updates needed.
 ### ComboBox
 - Change `menuWidth` value from a `DimensionValue` to a pixel value
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
-- [PENDING] Comment out `loadingState` (it has not been implemented yet)
 - Remove `placeholder` (it is no longer supported in Spectrum 2)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
-- [PENDING] Comment out `onLoadMore` (it has not been implemented yet)
 - Update `Item` to be a `ComboBoxItem`
 
 ### Dialog
@@ -228,9 +225,9 @@ No updates needed.
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
-- [PENDING] Comment out `isLoading` (it has not been implemented yet)
-- [PENDING] Comment out `onLoadMore` (it has not been implemented yet)
 - Update `Item` to be a `PickerItem`
+- Change `isLoading` to `loadingState` and provide the appropriate loading state.
+
 
 ### ProgressBar
 - Change `variant="overBackground"` to `staticColor="white"`
@@ -285,6 +282,7 @@ No updates needed.
 - For `Column` and `Row`: Update `key` to be `id` (and keep `key` if rendered inside `array.map`)
 - For dynamic tables, pass a `columns` prop into `Row`
 - For `Row`: Update dynamic render function to pass in `column` instead of `columnKey`
+- Move `loadingState` and `onLoadMore` from `TableBody` to `TableView`</li>
 - [PENDING] Comment out `UNSTABLE_allowsExpandableRows` (it has not been implemented yet)
 - [PENDING] Comment out `UNSTABLE_onExpandedChange` (it has not been implemented yet)
 - [PENDING] Comment out `UNSTABLE_expandedKeys` (it has not been implemented yet)
