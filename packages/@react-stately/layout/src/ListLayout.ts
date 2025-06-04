@@ -253,41 +253,48 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildCollection(y = this.padding): LayoutNode[] {
     let collection = this.virtualizer!.collection;
-    let skipped = 0;
+    let collectionNodes = [...collection];
+    let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+
+    let isEmptyOrLoading = collection?.size === 0 || !collectionNodes.some(item => item.type !== 'loader');
     if (isEmptyOrLoading) {
       y = 0;
     }
 
-    for (let node of collection) {
+    for (let node of collectionNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
-        skipped++;
         continue;
       }
 
       let layoutNode = this.buildChild(node, this.padding, y, null);
       y = layoutNode.layoutInfo.rect.maxY + this.gap;
       nodes.push(layoutNode);
-      if (node.type === 'item' && y > this.requestedRect.maxY) {
-        let itemsAfterRect = collection.size - (nodes.length + skipped);
-        let lastNode = collection.getItem(collection.getLastKey()!);
-        if (lastNode?.type === 'loader') {
-          itemsAfterRect--;
-        }
+      if (node.type === 'loader') {
+        let index = loaderNodes.indexOf(node);
+        loaderNodes.splice(index, 1);
+      }
 
-        y += itemsAfterRect * rowHeight;
-
-        // Always add the loader sentinel if present. This assumes the loader is the last option/row
-        // will need to refactor when handling multi section loading
-        if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
-          let loader = this.buildChild(lastNode, this.padding, y, null);
+      // Build each loader that exists in the collection that is outside the visible rect so that they are persisted
+      // at the proper estimated location. If the node.type is "section" then we don't do this shortcut since we have to
+      // build the sections to see how tall they are.
+      if ((node.type === 'item' || node.type === 'loader') && y > this.requestedRect.maxY) {
+        let lastProcessedIndex = collectionNodes.indexOf(node);
+        for (let loaderNode of loaderNodes) {
+          let loaderNodeIndex = collectionNodes.indexOf(loaderNode);
+          // Subtract by an additional 1 since we've already added the current item's height to y
+          y += (loaderNodeIndex - lastProcessedIndex - 1) * rowHeight;
+          let loader = this.buildChild(loaderNode, this.padding, y, null);
           nodes.push(loader);
           y = loader.layoutInfo.rect.maxY;
+          lastProcessedIndex = loaderNodeIndex;
         }
+
+        // Account for the rest of the items after the last loader spinner, subtract by 1 since we've processed the current node's height already
+        y += (collectionNodes.length - lastProcessedIndex - 1) * rowHeight;
         break;
       }
     }
