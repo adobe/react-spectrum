@@ -10,8 +10,7 @@ If you are able to browse the web, the full docs for React Spectrum (S2) are ava
 
 ## Configuring your bundler
 
-React Spectrum supports styling via macros, a new bundler feature that enables functions to run at build time. Currently, Parcel v2.12.0 and newer supports macros out of the box. When using other build tools, you can install a plugin to enable them.
-See the styling section to learn more about using the React Spectrum `style` macro.
+React Spectrum supports styling via macros, a new bundler feature that enables functions to run at build time. Currently, Parcel v2.12.0 and newer supports macros out of the box. When using other build tools, you can install a plugin to enable them. The other build tools setup instructions are in the sections below for "Webpack, Next.js, Vite, Rollup, or ESBuild".
 
 ### Webpack, Next.js, Vite, Rollup, or ESBuild
 
@@ -250,6 +249,51 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 @import "reset.css" layer(reset);
 ```
 
+### CSS optimization
+
+The style macro relies on CSS bundling and minification to generate optimized output. When configuring your build tool, follow these best practices:
+- Ensure that the styles are extracted into a CSS bundle and not injected at runtime by `<style>` elements.
+- Use a CSS minifier such as [Lightning CSS](mdc:https:/lightningcss.dev) to deduplicate common rules used between components. Consider running this during development as well to reduce style duplication in developer tools for improved debugging.
+- Configure your bundler to combine all CSS for S2 components and style macros into a single bundle instead of code splitting. Atomic CSS results in a lot of overlap between components. With code splitting, common rules are duplicated between bundles by default. To avoid this, load the CSS for all used S2 components in a single bundle. Because of the high degree of overlap between components, this initial bundle will be quite small.
+
+Guidance for specific build tools is below.
+
+### Parcel
+
+Parcel includes support for macros out of the box, and automatically optimizes CSS with [Lightning CSS](mdc:https:/lightningcss.dev). You can configure it to bundle all CSS for S2 components and style macros into a single file using the [manual shared bundles](mdc:https:/parceljs.org/features/code-splitting/#manual-shared-bundles) feature.
+
+```json
+// package.json
+{
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "**/@react-spectrum/s2/**",
+          // Update this glob as needed to match your source files.
+          "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "types": ["css"]
+      }
+    ]
+  }
+}
+```
+
+### Webpack
+
+- Use [MiniCssExtractPlugin](mdc:https:/webpack.js.org/plugins/mini-css-extract-plugin) to extract the generated styles into a CSS bundle. Do not use `style-loader`, which injects individual `<style>` rules at runtime.
+- Use [CssMinimizerWebpackPlugin](mdc:https:/webpack.js.org/plugins/css-minimizer-webpack-plugin) to optimize the generated CSS using [Lightning CSS](mdc:https:/lightningcss.dev). You can also configure this to run in development to remove duplicate rules and improve debugging.
+- Use [SplitChunksPlugin](mdc:https:/webpack.js.org/plugins/split-chunks-plugin) to bundle all S2 and style-macro generated CSS into a single bundle.
+See our [webpack example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js) for full configuration options.
+
+### Vite
+
+- Configure the `cssMinify` option to use [Lightning CSS](mdc:https:/lightningcss.dev), which produces much smaller output than the default minifier.
+- Configure Rollup to bundle all S2 and style-macro generated CSS into a single bundle using the [manualChunks](mdc:https:/rollupjs.org/configuration-options/#output-manualchunks) feature.
+See our [Vite example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts) for full configuration options.
+
 ## Other tips
 
 ### Virtualized collections
@@ -264,5 +308,5 @@ If you need to display some additional context, consider using the `ContextualHe
 
 ### Typography
 
-Note that the Text and Heading components are not general typography components, but instead are meant to be used WITHIN other component so default styles can be inherited (i.e. a Heading inside a Dialog or MenuItem). These components should not be used standalone. Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.
+Note that the Text and Heading components are not general typography components, but instead are meant to be used WITHIN other components so default styles can be inherited (i.e. a Heading inside a Dialog or MenuItem). These components should not be used standalone. Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.
  
