@@ -26,15 +26,21 @@ interface FormValidationProps<T> extends Validation<T> {
 export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
   let {validationBehavior, focus} = props;
 
-  let timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let justBlurredRef = useRef(false);
+  let timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   function announceErrorMessage(errorMessage: string = ''): void {
-    if (timeoutId.current != null) {
-      clearTimeout(timeoutId.current);
+    if (timeoutIdRef.current != null) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
     if (ref?.current &&
       errorMessage !== '' &&
-      ref.current.contains(getActiveElement(getOwnerDocument(ref.current)))) {
-      timeoutId.current = setTimeout(() => announce(errorMessage, 'polite'), 250);
+      (
+        ref.current.contains(getActiveElement(getOwnerDocument(ref.current))) ||
+        justBlurredRef.current
+      )
+    ) {
+      timeoutIdRef.current = setTimeout(() => announce(errorMessage, 'polite'), 250);
     }
   }
 
@@ -43,8 +49,6 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
       let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
       ref.current.setCustomValidity(errorMessage);
-
-      announceErrorMessage(errorMessage);
 
       // Prevent default tooltip for validation message.
       // https://bugzilla.mozilla.org/show_bug.cgi?id=605277
@@ -72,7 +76,10 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     // Auto focus the first invalid input in a form, unless the error already had its default prevented.
     let form = ref?.current?.form;
     if (!e.defaultPrevented && ref && form) {
+
+      // Announce the current error message
       announceErrorMessage(ref?.current?.validationMessage || '');
+
       if (getFirstInvalidInput(form) === ref.current) {
         if (focus) {
           focus();
@@ -93,6 +100,13 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     state.commitValidation();
   });
 
+  let onBlur = useEffectEvent(() => {
+    justBlurredRef.current = true;
+    // Announce the current error message
+    announceErrorMessage(ref?.current?.validationMessage || '');
+    justBlurredRef.current = false;
+  });
+
   useEffect(() => {
     let input = ref?.current;
     if (!input) {
@@ -100,16 +114,22 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     }
 
     let form = input.form;
+    input.addEventListener('blur', onBlur);
     input.addEventListener('invalid', onInvalid);
     input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
-      clearTimeout(timeoutId.current!);
+      if (timeoutIdRef.current != null) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
+      justBlurredRef.current = false;
+      input!.removeEventListener('blur', onBlur);
       input!.removeEventListener('invalid', onInvalid);
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
     };
-  }, [ref, onInvalid, onChange, onReset, validationBehavior]);
+  }, [justBlurredRef, onBlur, onChange, onInvalid, onReset, ref, validationBehavior]);
 }
 
 function getValidity(input: ValidatableElement) {
