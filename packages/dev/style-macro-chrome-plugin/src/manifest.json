@@ -5,6 +5,8 @@
   "devtools_page": "devtools.html",
   "content_scripts": [{
     "matches": ["*://*/*"],
-    "js": ["content-script.js"]
+    "js": ["content-script.js"],
+    "all_frames": true,
+    "run_at": "document_start"
   }]
 }

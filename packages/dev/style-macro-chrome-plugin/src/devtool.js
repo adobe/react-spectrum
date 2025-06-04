@@ -1,19 +1,4 @@
-let injectScript = () => {
-  chrome.scripting.executeScript({
-    target: {
-      tabId: chrome.devtools.inspectedWindow.tabId,
-      allFrames: true
-    },
-    files: chrome.runtime.getManifest().content_scripts[0].js
-  });
-};
 
-injectScript();
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (tabId === chrome.devtools.inspectedWindow.tabId && changeInfo.status === 'complete' && tab.active) {
-    injectScript();
-  }
-});
 
 chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   sidebar.setObject({});

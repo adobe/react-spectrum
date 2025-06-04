@@ -27,6 +27,8 @@ If the panel isn't updating with styles, try closing the dev tools and reopening
 
 If the extension doesn't appear to have the latest code, try closing the dev tools and reopening it.
 
+If every tab you have open (or many of them) reload when you make local changes to the extension, then go into the extension settings and limit it to `localhost` or something appropriate.
+
 ## ToDos
 
 - [ ] Work with RSC
