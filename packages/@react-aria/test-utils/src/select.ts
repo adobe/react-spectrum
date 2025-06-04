@@ -37,11 +37,17 @@ export class SelectTester {
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(root).queryByRole('button');
-    if (triggerButton == null) {
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton;
+    if (buttons.length === 0) {
       triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
+    } else {
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
-    this._trigger = triggerButton;
+
+    this._trigger = triggerButton ?? root;
   }
   /**
    * Set the interaction type used by the select tester.
@@ -183,7 +189,7 @@ export class SelectTester {
           return;
         }
 
-        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});

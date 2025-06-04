@@ -96,7 +96,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
         default: lightDark('accent-900', 'accent-700'),
         isHovered: lightDark('accent-1000', 'accent-600'),
         isPressed: lightDark('accent-1000', 'accent-600'),
-        isFocused: lightDark('accent-1000', 'accent-600')
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
       },
       isDisabled: {
         default: 'gray-100',

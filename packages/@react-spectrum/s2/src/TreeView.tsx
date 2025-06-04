@@ -33,7 +33,6 @@ import {colorMix, focusRing, fontRelative, iconStyle, lightDark, style} from '..
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {isAndroid} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
@@ -410,18 +409,14 @@ const expandButton = style<ExpandableRowChevronProps>({
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled, scale, isHidden} = fullProps;
+  let {isExpanded, scale, isHidden} = fullProps;
   let {direction} = useLocale();
-  isDisabled = isDisabled || isHidden;
 
   return (
     <Button
       {...props}
       ref={ref}
       slot="chevron"
-      // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      excludeFromTabOrder={isAndroid() && !isDisabled}
-      preventFocusOnPress
       className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
         className={style({
