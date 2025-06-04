@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
 
-type HelpTextStory = ComponentStoryObj<typeof TextField>;
+type HelpTextStory = StoryObj<typeof TextField>;
 
 const argTypes = {
   label: {
@@ -57,7 +57,7 @@ export default {
     description: 'Password must be at least 8 characters.'
   },
   argTypes: argTypes
-} as ComponentMeta<typeof TextField>;
+} as Meta<typeof TextField>;
 
 export let Default: HelpTextStory = {};
 
@@ -150,7 +150,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
 
 function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
-  
+
   return (
     <TextField
       {...props}

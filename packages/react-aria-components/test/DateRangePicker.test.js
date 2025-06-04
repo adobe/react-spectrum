@@ -11,7 +11,23 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
+import {
+  Button,
+  CalendarCell,
+  CalendarGrid,
+  DateInput,
+  DateRangePicker,
+  DateRangePickerContext,
+  DateSegment,
+  Dialog,
+  FieldError,
+  Group,
+  Heading,
+  Label,
+  Popover,
+  RangeCalendar,
+  Text
+} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -296,8 +312,8 @@ describe('DateRangePicker', () => {
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
     let normalize = (s) => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
-    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString()));
-    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString()));
+    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString('en-US')));
+    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString('en-US')));
   });
 
   it('should disable button and date input when DatePicker is disabled', () => {

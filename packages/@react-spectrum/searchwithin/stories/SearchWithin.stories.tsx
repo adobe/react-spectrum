@@ -25,9 +25,15 @@ export default {
   title: 'SearchWithin'
 };
 
-function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+interface SearchWithinProps extends Omit<SpectrumSearchWithinProps, 'children'> {
+  searchFieldProps?: SpectrumSearchFieldProps,
+  pickerProps?: Omit<SpectrumPickerProps<object>, 'children'>
+}
+
+function RenderSearchWithin(props: SearchWithinProps = {}) {
+  let {searchFieldProps, pickerProps, ...rest} = props;
   return (
-    <SearchWithin label="This is label" {...props}>
+    <SearchWithin label="This is label" {...rest}>
       <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
@@ -40,9 +46,10 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
   );
 }
 
-function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+function RenderReverse(props: SearchWithinProps = {}) {
+  let {searchFieldProps, pickerProps, ...rest} = props;
   return (
-    <SearchWithin label="Test label" {...props}>
+    <SearchWithin label="Test label" {...rest}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -77,74 +84,236 @@ function ResizeSearchWithinApp(props) {
   );
 }
 
-export const Default = () => render({});
+export const Default = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  )
+};
 
-export const ValueControlled = () => render({}, {value: 'Controlled'});
-ValueControlled.name = 'value (controlled) ';
+export const ValueControlled = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {value: 'Controlled'}
+  },
+  name: 'value (controlled)'
+};
 
-export const isDisabled = () => render({isDisabled: true});
-isDisabled.name = 'isDisabled: true';
+export const isDisabled = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    isDisabled: true
+  },
+  name: 'isDisabled: true'
+};
 
-export const isRequired = () => render({isRequired: true});
-isRequired.name = 'isRequired: true';
+export const isRequired = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    isRequired: true
+  },
+  name: 'isRequired: true'
+};
 
-export const isReadOnly = () => render({}, {isReadOnly: true, value: 'Read Only'});
-isReadOnly.name = 'isReadOnly: true';
+export const isReadOnly = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {isReadOnly: true, value: 'Read Only'}
+  },
+  name: 'isReadOnly: true'
+};
 
-export const searchfieldDefaultValue = () => render({}, {defaultValue: 'Default Value'});
-searchfieldDefaultValue.name = 'Default value for Searchfield';
+export const searchfieldDefaultValue = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {defaultValue: 'Default Value'}
+  },
+  name: 'Default value for Searchfield'
+};
 
-export const pickerDefaultValue = () => render({}, {}, {defaultSelectedKey: 'tags'});
-pickerDefaultValue.name = 'Default value for Picker';
+export const pickerDefaultValue = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    pickerProps: {defaultSelectedKey: 'tags'}
+  },
+  name: 'Default value for Picker'
+};
 
-export const isRequiredNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'});
-isRequiredNecessityIndicatorLabel.name = 'isRequired: true, necessityIndicator "label"';
+export const isRequiredNecessityIndicatorLabel = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    isRequired: true,
+    necessityIndicator: 'label'
+  },
+  name: 'isRequired: true, necessityIndicator "label"'
+};
 
-export const isRequiredFalse_necessityIndicator = () => render({isRequired: false, necessityIndicator: 'label'});
-isRequiredFalse_necessityIndicator.name = 'isRequired: false, necessityIndicator "label"';
+export const isRequiredFalse_necessityIndicator = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    isRequired: false,
+    necessityIndicator: 'label'
+  },
+  name: 'isRequired: false, necessityIndicator "label"'
+};
 
-export const InputValidationSateInvalid = () => render({}, {validationState: 'invalid'});
-InputValidationSateInvalid.name = 'input validationState: invalid';
+export const InputValidationSateInvalid = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {validationState: 'invalid'}
+  },
+  name: 'input validationState: invalid'
+};
 
-export const PickerValidationSateInvalid = () => render({}, {}, {isInvalid: true});
-PickerValidationSateInvalid.name = 'picker validationState: invalid';
+export const PickerValidationSateInvalid = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    pickerProps: {isInvalid: true}
+  },
+  name: 'picker validationState: invalid'
+};
 
-export const PickerDisabled = () => render({}, {}, {isDisabled: true});
+export const PickerDisabled = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    pickerProps: {isDisabled: true}
+  },
+  name: 'picker isDisabled: true'
+};
 
-export const CustomWidth300 = () => render({width: 300});
-CustomWidth300.name = 'Custom width: 300';
+export const CustomWidth300 = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    width: 300
+  },
+  name: 'Custom width: 300'
+};
 
-export const CustomWidth30 = () => render({width: 30});
-CustomWidth30.name = 'Custom width: 30';
+export const CustomWidth30 = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    width: 30
+  },
+  name: 'Custom width: 30'
+};
 
-export const LabelPositionSide = () => render({labelPosition: 'side'});
-LabelPositionSide.name = 'labelPosition: side';
+export const LabelPositionSide = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    labelPosition: 'side'
+  },
+  name: 'labelPosition: side'
+};
 
-export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Test aria label'});
+export const NoVisibleLabel = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    label: undefined,
+    'aria-label': 'Test aria label'
+  },
+  name: 'no visible label'
+};
 
-export const NoLabels = () => render({label: undefined});
+export const ExternalLabel = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <span id="foo">External label</span>
+      <RenderSearchWithin {...args} />
+    </div>
+  ),
+  args: {
+    label: undefined,
+    'aria-labelledby': 'foo'
+  },
+  name: 'external label'
+};
 
-export const ExternalLabel = () => (
-  <div style={{display: 'flex', flexDirection: 'column'}}>
-    <span id="foo">External label</span>
-    {render({label: undefined, 'aria-labelledby': 'foo'})}
-  </div>
-);
+export const AutoFocusSearchField = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {autoFocus: true}
+  },
+  name: 'autoFocus: true on SearchField'
+};
 
-export const AutoFocusSearchField = () => render({}, {autoFocus: true});
-AutoFocusSearchField.name = 'autoFocus: true on SearchField';
+export const AutoFocusPicker = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    pickerProps: {autoFocus: true}
+  },
+  name: 'autoFocus: true on Picker'
+};
 
-export const AutoFocusPicker = () => render({}, {}, {autoFocus: true});
-AutoFocusPicker.name = 'autoFocus: true on Picker';
+export const ReverseChildrenOrder = {
+  render: (args) => (
+    <RenderReverse {...args} />
+  )
+};
 
-export const ReverseChildrenOrder = () => renderReverse({});
+export const ResizeSearchWithin = {
+  render: (args) => (
+    <ResizeSearchWithinApp {...args} />
+  )
+};
 
-export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
+export const ResizeSearchWithinNoLabel = {
+  render: (args) => (
+    <ResizeSearchWithinApp {...args} />
+  ),
+  args: {
+    label: null
+  }
+};
 
-export const ResizeSearchWithinNoLabel = () => <ResizeSearchWithinApp label={null} />;
+export const iconFilter = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {icon: <Filter />}
+  },
+  name: 'icon: Filter'
+};
 
-export const iconFilter = () => render({}, {icon: <Filter />});
-iconFilter.name = 'icon: Filter';
-
-export const iconNull = () => render({}, {icon: null});
-iconNull.name = 'icon: null';
+export const iconNull = {
+  render: (args) => (
+    <RenderSearchWithin {...args} />
+  ),
+  args: {
+    searchFieldProps: {icon: null}
+  },
+  name: 'icon: null'
+};

@@ -1,15 +1,7 @@
-
 import {addons, types} from '@storybook/manager-api';
-import {getQueryParams} from '@storybook/preview-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
-const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
-  if (k.includes('providerSwitcher-')) {
-    return { ...acc, [k.replace('providerSwitcher-', '')]: v };
-  }
-  return acc;
-}, {});
 
 let THEMES = [
   {label: 'Auto', value: ''},
@@ -37,7 +29,17 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, express: providerValuesFromUrl.express === 'true'});
+  let localeParam = api.getQueryParam('providerSwitcher-locale') || undefined;
+  let themeParam = api.getQueryParam('providerSwitcher-theme') || undefined;
+  let scaleParam = api.getQueryParam('providerSwitcher-scale') || undefined;
+  let expressParam = api.getQueryParam('providerSwitcher-express') || undefined;
+
+  let [values, setValues] = useState({
+    locale: localeParam,
+    theme: themeParam,
+    scale: scaleParam,
+    express: expressParam === 'true'
+  });
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;
@@ -73,6 +75,7 @@ function ProviderFieldSetter({api}) {
   };
   useEffect(() => {
     let storySwapped = () => {
+      console.log('storySwapped', values);
       channel.emit('provider/updated', values);
     };
     channel.on('rsp/ready-for-update', storySwapped);
@@ -119,6 +122,7 @@ function ProviderFieldSetter({api}) {
 }
 
 addons.register('ProviderSwitcher', (api) => {
+  console.log('ProviderSwitcher registering');
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
