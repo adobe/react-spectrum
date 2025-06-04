@@ -1877,12 +1877,14 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <TreeItem>
-  {({selectionMode}) => (
     <TreeItemContent>
-      {selectionMode !== 'none' && <Checkbox />}
-      Item
+      {({selectionMode}) => (
+        <>
+          {selectionMode !== 'none' && <Checkbox />}
+          Item
+        </>
+      )}
     </TreeItemContent>
-  )}
 </TreeItem>
 ```
 
