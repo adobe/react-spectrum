@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,4 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './src';
+import React from 'react';
+import '@react-spectrum/s2/page.css';
+import {
+  ActionButton,
+  Text
+} from '@react-spectrum/s2';
+import AlignRight from '@react-spectrum/icon-library-test/AlignRight';
+
+function App() {
+  return (
+    <main>
+      <ActionButton>
+        <AlignRight />
+        <Text>Action Button</Text>
+      </ActionButton>
+    </main>
+  );
+}
+
+export default App;
