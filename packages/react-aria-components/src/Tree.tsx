@@ -16,7 +16,7 @@ import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -143,13 +143,7 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks,
-
-  /**
-   * An optional keyboard delegate implementation for type to select,
-   * to override the default.
-   */
-  keyboardDelegate?: KeyboardDelegate
+  dragAndDropHooks?: DragAndDropHooks
 }
 
 
@@ -196,7 +190,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
-  
+
   useEffect(() => {
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
@@ -272,7 +266,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
     treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
 
-    let keyboardDelegate = props.keyboardDelegate ||
+    let keyboardDelegate =
       new ListKeyboardDelegate({
         collection: state.collection,
         collator,
