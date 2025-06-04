@@ -90,13 +90,13 @@ function Example() {
 
 Virtualized scrolling is a performance optimization for large lists. Instead of rendering all items to the DOM at once, it only renders the visible items, reusing them as the user scrolls. This results in a small number of DOM elements being rendered, reducing memory usage and improving browser layout and rendering performance.
 
-* **Integrated** – Works with React Aria [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), and [Table](Table.html) components. Integrated with React Aria's [drag and drop](dnd.html), [selection](selection.html), and [table column resizing](Table.html#column-resizing) implementations.
+* **Integrated** – Works with React Aria [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), [Menu](Menu.html), and [Table](Table.html) components. Integrated with React Aria's [drag and drop](dnd.html), [selection](selection.html), and [table column resizing](Table.html#column-resizing) implementations.
 * **Custom layouts** – Support for list, grid, waterfall, and table layouts out of the box, with fixed or variable size items. Create a <TypeLink links={docs.links} type={docs.exports.Layout} /> subclass to build your own custom layout.
 * **Accessible** – Persists the focused element in the DOM even when out of view, ensuring keyboard navigation always works. Adds ARIA attributes like `aria-rowindex` to give screen reader users context.
 
 ## Anatomy
 
-Collection components such as [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), and [Table](Table.html) can be virtualized by wrapping them in a &lt;<TypeLink links={docs.links} type={docs.exports.Virtualizer} />&gt;, and providing a <TypeLink links={docs.links} type={docs.exports.Layout} /> object such as <TypeLink links={docs.links} type={docs.exports.ListLayout} /> or <TypeLink links={docs.links} type={docs.exports.GridLayout} />. See below for examples of each layout.
+Collection components such as [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), [Menu](Menu.html), and [Table](Table.html) can be virtualized by wrapping them in a &lt;<TypeLink links={docs.links} type={docs.exports.Virtualizer} />&gt;, and providing a <TypeLink links={docs.links} type={docs.exports.Layout} /> object such as <TypeLink links={docs.links} type={docs.exports.ListLayout} /> or <TypeLink links={docs.links} type={docs.exports.GridLayout} />. See below for examples of each layout.
 
 ```tsx
 import {Virtualizer, ListLayout} from 'react-aria-components';
