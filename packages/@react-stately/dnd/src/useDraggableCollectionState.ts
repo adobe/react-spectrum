@@ -77,21 +77,24 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     // Additionally, we filter out any keys that are children of any of the other selected keys
     let keys = new Set<Key>();
     if (selectionManager.isSelected(key)) {
-      for (let key of selectionManager.selectedKeys) {
-        let node = collection.getItem(key);
-        let isChild = false;
-        if (node && node?.parentKey) {
-          for (let potentialParentKey of selectionManager.selectedKeys) {
+      for (let currentKey of selectionManager.selectedKeys) {
+        let node = collection.getItem(currentKey);
+        if (node) {
+          let isChild = false;
+          let parentKey = node.parentKey;
+          while (parentKey != null) {
             // eslint-disable-next-line max-depth
-            if (key !== potentialParentKey && isChildOfNode(key, potentialParentKey, collection)) {
+            if (selectionManager.selectedKeys.has(parentKey)) {
               isChild = true;
               break;
             }
+            let parentNode = collection.getItem(parentKey);
+            parentKey = parentNode ? parentNode.parentKey : null;
           }
-        }
 
-        if (node && !isChild) {
-          keys.add(key);
+          if (!isChild) {
+            keys.add(currentKey);
+          }
         }
       }
     } else {
@@ -159,23 +162,4 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
       setDragging(false);
     }
   };
-}
-
-function isChildOfNode(key: Key, potentialParentKey: Key, collection: Collection<Node<unknown>>) {
-  let node = collection.getItem(key);
-  if (!node || node.parentKey == null) {
-    return false;
-  } else {
-    let isChild = false;
-    let parentKey = node.parentKey as Key | undefined | null;
-    while (parentKey && !isChild) {
-      let parentNode = collection.getItem(parentKey);
-      if (parentNode) {
-        isChild = potentialParentKey === parentNode.key;
-      }
-      parentKey = parentNode?.parentKey;
-    }
-
-    return isChild;
-  }
 }
