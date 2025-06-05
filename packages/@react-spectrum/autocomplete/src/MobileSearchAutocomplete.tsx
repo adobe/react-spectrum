@@ -207,9 +207,10 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let valueId = useId();
   let invalidId = useId();
+  let validId = useId();
   let validationIcon = validationState === 'invalid'
     ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
-    : <CheckmarkMedium />;
+    : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
 
   if (icon) {
     icon = React.cloneElement(icon, {
@@ -262,7 +263,8 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
       props['aria-labelledby'],
       props['aria-label'] && !props['aria-labelledby'] ? props.id : null,
       valueId,
-      validationState === 'invalid' ? invalidId : null
+      validationState === 'invalid' ? invalidId : null,
+      validationState === 'valid' ? validId : null
     ].filter(Boolean).join(' '),
     elementType: 'div'
   }, ref);
