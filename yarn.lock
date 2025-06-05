@@ -6743,21 +6743,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/test-utils@npm:1.0.0-alpha.7":
-  version: 1.0.0-alpha.7
-  resolution: "@react-aria/test-utils@npm:1.0.0-alpha.7"
-  dependencies:
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    "@testing-library/react": ^16.0.0
-    "@testing-library/user-event": ^14.0.0
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  checksum: 10c0/7be05efa54987287056be4b7bc4db9fe18a17b64062cd0c39d5e5434b1f7749b3e8535d98ac1b6622fab48d10c9cd0474a60ff18d8d5554dc3e7138b0f8e7ecd
-  languageName: node
-  linkType: hard
-
-"@react-aria/test-utils@npm:1.0.0-alpha.8, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
+"@react-aria/test-utils@npm:1.0.0-alpha.8, @react-aria/test-utils@npm:^1.0.0-alpha.8, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
@@ -8014,7 +8000,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.2"
     "@react-aria/live-announcer": "npm:^3.4.3"
-    "@react-aria/test-utils": "npm:1.0.0-alpha.7"
+    "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
     "@react-aria/utils": "npm:^3.29.1"
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-stately/layout": "npm:^4.3.1"
