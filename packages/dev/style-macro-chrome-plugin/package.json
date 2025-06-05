@@ -2,14 +2,18 @@
   "name": "style-macro-chrome-plugin",
   "version": "0.1.0",
   "scripts": {
-    "start": "parcel watch src/manifest.json --host localhost --config .parcelrc",
-    "build": "parcel build src/manifest.json --config .parcelrc"
+    "start": "parcel watch src/manifest.json src/devtools-pane.html --host localhost --config .parcelrc",
+    "build": "parcel build src/manifest.json src/devtools-pane.html --config .parcelrc"
   },
   "devDependencies": {
     "@parcel/config-default": "^2.14.0",
     "@parcel/config-webextension": "^2.14.0",
     "@parcel/core": "^2.14.0",
-    "parcel": "^2.14.0"
+    "@react-spectrum/s2": "^0.9.0",
+    "parcel": "^2.14.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "webext-bridge": "^6.0.1"
   },
   "rsp": {
     "type": "cli"
@@ -20,5 +24,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }

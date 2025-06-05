@@ -1,9 +1,13 @@
 {
   "extends": "@parcel/config-webextension",
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-build", "..."],
   "transformers": {
     "*.{js,mjs,jsx,cjs,ts,tsx}": [
       "@parcel/transformer-js",
       "@parcel/transformer-react-refresh-wrap"
     ]
+  },
+  "optimizers": {
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
 }

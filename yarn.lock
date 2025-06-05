@@ -11694,6 +11694,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/webextension-polyfill@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "@types/webextension-polyfill@npm:0.8.3"
+  checksum: 10c0/f2849c04d9d64f01dc1d654b42107a47f81e19c1cf804b8f7135fa3675b643b1ef3cebe2db30fe303296897e7d094c9283c5dbcaad087d743e9460daa722a507
+  languageName: node
+  linkType: hard
+
 "@types/webpack-env@npm:*":
   version: 1.18.8
   resolution: "@types/webpack-env@npm:1.18.8"
@@ -24904,6 +24911,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoevents@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "nanoevents@npm:6.0.2"
+  checksum: 10c0/fe9de511404c940a82ce34a5def4d5f00f2ce8b05303b7cb2c40b0a2b605661c903cda14b0284f4a02800f8af4707df8564e87e08f7b03b7ef913775c61adb81
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.6":
   version: 3.3.6
   resolution: "nanoid@npm:3.3.6"
@@ -29185,6 +29199,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"serialize-error@npm:^9.0.0":
+  version: 9.1.1
+  resolution: "serialize-error@npm:9.1.1"
+  dependencies:
+    type-fest: "npm:^2.5.3"
+  checksum: 10c0/c41f9a28e7d32d7d3a7cb433e7a1978c6211866133a3feab870cf6a1decc2968231a4a965f3e652772d2b4bbf700e78e0bc14b478d88697ab901374c572afc26
+  languageName: node
+  linkType: hard
+
 "serve-static@npm:1.16.2":
   version: 1.16.2
   resolution: "serve-static@npm:1.16.2"
@@ -30450,7 +30473,11 @@ __metadata:
     "@parcel/config-default": "npm:^2.14.0"
     "@parcel/config-webextension": "npm:^2.14.0"
     "@parcel/core": "npm:^2.14.0"
+    "@react-spectrum/s2": "npm:^0.9.0"
     parcel: "npm:^2.14.0"
+    react: "npm:^19.1.0"
+    react-dom: "npm:^19.1.0"
+    webext-bridge: "npm:^6.0.1"
   languageName: unknown
   linkType: soft
 
@@ -31016,6 +31043,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tiny-uid@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "tiny-uid@npm:1.1.2"
+  checksum: 10c0/8b208a7fee742d97c3a82ef24cd6341fb4daa2a52a44529c738f7996d63a48c1e0dc1d69a9dc17057a1726f670743ce21f3a3174398a8d9a9f014509acabac06
+  languageName: node
+  linkType: hard
+
 "title-case@npm:^2.1.0":
   version: 2.1.1
   resolution: "title-case@npm:2.1.1"
@@ -31433,7 +31467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^2.19.0, type-fest@npm:~2.19":
+"type-fest@npm:^2.19.0, type-fest@npm:^2.5.3, type-fest@npm:~2.19":
   version: 2.19.0
   resolution: "type-fest@npm:2.19.0"
   checksum: 10c0/a5a7ecf2e654251613218c215c7493574594951c08e52ab9881c9df6a6da0aeca7528c213c622bc374b4e0cb5c443aa3ab758da4e3c959783ce884c3194e12cb
@@ -32645,6 +32679,26 @@ __metadata:
   version: 1.2.2
   resolution: "weak-lru-cache@npm:1.2.2"
   checksum: 10c0/744847bd5b96ca86db1cb40d0aea7e92c02bbdb05f501181bf9c581e82fa2afbda32a327ffbe75749302b8492ab449f1c657ca02410d725f5d412d1e6c607d72
+  languageName: node
+  linkType: hard
+
+"webext-bridge@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "webext-bridge@npm:6.0.1"
+  dependencies:
+    "@types/webextension-polyfill": "npm:^0.8.3"
+    nanoevents: "npm:^6.0.2"
+    serialize-error: "npm:^9.0.0"
+    tiny-uid: "npm:^1.1.1"
+    webextension-polyfill: "npm:^0.9.0"
+  checksum: 10c0/744f07a5d3670fb3abfec1a0b5ed465c477fc125931480b6916f45f10dda10c04c2884cfdf0290805caf06fd379515bbef08a3b4a6571ed82a1b894c4d1f3540
+  languageName: node
+  linkType: hard
+
+"webextension-polyfill@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "webextension-polyfill@npm:0.9.0"
+  checksum: 10c0/ebcbb0fffcf4ee65726c6554d95c88ff13903a7a8e105bad154d1d6e1ed050a4b64d4e36fc9056bca9d44ee989d3da1a269f5e31f735012e053242dc43cac3de
   languageName: node
   linkType: hard
 
