@@ -9,6 +9,7 @@
     "@parcel/config-default": "^2.14.0",
     "@parcel/config-webextension": "^2.14.0",
     "@parcel/core": "^2.14.0",
+    "@parcel/transformer-js": "^2.14.0",
     "parcel": "^2.14.0"
   },
   "rsp": {

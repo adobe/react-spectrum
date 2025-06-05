@@ -5062,6 +5062,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.14.0#~/.yarn/patches/@parcel-transformer-js-npm-2.14.0-9521af387e.patch":
+  version: 2.14.0
+  resolution: "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.14.0#~/.yarn/patches/@parcel-transformer-js-npm-2.14.0-9521af387e.patch::version=2.14.0&hash=773e96"
+  dependencies:
+    "@parcel/diagnostic": "npm:2.14.0"
+    "@parcel/plugin": "npm:2.14.0"
+    "@parcel/rust": "npm:2.14.0"
+    "@parcel/source-map": "npm:^2.1.1"
+    "@parcel/utils": "npm:2.14.0"
+    "@parcel/workers": "npm:2.14.0"
+    "@swc/helpers": "npm:^0.5.0"
+    browserslist: "npm:^4.6.6"
+    nullthrows: "npm:^1.1.1"
+    regenerator-runtime: "npm:^0.14.1"
+    semver: "npm:^7.5.2"
+  peerDependencies:
+    "@parcel/core": ^2.14.0
+  checksum: 10c0/ac714d500c6ceb36290d6605a4de9724bcfc51965f7e496eb279943e73a7d0df5109bdb1dacec03966e5482b64c283e0583066f0272b8a4c860bd76923c55cf1
+  languageName: node
+  linkType: hard
+
 "@parcel/transformer-json@npm:2.14.0":
   version: 2.14.0
   resolution: "@parcel/transformer-json@npm:2.14.0"
@@ -30450,6 +30471,7 @@ __metadata:
     "@parcel/config-default": "npm:^2.14.0"
     "@parcel/config-webextension": "npm:^2.14.0"
     "@parcel/core": "npm:^2.14.0"
+    "@parcel/transformer-js": "npm:^2.14.0"
     parcel: "npm:^2.14.0"
   languageName: unknown
   linkType: soft
