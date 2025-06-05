@@ -340,6 +340,8 @@ function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boole
     }
   } else if (node.type === 'header') {
     return true;
+  } else if (node.type === 'loader' && !node.props.isLoading) {
+    return false;
   } else {
     return filterFn(node.textValue);
   }

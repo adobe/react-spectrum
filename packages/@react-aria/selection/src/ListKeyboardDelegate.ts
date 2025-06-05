@@ -71,14 +71,14 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key) || (item.type === 'loader' && !item.props.isLoading));
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
   }
 
   private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null): Key | null {
     let nextKey = key;
     while (nextKey != null) {
       let item = this.collection.getItem(nextKey);
-      if ((item?.type === 'loader' || (item?.type === 'item')) && !this.isDisabled(item)) {
+      if (item?.type === 'loader' || (item?.type === 'item' && !this.isDisabled(item))) {
         return nextKey;
       }
 

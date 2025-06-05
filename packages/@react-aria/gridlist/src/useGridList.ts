@@ -24,7 +24,6 @@ import {
   RefObject
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {getItemCount} from '@react-stately/collections';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
@@ -168,7 +167,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   );
 
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = getItemCount(state.collection, (node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading));
+    gridProps['aria-rowcount'] = state.collection.size;
     gridProps['aria-colcount'] = 1;
   }
 

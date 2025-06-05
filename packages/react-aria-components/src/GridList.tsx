@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {BaseCollection, Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
+import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
@@ -95,16 +95,23 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
 
 interface GridListInnerProps<T extends object> {
   props: GridListProps<T>,
-  collection: ICollection<Node<object>>,
+  collection: BaseCollection<object>,
   gridListRef: RefObject<HTMLDivElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
+
+  // TODO: just a test to filter out the loader spinners automatically if they aren't loading
+  // will need to see if this completely removes even the sentinel though...
+  let filteredCollection = useMemo(() => {
+    return collection && collection?.UNSTABLE_filter(() => true);
+  }, [collection]);
+
   let state = useListState({
     ...props,
-    collection,
+    collection: filteredCollection,
     children: undefined,
     layoutDelegate
   });
@@ -114,7 +121,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
-      collection,
+      collection: filteredCollection,
       collator,
       ref,
       disabledKeys,
@@ -123,7 +130,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       layout,
       direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [filteredCollection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
@@ -160,7 +167,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   if (isListDraggable && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
+      collection: filteredCollection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
@@ -174,12 +181,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   if (isListDroppable && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
+      collection: filteredCollection,
       selectionManager
     });
 
     let keyboardDelegate = new ListKeyboardDelegate({
-      collection,
+      collection: filteredCollection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
       ref
@@ -247,6 +254,9 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
           ]}>
           {isListDroppable && <RootDropIndicator />}
           <CollectionRoot
+            // TODO: maintain this as collection instead of the filtered one so that the loading sentinel remains
+            // This means that the ListLayout will have access to the non filtered collection but the keyboard delegate will have
+            // the filtered collection
             collection={collection}
             scrollRef={ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
