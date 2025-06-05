@@ -237,12 +237,13 @@ const iconStyles = style({
 });
 
 const loadingWrapperStyles = style({
+  ...focusRing(),
+  ...control({shape: 'default'}),
   gridColumnStart: '1',
   gridColumnEnd: '-1',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  marginY: 8
+  justifyContent: 'center'
 });
 
 const progressCircleStyles = style({

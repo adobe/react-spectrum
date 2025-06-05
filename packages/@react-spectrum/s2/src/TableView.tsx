@@ -373,6 +373,22 @@ const centeredWrapper = style({
   height: 'full'
 });
 
+const loadingWrapperStyles = style({
+  width: 'full',
+  height: 'full',
+  boxSizing: 'border-box',
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineWidth: 2,
+  outlineOffset: -2,
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  }
+});
+
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
 
 /**
@@ -390,7 +406,10 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <UNSTABLE_TableLoadingSentinel
+      isLoading={loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}
+      className={loadingWrapperStyles}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate

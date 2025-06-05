@@ -12,6 +12,7 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {getItemCount} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
@@ -175,7 +176,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   );
 
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = state.collection.size;
+    gridProps['aria-rowcount'] = getItemCount(state.collection, (node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading));
     gridProps['aria-colcount'] = state.collection.columnCount;
   }
 

@@ -11,6 +11,7 @@
  */
 
 import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {classNames} from '../../@react-spectrum/utils';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';
@@ -211,7 +212,7 @@ export const ComboBoxImeExample = () => (
 
 let manyItems = [...Array(10000)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
-export const VirtualizedComboBox = () => {
+export const VirtualizedComboBox = (args) => {
   const [searchTerm, setSearchTerm] = useState('');
   const {contains} = useFilter({sensitivity: 'base'});
   const filteredItems = useMemo(() => {
@@ -230,12 +231,21 @@ export const VirtualizedComboBox = () => {
       <Popover>
         <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
           <ListBox className={styles.menu}>
-            {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            <Collection items={filteredItems}>
+              {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={args.isLoading} />
           </ListBox>
         </Virtualizer>
       </Popover>
     </ComboBox>
   );
+};
+
+VirtualizedComboBox.story = {
+  args: {
+    isLoading: false
+  }
 };
 
 let renderEmptyState = () => {
@@ -305,7 +315,13 @@ AsyncVirtualizedDynamicCombobox.story = {
 
 const MyListBoxLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+    <UNSTABLE_ListBoxLoadingSentinel
+      style={{height: 30, width: '100%'}}
+      className={({isFocused, isFocusVisible}) => classNames(styles, 'loader', {
+        focused: isFocused,
+        focusVisible: isFocusVisible
+      })}
+      {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
     </UNSTABLE_ListBoxLoadingSentinel>
   );
