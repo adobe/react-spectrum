@@ -388,7 +388,6 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       });
     }
 
-    // bug here, multiple calls to style may collide
     // @ts-expect-error
     let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
     if (isStatic && process.env.NODE_ENV !== 'production') {
