@@ -81,7 +81,7 @@ export interface ComboBoxProps<T extends object> extends
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
-  Pick<ListBoxProps<T>, 'items'>,
+  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
   Pick<AsyncLoadable, 'onLoadMore'>  {
     /** The contents of the collection. */
@@ -560,7 +560,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   if (typeof children === 'function') {
     renderer = (
       <>
-        <Collection items={items ?? defaultItems}>
+        <Collection items={items ?? defaultItems} dependencies={props.dependencies}>
           {children}
         </Collection>
         {listBoxLoadingCircle}
@@ -682,6 +682,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
               }}>
               <ListBox
+                dependencies={props.dependencies}
                 renderEmptyState={() => (
                   <span className={emptyStateText({size})}>
                     {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
