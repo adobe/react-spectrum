@@ -25,11 +25,7 @@ export function roundToStepPrecision(value: number, step: number): number {
   // Handle negative exponents in exponential notation (e.g., "1e-7" → precision 8)
   let eIndex = stepString.toLowerCase().indexOf('e-');
   if (eIndex > 0) {
-    let significand = stepString.slice(0, eIndex);
-    let exponent = stepString.slice(eIndex + 1);
-    let pointIndex = significand.indexOf('.');
-    let decimals = pointIndex >= 0 ? significand.length - pointIndex : 0;
-    precision = Math.abs(Number(exponent)) + decimals + 1;
+    precision = Math.abs(Math.floor(Math.log10(Math.abs(step)))) + eIndex;
   } else {
     let pointIndex = stepString.indexOf('.');
     if (pointIndex >= 0) {
