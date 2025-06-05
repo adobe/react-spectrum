@@ -14,10 +14,13 @@ import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export const Input = React.forwardRef(function Input(props: any, ref: any) {
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -114,11 +117,13 @@ export const Input = React.forwardRef(function Input(props: any, ref: any) {
     'spectrum-Textfield-validationIcon'
   );
 
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
+  let validId = fieldProps?.id ? `${fieldProps.id}-valid-icon` : undefined;
   let validationIcon: ReactElement | null = null;
   if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
   } else if (validationState === 'valid' && !isDisabled) {
-    validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
+    validationIcon = <Checkmark id={validId} aria-label={stringFormatter.format('valid')} data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 
   return (
