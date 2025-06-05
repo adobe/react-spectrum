@@ -2,7 +2,7 @@
 
 import {ActionButton} from '@react-spectrum/s2';
 import {flushSync} from 'react-dom';
-import React, {ReactNode, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const example = style({
@@ -17,7 +17,14 @@ const example = style({
   },
   position: 'relative',
   width: 'full',
-  borderBottomRadius: 'xl'
+  borderBottomRadius: 'xl',
+  '--import-display': {
+    type: 'display',
+    value: {
+      default: 'none',
+      isExpanded: 'inline'
+    }
+  }
 });
 
 const expandWrapper = style({
@@ -32,12 +39,25 @@ const expandWrapper = style({
   paddingY: 8
 });
 
-export function ExpandableCode({children}: {children: ReactNode}) {
+export function ExpandableCode({children, hasHighlightedLine}: {children: ReactNode, hasHighlightedLine?: boolean}) {
   let [isExpanded, setExpanded] = useState(false);
   let ref = useRef<HTMLDivElement | null>(null);
+  let mask: string | undefined;
+  let padding: string | undefined;
+  if (!isExpanded) {
+    if (hasHighlightedLine) {
+      // mask the top, bottom, and right sides
+      mask = 'linear-gradient(transparent, white 25% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
+      padding = '0px';
+    } else {
+      // only mask the bottom
+      mask = 'linear-gradient(white 0% 50%, transparent)';
+    }
+  }
+
   return (
     <div ref={ref} className={example({isExpanded})}>
-      <div style={{maskImage: isExpanded ? undefined : 'linear-gradient(white 0% 50%, transparent)', maxHeight: isExpanded ? undefined : 'inherit'}}>
+      <div style={{maskImage: mask, maskComposite: 'intersect', maxHeight: isExpanded ? undefined : 'inherit', '--code-padding-y': padding} as CSSProperties}>
         {children}
       </div>
       <div className={expandWrapper({isExpanded})}>

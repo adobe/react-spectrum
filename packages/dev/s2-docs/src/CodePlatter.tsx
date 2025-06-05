@@ -11,7 +11,11 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 const platterStyle = style({
   backgroundColor: 'layer-2',
   borderRadius: 'lg',
-  '--code-padding': {
+  '--code-padding-x': {
+    type: 'paddingTop',
+    value: 16
+  },
+  '--code-padding-y': {
     type: 'paddingTop',
     value: 16
   },
@@ -31,7 +35,7 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
           density="regular"
           size="S">
           <TooltipTrigger placement="end">
-            <ActionButton aria-label="Copy code" onPress={() => navigator.clipboard.writeText(codeRef.current!.textContent!)}>
+            <ActionButton aria-label="Copy code" onPress={() => navigator.clipboard.writeText(codeRef.current!.querySelector('pre')!.textContent!)}>
               <Copy />
             </ActionButton>
             <Tooltip>Copy code</Tooltip>
@@ -72,7 +76,7 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
 
 export function Pre({children}) {
   return (
-    <pre className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0, padding: '--code-padding'})} style={{overflowWrap: 'break-word'}}>
+    <pre className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap', margin: 0, paddingX: '--code-padding-x', paddingY: '--code-padding-y'})} style={{overflowWrap: 'break-word'}}>
       {children}
     </pre>
   );

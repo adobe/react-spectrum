@@ -45,6 +45,8 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
     return null;
   }
 
+  children = children.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+
   if (!render) {
     return (
       <pre className={standaloneCode}>
@@ -95,10 +97,10 @@ interface TruncatedCodeProps extends ICodeProps {
 }
 
 function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
-  let lines = children.split('\n').length;
-  return lines > maxLines
+  let lines = children.split('\n');
+  return lines.length > maxLines
   ? (
-    <ExpandableCode>
+    <ExpandableCode hasHighlightedLine={children.includes('///- begin highlight')}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>
@@ -128,7 +130,7 @@ export function File({filename}: {filename: string}) {
   let contents = fs.readFileSync('../../../' + filename, 'utf8');
   return (
     <CodePlatter>
-      <TruncatedCode lang={path.extname(filename).slice(1)}>{contents}</TruncatedCode>
+      <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false}>{contents}</TruncatedCode>
     </CodePlatter>
   );
 }

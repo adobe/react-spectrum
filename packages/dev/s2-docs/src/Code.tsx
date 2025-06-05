@@ -16,7 +16,8 @@ export const styles = {
   tag: fn,
   constructor: fn,
   comment: style({color: 'gray-700'}),
-  variable: style({color: 'fuchsia-1000'})
+  variable: style({color: 'fuchsia-1000'}),
+  import: style({display: '--import-display'})
 };
 
 const mark = style({
@@ -26,8 +27,8 @@ const mark = style({
   borderWidth: 0,
   borderStartWidth: 2,
   borderStyle: 'solid',
-  marginX: 'calc(var(--code-padding) * -1)',
-  paddingX: 'calc(var(--code-padding) - self(borderStartWidth))',
+  marginX: 'calc(var(--code-padding-x) * -1)',
+  paddingX: 'calc(var(--code-padding-x) - self(borderStartWidth))',
   color: 'inherit'
 });
 
@@ -46,22 +47,60 @@ export interface ICodeProps {
   hideImports?: boolean
 }
  
-export function Code({children, lang, hideImports}: ICodeProps) {
+export function Code({children, lang, hideImports = true}: ICodeProps) {
   if (lang) {
     // @ts-ignore
     let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
     let lineNodes = lines(highlighted);
+    let idx = lineNodes.findIndex(line => !/^(["']use client["']|(\s*$))/.test(text(line)));
+    if (idx > 0) {
+      lineNodes = lineNodes.slice(idx);
+    }
+
     if (hideImports) {
-      let idx = lineNodes.findIndex(line => !/^("use client"|import|(\s*$))/.test(text(line)));
-      if (idx >= 0) {
-        lineNodes = lineNodes.slice(idx);
+      // Group into hidden and visible nodes.
+      // Hidden nodes will include all import statements. If a highlighted block is seen,
+      // then we'll hide all the lines up until 2 lines before this.
+      let hidden: HastNode[] = [];
+      let visible: HastNode[] = [];
+      let seenNonImportLine = false;
+      let hasHighlight = false;
+      for (let line of lineNodes) {
+        if (!seenNonImportLine && /^(["']use client["']|@?import|(\s*$))/.test(text(line))) {
+          hidden.push(line);
+        } else {
+          seenNonImportLine = true;
+          visible.push(line);
+        }
+
+        if (line.tagName === 'highlight' && !hasHighlight) {
+          hasHighlight = true;
+          // Center highlighted lines within collapsed window (~8 lines).
+          let highlightedLines = line.children.length;
+          let contextLines = highlightedLines < 6
+            ? Math.floor((8 - highlightedLines) / 2)
+            : 2;
+          contextLines++;
+          hidden.push(...visible.slice(0, -contextLines));
+          visible = visible.slice(-contextLines);
+        }
       }
-    } else {
-      let idx = lineNodes.findIndex(line => !/^("use client"|(\s*$))/.test(text(line)));
-      if (idx >= 0) {
-        lineNodes = lineNodes.slice(idx);
+
+      if (hidden.length && visible.length) {
+        lineNodes = [
+          {
+            type: 'element',
+            tagName: 'span',
+            children: hidden,
+            properties: {
+              className: 'import'
+            }
+          },
+          ...visible
+        ];
       }
     }
+    
     return <code>{lineNodes.map((line, i) => renderHast(line, i))}</code>;
   }
 
@@ -179,10 +218,14 @@ function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): Re
     if (node.tagName === 'span' && !className) {
       return children;
     }
-    if (node.tagName === 'div') {
+    if (node.tagName === 'div' && !className) {
       return children;
     }
     let type = groupings[node.tagName] || node.tagName;
+    if (type === 'div') {
+      // we inserted a newline, so treat this as inline.
+      type = 'span';
+    }
     return React.createElement(type, {...node.properties, className, key}, children);
   } else {
     // @ts-ignore

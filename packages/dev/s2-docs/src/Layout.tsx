@@ -18,8 +18,8 @@ import {VisualExample} from './VisualExample';
 
 const components = {
   h1: ({children, ...props}) => <h1 {...props} className={style({font: 'heading-3xl', marginY: 0})}>{children}</h1>,
-  h2: ({children, ...props}) => <h2 {...props} id={anchorId(children)} className={style({font: 'heading-xl', marginTop: 48, marginBottom: 12})}>{children}</h2>,
-  h3: ({children, ...props}) => <h3 {...props} id={anchorId(children)} className={style({font: 'heading', marginTop: 32, marginBottom: 12})}>{children}</h3>,
+  h2: ({children, ...props}) => <h2 {...props} id={anchorId(children)} className={style({font: 'heading-xl', marginTop: 48, marginBottom: 24})}>{children}</h2>,
+  h3: ({children, ...props}) => <h3 {...props} id={anchorId(children)} className={style({font: 'heading', marginTop: 32, marginBottom: 24})}>{children}</h3>,
   h4: ({children, ...props}) => <h4 {...props} id={anchorId(children)} className={style({font: 'heading-sm'})}>{children}</h4>,
   p: ({children, ...props}) => <p {...props} className={style({font: 'body-lg', marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,

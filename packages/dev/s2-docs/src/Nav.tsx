@@ -20,14 +20,18 @@ export function Nav({pages, currentPage}: PageProps) {
       {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>
-            {pages.map(page => (
-              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name}</SideNavLink></SideNavItem>
+            {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
+              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
             ))}
           </SideNav>
         </SideNavSection>
       ))}
     </nav>
   );
+}
+
+function title(page) {
+  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
 function SideNavSection({title, children}) {
