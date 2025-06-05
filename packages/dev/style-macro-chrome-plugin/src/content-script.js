@@ -10,7 +10,6 @@ window.addEventListener('message', function (event) {
     return;
   }
 
-  // console.log(event)
   var message = event.data;
 
   // Only accept messages that we know are ours. Note that this is not foolproof

@@ -395,7 +395,6 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       className += ` -macro$${id}`;
       return {toString: new Function(`
         (globalThis.__macros ??= {})[${JSON.stringify(id)}] = ${JSON.stringify({loc, style})};
-        // console.log('static macro ${JSON.stringify(className)}');
         return ${JSON.stringify(className)};
       `)};
     }
@@ -404,12 +403,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (process.env.NODE_ENV !== 'production') {
       js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
       js += 'rules += " -macro$" + hash.toString(36);\n';
-      // js += `console.log('dynamic macro', hash.toString(36), currentRules);\n`;
       js += `(globalThis.__macros ??= {})[hash.toString(36)] = {loc: ${JSON.stringify(loc)}, style: currentRules};\n`;
       js += 'window.postMessage("update-macros", "*");\n';
     }
     js += 'return rules;';
-    // console.log(js)
     if (allowedOverrides) {
       return new Function('props', 'overrides', js) as any;
     }
