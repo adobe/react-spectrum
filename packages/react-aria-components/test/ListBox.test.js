@@ -1616,12 +1616,11 @@ describe('ListBox', () => {
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
 
-      // Even if the listbox is empty, providing isLoading will render the loader
+      // If isLoading is provided to sentinel, it counts as a item so it shouldn't render empty state
       tree.rerender(<AsyncListbox items={[]} isLoading />);
       options = listboxTester.options();
       expect(options).toHaveLength(1);
-      expect(options[0]).toHaveTextContent('empty state');
-      expect(tree.queryByText('Loading...')).toBeTruthy();
+      expect(options[0]).toHaveTextContent('Loading...');
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 

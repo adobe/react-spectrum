@@ -1148,11 +1148,11 @@ describe('GridList', () => {
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
 
+      // If isLoading is provided to sentinel, it counts as a item so it shouldn't render empty state
       tree.rerender(<AsyncGridList items={[]} isLoading />);
       rows = gridListTester.rows;
       expect(rows).toHaveLength(1);
-      expect(rows[0]).toHaveTextContent('empty state');
-      expect(tree.queryByText('Loading...')).toBeTruthy();
+      expect(rows[0]).toHaveTextContent('Loading...');
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
