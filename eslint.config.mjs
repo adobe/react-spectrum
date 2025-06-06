@@ -54,7 +54,8 @@ export default [{
         "starters/**/*",
         "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
-        "packages/@react-spectrum/s2/spectrum-illustrations"
+        "packages/@react-spectrum/s2/spectrum-illustrations",
+        "packages/dev/s2-docs/pages/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
