@@ -456,11 +456,6 @@ export const PopoverChildElementAnimationExample = () => (
           }}>
           <style>
             {`
-              @starting-style {
-                .react-aria-Popover .content {
-                  opacity: 0;
-                }
-              }
               .react-aria-Popover[data-exiting] .content,
               .react-aria-Popover[data-entering] .content {
                 opacity: 0;
