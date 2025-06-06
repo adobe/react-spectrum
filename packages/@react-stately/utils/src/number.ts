@@ -20,9 +20,18 @@ export function clamp(value: number, min: number = -Infinity, max: number = Infi
 
 export function roundToStepPrecision(value: number, step: number): number {
   let roundedValue = value;
+  let precision = 0;
   let stepString = step.toString();
-  let pointIndex = stepString.indexOf('.');
-  let precision = pointIndex >= 0 ? stepString.length - pointIndex : 0;
+  // Handle negative exponents in exponential notation (e.g., "1e-7" → precision 8)
+  let eIndex = stepString.toLowerCase().indexOf('e-');
+  if (eIndex > 0) {
+    precision = Math.abs(Math.floor(Math.log10(Math.abs(step)))) + eIndex;
+  } else {
+    let pointIndex = stepString.indexOf('.');
+    if (pointIndex >= 0) {
+      precision = stepString.length - pointIndex;
+    }
+  }
   if (precision > 0) {
     let pow = Math.pow(10, precision);
     roundedValue = Math.round(roundedValue * pow) / pow;
