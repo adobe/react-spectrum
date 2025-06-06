@@ -8,6 +8,7 @@ import './anatomy.css';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
+import {H2, H3, H4} from './Headings';
 import {Link} from './Link';
 import {PropTable} from './PropTable';
 import {SearchField} from '@react-spectrum/s2';
@@ -18,9 +19,9 @@ import {VisualExample} from './VisualExample';
 
 const components = {
   h1: ({children, ...props}) => <h1 {...props} className={style({font: 'heading-3xl', marginY: 0})}>{children}</h1>,
-  h2: ({children, ...props}) => <h2 {...props} id={anchorId(children)} className={style({font: 'heading-xl', marginTop: 48, marginBottom: 24})}>{children}</h2>,
-  h3: ({children, ...props}) => <h3 {...props} id={anchorId(children)} className={style({font: 'heading', marginTop: 32, marginBottom: 24})}>{children}</h3>,
-  h4: ({children, ...props}) => <h4 {...props} id={anchorId(children)} className={style({font: 'heading-sm'})}>{children}</h4>,
+  h2: H2,
+  h3: H3,
+  h4: H4,
   p: ({children, ...props}) => <p {...props} className={style({font: 'body-lg', marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
   li: ({children, ...props}) => <li {...props} className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>{children}</li>,
