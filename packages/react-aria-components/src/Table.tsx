@@ -373,11 +373,11 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let filteredCollection = useMemo(() => {
     return collection && collection.UNSTABLE_filter!(() => true);
   }, [collection]) as ITableCollection<Node<object>>;
-
   let state = useTableState({
     ...props,
-    // collection,
-    collection: filteredCollection,
+    // TODO: filter in BaseCollection doesn't handle tablebody/tableheader top level node processing, will need to update that
+    collection,
+    // collection: filteredCollection,
     children: undefined,
     UNSAFE_selectionState: selectionState
   });

@@ -225,6 +225,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     let lastNode: Mutable<CollectionNode<T>> | null = null;
 
     for (let node of this) {
+      // TODO: will need to update to handle table top level body/header nodes
       if (node.type === 'section' && node.hasChildNodes) {
         let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
         let lastChildInSection: Mutable<CollectionNode<T>> | null = null;
