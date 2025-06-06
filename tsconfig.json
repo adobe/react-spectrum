@@ -54,6 +54,7 @@
     "**/node_modules",
     "packages/dev/optimize-locales-plugin",
     "packages/@react-spectrum/s2/s2wf-icons",
-    "packages/@react-spectrum/s2/icon.d.ts"
+    "packages/@react-spectrum/s2/icon.d.ts",
+    "packages/dev/s2-docs/pages/**"
   ]
 }
