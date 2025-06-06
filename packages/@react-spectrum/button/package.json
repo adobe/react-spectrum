@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/button",
-  "version": "3.16.14",
+  "version": "3.16.15",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,18 +40,18 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.13.1",
-    "@react-aria/focus": "^3.20.3",
-    "@react-aria/i18n": "^3.12.9",
-    "@react-aria/interactions": "^3.25.1",
-    "@react-aria/utils": "^3.29.0",
-    "@react-spectrum/progress": "^3.7.16",
-    "@react-spectrum/text": "^3.5.15",
-    "@react-spectrum/utils": "^3.12.5",
-    "@react-stately/toggle": "^3.8.4",
-    "@react-types/button": "^3.12.1",
-    "@react-types/shared": "^3.29.1",
-    "@spectrum-icons/ui": "^3.6.16",
+    "@react-aria/button": "^3.13.2",
+    "@react-aria/focus": "^3.20.4",
+    "@react-aria/i18n": "^3.12.10",
+    "@react-aria/interactions": "^3.25.2",
+    "@react-aria/utils": "^3.29.1",
+    "@react-spectrum/progress": "^3.7.17",
+    "@react-spectrum/text": "^3.5.16",
+    "@react-spectrum/utils": "^3.12.6",
+    "@react-stately/toggle": "^3.8.5",
+    "@react-types/button": "^3.12.2",
+    "@react-types/shared": "^3.30.0",
+    "@spectrum-icons/ui": "^3.6.17",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

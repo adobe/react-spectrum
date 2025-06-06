@@ -96,7 +96,7 @@ export interface PickerProps<T extends object> extends
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
-  Pick<ListBoxProps<T>, 'items'>,
+  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
   Pick<AsyncLoadable, 'onLoadMore'> {
     /** The contents of the collection. */
@@ -318,7 +318,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={props.dependencies}>
           {children}
         </Collection>
         {listBoxLoadingCircle}
@@ -424,6 +424,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     }]
                   ]}>
                   <ListBox
+                    dependencies={props.dependencies}
                     items={items}
                     className={listbox({size})}>
                     {renderer}

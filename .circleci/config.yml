@@ -700,6 +700,11 @@ jobs:
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/icon-builder-fixture'
+
   v-publish-stats:
     executor: rsp
     steps:
