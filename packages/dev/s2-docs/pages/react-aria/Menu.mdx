@@ -2,8 +2,6 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {Menu as VanillaMenu, MenuItem} from 'vanilla-starter/Menu';
-import vanillaDocs from 'docs:vanilla-starter/Menu';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
@@ -15,9 +13,9 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <ExampleSwitcher>
   ```tsx render files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css", "starters/docs/src/theme.css"]}
   "use client";
-  import {MenuTrigger, Popover, SubmenuTrigger, MenuSection, Separator} from 'react-aria-components';
+  import {MenuTrigger, Menu, Popover, SubmenuTrigger, MenuSection, Separator} from 'react-aria-components';
   import {Button} from 'vanilla-starter/Button';
-  import {Menu, MenuItem} from 'vanilla-starter/Menu';
+  import {MenuItem} from 'vanilla-starter/Menu';
 
   <MenuTrigger>
     <Button aria-label="Actions">☰</Button>
@@ -473,36 +471,6 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
     </Menu>
   </Popover>
 </MenuTrigger>
-```
-
-### Controlled open state
-
-Use the `defaultOpen` or `isOpen` prop to set the popover open state.
-
-```tsx render hideImports
-"use client";
-import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-components';
-import {useState} from 'react';
-
-function Example() {
-  let [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <p>Menu is {open ? 'open' : 'closed'}</p>
-      <MenuTrigger isOpen={open} onOpenChange={setOpen}>
-        <Button>Edit</Button>
-        <Popover>
-          <Menu>
-            <MenuItem>Copy</MenuItem>
-            <MenuItem>Cut</MenuItem>
-            <MenuItem>Paste</MenuItem>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    </>
-  );
-}
 ```
 
 ## API

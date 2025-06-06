@@ -223,31 +223,6 @@ import {Form} from 'react-aria-components';
 </Form>
 ```
 
-## Controlled open state
-
-Use the `defaultOpen` or `isOpen` prop to set the popover open state.
-
-```tsx render hideImports
-"use client";
-import {Select, SelectItem} from 'vanilla-starter/Select';
-import {useState} from 'react';
-
-function Example() {
-  let [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <p>Select is {open ? 'open' : 'closed'}</p>
-      <Select label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
-        <SelectItem id="rarely">Rarely</SelectItem>
-        <SelectItem id="sometimes">Sometimes</SelectItem>
-        <SelectItem id="always">Always</SelectItem>
-      </Select>
-    </>
-  );
-}
-```
-
 ## API
 
 ### Select

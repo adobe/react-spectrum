@@ -1,12 +1,13 @@
 'use client';
 
-import {Avatar, Content, ContextualHelp, Footer, Heading, NotificationBadge, NumberField, Picker, PickerItem, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Avatar, Collection, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useState} from 'react';
+import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {IconPicker} from './IconPicker';
 import type {PropControl} from './VisualExample';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {useLocale} from 'react-aria';
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -300,8 +301,19 @@ export function Control({name}: {name: string}) {
       }
       break;
     case 'string':
+      if (name === 'locale') {
+        return <LocaleControl control={control} value={value} onChange={onChange} />;
+      }
       return <StringControl control={control} value={value} onChange={onChange} />;
+    case 'interface':
+      if (control.value.name === 'DateDuration') {
+        return <DurationControl control={control} value={value} onChange={onChange} />;
+      }
+      break;
     default:
+      if (name === 'children') {
+        return <StringControl control={control} value={value} onChange={onChange} />;
+      }
       console.warn(control);
   }
 }
@@ -323,7 +335,8 @@ function BooleanControl({control, value, onChange}: ControlProps) {
 function UnionControl({control, value, onChange}) {
   if (control.value.elements.reduce((p, v) => p + v.value).length > 30) {
     return (
-      <Picker label={control.name} contextualHelp={<PropContextualHelp control={control} />} selectedKey={value} onSelectionChange={onChange} styles={style({width: 160})}>
+      <Picker label={control.name} contextualHelp={<PropContextualHelp control={control} />} selectedKey={value == null && control.optional && !control.default ? '__none' : value} onSelectionChange={v => onChange(v === '__none' ? null : v)} styles={style({width: 130})}>
+        {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.map(element => (
           <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
         ))}
@@ -372,7 +385,7 @@ function NumberControl({control, value, onChange}: ControlProps) {
       contextualHelp={<PropContextualHelp control={control} />}
       value={value}
       onChange={onChange}
-      styles={style({width: 120})} />
+      styles={style({width: 130})} />
   );
 }
 
@@ -398,7 +411,7 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
             break;
         }
       }}
-      styles={style({width: 160})}>
+      styles={style({width: 130})}>
       <PickerItem id="decimal">Decimal</PickerItem>
       <PickerItem id="percent">Percent</PickerItem>
       <PickerItem id="currency">Currency</PickerItem>
@@ -414,7 +427,7 @@ function StringControl({control, value, onChange}: ControlProps) {
       contextualHelp={<PropContextualHelp control={control} />}
       value={value || ''}
       onChange={onChange}
-      styles={style({width: 160})} />
+      styles={style({width: 130})} />
   );
 }
 
@@ -465,5 +478,179 @@ function ContextualHelpControl({control, value, onChange}: ControlProps) {
     <Wrapper control={control}>
       <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
     </Wrapper>
+  );
+}
+
+
+// https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
+const preferences = [
+  // Tier 1
+  {value: 'fr-FR'},
+  {value: 'fr-CA'},
+  {value: 'de-DE'},
+  {value: 'en-US'},
+  {value: 'en-GB'},
+  {value: 'ja-JP', ordering: 'gregory japanese'},
+  // // Tier 2
+  {value: 'da-DK'},
+  {value: 'nl-NL'},
+  {value: 'fi-FI'},
+  {value: 'it-IT'},
+  {value: 'nb-NO'},
+  {value: 'es-ES'},
+  {value: 'sv-SE'},
+  {value: 'pt-BR'},
+  // // Tier 3
+  {value: 'zh-CN'},
+  {value: 'zh-TW', ordering: 'gregory roc chinese'},
+  {value: 'ko-KR'},
+  // // Tier 4
+  {value: 'bg-BG'},
+  {value: 'hr-HR'},
+  {value: 'cs-CZ'},
+  {value: 'et-EE'},
+  {value: 'hu-HU'},
+  {value: 'lv-LV'},
+  {value: 'lt-LT'},
+  {value: 'pl-PL'},
+  {value: 'ro-RO'},
+  {value: 'ru-RU'},
+  {value: 'sr-SP'},
+  {value: 'sk-SK'},
+  {value: 'sl-SI'},
+  {value: 'tr-TR'},
+  {value: 'uk-UA'},
+  // // Tier 5
+  {value: 'ar-AE', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
+  {value: 'ar-DZ', ordering: 'gregory islamic islamic-civil islamic-tbla'},
+  {value: 'ar-EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
+  {value: 'ar-SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
+  {value: 'el-GR'},
+  {value: 'he-IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+
+  {value: 'fa-AF', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
+  {value: 'am-ET', ordering: 'gregory ethiopic ethioaa'},
+  {value: 'hi-IN', ordering: 'gregory indian'},
+  // {territories: 'KR', ordering: 'gregory dangi'},
+  {value: 'th-TH', ordering: 'buddhist gregory'}
+];
+
+const calendars = [
+  {key: 'gregory', name: 'Gregorian'},
+  {key: 'japanese', name: 'Japanese'},
+  {key: 'buddhist', name: 'Buddhist'},
+  {key: 'roc', name: 'Taiwan'},
+  {key: 'persian', name: 'Persian'},
+  {key: 'indian', name: 'Indian'},
+  {key: 'islamic-umalqura', name: 'Islamic (Umm al-Qura)'},
+  {key: 'islamic-civil', name: 'Islamic Civil'},
+  {key: 'islamic-tbla', name: 'Islamic Tabular'},
+  {key: 'hebrew', name: 'Hebrew'},
+  {key: 'coptic', name: 'Coptic'},
+  {key: 'ethiopic', name: 'Ethiopic'},
+  {key: 'ethioaa', name: 'Ethiopic (Amete Alem)'}
+];
+
+function matchLocale(defaultLocale: string) {
+  let parsed: Intl.Locale;
+  try {
+    parsed = new Intl.Locale(defaultLocale);
+  } catch {
+    return 'en-US';
+  }
+
+  let locales = preferences.map(p => new Intl.Locale(p.value));
+
+  // Try with both language and region first, and if that fails, try again with just language
+  let p = locales.find(locale => locale.language === parsed.language && locale.region === parsed.region) || locales.find(locale => locale.language === parsed.language);
+  return p?.toString() || 'en-US';
+}
+
+
+function LocaleControl({value, onChange}: ControlProps) {
+  let {locale: defaultLocale} = useLocale();
+  let langDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
+  let regionDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
+  let locales = useMemo(() => {
+    return preferences.map(item => {
+      let locale = new Intl.Locale(item.value);
+      return {
+        ...item,
+        label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region!)})`
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+  }, [langDisplay, regionDisplay]);
+
+  let matched = useMemo(() => matchLocale(value), [value]);
+  let pref = preferences.find(p => p.value === matched);
+  // @ts-ignore there cannot be any undefined values in the array
+  let preferredCalendars: Array<{key: string, name: string}> = useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  let otherCalendars = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
+
+  let updateLocale = locale => {
+    let newLocale = new Intl.Locale(locale, {
+      calendar: (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]
+    });
+    onChange(newLocale.toString());
+  };
+
+  let updateCalendar = calendar => {
+    let newLocale = new Intl.Locale(value, {
+      calendar
+    });
+    onChange(newLocale.toString());
+  };
+
+  let lang: string | null = null;
+  let calendar: string | null = null;
+
+  if (value) {
+    let locale = new Intl.Locale(value);
+    lang = locale.baseName;
+    calendar = locale.calendar || null;
+  }
+
+  return (
+    <>
+      <Picker label="Locale" items={locales} selectedKey={lang} onSelectionChange={updateLocale}>
+        {item => <PickerItem id={item.value}>{item.label}</PickerItem>}
+      </Picker>
+      <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+        <PickerSection>
+          <Header>
+            <Heading>Preferred</Heading>
+          </Header>
+          <Collection items={preferredCalendars}>
+            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+          </Collection>
+        </PickerSection>
+        <PickerSection>
+          <Header>
+            <Heading>Other</Heading>
+          </Header>
+          <Collection items={otherCalendars}>
+            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+          </Collection>
+        </PickerSection>
+      </Picker>
+    </>
+  );
+}
+
+function DurationControl({control, value, onChange}: ControlProps) {
+  // For now we only care about months.
+  return (
+    <NumberField
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      value={value.months}
+      onChange={months => onChange({months})}
+      styles={style({width: 130})}
+      formatOptions={{
+        style: 'unit',
+        unit: 'month',
+        unitDisplay: 'long'
+      }} />
   );
 }

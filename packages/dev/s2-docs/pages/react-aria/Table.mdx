@@ -215,6 +215,7 @@ interface Character {
 }
 
 function AsyncSortTable() {
+  ///- begin highlight -///
   let list = useAsyncList<Character>({
     async load({ signal }) {
       let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {
@@ -226,6 +227,7 @@ function AsyncSortTable() {
       };
     }
   });
+  ///- end highlight -///
 
   return (
     <Table aria-label="Star Wars characters">
