@@ -86,7 +86,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
 
   // Override to include header rows
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = gridProps['aria-rowcount']! + state.collection.headerRows.length;
+    gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
   if (tableNestedRows() && 'expandedKeys' in state) {

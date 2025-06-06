@@ -15,7 +15,7 @@ import {getChildNodes} from './getChildNodes';
 
 const cache = new WeakMap<Iterable<unknown>, number>();
 
-export function getItemCount<T>(collection: Collection<Node<T>>, isValidItem: ((node: Node<T>) => boolean) = (node) => node.type === 'item'): number {
+export function getItemCount<T>(collection: Collection<Node<T>>, isValidItem: ((node: Node<T>) => boolean) = (node) => node.type === 'item' || node.type === 'loader'): number {
   let count = cache.get(collection);
   if (count != null) {
     return count;

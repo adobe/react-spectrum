@@ -244,9 +244,9 @@ function generateRandomString(minLength: number, maxLength: number): string {
 
 export function VirtualizedListBox(args) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
-  for (let s = 0; s < 10; s++) {
+  for (let s = 0; s < 1; s++) {
     let items: {id: string, name: string}[] = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1; i++) {
       const l = (s * 5) + i + 10;
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${args.variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }

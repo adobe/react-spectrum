@@ -369,9 +369,15 @@ interface TableInnerProps {
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
+
+  let filteredCollection = useMemo(() => {
+    return collection && collection.UNSTABLE_filter!(() => true);
+  }, [collection]) as ITableCollection<Node<object>>;
+
   let state = useTableState({
     ...props,
-    collection,
+    // collection,
+    collection: filteredCollection,
     children: undefined,
     UNSAFE_selectionState: selectionState
   });
@@ -409,7 +415,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
+      collection: filteredCollection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
@@ -423,12 +429,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
+      collection: filteredCollection,
       selectionManager
     });
 
     let keyboardDelegate = new ListKeyboardDelegate({
-      collection,
+      collection: filteredCollection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
       ref,

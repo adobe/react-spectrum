@@ -202,7 +202,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  // let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,

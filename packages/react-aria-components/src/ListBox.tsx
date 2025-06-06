@@ -122,8 +122,19 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
-  let state = UNSTABLE_useFilteredListState(inputState, filter);
-  let {collection, selectionManager} = state;
+
+  // TODO: for autocomplete:
+  // need a filtered version with loaders and one without loaders
+  // For non autocomplete listbox, need a version with loaders and one without loaders
+
+  // TODO: this is the input value filtered collection (if any input value) but includes the loaders
+  // we filter afterwards
+  let {collection: withLoadersCollection} = UNSTABLE_useFilteredListState(inputState, filter, true);
+
+  // TODO: This is the filtered one
+  let state = UNSTABLE_useFilteredListState(inputState, filter, false);
+  let {collection: loadersFilteredCollection, selectionManager} = state;
+
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let {direction} = useLocale();
@@ -132,7 +143,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let keyboardDelegate = useMemo(() => (
     props.keyboardDelegate || new ListKeyboardDelegate({
-      collection,
+      collection: loadersFilteredCollection,
       collator,
       ref: listBoxRef,
       disabledKeys,
@@ -142,7 +153,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
       direction,
       layoutDelegate
     })
-  ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout, layoutDelegate]);
+  ), [loadersFilteredCollection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout, layoutDelegate]);
 
   let {listBoxProps} = useListBox({
     ...props,
@@ -174,7 +185,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 
   if (isListDraggable && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
+      collection: loadersFilteredCollection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
@@ -188,11 +199,11 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 
   if (isListDroppable && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
+      collection: loadersFilteredCollection,
       selectionManager
     });
 
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef, {orientation, layout, direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(loadersFilteredCollection, listBoxRef, {orientation, layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -202,7 +213,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  // let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = loadersFilteredCollection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
@@ -255,7 +267,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
           ]}>
           <CollectionRoot
-            collection={collection}
+            collection={withLoadersCollection}
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />

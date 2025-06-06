@@ -217,7 +217,8 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
   // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
   // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
-  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
+  // TODO: shouldIncludeLoaders is silly, potentially just refactor filterFn to take a node rather than a nodeValue, but for now just testing the approach
+  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean, shouldIncludeLoaders?: boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
     // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
     // for updating the next/prevKey for every non-filtered node.
@@ -291,16 +292,21 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       } else {
         // At this point, the node is either a subdialogtrigger node or a standard row/item
         let clonedNode: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-        if (shouldKeepNode(clonedNode, filterFn, this, newCollection)) {
+        if (shouldKeepNode(clonedNode, filterFn, this, newCollection, shouldIncludeLoaders)) {
           if (newCollection.firstKey == null) {
             newCollection.firstKey = clonedNode.key;
           }
 
-          if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
-            lastNode.nextKey = clonedNode.key;
-            clonedNode.prevKey = lastNode.key;
-          } else {
-            clonedNode.prevKey = null;
+          if (lastNode != null) {
+            if (
+              (lastNode.type !== 'section' && lastNode.type !== 'separator' && lastNode.parentKey === clonedNode.parentKey) ||
+              (clonedNode.type === 'loader')
+            ) {
+              lastNode.nextKey = clonedNode.key;
+              clonedNode.prevKey = lastNode.key;
+            } else {
+              clonedNode.prevKey = null;
+            }
           }
 
           clonedNode.nextKey = null;
@@ -326,7 +332,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boolean, oldCollection: BaseCollection<T>, newCollection: BaseCollection<T>): boolean {
+function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boolean, oldCollection: BaseCollection<T>, newCollection: BaseCollection<T>, shouldIncludeLoaders?: boolean): boolean {
   if (node.type === 'subdialogtrigger' || node.type === 'submenutrigger') {
     // Subdialog wrapper should only have one child, if it passes the filter add it to the new collection since we don't need to
     // do any extra handling for its first/next key
@@ -340,7 +346,7 @@ function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boole
     }
   } else if (node.type === 'header') {
     return true;
-  } else if (node.type === 'loader' && !node.props.isLoading) {
+  } else if (!shouldIncludeLoaders && node.type === 'loader' && !node.props.isLoading) {
     return false;
   } else {
     return filterFn(node.textValue);

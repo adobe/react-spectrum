@@ -1148,11 +1148,10 @@ describe('GridList', () => {
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
 
-      // Even if the gridlist is empty, providing isLoading will render the loader
       tree.rerender(<AsyncGridList items={[]} isLoading />);
       rows = gridListTester.rows;
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveTextContent('empty state');
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toHaveTextContent('empty state');
       expect(tree.queryByText('Loading...')).toBeTruthy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });

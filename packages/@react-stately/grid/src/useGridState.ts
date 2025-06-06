@@ -61,7 +61,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   useEffect(() => {
     if (selectionState.focusedKey != null && cachedCollection.current) {
       let item = collection.getItem(selectionState.focusedKey);
-      if (!item || (item.type === 'loader' && !item.props.isLoading)) {
+      if (!item) {
         const node = cachedCollection.current.getItem(selectionState.focusedKey);
         const parentNode =
           node?.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
@@ -83,8 +83,8 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
           rows.length - 1);
         let newRow: GridNode<T> | null = null;
         while (index >= 0) {
-          // Find a row that is not disabled, nor is a header row, nor is a loader sentinel that isn't loading
-          if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow' && !(rows[index].type === 'loader' && !rows[index].props.isLoading)) {
+          // Find a row that is not disabled, nor is a header row
+          if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
             newRow = rows[index];
             break;
           }

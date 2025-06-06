@@ -121,9 +121,9 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   if (isVirtualized) {
     let index = Number(item?.index);
     optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
-    // TODO: this is not great, but the loader sentinel is always in the collection even when loading isn't currently in progress.
-    // This same issue applies to the other collection elements, namely the row counts calculated for the top level parent element
-    optionProps['aria-setsize'] = getItemCount(state.collection, (node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading));
+    // TODO: this may still need to apply the isLoading check since we don't want to change getItemCount to include loaders by default?
+    // since combobox uses that for announcements? Maybe combobox can be the exception?
+    optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
   let onAction = data?.onAction ? () => data?.onAction?.(key) : undefined;

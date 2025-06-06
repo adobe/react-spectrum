@@ -72,8 +72,9 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 /**
  * Filters a collection using the provided filter function and returns a new ListState.
  */
-export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filter: ((nodeValue: string) => boolean) | null | undefined): ListState<T> {
-  let collection = useMemo(() => filter ? state.collection.UNSTABLE_filter!(filter) : state.collection, [state.collection, filter]);
+export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filter: ((nodeValue: string) => boolean) | null | undefined, shouldIncludeLoaders?: boolean): ListState<T> {
+  // TODO: this doesn't quite work with combobox because the base collection becomes a ListCollection due to useComboBoxState which doesn't have filter since it is old collections...
+  let collection = useMemo(() => (filter || (shouldIncludeLoaders != null) && state.collection.UNSTABLE_filter) ? state.collection.UNSTABLE_filter!(filter ?? (() => true), shouldIncludeLoaders) : state.collection, [state.collection, filter, shouldIncludeLoaders]);
   let selectionManager = state.selectionManager.withCollection(collection);
   useFocusedKeyReset(collection, selectionManager);
   return {
@@ -89,7 +90,7 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   useEffect(() => {
     if (selectionManager.focusedKey != null && cachedCollection.current) {
       let item = collection.getItem(selectionManager.focusedKey);
-      if (!item || (item.type === 'loader' && !item.props.isLoading)) {
+      if (!item) {
         const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
         const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
           key => {
@@ -130,7 +131,7 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
         let isReverseSearching = false;
         while (index >= 0) {
           // Find a row that is not disabled, nor is a loader sentinel that isn't loading
-          if (!selectionManager.isDisabled(itemNodes[index].key) && !(itemNodes[index].type === 'loader' && !itemNodes[index].props.isLoading)) {
+          if (!selectionManager.isDisabled(itemNodes[index].key)) {
             newNode = itemNodes[index];
             break;
           }

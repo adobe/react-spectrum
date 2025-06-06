@@ -305,7 +305,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   });
 
   // Announce the number of available suggestions when it changes
-  let optionCount = getItemCount(state.collection);
+  let optionCount = getItemCount(state.collection, (node) => node.type === 'item');
   let lastSize = useRef(optionCount);
   let lastOpen = useRef(state.isOpen);
   useEffect(() => {

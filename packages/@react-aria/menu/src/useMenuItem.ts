@@ -187,7 +187,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   if (isVirtualized) {
     ariaProps['aria-posinset'] = item?.index;
-    ariaProps['aria-setsize'] = getItemCount(state.collection, (node) => node.type === 'item' || (node.type === 'loader' && node.props.isLoading));
+    ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
   let onPressStart = (e: PressEvent) => {
