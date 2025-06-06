@@ -1,0 +1,1026 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import DropOperation from '@react-aria/dnd/docs/DropOperation.svg';
+import BetweenDropPosition from '@react-aria/dnd/docs/BetweenDropPosition.svg';
+import OnDropPosition from '@react-aria/dnd/docs/OnDropPosition.svg';
+import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
+import Anatomy from '@react-aria/dnd/docs/Anatomy.svg';
+import DragAffordance from '@react-aria/dnd/docs/DragAffordance.svg';
+import {GroupedPropTable} from '../../src/PropTable';
+
+export const section = 'Guides';
+
+# Drag and Drop
+
+<PageDescription>Drag and drop is an intuitive way for users to transfer data between locations. React Aria implements drag and drop for mouse and touch interactions, and provides full keyboard and screen reader accessibility.</PageDescription>
+
+## Introduction
+
+Drag and drop allows a user to move data between two locations. The initial location is referred to as a **drag source**, and the final location is referred to as a **drop target**. The dragged data consists of one or more **drag items**, each of which contains data such as text, files, or application-specific objects. These are shown in a **drag preview** under the user's cursor.
+
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+
+Drag and drop is implemented using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. The result of this function is passed into components that support drag and drop, such as [ListBox](ListBox.html), [GridList](GridList.html), and [Table](Table.html).
+
+## Drag source
+
+A drag source provides one or more **drag items**, which specify the data to be dragged. A drag item may be an object represented by the draggable element, a file, plain text content, etc. Each drag item includes a type, and the corresponding data. The type of a drag item can be a [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom string specific to the application.
+
+Multiple data formats for each item may be provided for interoperability with various drop targets. For example, a drag source may provide the data for a drag as a custom JSON object and as plain text or HTML. This allows the user to drop in external applications such as email clients or text editors.
+
+This example provides each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DroppableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useListData} from 'react-stately';
+import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
+import {createElement, useState} from 'react';
+import {DroppableGridList} from './DroppableGridList';
+
+///- begin collapse -///
+let items = new Map([
+  ['ps', {name: 'Photoshop', style: 'strong'}],
+  ['xd', {name: 'XD', style: 'strong'}],
+  ['id', {name: 'InDesign', style: 'strong'}],
+  ['dw', {name: 'Dreamweaver', style: 'em'}],
+  ['co', {name: 'Connect', style: 'em'}]
+]);
+///- end collapse -///
+
+function DraggableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = items.get(key as string)!;
+        return {
+          'text/plain': item.name,
+          'text/html': `<${item.style}>${item.name}</${item.style}>`,
+          'custom-app-type': JSON.stringify({id: key, ...item})
+        };
+      });
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <GridList
+      aria-label="Draggable list"
+      selectionMode="multiple"
+      items={items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {([id, item]) => (
+        <GridListItem
+          id={id}
+          textValue={item.name}>
+          {createElement(item.style || 'span', null, item.name)}
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableGridList />
+  <DroppableGridList />
+</div>
+```
+
+## Drag preview
+
+While dragging, a **drag preview** is displayed under the user's mouse or finger to represent the items being dragged. By default, this is a copy of the dragged element. A custom preview can be rendered by the `renderDragPreview` function, which receives the dragged data, and returns a JSX element.
+
+This example renders a custom drag preview which shows the number of items being dragged.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe Dreamweaver'},
+  {id: 4, name: 'Adobe InDesign'},
+  {id: 5, name: 'Adobe Connect'}
+];
+///- end collapse -///
+
+function DraggableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin collapse -///
+    getItems(keys) {
+      return [...keys].map(key => ({
+        'text/plain': items.find(item => item.id === key)!.name
+      }));
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <GridList 
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => <GridListItem>{item.name}</GridListItem>}
+    </GridList>
+  );
+}
+```
+
+```css render hidden
+/* TODO: move into starter */
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  border-radius: 4px;
+
+  .badge {
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+## Drop positions
+
+Collection components such as [ListBox](ListBox.html), [Table](Table.html), and [GridList](GridList.html) support multiple **drop positions**.
+
+* The `"root"` drop position allows dropping on the collection as a whole. 
+* The `"on"` drop position allows dropping on individual collection items, such as a folder within a list.
+* The `"before"` and `"after"` drop positions allow the user to insert or move items between other items. This is displayed by rendering a **drop indicator** between items when dragging over the space between them.
+
+Any number of these drop positions can be allowed at the same time, and the component can use the types of the dragged items to selectively allow or disallow certain positions.
+
+<Figure>
+  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 'var(--anatomy-radius)'}}>
+    <RootDropPosition role="img" aria-label="Root drop position" />
+    <OnDropPosition role="img" aria-label="On drop position" />
+    <BetweenDropPosition role="img" aria-label="Between drop position" />
+  </div>
+  <Caption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</Caption>
+</Figure>
+
+### Dropping on the collection
+
+Dropping on the collection as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the collection, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components';
+import {useState} from 'react';
+import {DraggableGridList} from './DraggableGridList';
+
+interface Item {
+  id: number,
+  name: string
+}
+
+function DroppableGridList() {
+  let [items, setItems] = useState<Item[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    async onRootDrop(e) {
+      let items = await Promise.all(e.items.map(async (item, i) => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: i, name};
+      }));
+      setItems(items);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <GridList
+        aria-label="Droppable list"
+        items={items}
+        dragAndDropHooks={dragAndDropHooks}
+        renderEmptyState={() => 'Drop items here'}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </GridList>
+    </div>
+  );
+}
+```
+
+### Dropping on items
+
+Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components';
+import {DraggableGridList} from './DraggableGridList';
+
+function DroppableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    onItemDrop(e) {
+      alert(`Dropped on ${e.target.key}`);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <GridList aria-label="Droppable list" dragAndDropHooks={dragAndDropHooks}>
+        <GridListItem id="applications">Applications</GridListItem>
+        <GridListItem id="documents">Documents</GridListItem>
+        <GridListItem id="pictures">Pictures</GridListItem>
+      </GridList>
+    </div>
+  );
+}
+```
+
+### Dropping between items
+
+Dropping between items can be enabled using the `onInsert` event. React Aria renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `renderDropIndicator` function.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useListData} from 'react-stately';
+import {useDragAndDrop, DropIndicator} from 'react-aria-components';
+import {DraggableGridList} from './DraggableGridList';
+
+function DroppableGridList() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.map(async item => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: Math.random(), name};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    },
+    renderDropIndicator(target) {
+      return (
+        <DropIndicator
+          target={target}
+          className="drop-indicator" />
+      );
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <GridList
+        aria-label="Droppable list"
+        items={list.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </GridList>
+    </div>
+  );
+}
+```
+
+```css render hidden
+.drop-indicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);;
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}
+```
+
+## Drop data
+
+Users can drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+### Text
+
+A <TypeLink links={docs.links} type={docs.links[docs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
+import {createElement, useState} from 'react';
+import {DraggableGridList} from './DraggableGridList';
+
+interface TextItem {
+  id: string,
+  name: string,
+  style: string
+}
+
+function DroppableGridList() {
+  let [items, setItems] = useState<TextItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    acceptedDragTypes: ['custom-app-type'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      setItems(items);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <GridList
+      aria-label="Droppable list"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => "Drop items here"}>
+      {item => (
+        <GridListItem textValue={item.name}>
+          {createElement(item.style || 'span', null, item.name)}
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableGridList />
+  <DroppableGridList />
+</div>
+```
+
+### Files
+
+A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, isFileDropItem} from 'react-aria-components';
+import {useState} from 'react';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+
+function DroppableGridList() {
+  let [items, setItems] = useState<ImageItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    acceptedDragTypes: ['image/jpeg', 'image/png'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <GridList
+      aria-label="Droppable list"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => "Drop images here"}>
+      {item => (
+        <GridListItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+```
+
+```css render hidden
+.image-item {
+  display: flex;
+  height: 50px;
+  gap: 10px;
+  align-items: center;
+}
+
+.image-item img {
+  height: 100%;
+  aspect-ratio: 1/1;
+  object-fit: contain;
+}
+
+.image-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+### Directories
+
+A <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /> or <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
+import {useState} from 'react';
+import File from '@react-spectrum/s2/icons/File';
+import Folder from '@react-spectrum/s2/icons/Folder';
+
+interface DirItem {
+  name: string,
+  kind: string
+}
+
+function DroppableGridList() {
+  let [files, setFiles] = useState<DirItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
+    async onRootDrop(e) {
+      // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
+      let files = [];
+      for await (let entry of dir.getEntries()) {
+        files.push({
+          name: entry.name,
+          kind: entry.kind
+        });
+      }
+      setFiles(files);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <GridList
+      aria-label="Droppable list"
+      items={files}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => "Drop directory here"}>
+      {item => (
+        <GridListItem id={item.name} textValue={item.name}>
+          <div className="dir-item">
+            {item.kind === 'directory' ? <Folder /> : <File />}
+            <span>{item.name}</span>
+          </div>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+```
+
+```css render hidden
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dir-item {
+  flex: 0 0 auto;
+}
+
+.dir-item {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+## Drop operations
+
+A <TypeLink links={docs.links} type={docs.links[docs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – the dragged data will be moved from its source location to the target location.
+* `copy` – the dragged data will be copied to the target destination.
+* `link` – a relationship will be established between the source and target locations.
+* `cancel` – the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy. The drag source can also specify what drop operations are allowed for its data, allowing the drop target to decide what operation to perform, using the restrictions set by the drag source as a guideline.
+
+<Figure>
+  <DropOperation role="img" aria-labelledby="drop-operation-caption" />
+  <Caption id="drop-operation-caption" style={{fontStyle: 'italic'}}>Visual feedback for a copy drop operation.</Caption>
+</Figure>
+
+
+### getDropOperation
+
+The `getDropOperation` option can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return the operation that will be performed on drop. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the example below, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components';
+import {useState} from 'react';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+
+function DroppableGridList() {
+  let [items, setItems] = useState<ImageItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    getDropOperation: () => 'copy',
+    ///- end highlight -///
+    acceptedDragTypes: ['image/png'],
+    ///- begin collapse -///
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+    }
+    ///- end collapse -///
+  });
+
+  ///- begin collapse -///
+  return (
+    <GridList
+      aria-label="Droppable list"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => "Drop PNGs here"}>
+      {item => (
+        <GridListItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+  ///- end collapse -///
+}
+```
+
+### getAllowedDropOperations
+
+The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components';
+import {DroppableGridList} from './DroppableGridList';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe Dreamweaver'},
+  {id: 4, name: 'Adobe InDesign'},
+  {id: 5, name: 'Adobe Connect'}
+];
+///- end collapse -///
+
+function DraggableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin collapse -///
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = items.find(item => item.id === key)!;
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    getAllowedDropOperations: () => ['copy']
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <GridList
+        aria-label="Draggable list"
+        selectionMode="multiple"
+        items={items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </GridList>
+      <DroppableGridList />
+    </div>
+  );
+  ///- end collapse -///
+}
+```
+
+### onDragEnd
+
+The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
+
+This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/DraggableGridList.tsx']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components';
+import {useListData} from 'react-stately';
+import {DroppableGridList} from './DroppableGridList';
+
+function DraggableGridList() {
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+  ///- end collapse -///
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin collapse -///
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    onDragEnd(e) {
+      if (e.dropOperation === 'move') {
+        list.remove(...e.keys);
+      }
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <GridList
+        aria-label="Draggable list"
+        selectionMode="multiple"
+        items={list.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </GridList>
+      <DroppableGridList />
+    </div>
+  );
+  ///- end collapse -///
+}
+```
+
+### Drop events
+
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onItemDrop = async (e) => {
+  let data = JSON.parse(await e.items[0].getText('my-app-file'));
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+};
+```
+
+## Examples
+
+### Reordering
+
+This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function ReorderableGridList() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys) {
+      return [...keys].map(key => ({
+        'text/plain': list.getItem(key).name
+      }));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <GridList
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {item => <GridListItem>{item.name}</GridListItem>}
+    </GridList>
+  );
+}
+```
+
+### Drag between lists
+
+This example puts together many of the examples described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
+import {useListData} from 'react-stately';
+import {useState} from 'react';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndGridListProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndGridList(props: DndGridListProps) {
+  let list = useListData({
+    initialItems: props.initialItems
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <GridList
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}>
+      {item => <GridListItem>{item.name}</GridListItem>}
+    </GridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DndGridList
+    initialItems={[
+      { id: '1', type: 'file', name: 'Adobe Photoshop' },
+      { id: '2', type: 'file', name: 'Adobe XD' },
+      { id: '3', type: 'folder', name: 'Documents' },
+      { id: '4', type: 'file', name: 'Adobe InDesign' },
+      { id: '5', type: 'folder', name: 'Utilities' },
+      { id: '6', type: 'file', name: 'Adobe AfterEffects' }
+    ]}
+    aria-label="First GridList" />
+  <DndGridList
+    initialItems={[
+      { id: '7', type: 'folder', name: 'Pictures' },
+      { id: '8', type: 'file', name: 'Adobe Fresco' },
+      { id: '9', type: 'folder', name: 'Apps' },
+      { id: '10', type: 'file', name: 'Adobe Illustrator' },
+      { id: '11', type: 'file', name: 'Adobe Lightroom' },
+      { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
+    ]}
+    aria-label="Second GridList" />
+</div>
+```
+
+## Accessibility
+
+While drag and drop has historically been mostly limited to mouse and touchscreen users, keyboard and screen reader friendly alternatives are important for users who cannot use these interaction methods. React Aria implements keyboard and screen reader interactions for drag and drop that provide full parity with the mouse and touch experiences.
+
+Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to cycle between the drop targets that accept the dragged data, and <Keyboard>Enter</Keyboard> to drop. <Keyboard>Escape</Keyboard> cancels a drag. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop. Screen reader announcements are included to help guide the user through this process.
+
+Collection components such as [GridList](GridList.html) and [Table](Table.html) are treated as a single drop target, so that users can easily tab past them to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a **drop position**, such as on an item, or between items.
+
+Draggable elements can sometimes have conflicting keyboard interactions, such as selection. These are handled by adding an explicit **drag affordance**. Keyboard and screen reader users can focus this element, and use it to initiate drag and drop for the parent item. In addition, this has the added benefit of making drag and drop more discoverable.
+
+<Figure>
+  <DragAffordance role="img" aria-labelledby="drag-affordance-caption" />
+  <Caption id="drag-affordance-caption" style={{fontStyle: 'italic'}}>A focusable drag affordance to initiate keyboard and screen reader drag and drop.</Caption>
+</Figure>
+
+Note that because mouse and touch drag and drop interactions utilize the native browser APIs, they work both within the browser window and with external applications on the user's device. Keyboard and screen reader drag and drop is implemented from scratch, and therefore can only be supported within the browser window. Alternative interactions for operations involving external applications, such as file uploading or copy and paste, should be implemented in addition to drag and drop.
+
+## API
+
+### useDragAndDrop
+
+<GroupedPropTable
+  properties={docs.exports.DragAndDropOptions.properties}
+  links={docs.links}
+  propGroups={{
+    'Drag source': [
+      'getItems',
+      'renderDragPreview',
+      'getAllowedDropOperations',
+      'onDragStart',
+      'onDragMove',
+      'onDragEnd'
+    ],
+    'Drop target': [
+      'onRootDrop',
+      'onItemDrop',
+      'onInsert',
+      'onReorder',
+      'onMove',
+      'onDropEnter',
+      'onDropExit',
+      'onDropActivate',
+      'onDrop',
+      'renderDropIndicator',
+      'acceptedDragTypes',
+      'shouldAcceptItemDrop',
+      'getDropOperation',
+      'dropTargetDelegate'
+    ]
+  }}
+  defaultExpanded={new Set(['Drag source', 'Drop target'])} />
+
+### DropIndicator
+
+<PropTable component={docs.exports.DropIndicator} links={docs.links} />
+
+<StateTable defaultClassName="react-aria-DropIndicator" properties={docs.exports.DropIndicatorRenderProps.properties} />

@@ -83,7 +83,7 @@ const plugin = {
                     for (let statement of node.body) {
                       if (statement.type === 'ImportDeclaration') {
                         allImports.push(statement);
-                      } else {
+                      } else if (allImports.length > 0) {
                         // Do not replace if there are other statements between imports.
                         break;
                       }

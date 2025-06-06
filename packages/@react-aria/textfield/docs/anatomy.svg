@@ -1,4 +1,4 @@
-<svg style="max-height: 141px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 272 141">
+<svg style="max-height: 141px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 272 141">
   <title>Text field anatomy diagram</title>
   <desc>Shows a text field component with labels pointing to its parts, including the input, and label elements.</desc>
   <g transform="translate(-341 -39)">

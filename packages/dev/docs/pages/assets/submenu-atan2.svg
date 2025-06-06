@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="440" height="300" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 451 356">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="440" height="300" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 451 356">
   <defs>
     <clipPath id="clip-atan2_2">
       <rect width="440" height="351"/>

@@ -470,6 +470,21 @@ jobs:
           paths:
             - '*/docs/'
 
+  s2-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/s2-docs/'
+
   verdaccio:
     executor: rsp-xlarge
     steps:
@@ -874,6 +889,9 @@ workflows:
       - docs:
           requires:
             - install
+      - s2-docs:
+          requires:
+            - install
       - verdaccio:
           filters:
             branches:
@@ -928,6 +946,7 @@ workflows:
             - storybook
             - storybook-s2
             - docs
+            - s2-docs
       - deploy-verdaccio:
           requires:
             - v-docs
