@@ -40,7 +40,11 @@ const meta: Meta<typeof TagGroup<any>> = {
     onRemove: {
       control: {type: 'boolean'}
     },
-    onSelectionChange: {table: {category: 'Events'}}
+    onSelectionChange: {table: {category: 'Events'}},
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'TagGroup'

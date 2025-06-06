@@ -30,7 +30,11 @@ const meta: Meta<typeof SearchField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
+    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit']),
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    contextualHelp: {table: {disable: true}}
   },
   title: 'SearchField'
 };

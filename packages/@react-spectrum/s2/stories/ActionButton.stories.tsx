@@ -28,7 +28,8 @@ const meta: Meta<typeof ActionButton> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp']),
+    children: {table: {disable: true}}
   },
   title: 'ActionButton'
 };
