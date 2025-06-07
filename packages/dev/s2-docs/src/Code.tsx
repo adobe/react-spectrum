@@ -101,7 +101,7 @@ export function Code({children, lang, hideImports = true}: ICodeProps) {
       }
     }
     
-    return <code>{lineNodes.map((line, i) => renderHast(line, i))}</code>;
+    return <code>{renderChildren(lineNodes, 0)}</code>;
   }
 
   return <code className={style({font: 'code-sm', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
@@ -188,49 +188,64 @@ function lines(node: HastNode) {
 
 function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): ReactNode {
   if (node.type === 'element' && 'children' in node) {
-    let childArray: ReactNode[] = [];
-    for (let [i, child] of node.children.entries()) {
-      let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
-      childArray.push(renderHast(child, i, indent));
-    }
-
+    let childArray: ReactNode[] = renderChildren(node.children, key);
     if (node.tagName === 'div') {
-      childArray.push('\n');
-    }
-
-    // Merge adjacent text nodes.
-    for (let i = childArray.length - 1; i >= 1; i--) {
-      if (typeof childArray[i] === 'string' && typeof childArray[i - 1] === 'string') {
-        // @ts-ignore - we just checked the type above
-        childArray[i - 1] += childArray[i];
-        childArray.splice(i, 1);
+      if (typeof childArray.at(-1) === 'string') {
+        childArray[childArray.length - 1] += '\n';
+      } else {
+        childArray.push('\n');
       }
     }
 
     let children = childArray.length === 1 ? childArray[0] : childArray;
     let className = node.properties?.className.split(' ').map(c => styles[c]).filter(Boolean).join(' ') || undefined;
-    // if (/function|constructor|tag/.test(node.properties?.className) && !/method/.test(node.properties?.className) && text(node) === 'Switch') {
-    //   return <InlineLink key={key} type={docs.exports.Switch} />;
-    // }
     if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
       return <CodeProps key={key} indent={indent} />;
     }
+    
+    // CodeProps includes the indent and newlines in case there are no props to show.
+    if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
+      children = childArray[1];
+    }
+
     if (node.tagName === 'span' && !className) {
       return children;
     }
+
     if (node.tagName === 'div' && !className) {
       return children;
     }
+
     let type = groupings[node.tagName] || node.tagName;
     if (type === 'div') {
       // we inserted a newline, so treat this as inline.
       type = 'span';
     }
+
     return React.createElement(type, {...node.properties, className, key}, children);
   } else {
     // @ts-ignore
     return node.value;
   }
+}
+
+function renderChildren(children: (HastNode | HastTextNode)[], key: number) {
+  let childArray: ReactNode[] = [];
+  for (let [i, child] of children.entries()) {
+    let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
+    let childNode = renderHast(child, key, indent);
+    let childNodes = Array.isArray(childNode) ? childNode : [childNode];
+    for (let childNode of childNodes) {
+      if (typeof childNode === 'string' && typeof childArray.at(-1) === 'string') {
+        childArray[childArray.length - 1] += childNode;
+      } else {
+        childArray.push(childNode);
+        key++;
+      }
+    }
+  }
+
+  return childArray;
 }
 
 function text(node) {

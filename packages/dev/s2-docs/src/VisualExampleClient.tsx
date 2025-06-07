@@ -131,10 +131,19 @@ export function CodeOutput({code}: {code?: ReactNode}) {
 
 export function CodeProps({indent = ''}) {
   let {props, controls} = useContext(Context);
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
   let newlines = indent.length > 0 || countChars(renderedProps) > 40;
-  let separator = newlines ? '\n' + (indent || '  ') : ' ';
-  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines && indent && i === 0 ? '' : separator}{p}</Fragment>);
+  let separator = newlines ? (indent || '  ') : ' ';
+  renderedProps = renderedProps.map((p, i) => {
+    let sep = separator;
+    if (newlines) {
+      sep = (indent && i === 0 ? '' : '\n') + separator;
+    }
+    return <Fragment key={i}>{sep}{p}</Fragment>;
+  });
+  if (newlines && indent && renderedProps.length) {
+    renderedProps.push('\n');
+  }
   return renderedProps;
 }
 
