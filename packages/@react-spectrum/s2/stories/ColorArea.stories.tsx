@@ -21,7 +21,8 @@ const meta: Meta<typeof ColorArea> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd']),
+    value: {control: {type: 'text'}}
   },
   title: 'ColorArea'
 };

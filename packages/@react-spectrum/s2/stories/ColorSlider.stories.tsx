@@ -22,7 +22,8 @@ const meta: Meta<typeof ColorSlider> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd']),
+    contextualHelp: {table: {disable: true}}
   },
   title: 'ColorSlider'
 };
