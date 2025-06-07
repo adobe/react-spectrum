@@ -228,7 +228,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
       {!errorState && (
         <img
           {...getFetchPriorityProp(fetchPriority)}
-          src={src}
+          src={src || undefined}
           alt={alt}
           crossOrigin={crossOrigin}
           decoding={decoding}

@@ -300,7 +300,8 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
     values: {
       isFocused,
       isFocusVisible,
-      isInert: !isSelected,
+      // @ts-ignore - compatibility with React < 19
+      isInert: inertValue(!isSelected),
       state
     }
   });
