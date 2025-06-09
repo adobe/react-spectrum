@@ -50,9 +50,9 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
-    cancelProps = {} as DOMProps,
-    primaryProps = {} as DOMProps,
-    secondaryProps = {} as DOMProps,
+    cancelDOMProps = {} as DOMProps,
+    primaryDOMProps = {} as DOMProps,
+    secondaryDOMProps = {} as DOMProps,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
