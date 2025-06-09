@@ -177,8 +177,10 @@ function FileTable() {
             </Column>
           )}
         </TableHeader>
+        {/*- begin highlight -*/}
         <TableBody items={rows} dependencies={[visibleColumns]}>
           {item => (
+            /*- end highlight -*/
             <Row columns={visibleColumns}>
               {column => <Cell>{item[column.id]}</Cell>}
             </Row>
@@ -268,7 +270,9 @@ import {TableBody, Cell} from 'react-aria-components';
     <Column>Date added</Column>
   </TableHeader>
   <TableBody>
+    {/*- begin highlight -*/}
     <Row href="https://adobe.com/" target="_blank">
+      {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>

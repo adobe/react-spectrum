@@ -93,9 +93,11 @@ function Example() {
   ];
 
   return (
+    /*- begin highlight -*/
     <GridList aria-label="Animals" items={options} selectionMode="multiple">
       {(item) => <GridListItem>{item.name}</GridListItem>}
     </GridList>
+    /*- end highlight -*/
   );
 }
 ```
@@ -114,6 +116,7 @@ interface Character {
 }
 
 function AsyncLoadingExample() {
+  /*- begin highlight -*/
   let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
@@ -127,6 +130,7 @@ function AsyncLoadingExample() {
       };
     }
   });
+  /*- end highlight -*/
 
   return (
     <GridList aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
@@ -145,7 +149,9 @@ Use the `href` prop on a `<GridListItem>` to create a link. See the **client sid
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 <GridList/* PROPS */>
+  {/*- begin highlight -*/}
   <GridListItem href="https://adobe.com/" target="_blank">Adobe</GridListItem>
+  {/*- end highlight -*/}
   <GridListItem href="https://apple.com/" target="_blank">Apple</GridListItem>
   <GridListItem href="https://google.com/" target="_blank">Google</GridListItem>
   <GridListItem href="https://microsoft.com/" target="_blank">Microsoft</GridListItem>

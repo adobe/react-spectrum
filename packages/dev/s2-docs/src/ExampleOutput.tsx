@@ -14,6 +14,7 @@ export function ExampleOutput({component, props = {}, align = 'center'}: Example
     <div 
       className={style({
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: {
           align: {
             center: 'center',

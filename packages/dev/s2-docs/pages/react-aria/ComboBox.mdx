@@ -90,6 +90,7 @@ import {ComboBox} from 'vanilla-starter/ComboBox';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
 
 function Example() {
+  /*- begin collapse -*/
   let options = [
     {name: 'Fruit', children: [
       {name: 'Apple'},
@@ -112,6 +113,7 @@ function Example() {
       {name: 'Potatoes'}
     ]}
   ];
+  /*- end collapse -*/
 
   return (
     <ComboBox label="Preferred fruit or vegetable" items={options}>
@@ -211,6 +213,7 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 
 function ControlledComboBox() {
+  /*- begin collapse -*/
   let options = [
     {id: 1, name: 'Aerospace'},
     {id: 2, name: 'Mechanical'},
@@ -222,6 +225,7 @@ function ControlledComboBox() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
+  /*- end collapse -*/
 
   let [fieldState, setFieldState] = useState({
     selectedKey: null,
@@ -250,11 +254,13 @@ function ControlledComboBox() {
       <p>Current input text: {fieldState.inputValue}</p>
        <ComboBox
         label="Pick a engineering major"
+        /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey}
         inputValue={fieldState.inputValue}
         onSelectionChange={onSelectionChange}
         onInputChange={onInputChange}>
+        {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
     </div>

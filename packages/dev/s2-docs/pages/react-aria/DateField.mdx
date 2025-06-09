@@ -68,15 +68,14 @@ function Example() {
   let formatter = useDateFormatter({ dateStyle: 'full' });
   
   return (
-    <div>
+    <>
       <DateField
         ///- begin highlight -///
         value={date}
-        onChange={setDate}
-        ///- end highlight -///
-      />
+        onChange={setDate} />
+      {/*- end highlight -*/}
       <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
-    </div>
+    </>
   );
 }
 ```

@@ -56,7 +56,7 @@ function Example(props) {
   let [selected, setSelection] = useState(false);
 
   return (
-    <div>
+    <>
       <Checkbox 
         {...props}
         ///- begin highlight -///
@@ -67,8 +67,8 @@ function Example(props) {
       >
         Subscribe
       </Checkbox>
-      <p>{`You are ${props.isIndeterminate ? 'kind of subscribed' : selected ? 'subscribed' : 'unsubscribed'}`}</p>
-    </div>
+      <p>{`You are ${props.isIndeterminate ? 'partially subscribed' : selected ? 'subscribed' : 'unsubscribed'}`}</p>
+    </>
   );
 }
 ```

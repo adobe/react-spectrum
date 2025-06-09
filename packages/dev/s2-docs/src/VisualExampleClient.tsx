@@ -1,6 +1,6 @@
 'use client';
 
-import {Avatar, Collection, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CodePlatter, Pre} from './CodePlatter';
 import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
@@ -8,6 +8,7 @@ import {IconPicker} from './IconPicker';
 import type {PropControl} from './VisualExample';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {useLocale} from 'react-aria';
+import { getColorChannels, parseColor } from 'react-stately';
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -244,13 +245,20 @@ function renderValue(value: any) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
       let entries = Object.entries(value);
-      return (<>{'{'}{entries.map(([name, value], i) => {
+      let res: ReactNode[] = entries.map(([name, value], i) => {
         let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
         return <Fragment key={i}>{result}</Fragment>;
-      })}{'}'}</>);
+      });
+
+      if (countChars(res) > 40) {
+        res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
+        res.push('\n  ');
+      }
+
+      return <>{'{'}{res}{'}'}</>;
     }
   }
 }
@@ -295,6 +303,12 @@ export function Control({name}: {name: string}) {
     case 'boolean':
       return <BooleanControl control={control} value={value} onChange={onChange} />;
     case 'union':
+      if (name === 'channel' || name === 'xChannel' || name === 'yChannel') {
+        return <ChannelControl control={control} value={value} onChange={onChange} />;
+      }
+      if (name === 'colorSpace') {
+        return <ColorSpaceControl control={control} value={value} />;
+      }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;
@@ -341,8 +355,8 @@ function BooleanControl({control, value, onChange}: ControlProps) {
   );
 }
 
-function UnionControl({control, value, onChange}) {
-  if (control.value.elements.reduce((p, v) => p + v.value).length > 30) {
+function UnionControl({control, value, onChange, isPicker = false}) {
+  if (isPicker || control.value.elements.reduce((p, v) => p + v.value).length > 30) {
     return (
       <Picker label={control.name} contextualHelp={<PropContextualHelp control={control} />} selectedKey={value == null && control.optional && !control.default ? '__none' : value} onSelectionChange={v => onChange(v === '__none' ? null : v)} styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
@@ -400,32 +414,105 @@ function NumberControl({control, value, onChange}: ControlProps) {
 
 function NumberFormatControl({control, value, onChange}: ControlProps) {
   return (
-    <Picker
-      label={control.name}
-      contextualHelp={<PropContextualHelp control={control} />}
-      selectedKey={value?.style || 'decimal'}
-      onSelectionChange={id => {
-        switch (id) {
-          case 'decimal':
-            onChange({style: 'decimal'});
-            break;
-          case 'percent':
-            onChange({style: 'percent'});
-            break;
-          case 'currency':
-            onChange({style: 'currency', currency: 'USD'});
-            break;
-          case 'unit':
-            onChange({style: 'unit', unit: 'inch'});
-            break;
-        }
-      }}
-      styles={style({width: 130})}>
-      <PickerItem id="decimal">Decimal</PickerItem>
-      <PickerItem id="percent">Percent</PickerItem>
-      <PickerItem id="currency">Currency</PickerItem>
-      <PickerItem id="unit">Unit</PickerItem>
-    </Picker>
+    <>
+      <Picker
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        selectedKey={value?.style || 'decimal'}
+        onSelectionChange={id => {
+          switch (id) {
+            case 'decimal':
+              onChange({style: 'decimal'});
+              break;
+            case 'percent':
+              onChange({style: 'percent'});
+              break;
+            case 'currency':
+              onChange({style: 'currency', currency: 'USD'});
+              break;
+            case 'unit':
+              onChange({style: 'unit', unit: 'inch'});
+              break;
+          }
+        }}
+        styles={style({width: 130})}>
+        <PickerItem id="decimal">Decimal</PickerItem>
+        <PickerItem id="percent">Percent</PickerItem>
+        <PickerItem id="currency">Currency</PickerItem>
+        <PickerItem id="unit">Unit</PickerItem>
+      </Picker>
+      {control.options?.showDetails && <>
+        <RangeSlider
+          label="Decimals"
+          value={{start: value?.minimumFractionDigits ?? 0, end: value?.maximumFractionDigits ?? 5}}
+          minValue={0}
+          maxValue={5}
+          onChange={v => onChange({...value, minimumFractionDigits: v.start, maximumFractionDigits: v.end})}
+          styles={style({width: 130})} />
+        {value?.style === 'decimal' && (
+          <Picker
+            label="Sign Display"
+            selectedKey={value?.signDisplay ?? 'auto'}
+            onSelectionChange={signDisplay => onChange({...value, signDisplay})}
+            styles={style({width: 130})}>
+            <PickerItem id="auto">Auto</PickerItem>
+            <PickerItem id="always">Always</PickerItem>
+            <PickerItem id="exceptZero">Except zero</PickerItem>
+            <PickerItem id="negative">Negative</PickerItem>
+            <PickerItem id="never">Never</PickerItem>
+          </Picker>
+        )}
+        {value?.style === 'currency' && <>
+          <ComboBox
+            label="Currency"
+            selectedKey={value.currency}
+            onSelectionChange={currency => onChange({...value, currency})}
+            styles={style({width: 130})}>
+            {Intl.supportedValuesOf('currency').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
+          </ComboBox>
+          <UnionControl
+            control={{
+              name: 'Currency Display',
+              optional: true,
+              default: 'symbol',
+              value: {
+                elements: [
+                  {value: 'code'},
+                  {value: 'symbol'},
+                  {value: 'narrowSymbol'},
+                  {value: 'name'}
+                ]
+              }
+            }}
+            value={value.currencyDisplay ?? 'symbol'}
+            onChange={currencyDisplay => onChange({...value, currencyDisplay})} />
+        </>}
+        {value?.style === 'unit' && <>
+          <ComboBox
+            label="Unit"
+            selectedKey={value.unit}
+            onSelectionChange={unit => onChange({...value, unit})}
+            styles={style({width: 130})}>
+            {Intl.supportedValuesOf('unit').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
+          </ComboBox>
+          <UnionControl
+            control={{
+              name: 'Unit Display',
+              optional: true,
+              default: 'short',
+              value: {
+                elements: [
+                  {value: 'narrow'},
+                  {value: 'short'},
+                  {value: 'long'}
+                ]
+              }
+            }}
+            value={value.unitDisplay ?? 'short'}
+            onChange={unitDisplay => onChange({...value, unitDisplay})} />
+        </>}
+      </>}
+    </>
   );
 }
 
@@ -577,7 +664,7 @@ function matchLocale(defaultLocale: string) {
 }
 
 
-function LocaleControl({value, onChange}: ControlProps) {
+function LocaleControl({control, value, onChange}: ControlProps) {
   let {locale: defaultLocale} = useLocale();
   let langDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
   let regionDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
@@ -597,9 +684,20 @@ function LocaleControl({value, onChange}: ControlProps) {
   let preferredCalendars: Array<{key: string, name: string}> = useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
   let otherCalendars = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
 
+  let extension = control.options ?? 'calendar';
   let updateLocale = locale => {
+    let calendar, numberingSystem;
+    if (extension === 'calendar') {
+      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]; 
+    } else if (extension === 'numberingSystem') {
+      numberingSystem = new Intl.NumberFormat(locale).resolvedOptions().numberingSystem;
+      if (numberingSystem === 'arabext') {
+        numberingSystem = 'arab';
+      }
+    }
     let newLocale = new Intl.Locale(locale, {
-      calendar: (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]
+      calendar,
+      numberingSystem
     });
     onChange(newLocale.toString());
   };
@@ -611,13 +709,22 @@ function LocaleControl({value, onChange}: ControlProps) {
     onChange(newLocale.toString());
   };
 
+  let updateNumberingSystem = numberingSystem => {
+    let newLocale = new Intl.Locale(value, {
+      numberingSystem
+    });
+    onChange(newLocale.toString());
+  };
+
   let lang: string | null = null;
   let calendar: string | null = null;
+  let numberingSystem: string | null = null;
 
   if (value) {
     let locale = new Intl.Locale(value);
     lang = locale.baseName;
     calendar = locale.calendar || null;
+    numberingSystem = locale.numberingSystem || null;
   }
 
   return (
@@ -625,24 +732,35 @@ function LocaleControl({value, onChange}: ControlProps) {
       <Picker label="Locale" items={locales} selectedKey={lang} onSelectionChange={updateLocale}>
         {item => <PickerItem id={item.value}>{item.label}</PickerItem>}
       </Picker>
-      <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
-        <PickerSection>
-          <Header>
-            <Heading>Preferred</Heading>
-          </Header>
-          <Collection items={preferredCalendars}>
-            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
-          </Collection>
-        </PickerSection>
-        <PickerSection>
-          <Header>
-            <Heading>Other</Heading>
-          </Header>
-          <Collection items={otherCalendars}>
-            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
-          </Collection>
-        </PickerSection>
-      </Picker>
+      {extension === 'calendar' && (
+        <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+          <PickerSection>
+            <Header>
+              <Heading>Preferred</Heading>
+            </Header>
+            <Collection items={preferredCalendars}>
+              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+          <PickerSection>
+            <Header>
+              <Heading>Other</Heading>
+            </Header>
+            <Collection items={otherCalendars}>
+              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+        </Picker>
+      )}
+      {extension === 'numberingSystem' && (
+        <Picker label="Numbering system" selectedKey={numberingSystem} onSelectionChange={updateNumberingSystem}>
+          <PickerItem id="latn">Latin</PickerItem>
+          <PickerItem id="arab">Arabic</PickerItem>
+          <PickerItem id="hanidec">Hanidec</PickerItem>
+          <PickerItem id="deva">Devanagari</PickerItem>
+          <PickerItem id="beng">Bengali</PickerItem>
+        </Picker>
+      )}
     </>
   );
 }
@@ -660,6 +778,55 @@ function DurationControl({control, value, onChange}: ControlProps) {
         style: 'unit',
         unit: 'month',
         unitDisplay: 'long'
+      }} />
+  );
+}
+
+function ChannelControl({control, value, onChange}) {
+  let {props} = useContext(Context);
+  let colorSpace = props.colorSpace;
+  if (!colorSpace && props.defaultValue) {
+    let color = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
+    colorSpace = color.getColorSpace();
+  }
+  return (
+    <UnionControl
+      isPicker
+      control={{
+        ...control,
+        value: {
+          type: 'union',
+          elements: [
+            ...getColorChannels(colorSpace).map(v => ({type: 'string', value: v})),
+            {type: 'string', value: 'alpha'}
+          ]
+        }
+      }}
+      value={value}
+      onChange={onChange} />
+  );
+}
+
+function ColorSpaceControl({control, value}) {
+  let {setProps} = useContext(Context);
+  return (
+    <UnionControl
+      control={{
+        ...control,
+        optional: false
+      }}
+      value={value}
+      onChange={colorSpace => {
+        setProps(props => {
+          props = {...props, colorSpace};
+          if (props.channel) {
+            props.channel = getColorChannels(colorSpace)[0];
+          }
+          
+          delete props.xChannel;
+          delete props.yChannel;
+          return props;
+        });
       }} />
   );
 }

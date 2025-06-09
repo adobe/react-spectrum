@@ -116,6 +116,7 @@ function lines(node: HastNode) {
   let endLine = () => {
     if (skip) {
       skip = false;
+      currentLine = [];
       return;
     }
     let childNode = {
@@ -147,16 +148,17 @@ function lines(node: HastNode) {
       continue;
     } else if ('properties' in child && child.properties?.className === 'comment') {
       let comment = text(child);
-      if (comment.startsWith('///- begin ')) {
+      let begin = comment.match(/^(?:\/\/\/|\/\*)- begin (.+) -(?:\/\/\/|\*\/)$/);
+      if (begin) {
         grouping = {
           type: 'element',
-          tagName: comment.slice('///- begin '.length, -(' -///'.length)),
+          tagName: begin[1],
           children: []
         } as any;
         currentLine = [];
         skip = true;
         continue;
-      } else if (comment.startsWith('///- end ') && grouping) {
+      } else if (grouping && (comment.startsWith('///- end ') || comment.startsWith('/*- end '))) {
         resultLines.push(grouping);
         grouping = null;
         currentLine = [];

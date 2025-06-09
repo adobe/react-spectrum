@@ -100,7 +100,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   let lines = children.split('\n');
   return lines.length > maxLines
   ? (
-    <ExpandableCode hasHighlightedLine={children.includes('///- begin highlight')}>
+    <ExpandableCode hasHighlightedLine={children.includes('- begin highlight')}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>

@@ -74,7 +74,7 @@ function Example() {
   let formatter = useDateFormatter({ dateStyle: 'full' });
   
   return (
-    <div>
+    <>
       <Calendar
         ///- begin highlight -///
         value={date}
@@ -82,7 +82,7 @@ function Example() {
         ///- end highlight -///
       />
       <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -301,8 +301,10 @@ import {Button} from 'vanilla-starter/Button';
 <Calendar>
   <header style={{display: 'flex', gap: 4}}>
     <Button slot="previous">◀</Button>
+    {/*- begin highlight -*/}
     <MonthDropdown />
     <YearDropdown />
+    {/*- end highlight -*/}
     <Button slot="next">▶</Button>
   </header>
   <CalendarGrid>

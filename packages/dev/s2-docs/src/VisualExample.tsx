@@ -42,6 +42,7 @@ export interface VisualExampleProps {
   slots?: {[slot: string]: boolean},
   /** Initial values for the prop controls. */
   initialProps?: {[prop: string]: any},
+  controlOptions?: {[prop: string]: any},
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
@@ -54,13 +55,14 @@ export interface PropControl extends Omit<TProperty, 'description'> {
   description: ReactNode,
   default: any,
   valueType: ReactNode,
-  slots?: {[slot: string]: boolean}
+  slots?: {[slot: string]: boolean},
+  options?: any
 }
 
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots, align}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align}: VisualExampleProps) {
   let componentProps = docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -99,7 +101,8 @@ export function VisualExample({component, docs, links, importSource, props, init
       description: renderHTMLfromMarkdown(prop.description, {forceInline: true}),
       default: defaultValue,
       valueType: <Type type={prop.value} />,
-      slots: name === 'children' ? slots : undefined
+      slots: name === 'children' ? slots : undefined,
+      options: controlOptions?.[name]
     };
 
     return [name, renderedProp];

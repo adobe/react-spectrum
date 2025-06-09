@@ -87,6 +87,7 @@ import {Select} from 'vanilla-starter/Select';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
 
 function Example() {
+  /*- begin collapse -*/
   let options = [
     {name: 'Fruit', children: [
       {name: 'Apple'},
@@ -109,6 +110,7 @@ function Example() {
       {name: 'Potatoes'}
     ]}
   ];
+  /*- end collapse -*/
 
   return (
     <Select label="Preferred fruit or vegetable" items={options}>
@@ -145,9 +147,11 @@ function Example() {
         <span aria-hidden="true">▼</span>
       </Button>
       <Popover>
+        {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField label="Search tags" autoFocus />
           <ListBox>
+            {/*- end highlight -*/}
             <ListBoxItem>News</ListBoxItem>
             <ListBoxItem>Travel</ListBoxItem>
             <ListBoxItem>Shopping</ListBoxItem>
