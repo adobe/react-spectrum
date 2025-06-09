@@ -154,8 +154,7 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
         hideArrow
         state={state}
         triggerRef={unwrappedTriggerRef}
-        scrollRef={listboxRef}
-        shouldContainFocus>
+        scrollRef={listboxRef}>
         {listbox}
       </Popover>
     );
