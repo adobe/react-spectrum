@@ -99,10 +99,10 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** Button to focus by default when the dialog opens. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary',
   /** DOM props to add to cancel button. */
-  cancelProps?: DOMProps & AriaLabelingProps,
+  cancelDOMProps?: DOMProps & AriaLabelingProps,
   /** DOM props to add to primary button. */
-  primaryProps?: DOMProps & AriaLabelingProps,
+  primaryDOMProps?: DOMProps & AriaLabelingProps,
   /** DOM props to add to secondary button. */
-  secondaryProps?: DOMProps & AriaLabelingProps
+  secondaryDOMProps?: DOMProps & AriaLabelingProps
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
 }
