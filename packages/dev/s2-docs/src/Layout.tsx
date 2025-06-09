@@ -9,9 +9,9 @@ import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {H2, H3, H4} from './Headings';
+import Header from './Header';
 import {Link} from './Link';
 import {PropTable} from './PropTable';
-import {SearchField} from '@react-spectrum/s2';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
@@ -54,7 +54,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
       </head>
       <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxWidth: 1600, marginX: 'auto', padding: 12})}>
-        <SearchField />
+        <Header pages={pages} currentPage={currentPage}  />
         <div className={style({display: 'flex', gap: 32, width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
