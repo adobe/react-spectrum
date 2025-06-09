@@ -175,14 +175,14 @@ export const AutoFocusCancel = () => renderAlert({
   autoFocusButton: 'cancel',
   'data-testid': 'alert-dialog',
   cancelProps: {
-    'data-testid': 'alert-dialog-cancel-btn',
+    'data-testid': 'alert-dialog-cancel-btn'
   },
   secondaryProps: {
-    'data-testid': 'alert-dialog-secondary-btn',
+    'data-testid': 'alert-dialog-secondary-btn'
   },
   primaryProps: {
-    'data-testid': 'alert-dialog-primary-btn',
-  },
+    'data-testid': 'alert-dialog-primary-btn'
+  }
 } as SpectrumAlertDialogProps);
 
 AutoFocusCancel.story = {
