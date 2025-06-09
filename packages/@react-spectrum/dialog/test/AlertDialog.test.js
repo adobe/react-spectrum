@@ -177,4 +177,34 @@ describe('AlertDialog', function () {
     let button = getByText('secondary').closest('button');
     expect(document.activeElement).toBe(button);
   });
+
+  it('can add test ids', function () {
+    let {getByTestId} = render(
+      <Provider theme={theme}>
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          cancelLabel="cancel"
+          primaryActionLabel="confirm"
+          secondaryActionLabel="secondary"
+          autoFocusButton="secondary"
+          data-testid="alert-dialog"
+          cancelProps={{ 'data-testid': 'alert-dialog-cancel-btn' }}
+          secondaryProps={{ 'data-testid': 'alert-dialog-secondary-btn' }}
+          primaryProps={{ 'data-testid': 'alert-dialog-primary-btn' }}
+        >
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    let dialog = getByTestId('alert-dialog');
+    expect(dialog).toBeDefined();
+    let cancelBtn = getByTestId('alert-dialog-cancel-btn');
+    expect(cancelBtn).toBeDefined();
+    let secondaryBtn = getByTestId('alert-dialog-secondary-btn');
+    expect(secondaryBtn).toBeDefined();
+    let primaryBtn = getByTestId('alert-dialog-primary-btn');
+    expect(primaryBtn).toBeDefined();
+  });
 });
