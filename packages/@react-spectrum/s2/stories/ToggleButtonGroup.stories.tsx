@@ -26,7 +26,8 @@ const meta: Meta<typeof ToggleButtonGroup> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onSelectionChange'])
+    ...categorizeArgTypes('Events', ['onSelectionChange']),
+    children: {table: {disable: true}}
   },
   title: 'ToggleButtonGroup'
 };
