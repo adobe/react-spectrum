@@ -97,6 +97,12 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** Handler that is called when the secondary button is pressed. */
   onSecondaryAction?: () => void,
   /** Button to focus by default when the dialog opens. */
-  autoFocusButton?: 'cancel' | 'primary' | 'secondary'
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary',
+  /** DOM props to add to cancel button */
+  cancelProps?: DOMProps,
+  /** DOM props to add to primary button */
+  primaryProps?: DOMProps,
+  /** DOM props to add to secondary button */
+  secondaryProps?: DOMProps,
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
 }

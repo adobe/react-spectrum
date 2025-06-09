@@ -13,13 +13,13 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {chain} from '@react-aria/utils';
+import {chain, filterDOMProps} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -50,6 +50,9 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
+    cancelProps = {} as DOMProps,
+    primaryProps = {} as DOMProps,
+    secondaryProps = {} as DOMProps,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -71,7 +74,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
       isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
-      ref={ref}>
+      ref={ref}
+      {...filterDOMProps(props)}>
       <Heading>{title}</Heading>
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
@@ -85,7 +89,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
-            autoFocus={autoFocusButton === 'cancel'}>
+            autoFocus={autoFocusButton === 'cancel'}
+            {...filterDOMProps(cancelProps)}>
             {cancelLabel}
           </Button>
         }
@@ -94,7 +99,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
             variant="secondary"
             onPress={() => chain(onClose(), onSecondaryAction())}
             isDisabled={isSecondaryActionDisabled}
-            autoFocus={autoFocusButton === 'secondary'}>
+            autoFocus={autoFocusButton === 'secondary'}
+            {...filterDOMProps(secondaryProps)}>
             {secondaryActionLabel}
           </Button>
         }
@@ -102,7 +108,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
           variant={confirmVariant}
           onPress={() => chain(onClose(), onPrimaryAction())}
           isDisabled={isPrimaryActionDisabled}
-          autoFocus={autoFocusButton === 'primary'}>
+          autoFocus={autoFocusButton === 'primary'}
+          {...filterDOMProps(primaryProps)}>
           {primaryActionLabel}
         </Button>
       </ButtonGroup>
