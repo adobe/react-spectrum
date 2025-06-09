@@ -408,7 +408,7 @@ class DragSession {
       this.dragTarget.element,
       ...validDropItems.flatMap(item => item.activateButtonRef?.current ? [item.element, item.activateButtonRef?.current] : [item.element]),
       ...visibleDropTargets.flatMap(target => target.activateButtonRef?.current ? [target.element, target.activateButtonRef?.current] : [target.element])
-    ], {shouldUseInert: true});
+    ]);
 
     this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
   }

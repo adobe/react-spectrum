@@ -809,7 +809,7 @@ describe('MenuTrigger', function () {
     });
   });
 
-  it('does not close if menu is tabbed away from', async function () {
+  it('closes if menu is tabbed away from', async function () {
     let tree = render(
       <Provider theme={theme}>
         <MenuTrigger>
@@ -835,8 +835,8 @@ describe('MenuTrigger', function () {
     await user.tab();
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
-    expect(menu).toBeInTheDocument();
-    expect(document.activeElement).toBe(menuTester.options()[0]);
+    expect(menu).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(menuTester.trigger);
   });
 });
 
@@ -929,6 +929,22 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
+    ),
+    siblingFocusableElement: () => render(
+      <Provider theme={theme}>
+        <input aria-label="before" />
+        <MenuTrigger>
+          <Button variant="primary">
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+        <input aria-label="after" />
+      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>
@@ -1065,6 +1081,24 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
+    ),
+    siblingFocusableElement: () => render(
+      <Provider theme={theme}>
+        <input aria-label="before" />
+        <MenuTrigger>
+          <Button variant="primary">
+            {triggerText}
+          </Button>
+          <Menu items={ariaWithSection}>
+            {item => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+              </Section>
+            )}
+          </Menu>
+        </MenuTrigger>
+        <input aria-label="after" />
+      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>

@@ -10,15 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from '@react-aria/utils';
-
-const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
-
-interface AriaHideOutsideOptions {
-  root?: Element,
-  shouldUseInert?: boolean
-}
-
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
@@ -38,27 +29,9 @@ let observerStack: Array<ObserverWrapper> = [];
  * @param root - Nothing will be hidden above this element.
  * @returns - A function to restore all hidden elements.
  */
-export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
-  let windowObj = getOwnerWindow(targets?.[0]);
-  let opts = options instanceof windowObj.Element ? {root: options} : options;
-  let root = opts?.root ?? document.body;
-  let shouldUseInert = opts?.shouldUseInert && supportsInert;
+export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
-
-  let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof windowObj.HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
-  };
-
-  let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
-      element.inert = hidden;
-    } else if (hidden) {
-      element.setAttribute('aria-hidden', 'true');
-    } else {
-      element.removeAttribute('aria-hidden');
-    }
-  };
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -114,12 +87,12 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
     // If already aria-hidden, and the ref count is zero, then this element
     // was already hidden and there's nothing for us to do.
-    if (getHidden(node) && refCount === 0) {
+    if (node.getAttribute('aria-hidden') === 'true' && refCount === 0) {
       return;
     }
 
     if (refCount === 0) {
-      setHidden(node, true);
+      node.setAttribute('aria-hidden', 'true');
     }
 
     hiddenNodes.add(node);
@@ -188,7 +161,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
         continue;
       }
       if (count === 1) {
-        setHidden(node, false);
+        node.removeAttribute('aria-hidden');
         refCountMap.delete(node);
       } else {
         refCountMap.set(node, count - 1);
