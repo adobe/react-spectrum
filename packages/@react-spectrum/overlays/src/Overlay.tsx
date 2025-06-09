@@ -22,7 +22,6 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
     children,
     isOpen,
     disableFocusManagement,
-    shouldContainFocus,
     container,
     onEnter,
     onEntering,
@@ -57,7 +56,7 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} shouldContainFocus={shouldContainFocus} isExiting={!isOpen}>
+    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} isExiting={!isOpen}>
       <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
         <OpenTransition
           in={isOpen}

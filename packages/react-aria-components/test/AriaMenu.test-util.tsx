@@ -52,6 +52,9 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs at least four child items, all enabled, with single selection
     multipleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
+    // needs a focusable sibling after the trigger with the label 'after'
+    // TODO: better to have tests return JSX and I call `render`? could allow me to inject elements in the DOM more easily
+    siblingFocusableElement?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs two menus that are siblings
     multipleMenus?: (props?: {name: string}) => ReturnType<typeof render>,
     // Menu should only open on long press
@@ -548,6 +551,25 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+
+    if (renderers.siblingFocusableElement) {
+      describe('sibling focusable element', function () {
+        it('focuses the next tabbable thing after the trigger if tab is hit inside the menu', async function () {
+          let tree = (renderers.siblingFocusableElement!)();
+          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+
+          await menuTester.open();
+          act(() => {jest.runAllTimers();});
+
+          let menu = menuTester.menu;
+
+          await user.tab();
+          act(() => {jest.runAllTimers();});
+          expect(menu).not.toBeInTheDocument();
+          expect(document.activeElement).toBe(tree.getByLabelText('after'));
         });
       });
     }
