@@ -24,7 +24,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -118,6 +118,8 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
+  let datePickerInputId = useId();
+
   return (
     <Field
       {...props}
@@ -137,6 +139,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
         className={className}
         ref={targetRef}>
         <Input
+          id={datePickerInputId}
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
@@ -147,6 +150,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"
+            id={validationState === 'valid' ? datePickerInputId : undefined}
             isQuiet={isQuiet} />
         </Input>
         <DialogTrigger

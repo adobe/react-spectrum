@@ -15,11 +15,12 @@ import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
-import {Input} from './Input';
+import {Input, VALID_ICON_POSTFIX} from './Input';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
+import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTimeField} from '@react-aria/datepicker';
@@ -58,6 +59,9 @@ export const TimeField = React.forwardRef(function TimeField<T extends TimeValue
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
+  let timeFieldInputId = useId();
+  let validIconId = validationState === 'valid' ? timeFieldInputId + VALID_ICON_POSTFIX : undefined;
+
   return (
     <Field
       {...props}
@@ -72,6 +76,7 @@ export const TimeField = React.forwardRef(function TimeField<T extends TimeValue
       validationDetails={validationDetails}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
       <Input
+        id={timeFieldInputId}
         ref={fieldRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
@@ -82,6 +87,7 @@ export const TimeField = React.forwardRef(function TimeField<T extends TimeValue
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
+            aria-describedby={i <= 1 ? validIconId : undefined}
             key={i}
             segment={segment}
             state={state}

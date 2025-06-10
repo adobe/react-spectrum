@@ -49,9 +49,15 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
   );
 }
 
-function EditableSegment({segment, state}: DatePickerSegmentProps) {
+function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps & {'aria-describedby'?: string}) {
   let ref = useRef<HTMLDivElement | null>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
+  let {'aria-describedby': ariaDescribedByProp} = otherProps;
+
+  if (ariaDescribedByProp) {
+    // Merge aria-describedby from segmentProps and otherProps
+    segmentProps['aria-describedby'] = segmentProps['aria-describedby'] ? `${segmentProps['aria-describedby']} ${ariaDescribedByProp}` : ariaDescribedByProp;
+  }
 
   return (
     <span

@@ -19,6 +19,7 @@ import React, {JSX, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {VALID_ICON_POSTFIX} from './Input';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,
@@ -28,11 +29,13 @@ interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerPr
 
 export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>): JSX.Element {
   let {
+    id: datePickerInputId,
     isDisabled,
     isReadOnly,
     isRequired,
     inputClassName
   } = props;
+
   let ref = useRef<HTMLDivElement | null>(null);
   let {locale} = useLocale();
   let state = useDateFieldState({
@@ -44,10 +47,16 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
   let inputRef = useRef<HTMLInputElement | null>(null);
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
+  let validIconId = datePickerInputId ? datePickerInputId + VALID_ICON_POSTFIX : undefined;
+
+  // field props is container element that does not need an id
+  fieldProps.id = undefined;
+
   return (
     <span {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
+          aria-describedby={i === 0 ? validIconId : undefined}
           key={i}
           segment={segment}
           state={state}

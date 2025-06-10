@@ -22,9 +22,12 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useFocusRing} from '@react-aria/focus';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
+export const VALID_ICON_POSTFIX = '-valid-icon';
+
 export const Input = React.forwardRef(function Input(props: any, ref: any) {
   let inputRef = useRef<HTMLInputElement | null>(null);
   let {
+    id,
     isDisabled,
     isQuiet,
     inputClassName,
@@ -118,16 +121,16 @@ export const Input = React.forwardRef(function Input(props: any, ref: any) {
   );
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
-  let validId = fieldProps?.id ? `${fieldProps.id}-valid-icon` : undefined;
+  let validIconId = id ? id + VALID_ICON_POSTFIX : undefined;
   let validationIcon: ReactElement | null = null;
   if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
   } else if (validationState === 'valid' && !isDisabled) {
-    validationIcon = <Checkmark id={validId} aria-label={stringFormatter.format('valid')} data-testid="valid-icon" UNSAFE_className={iconClass} />;
+    validationIcon = <Checkmark id={validIconId} aria-label={stringFormatter.format('valid')} data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 
   return (
-    <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
+    <div role="presentation" id={id} {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
       <div role="presentation" className={inputClass}>
         <div
           role="presentation"

@@ -391,8 +391,7 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Example);
     let input = tree.getByTestId(testId);
     let helpText;
-    let validIcon = tree.queryByRole('img', {'aria-label': '(valid)'});
-    expect(validIcon).toBeTruthy();
+    let validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
     expect(validIcon).toHaveAttribute('id');
     expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', `${validIcon.id}`);
 
@@ -426,9 +425,7 @@ describe('Shared TextField behavior', () => {
     });
 
     validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
-    expect(validIcon).toBeTruthy();
     expect(validIcon).toHaveAttribute('id');
-
     expect(input).toHaveAttribute('aria-describedby', `${validIcon.id}`);
   });
 
