@@ -648,7 +648,7 @@ module.exports = new Transformer({
         });
       }
 
-      console.log('UNKNOWN TYPE', path.node.type);
+      // console.log('UNKNOWN TYPE', path.node.type);
       return Object.assign(node, {type: 'any'});
     }
 

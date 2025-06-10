@@ -1,0 +1,23 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-docs", "..."],
+  "transformers": {
+    "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
+    "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],
+    "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-postcss", "..."],
+    // Disable PostCSS from running over style macro output
+    "*.css": ["@parcel/transformer-css"],
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  },
+  "packagers": {
+    "*.json": "parcel-packager-docs"
+  }
+}

@@ -1,3 +1,4 @@
+'use client';
 import React, { useContext } from "react";
 import {
   Disclosure as AriaDisclosure,

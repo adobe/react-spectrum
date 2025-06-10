@@ -1,0 +1,166 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/DatePicker';
+import {DatePicker as VanillaDatePicker} from 'vanilla-starter/DatePicker';
+import {DatePicker as TailwindDatePicker} from 'tailwind-starter/DatePicker';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
+
+# DatePicker
+
+<PageDescription>{docs.exports.DatePicker.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaDatePicker}
+    docs={vanillaDocs.exports.DatePicker}
+    links={vanillaDocs.links}
+    props={['label', 'granularity', 'isDisabled']}
+    initialProps={{label: 'Date'}}
+    files={["starters/docs/src/DatePicker.tsx", "starters/docs/src/DatePicker.css", "starters/docs/src/theme.css"]} />
+  <VisualExample
+    component={TailwindDatePicker}
+    docs={vanillaDocs.exports.DatePicker}
+    links={vanillaDocs.links}
+    props={['label', 'granularity', 'isDisabled']}
+    initialProps={{label: 'Date'}}
+    files={["starters/tailwind/src/DatePicker.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Anatomy
+
+<Anatomy />
+
+A DatePicker consists of a label, and a [Group](Group.html) containing a [DateField](DateField.html) and a [Button](Button.html). Clicking the button opens a [Popover](Popover.html) containing a [Calendar](Calendar.html). The DateField includes segments for each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard.
+
+`DatePicker` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
+
+```tsx
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, Button, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
+
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <Dialog>
+      <Calendar />
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+
+```tsx render
+"use client";
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from 'react-aria';
+import {DatePicker} from 'vanilla-starter/DatePicker';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let formatter = useDateFormatter({ dateStyle: 'full' });
+  
+  return (
+    <div>
+      <DatePicker
+        ///- begin highlight -///
+        value={date}
+        onChange={setDate}
+        ///- end highlight -///
+      />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </div>
+  );
+}
+```
+
+### Format options
+
+The date format is automatically determined based on the user's locale. `DatePicker` supports several props to control how values are displayed.
+
+```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'firstDayOfWeek', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
+"use client";
+import {now, getLocalTimeZone} from '@internationalized/date';
+import {DatePicker} from 'vanilla-starter/DatePicker';
+
+<DatePicker
+  defaultValue={now(getLocalTimeZone())}
+  /* PROPS */ />
+```
+
+### International calendars
+
+By default, `DatePicker` displays the value using the calendar system for the user's locale. Use `<I18nProvider>` to override the calendar system by setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). The `onChange` event always receives a date in the same calendar as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
+"use client";
+import {I18nProvider} from 'react-aria-components';
+import {now, getLocalTimeZone} from '@internationalized/date';
+import {DatePicker} from 'vanilla-starter/DatePicker';
+
+<I18nProvider/* PROPS */>
+  <DatePicker defaultValue={now(getLocalTimeZone())} />
+</I18nProvider>
+```
+
+## Forms
+
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+import {DatePicker} from 'vanilla-starter/DatePicker';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'react-aria-components';
+
+function Example() {
+  let {locale} = useLocale();
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({ days: 5 })],
+    [now.add({ days: 14 }), now.add({ days: 16 })],
+    [now.add({ days: 23 }), now.add({ days: 24 })]
+  ];
+
+  return (
+    <Form>
+      <DatePicker
+        label="Appointment date"
+        ///- begin highlight -///
+        name="date"
+        isRequired
+        minValue={today(getLocalTimeZone())}
+        isDateUnavailable={date => (
+          isWeekend(date, locale) ||
+          disabledRanges.some((interval) =>
+            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+          )
+        )}
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-DatePicker" properties={docs.exports.DatePickerRenderProps.properties} />
