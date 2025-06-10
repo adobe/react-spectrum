@@ -23,7 +23,7 @@
     "@parcel/transformer-raw": "^2.14.0",
     "@parcel/transformer-react-refresh-wrap": "^2.14.0",
     "@react-spectrum/parcel-namer-s2": ">=0.3.0",
-    "@react-spectrum/parcel-transformer-s2-icon": "^0.3.0",
+    "@react-spectrum/parcel-transformer-s2-icon": ">=0.3.0",
     "@swc/helpers": "^0.5.0",
     "glob": "^8.0.3"
   },
