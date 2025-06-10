@@ -38,10 +38,10 @@ echo 'test icon builder'
 cd examples/s2-webpack-5-example
 mkdir icon-test
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
-curl -s http://localhost:4000/@react-spectrum/s2-icon-builder | jq '.'
-yarn info @react-spectrum/s2-icon-builder
-yarn @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+echo 'concluded icon builder'
 
+echo 'testing icon builder library'
 mkdir icon-library-test
 touch icon-library-test/package.json
 cat > icon-library-test/package.json << EOF
