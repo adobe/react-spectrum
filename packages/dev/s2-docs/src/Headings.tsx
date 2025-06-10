@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useHover} from '@react-aria/interactions';
 import {useFocusRing} from '@react-aria/focus';
@@ -10,10 +11,9 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
-function AnchorLink({anchorId, isHovered, level}) {
+function AnchorLink({anchorId, isHovered, level, headingText}) {
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
   const href = `#${anchorId}`;
-  // TODO: Do these links need aria-labels or aria-labelledby?
   return (
     <span {...focusProps} className={style({
       opacity: {
@@ -30,7 +30,7 @@ function AnchorLink({anchorId, isHovered, level}) {
       },
       transition: '[opacity 0.2s ease-in-out]',
     })({isHovered, isFocusVisible, level})}>
-      <Link href={href}>
+      <Link href={href} aria-label={`Link to ${headingText}`}>
         <LinkIcon
           styles={iconStyle({size: 'S', marginBottom: 4})} 
           UNSAFE_style={{marginBottom: (level === 3 || level === 4) ? 0 : undefined}}
@@ -46,7 +46,7 @@ export function H2({children, ...props}) {
   return (
     <h2 {...props} id={id} className={style({font: 'heading-xl', marginTop: 48, marginBottom: 24})} {...hoverProps}>
       {children}
-      <AnchorLink anchorId={id} isHovered={isHovered} level={2} />
+      <AnchorLink anchorId={id} isHovered={isHovered} level={2} headingText={children} />
     </h2>
   );
 }
@@ -57,7 +57,7 @@ export function H3({children, ...props}) {
   return (
     <h3 {...props} id={id} className={style({font: 'heading', marginTop: 32, marginBottom: 2})} {...hoverProps}>
       {children}
-      <AnchorLink anchorId={id} isHovered={isHovered} level={3} />
+      <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>
   );
 }
@@ -68,7 +68,7 @@ export function H4({children, ...props}) {
   return (
     <h4 {...props} id={id} className={style({font: 'heading-sm'})} {...hoverProps}>
       {children}
-      <AnchorLink anchorId={id} isHovered={isHovered} level={4} />
+      <AnchorLink anchorId={id} isHovered={isHovered} level={4} headingText={children} />
     </h4>
   );
 }
