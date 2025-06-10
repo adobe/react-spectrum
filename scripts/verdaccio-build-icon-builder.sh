@@ -6,7 +6,7 @@ output="output.out"
 
 set -e
 
-echo "Building docs with verdaccio"
+echo "Building icons with verdaccio"
 
 # Wait for verdaccio to start
 grep -q 'http address' <(tail -f $output)
@@ -39,7 +39,9 @@ cd examples/s2-webpack-5-example
 mkdir icon-test
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+echo 'concluded icon builder'
 
+echo 'testing icon builder library'
 mkdir icon-library-test
 touch icon-library-test/package.json
 cat > icon-library-test/package.json << EOF
@@ -65,7 +67,7 @@ cat > icon-library-test/package.json << EOF
     "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
   "devDependencies": {
-    "@react-spectrum/s2-icon-builder": ">=0.2.3",
+    "@react-spectrum/s2-icon-builder": "latest",
     "@react-spectrum/s2": "latest",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
