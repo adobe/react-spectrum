@@ -433,7 +433,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox<Plant> label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
+                <ComboBox<Plant> label="Common Name" name="common_name" isRequired items={plants as Iterable<Plant>} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
                 <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />

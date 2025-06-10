@@ -16,7 +16,7 @@ import {render} from '@testing-library/react';
 import {StrictModeWrapper} from './StrictModeWrapper';
 import {theme} from '@react-spectrum/theme-default';
 
-export {renderHook, act, act as actHook, fireEvent, within, screen, waitFor} from '@testing-library/react';
+export {renderHook, act, act as actHook, fireEvent, within, screen, waitFor, getAllByRole, createEvent, waitForElementToBeRemoved} from '@testing-library/react';
 
 function customRender(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined): ReturnType<typeof render> {
   return render(ui, {wrapper: StrictModeWrapper, ...options});
