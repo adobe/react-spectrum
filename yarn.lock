@@ -7940,26 +7940,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2-icon-builder@npm:^0.2.0":
-  version: 0.2.4
-  resolution: "@react-spectrum/s2-icon-builder@npm:0.2.4"
-  dependencies:
-    "@parcel/bundler-library": "npm:^2.14.0"
-    "@parcel/compressor-raw": "npm:^2.14.0"
-    "@parcel/core": "npm:^2.14.0"
-    "@parcel/namer-default": "npm:^2.14.0"
-    "@parcel/packager-raw": "npm:^2.14.0"
-    "@parcel/reporter-cli": "npm:^2.14.0"
-    "@parcel/resolver-default": "npm:^2.14.0"
-    "@parcel/transformer-raw": "npm:^2.14.0"
-    "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.3.0"
-  bin:
-    transform-icons: index.js
-  checksum: 10c0/f24669f8351700d547dffe0a1f5030db4ce24f3d952958dcdef8d9d64c11705ab448bbdcc24e864ecd712609b13d31fa1070474b7abed5bca5de986f7515a447
-  languageName: node
-  linkType: hard
-
-"@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder":
+"@react-spectrum/s2-icon-builder@npm:>=0.2.0, @react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder"
   dependencies:
@@ -27750,7 +27731,7 @@ __metadata:
     "@parcel/transformer-svg-react": "npm:^2.14.0"
     "@parcel/transformer-typescript-types": "npm:^2.14.0"
     "@react-spectrum/parcel-namer-s2": "npm:^0.3.0"
-    "@react-spectrum/s2-icon-builder": "npm:^0.2.0"
+    "@react-spectrum/s2-icon-builder": "npm:>=0.2.0"
     "@spectrum-css/component-builder": "workspace:^"
     "@spectrum-css/vars": "npm:^2.3.0"
     "@storybook/addon-a11y": "patch:@storybook/addon-a11y@npm%3A^7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch"
