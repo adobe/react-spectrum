@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",
@@ -24,7 +24,7 @@
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
-    "@react-spectrum/s2": "^0.9.1",
+    "@react-spectrum/s2": "^0.9.2",
     "@react-types/shared": "^3.30.0",
     "@types/node": "^22",
     "boxen": "^5.1.2",
