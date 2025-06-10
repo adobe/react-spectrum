@@ -22,7 +22,8 @@ const meta: Meta<typeof Checkbox> = {
   tags: ['autodocs'],
   argTypes: {
     inputRef: {control: {disable: true}},
-    onChange: {table: {category: 'Events'}}
+    onChange: {table: {category: 'Events'}},
+    children: {table: {disable: true}}
   },
   title: 'Checkbox'
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,13 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
+import App from './App';
+import {createRoot} from 'react-dom/client';
 
-export interface SpectrumSearchWithinProps extends SpectrumLabelableProps, DOMProps, StyleProps, AriaLabelingProps {
-  /** The SearchField and Picker contained within the SearchWithin. */
-  children: [ReactElement, ReactElement],
-
-  /** Whether the children should be disabled. Propagated to both children. */
-  isDisabled?: boolean
-}
+const container = document.getElementById('app');
+const root = createRoot(container);
+root.render(<App />);

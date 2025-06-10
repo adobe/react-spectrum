@@ -23,6 +23,9 @@ const meta: Meta<typeof Dialog> = {
       controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
     }
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'Dialog'
 };
