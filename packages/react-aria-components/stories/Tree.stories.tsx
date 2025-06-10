@@ -322,7 +322,11 @@ let rows = [
 
 const MyTreeLoader = () => {
   return (
-    <UNSTABLE_TreeLoadingIndicator>
+    <UNSTABLE_TreeLoadingIndicator
+      className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible
+      })}>      
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
