@@ -17,6 +17,7 @@ import {parseColor} from '@react-stately/color';
 import React from 'react';
 import * as stories from '../stories/ColorArea.stories';
 import userEvent from '@testing-library/user-event';
+import { ProviderProps } from '@react-spectrum/provider';
 
 let {XRedYGreen: DefaultColorArea, XBlueYGreen, XSaturationYBrightness, XSaturationYLightness} = composeStories(stories);
 
@@ -209,7 +210,7 @@ describe('ColorArea', () => {
               {...props}
               onChange={onChangeSpy}
               onChangeEnd={onChangeEndSpy} />
-          , undefined, {locale: 'ar-AE'});
+          , undefined, {locale: 'ar-AE'} as ProviderProps);
           let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([

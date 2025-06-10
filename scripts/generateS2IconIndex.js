@@ -124,7 +124,7 @@ let styles = style({
     }
 
     src += `
-export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}})${isIllustration ? '' : ': ReactNode'} {
+export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}}): ReactNode {
   ${ctx}let {size = 'M', ...otherProps} = props;
   switch (size) {${Object.keys(sizes).map(size => `
     case '${size}':

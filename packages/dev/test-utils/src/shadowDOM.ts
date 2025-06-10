@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-export function createShadowRoot(attachTo = document.body) {
+interface ShadowRootReturnValue {
+  shadowHost: HTMLElement,
+  shadowRoot: ShadowRoot,
+  cleanup: () => void
+}
+
+export function createShadowRoot(attachTo: HTMLElement = document.body): ShadowRootReturnValue {
   const div = document.createElement('div');
   attachTo.appendChild(div);
   const shadowRoot = div.attachShadow({mode: 'open'});

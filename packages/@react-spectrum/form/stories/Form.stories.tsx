@@ -18,12 +18,13 @@ import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {countries, states} from './data';
+import {countries, Country, State, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
-import {Form} from '../';
+import {Form, SpectrumFormProps} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.stories';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
@@ -44,74 +45,92 @@ import {Well} from '@react-spectrum/well';
 
 export default {
   title: 'Form',
+  component: Form,
   providerSwitcher: {status: 'positive'}
+} as ComponentMeta<typeof Form>;
+
+export type FormStory = ComponentStoryObj<typeof Form>;
+
+export const Default: FormStory = {
+  render: () => <Render />
 };
 
-export const Default = () => render({});
-export const LabelPositionSide = () => render({labelPosition: 'side'});
-
-LabelPositionSide.story = {
+export const LabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    labelPosition: 'side'
+  },
   name: 'labelPosition: side'
 };
 
-export const CustomWidth = () => render({width: 400});
-
-CustomWidth.story = {
+export const CustomWidth: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400
+  },
   name: 'custom width'
 };
 
-export const CustomWidthLabelPositionSide = () => render({width: 400, labelPosition: 'side'});
-
-CustomWidthLabelPositionSide.story = {
+export const CustomWidthLabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelPosition: 'side'
+  },
   name: 'custom width, labelPosition: side'
 };
 
-export const LabelAlignEnd = () => render({width: 400, labelAlign: 'end'});
-
-LabelAlignEnd.story = {
+export const LabelAlignEnd: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelAlign: 'end'
+  },
   name: 'labelAlign: end'
 };
 
-export const LabelPositionSideLabelAlignEnd = () =>
-  render({width: 400, labelPosition: 'side', labelAlign: 'end'});
-
-LabelPositionSideLabelAlignEnd.story = {
+export const LabelPositionSideLabelAlignEnd: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelPosition: 'side',
+    labelAlign: 'end'
+  },
   name: 'labelPosition: side, labelAlign: end'
 };
 
-export const FieldsNextToEachOther = () => (
-  <Form>
-    <Flex>
-      <TextField
-        label="First Name"
-        marginEnd="size-100"
-        flex={1}
-        description="Please enter your first name." />
-      <TextField label="Last Name" flex={1} description="Please enter your last name." />
-    </Flex>
-    <TextField label="Street Address" description="Please include apartment or suite number." />
-    <Flex>
-      <TextField
-        label="City"
-        marginEnd="size-100"
-        flex={1}
-        description="Please enter the city you live in." />
-      <Picker label="State" items={states} marginEnd="size-100" flex={1}>
-        {(item) => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
-    </Flex>
-  </Form>
-);
-
-FieldsNextToEachOther.story = {
+export const FieldsNextToEachOther: FormStory = {
+  render: (args) => (
+    <Form {...args}>
+      <Flex>
+        <TextField
+          label="First Name"
+          marginEnd="size-100"
+          flex={1}
+          description="Please enter your first name." />
+        <TextField label="Last Name" flex={1} description="Please enter your last name." />
+      </Flex>
+      <TextField label="Street Address" description="Please include apartment or suite number." />
+      <Flex>
+        <TextField
+          label="City"
+          marginEnd="size-100"
+          flex={1}
+          description="Please enter the city you live in." />
+        <Picker<State> label="State" items={states} marginEnd="size-100" flex={1}>
+          {(item) => <Item key={item.abbr}>{item.name}</Item>}
+        </Picker>
+        <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
+      </Flex>
+    </Form>
+  ),
   name: 'fields next to each other'
 };
 
-export const FieldsWithAutoCompleteProperty = () => {
+const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
   const [checked, setChecked] = useState(true);
   return (
-    <Form>
+    <Form {...props}>
       <Well role="group" aria-labelledby="billing-legend">
         <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>
           Billing address
@@ -147,7 +166,7 @@ export const FieldsWithAutoCompleteProperty = () => {
             label="City"
             marginEnd="size-100"
             flex={1} />
-          <Picker
+          <Picker<State>
             autoComplete="billing address-level1"
             name="state"
             isRequired
@@ -165,7 +184,7 @@ export const FieldsWithAutoCompleteProperty = () => {
             flex={1} />
         </Flex>
         <Flex>
-          <Picker
+          <Picker<Country>
             autoComplete="billing country"
             name="country"
             isRequired
@@ -234,7 +253,7 @@ export const FieldsWithAutoCompleteProperty = () => {
                 label="City"
                 marginEnd="size-100"
                 flex={1} />
-              <Picker
+              <Picker<State>
                 autoComplete="shipping address-level1"
                 name="shippingState"
                 isRequired
@@ -252,7 +271,7 @@ export const FieldsWithAutoCompleteProperty = () => {
                 flex={1} />
             </Flex>
             <Flex>
-              <Picker
+              <Picker<Country>
                 autoComplete="shipping country"
                 name="shippingCountry"
                 isRequired
@@ -286,122 +305,140 @@ export const FieldsWithAutoCompleteProperty = () => {
     </Form>
   );
 };
-
-FieldsWithAutoCompleteProperty.story = {
+export const FieldsWithAutoCompleteProperty: FormStory = {
+  render: (args) => <FieldsWithAutoCompletePropertyRender {...args} />,
   name: 'fields with autoComplete property'
 };
 
-export const IsRequiredTrue = () => render({isRequired: true});
-
-IsRequiredTrue.story = {
+export const IsRequiredTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true
+  },
   name: 'isRequired: true'
 };
 
-export const IsRequiredTrueNecessityIndicatorLabel = () =>
-  render({isRequired: true, necessityIndicator: 'label'});
-
-IsRequiredTrueNecessityIndicatorLabel.story = {
+export const IsRequiredTrueNecessityIndicatorLabel: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true,
+    necessityIndicator: 'label'
+  },
   name: 'isRequired: true, necessityIndicator: label'
 };
 
-export const IsRequiredFalseNecessityIndicatorLabel = () =>
-  render({isRequired: false, necessityIndicator: 'label'});
-
-IsRequiredFalseNecessityIndicatorLabel.story = {
+export const IsRequiredFalseNecessityIndicatorLabel: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: false,
+    necessityIndicator: 'label'
+  },
   name: 'isRequired: false, necessityIndicator: label'
 };
 
-export const IsDisabled = () => render({isDisabled: true});
-
-IsDisabled.story = {
+export const IsDisabled: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isDisabled: true
+  },
   name: 'isDisabled'
 };
 
-export const IsQuiet = () => render({isQuiet: true});
-
-IsQuiet.story = {
+export const IsQuiet: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isQuiet: true
+  },
   name: 'isQuiet'
 };
 
-export const IsQuietLabelPositionSide = () => render({isQuiet: true, labelPosition: 'side'});
-
-IsQuietLabelPositionSide.story = {
+export const IsQuietLabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isQuiet: true,
+    labelPosition: 'side'
+  },
   name: 'isQuiet, labelPosition: side'
 };
 
-export const IsEmphasized = () => render({isEmphasized: true});
-
-IsEmphasized.story = {
+export const IsEmphasized: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isEmphasized: true
+  },
   name: 'isEmphasized'
 };
 
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
-
-ValidationStateInvalid.story = {
+export const ValidationStateInvalid: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'invalid'
+  },
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid = () => render({validationState: 'valid'});
-
-ValidationStateValid.story = {
+export const ValidationStateValid: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'valid'
+  },
   name: 'validationState: valid'
 };
 
-export const ValidationStateInvalidIsQuietTrue = () =>
-  render({validationState: 'invalid', isQuiet: true});
-
-ValidationStateInvalidIsQuietTrue.story = {
+export const ValidationStateInvalidIsQuietTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'invalid',
+    isQuiet: true
+  },
   name: 'validationState: invalid, isQuiet: true'
 };
 
-export const ValidationStateValidIsQuietTrue = () =>
-  render({validationState: 'valid', isQuiet: true});
-
-ValidationStateValidIsQuietTrue.story = {
+export const ValidationStateValidIsQuietTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'valid',
+    isQuiet: true
+  },
   name: 'validationState: valid, isQuiet: true'
 };
 
-export const FormWithReset = () => <FormWithControls />;
-
-FormWithReset.story = {
+export const FormWithReset: FormStory = {
+  render: () => <FormWithControls />,
   name: 'form with reset'
 };
 
-
-export const _FormWithSubmit = () => <FormWithSubmit />;
-
-_FormWithSubmit.story = {
+export const _FormWithSubmit: FormStory = {
+  render: () => <FormWithSubmit />,
   name: 'form with submit'
 };
 
-export const FormWithNumberfieldAndLocaleArAe = () => (
-  <Flex gap="size-100">
-    <NumberField label="Outside form" description="Hello" />
-    <Form>
-      <NumberField label="Inside form" />
-    </Form>
-    <Form>
-      <TextField label="First Name" />
-    </Form>
-    <Form>
-      <TextField label="First Name" />
-      <NumberField label="Inside form" />
-    </Form>
-  </Flex>
-);
-
-FormWithNumberfieldAndLocaleArAe.story = {
+export const FormWithNumberfieldAndLocaleArAe: FormStory = {
+  render: () => (
+    <Flex gap="size-100">
+      <NumberField label="Outside form" description="Hello" />
+      <Form>
+        <NumberField label="Inside form" />
+      </Form>
+      <Form>
+        <TextField label="First Name" />
+      </Form>
+      <Form>
+        <TextField label="First Name" />
+        <NumberField label="Inside form" />
+      </Form>
+    </Flex>
+  ),
   name: 'form with numberfield and locale=ar-AE'
 };
 
-export const WithTranslations = () => <FormTranslatedText />;
-
-WithTranslations.story = {
+export const WithTranslations: FormStory = {
+  render: () => <FormTranslatedText />,
   name: 'with translations',
   parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
 
-function render(props: any = {}) {
+function Render(props: any = {}) {
   return (
     <Form {...props}>
       <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
@@ -422,10 +459,10 @@ function render(props: any = {}) {
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
       <NumberField label="Years lived there" name="years" />
-      <Picker label="State" items={states} name="state">
+      <Picker<State> label="State" items={states} name="state">
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries} name="country">
+      <Picker<Country> label="Country" items={countries} name="country">
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
@@ -498,7 +535,7 @@ function FormWithControls(props: any = {}) {
       <TextField name="first-name" label="First Name (controlled)" value={firstName} onChange={setFirstName} />
       <TextField name="last-name" label="Last Name (uncontrolled)" defaultValue="world" />
       <TextField name="street-address" label="Street Address (uncontrolled)" />
-      <Picker name="country" label="Country (uncontrolled)" items={countries}>
+      <Picker<Country> name="country" label="Country (uncontrolled)" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <NumberField name="age" label="Age (uncontrolled)" />
@@ -709,21 +746,22 @@ function FormWithSubmit() {
   );
 }
 
-export const NativeValidation = () => render({
-  isRequired: true,
-  validationBehavior: 'native',
-  showSubmit: true,
-  onSubmit: (e) => {
-    e.preventDefault();
-    action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
-  }
-});
-
-NativeValidation.story = {
+export const NativeValidation: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true,
+    validationBehavior: 'native',
+    // @ts-ignore
+    showSubmit: true,
+    onSubmit: (e) => {
+      e.preventDefault();
+      action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+    }
+  },
   parameters: {description: {data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'}}
 };
 
-export function ServerValidation() {
+const ServerValidationRender = () => {
   let [serverErrors, setServerErrors] = useState<any>({});
   let onSubmit = async (e) => {
     e.preventDefault();
@@ -734,19 +772,22 @@ export function ServerValidation() {
     setServerErrors(errors);
   };
 
-  return render({
-    validationBehavior: 'native',
-    onSubmit,
-    validationErrors: serverErrors,
-    showSubmit: true
-  });
-}
+  return (
+    <Render
+      validationBehavior="native"
+      onSubmit={onSubmit}
+      validationErrors={serverErrors}
+      // @ts-ignore
+      showSubmit />
+  );
+};
 
-ServerValidation.story = {
+export const ServerValidation: FormStory = {
+  render: () => <ServerValidationRender />,
   parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
 };
 
-export let NumberFieldFormSubmit = {
+export const NumberFieldFormSubmit: FormStory = {
   render: () => {
     return (
       <Form

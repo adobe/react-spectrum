@@ -48,13 +48,13 @@ const allColumns: ColumnProps[] = [
 
 let hideOnScroll = document.getElementById('hideOnScroll');
 
-export function ExampleApp() {
+export function ExampleApp(): React.ReactNode {
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'common_name',
     direction: 'ascending'
   });
 
-  let [allItems, setAllItems] = useState(() => plants.map(p => ({...p, isFavorite: false})));
+  let [allItems, setAllItems] = useState<Plant[]>(() => plants.map(p => ({...p, isFavorite: false})));
   let [search, setSearch] = useState('');
   let [favorite, setFavorite] = useState(false);
   let [cycles, setCycles] = useState<Selection>(new Set());
@@ -433,7 +433,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
+                <ComboBox<Plant> label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
                 <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />

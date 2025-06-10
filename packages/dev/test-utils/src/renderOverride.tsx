@@ -10,34 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {Provider} from '@react-spectrum/provider';
+import {Provider, ProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {StrictModeWrapper} from './StrictModeWrapper';
 import {theme} from '@react-spectrum/theme-default';
 
-let reactTestingLibrary = require('@testing-library/react');
+export {renderHook, act, act as actHook, fireEvent, within, screen, waitFor} from '@testing-library/react';
 
-// export everything
-export * from '@testing-library/react';
-
-// export renderHook and actHook from testing-library/react-hooks library if they don't exist in @testing-library/react
-// (i.e. renderHook is only in v13+ of testing library)
-export let renderHook = reactTestingLibrary.renderHook;
-export let actHook = reactTestingLibrary.act;
-if (!renderHook) {
-  let rhtl = require('@testing-library/react-hooks');
-  renderHook = rhtl.renderHook;
-  actHook = rhtl.act;
-}
-
-function customRender(ui, options) {
+function customRender(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined): ReturnType<typeof render> {
   return render(ui, {wrapper: StrictModeWrapper, ...options});
 }
 
 // override render method with
 export {customRender as render};
 
-export function renderv3(ui, options, providerProps) {
-  return render(ui, {wrapper: (props) => <Provider theme={theme} {...providerProps}><StrictModeWrapper {...props} /></Provider>, ...options});
+export function renderv3(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined, providerProps?: ProviderProps | undefined): ReturnType<typeof render> {
+  return render(ui, {
+    wrapper: (props: React.PropsWithChildren) => (
+      <Provider
+        theme={theme}
+        {...providerProps}>
+        <StrictModeWrapper {...props} />
+      </Provider>
+    ),
+    ...options
+  });
 }
