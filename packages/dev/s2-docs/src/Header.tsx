@@ -10,6 +10,7 @@ import { AdobeLogo } from './icons/AdobeLogo';
 import { GithubLogo } from './icons/GithubLogo';
 import { InternationalizedLogo } from './icons/InternationalizedLogo';
 import { ReactAriaLogo } from './icons/ReactAriaLogo';
+import { flushSync } from 'react-dom';
 
 function getButtonText(currentPage) {
   if (currentPage.url.includes('react-aria')) {
@@ -35,8 +36,18 @@ export default function Header(props: PageProps) {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
   let handleMenuButtonPress = () => {
-    setSearchOpen((prev) => !prev);
-    setIsSubmenuOpen(false);
+    if (!document.startViewTransition) {
+      setSearchOpen((prev) => !prev);
+      setIsSubmenuOpen(false);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setSearchOpen((prev) => !prev);
+        setIsSubmenuOpen(false);
+      });
+    });
   }
 
   return (
@@ -44,20 +55,30 @@ export default function Header(props: PageProps) {
       <header className={style({width: 'full', display: 'flex', justifyContent: 'center'})}>
         <div className={style({
           width: 'full', 
+          // Matches search menu
           maxWidth: 1240, 
           display: 'grid',
           gridTemplateColumns: '1fr auto 1fr',
-          alignItems: 'center'
+          alignItems: 'center',
+          paddingX: 16,
         })}>
           <div className={style({justifySelf: 'start'})}>
             <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={handleMenuButtonPress}>
-              {getButtonIcon(currentPage)}
-              <span className={style({fontSize: 'heading-xs', marginStart: 4})}>{getButtonText(currentPage)}</span>
+              <div className={style({display: 'flex', alignItems: 'center'})}>
+                {/* @ts-ignore */}
+                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'}}>
+                  {getButtonIcon(currentPage)}
+                </div>
+                {/* @ts-ignore */}
+                <span className={style({fontSize: 'heading-xs', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'}}>
+                  {getButtonText(currentPage)}
+                </span>
+              </div>
               <ChevronDown UNSAFE_className={'react-spectrum-select-chevron' + style({paddingEnd: 8})} UNSAFE_style={{width: 18}} />
             </ActionButton>
           </div>
           <SearchMenu pages={pages} currentPage={currentPage} setSearchOpen={setSearchOpen} setIsSubmenuOpen={setIsSubmenuOpen} isSearchOpen={searchOpen} isSubmenuOpen={isSubmenuOpen} />
-          <div className={style({display: 'flex', alignItems: 'center', gap: 4, marginEnd: 32, justifySelf: 'end'})}>
+          <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <ActionButton aria-label="React Spectrum GitHub repo" size="XL" isQuiet>
               <GithubLogo />
             </ActionButton>

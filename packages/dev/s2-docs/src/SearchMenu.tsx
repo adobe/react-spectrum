@@ -100,7 +100,8 @@ let modalStyle = style({
   position: 'absolute',
   top: 8,
   width: "full",
-  maxWidth: 1180,
+  // Matches header
+  maxWidth: 1240,
   backgroundColor: 'elevated',
   paddingX: 16,
   paddingY: 8,
@@ -389,7 +390,7 @@ export default function SearchMenu(props) {
           orientation="vertical"
           selectedKey={selectedLibrary}
           onSelectionChange={(key) => {
-                  // Reset submenu state when changing tabs
+            // Reset submenu state when changing tabs
             setIsSubmenuOpen(false);
             setSubmenuParentItem(null);
             setSubmenuItems([]);
@@ -409,13 +410,19 @@ export default function SearchMenu(props) {
             }, 10);
           }}>
           <TabList aria-label="Library">
-            {orderedTabs.map((tab) => (
+            {orderedTabs.map((tab, i) => (
               <Tab key={tab.id} id={tab.id}>
                 <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                  {tab.icon}
+                  {/* @ts-ignore */}
+                  <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'}}>
+                    {tab.icon}
+                  </div>
                   <div className={style({display: 'flex', flexDirection: 'column', gap: 0})}>
-                    <span className={style({fontSize: 'heading-xs'})}>{tab.label}</span>
-                    <span className={style({fontSize: 'detail'})}>{tab.description}</span>
+                    {/* @ts-ignore */}
+                    <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'}} className={style({fontSize: 'heading-xs'})}>
+                      {tab.label}
+                    </span>
+                    <span className={style({fontSize: 'ui-sm'})}>{tab.description}</span>
                   </div>
                 </div>
               </Tab>
