@@ -13,10 +13,11 @@
 import FileImage_L from 'illustration:./S2_lin_fileImage_160.svg';
 import FileImage_M from 'illustration:./S2_lin_fileImage_96.svg';
 import FileImage_S from 'illustration:./S2_lin_fileImage_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function FileImage(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function FileImage(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

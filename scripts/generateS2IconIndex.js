@@ -66,7 +66,8 @@ function generate(dir) {
   }
 
   let relative = path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
-  let typeImport = dir.includes('ui-icons') ? "import {ReactNode, SVGProps} from 'react';" : `import {IconProps, IllustrationContext} from '${relative}';`;
+  let typeImport = dir.includes('ui-icons') ? "import {ReactNode, SVGProps} from 'react';" : `import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '${relative}';`;
   let ctx = dir.includes('spectrum-illustrations') ? '[props] = useContextProps(props, null, IllustrationContext);\n  ' : '';
   let type = dir.includes('ui-icons') ? 'SVGProps<SVGSVGElement>' : 'IconProps';
   let isIllustration =  dir.includes('spectrum-illustrations');
