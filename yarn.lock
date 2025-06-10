@@ -7831,7 +7831,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/parcel-namer-s2@npm:^0.3.0, @react-spectrum/parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
+"@react-spectrum/parcel-namer-s2@npm:>=0.3.0, @react-spectrum/parcel-namer-s2@npm:^0.3.0, @react-spectrum/parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-namer-s2@workspace:packages/dev/parcel-namer-s2"
   dependencies:
@@ -7956,7 +7956,7 @@ __metadata:
     "@parcel/transformer-js": "npm:^2.14.0"
     "@parcel/transformer-raw": "npm:^2.14.0"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.14.0"
-    "@react-spectrum/parcel-namer-s2": "npm:^0.3.0"
+    "@react-spectrum/parcel-namer-s2": "npm:>=0.3.0"
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.3.0"
     "@swc/helpers": "npm:^0.5.0"
     glob: "npm:^8.0.3"
