@@ -16,10 +16,21 @@ import {render} from '@testing-library/react';
 import {StrictModeWrapper} from './StrictModeWrapper';
 import {theme} from '@react-spectrum/theme-default';
 
-export {renderHook, act, act as actHook, fireEvent, within, screen, waitFor, getAllByRole, createEvent, waitForElementToBeRemoved} from '@testing-library/react';
+export {act, fireEvent, within, screen, waitFor, getAllByRole, createEvent, waitForElementToBeRemoved} from '@testing-library/react';
 
 function customRender(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined): ReturnType<typeof render> {
   return render(ui, {wrapper: StrictModeWrapper, ...options});
+}
+
+let reactTestingLibrary = require('@testing-library/react');
+// export renderHook and actHook from testing-library/react-hooks library if they don't exist in @testing-library/react
+// (i.e. renderHook is only in v13+ of testing library)
+export let renderHook = reactTestingLibrary.renderHook;
+export let actHook = reactTestingLibrary.act;
+if (!renderHook) {
+  let rhtl = require('@testing-library/react-hooks');
+  renderHook = rhtl.renderHook;
+  actHook = rhtl.act;
 }
 
 // override render method with
