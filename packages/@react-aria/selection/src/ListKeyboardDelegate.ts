@@ -78,7 +78,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let nextKey = key;
     while (nextKey != null) {
       let item = this.collection.getItem(nextKey);
-      if (item?.type === 'loader' || (item?.type === 'item' && !this.isDisabled(item))) {
+      if (item?.type === 'item' && !this.isDisabled(item)) {
         return nextKey;
       }
 

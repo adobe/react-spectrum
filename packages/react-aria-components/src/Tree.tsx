@@ -695,7 +695,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
+export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -707,19 +707,16 @@ export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicat
 
 export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
-  ref = useObjectRef<HTMLDivElement>(ref);
-  let {rowProps, gridCellProps, ...states} = useTreeItem({node: item}, state, ref);
+  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
+  // @ts-ignore
+  let {rowProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
   let ariaProps = {
-    role: 'row',
     'aria-level': rowProps['aria-level'],
     'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize'],
-    tabIndex: rowProps.tabIndex
+    'aria-setsize': rowProps['aria-setsize']
   };
-
-  let {isFocusVisible, focusProps} = useFocusRing();
 
   let renderProps = useRenderProps({
     ...props,
@@ -727,24 +724,19 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
     values: {
-      level,
-      isFocused: states.isFocused,
-      isFocusVisible
+      level
     }
   });
 
   return (
     <>
       <div
+        role="row"
         ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps, focusProps)}
+        {...mergeProps(filterDOMProps(props as any), ariaProps)}
         {...renderProps}
-        data-key={rowProps['data-key']}
-        data-collection={rowProps['data-collection']}
-        data-focused={states.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
         data-level={level}>
-        <div {...gridCellProps}>
+        <div role="gridcell" aria-colindex={1}>
           {renderProps.children}
         </div>
       </div>
