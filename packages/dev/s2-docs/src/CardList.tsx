@@ -37,7 +37,7 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
       return [];
     }
 
-    const components = pages
+    const sections = pages
       .filter(page => {
         if (!page.url || !page.url.endsWith('.html')) {
           return false;
@@ -52,25 +52,42 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
         
         return library === selectedLibrary;
       })
-      .map(page => {
+      .reduce<Record<string, IExampleItem[]>>((acc, page) => {
+        let sectionName = (page as any).exports?.section;
+        if (!sectionName || sectionName === 'S2') {
+          sectionName = 'Components';
+        }
+
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
         
-        return {
+        const component = {
           id: name,
           name: title,
           description: `${title} documentation`,
           href: page.url
         };
-      });
 
-    const section: IExampleSection = {
-      id: 'components',
-      name: 'Components',
-      children: components
-    };
+        if (!acc[sectionName]) {
+          acc[sectionName] = [];
+        }
+        acc[sectionName].push(component);
 
-    return [section];
+        return acc;
+      }, {});
+
+    const sectionEntries = Object.entries(sections).map(([name, children]) => ({
+      id: name.toLowerCase().replace(/\s+/g, '-'),
+      name,
+      children
+    }));
+
+    const componentsSection = sectionEntries.find(section => section.name === 'Components');
+    const otherSections = sectionEntries.filter(section => section.name !== 'Components');
+
+    otherSections.sort((a, b) => a.name.localeCompare(b.name));
+
+    return componentsSection ? [...otherSections, componentsSection] : otherSections;
   }, [pages, selectedLibrary]);
 
   return (
