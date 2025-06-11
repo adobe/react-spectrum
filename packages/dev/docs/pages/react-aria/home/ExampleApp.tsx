@@ -23,7 +23,7 @@ import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
 import {Menu, MenuItem} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
-import plants from './plants';
+import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
 import React, {ReactElement, UIEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchField} from 'tailwind-starter/SearchField';
@@ -34,8 +34,6 @@ import {Tooltip} from 'tailwind-starter/Tooltip';
 import {tv} from 'tailwind-variants';
 import {useCollator, useFilter, VisuallyHidden} from 'react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
-
-type Plant = typeof plants[0] & {isFavorite: boolean};
 
 const allColumns: ColumnProps[] = [
   {id: 'favorite', children: <VisuallyHidden>Favorite</VisuallyHidden>, width: 40, minWidth: 40},
@@ -433,7 +431,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox<Plant> label="Common Name" name="common_name" isRequired items={plants as Iterable<Plant>} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
+                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
                 <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />

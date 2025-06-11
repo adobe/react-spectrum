@@ -21,7 +21,7 @@ import {ComboBox} from '@react-spectrum/combobox';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {countries, Country, State, states} from './data';
+import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form, SpectrumFormProps} from '../';
@@ -117,7 +117,7 @@ export const FieldsNextToEachOther: FormStory = {
           marginEnd="size-100"
           flex={1}
           description="Please enter the city you live in." />
-        <Picker<State> label="State" items={states} marginEnd="size-100" flex={1}>
+        <Picker label="State" items={states} marginEnd="size-100" flex={1}>
           {(item) => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
         <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
@@ -166,7 +166,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             label="City"
             marginEnd="size-100"
             flex={1} />
-          <Picker<State>
+          <Picker
             autoComplete="billing address-level1"
             name="state"
             isRequired
@@ -184,7 +184,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             flex={1} />
         </Flex>
         <Flex>
-          <Picker<Country>
+          <Picker
             autoComplete="billing country"
             name="country"
             isRequired
@@ -253,7 +253,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 label="City"
                 marginEnd="size-100"
                 flex={1} />
-              <Picker<State>
+              <Picker
                 autoComplete="shipping address-level1"
                 name="shippingState"
                 isRequired
@@ -271,7 +271,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 flex={1} />
             </Flex>
             <Flex>
-              <Picker<Country>
+              <Picker
                 autoComplete="shipping country"
                 name="shippingCountry"
                 isRequired
@@ -459,10 +459,10 @@ function Render(props: any = {}) {
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
       <NumberField label="Years lived there" name="years" />
-      <Picker<State> label="State" items={states} name="state">
+      <Picker label="State" items={states} name="state">
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker<Country> label="Country" items={countries} name="country">
+      <Picker label="Country" items={countries} name="country">
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
@@ -535,7 +535,7 @@ function FormWithControls(props: any = {}) {
       <TextField name="first-name" label="First Name (controlled)" value={firstName} onChange={setFirstName} />
       <TextField name="last-name" label="Last Name (uncontrolled)" defaultValue="world" />
       <TextField name="street-address" label="Street Address (uncontrolled)" />
-      <Picker<Country> name="country" label="Country (uncontrolled)" items={countries}>
+      <Picker name="country" label="Country (uncontrolled)" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <NumberField name="age" label="Age (uncontrolled)" />
