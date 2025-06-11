@@ -515,7 +515,9 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
 function getOffset(node: Element): Offset {
   let {top, left, width, height} = node.getBoundingClientRect();
-  let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
+  let { scrollTop: elementScrollTop, scrollLeft: scrollLeft, clientTop: clientTop, clientLeft: clientLeft } = document.documentElement;
+  // This is a workaround to ensure we get the correct scrollTop value.
+  let scrollTop = elementScrollTop || document.body.scrollTop || 0;
   return {
     top: top + scrollTop - clientTop,
     left: left + scrollLeft - clientLeft,
