@@ -188,10 +188,7 @@ describe('AlertDialog', function () {
           primaryActionLabel="confirm"
           secondaryActionLabel="secondary"
           autoFocusButton="secondary"
-          data-testid="alert-dialog"
-          cancelDOMProps={{'data-testid': 'alert-dialog-cancel-btn'}}
-          secondaryDOMProps={{'data-testid': 'alert-dialog-secondary-btn'}}
-          primaryDOMProps={{'data-testid': 'alert-dialog-primary-btn'}}>
+          data-testid="alert-dialog">
           Content body
         </AlertDialog>
       </Provider>

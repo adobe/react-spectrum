@@ -50,9 +50,6 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
-    cancelDOMProps = {} as DOMProps,
-    primaryDOMProps = {} as DOMProps,
-    secondaryDOMProps = {} as DOMProps,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -90,7 +87,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
             autoFocus={autoFocusButton === 'cancel'}
-            {...filterDOMProps(cancelProps)}>
+            data-testid="rsp-alertDialog-cancelButton">
             {cancelLabel}
           </Button>
         }
@@ -100,7 +97,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
             onPress={() => chain(onClose(), onSecondaryAction())}
             isDisabled={isSecondaryActionDisabled}
             autoFocus={autoFocusButton === 'secondary'}
-            {...filterDOMProps(secondaryProps)}>
+            data-testid="rsp-alertDialog-secondaryButton">
             {secondaryActionLabel}
           </Button>
         }
@@ -109,7 +106,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
           onPress={() => chain(onClose(), onPrimaryAction())}
           isDisabled={isPrimaryActionDisabled}
           autoFocus={autoFocusButton === 'primary'}
-          {...filterDOMProps(primaryProps)}>
+          data-testid="rsp-alertDialog-confirmButton">
           {primaryActionLabel}
         </Button>
       </ButtonGroup>
