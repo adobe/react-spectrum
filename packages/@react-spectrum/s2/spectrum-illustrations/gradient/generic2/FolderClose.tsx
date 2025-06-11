@@ -13,10 +13,11 @@
 import FolderClose_L from 'illustration:./S2_fill_folderClose_generic2_160.svg';
 import FolderClose_M from 'illustration:./S2_fill_folderClose_generic2_96.svg';
 import FolderClose_S from 'illustration:./S2_fill_folderClose_generic2_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function FolderClose(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function FolderClose(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

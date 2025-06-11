@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 import VectorDraw_L from 'illustration:./S2_fill_vectorDraw_generic1_160.svg';
 import VectorDraw_M from 'illustration:./S2_fill_vectorDraw_generic1_96.svg';
 import VectorDraw_S from 'illustration:./S2_fill_vectorDraw_generic1_48.svg';
 
-export default function VectorDraw(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function VectorDraw(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

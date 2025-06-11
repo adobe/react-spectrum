@@ -13,10 +13,11 @@
 import _3D_L from 'illustration:./S2_lin_3D_160.svg';
 import _3D_M from 'illustration:./S2_lin_3D_96.svg';
 import _3D_S from 'illustration:./S2_lin_3D_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function _3D(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function _3D(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {
