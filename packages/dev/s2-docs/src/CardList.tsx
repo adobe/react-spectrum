@@ -37,9 +37,21 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
       return [];
     }
 
-    // Transform pages data into sections
     const components = pages
-      .filter(page => page.url && page.url.endsWith('.html'))
+      .filter(page => {
+        if (!page.url || !page.url.endsWith('.html')) {
+          return false;
+        }
+
+        let library: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
+        if (page.url.includes('react-aria')) {
+          library = 'react-aria';
+        } else if (page.url.includes('react-internationalized')) {
+          library = 'internationalized';
+        }
+        
+        return library === selectedLibrary;
+      })
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
@@ -59,7 +71,7 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
     };
 
     return [section];
-  }, [pages]);
+  }, [pages, selectedLibrary]);
 
   return (
     <nav className={style({ 
@@ -95,17 +107,15 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
                   textValue={item.name}
                   size="S"
                 >
-                  {item.thumbnail && (
-                    <CardPreview>
-                      <Image
-                        alt={item.name}
-                        src={item.thumbnail.toString()}
-                        styles={style({
-                          width: 'full',
-                          pointerEvents: 'none'
-                        })} />
-                    </CardPreview>
-                  )}
+                  <CardPreview>
+                    <Image
+                      alt={item.name}
+                      src={item.thumbnail?.toString() ?? 'https://placehold.co/600x400'}
+                      styles={style({
+                        width: 'full',
+                        pointerEvents: 'none'
+                      })} />
+                  </CardPreview>
                   <Content>
                     <Text slot="title">{item.name}</Text>
                     {item.description && <Text slot="description">{item.description}</Text>}
