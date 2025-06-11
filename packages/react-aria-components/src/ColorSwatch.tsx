@@ -1,7 +1,7 @@
 import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
 import {Color} from 'react-stately';
 import {ContextValue, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ColorSwatchRenderProps {
   /** The color of the swatch. */
@@ -10,12 +10,14 @@ export interface ColorSwatchRenderProps {
 
 export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps {}
 
-export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
+export const ColorSwatchContext: Context<ContextValue<ColorSwatchProps, HTMLDivElement>> = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
 
 /**
  * A ColorSwatch displays a preview of a selected color.
  */
-export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatch:
+  React.ForwardRefExoticComponent<ColorSwatchProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
   let renderProps = useRenderProps({
@@ -26,7 +28,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
       color
     }
   });
-  
+
   return (
     <div
       {...colorSwatchProps}

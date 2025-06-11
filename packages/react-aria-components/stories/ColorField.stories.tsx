@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, Input, Label} from 'react-aria-components';
+import {ColorField, ColorFieldProps, Input, Label} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -24,17 +25,22 @@ export default {
       control: 'select',
       options: [null, 'red', 'green', 'blue', 'hue', 'saturation', 'lightness', 'brightness']
     }
+  },
+  component: ColorField
+} as ComponentMeta<typeof ColorField>;
+
+;
+export type ColorFieldStory = ComponentStoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
+
+export const ColorFieldExample: ColorFieldStory = {
+  render: (args) => (
+    <ColorField {...args}>
+      <Label>{args.label}</Label>
+      <Input style={{display: 'block'}} />
+    </ColorField>
+  ),
+  args: {
+    label: 'Test',
+    defaultValue: '#f00'
   }
-};
-
-export const ColorFieldExample = (args) => (
-  <ColorField {...args}>
-    <Label>{args.label}</Label>
-    <Input style={{display: 'block'}} />
-  </ColorField>
-);
-
-ColorFieldExample.args = {
-  label: 'Test',
-  defaultValue: '#f00'
 };

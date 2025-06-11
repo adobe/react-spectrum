@@ -15,7 +15,7 @@ import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomple
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, JSX, RefObject, useRef} from 'react';
+import React, {Context, createContext, JSX, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
@@ -27,11 +27,11 @@ interface InternalAutocompleteContextValue {
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
-export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+export const AutocompleteContext: Context<SlottedContextValue<Partial<AutocompleteProps>>> = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
+export const AutocompleteStateContext: Context<AutocompleteState | null> = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+export const UNSTABLE_InternalAutocompleteContext: Context<InternalAutocompleteContextValue | null> = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.

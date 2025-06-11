@@ -11,15 +11,19 @@
  */
 
 import clsx from 'clsx';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {DateInput, DateSegment, Label, TimeField} from 'react-aria-components';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: TimeField
+} as ComponentMeta<typeof TimeField>;
 
-export const TimeFieldExample = () => (
+export type TimeFieldStory = ComponentStoryFn<typeof TimeField>;
+
+export const TimeFieldExample: TimeFieldStory = () => (
   <TimeField data-testid="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>

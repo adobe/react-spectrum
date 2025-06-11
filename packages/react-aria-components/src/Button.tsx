@@ -30,7 +30,7 @@ import {
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {Context, createContext, ForwardedRef, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -101,7 +101,7 @@ interface ButtonContextValue extends ButtonProps {
 
 const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
 
-export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
+export const ButtonContext: Context<ContextValue<ButtonContextValue, HTMLButtonElement>> = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
@@ -181,7 +181,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       </ProgressBarContext.Provider>
     </button>
   );
-});
+}) satisfies (props: ButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null as
+ (props: ButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null;
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true

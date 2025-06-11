@@ -11,15 +11,17 @@
  */
 
 import {ContextValue, useContextProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   elementType?: string
 }
 
-export const TextContext = createContext<ContextValue<TextProps, HTMLElement>>({});
+export const TextContext: Context<ContextValue<TextProps, HTMLElement>> = createContext<ContextValue<TextProps, HTMLElement>>({});
 
-export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<HTMLElement>) {
+export const Text:
+  React.ForwardRefExoticComponent<TextProps & React.RefAttributes<HTMLElement>> =
+forwardRef(function Text(props: TextProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, TextContext);
   let {elementType: ElementType = 'span', ...domProps} = props;
   // @ts-ignore

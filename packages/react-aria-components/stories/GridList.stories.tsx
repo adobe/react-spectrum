@@ -27,6 +27,7 @@ import {
   ListLayout,
   Modal,
   ModalOverlay,
+  ModalOverlayProps,
   Popover,
   Size,
   Tag,
@@ -36,17 +37,21 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: GridList
+} as ComponentMeta<typeof GridList>;
 
-export const GridListExample = (args) => (
+export type GridListStory = ComponentStoryFn<typeof GridList>;
+
+export const GridListExample: GridListStory = (args) => (
   <GridList
     {...args}
     className={styles.menu}
@@ -138,7 +143,7 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export function VirtualizedGridList() {
+export let VirtualizedGridList: GridListStory = () => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -181,9 +186,9 @@ export function VirtualizedGridList() {
       </GridList>
     </Virtualizer>
   );
-}
+};
 
-export function VirtualizedGridListGrid() {
+export let VirtualizedGridListGrid: GridListStory = () => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -200,7 +205,7 @@ export function VirtualizedGridListGrid() {
       </GridList>
     </Virtualizer>
   );
-}
+};
 
 let renderEmptyState = ({isLoading}) => {
   return  (
@@ -233,14 +238,14 @@ const MyGridListLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncGridList = (args) => {
+function AsyncGridListRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -265,22 +270,23 @@ export const AsyncGridList = (args) => {
       <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </GridList>
   );
-};
+}
 
-AsyncGridList.story = {
+export let AsyncGridList: ComponentStoryObj<typeof AsyncGridListRender> = {
+  render: (args) => <AsyncGridListRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export const AsyncGridListVirtualized = (args) => {
+function AsyncGridListVirtualizedRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -311,13 +317,14 @@ export const AsyncGridListVirtualized = (args) => {
   );
 };
 
-AsyncGridListVirtualized.story = {
+export let AsyncGridListVirtualized: ComponentStoryObj<typeof AsyncGridListVirtualizedRender> = {
+  render: (args) => <AsyncGridListVirtualizedRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export function TagGroupInsideGridList() {
+export let TagGroupInsideGridList: GridListStory = () => {
   return (
     <GridList
       className={styles.menu}
@@ -359,7 +366,7 @@ export function TagGroupInsideGridList() {
       </MyGridListItem>
     </GridList>
   );
-}
+};
 
 const GridListDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -402,7 +409,7 @@ const GridListDropdown = () => {
   );
 };
 
-function GridListInModalPickerRender(props) {
+function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
   const [mainModalOpen, setMainModalOpen] = useState(true);
   return (
     <>
@@ -447,7 +454,7 @@ function GridListInModalPickerRender(props) {
   );
 }
 
-export const GridListInModalPicker = {
+export let GridListInModalPicker: ComponentStoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
     docs: {

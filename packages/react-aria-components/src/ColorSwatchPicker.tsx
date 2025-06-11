@@ -6,7 +6,7 @@ import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
@@ -20,13 +20,15 @@ export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>
   layout?: 'grid' | 'stack'
 }
 
-export const ColorSwatchPickerContext = createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
+export const ColorSwatchPickerContext: Context<ContextValue<ColorSwatchPickerProps, HTMLDivElement>> = createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
 const ColorMapContext = createContext<Map<string, Color> | null>(null);
 
 /**
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
-export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatchPicker:
+  React.ForwardRefExoticComponent<ColorSwatchPickerProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSwatchPickerContext);
   let state = useColorPickerState(props);
   let colorMap = useMemo(() => new Map(), []);
@@ -68,7 +70,9 @@ export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPicke
   isDisabled?: boolean
 }
 
-export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatchPickerItem:
+  React.ForwardRefExoticComponent<ColorSwatchPickerItemProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
   let propColor = props.color || '#0000';
   let color = useMemo(() => typeof propColor === 'string' ? parseColor(propColor) : propColor, [propColor]);
   let {locale} = useLocale();

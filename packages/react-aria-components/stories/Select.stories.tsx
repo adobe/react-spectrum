@@ -11,17 +11,21 @@
  */
 
 import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React from 'react';
+import React, {JSX} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: Select
+} as ComponentMeta<typeof Select>;
 
-export const SelectExample = () => (
+export type SelectStory = ComponentStoryFn<typeof Select>;
+
+export const SelectExample: SelectStory = () => (
   <Select data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -42,7 +46,7 @@ export const SelectExample = () => (
   </Select>
 );
 
-export const SelectRenderProps = () => (
+export const SelectRenderProps: SelectStory = () => (
   <Select data-testid="select-render-props">
     {({isOpen}) => (
       <>
@@ -66,7 +70,7 @@ export const SelectRenderProps = () => (
 
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
-export const SelectManyItems = () => (
+export const SelectManyItems: SelectStory = () => (
   <Select>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -84,7 +88,7 @@ export const SelectManyItems = () => (
   </Select>
 );
 
-export const VirtualizedSelect = () => (
+export const VirtualizedSelect: SelectStory = () => (
   <Select>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -119,7 +123,7 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncVirtualizedCollectionRenderSelect = (args) => {
+function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -169,7 +173,8 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   );
 };
 
-AsyncVirtualizedCollectionRenderSelect.story = {
+export const AsyncVirtualizedCollectionRenderSelect: ComponentStoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
+  render: (args) => <AsyncVirtualizedCollectionRenderSelectRender {...args} />,
   args: {
     delay: 50
   }

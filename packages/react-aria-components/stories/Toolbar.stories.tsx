@@ -10,17 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
+import {Checkbox, Link, ToggleButton, Toolbar} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Orientation} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: Toolbar
+} as ComponentMeta<typeof Toolbar>;
 
-export const ToolbarExample = (props: ToolbarProps) => {
+export type ToolbarStory = ComponentStoryFn<typeof Toolbar>;
+
+export const ToolbarExample: ToolbarStory = (props) => {
   return (
     <div>
       <label htmlFor="before">Input Before Toolbar</label>

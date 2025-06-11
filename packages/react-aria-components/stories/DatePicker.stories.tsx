@@ -12,14 +12,18 @@
 
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar} from 'react-aria-components';
 import clsx from 'clsx';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: DatePicker
+} as ComponentMeta<typeof DatePicker>;
 
-export const DatePickerExample = () => (
+export type DatePickerStory = ComponentStoryFn<typeof DatePicker>;
+
+export const DatePickerExample: DatePickerStory = () => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -52,7 +56,7 @@ export const DatePickerExample = () => (
   </DatePicker>
 );
 
-export const DatePickerTriggerWidthExample = () => (
+export const DatePickerTriggerWidthExample: DatePickerStory = () => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
@@ -87,7 +91,7 @@ export const DatePickerTriggerWidthExample = () => (
   </DatePicker>
 );
 
-export const DateRangePickerExample = () => (
+export const DateRangePickerExample: DatePickerStory = () => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -126,7 +130,7 @@ export const DateRangePickerExample = () => (
   </DateRangePicker>
 );
 
-export const DateRangePickerTriggerWidthExample = () => (
+export const DateRangePickerTriggerWidthExample: DatePickerStory = () => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>

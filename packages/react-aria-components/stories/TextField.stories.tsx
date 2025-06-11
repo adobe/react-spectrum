@@ -12,14 +12,18 @@
 
 import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: TextField
+} as ComponentMeta<typeof TextField>;
 
-export const TextfieldExample = () => {
+export type TextFieldStory = ComponentStoryFn<typeof TextField>;
+
+export const TextfieldExample: TextFieldStory = () => {
   return (
     <TextField data-testid="textfield-example">
       <Label>First name</Label>
@@ -28,7 +32,7 @@ export const TextfieldExample = () => {
   );
 };
 
-export const TextFieldSubmitExample = (args) => {
+export const TextFieldSubmitExample: TextFieldStory = (args) => {
   return (
     <Form>
       <TextField className={classNames(styles, 'textfieldExample')} name="email" type="email" isRequired {...args}>

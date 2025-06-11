@@ -11,13 +11,17 @@
  */
 
 import {Button, Group, Input, Label, NumberField} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: NumberField
+} as ComponentMeta<typeof NumberField>;
 
-export const NumberFieldExample = {
+export type NumberFieldStory = ComponentStoryObj<typeof NumberField>;
+
+export const NumberFieldExample: NumberFieldStory = {
   args: {
     defaultValue: 0,
     minValue: 0,

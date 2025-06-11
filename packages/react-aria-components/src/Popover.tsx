@@ -85,7 +85,7 @@ interface PopoverContextValue extends PopoverProps {
   clearContexts?: Context<any>[]
 }
 
-export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
+export const PopoverContext: Context<ContextValue<PopoverContextValue, HTMLElement>> = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
 
 // Stores a ref for the portal container for a group of popovers (e.g. submenus).
 const PopoverGroupContext = createContext<RefObject<Element | null> | null>(null);
@@ -93,7 +93,9 @@ const PopoverGroupContext = createContext<RefObject<Element | null> | null>(null
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
+export const Popover:
+  (props: PopoverProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);

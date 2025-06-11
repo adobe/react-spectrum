@@ -12,11 +12,11 @@
 
 import {DOMProps, ValidationResult} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 import {Text} from './Text';
 
-export const FieldErrorContext = createContext<ValidationResult | null>(null);
+export const FieldErrorContext: Context<ValidationResult | null> = createContext<ValidationResult | null>(null);
 
 export interface FieldErrorRenderProps extends ValidationResult {}
 export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps {}
@@ -24,7 +24,9 @@ export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOM
 /**
  * A FieldError displays validation errors for a form field.
  */
-export const FieldError = forwardRef(function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
+export const FieldError:
+  React.ForwardRefExoticComponent<FieldErrorProps & React.RefAttributes<HTMLElement>> =
+forwardRef(function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
   let validation = useContext(FieldErrorContext);
   if (!validation?.isInvalid) {
     return null;

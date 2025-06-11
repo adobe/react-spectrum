@@ -14,7 +14,7 @@ import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRe
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -227,7 +227,9 @@ export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-export const ResizableTableContainer = forwardRef(function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ResizableTableContainer:
+  React.ForwardRefExoticComponent<ResizableTableContainerProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
   let containerRef = useObjectRef(ref);
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -282,9 +284,9 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
   );
 });
 
-export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
-export const TableStateContext = createContext<TableState<any> | null>(null);
-export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+export const TableContext: Context<ContextValue<TableProps, HTMLTableElement>> = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
+export const TableStateContext: Context<TableState<any> | null> = createContext<TableState<any> | null>(null);
+export const TableColumnResizeStateContext: Context<TableColumnResizeState<unknown> | null> = createContext<TableColumnResizeState<unknown> | null>(null);
 
 export interface TableRenderProps {
   /**
@@ -331,7 +333,9 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
+export const Table:
+  React.ForwardRefExoticComponent<TableProps & React.RefAttributes<HTMLTableElement>> =
+forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -600,7 +604,9 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
       {props.children}
     </Collection>
   )
-);
+) satisfies <T extends object>(props: TableHeaderProps<T> & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null as
+<T extends object>(props: TableHeaderProps<T> & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null;
+
 
 function TableHeaderRow({item}: {item: GridNode<any>}) {
   let ref = useRef<HTMLTableRowElement>(null);
@@ -689,7 +695,7 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps> {
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<unknown>) => {
+export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<object>) => {
   let ref = useObjectRef<HTMLTableHeaderCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -769,7 +775,9 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       </Provider>
     </TH>
   );
-});
+}) satisfies (props: ColumnProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null as
+(props: ColumnProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null;
+
 
 export interface ColumnResizerRenderProps {
   /**
@@ -811,7 +819,9 @@ interface ColumnResizerContextValue {
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
 
-export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColumnResizer:
+  React.ForwardRefExoticComponent<ColumnResizerProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let layoutState = useContext(TableColumnResizeStateContext);
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
@@ -989,7 +999,9 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {emptyState}
     </TBody>
   );
-});
+}) satisfies <T extends object>(props: TableBodyProps<T> & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null as
+<T extends object>(props: TableBodyProps<T> & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null;
+
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
@@ -1025,7 +1037,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   'item',
-  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement>, item: GridNode<T>) => {
+  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement>, item: GridNode<object>) => {
     let ref = useObjectRef<HTMLTableRowElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
@@ -1164,7 +1176,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       </Collection>
     );
   }
-);
+) satisfies <T extends object>(props: RowProps<T> & React.RefAttributes<HTMLTableRowElement>) => ReactElement | null as
+<T extends object>(props: RowProps<T> & React.RefAttributes<HTMLTableRowElement>) => ReactElement | null;
+
 
 export interface CellRenderProps {
   /**
@@ -1205,7 +1219,7 @@ export interface CellProps extends RenderProps<CellRenderProps> {
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<unknown>) => {
+export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<object>) => {
   let ref = useObjectRef<HTMLTableCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
@@ -1249,7 +1263,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       </CollectionRendererContext.Provider>
     </TD>
   );
-});
+}) satisfies (props: CellProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null as
+(props: CellProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null;
+
 
 function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
@@ -1359,7 +1375,7 @@ export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator(props: TableLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -1409,7 +1425,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
           {...mergeProps(filterDOMProps(props as any), rowProps)}
           {...renderProps}
           role="row"
-          ref={ref}>
+          ref={ref as ForwardedRef<HTMLTableRowElement>}>
           <TD role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
           </TD>
@@ -1417,4 +1433,6 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
       )}
     </>
   );
-});
+}) satisfies <T extends object>(props: TableLoadingSentinelProps & React.RefAttributes<T>) => ReactElement | null as
+<T extends object>(props: TableLoadingSentinelProps & React.RefAttributes<T>) => ReactElement | null;
+

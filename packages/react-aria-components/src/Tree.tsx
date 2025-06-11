@@ -21,7 +21,7 @@ import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRender
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
@@ -147,14 +147,16 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
 }
 
 
-export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-export const TreeStateContext = createContext<TreeState<any> | null>(null);
+export const TreeContext: Context<ContextValue<TreeProps<any>, HTMLDivElement>> = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const TreeStateContext: Context<TreeState<any> | null> = createContext<TreeState<any> | null>(null);
 
 /**
  * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
  * and selection.
  */
-export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Tree:
+  <T extends object>(props: TreeProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, TreeContext);
 
@@ -457,9 +459,10 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', func
       {renderProps.children}
     </CollectionRendererContext.Provider>
   );
-});
+}) satisfies (props: TreeItemContentProps & React.RefAttributes<object>) => React.ReactElement | null as
+(props: TreeItemContentProps & React.RefAttributes<object>) => React.ReactElement | null;
 
-export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
+export const TreeItemContentContext: Context<TreeItemContentRenderProps | null> = createContext<TreeItemContentRenderProps | null>(null);
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeItemOptions, 'hasChildItems'> {
   /** The unique id of the tree row. */
@@ -693,7 +696,9 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
       </div>
     </>
   );
-});
+}) satisfies <T extends object>(props: TreeItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
+<T extends object>(props: TreeItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+
 
 export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   /**
@@ -705,7 +710,7 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
 
 export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader(props: TreeLoaderProps,  ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(TreeStateContext)!;
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
@@ -732,7 +737,7 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
     <>
       <div
         role="row"
-        ref={ref}
+        ref={ref as ForwardedRef<HTMLDivElement>}
         {...mergeProps(filterDOMProps(props as any), ariaProps)}
         {...renderProps}
         data-level={level}>
@@ -742,7 +747,9 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
       </div>
     </>
   );
-});
+}) satisfies (props: TreeLoaderProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
+(props: TreeLoaderProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+
 
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
   if (!expanded) {

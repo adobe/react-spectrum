@@ -12,23 +12,27 @@
 
 import {action} from '@storybook/addon-actions';
 import {classNames} from '@react-spectrum/utils';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: ToggleButton
+} as ComponentMeta<typeof ToggleButton>;
 
-export const ToggleButtonExample = () => {
+export type ToggleButtonStory = ComponentStoryFn<typeof ToggleButton>;
+
+export const ToggleButtonExample: ToggleButtonStory = () => {
 
   const [textColor, setTextColor] = useState('black');
 
   return (
     <ToggleButton
-      className={classNames(styles, 'toggleButtonExample')} 
-      data-testid="toggle-button-example" 
-      onKeyUp={action('keyup')} 
+      className={classNames(styles, 'toggleButtonExample')}
+      data-testid="toggle-button-example"
+      onKeyUp={action('keyup')}
       onPress={action('press')}
       onHoverStart={() => setTextColor('red')}
       onHoverEnd={() => setTextColor('black')}

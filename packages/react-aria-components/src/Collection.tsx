@@ -12,7 +12,7 @@
 import {CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
 import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
-import React, {cloneElement, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {cloneElement, Context, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
 import {StyleProps} from './utils';
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
@@ -97,16 +97,18 @@ interface SectionContextValue {
   render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>, className?: string) => ReactElement
 }
 
-export const SectionContext = createContext<SectionContextValue | null>(null);
+export const SectionContext: Context<SectionContextValue | null> = createContext<SectionContextValue | null>(null);
 
 /** @deprecated */
-export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
+export const Section =
+/*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<object>): JSX.Element => {
   let {name, render} = useContext(SectionContext)!;
   if (process.env.NODE_ENV !== 'production') {
     console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
   }
   return render(props, ref, section, 'react-aria-Section');
-});
+}) satisfies <T extends object>(props: SectionProps<T> & React.RefAttributes<HTMLElement>) => ReactElement | null as
+  <T extends object>(props: SectionProps<T> & React.RefAttributes<HTMLElement>) => ReactElement | null;
 
 export interface CollectionBranchProps {
   /** The collection of items to render. */
@@ -211,7 +213,7 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   return afterIndicators;
 }
 
-export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
+export const CollectionRendererContext: Context<CollectionRenderer> = createContext<CollectionRenderer>(DefaultCollectionRenderer);
 
 type PersistedKeysReturnValue = Set<Key> | null;
 export function usePersistedKeys(focusedKey: Key | null): PersistedKeysReturnValue {

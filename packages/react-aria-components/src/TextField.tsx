@@ -18,7 +18,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 
@@ -50,7 +50,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'plac
   isInvalid?: boolean
 }
 
-export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
+export const TextFieldContext: Context<ContextValue<TextFieldProps, HTMLDivElement>> = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
@@ -122,4 +122,6 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       </Provider>
     </div>
   );
-});
+}) satisfies (props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
+(props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+

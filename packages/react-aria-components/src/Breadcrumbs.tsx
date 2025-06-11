@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -26,12 +26,14 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
   onAction?: (key: Key) => void
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
+export const BreadcrumbsContext: Context<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>> = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
 
 /**
  * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
  */
-export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+export const Breadcrumbs:
+  <T extends object>(props: BreadcrumbsProps<T> & React.RefAttributes<HTMLOListElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let {navProps} = useBreadcrumbs(props);
@@ -75,7 +77,9 @@ export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
 /**
  * A Breadcrumb represents an individual item in a `<Breadcrumbs>` list.
  */
-export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
+export const Breadcrumb:
+  (props: BreadcrumbProps & React.RefAttributes<object>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
   let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;

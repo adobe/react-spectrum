@@ -30,7 +30,7 @@ import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, us
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -87,15 +87,17 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
-export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>(null);
-export const CalendarStateContext = createContext<CalendarState | null>(null);
-export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
+export const CalendarContext: Context<ContextValue<CalendarProps<any>, HTMLDivElement>> = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
+export const RangeCalendarContext: Context<ContextValue<RangeCalendarProps<any>, HTMLDivElement>> = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>(null);
+export const CalendarStateContext: Context<CalendarState | null> = createContext<CalendarState | null>(null);
+export const RangeCalendarStateContext: Context<RangeCalendarState | null> = createContext<RangeCalendarState | null>(null);
 
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Calendar:
+  <T extends DateValue>(props: CalendarProps<T> & React.RefAttributes<HTMLDivElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -168,7 +170,9 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 /**
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const RangeCalendar:
+  <T extends DateValue>(props: RangeCalendarProps<T> & React.RefAttributes<HTMLDivElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RangeCalendarContext);
   let {locale} = useLocale();
   let state = useRangeCalendarState({
@@ -352,7 +356,9 @@ const InternalCalendarGridContext = createContext<InternalCalendarGridContextVal
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
+export const CalendarGrid:
+  (props: CalendarGridProps & React.RefAttributes<HTMLTableElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let calenderProps = useSlottedContext(CalendarContext)!;
@@ -422,7 +428,10 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 /**
  * A calendar grid header displays a row of week day names at the top of a month.
  */
-const CalendarGridHeaderForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
+const CalendarGridHeaderForwardRef:
+  (props: CalendarGridHeaderProps & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
+
 export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
 export interface CalendarHeaderCellProps extends DOMProps {}
@@ -443,7 +452,10 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
 /**
  * A calendar header cell displays a week day name at the top of a column within a calendar.
  */
-const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
+const CalendarHeaderCellForwardRef:
+  React.ForwardRefExoticComponent<CalendarHeaderCellProps & React.RefAttributes<HTMLTableCellElement>> =
+forwardRef(CalendarHeaderCell);
+
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
 export interface CalendarGridBodyProps extends StyleProps {
@@ -480,7 +492,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 /**
  * A calendar grid body displays a grid of calendar cells within a month.
  */
-const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
+const CalendarGridBodyForwardRef: (props: CalendarGridBodyProps & React.RefAttributes<HTMLTableSectionElement>) => ReactElement | null = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
@@ -491,7 +503,7 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>,
 /**
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+export const CalendarCell: (props: CalendarCellProps & React.RefAttributes<HTMLTableCellElement>) => ReactElement | null = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;

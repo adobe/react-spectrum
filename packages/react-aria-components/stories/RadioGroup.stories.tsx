@@ -11,14 +11,18 @@
  */
 
 import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: RadioGroup
+} as ComponentMeta<typeof RadioGroup>;
 
-export const RadioGroupExample = () => {
+export type RadioGroupStory = ComponentStoryFn<typeof RadioGroup>;
+
+export const RadioGroupExample: RadioGroupStory = () => {
   return (
     <RadioGroup
       data-testid="radio-group-example"
@@ -31,9 +35,9 @@ export const RadioGroupExample = () => {
   );
 };
 
-export const RadioGroupControlledExample = () => {
+export const RadioGroupControlledExample: RadioGroupStory = () => {
   let [selected, setSelected] = useState<string|null>(null);
-  
+
   return (
     <RadioGroup
       data-testid="radio-group-example"
@@ -48,7 +52,7 @@ export const RadioGroupControlledExample = () => {
   );
 };
 
-export const RadioGroupInDialogExample = () => {
+export const RadioGroupInDialogExample: RadioGroupStory = () => {
   return (
     <DialogTrigger>
       <Button>Open dialog</Button>
@@ -81,7 +85,14 @@ export const RadioGroupInDialogExample = () => {
             {({close}) => (
               <>
                 <div>
-                  <RadioGroupExample />
+                  <RadioGroup
+                    data-testid="radio-group-example"
+                    className={styles.radiogroup}>
+                    <Label>Favorite pet</Label>
+                    <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                    <Radio className={styles.radio} value="cats">Cat</Radio>
+                    <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                  </RadioGroup>
                 </div>
                 <div>
                   <Button onPress={close} style={{marginTop: 10}}>
@@ -97,7 +108,7 @@ export const RadioGroupInDialogExample = () => {
   );
 };
 
-export const RadioGroupSubmitExample = () => {
+export const RadioGroupSubmitExample: RadioGroupStory = () => {
   return (
     <Form>
       <RadioGroup

@@ -19,7 +19,7 @@ import {InputContext} from './Input';
 import {InputDOMProps, ValidationResult} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface ColorFieldRenderProps {
@@ -46,7 +46,7 @@ export interface ColorFieldRenderProps {
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps {
   /**
-   * The color channel that this field edits. If not provided, 
+   * The color channel that this field edits. If not provided,
    * the color is edited as a hex value.
    */
   channel?: ColorChannel,
@@ -57,12 +57,14 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'pl
   colorSpace?: ColorSpace
 }
 
-export const ColorFieldStateContext = createContext<ColorFieldState | null>(null);
+export const ColorFieldStateContext: Context<ColorFieldState | null> = createContext<ColorFieldState | null>(null);
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorField:
+  React.ForwardRefExoticComponent<ColorFieldProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorFieldContext);
   if (props.channel) {
     return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;

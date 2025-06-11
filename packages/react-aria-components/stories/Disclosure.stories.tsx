@@ -11,6 +11,7 @@
  */
 
 import {Button, Heading} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Disclosure, DisclosurePanel} from '../src/Disclosure';
 import React from 'react';
 import './styles.css';
@@ -18,9 +19,11 @@ import './styles.css';
 export default {
   title: 'React Aria Components',
   component: Disclosure
-};
+} as ComponentMeta<typeof Disclosure>;
 
-export const DisclosureExample = (args: any) => (
+export type DisclosureStory = ComponentStoryFn<typeof Disclosure>;
+
+export const DisclosureExample: DisclosureStory = (args) => (
   <Disclosure {...args}>
     {({isExpanded}) => (
       <>
@@ -35,7 +38,7 @@ export const DisclosureExample = (args: any) => (
   </Disclosure>
 );
 
-export const DisclosureControlledExample = (args: any) => {
+export const DisclosureControlledExample: DisclosureStory = (args) => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>

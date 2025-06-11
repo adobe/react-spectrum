@@ -24,6 +24,7 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import React, {
+  Context,
   createContext,
   ForwardedRef,
   forwardRef,
@@ -41,9 +42,9 @@ import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
-export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
-export const MenuStateContext = createContext<TreeState<any> | null>(null);
-export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
+export const MenuContext: Context<ContextValue<MenuProps<any>, HTMLDivElement>> = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
+export const MenuStateContext: Context<TreeState<any> | null> = createContext<TreeState<any> | null>(null);
+export const RootMenuTriggerStateContext: Context<RootMenuTriggerState | null> = createContext<RootMenuTriggerState | null>(null);
 const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
@@ -146,7 +147,9 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
       {props.children[1]}
     </Provider>
   );
-}, props => props.children[0]);
+}, props => props.children[0]) satisfies (props: SubmenuTriggerProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null as
+(props: SubmenuTriggerProps & React.RefAttributes<HTMLDivElement>) => ReactElement | null;
+
 
 export interface MenuRenderProps {
   /**
@@ -164,7 +167,9 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Menu:
+  <T extends object>(props: MenuProps<T> & React.RefAttributes<HTMLDivElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
@@ -282,7 +287,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
+function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<object>, className = 'react-aria-MenuSection') {
   let state = useContext(MenuStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -321,7 +326,9 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner) satisfies
+<T extends object>(props: MenuSectionProps<T> & React.RefAttributes<HTMLElement>) => ReactElement | null as
+<T extends object>(props: MenuSectionProps<T> & React.RefAttributes<HTMLElement>) => ReactElement | null;
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -358,8 +365,8 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
+export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
+  [props, forwardedRef] = useContextProps(props, forwardedRef as ForwardedRef<HTMLDivElement>, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
@@ -422,4 +429,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
       </Provider>
     </ElementType>
   );
-});
+}) satisfies <T extends object>(props: MenuItemProps<T> & React.RefAttributes<T>) => ReactElement | null as
+<T extends object>(props: MenuItemProps<T> & React.RefAttributes<T>) => ReactElement | null;
+
