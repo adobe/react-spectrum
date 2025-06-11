@@ -33,7 +33,7 @@ interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
-const TIMEOUT_DURATION = 250;
+const TIMEOUT_DURATION = 325;
 
 export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
   let {validationBehavior, focus} = props;
