@@ -33,6 +33,8 @@ interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
+const TIMEOUT_DURATION = 250;
+
 export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
   let {validationBehavior, focus} = props;
 
@@ -48,7 +50,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
         justBlurredRef.current
       )
     ) {
-      timeoutIdRef.current = setTimeout(() => announce(errorMessage, 'polite'), 250);
+      timeoutIdRef.current = setTimeout(() => announce(errorMessage, 'polite'), TIMEOUT_DURATION);
     }
   }
 
@@ -167,7 +169,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
     };
-  }, [justBlurredRef, onBlur, onChange, onInvalid, onReset, ref, validationBehavior]);
+  }, [onBlur, onChange, onInvalid, onReset, ref, validationBehavior]);
 }
 
 function getValidity(input: ValidatableElement): ValidityState {
