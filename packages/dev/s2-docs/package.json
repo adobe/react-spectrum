@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
-    "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs"
+    "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
+    "generate:og": "node scripts/generateOg.mjs"
   },
   "targets": {
     "react-static": {
@@ -34,7 +35,10 @@
     "react-aria-components": "^1.7.1",
     "react-dom": "^19",
     "react-stately": "^3.38.0",
-    "tree-sitter-highlight": "^1.0.1"
+    "tree-sitter-highlight": "^1.0.1",
+    "satori": "^0.15.2",
+    "gray-matter": "^4.0.3",
+    "sharp": "^0.33.5"
   },
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",
