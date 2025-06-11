@@ -306,9 +306,9 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
 /**
  * A ListBoxSection represents a section within a ListBox.
  */
-export const ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner) satisfies
-  <T extends object>(props: ListBoxSectionProps<T> & React.RefAttributes<HTMLElement>) => React.ReactElement | null as
-  <T extends object>(props: ListBoxSectionProps<T> & React.RefAttributes<HTMLElement>) => React.ReactElement | null;
+export const ListBoxSection:
+  <T extends object>(props: ListBoxSectionProps<T> & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
+/*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner);
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
@@ -333,7 +333,9 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
 /**
  * A ListBoxItem represents an individual option in a ListBox.
  */
-export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
+export const ListBoxItem:
+  <T extends object>(props: ListBoxItemProps<T> & React.RefAttributes<T>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -416,8 +418,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
       </Provider>
     </ElementType>
   );
-}) satisfies <T extends object>(props: ListBoxItemProps<T> & React.RefAttributes<T>) => React.ReactElement | null as
-<T extends object>(props: ListBoxItemProps<T> & React.RefAttributes<T>) => React.ReactElement | null;
+});
 
 
 function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -482,7 +483,9 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
   isLoading?: boolean
 }
 
-export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
+export const UNSTABLE_ListBoxLoadingSentinel:
+  (props: ListBoxLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+createLeafComponent('loader', function ListBoxLoadingIndicator(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -533,6 +536,5 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
       )}
     </>
   );
-}) satisfies (props: ListBoxLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-(props: ListBoxLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 

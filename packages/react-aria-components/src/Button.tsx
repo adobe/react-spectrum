@@ -106,7 +106,9 @@ export const ButtonContext: Context<ContextValue<ButtonContextValue, HTMLButtonE
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
-export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+export const Button:
+  (props: ButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null =
+/*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
@@ -181,8 +183,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       </ProgressBarContext.Provider>
     </button>
   );
-}) satisfies (props: ButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null as
- (props: ButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null;
+});
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true

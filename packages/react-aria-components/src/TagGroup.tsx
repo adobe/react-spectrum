@@ -203,7 +203,9 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
 /**
  * A Tag is an individual item within a TagList.
  */
-export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
+export const Tag:
+  (props: TagProps & React.RefAttributes<object>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});
@@ -264,6 +266,5 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
       </div>
     </div>
   );
-}) satisfies (props: TagProps & React.RefAttributes<object>) => React.ReactElement | null as
-(props: TagProps & React.RefAttributes<object>) => React.ReactElement | null;
+});
 

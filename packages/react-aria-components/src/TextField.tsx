@@ -55,7 +55,9 @@ export const TextFieldContext: Context<ContextValue<TextFieldProps, HTMLDivEleme
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-export const TextField = /*#__PURE__*/ createHideableComponent(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const TextField:
+  (props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ createHideableComponent(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -122,6 +124,5 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       </Provider>
     </div>
   );
-}) satisfies (props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-(props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 

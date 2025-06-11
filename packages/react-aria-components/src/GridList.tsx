@@ -282,7 +282,9 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
+export const GridListItem:
+ <T extends object>(props: GridListItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef as ForwardedRef<HTMLDivElement>);
@@ -417,8 +419,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
       </div>
     </>
   );
-}) satisfies <T extends object>(props: GridListItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-<T extends object>(props: GridListItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 
 function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
@@ -511,7 +512,9 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
+export const UNSTABLE_GridListLoadingSentinel:
+  (props: GridListLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -556,5 +559,4 @@ export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponen
       )}
     </>
   );
-}) satisfies (props: GridListLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-(props: GridListLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});

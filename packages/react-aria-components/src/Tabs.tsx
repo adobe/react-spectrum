@@ -244,7 +244,9 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
+export const Tab:
+  (props: TabProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
@@ -286,14 +288,15 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       {renderProps.children}
     </ElementType>
   );
-}) satisfies (props: TabProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null as
-(props: TabProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null;
+});
 
 
 /**
  * A TabPanel provides the content for a tab.
  */
-export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
+export const TabPanel:
+  (props: TabPanelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {tabPanelProps} = useTabPanel(props, state, ref);
@@ -343,6 +346,5 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
       </Provider>
     </div>
   );
-}) satisfies (props: TabPanelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-(props: TabPanelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 

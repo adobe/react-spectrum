@@ -56,7 +56,9 @@ let filterHoverProps = (props: InputProps) => {
 /**
  * An input allows a user to input text.
  */
-export const Input = /*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+export const Input:
+  (props: InputProps & React.RefAttributes<HTMLInputElement>) => React.ReactElement | null =
+/*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -89,6 +91,5 @@ export const Input = /*#__PURE__*/ createHideableComponent(function Input(props:
       data-focus-visible={isFocusVisible || undefined}
       data-invalid={isInvalid || undefined} />
   );
-}) satisfies (props: InputProps & React.RefAttributes<HTMLInputElement>) => React.ReactElement | null as
-(props: InputProps & React.RefAttributes<HTMLInputElement>) => React.ReactElement | null;
+});
 

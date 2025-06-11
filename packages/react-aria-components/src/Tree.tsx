@@ -448,7 +448,9 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+export const TreeItemContent:
+  (props: TreeItemContentProps & React.RefAttributes<object>) => React.ReactElement | null =
+/*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -459,8 +461,7 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', func
       {renderProps.children}
     </CollectionRendererContext.Provider>
   );
-}) satisfies (props: TreeItemContentProps & React.RefAttributes<object>) => React.ReactElement | null as
-(props: TreeItemContentProps & React.RefAttributes<object>) => React.ReactElement | null;
+});
 
 export const TreeItemContentContext: Context<TreeItemContentRenderProps | null> = createContext<TreeItemContentRenderProps | null>(null);
 
@@ -487,7 +488,9 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const TreeItem:
+  <T extends object>(props: TreeItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -696,8 +699,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
       </div>
     </>
   );
-}) satisfies <T extends object>(props: TreeItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-<T extends object>(props: TreeItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 
 
 export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
@@ -710,7 +712,9 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
 
 export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader(props: TreeLoaderProps,  ref: ForwardedRef<Element>, item: Node<object>) {
+export const UNSTABLE_TreeLoadingIndicator:
+  (props: TreeLoaderProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+createLeafComponent('loader', function TreeLoader(props: TreeLoaderProps,  ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(TreeStateContext)!;
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
@@ -747,8 +751,7 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
       </div>
     </>
   );
-}) satisfies (props: TreeLoaderProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null as
-(props: TreeLoaderProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null;
+});
 
 
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
