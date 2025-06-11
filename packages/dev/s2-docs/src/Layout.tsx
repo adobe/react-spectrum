@@ -1,36 +1,38 @@
-import {Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
+import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
 import '@react-spectrum/s2/page.css';
 import './font.css';
 import './anatomy.css';
+import {AdobeLogo} from './AdobeLogo';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {Link} from './Link';
+import {MobileHeader} from './MobileHeader';
+import {PickerItem, SearchField} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
-import {SearchField} from '@react-spectrum/s2';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
 import {VisualExample} from './VisualExample';
 
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} className={style({font: 'heading-3xl', marginY: 0})}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id={anchorId(children)} className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
   h2: ({children, ...props}) => <h2 {...props} id={anchorId(children)} className={style({font: 'heading-xl', marginTop: 48, marginBottom: 24})}>{children}</h2>,
   h3: ({children, ...props}) => <h3 {...props} id={anchorId(children)} className={style({font: 'heading', marginTop: 32, marginBottom: 24})}>{children}</h3>,
   h4: ({children, ...props}) => <h4 {...props} id={anchorId(children)} className={style({font: 'heading-sm'})}>{children}</h4>,
-  p: ({children, ...props}) => <p {...props} className={style({font: 'body-lg', marginY: 24})}>{children}</p>,
+  p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
-  li: ({children, ...props}) => <li {...props} className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>{children}</li>,
+  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginTop: 0, marginBottom: 8})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
-  PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-xl'})}>{children}</p>,
+  PageDescription: ({children, ...props}) => <p {...props} className={style({font: {default: 'body-lg', lg: 'body-xl'}})}>{children}</p>,
   VisualExample,
   Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
   PropTable,
@@ -52,27 +54,96 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
       </head>
-      <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxWidth: 1600, marginX: 'auto', padding: 12})}>
-        <SearchField />
+      <body
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          maxWidth: {
+            default: 'full',
+            lg: 1280
+          },
+          marginX: 'auto',
+          marginY: 0,
+          padding: {
+            default: 0,
+            lg: 12
+          }
+        })}>
+        <div
+          className={style({
+            display: {
+              default: 'none',
+              lg: 'flex'
+            },
+            paddingBottom: 12,
+            width: 'full'
+          })}>
+          <div
+            className={style({
+              display: 'flex',
+              gap: 12,
+              alignItems: 'center',
+              flexGrow: 1
+            })}>
+            <AdobeLogo />
+            <h2 
+              className={style({
+                font: 'heading-sm',
+                marginY: 0
+              })}>
+              React Aria
+            </h2>
+          </div>
+          <SearchField />
+        </div>
+        <MobileHeader
+          toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+          nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
         <div className={style({display: 'flex', gap: 32, width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}
             className={style({
               backgroundColor: 'base',
-              padding: 40,
-              borderRadius: 'xl',
-              boxShadow: 'emphasized',
-              maxWidth: 1280,
+              padding: {
+                default: 12,
+                lg: 40
+              },
+              borderRadius: {
+                default: 'none',
+                lg: 'xl'
+              },
+              boxShadow: {
+                lg: 'emphasized'
+              },
+              width: 'full',
               boxSizing: 'border-box',
               flexGrow: 1,
               display: 'flex',
               justifyContent: 'space-between'
             })}>
-            <article className={style({maxWidth: 768, width: 'full'})}>
+            <article
+              className={style({
+                maxWidth: 768,
+                width: 'full'
+              })}>
               {React.cloneElement(children, {components})}
             </article>
-            <aside className={style({position: 'sticky', top: 0, height: 'fit', maxHeight: 'screen', overflow: 'auto', paddingY: 32, boxSizing: 'border-box'})}>
+            <aside
+              className={style({
+                position: 'sticky',
+                top: 0,
+                height: 'fit',
+                maxHeight: 'screen',
+                overflow: 'auto',
+                paddingY: 32,
+                boxSizing: 'border-box',
+                display: {
+                  default: 'none',
+                  lg: 'block'
+                }
+              })}>
               <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
               <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
             </aside>
@@ -96,4 +167,28 @@ function Toc({toc}) {
       </SideNav>
     </OnPageNav>
   );
+}
+
+function MobileToc({toc}) {
+  return (
+    <MobileOnPageNav>
+      {renderMobileToc(toc)}
+    </MobileOnPageNav>
+  );
+}
+
+function renderMobileToc(toc, seen = new Map()) {
+  return toc.map((c) => {
+    let href = '#' + anchorId(c.title);
+    if (seen.has(href)) {
+      seen.set(href, seen.get(href) + 1);
+      href += '-' + seen.get(href);
+    } else {
+      seen.set(href, 1);
+    }
+    return (<React.Fragment key={href}>
+      <PickerItem id={href} href={href}>{c.title}</PickerItem>
+      {c.children.length > 0 && renderMobileToc(c.children, seen)}
+    </React.Fragment>);
+  });
 }

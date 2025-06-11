@@ -3,7 +3,7 @@ import {renderHTMLfromMarkdown, TInterface} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
-const codeStyle = style({font: 'code-sm'});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface StateTableProps {
   properties: TInterface['properties'],
@@ -37,7 +37,8 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
               </code>
             </TableCell>
             {showSelector && <TableCell role="rowheader">
-              {prop.type === 'property' && prop.selector ? <Code lang="css">{prop.selector}</Code> : <code className={codeStyle}>—</code>}
+              <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>CSS Selector: </strong>
+              {prop.type === 'property' && prop.selector ? <span className={codeStyle}><Code lang="css">{prop.selector}</Code></span> : <code className={codeStyle}>—</code>}
             </TableCell>}
             <TableCell>{prop.description && renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell>
           </TableRow>

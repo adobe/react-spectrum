@@ -76,7 +76,7 @@ export type TType =
   | TReference
   | TMapped;
 
-const codeStyle = style({font: 'code-sm'});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 let LINKS = {};
 export function setLinks(links) {
@@ -255,27 +255,27 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
   let openElement, closeElement;
 
   if (params.length === 0) {
-    openElement = <span className="token punctuation">{open}</span>;
-    closeElement = <span className="token punctuation">{close}</span>;
+    openElement = <Punctuation>{open}</Punctuation>;
+    closeElement = <Punctuation>{close}</Punctuation>;
   } else if (params.length > 2 || alwaysIndent) {
     // Always indent.
-    openElement =  <span className="token punctuation">{open.trimEnd() + '\n' + large + '  '}</span>;
-    closeElement =  <span className="token punctuation">{'\n' + large + close.trimStart()}</span>;
+    openElement =  <Punctuation>{open.trimEnd() + '\n' + large + '  '}</Punctuation>;
+    closeElement =  <Punctuation>{'\n' + large + close.trimStart()}</Punctuation>;
     large += '  ';
     // small += '  ';
   } else {
     // Indent on small screens. Don't indent on large screens.
     openElement = (
       <>
-        {/* <span className="token punctuation small">{open.trimEnd() + '\n' + small + '  '}</span> */}
-        <span className="token punctuation large">{open}</span>
+        {/* <Punctuation>{open.trimEnd() + '\n' + small + '  '}</Punctuation> */}
+        <Punctuation>{open}</Punctuation>
       </>
     );
 
     closeElement = (
       <>
-        {/* <span className="token punctuation small">{'\n' + small + close.trimStart()}</span> */}
-        <span className="token punctuation large">{close}</span>
+        {/* <Punctuation>{'\n' + small + close.trimStart()}</Punctuation> */}
+        <Punctuation>{close}</Punctuation>
       </>
     );
 
@@ -289,6 +289,13 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
       {closeElement}
     </>
   );
+}
+
+function Punctuation({children}) {
+  if (typeof children === 'string' && /\s/.test(children)) {
+    return children;
+  }
+  return <><wbr />{children}</>;
 }
 
 export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverIndent}: {elements: TType[], joiner: string, minIndent?: number, newlineBefore?: boolean, neverIndent?: boolean}) {
@@ -331,11 +338,10 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
     .filter(Boolean)
     .reduce<ReactNode[]>((acc, v, i) => [
       ...acc,
-      <span
-        className="token punctuation"
+      <Punctuation
         key={`join${i}`}>
         {contents}
-      </span>,
+      </Punctuation>,
       <React.Fragment
         key={`type${i}`}>
         <Type type={v} />
@@ -367,9 +373,9 @@ export function TypeParameters({typeParameters}: {typeParameters: TType[]}) {
 
   return (
     <>
-      <span className="token punctuation">&lt;</span>
+      <Punctuation>&lt;</Punctuation>
       <JoinList elements={typeParameters} joiner=", " neverIndent />
-      <span className="token punctuation">&gt;</span>
+      <Punctuation>&gt;</Punctuation>
     </>
   );
 }
@@ -388,7 +394,7 @@ function TypeParameter({name, constraint, default: defaultType}: TTypeParameter)
       }
       {defaultType &&
         <>
-          <span className="token punctuation">{' = '}</span>
+          <Punctuation>{' = '}</Punctuation>
           <Type type={defaultType} />
         </>
       }
@@ -404,7 +410,7 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
       <Indent params={parameters} open="(" close=")">
         <JoinList elements={parameters} joiner=", " />
       </Indent>
-      <span className="token punctuation">{name ? ': ' : ' => '}</span>
+      <Punctuation>{name ? ': ' : ' => '}</Punctuation>
       <Type type={returnType} />
     </>
   );
@@ -413,18 +419,18 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
 function Parameter({name, value, default: defaultValue, optional, rest}: TParameter) {
   return (
     <>
-      {rest && <span className="token punctuation">...</span>}
-      <span className="token">{name}</span>
-      {optional && <span className="token punctuation">?</span>}
+      {rest && <Punctuation>...</Punctuation>}
+      {name}
+      {optional && <Punctuation>?</Punctuation>}
       {value &&
         <>
-          <span className="token punctuation">: </span>
+          <Punctuation>: </Punctuation>
           <Type type={value} />
         </>
       }
       {defaultValue &&
         <>
-          <span className="token punctuation"> = </span>
+          <Punctuation> = </Punctuation>
           <span dangerouslySetInnerHTML={{__html: defaultValue}} />
         </>
       }
@@ -548,7 +554,7 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                     <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
                       <strong className={style({font: 'body', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
                       {prop.default
-                        ? <Code lang="tsx">{prop.default}</Code>
+                        ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>
                         : '—'
                       }
                     </TableCell>
@@ -578,7 +584,7 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                       <Indent params={prop.value.parameters} open="(" close=")">
                         <JoinList elements={prop.value.parameters} joiner=", " />
                       </Indent>
-                      <span className="token punctuation">{': '}</span>
+                      <Punctuation>{': '}</Punctuation>
                       <Type type={prop.value.return} />
                     </code>
                   </TableCell>
@@ -596,8 +602,8 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
 }
 
 function ObjectType({properties}: TObject) {
-  const startObject = <span className="token punctuation">{'{'}</span>;
-  const endObject = <span className="token punctuation">{'}'}</span>;
+  const startObject = <Punctuation>{'{'}</Punctuation>;
+  const endObject = <Punctuation>{'}'}</Punctuation>;
   return (
     <>
       {startObject}
@@ -616,12 +622,12 @@ function ObjectType({properties}: TObject) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={k ?? i} style={{paddingLeft: '1.5em'}}>
-            {indexType && <span className="token punctuation">[</span>}
+            {indexType && <Punctuation>[</Punctuation>}
             <span className={`token ${token}`}>{k}</span>
-            {indexType && <span className="token punctuation">{': '}</span>}
+            {indexType && <Punctuation>{': '}</Punctuation>}
             {indexType && <Type type={indexType} />}
-            {indexType && <span className="token punctuation">]</span>}
-            <span className="token punctuation">{punc}</span>
+            {indexType && <Punctuation>]</Punctuation>}
+            <Punctuation>{punc}</Punctuation>
             <Type type={value} />
             {i < arr.length - 1 ? ',' : ''}
           </div>
@@ -636,7 +642,7 @@ function ArrayType({elementType}: TArray) {
   return (
     <>
       <Type type={elementType} />
-      <span className="token punctuation">[]</span>
+      <Punctuation>[]</Punctuation>
     </>
   );
 }
@@ -659,9 +665,9 @@ function ConditionalType({checkType, extendsType, trueType, falseType}: TConditi
       <span className={codeStyles.keyword}>extends</span>
       {' '}
       <Type type={extendsType} />
-      <span className="token punctuation">{' ? '}</span>
+      <Punctuation>{' ? '}</Punctuation>
       <Type type={trueType} />
-      <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
+      <Punctuation>{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</Punctuation>
       <Type type={falseType} />
     </>
   );
@@ -678,9 +684,9 @@ function TemplateLiteral({elements}: TTemplate) {
 
         return (
           <React.Fragment key={i}>
-            <span className="token punctuation">{'${'}</span>
+            <Punctuation>{'${'}</Punctuation>
             <Type type={element} />
-            <span className="token punctuation">{'}'}</span>
+            <Punctuation>{'}'}</Punctuation>
           </React.Fragment>
         );
       })}

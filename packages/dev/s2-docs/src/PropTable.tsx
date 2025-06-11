@@ -50,7 +50,7 @@ const DEFAULT_EXPANDED = new Set([
   'Value'
 ]);
 
-const codeStyle = style({font: 'code-sm'});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface PropTableProps {
   component: TComponent,
@@ -141,14 +141,13 @@ function Rows({props, showDefault}: {props: TInterface['properties'], showDefaul
         </TableCell>
         {showDefault &&
           <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
-            <strong className={style({font: 'body', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
+            <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
             {prop.default
-              ? <Code lang="tsx">{prop.default}</Code>
+              ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>
               : '—'
             }
           </TableCell>
         }
-        {/* <TableCell>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell> */}
       </TableRow>
       {prop.description && <TableRow>
         <TableCell colSpan={3}>{renderHTMLfromMarkdown(prop.description, {forceInline: true})}</TableCell>

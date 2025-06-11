@@ -6,9 +6,10 @@ import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffec
 import {ExampleOutput} from './ExampleOutput';
 import {IconPicker} from './IconPicker';
 import type {PropControl} from './VisualExample';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {useLocale} from 'react-aria';
 import { getColorChannels, parseColor } from 'react-stately';
+import { mergeStyles } from '../../../@react-spectrum/s2/style/runtime';
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -356,9 +357,15 @@ function BooleanControl({control, value, onChange}: ControlProps) {
 }
 
 function UnionControl({control, value, onChange, isPicker = false}) {
-  if (isPicker || control.value.elements.reduce((p, v) => p + v.value).length > 30) {
+  let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
+  if (isPicker || length > 16) {
     return (
-      <Picker label={control.name} contextualHelp={<PropContextualHelp control={control} />} selectedKey={value == null && control.optional && !control.default ? '__none' : value} onSelectionChange={v => onChange(v === '__none' ? null : v)} styles={style({width: 130})}>
+      <Picker 
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        selectedKey={value == null && control.optional && !control.default ? '__none' : value}
+        onSelectionChange={v => onChange(v === '__none' ? null : v)}
+        styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.map(element => (
           <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
@@ -368,20 +375,49 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   }
 
   return (
-    <Wrapper control={control}>
-      <ToggleButtonGroup aria-label={control.name} disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]} onSelectionChange={keys => onChange([...keys][0])} density="compact" styles={style({marginY: 4})}>
+    <Wrapper
+      control={control}
+      styles={style({
+        gridColumnStart: 1,
+        gridColumnEnd: {
+          default: 1,
+          isLong: -1
+        }
+      })({isLong: length > 12 || control.value.elements.length > 3})}>
+      <ToggleButtonGroup
+        aria-label={control.name}
+        disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]}
+        onSelectionChange={keys => onChange([...keys][0])}
+        density="compact"
+        styles={style({marginY: 4})}>
         {control.value.elements.map(element => (
-          <ToggleButton key={element.value} id={element.value}>{element.value}</ToggleButton>
+          <ToggleButton
+            key={element.value}
+            id={element.value}
+            styles={style({
+              flexGrow: {
+                default: 1,
+                lg: 0
+              }
+            })}>
+            {element.value}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
     </Wrapper>
   );
 }
 
-function Wrapper({control, children}: {control: PropControl, children: ReactNode}) {
+function Wrapper({control, children, styles}: {control: PropControl, children: ReactNode, styles?: StyleString}) {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <span className={style({font: 'ui', color: 'neutral-subdued'})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
+    <div className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
+      <span className={style({font: 'ui', color: 'neutral-subdued', wordBreak: 'break-all'})}>
+        {control.name}
+        <span className={style({whiteSpace: 'nowrap'})}>
+          &nbsp;
+          {control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}
+        </span>
+      </span>
       {children}
     </div>
   );
@@ -531,7 +567,7 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
   if (control.slots) {
     let objectValue = typeof value === 'string' ? {text: value} : value;
     return (
-      <Wrapper control={control}>
+      <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
         {control.slots.icon && (
           <div className={style({display: 'flex', gap: 4})}>
             <TextField

@@ -16,7 +16,10 @@ const example = style({
     default: 32,
     ':is([data-example-switcher] > *)': 0
   },
-  padding: 24
+  padding: {
+    default: 12,
+    lg: 24
+  }
 });
 
 const standaloneCode = style({
@@ -28,7 +31,10 @@ const standaloneCode = style({
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
-  font: 'code-sm',
+  font: {
+    default: 'code-xs',
+    lg: 'code-sm'
+  },
   whiteSpace: 'pre-wrap'
 });
 

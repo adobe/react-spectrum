@@ -1,3 +1,4 @@
+import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import React, {HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -41,27 +42,42 @@ const tableColumn = style({
 const tableCell = style({
   paddingX: 16,
   height: {
-    align: {
-      center: 40
+    sm: {
+      align: {
+        center: 40
+      }
     }
   },
   paddingTop: {
-    align: {
-      top: 4,
-      center: 0,
-      bottom: 12
+    default: 4,
+    sm: {
+      align: {
+        top: 4,
+        center: 0,
+        bottom: 12
+      }
     }
   },
   paddingBottom: {
-    align: {
-      top: 12,
-      center: 0,
-      bottom: 0
+    default: {
+      ':last-child': 4,
+      align: {
+        bottom: 0
+      }
+    },
+    sm: {
+      align: {
+        top: 12,
+        center: 0,
+        bottom: 0
+      }
     }
   },
   borderWidth: 0,
   borderBottomWidth: {
-    default: 1,
+    default: 0,
+    ':last-child': 1,
+    sm: 1,
     ':is(tbody:last-child > tr:last-child > *)': 0,
     isBorderHidden: 0
   },
@@ -106,5 +122,5 @@ export function TableCell({hideBorder, styles, ...props}: TableCellProps) {
   } else if (props.colSpan) {
     align = 'top';
   }
-  return <td {...props} className={tableCell({isBorderHidden: hideBorder, align}) + (styles || '')} />;
+  return <td {...props} className={mergeStyles(tableCell({isBorderHidden: hideBorder, align}), styles)} />;
 }

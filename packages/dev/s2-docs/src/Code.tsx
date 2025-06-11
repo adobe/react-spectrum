@@ -104,7 +104,7 @@ export function Code({children, lang, hideImports = true}: ICodeProps) {
     return <code>{renderChildren(lineNodes, 0)}</code>;
   }
 
-  return <code className={style({font: 'code-sm', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
+  return <code className={style({font: {default: 'code-xs', lg: 'code-sm'}, backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
 }
 
 function lines(node: HastNode) {

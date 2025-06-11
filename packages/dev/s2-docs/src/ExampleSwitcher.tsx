@@ -13,12 +13,23 @@ const exampleStyle = style({
   flexDirection: 'column'
 });
 
+const switcher = style({
+  marginTop: {
+    default: 12,
+    lg: 24
+  },
+  marginStart: {
+    default: 12,
+    lg: 24
+  }
+});
+
 export function ExampleSwitcher({examples = ['Vanilla CSS', 'Tailwind'] as Key[], children}) {
   let [selected, setSelected] = useState<Key>(examples[0]);
 
   return (
     <div className={exampleStyle} data-example-switcher>
-      <SegmentedControl selectedKey={selected} onSelectionChange={setSelected} styles={style({marginTop: 20, marginStart: 20})}>
+      <SegmentedControl selectedKey={selected} onSelectionChange={setSelected} styles={switcher}>
         {examples.map(example => <SegmentedControlItem key={example} id={example}>{example}</SegmentedControlItem>)}
       </SegmentedControl>
       {children[examples.indexOf(selected)]}

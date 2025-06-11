@@ -7,27 +7,63 @@ import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
-  padding: 24,
+  padding: {
+    default: 12,
+    lg: 24
+  },
   marginTop: 20,
   borderRadius: 'xl',
   display: 'grid',
   gridTemplateAreas: {
-    layout: {
-      narrow: [
-        'example controls',
-        'files controls'
-      ],
-      wide: [
-        'example controls',
-        'files files'
-      ]
+    default: [
+      'example',
+      'controls',
+      'files'
+    ],
+    lg: {
+      layout: {
+        narrow: [
+          'example controls',
+          'files controls'
+        ],
+        wide: [
+          'example controls',
+          'files files'
+        ]
+      }
     }
   },
-  gridTemplateColumns: ['1fr', 'auto'],
-  gridTemplateRows: ['1fr', 'auto'],
-  gap: 24,
+  gridTemplateColumns: {
+    default: ['1fr'],
+    lg: ['1fr', 'auto']
+  },
+  gridTemplateRows: {
+    default: ['auto', 'auto', 'auto'],
+    lg: ['1fr', 'auto']
+  },
+  gap: {
+    default: 12,
+    lg: 24
+  },
   width: 'full',
   boxSizing: 'border-box'
+});
+
+const controlsStyle = style({
+  display: 'grid',
+  gridTemplateColumns: {
+    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    lg: ['1fr']
+  },
+  gridAutoFlow: 'dense',
+  gridAutoRows: 'min-content',
+  maxWidth: 'full',
+  // overflow: 'hidden',
+  gap: {
+    default: 12,
+    lg: 16
+  },
+  gridArea: 'controls'
 });
 
 export interface VisualExampleProps {
@@ -119,10 +155,10 @@ export function VisualExample({component, docs, links, importSource, props, init
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
       <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} />
-        <div className={style({display: 'flex', flexDirection: 'column', gap: 16, gridArea: 'controls'})}>
+        <div className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
-        <div style={{gridArea: 'files'}}>
+        <div style={{gridArea: 'files', overflow: 'hidden'}}>
           {files ? <Files files={files}>{output}</Files> : output}
         </div>
       </div>
