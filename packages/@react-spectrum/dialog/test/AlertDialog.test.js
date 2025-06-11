@@ -196,11 +196,11 @@ describe('AlertDialog', function () {
 
     let dialog = getByTestId('alert-dialog');
     expect(dialog).toBeDefined();
-    let cancelBtn = getByTestId('alert-dialog-cancel-btn');
+    let cancelBtn = getByTestId('rsp-alertDialog-cancelButton');
     expect(cancelBtn).toBeDefined();
-    let secondaryBtn = getByTestId('alert-dialog-secondary-btn');
+    let secondaryBtn = getByTestId('rsp-alertDialog-secondaryButton');
     expect(secondaryBtn).toBeDefined();
-    let primaryBtn = getByTestId('alert-dialog-primary-btn');
+    let primaryBtn = getByTestId('rsp-alertDialog-confirmButton');
     expect(primaryBtn).toBeDefined();
   });
 });
