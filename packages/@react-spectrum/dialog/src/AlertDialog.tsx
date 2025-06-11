@@ -19,7 +19,7 @@ import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
