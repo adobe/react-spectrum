@@ -449,7 +449,8 @@ export default function SearchMenu(props) {
                 showCards={showCards}
                 renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
                 filter={filter}
-                noResultsText={(value) => `No results for "${value}" in ${tab.label}`} />
+                noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
+                closeSearchMenu={closeSearchMenu} />
             </TabPanel>
           ))}
         </Tabs>

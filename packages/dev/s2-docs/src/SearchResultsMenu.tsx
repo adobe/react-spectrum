@@ -1,7 +1,8 @@
 'use client';
 
-import {Autocomplete, AutocompleteProps, Collection} from 'react-aria-components';
-import {Breadcrumb, Breadcrumbs, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Text} from '@react-spectrum/s2';
+import {ActionButton, Breadcrumb, Breadcrumbs, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Text} from '@react-spectrum/s2';
+import {Autocomplete, AutocompleteProps, Collection, OverlayTriggerStateContext, Provider} from 'react-aria-components';
+import Close from '@react-spectrum/s2/icons/Close';
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import type {TextFieldRef} from '@react-types/textfield';
@@ -43,7 +44,24 @@ interface SearchResultsMenuProps {
   showCards: boolean,
   renderCardList: () => React.ReactNode,
   filter?: AutocompleteProps['filter'],
-  noResultsText?: (value: string) => string
+  noResultsText?: (value: string) => string,
+  closeSearchMenu: () => void
+}
+
+function CloseButton({closeSearchMenu}: {closeSearchMenu: () => void}) {
+  return (
+    <div style={{position: 'absolute', top: 8, right: 8}}>
+      <Provider
+        values={[
+          // Remove the pressed state. S2/RAC bug?
+          [OverlayTriggerStateContext, null]
+        ]}>
+        <ActionButton isQuiet onPress={closeSearchMenu}>
+          <Close />
+        </ActionButton>
+      </Provider>
+    </div> 
+  );
 }
 
 export default function SearchResultsMenu({
@@ -63,7 +81,8 @@ export default function SearchResultsMenu({
   showCards,
   renderCardList,
   filter,
-  noResultsText = (value) => `No results for "${value}" in ${libraryName}` // Default with library name
+  noResultsText = (value) => `No results for "${value}" in ${libraryName}`, // Default with library name
+  closeSearchMenu
 }: SearchResultsMenuProps) {
 
   // Handler for ArrowLeft in submenu view
@@ -105,7 +124,7 @@ export default function SearchResultsMenu({
           aria-label={`Submenu for ${submenuParentItem.name}`}>
           <div onKeyDown={handleSubmenuKeyDown} role="region" aria-label="Submenu search">
             {/* Search Field for Submenu */}
-            <div className={style({display: 'flex', marginX: 'auto', justifyContent: 'center', alignItems: 'center'})}>
+            <div className={style({display: 'flex', marginX: 'auto', justifyContent: 'center', alignItems: 'center', marginInlineEnd: 64, marginInlineStart: 0})}>
               <SearchField
                 value={submenuSearchValue}
                 onChange={onSubmenuSearchValueChange}
@@ -114,6 +133,9 @@ export default function SearchResultsMenu({
                 size="L"
                 aria-label={`Search sections within ${submenuParentItem.name}`}
                 styles={style({width: '[500px]'})} />
+
+              <CloseButton closeSearchMenu={closeSearchMenu} />
+
             </div>
 
             {/* Breadcrumbs Wrapper */}
@@ -163,6 +185,9 @@ export default function SearchResultsMenu({
               aria-label={`Search ${libraryName}`}
               styles={style({width: '[500px]'})} />
           </div>
+
+          <CloseButton closeSearchMenu={closeSearchMenu} />
+
           {showCards && renderCardList()}
 
           <div style={{display: showCards ? 'none' : 'block'}} className={style({maxHeight: '[85vh]', overflow: 'auto'})}>
