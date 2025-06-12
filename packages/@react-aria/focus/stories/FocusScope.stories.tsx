@@ -29,7 +29,7 @@ const meta = {
       data: 'Should not be able to click or navigate back into inputs from previous "dialogs".'
     }
   },
-  excludeStories: ['Example'] as const
+  excludeStories: ['Example']
 } as Meta<typeof Example>;
 
 export default meta;

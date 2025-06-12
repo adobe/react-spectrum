@@ -31,12 +31,12 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {PressResponder} from '@react-aria/interactions';
 import React, {JSX, useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {StoryFn, StoryObj} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useClipboard, useDrag, useDraggableCollection, useDraggableItem, useDrop} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
@@ -55,10 +55,12 @@ for (let i = 0; i < 20; i++) {
   manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
 }
 
-export default {
+const meta = {
   title: 'Drag and Drop',
-  excludeStories: ['Droppable', 'Draggable'] as const
-};
+  excludeStories: ['Droppable', 'Draggable']
+} as Meta<typeof Droppable>;
+
+export default meta;
 
 export type DnDStory = StoryFn<typeof Droppable>;
 export type DnDStoryObj = StoryObj<typeof Droppable>;
