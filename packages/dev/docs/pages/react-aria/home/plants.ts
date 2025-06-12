@@ -9,6 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+export interface Plant {
+  id: number,
+  common_name: string,
+  scientific_name: string[],
+  watering: string,
+  sunlight: string[],
+  cycle: string,
+  default_image: {
+    thumbnail: string
+  },
+  isFavorite?: boolean
+}
+
 export default [
   {
     id: 1,
@@ -230,4 +244,4 @@ export default [
       thumbnail: new URL('plants/nasturtium.jpg?as=webp', import.meta.url).toString()
     }
   }
-];
+] as Plant[];
