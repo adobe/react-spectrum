@@ -64,9 +64,9 @@ async function loadFont(url) {
   return new Uint8Array(await res.arrayBuffer());
 }
 
-const [interRegular, interBold] = await Promise.all([
-  loadFont('https://github.com/rsms/inter/blob/v3.19/docs/font-files/Inter-Regular.otf?raw=true'),
-  loadFont('https://github.com/rsms/inter/blob/v3.19/docs/font-files/InterDisplay-Bold.otf?raw=true')
+const [adobeCleanRegular, adobeCleanBold] = await Promise.all([
+  loadFont('https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3'),
+  loadFont('https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3')
 ]);
 
 await fs.mkdir(outputDir, {recursive: true});
@@ -92,7 +92,7 @@ for (let file of files) {
           height: '100%',
           backgroundColor: '#ffffff',
           padding: '80px',
-          fontFamily: 'Inter',
+          fontFamily: 'adobe-clean',
           color: '#000000',
           alignItems: 'center',
           flexDirection: 'row',
@@ -128,9 +128,8 @@ for (let file of files) {
                   type: 'div',
                   props: {
                     style: {
-                      fontSize: 72,
-                      fontWeight: 700,
-                      lineHeight: 1.2
+                      fontSize: 92,
+                      fontWeight: 700
                     },
                     children: title
                   }
@@ -139,9 +138,8 @@ for (let file of files) {
                   type: 'div',
                   props: {
                     style: {
-                      marginTop: 12,
-                      fontSize: 40,
-                      fontWeight: 500,
+                      fontSize: 48,
+                      fontWeight: 400,
                       color: '#666'
                     },
                     children: subtitle
@@ -158,14 +156,14 @@ for (let file of files) {
       height: 630,
       fonts: [
         {
-          name: 'Inter',
-          data: interRegular,
+          name: 'adobe-clean',
+          data: adobeCleanRegular,
           weight: 400,
           style: 'normal'
         },
         {
-          name: 'Inter',
-          data: interBold,
+          name: 'adobe-clean',
+          data: adobeCleanBold,
           weight: 700,
           style: 'normal'
         }
