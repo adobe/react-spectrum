@@ -18,7 +18,7 @@ import {
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {useCallback, useRef} from 'react';
@@ -28,7 +28,9 @@ import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
-export const ButtonGroup = React.forwardRef(function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const ButtonGroup:
+  React.ForwardRefExoticComponent<SpectrumButtonGroupProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
