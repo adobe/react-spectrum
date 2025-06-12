@@ -13,9 +13,11 @@ import {
   TabListStateContext
 } from 'react-aria-components';
 // import {centerBaseline} from './CenterBaseline';
+import {DOMRef} from '@react-types/shared';
 import {focusRing, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {IconContext, Text, TextContext} from '@react-spectrum/s2';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
@@ -49,9 +51,10 @@ const tabs = style({
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
  */
-export const Tabs = forwardRef(function Tabs(props: TabsProps) {
+export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
   return (
-    <div className={tabs}>
+    <div className={tabs} ref={domRef}>
       <RACTabs
         {...props}
         style={{display: 'contents'}}>
