@@ -5,7 +5,7 @@ import {AutocompleteProps, Button, ButtonProps, Modal, useFilter} from 'react-ar
 import CardList from './CardList';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
@@ -118,7 +118,7 @@ let modalStyle = style({
 });
 
 export default function SearchMenu(props) {
-  let {pages, currentPage, setSearchOpen, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
+  let {pages, currentPage, toggleShowSearchMenu, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
 
   let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
@@ -224,6 +224,22 @@ export default function SearchMenu(props) {
     return sections;
   }, [transformedComponents]);
 
+    // Handler for Breadcrumb action and closing submenu via Left Arrow
+  const handleBreadcrumbAction = useCallback(() => {
+    setIsSubmenuOpen(false);
+    setSearchValue(previousSearchValue); // Restore main search value
+    setSubmenuSearchValue('');
+    setSubmenuParentItem(null);
+    setSubmenuItems([]);
+      // Focus the MAIN search field after state update allows it to render
+    setTimeout(() => {
+          // Check ref exists and points to the MAIN search field before focusing
+      if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === 'Search React Spectrum') {
+        searchRef.current.focus();
+      }
+    }, 10);
+  }, [previousSearchValue, searchRef, setIsSubmenuOpen, setSearchValue, setSubmenuItems, setSubmenuParentItem, setSubmenuSearchValue]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -231,21 +247,21 @@ export default function SearchMenu(props) {
         if (isSubmenuOpen) {
           handleBreadcrumbAction();
         } else {
-          setSearchOpen(false);
+          toggleShowSearchMenu();
         }
       } else if (!isSubmenuOpen &&
         ((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) || e.key === '/')) {
         e.preventDefault();
-        setSearchOpen((prev) => !prev);
+        toggleShowSearchMenu();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isMac, isSubmenuOpen, previousSearchValue]);
+  }, [handleBreadcrumbAction, isMac, isSubmenuOpen, previousSearchValue, toggleShowSearchMenu]);
 
   let onFocusSearch = () => {
-    setSearchOpen(true);
+    toggleShowSearchMenu();
     if (isSearchOpen && !isSubmenuOpen) {
       setTimeout(() => searchRef.current?.focus(), 10);
     }
@@ -273,7 +289,7 @@ export default function SearchMenu(props) {
       setPreviousSearchValue('');
       setSubmenuSearchValue('');
     }
-  }, [isSearchOpen, searchValue, submenuSearchValue]);
+  }, [currentLibrary, isSearchOpen, searchValue, setIsSubmenuOpen, submenuSearchValue]);
 
   let {contains} = useFilter({sensitivity: 'base'});
 
@@ -343,22 +359,6 @@ export default function SearchMenu(props) {
     setIsSubmenuOpen(true);
   };
 
-  // Handler for Breadcrumb action and closing submenu via Left Arrow
-  const handleBreadcrumbAction = () => {
-    setIsSubmenuOpen(false);
-    setSearchValue(previousSearchValue); // Restore main search value
-    setSubmenuSearchValue('');
-    setSubmenuParentItem(null);
-    setSubmenuItems([]);
-    // Focus the MAIN search field after state update allows it to render
-    setTimeout(() => {
-        // Check ref exists and points to the MAIN search field before focusing
-      if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === 'Search React Spectrum') {
-        searchRef.current.focus();
-      }
-    }, 10);
-  };
-
   // Type to search handler
   const handleButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     // Ignore modifier keys, navigation keys, Enter, Escape, etc.
@@ -370,7 +370,8 @@ export default function SearchMenu(props) {
   };
 
   let handleButtonPress = () => {
-    setSearchOpen((prev) => !prev); setIsSubmenuOpen(false);
+    toggleShowSearchMenu();
+    setIsSubmenuOpen(false);
   };
 
   return (
@@ -384,7 +385,7 @@ export default function SearchMenu(props) {
         gap: 16
       })}>
       <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} />
-      <Modal isDismissable isOpen={isSearchOpen} onOpenChange={setSearchOpen} className={modalStyle}>
+      <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
         <Tabs
           aria-label="Libraries"
           keyboardActivation="manual"

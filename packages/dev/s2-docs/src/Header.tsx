@@ -35,7 +35,7 @@ export default function Header(props: PageProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
-  let handleMenuButtonPress = () => {
+  let toggleShowSearchMenu = () => {
     if (!document.startViewTransition) {
       setSearchOpen((prev) => !prev);
       setIsSubmenuOpen(false);
@@ -64,7 +64,7 @@ export default function Header(props: PageProps) {
             paddingX: 16
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={handleMenuButtonPress}>
+            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 {/* @ts-ignore */}
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'}}>
@@ -78,7 +78,7 @@ export default function Header(props: PageProps) {
               <ChevronDown UNSAFE_className={'react-spectrum-select-chevron' + style({paddingEnd: 8})} UNSAFE_style={{width: 18}} />
             </ActionButton>
           </div>
-          <SearchMenu pages={pages} currentPage={currentPage} setSearchOpen={setSearchOpen} setIsSubmenuOpen={setIsSubmenuOpen} isSearchOpen={searchOpen} isSubmenuOpen={isSubmenuOpen} />
+          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} setIsSubmenuOpen={setIsSubmenuOpen} isSearchOpen={searchOpen} isSubmenuOpen={isSubmenuOpen} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <ActionButton aria-label="React Spectrum GitHub repo" size="XL" isQuiet>
               <GithubLogo />
