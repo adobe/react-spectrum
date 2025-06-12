@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, IDropOperation, NATIVE_DRAG_TYPES} from './constants';
+import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
 import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, RefObject, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
@@ -379,7 +379,7 @@ export function setGlobalDropEffect(dropEffect: DropEffect | undefined): void {
   globalDropEffect = dropEffect;
 }
 
-export let globalAllowedDropOperations: IDropOperation[keyof IDropOperation] = DROP_OPERATION.none;
-export function setGlobalAllowedDropOperations(o: IDropOperation[keyof IDropOperation]): void {
+export let globalAllowedDropOperations: DROP_OPERATION = DROP_OPERATION.none;
+export function setGlobalAllowedDropOperations(o: DROP_OPERATION): void {
   globalAllowedDropOperations = o;
 }

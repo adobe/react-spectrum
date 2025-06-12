@@ -21,15 +21,14 @@ export interface IDropOperation {
   readonly all: number
 }
 
-export const DROP_OPERATION: IDropOperation = {
-  none: 0,
-  cancel: 0,
-  move: 1 << 0,
-  copy: 1 << 1,
-  link: 1 << 2,
-  get all() { return this.move | this.copy | this.link; }
-} as const;
-
+export enum DROP_OPERATION {
+  none = 0,
+  cancel = 0,
+  move = 1 << 0,
+  copy = 1 << 1,
+  link = 1 << 2,
+  all = move | copy | link
+}
 interface DropOperationAllowed extends IDropOperation {
   readonly copyMove: number,
   readonly copyLink: number,
@@ -57,6 +56,7 @@ interface EffectAllowed {
   6: 'copyLink',
   7: 'all'
 }
+
 export const EFFECT_ALLOWED: EffectAllowed = invert(DROP_OPERATION_ALLOWED) as unknown as EffectAllowed;
 EFFECT_ALLOWED[DROP_OPERATION.all] = 'all'; // ensure we don't map to 'uninitialized'.
 
@@ -68,12 +68,11 @@ interface DropEffect {
   7: 'all'
 }
 export const DROP_EFFECT: DropEffect = invert(DROP_OPERATION) as unknown as DropEffect;
-
 export const DROP_EFFECT_TO_DROP_OPERATION: {[name: string]: DropOperation} = {
-  none: 'cancel' as DropOperation,
-  link: 'link' as DropOperation,
-  copy: 'copy' as DropOperation,
-  move: 'move' as DropOperation
+  none: 'cancel',
+  link: 'link',
+  copy: 'copy',
+  move: 'move'
 };
 
 interface DropOperationToDropEffect {
