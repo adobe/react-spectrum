@@ -65,7 +65,7 @@ const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles: (props: ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {
   isInGroup: boolean,
   isStaticColor: boolean
-}, overrides?: StyleString<string> | null) => string =
+}, overrides?: StyleString | null) => StyleString =
 style<
   ButtonRenderProps &
   ActionButtonStyleProps &

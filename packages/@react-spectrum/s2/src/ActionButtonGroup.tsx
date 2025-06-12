@@ -52,7 +52,7 @@ export const actionGroupStyle: (props: Omit<ActionButtonGroupProps, 'children'> 
   size: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density: 'compact' | 'regular',
   orientation: 'horizontal' | 'vertical'
-}, overrides?: StyleString<string> | null) => string = style({
+}, overrides?: StyleString | null) => StyleString = style({
   display: 'flex',
   flexDirection: {
     orientation: {
