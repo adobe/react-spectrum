@@ -118,7 +118,7 @@ let modalStyle = style({
 });
 
 export default function SearchMenu(props) {
-  let {pages, currentPage, toggleShowSearchMenu, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
+  let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
 
   let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
@@ -242,12 +242,12 @@ export default function SearchMenu(props) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && isSubmenuOpen) {
         e.preventDefault();
         if (isSubmenuOpen) {
           handleBreadcrumbAction();
         } else {
-          toggleShowSearchMenu();
+          closeSearchMenu();
         }
       } else if (!isSubmenuOpen &&
         ((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) || e.key === '/')) {
@@ -258,7 +258,7 @@ export default function SearchMenu(props) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleBreadcrumbAction, isMac, isSubmenuOpen, previousSearchValue, toggleShowSearchMenu]);
+  }, [closeSearchMenu, handleBreadcrumbAction, isMac, isSubmenuOpen, previousSearchValue, toggleShowSearchMenu]);
 
   let onFocusSearch = () => {
     toggleShowSearchMenu();
