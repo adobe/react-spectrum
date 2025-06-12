@@ -27,7 +27,7 @@ function getButtonIcon(currentPage) {
   } else if (currentPage.url.includes('react-internationalized')) {
     return <InternationalizedLogo />;
   }
-  return <AdobeLogo size={24} className={style({marginStart: 8})} />;
+  return <AdobeLogo />;
 }
 
 export default function Header(props: PageProps) {
@@ -79,7 +79,7 @@ export default function Header(props: PageProps) {
             paddingX: 16
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu}>
+            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu} UNSAFE_style={{paddingInlineStart: 10}}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 {/* @ts-ignore */}
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'}}>

@@ -419,12 +419,12 @@ export default function SearchMenu(props) {
                   <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'}}>
                     {tab.icon}
                   </div>
-                  <div className={style({display: 'flex', flexDirection: 'column', gap: 0})}>
+                  <div>
                     {/* @ts-ignore */}
                     <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'}} className={style({fontSize: 'heading-xs'})}>
                       {tab.label}
                     </span>
-                    <span className={style({fontSize: 'ui-sm'})}>{tab.description}</span>
+                    <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
                   </div>
                 </div>
               </Tab>
