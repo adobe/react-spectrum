@@ -58,7 +58,9 @@ export const bar = () => ({
   columnGap: 12 // spacing-200
 } as const);
 
-export const track = () => ({
+export const track: () => {
+  [key: string]: any
+} = () => ({
   ...fieldInput(),
   gridArea: 'bar',
   overflow: 'hidden',

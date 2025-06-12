@@ -258,7 +258,7 @@ export const ActionButtonContext: Context<ContextValue<Partial<ActionButtonProps
  * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
 export const ActionButton:
-  ForwardRefExoticComponent<ActionButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement>>> =
+  ForwardRefExoticComponent<ActionButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
 forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);

@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {createContext, forwardRef, ReactNode} from 'react';
+import {Context, createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -55,7 +55,7 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
   label?: ReactNode
 }
 
-export const ProgressBarContext = createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressBarContext: Context<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>> = createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const indeterminateLTR = keyframes(`
   0% {

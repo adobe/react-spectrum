@@ -91,7 +91,7 @@ export interface ActionBarProps extends SlotProps {
 export const ActionBarContext: Context<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>> = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const ActionBar:
-ForwardRefExoticComponent<ActionBarProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+  ForwardRefExoticComponent<ActionBarProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
 forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);
