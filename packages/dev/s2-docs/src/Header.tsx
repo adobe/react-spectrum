@@ -1,16 +1,16 @@
 'use client';
 
 import {ActionButton} from '@react-spectrum/s2';
+import {AdobeLogo} from './icons/AdobeLogo';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {flushSync} from 'react-dom';
+import {GithubLogo} from './icons/GithubLogo';
+import {InternationalizedLogo} from './icons/InternationalizedLogo';
+import {PageProps} from '@parcel/rsc';
 import React, {useState} from 'react';
+import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import SearchMenu from './SearchMenu';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
-import {PageProps} from '@parcel/rsc';
-import { AdobeLogo } from './icons/AdobeLogo';
-import { GithubLogo } from './icons/GithubLogo';
-import { InternationalizedLogo } from './icons/InternationalizedLogo';
-import { ReactAriaLogo } from './icons/ReactAriaLogo';
-import { flushSync } from 'react-dom';
 
 function getButtonText(currentPage) {
   if (currentPage.url.includes('react-aria')) {
@@ -48,20 +48,21 @@ export default function Header(props: PageProps) {
         setIsSubmenuOpen(false);
       });
     });
-  }
+  };
 
   return (
     <>
       <header className={style({width: 'full', display: 'flex', justifyContent: 'center'})}>
-        <div className={style({
-          width: 'full', 
+        <div
+          className={style({
+            width: 'full', 
           // Matches search menu
-          maxWidth: 1240, 
-          display: 'grid',
-          gridTemplateColumns: '1fr auto 1fr',
-          alignItems: 'center',
-          paddingX: 16,
-        })}>
+            maxWidth: 1240, 
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
+            alignItems: 'center',
+            paddingX: 16
+          })}>
           <div className={style({justifySelf: 'start'})}>
             <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={handleMenuButtonPress}>
               <div className={style({display: 'flex', alignItems: 'center'})}>

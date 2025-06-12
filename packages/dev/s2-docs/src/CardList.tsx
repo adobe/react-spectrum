@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo } from "react";
-import { focusRing, style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { Card, CardPreview, Content, Text, Image } from "@react-spectrum/s2";
-import { Link } from "react-aria-components";
-import { Page } from "@parcel/rsc";
+import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
+import {focusRing, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {Link} from 'react-aria-components';
+import {Page} from '@parcel/rsc';
+import React, {useMemo} from 'react';
 
 interface IExampleSection {
   id: string,
@@ -17,11 +17,11 @@ interface IExampleItem {
   name: string,
   description?: string,
   href: string,
-  thumbnail?: URL | string,
+  thumbnail?: URL | string
 }
 
 interface CardListProps {
-  selectedLibrary: 'react-spectrum' | 'react-aria' | 'internationalized';
+  selectedLibrary: 'react-spectrum' | 'react-aria' | 'internationalized',
   pages?: Page[]
 }
 
@@ -31,7 +31,7 @@ const linkCardStyles = style({
   ...focusRing()
 });
 
-export function CardList({ selectedLibrary, pages }: CardListProps) {
+export function CardList({selectedLibrary, pages}: CardListProps) {
   let sectionsData = useMemo(() => {
     if (!pages || !Array.isArray(pages)) {
       return [];
@@ -91,12 +91,13 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
   }, [pages, selectedLibrary]);
 
   return (
-    <nav className={style({ 
-      maxHeight: '[80vh]',
-      overflow: 'auto',
-      margin: 16,
-      padding: 16,
-    })}>
+    <nav
+      className={style({ 
+        maxHeight: '[80vh]',
+        overflow: 'auto',
+        margin: 16,
+        padding: 16
+      })}>
       {sectionsData.map((section: IExampleSection) => (
         <div key={section.id}>
           <h3 
@@ -106,24 +107,23 @@ export function CardList({ selectedLibrary, pages }: CardListProps) {
               marginTop: 32,
               position: 'relative',
               scrollMarginTop: 16
-            })}
-          >
+            })}>
             {section.name}
           </h3>
           
-          <div className={style({ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, 192px)',
-            columnGap: 16,
-            rowGap: 16
-          })}>
+          <div
+            className={style({ 
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, 192px)',
+              columnGap: 16,
+              rowGap: 16
+            })}>
             {section.children && section.children.map((item) => (
               <Link href={item.href} key={item.id} className={linkCardStyles}>
                 <Card
                   id={item.id}
                   textValue={item.name}
-                  size="S"
-                >
+                  size="S">
                   <CardPreview>
                     <Image
                       alt={item.name}

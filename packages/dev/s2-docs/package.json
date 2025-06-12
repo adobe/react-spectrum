@@ -25,20 +25,24 @@
   },
   "dependencies": {
     "@parcel/rsc": "patch:@parcel/rsc@npm%3A2.14.4#~/.yarn/patches/@parcel-rsc-npm-2.14.4-224743f6b2.patch",
+    "@react-aria/focus": "^3.20.4",
+    "@react-aria/i18n": "^3.12.10",
     "@react-aria/interactions": "^3.25.1",
     "@react-aria/utils": "^3.29.0",
     "@react-spectrum/s2": "^0.9.0",
+    "@react-types/shared": "^3.30.0",
+    "@react-types/textfield": "^3.12.3",
     "globals-docs": "^2.4.1",
+    "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^6.11.0",
     "react": "^19",
     "react-aria": "^3.40.0",
     "react-aria-components": "^1.7.1",
     "react-dom": "^19",
     "react-stately": "^3.38.0",
-    "tree-sitter-highlight": "^1.0.1",
     "satori": "^0.15.2",
-    "gray-matter": "^4.0.3",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "tree-sitter-highlight": "^1.0.1"
   },
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",

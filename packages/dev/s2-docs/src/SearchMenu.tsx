@@ -1,29 +1,29 @@
 'use client';
 
-import {AutocompleteProps, Button, ButtonProps, Modal, useFilter} from 'react-aria-components';
-import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import Search from '@react-spectrum/s2/icons/Search';
-import {TextFieldRef} from '@react-types/textfield';
-import {Tab, TabList, TabPanel, Tabs} from './Tabs';
-import SearchResultsMenu from './SearchResultsMenu';
-import CardList from './CardList';
-import {ReactAriaLogo} from './icons/ReactAriaLogo';
-import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {AdobeLogo} from './icons/AdobeLogo';
+import {AutocompleteProps, Button, ButtonProps, Modal, useFilter} from 'react-aria-components';
+import CardList from './CardList';
+import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {InternationalizedLogo} from './icons/InternationalizedLogo';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {ReactAriaLogo} from './icons/ReactAriaLogo';
+import Search from '@react-spectrum/s2/icons/Search';
+import SearchResultsMenu from './SearchResultsMenu';
+import {Tab, TabList, TabPanel, Tabs} from './Tabs';
+import {TextFieldRef} from '@react-types/textfield';
 
 interface ComponentItem {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  href?: string;
+  id: string,
+  name: string,
+  category?: string,
+  description?: string,
+  href?: string
 }
 
 interface SubmenuItem {
-  id: string;
-  name: string;
-  href: string;
+  id: string,
+  name: string,
+  href: string
 }
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
@@ -99,7 +99,7 @@ function FakeSearchFieldButton({onPress, onKeyDown, ...props}: FakeSearchFieldBu
 let modalStyle = style({
   position: 'absolute',
   top: 8,
-  width: "full",
+  width: 'full',
   // Matches header
   maxWidth: 1240,
   backgroundColor: 'elevated',
@@ -114,11 +114,11 @@ let modalStyle = style({
   left: 0,
   right: 0,
   margin: 'auto',
-  maxHeight: '[90vh]',
+  maxHeight: '[90vh]'
 });
 
 export default function SearchMenu(props) {
-  let {pages, currentPage, setSearchOpen, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen } = props;
+  let {pages, currentPage, setSearchOpen, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
 
   let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
@@ -374,14 +374,15 @@ export default function SearchMenu(props) {
   };
 
   return (
-    <div className={style({ 
-      width: 'full', 
-      maxWidth: '[1280px]', 
-      display: 'grid',
-      gridTemplateColumns: 'auto 1fr auto',
-      alignItems: 'center',
-      gap: 16
-    })}>
+    <div
+      className={style({ 
+        width: 'full', 
+        maxWidth: '[1280px]', 
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto',
+        alignItems: 'center',
+        gap: 16
+      })}>
       <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={setSearchOpen} className={modalStyle}>
         <Tabs

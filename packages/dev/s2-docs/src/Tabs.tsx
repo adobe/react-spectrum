@@ -13,17 +13,15 @@ import {
   TabListStateContext
 } from 'react-aria-components';
 // import {centerBaseline} from './CenterBaseline';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {focusRing, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
+import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {IconContext, Text, TextContext} from '@react-spectrum/s2';
 import {useId, useLayoutEffect} from '@react-aria/utils';
-import {Text, TextContext, IconContext} from '@react-spectrum/s2';
 import {useLocale} from '@react-aria/i18n';
-import React from 'react';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'> {
   /** The content to display in the tabs. */
-  children: ReactNode,
+  children: ReactNode
 }
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'> {
@@ -45,13 +43,13 @@ const tabs = style({
   position: 'relative',
   display: 'flex',
   flexShrink: 0,
-  font: 'ui',
+  font: 'ui'
 });
 
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
  */
-export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+export const Tabs = forwardRef(function Tabs(props: TabsProps) {
   return (
     <div className={tabs}>
       <RACTabs
@@ -73,7 +71,7 @@ const tablist = style({
   gap: 32,
   maxWidth: 240,
   height: 'full',
-  paddingY: 4,
+  paddingY: 4
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
@@ -104,7 +102,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 }
 
 interface TabLineProps {
-  selectedTab: HTMLElement | undefined,
+  selectedTab: HTMLElement | undefined
 }
 
 const selectedIndicator = style({
@@ -138,7 +136,7 @@ const selectedIndicator = style({
 
 function TabLine(props: TabLineProps) {
   let {
-    selectedTab,
+    selectedTab
   } = props;
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);

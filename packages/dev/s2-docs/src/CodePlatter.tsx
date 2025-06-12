@@ -1,13 +1,13 @@
 'use client';
 
 import {ActionButton, ActionButtonGroup, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import ExportTo from '@react-spectrum/s2/icons/ExportTo';
 import Link from '@react-spectrum/s2/icons/Link';
 import More from '@react-spectrum/s2/icons/More';
 import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 
 const platterStyle = style({
   backgroundColor: 'layer-2',
