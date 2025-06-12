@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, SlotProps, Toolbar} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {Context, createContext, ForwardedRef, forwardRef, ForwardRefExoticComponent, RefAttributes, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {style} from '../style' with {type: 'macro'};
+import {style, StyleString} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles, SlotProps {
@@ -47,7 +47,12 @@ export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles,
   isDisabled?: boolean
 }
 
-export const actionGroupStyle = style({
+export const actionGroupStyle: (props: Omit<ActionButtonGroupProps, 'children'> & {
+  isJustified: boolean,
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  density: 'compact' | 'regular',
+  orientation: 'horizontal' | 'vertical'
+}, overrides?: StyleString<string> | null) => string = style({
   display: 'flex',
   flexDirection: {
     orientation: {
@@ -72,18 +77,20 @@ export const actionGroupStyle = style({
 }, getAllowedOverrides({height: true}));
 
 
-export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
+export const ActionButtonGroupContext: Context<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>> = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.
  */
-export const ActionButtonGroup = forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ActionButtonGroup:
+  ForwardRefExoticComponent<ActionButtonGroupProps & RefAttributes<HTMLDivElement>> =
+forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonGroupContext);
   let {
     density = 'regular',
     size = 'M',
     orientation = 'horizontal',
-    isJustified,
+    isJustified = false,
     children,
     UNSAFE_className = '',
     UNSAFE_style,
