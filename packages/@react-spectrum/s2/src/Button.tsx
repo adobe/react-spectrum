@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, iconStyle, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -19,6 +19,7 @@ import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
@@ -243,10 +244,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       }
     }
   },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
   outlineColor: {
     default: 'focus-ring',
     isStaticColor: 'transparent-overlay-1000',
@@ -376,15 +373,17 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
             }],
             [IconContext, {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({
-                size: fontRelative(20),
-                marginStart: '--iconMargin',
-                flexShrink: 0,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
-                }
-              })({isProgressVisible})
+              styles: mergeStyles(
+                iconStyle({color: 'currentColor'}),
+                style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin',
+                  flexShrink: 0,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible}))
             }]
           ]}>
           {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
@@ -458,7 +457,10 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
           }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: mergeStyles(
+              iconStyle({color: 'currentColor'}),
+              style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            )
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
