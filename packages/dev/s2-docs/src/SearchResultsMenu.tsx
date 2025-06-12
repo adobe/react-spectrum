@@ -45,7 +45,8 @@ interface SearchResultsMenuProps {
   renderCardList: () => React.ReactNode,
   filter?: AutocompleteProps['filter'],
   noResultsText?: (value: string) => string,
-  closeSearchMenu: () => void
+  closeSearchMenu: () => void,
+  isPrimary?: boolean
 }
 
 function CloseButton({closeSearchMenu}: {closeSearchMenu: () => void}) {
@@ -82,7 +83,8 @@ export default function SearchResultsMenu({
   renderCardList,
   filter,
   noResultsText = (value) => `No results for "${value}" in ${libraryName}`, // Default with library name
-  closeSearchMenu
+  closeSearchMenu,
+  isPrimary = false
 }: SearchResultsMenuProps) {
 
   // Handler for ArrowLeft in submenu view
@@ -176,13 +178,14 @@ export default function SearchResultsMenu({
         // --- Main Search Autocomplete ---
         <Autocomplete filter={filter}>
           {/* Main Search Field */}
-          <div className={style({display: 'flex', marginX: 'auto', justifyContent: 'center', alignItems: 'center'})}>
+          <div className={style({margin: 'auto', width: '[fit-content]'})}>
             <SearchField
               value={searchValue}
               onChange={onSearchValueChange}
               ref={searchRef}
               size="L"
               aria-label={`Search ${libraryName}`}
+              UNSAFE_style={{marginInlineEnd: 304, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'}}
               styles={style({width: '[500px]'})} />
           </div>
 

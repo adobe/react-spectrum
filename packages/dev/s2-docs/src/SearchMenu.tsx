@@ -27,10 +27,11 @@ interface SubmenuItem {
 }
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
-  onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => void
+  onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => void,
+  isSearchOpen: boolean
 }
 
-function FakeSearchFieldButton({onPress, onKeyDown, ...props}: FakeSearchFieldButtonProps) {
+function FakeSearchFieldButton({onPress, onKeyDown, isSearchOpen, ...props}: FakeSearchFieldButtonProps) {
   return (
     <Button
       {...props}
@@ -71,7 +72,8 @@ function FakeSearchFieldButton({onPress, onKeyDown, ...props}: FakeSearchFieldBu
           default: 0,
           isFocusVisible: 2
         }
-      })({isHovered, isFocusVisible})}>
+      })({isHovered, isFocusVisible})}
+      style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'}}>
       <Search
         UNSAFE_className={String(style({
           size: fontRelative(20),
@@ -384,7 +386,7 @@ export default function SearchMenu(props) {
         alignItems: 'center',
         gap: 16
       })}>
-      <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} />
+      <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
         <Tabs
           aria-label="Libraries"
@@ -430,7 +432,7 @@ export default function SearchMenu(props) {
               </Tab>
             ))}
           </TabList>
-          {orderedTabs.map((tab) => (
+          {orderedTabs.map((tab, i) => (
             <TabPanel key={tab.id} id={tab.id}>
               <SearchResultsMenu
                 libraryName={tab.label}
@@ -450,7 +452,8 @@ export default function SearchMenu(props) {
                 renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
                 filter={filter}
                 noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
-                closeSearchMenu={closeSearchMenu} />
+                closeSearchMenu={closeSearchMenu}
+                isPrimary={i === 0} />
             </TabPanel>
           ))}
         </Tabs>
