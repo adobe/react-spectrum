@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusScope} from '../';
-import {Meta} from '@storybook/react';
+import {FocusScope, FocusScopeProps} from '../';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -22,18 +22,20 @@ interface StoryProps {
   contain: boolean
 }
 
-const meta: Meta<StoryProps> = {
+const meta = {
   title: 'FocusScope',
   parameters: {
     description: {
       data: 'Should not be able to click or navigate back into inputs from previous "dialogs".'
     }
-  }
-};
+  },
+  excludeStories: ['Example'] as const
+} as Meta<typeof Example>;
 
 export default meta;
 
-const Template = ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
+export type FocusScopeStory = StoryFn<typeof Example>;
+export type FocusScopeStoryObj = StoryObj<typeof Example>;
 
 function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: boolean}) {
   if (!isPortaled) {
@@ -88,7 +90,7 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
   );
 }
 
-export function Example({isPortaled, contain}: StoryProps) {
+export let Example = ({isPortaled, contain}: FocusScopeProps & StoryProps): JSX.Element => {
   let [open, setOpen] = useState(false);
 
   return (
@@ -103,7 +105,10 @@ export function Example({isPortaled, contain}: StoryProps) {
       <div id={dialogsRoot} />
     </div>
   );
-}
+};
+
+export let ExampleStory: FocusScopeStory = (args) => <Example {...args} />;
+ExampleStory.storyName = 'Example';
 
 function FocusableFirstInScopeExample() {
   let [contentIndex, setContentIndex] = useState(0);
@@ -182,31 +187,31 @@ function IgnoreRestoreFocusExample() {
   );
 }
 
-export const KeyboardNavigation = {
-  render: Template,
+export const KeyboardNavigation: FocusScopeStoryObj = {
+  render: (args) => <Example {...args} />,
   args: {isPortaled: false}
 };
 
-export const KeyboardNavigationInsidePortal = {
-  render: Template,
+export const KeyboardNavigationInsidePortal: FocusScopeStoryObj = {
+  render: (args) => <Example {...args} />,
   args: {isPortaled: true}
 };
 
-export const KeyboardNavigationNoContain = {
-  render: Template,
+export const KeyboardNavigationNoContain: FocusScopeStoryObj = {
+  render: (args) => <Example {...args} />,
   args: {isPortaled: false, contain: false}
 };
 
-export const KeyboardNavigationInsidePortalNoContain = {
-  render: Template,
+export const KeyboardNavigationInsidePortalNoContain: FocusScopeStoryObj = {
+  render: (args) => <Example {...args} />,
   args: {isPortaled: true, contain: false}
 };
 
-export const IgnoreRestoreFocus = {
+export const IgnoreRestoreFocus: FocusScopeStoryObj = {
   render: () => <IgnoreRestoreFocusExample />
 };
 
-export const FocusableFirstInScope = {
+export const FocusableFirstInScope: FocusScopeStoryObj = {
   render: () => <FocusableFirstInScopeExample />
 };
 
@@ -239,7 +244,7 @@ function FocusableInputFormExample(args) {
   );
 }
 
-export const FocusableInputForm = {
+export const FocusableInputForm: FocusScopeStoryObj = {
   name: 'FocusableInputForm',
   render: (args) => <FocusableInputFormExample {...args} />,
   args: {

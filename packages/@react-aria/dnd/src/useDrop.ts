@@ -15,7 +15,7 @@ import {DOMAttributes, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEve
 import {DragEvent, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
-import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
+import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT, IDropOperation} from './constants';
 import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -76,7 +76,7 @@ export function useDrop(options: DropOptions): DropResult {
     y: number,
     dragOverElements: Set<Element>,
     dropEffect: DataTransfer['dropEffect'],
-    allowedOperations: DROP_OPERATION,
+    allowedOperations: IDropOperation[keyof IDropOperation],
     dropActivateTimer: ReturnType<typeof setTimeout> | undefined
   }>({
     x: 0,
@@ -421,7 +421,7 @@ function getAllowedOperations(e: DragEvent) {
   return allowedOperations;
 }
 
-function allowedOperationsToArray(allowedOperationsBits: DROP_OPERATION) {
+function allowedOperationsToArray(allowedOperationsBits: IDropOperation[keyof IDropOperation]) {
   let allowedOperations: Array<DropOperation> = [];
   if (allowedOperationsBits & DROP_OPERATION.move) {
     allowedOperations.push('move');
@@ -438,7 +438,7 @@ function allowedOperationsToArray(allowedOperationsBits: DROP_OPERATION) {
   return allowedOperations;
 }
 
-function getDropOperation(allowedOperations: DROP_OPERATION, operation: DropOperation) {
+function getDropOperation(allowedOperations: IDropOperation[keyof IDropOperation], operation: DropOperation) {
   let op = DROP_OPERATION[operation];
   return allowedOperations & op ? operation : 'cancel';
 }

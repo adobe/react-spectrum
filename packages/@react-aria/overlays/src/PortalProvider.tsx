@@ -21,7 +21,7 @@ export interface PortalProviderProps {
 
 export interface PortalProviderContextValue extends Omit<PortalProviderProps, 'children'>{};
 
-export const PortalContext = createContext<PortalProviderContextValue>({});
+export const PortalContext: React.Context<PortalProviderContextValue> = createContext<PortalProviderContextValue>({});
 
 /**
  * Sets the portal container for all overlay elements rendered by its children.

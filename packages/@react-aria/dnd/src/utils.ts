@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
+import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, IDropOperation, NATIVE_DRAG_TYPES} from './constants';
 import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, RefObject, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
@@ -20,8 +20,8 @@ interface DroppableCollectionMap {
   ref: RefObject<HTMLElement | null>
 }
 
-export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
-export const DIRECTORY_DRAG_TYPE = Symbol();
+export const droppableCollectionMap: WeakMap<DroppableCollectionState, DroppableCollectionMap> = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE: symbol = Symbol();
 
 export function getDroppableCollectionId(state: DroppableCollectionState): string {
   let {id} = droppableCollectionMap.get(state) || {};
@@ -379,7 +379,7 @@ export function setGlobalDropEffect(dropEffect: DropEffect | undefined): void {
   globalDropEffect = dropEffect;
 }
 
-export let globalAllowedDropOperations = DROP_OPERATION.none;
-export function setGlobalAllowedDropOperations(o: DROP_OPERATION): void {
+export let globalAllowedDropOperations: IDropOperation[keyof IDropOperation] = DROP_OPERATION.none;
+export function setGlobalAllowedDropOperations(o: IDropOperation[keyof IDropOperation]): void {
   globalAllowedDropOperations = o;
 }
