@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {ColorThumb as AriaColorThumb, ColorThumbProps} from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
@@ -17,7 +17,7 @@ const thumbStyles = tv({
   }
 });
 
-export function ColorThumb(props: ColorThumbProps) {
+export function ColorThumb(props: ColorThumbProps): ReactNode {
   return (
     <AriaColorThumb
       {...props}

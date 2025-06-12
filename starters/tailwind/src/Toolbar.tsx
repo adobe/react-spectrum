@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Toolbar as RACToolbar, ToolbarProps, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
@@ -12,7 +12,7 @@ const styles = tv({
   }
 })
 
-export function Toolbar(props: ToolbarProps) {
+export function Toolbar(props: ToolbarProps): ReactNode {
   return (
     <RACToolbar
       {...props}

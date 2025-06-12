@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ColorSwatchPicker as AriaColorSwatchPicker,
   ColorSwatchPickerItem as AriaColorSwatchPickerItem,
@@ -11,7 +11,7 @@ import {tv} from 'tailwind-variants';
 
 export function ColorSwatchPicker(
   { children, ...props }: Omit<ColorSwatchPickerProps, 'layout'>
-) {
+): ReactNode {
   return (
     <AriaColorSwatchPicker {...props} className={composeTailwindRenderProps(props.className, 'flex gap-1')}>
       {children}

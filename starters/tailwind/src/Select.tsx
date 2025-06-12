@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
@@ -36,7 +36,7 @@ export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 
 
 export function Select<T extends object>(
   { label, description, errorMessage, children, items, ...props }: SelectProps<T>
-) {
+): ReactNode {
   return (
     <AriaSelect {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
@@ -55,10 +55,10 @@ export function Select<T extends object>(
   );
 }
 
-export function SelectItem(props: ListBoxItemProps) {
+export function SelectItem(props: ListBoxItemProps): ReactNode {
   return <DropdownItem {...props} />;
 }
 
-export function SelectSection<T extends object>(props: DropdownSectionProps<T>) {
+export function SelectSection<T extends object>(props: DropdownSectionProps<T>): ReactNode {
   return <DropdownSection {...props} />;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
@@ -26,7 +26,7 @@ let button = tv({
   }
 });
 
-export function Button(props: ButtonProps) {
+export function Button(props: ButtonProps): ReactNode {
   return (
     <RACButton
       {...props}

@@ -1,5 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
@@ -11,7 +11,7 @@ export interface MeterProps extends AriaMeterProps {
   label?: string;
 }
 
-export function Meter({ label, ...props }: MeterProps) {
+export function Meter({ label, ...props }: MeterProps): ReactNode {
   return (
     <AriaMeter {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {({ percentage, valueText }) => (
@@ -32,7 +32,7 @@ export function Meter({ label, ...props }: MeterProps) {
   );
 }
 
-function getColor(percentage: number) {
+function getColor(percentage: number): string {
   if (percentage < 70) {
     return 'bg-green-600';
   }

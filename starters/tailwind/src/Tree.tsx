@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Tree as AriaTree,
   TreeItem as AriaTreeItem,
@@ -29,7 +29,7 @@ const itemStyles = tv({
 
 export function Tree<T extends object>(
   { children, ...props }: TreeProps<T>
-) {
+): ReactNode {
   return (
     <AriaTree {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-gray-200 dark:border-zinc-600 rounded-lg')}>
       {children}
@@ -37,7 +37,7 @@ export function Tree<T extends object>(
   );
 }
 
-export function TreeItem(props: TreeItemProps) {
+export function TreeItem(props: TreeItemProps): ReactNode {
   return (
     <AriaTreeItem className={itemStyles} {...props} />
   )
@@ -68,7 +68,7 @@ const chevron = tv({
   }
 });
 
-export function TreeItemContent({ children, ...props }: TreeItemContentProps) {
+export function TreeItemContent({ children, ...props }: TreeItemContentProps): ReactNode {
   return (
     <AriaTreeItemContent {...props}>
       {({ selectionMode, selectionBehavior, hasChildItems, isExpanded, isDisabled }) => (

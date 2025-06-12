@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Tab as RACTab,
   TabList as RACTabList,
@@ -23,7 +23,7 @@ const tabsStyles = tv({
   }
 });
 
-export function Tabs(props: TabsProps) {
+export function Tabs(props: TabsProps): ReactNode {
   return (
     <RACTabs
       {...props}
@@ -44,7 +44,7 @@ const tabListStyles = tv({
   }
 });
 
-export function TabList<T extends object>(props: TabListProps<T>) {
+export function TabList<T extends object>(props: TabListProps<T>): ReactNode {
   return (
     <RACTabList
       {...props}
@@ -69,7 +69,7 @@ const tabProps = tv({
   }
 });
 
-export function Tab(props: TabProps) {
+export function Tab(props: TabProps): ReactNode {
   return (
     <RACTab
       {...props}
@@ -85,7 +85,7 @@ const tabPanelStyles = tv({
   base: 'flex-1 p-4 text-sm text-gray-900 dark:text-zinc-100'
 });
 
-export function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: TabPanelProps): ReactNode {
   return (
     <RACTabPanel
       {...props}

@@ -22,7 +22,7 @@ export function AlertDialog({
   onAction,
   children,
   ...props
-}: AlertDialogProps) {
+}: AlertDialogProps): ReactNode {
   return (
     <Dialog role="alertdialog" {...props}>
       {({ close }) => (

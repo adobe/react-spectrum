@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { ReactNode, useContext } from "react";
 import {
   Disclosure as AriaDisclosure,
   DisclosureGroup as AriaDisclosureGroup,
@@ -54,7 +54,7 @@ export interface DisclosureProps extends AriaDisclosureProps {
   children: React.ReactNode;
 }
 
-export function Disclosure({ children, ...props }: DisclosureProps) {
+export function Disclosure({ children, ...props }: DisclosureProps): ReactNode {
   let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
     <AriaDisclosure
@@ -70,7 +70,7 @@ export interface DisclosureHeaderProps {
   children: React.ReactNode;
 }
 
-export function DisclosureHeader({ children }: DisclosureHeaderProps) {
+export function DisclosureHeader({ children }: DisclosureHeaderProps): ReactNode {
   let { isExpanded } = useContext(DisclosureStateContext)!;
   let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
@@ -94,7 +94,7 @@ export interface DisclosurePanelProps extends AriaDisclosurePanelProps {
   children: React.ReactNode;
 }
 
-export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
+export function DisclosurePanel({ children, ...props }: DisclosurePanelProps): ReactNode {
   return (
     <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'group-data-[expanded]:px-4 group-data-[expanded]:py-2')}>
       {children}
@@ -106,7 +106,7 @@ export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
   children: React.ReactNode;
 }
 
-export function DisclosureGroup({ children, ...props }: DisclosureGroupProps) {
+export function DisclosureGroup({ children, ...props }: DisclosureGroupProps): ReactNode   {
   return (
     <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border border-gray-200 dark:border-zinc-600 rounded-lg')}>
       {children}

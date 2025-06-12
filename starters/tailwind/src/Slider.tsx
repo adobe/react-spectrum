@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
@@ -44,7 +44,7 @@ export interface SliderProps<T> extends AriaSliderProps<T> {
 
 export function Slider<T extends number | number[]>(
   { label, thumbLabels, ...props }: SliderProps<T>
-) {
+): ReactNode {
   return (
     <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64')}>
       <Label>{label}</Label>

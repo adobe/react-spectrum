@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Calendar as AriaCalendar,
   CalendarGridHeader as AriaCalendarGridHeader,
@@ -37,7 +37,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
 
 export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
-) {
+): ReactNode {
   return (
     <AriaCalendar {...props}>
       <CalendarHeader />
@@ -52,7 +52,7 @@ export function Calendar<T extends DateValue>(
   );
 }
 
-export function CalendarHeader() {
+export function CalendarHeader(): ReactNode {
   let {direction} = useLocale();
 
   return (
@@ -68,7 +68,7 @@ export function CalendarHeader() {
   );
 }
 
-export function CalendarGridHeader() {
+export function CalendarGridHeader(): ReactNode {
   return (
     <AriaCalendarGridHeader>
       {(day) => (

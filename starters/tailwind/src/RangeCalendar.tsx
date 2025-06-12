@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
@@ -38,7 +38,7 @@ const cell = tv({
 
 export function RangeCalendar<T extends DateValue>(
   { errorMessage, ...props }: RangeCalendarProps<T>
-) {
+): ReactNode {
   return (
     <AriaRangeCalendar {...props}>
       <CalendarHeader />

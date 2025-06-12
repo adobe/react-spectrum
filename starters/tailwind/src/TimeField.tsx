@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
@@ -17,7 +17,7 @@ export interface TimeFieldProps<T extends TimeValue>
 
 export function TimeField<T extends TimeValue>(
   { label, description, errorMessage, ...props }: TimeFieldProps<T>
-) {
+): ReactNode {
   return (
     <AriaTimeField {...props}>
       <Label>{label}</Label>

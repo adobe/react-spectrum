@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   Autocomplete as AriaAutocomplete,
   AutocompleteProps as AriaAutocompleteProps,
@@ -24,7 +24,7 @@ export function Autocomplete<T extends object>({
   children,
   label,
   ...props
-}: AutocompleteProps<T>) {
+}: AutocompleteProps<T>): ReactNode {
   let { contains } = useFilter({ sensitivity: "base" });
   return (
     <div className="p-3 border-2 border-gray-200 rounded-xl dark:border-zinc-700">

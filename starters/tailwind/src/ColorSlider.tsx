@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ColorSlider as AriaColorSlider,
   ColorSliderProps as AriaColorSliderProps,
@@ -27,7 +27,7 @@ interface ColorSliderProps extends AriaColorSliderProps {
   label?: string;
 }
 
-export function ColorSlider({ label, ...props }: ColorSliderProps) {
+export function ColorSlider({ label, ...props }: ColorSliderProps): ReactNode {
   return (
     <AriaColorSlider {...props} className={composeTailwindRenderProps(props.className, 'orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56')}>
       <Label>{label}</Label>

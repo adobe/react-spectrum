@@ -1,5 +1,5 @@
 import { SearchIcon, XIcon } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
@@ -17,7 +17,7 @@ export interface SearchFieldProps extends AriaSearchFieldProps {
 
 export function SearchField(
   { label, description, errorMessage, ...props }: SearchFieldProps
-) {
+): ReactNode {
   return (
     <AriaSearchField {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 min-w-[40px]')}>
       {label && <Label>{label}</Label>}

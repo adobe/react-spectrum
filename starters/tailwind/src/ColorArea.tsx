@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ColorArea as AriaColorArea,
   ColorAreaProps as AriaColorAreaProps
@@ -8,7 +8,7 @@ import { ColorThumb } from './ColorThumb';
 
 export interface ColorAreaProps extends AriaColorAreaProps {}
 
-export function ColorArea(props: ColorAreaProps) {
+export function ColorArea(props: ColorAreaProps): ReactNode {
   return (
     <AriaColorArea
       {...props}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
@@ -26,11 +26,11 @@ export interface TextFieldProps extends AriaTextFieldProps {
 
 export function TextField(
   { label, description, errorMessage, ...props }: TextFieldProps
-) {
+): ReactNode {
   return (
     <AriaTextField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
-      <Input className={inputStyles} />
+      <Input className={(renderProps) => inputStyles(renderProps as any)} />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaTextField>

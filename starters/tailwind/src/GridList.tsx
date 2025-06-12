@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
@@ -12,7 +12,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
-) {
+): ReactNode {
   return (
     <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-gray-200 dark:border-zinc-600 rounded-lg')}>
       {children}
@@ -34,7 +34,7 @@ const itemStyles = tv({
   }
 });
 
-export function GridListItem({ children, ...props }: GridListItemProps) {
+export function GridListItem({ children, ...props }: GridListItemProps): ReactNode {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props} className={itemStyles}>

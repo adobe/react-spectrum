@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
@@ -22,7 +22,7 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
 
 export function ComboBox<T extends object>(
   { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T>
-) {
+): ReactNode {
   return (
     <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       <Label>{label}</Label>
@@ -43,10 +43,10 @@ export function ComboBox<T extends object>(
   );
 }
 
-export function ComboBoxItem(props: ListBoxItemProps) {
+export function ComboBoxItem(props: ListBoxItemProps): ReactNode {
   return <DropdownItem {...props} />;
 }
 
-export function ComboBoxSection<T extends object>(props: DropdownSectionProps<T>) {
+export function ComboBoxSection<T extends object>(props: DropdownSectionProps<T>): ReactNode {
   return <DropdownSection {...props} />;
 }
