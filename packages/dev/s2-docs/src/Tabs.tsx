@@ -10,11 +10,12 @@ import {
   Tab as RACTab,
   TabList as RACTabList,
   Tabs as RACTabs,
-  TabListStateContext
+  TabListStateContext,
+  TabRenderProps
 } from 'react-aria-components';
 // import {centerBaseline} from './CenterBaseline';
+import {baseColor, focusRing, size, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
-import {focusRing, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {IconContext, Text, TextContext} from '@react-spectrum/s2';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -174,24 +175,36 @@ function TabLine(props: TabLineProps) {
   );
 }
 
-const tab = style({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
   ...focusRing(),
   display: 'flex',
   color: {
-    default: 'neutral-subdued',
-    isSelected: 'neutral',
-    isHovered: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
+    isDisabled: 'disabled',
     forcedColors: {
-      isSelected: 'Highlight'
+      isSelected: 'Highlight',
+      isDisabled: 'GrayText'
     }
   },
   borderRadius: 'sm',
   gap: 'text-to-visual',
+  height: {
+    density: {
+      compact: 32,
+      regular: 48
+    }
+  },
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
   flexShrink: 0,
   transition: 'default',
+  paddingX: {
+    labelBehavior: {
+      hide: size(6)
+    }
+  },
   disableTapHighlight: true
 });
 
