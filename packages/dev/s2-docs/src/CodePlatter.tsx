@@ -2,11 +2,15 @@
 
 import {ActionButton, ActionButtonGroup, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import Copy from '@react-spectrum/s2/icons/Copy';
+import Download from '@react-spectrum/s2/icons/Download';
 import ExportTo from '@react-spectrum/s2/icons/ExportTo';
 import Link from '@react-spectrum/s2/icons/Link';
 import More from '@react-spectrum/s2/icons/More';
 import {ReactNode, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
+import {createStackBlitz} from './StackBlitz';
+import {zip} from './zip';
 
 const platterStyle = style({
   backgroundColor: 'layer-2',
@@ -24,7 +28,14 @@ const platterStyle = style({
   overflow: 'auto'
 });
 
-export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl?: string}) {
+interface CodePlatterProps {
+  children: ReactNode,
+  shareUrl?: string,
+  files?: {[name: string]: string},
+  type?: 'vanilla' | 'tailwind' | 's2'
+}
+
+export function CodePlatter({children, shareUrl, files, type}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   return (
     <div className={platterStyle}>
@@ -40,7 +51,7 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
             </ActionButton>
             <Tooltip>Copy code</Tooltip>
           </TooltipTrigger>
-          <MenuTrigger>
+          {(shareUrl || files || type) && <MenuTrigger>
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Share">
                 <More />
@@ -55,18 +66,59 @@ export function CodePlatter({children, shareUrl}: {children: ReactNode, shareUrl
                 <Link />
                 <Text slot="label">Copy Link</Text>
               </MenuItem>}
-              <MenuItem>
+              {(files || type) && <MenuItem
+                onAction={() => {
+                  let code = codeRef.current!.querySelector('pre')!.textContent!;
+                  createCodeSandbox({
+                    ...files,
+                    'Example.tsx': transformExampleCode(code)
+                  }, type);
+                }}>
                 <ExportTo />
                 <Text slot="label">Open in CodeSandbox</Text>
-              </MenuItem>
-              <MenuItem>
+              </MenuItem>}
+              {(files || type) && type !== 's2' && <MenuItem
+                onAction={() => {
+                  let code = codeRef.current!.querySelector('pre')!.textContent!;
+                  createStackBlitz({
+                    ...files,
+                    'Example.tsx': transformExampleCode(code)
+                  }, type);
+                }}>
                 <ExportTo />
                 <Text slot="label">Open in StackBlitz</Text>
-              </MenuItem>
+              </MenuItem>}
+              {(files || type) && <MenuItem
+                onAction={() => {
+                  let code = codeRef.current!.querySelector('pre')!.textContent!;
+                  let filesToDownload = getCodeSandboxFiles({
+                    ...files,
+                    'Example.tsx': transformExampleCode(code)
+                  }, type);
+                  let filesToZip = {};
+                  for (let key in filesToDownload) {
+                    if (filesToDownload[key]) {
+                      filesToZip[key] = filesToDownload[key].content
+                    }
+                  }
+                  let blob = zip(filesToZip);
+
+                  let a = document.createElement('a');
+                  a.href = URL.createObjectURL(blob);
+                  a.download = 'example.zip';
+                  a.hidden = true;
+                  document.body.appendChild(a);
+
+                  a.click();
+                  a.remove();
+                }}>
+                <Download />
+                <Text slot="label">Download ZIP</Text>
+              </MenuItem>}
             </Menu>
-          </MenuTrigger>
+          </MenuTrigger>}
         </ActionButtonGroup>
-      </div>     
+      </div>
       <div ref={codeRef}> 
         {children}
       </div>
@@ -80,4 +132,20 @@ export function Pre({children}) {
       {children}
     </pre>
   );
+}
+
+function transformExampleCode(code: string): string {
+  // Add function wrapper around raw JSX in examples.
+  return code.replace(/\n<((?:.|\n)+)/, (_, code) => {
+    let res = '\nexport function Example() {\n  return (\n    <';
+    let lines = code.split('\n');
+    res += lines.shift();
+
+    for (let line of lines) {
+      res += '\n    ' + line;
+    }
+
+    res += '\n  );\n}\n';
+    return res;
+  });
 }

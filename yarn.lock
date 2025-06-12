@@ -8044,6 +8044,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.29.0"
     "@react-spectrum/s2": "npm:^0.9.0"
     globals-docs: "npm:^2.4.1"
+    lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
     react: "npm:^19"
     react-aria: "npm:^3.40.0"

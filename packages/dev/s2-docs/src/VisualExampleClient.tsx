@@ -2,7 +2,7 @@
 
 import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {IconPicker} from './IconPicker';
 import type {PropControl} from './VisualExample';
@@ -103,7 +103,13 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
   );
 }
 
-export function CodeOutput({code}: {code?: ReactNode}) {
+interface CodeOutputProps {
+  code?: ReactNode,
+  files?: {[name: string]: string},
+  type?: 'vanilla' | 'tailwind' | 's2'
+}
+
+export function CodeOutput({code, files, type}: CodeOutputProps) {
   let {name, importSource, props, controls} = useContext(Context);
   let url;
   if (typeof location !== 'undefined') {
@@ -125,7 +131,7 @@ export function CodeOutput({code}: {code?: ReactNode}) {
   );
 
   return (
-    <CodePlatter shareUrl={url?.toString()}>
+    <CodePlatter shareUrl={url?.toString()} files={files} type={type}>
       {code}
     </CodePlatter>
   );
@@ -358,7 +364,7 @@ function BooleanControl({control, value, onChange}: ControlProps) {
 
 function UnionControl({control, value, onChange, isPicker = false}) {
   let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
-  if (isPicker || length > 16) {
+  if (isPicker || length > 18) {
     return (
       <Picker 
         label={control.name}

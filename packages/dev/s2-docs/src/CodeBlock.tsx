@@ -140,3 +140,36 @@ export function File({filename}: {filename: string}) {
     </CodePlatter>
   );
 }
+
+// Reads files, parses imports, and loads recursively.
+export function getFiles(files: string[]) {
+  let queue: string[] = [...files];
+  let fileContents = {};
+  for (let i = 0; i < queue.length; i++) {
+    let file = path.isAbsolute(queue[i]) ? queue[i] : path.resolve('../../../' + queue[i]);
+    if (path.extname(file) === '') {
+      if (fs.existsSync(file + '.tsx')) {
+        file += '.tsx';
+      } else if (fs.existsSync(file + '.ts')) {
+        file += '.ts';
+      }
+    }
+
+    let name = path.basename(file);
+    let contents = fs.readFileSync(file, 'utf8');
+    fileContents[name] = contents;
+
+    for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
+      if (!specifier.startsWith('.')) {
+        continue;
+      }
+
+      let resolved = path.resolve(path.dirname(file), specifier);
+      if (!fileContents[path.basename(resolved)]) {
+        queue.push(resolved);
+      }
+    }
+  }
+  
+  return fileContents;
+}

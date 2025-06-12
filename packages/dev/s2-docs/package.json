@@ -28,6 +28,7 @@
     "@react-aria/utils": "^3.29.0",
     "@react-spectrum/s2": "^0.9.0",
     "globals-docs": "^2.4.1",
+    "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",
     "react": "^19",
     "react-aria": "^3.40.0",

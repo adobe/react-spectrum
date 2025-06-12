@@ -1,5 +1,5 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
-import {Files} from './CodeBlock';
+import {Files, getFiles} from './CodeBlock';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
@@ -11,7 +11,10 @@ const exampleStyle = style({
     default: 12,
     lg: 24
   },
-  marginTop: 20,
+  marginTop: {
+    default: 20,
+    ':is([data-example-switcher] > *)': 0
+  },
   borderRadius: 'xl',
   display: 'grid',
   gridTemplateAreas: {
@@ -82,6 +85,7 @@ export interface VisualExampleProps {
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
+  type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
   align?: 'center' | 'start' | 'end'
@@ -98,7 +102,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type}: VisualExampleProps) {
   let componentProps = docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -148,7 +152,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
-  let output = <CodeOutput code={code} />;
+  let output = <CodeOutput code={code} files={files ? getFiles(files) : undefined} type={type} />;
 
   // Render the corresponding client component to make the controls interactive.
   return (
