@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Separator as RACSeparator, SeparatorProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
@@ -15,7 +15,7 @@ const styles = tv({
   }
 });
 
-export function Separator(props: SeparatorProps) {
+export function Separator(props: SeparatorProps): ReactNode {
   return (
     <RACSeparator
       {...props}

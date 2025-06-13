@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Tooltip as AriaTooltip,
   TooltipProps as AriaTooltipProps,
@@ -23,7 +23,7 @@ const styles = tv({
   }
 });
 
-export function Tooltip({ children, ...props }: TooltipProps) {
+export function Tooltip({ children, ...props }: TooltipProps): ReactNode {
   return (
     <AriaTooltip {...props} offset={10} className={composeRenderProps(props.className, (className, renderProps) => styles({...renderProps, className}))}>
       <OverlayArrow>

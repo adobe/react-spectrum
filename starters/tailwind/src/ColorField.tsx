@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps,
@@ -25,7 +25,7 @@ export interface ColorFieldProps extends AriaColorFieldProps {
 
 export function ColorField(
   { label, description, errorMessage, ...props }: ColorFieldProps
-) {
+): ReactNode {
   return (
     <AriaColorField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}

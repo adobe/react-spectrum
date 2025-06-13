@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
+import { Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps as RACRadioProps, ValidationResult } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';
@@ -11,7 +11,11 @@ export interface RadioGroupProps extends Omit<RACRadioGroupProps, 'children'> {
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function RadioGroup(props: RadioGroupProps) {
+export interface RadioProps extends Omit<RACRadioProps, 'children'> {
+  children?: ReactNode,
+}
+
+export function RadioGroup(props: RadioGroupProps): ReactNode {
   return (
     <RACRadioGroup {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-2')}>
       <Label>{props.label}</Label>
@@ -41,13 +45,15 @@ const styles = tv({
   }
 });
 
-export function Radio(props: RadioProps) {
+export function Radio(props: RadioProps): ReactNode {
   return (
     <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
-      {renderProps => <>
-        <div className={styles(renderProps)} />
-        {props.children}
-      </>}
+      {renderProps => (
+        <>
+          <div className={styles(renderProps)} />
+          {props.children}
+        </>
+      )}
     </RACRadio>
   );
 }

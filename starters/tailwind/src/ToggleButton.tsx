@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ToggleButton as RACToggleButton, ToggleButtonProps, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
@@ -17,7 +17,7 @@ let styles = tv({
   }
 });
 
-export function ToggleButton(props: ToggleButtonProps) {
+export function ToggleButton(props: ToggleButtonProps): ReactNode {
   return (
     <RACToggleButton
       {...props}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { composeRenderProps, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
@@ -12,7 +12,7 @@ const styles = tv({
   }
 });
 
-export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
+export function ToggleButtonGroup(props: ToggleButtonGroupProps): ReactNode {
   return (
     <RACToggleButtonGroup
       {...props}
