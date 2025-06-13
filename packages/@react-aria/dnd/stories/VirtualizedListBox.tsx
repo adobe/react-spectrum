@@ -23,7 +23,7 @@ import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
-import React, {useMemo} from 'react';
+import React, {JSX, useMemo} from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
@@ -36,7 +36,7 @@ interface ItemValue {
   text: string
 }
 
-export function VirtualizedListBoxExample(props) {
+export function VirtualizedListBoxExample(props: any): JSX.Element {
   let id = React.useRef(props.items?.length || 3);
   let list = useListData({
     initialItems: props.items || [
@@ -99,7 +99,9 @@ export function VirtualizedListBoxExample(props) {
 const Context = React.createContext<{state: ListState<object>, dropState: DroppableCollectionState} | null>(null);
 const acceptedTypes = ['item', 'folder'];
 
-export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
+export const VirtualizedListBox:
+  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
+React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
   let onDrop = async (e) => {
     action('onDrop')(e);

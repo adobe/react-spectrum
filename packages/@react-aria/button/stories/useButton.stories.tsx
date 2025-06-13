@@ -11,14 +11,16 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useButton} from '../';
 
 export default {
   title: 'useButton'
 };
+export type InputButtonStory = StoryObj<typeof InputButton>;
 
-export const InputTypeButton = {
+export const InputTypeButton: InputButtonStory = {
   render: () => <InputButton />,
   name: 'input type button'
 };
@@ -27,7 +29,7 @@ interface InputButtonProps extends AriaButtonProps<'input'> {
   value?: string
 }
 
-function InputButton(props: InputButtonProps) {
+function InputButton(props: InputButtonProps): JSX.Element {
   let {
     value = 'Test'
   } = props;

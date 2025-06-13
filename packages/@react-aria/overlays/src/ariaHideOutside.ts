@@ -29,7 +29,7 @@ let observerStack: Array<ObserverWrapper> = [];
  * @param root - Nothing will be hidden above this element.
  * @returns - A function to restore all hidden elements.
  */
-export function ariaHideOutside(targets: Element[], root = document.body) {
+export function ariaHideOutside(targets: Element[], root: Element = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
 
@@ -180,7 +180,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   };
 }
 
-export function keepVisible(element: Element) {
+export function keepVisible(element: Element): (() => void) | undefined {
   let observer = observerStack[observerStack.length - 1];
   if (observer && !observer.visibleNodes.has(element)) {
     observer.visibleNodes.add(element);

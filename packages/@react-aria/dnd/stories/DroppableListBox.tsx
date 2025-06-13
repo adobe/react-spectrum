@@ -21,7 +21,7 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -35,7 +35,7 @@ interface ItemValue {
   text: string
 }
 
-export function DroppableListBoxExample(props) {
+export function DroppableListBoxExample(props: any): JSX.Element {
   let id = React.useRef(props.items?.length || 3);
   let list = useListData({
     initialItems: props.items || [
@@ -93,7 +93,9 @@ export function DroppableListBoxExample(props) {
   );
 }
 
-export const DroppableListBox = React.forwardRef(function (props: any, ref) {
+export const DroppableListBox:
+  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
+React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
   let onDrop = async (e) => {
     action('onDrop')(e);

@@ -395,11 +395,11 @@ export class ElementNode<T> extends BaseNode<T> {
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
-  ownerDocument = this;
+  ownerDocument: Document<T, C> = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
   isSSR = false;
   nodeId = 0;
-  nodesByProps = new WeakMap<object, ElementNode<T>>();
+  nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
   isMounted = true;
   private collection: C;
   private nextCollection: C | null = null;

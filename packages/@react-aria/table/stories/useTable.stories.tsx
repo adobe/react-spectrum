@@ -16,8 +16,8 @@ import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize} from '@react-types/table';
 import {Table as DocsTable} from './example-docs';
 import {Key} from '@react-types/shared';
-import {Meta, StoryFn} from '@storybook/react';
-import React, {useCallback, useMemo, useState} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {SpectrumTableProps} from '@react-spectrum/table';
 import {Table} from './example';
@@ -47,9 +47,9 @@ let defaultRows = [
   {id: 10, name: 'Blastoise', type: 'Water', level: '56', weight: '188lbs', height: '5\'3"'},
   {id: 11, name: 'Venusaur', type: 'Grass, Poison', level: '83', weight: '220lbs', height: '6\'7"'},
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
-];
+] as const;
 
-const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
+const Template = (args: SpectrumTableProps<any>): JSX.Element => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -74,7 +74,7 @@ const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-const TemplateBackwardsCompat: StoryFn<SpectrumTableProps<any>> = (args) => (
+const TemplateBackwardsCompat = (args: SpectrumTableProps<any>): JSX.Element => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -101,12 +101,12 @@ const TemplateBackwardsCompat: StoryFn<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-export const ScrollTesting = {
-  render: Template
+export const ScrollTesting: StoryObj<typeof Table> = {
+  render: (args) => <Template {...args} />
 };
 
-export const ActionTesting = {
-  render: Template,
+export const ActionTesting: StoryObj<typeof Table> = {
+  render: (args) => <Template {...args} />,
   args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
   parameters: {
     a11y: {
@@ -118,8 +118,8 @@ export const ActionTesting = {
   }
 };
 
-export const BackwardCompatActionTesting = {
-  render: TemplateBackwardsCompat,
+export const BackwardCompatActionTesting: StoryObj<typeof Table> = {
+  render: (args) => <TemplateBackwardsCompat {...args} />,
   args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
   parameters: {
     a11y: {
@@ -131,7 +131,7 @@ export const BackwardCompatActionTesting = {
   }
 };
 
-export const TableWithResizingNoProps = {
+export const TableWithResizingNoProps: StoryObj<typeof Table> = {
   args: {},
   render: (args) => (
     <ResizingTable {...args}>
@@ -161,7 +161,7 @@ let columnsDefaultFR: ColumnData[] = [
   {name: 'Level', uid: 'level', defaultWidth: '4fr'}
 ];
 
-export const TableWithResizingFRs = {
+export const TableWithResizingFRs: StoryObj<typeof Table> = {
   args: {},
   render: () => (
     <ResizingTable>
@@ -183,7 +183,7 @@ export const TableWithResizingFRs = {
   )
 };
 
-function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: typeof defaultRows[0][], onResize}) {
+function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: typeof defaultRows[0][], onResize: any}): JSX.Element {
   let {columns, rows = defaultRows, onResize, ...otherProps} = props;
   let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
 
@@ -235,7 +235,7 @@ let columnsFR: ColumnData[] = [
   {name: 'Level', uid: 'level', width: '5fr'}
 ];
 
-export const TableWithResizingFRsControlled = {
+export const TableWithResizingFRsControlled: StoryObj<typeof ControlledTableResizing> = {
   args: {columns: columnsFR},
   render: (args) => <ControlledTableResizing {...args} />,
   parameters: {description: {data: `
@@ -254,7 +254,7 @@ let columnsSomeFR: ColumnData[] = [
   {name: 'Level', uid: 'level', width: '5fr'}
 ];
 
-export const TableWithSomeResizingFRsControlled = {
+export const TableWithSomeResizingFRsControlled: StoryObj<typeof ControlledTableResizing> = {
   args: {columns: columnsSomeFR},
   render: (args) => <ControlledTableResizing {...args} />,
   parameters: {description: {data: `
@@ -265,7 +265,7 @@ export const TableWithSomeResizingFRsControlled = {
   `}}
 };
 
-export const DocExample = {
+export const DocExample: StoryObj<typeof DocsTable> = {
   args: {},
   render: (args) => (
     <DocsTable
@@ -292,14 +292,14 @@ export const DocExample = {
   )
 };
 
-export const DocExampleControlled = {
+export const DocExampleControlled: StoryObj<typeof ControlledDocsTable> = {
   args: {columns: columnsFR},
   render: (args) => (
     <ControlledDocsTable {...args} />
   )
 };
 
-function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: any, onResize: any}): JSX.Element {
   let {columns, onResize, ...otherProps} = props;
   let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
   let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {

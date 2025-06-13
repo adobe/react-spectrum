@@ -15,7 +15,8 @@
 import {action} from '@storybook/addon-actions';
 import {clamp} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
-import React, {useRef, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useMove} from '../';
 
 interface IPosition {
@@ -79,7 +80,7 @@ export default {
   title: 'useMove'
 };
 
-export const Log = () => {
+const LogRender = (): JSX.Element => {
   let {moveProps} = useMove({
     onMoveStart(e) { action('onMoveStart')(JSON.stringify(e)); },
     onMove(e) { action('onMove')(JSON.stringify(e)); },
@@ -89,7 +90,14 @@ export const Log = () => {
   return <div {...moveProps} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
 };
 
-export const _Ball1D = {
+export type LogStory = StoryObj<typeof LogRender>;
+
+export const Log: LogStory = {
+  render: () => <LogRender />,
+  name: 'Log'
+};
+
+export const _Ball1D: LogStory = {
   render: () => (
     <Flex direction="column" gap="size-1000">
       <Ball1D />
@@ -118,7 +126,7 @@ function Ball2DStory() {
   );
 }
 
-export const Ball2D = {
+export const Ball2D: LogStory = {
   render: () => <Ball2DStory />,
   name: 'Ball 2D'
 };
@@ -145,7 +153,7 @@ function BallNestedStory() {
   );
 }
 
-export const BallNested = {
+export const BallNested: LogStory = {
   render: () => <BallNestedStory />,
   name: 'Ball nested'
 };

@@ -43,7 +43,8 @@ export interface OverlayProps {
   isExiting?: boolean
 }
 
-export const OverlayContext = React.createContext<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null>(null);
+export const OverlayContext: React.Context<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null> =
+  React.createContext<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null>(null);
 
 /**
  * A container which renders an overlay such as a popover or modal in a portal,

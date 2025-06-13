@@ -1,14 +1,14 @@
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {useFocusRing} from '@react-aria/focus';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListState} from '@react-stately/list';
 
-export function DraggableListBox(props) {
+export function DraggableListBox(props: any): JSX.Element {
   let state = useListState(props);
   let ref = React.useRef<HTMLUListElement | null>(null);
   let {listBoxProps} = useListBox(

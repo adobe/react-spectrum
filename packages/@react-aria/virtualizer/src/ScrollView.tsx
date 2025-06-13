@@ -51,7 +51,9 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
   );
 }
 
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
+const ScrollViewForwardRef:
+  React.ForwardRefExoticComponent<ScrollViewProps & React.RefAttributes<HTMLDivElement | null>> =
+React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
 interface ScrollViewAria {

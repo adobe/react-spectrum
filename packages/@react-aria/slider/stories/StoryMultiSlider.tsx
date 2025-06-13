@@ -12,7 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
@@ -26,7 +26,7 @@ interface StoryMultiSliderProps extends SliderProps {
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export function StoryMultiSlider(props: StoryMultiSliderProps) {
+export function StoryMultiSlider(props: StoryMultiSliderProps): JSX.Element {
   const {children} = props;
   const trackRef = React.useRef<HTMLDivElement>(null);
   const formatter = useNumberFormatter(props.formatOptions);
@@ -83,7 +83,7 @@ interface SliderStateContext {
   index: number
 }
 
-export function StoryThumb(props: StoryThumbProps) {
+export function StoryThumb(props: StoryThumbProps): JSX.Element {
   if (!(props as any).__context) {
     throw new Error('Cannot use StoryThumb outside of a StoryMultiSlider!');
   }

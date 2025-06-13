@@ -11,14 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {AriaMenuTriggerProps, useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
+import {CollectionBase} from '@react-types/shared';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {JSX} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useFocus, useInteractOutside} from '@react-aria/interactions';
-import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useTreeState} from '@react-stately/tree';
 
@@ -26,7 +28,7 @@ export default {
   title: 'useMenu'
 };
 
-export const DoubleMenuFiresOnInteractOutside = {
+export const DoubleMenuFiresOnInteractOutside: StoryObj<typeof MenuButton> = {
   render: () => (
     <div>
       <div>
@@ -49,7 +51,7 @@ export const DoubleMenuFiresOnInteractOutside = {
   name: 'double menu fires onInteractOutside'
 };
 
-function MenuButton(props) {
+function MenuButton(props: AriaMenuTriggerProps & CollectionBase<unknown> & {label: string}): JSX.Element {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 

@@ -23,7 +23,7 @@ import {Item} from '@react-stately/collections';
 import {ItemDropTarget, Key} from '@react-types/shared';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
 import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
@@ -33,7 +33,7 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export function ReorderableGridExample(props) {
+export function ReorderableGridExample(props: any): JSX.Element {
   let list = useListData({
     initialItems: props.items || [
       {id: '1', type: 'item', text: 'One'},

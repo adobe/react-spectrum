@@ -18,7 +18,9 @@ export interface DragPreviewProps {
   children: (items: DragItem[]) => JSX.Element | null
 }
 
-export const DragPreview = React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {
+export const DragPreview:
+  React.ForwardRefExoticComponent<DragPreviewProps & React.RefAttributes<DragPreviewRenderer | null>> =
+React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {
   let render = props.children;
   let [children, setChildren] = useState<JSX.Element | null>(null);
   let domRef = useRef<HTMLDivElement | null>(null);

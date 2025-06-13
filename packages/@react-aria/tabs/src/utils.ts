@@ -13,7 +13,7 @@
 import {Key} from '@react-types/shared';
 import {TabListState} from '@react-stately/tabs';
 
-export const tabsIds = new WeakMap<TabListState<unknown>, string>();
+export const tabsIds: WeakMap<TabListState<unknown>, string> = new WeakMap<TabListState<unknown>, string>();
 
 export function generateId<T>(state: TabListState<T> | null, key: Key | null | undefined, role: string): string {
   if (!state) {

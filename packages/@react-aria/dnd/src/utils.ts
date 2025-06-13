@@ -20,8 +20,8 @@ interface DroppableCollectionMap {
   ref: RefObject<HTMLElement | null>
 }
 
-export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
-export const DIRECTORY_DRAG_TYPE = Symbol();
+export const droppableCollectionMap: WeakMap<DroppableCollectionState, DroppableCollectionMap> = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE: symbol = Symbol();
 
 export function getDroppableCollectionId(state: DroppableCollectionState): string {
   let {id} = droppableCollectionMap.get(state) || {};
@@ -379,7 +379,7 @@ export function setGlobalDropEffect(dropEffect: DropEffect | undefined): void {
   globalDropEffect = dropEffect;
 }
 
-export let globalAllowedDropOperations = DROP_OPERATION.none;
+export let globalAllowedDropOperations: DROP_OPERATION = DROP_OPERATION.none;
 export function setGlobalAllowedDropOperations(o: DROP_OPERATION): void {
   globalAllowedDropOperations = o;
 }
