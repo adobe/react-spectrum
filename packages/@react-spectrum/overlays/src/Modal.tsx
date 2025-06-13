@@ -12,7 +12,7 @@
 
 import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, RefObject, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
@@ -22,7 +22,7 @@ import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useObjectRef, useViewportSize} from '@react-aria/utils';
 
-interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
+export interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
   state: OverlayTriggerState,
   type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'
@@ -34,7 +34,9 @@ interface ModalWrapperProps extends ModalProps {
   children: ReactNode
 }
 
-export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+export const Modal:
+  React.ForwardRefExoticComponent<ModalProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);

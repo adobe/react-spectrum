@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {ProgressBarBase} from '@react-spectrum/progress';
 import React from 'react';
 import {SpectrumMeterProps} from '@react-types/meter';
@@ -22,7 +22,9 @@ import {useMeter} from '@react-aria/meter';
  * Meters are visual representations of a quantity or an achievement.
  * Their progress is determined by user actions, rather than system actions.
  */
-export const Meter = React.forwardRef(function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
+export const Meter:
+  React.ForwardRefExoticComponent<SpectrumMeterProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
   let {variant = 'informative', ...otherProps} = props;
   const {
     meterProps,

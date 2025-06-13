@@ -12,7 +12,7 @@
 
 import {AriaModalOverlayProps, DismissButton, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, RefObject, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
@@ -33,7 +33,9 @@ interface TrayWrapperProps extends TrayProps {
   wrapperRef: RefObject<HTMLDivElement | null>
 }
 
-export const Tray = forwardRef(function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
+export const Tray:
+  React.ForwardRefExoticComponent<TrayProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
