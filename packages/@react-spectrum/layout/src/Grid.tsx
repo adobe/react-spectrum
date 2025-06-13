@@ -18,7 +18,7 @@ import {
   useDOMRef,
   useStyleProps
 } from '@react-spectrum/utils';
-import {DimensionValue, DOMRef} from '@react-types/shared';
+import {DimensionValue, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
@@ -44,7 +44,9 @@ const gridStyleProps: StyleHandlers = {
  * A layout container using CSS grid. Supports Spectrum dimensions as values to
  * ensure consistent and adaptive sizing and spacing.
  */
-export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
+export const Grid:
+  React.ForwardRefExoticComponent<GridProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     ...otherProps

@@ -21,7 +21,9 @@ import React, {ReactNode, Ref} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
-export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
+export const Field:
+  React.ForwardRefExoticComponent<SpectrumFieldProps & React.RefAttributes<HTMLElement>> =
+React.forwardRef(function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;
