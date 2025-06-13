@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {Context, createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Validation, ValidationErrors, ValidationFunction, ValidationResult} from '@react-types/shared';
 
 export const VALID_VALIDITY_STATE: ValidityState = {
@@ -39,9 +39,9 @@ export const DEFAULT_VALIDATION_RESULT: ValidationResult = {
   validationErrors: []
 };
 
-export const FormValidationContext = createContext<ValidationErrors>({});
+export const FormValidationContext: Context<ValidationErrors> = createContext<ValidationErrors>({});
 
-export const privateValidationStateProp = '__formValidationState' + Date.now();
+export const privateValidationStateProp: string = '__formValidationState' + Date.now();
 
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,

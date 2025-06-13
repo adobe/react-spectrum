@@ -15,6 +15,7 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
 import {Flex} from '@react-spectrum/layout';
 import * as AllIcons from '../src';
+import { Meta, StoryFn } from '@storybook/react';
 
 let allIcons = Object.keys(AllIcons);
 let alphabet = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
@@ -29,15 +30,15 @@ export default {
   parameters: {
     chromaticProvider: {express: false},
   }
-};
+} as Meta<typeof Add>;
 
-export const IconAddWithSizes = () => renderIconSizes(Add, { 'aria-label': 'Add' });
+export const IconAddWithSizes: StoryFn<typeof Add> = () => renderIconSizes(Add, { 'aria-label': 'Add' });
 
 IconAddWithSizes.story = {
   name: 'icon: Add with sizes',
 };
 
-export const Colors = () => (
+export const Colors: StoryFn<typeof Alert> = () => (
   <Flex gap="size-200">
     <Alert aria-label="info default" />
     <Alert color="informative" aria-label="info alert" />
@@ -47,7 +48,7 @@ export const Colors = () => (
   </Flex>
 );
 
-export const AllWorkflow = () => (
+export const AllWorkflow: StoryFn<typeof Add> = () => (
   <Flex direction="column">
     {Object.keys(alphabetizedIcons).map((char) => (
       <div style={{ height: 'calc(12 * var(--spectrum-global-dimension-size-300))' }}>

@@ -251,7 +251,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     this.validRect = this.requestedRect.copy();
   }
 
-  protected buildCollection(y = this.padding): LayoutNode[] {
+  protected buildCollection(y: number = this.padding): LayoutNode[] {
     let collection = this.virtualizer!.collection;
     let skipped = 0;
     let nodes: LayoutNode[] = [];
