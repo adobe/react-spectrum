@@ -28,7 +28,7 @@ interface ToastContainerProps extends AriaToastRegionProps {
   placement?: ToastPlacement
 }
 
-export const ToasterContext = createContext(false);
+export const ToasterContext: React.Context<boolean> = createContext(false);
 
 export function Toaster(props: ToastContainerProps): ReactElement {
   let {

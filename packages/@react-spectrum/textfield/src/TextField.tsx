@@ -22,7 +22,9 @@ import {useTextField} from '@react-aria/textfield';
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-export const TextField = forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
+export const TextField:
+  React.ForwardRefExoticComponent<SpectrumTextFieldProps & React.RefAttributes<TextFieldRef<HTMLInputElement>>> =
+forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
