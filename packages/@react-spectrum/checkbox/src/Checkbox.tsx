@@ -15,7 +15,7 @@ import {CheckboxGroupContext} from './context';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useContext, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
@@ -30,7 +30,9 @@ import {useToggleState} from '@react-stately/toggle';
  * Checkboxes allow users to select multiple items from a list of individual items,
  * or to mark one individual item as selected.
  */
-export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Checkbox:
+  React.ForwardRefExoticComponent<SpectrumCheckboxProps & React.RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
+forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);

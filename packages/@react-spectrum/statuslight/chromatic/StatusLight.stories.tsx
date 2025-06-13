@@ -11,6 +11,7 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {StatusLight} from '../';
@@ -20,15 +21,17 @@ let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse'
 
 export default {
   title: 'StatusLight'
-};
+} as Meta<SpectrumStatusLightProps>;
 
-export const AllVariants = () => render();
+export type StatusLightStory = StoryObj<typeof StatusLight>;
+
+export const AllVariants: StatusLightStory = () => render();
 
 AllVariants.story = {
   name: 'all variants'
 };
 
-export const Multiline = () => (
+export const Multiline: StatusLightStory = () => (
   <View width="size-3000">
     <StatusLight variant="celery">Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.</StatusLight>
   </View>

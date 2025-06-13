@@ -13,6 +13,7 @@
 import {Avatar} from '..';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {StoryFn} from '@storybook/react';
 
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
@@ -22,7 +23,9 @@ export default {
   title: 'Avatar'
 };
 
-export const all = () => (
+export type AvatarStory = StoryFn<typeof Avatar>;
+
+export const all: AvatarStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>Default</h2>
     <Avatar src={SRC_URL_1} />

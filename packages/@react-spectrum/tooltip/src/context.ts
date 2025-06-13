@@ -11,7 +11,7 @@
  */
 
 import {PlacementAxis} from '@react-types/overlays';
-import React, {HTMLAttributes} from 'react';
+import React, {Context, HTMLAttributes} from 'react';
 import {RefObject, StyleProps} from '@react-types/shared';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 
@@ -23,4 +23,4 @@ interface TooltipContextProps extends StyleProps {
   arrowRef?: RefObject<HTMLElement | null>
 }
 
-export const TooltipContext = React.createContext<TooltipContextProps>({placement: null});
+export const TooltipContext: Context<TooltipContextProps> = React.createContext<TooltipContextProps>({placement: null});

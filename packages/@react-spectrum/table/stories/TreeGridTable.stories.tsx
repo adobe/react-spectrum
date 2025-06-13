@@ -14,20 +14,59 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
 import {Key} from '@react-types/shared';
-import React, {useState} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, useState} from 'react';
 
 enableTableNestedRows();
 
 export default {
   ...defaultConfig,
-  title: 'TableView/Expandable rows'
-} as ComponentMeta<typeof TableView>;
+  title: 'TableView/Expandable rows',
+  excludeStories: [
+    'StaticExpandableRowsRender',
+    'DynamicExpandableRowsStoryRender',
+    'UserSetRowHeaderRender',
+    'ManyExpandableRowsStoryRender',
+    'EmptyTreeGridStoryRender',
+    'LoadingTreeGridStoryRender'
+  ]
+} as Meta<typeof TableView>;
 
+export const StaticExpandableRowsRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
+  <TableView aria-label="TableView with static expandable rows" width={500} height={200} UNSTABLE_defaultExpandedKeys={['row 1']} UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableHeader>
+      <Column key="foo">Foo</Column>
+      <Column key="bar">Bar</Column>
+      <Column key="baz">Baz</Column>
+    </TableHeader>
+    <TableBody>
+      <Row key="row 1">
+        <Cell>Lvl 1 Foo 1</Cell>
+        <Cell>Lvl 1 Bar 1</Cell>
+        <Cell> Lvl 1 Baz 1</Cell>
+        <Row key="child row 1 level 2">
+          <Cell>Lvl 2 Foo 1</Cell>
+          <Cell>Lvl 2 Bar 1</Cell>
+          <Cell>Lvl 2 Baz 1</Cell>
+          <Row key="child row 1 level 3">
+            <Cell>Lvl 3 Foo 1</Cell>
+            <Cell>Lvl 3 Bar 1</Cell>
+            <Cell>Lvl 3 Baz 1</Cell>
+          </Row>
+        </Row>
+        <Row key="child row 2 level 2">
+          <Cell>Lvl 2 Foo 2</Cell>
+          <Cell>Lvl 2 Bar 2</Cell>
+          <Cell>Lvl 2 Baz 2</Cell>
+        </Row>
+      </Row>
+    </TableBody>
+  </TableView>
+);
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const StaticExpandableRows: TableStory = {
   args: {
@@ -35,37 +74,7 @@ export const StaticExpandableRows: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
-    <TableView UNSTABLE_defaultExpandedKeys={['row 1']} UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
-      <TableHeader>
-        <Column key="foo">Foo</Column>
-        <Column key="bar">Bar</Column>
-        <Column key="baz">Baz</Column>
-      </TableHeader>
-      <TableBody>
-        <Row key="row 1">
-          <Cell>Lvl 1 Foo 1</Cell>
-          <Cell>Lvl 1 Bar 1</Cell>
-          <Cell> Lvl 1 Baz 1</Cell>
-          <Row key="child row 1 level 2">
-            <Cell>Lvl 2 Foo 1</Cell>
-            <Cell>Lvl 2 Bar 1</Cell>
-            <Cell>Lvl 2 Baz 1</Cell>
-            <Row key="child row 1 level 3">
-              <Cell>Lvl 3 Foo 1</Cell>
-              <Cell>Lvl 3 Bar 1</Cell>
-              <Cell>Lvl 3 Baz 1</Cell>
-            </Row>
-          </Row>
-          <Row key="child row 2 level 2">
-            <Cell>Lvl 2 Foo 2</Cell>
-            <Cell>Lvl 2 Bar 2</Cell>
-            <Cell>Lvl 2 Baz 2</Cell>
-          </Row>
-        </Row>
-      </TableBody>
-    </TableView>
-  ),
+  render: (args) => <StaticExpandableRowsRender {...args} />,
   name: 'static with expandable rows'
 };
 
@@ -78,7 +87,7 @@ let nestedItems = [
   ]}
 ];
 
-function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
+function DynamicExpandableRows(props: Omit<SpectrumTableProps<unknown>, 'children'>) {
   let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
 
   return (
@@ -105,17 +114,57 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
   );
 }
 
+export const DynamicExpandableRowsStoryRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
+  <DynamicExpandableRows aria-label="TableView with dynamic expandable rows" width={500} height={400} {...args} />
+);
+
 export const DynamicExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with dynamic expandable rows',
     width: 500,
     height: 400
   },
-  render: (args) => (
-    <DynamicExpandableRows {...args} />
-  ),
+  render: (args) => <DynamicExpandableRowsStoryRender {...args} />,
   name: 'dynamic with expandable rows'
 };
+
+export const UserSetRowHeaderRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
+  <TableView
+    UNSTABLE_allowsExpandableRows
+    UNSTABLE_onExpandedChange={action('onExpandedChange')}
+    aria-label="TableView with expandable rows and multiple row headers"
+    width={500}
+    height={400}
+    {...args}>
+    <TableHeader>
+      <Column key="foo" allowsResizing>Foo</Column>
+      <Column isRowHeader allowsResizing key="bar">Bar</Column>
+      <Column isRowHeader key="baz" allowsResizing>Baz</Column>
+    </TableHeader>
+    <TableBody>
+      <Row key="test">
+        <Cell>Lvl 1 Foo 1</Cell>
+        <Cell>Lvl 1 Bar 1</Cell>
+        <Cell>Lvl 1 Baz 1</Cell>
+        <Row>
+          <Cell>Lvl 2 Foo 1</Cell>
+          <Cell>Lvl 2 Bar 1</Cell>
+          <Cell>Lvl 2 Baz 1</Cell>
+          <Row>
+            <Cell>Lvl 3 Foo 1</Cell>
+            <Cell>Lvl 3 Bar 1</Cell>
+            <Cell>Lvl 3 Baz 1</Cell>
+          </Row>
+        </Row>
+        <Row>
+          <Cell>Lvl 2 Foo 2</Cell>
+          <Cell>Lvl 2 Bar 2</Cell>
+          <Cell>Lvl 2 Baz 2</Cell>
+        </Row>
+      </Row>
+    </TableBody>
+  </TableView>
+);
 
 export const UserSetRowHeader: TableStory = {
   args: {
@@ -123,37 +172,7 @@ export const UserSetRowHeader: TableStory = {
     width: 500,
     height: 400
   },
-  render: (args) => (
-    <TableView UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
-      <TableHeader>
-        <Column key="foo" allowsResizing>Foo</Column>
-        <Column isRowHeader allowsResizing key="bar">Bar</Column>
-        <Column isRowHeader key="baz" allowsResizing>Baz</Column>
-      </TableHeader>
-      <TableBody>
-        <Row key="test">
-          <Cell>Lvl 1 Foo 1</Cell>
-          <Cell>Lvl 1 Bar 1</Cell>
-          <Cell>Lvl 1 Baz 1</Cell>
-          <Row>
-            <Cell>Lvl 2 Foo 1</Cell>
-            <Cell>Lvl 2 Bar 1</Cell>
-            <Cell>Lvl 2 Baz 1</Cell>
-            <Row>
-              <Cell>Lvl 3 Foo 1</Cell>
-              <Cell>Lvl 3 Bar 1</Cell>
-              <Cell>Lvl 3 Baz 1</Cell>
-            </Row>
-          </Row>
-          <Row>
-            <Cell>Lvl 2 Foo 2</Cell>
-            <Cell>Lvl 2 Bar 2</Cell>
-            <Cell>Lvl 2 Baz 2</Cell>
-          </Row>
-        </Row>
-      </TableBody>
-    </TableView>
-  ),
+  render: (args) => <UserSetRowHeaderRender {...args} />,
   name: 'multiple user set row headers',
   parameters: {
     description: {
@@ -179,17 +198,21 @@ function generateRows(count = 5) {
   for (let i = 1; i <= count; i++) {
     let row = generateRow(1, 3, i);
     manyRows.push(row);
-  }  
+  }
   return manyRows;
 }
 
-interface ManyExpandableRowsProps extends SpectrumTableProps<unknown> {
+interface ManyExpandableRowsProps extends Omit<SpectrumTableProps<unknown>, 'children'> {
   allowsResizing?: boolean,
   showDivider?: boolean,
   rowCount?: number
 }
 
-function ManyExpandableRows(props: ManyExpandableRowsProps) {
+export const ManyExpandableRowsStoryRender = (args: ManyExpandableRowsProps): JSX.Element => (
+  <ManyExpandableRows aria-label="TableView with many dynamic expandable rows" width={500} height={400} rowCount={5} {...args} />
+);
+
+function ManyExpandableRows(props: ManyExpandableRowsProps): JSX.Element {
   let {allowsResizing, showDivider, ...otherProps} = props;
   let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
   let manyRows = generateRows(props.rowCount ?? 5);
@@ -216,7 +239,7 @@ function ManyExpandableRows(props: ManyExpandableRowsProps) {
   );
 }
 
-export const ManyExpandableRowsStory: ComponentStoryObj<typeof ManyExpandableRows> = {
+export const ManyExpandableRowsStory: StoryObj<typeof ManyExpandableRows> = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
     width: 500,
@@ -224,10 +247,14 @@ export const ManyExpandableRowsStory: ComponentStoryObj<typeof ManyExpandableRow
     rowCount: 5
   },
   render: (args) => (
-    <ManyExpandableRows {...args} />
+    <ManyExpandableRowsStoryRender {...args} />
   ),
   name: 'many expandable rows'
 };
+
+export const EmptyTreeGridStoryRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
+  <EmptyStateTable UNSTABLE_allowsExpandableRows selectionMode="none" columns={columns} items={generateRows()} allowsSorting={false} width={500} height={400} {...args} />
+);
 
 export const EmptyTreeGridStory: TableStory = {
   args: {
@@ -235,9 +262,7 @@ export const EmptyTreeGridStory: TableStory = {
     width: 500,
     height: 400
   },
-  render: (args) => (
-    <EmptyStateTable UNSTABLE_allowsExpandableRows selectionMode="none" columns={columns} items={generateRows()} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
-  ),
+  render: (args) => <EmptyTreeGridStoryRender {...args} />,
   name: 'empty state'
 };
 
@@ -263,15 +288,17 @@ function LoadingStateTable(props) {
   );
 }
 
+export const LoadingTreeGridStoryRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
+  <LoadingStateTable aria-label="TableView with loading" width={500} height={400} {...args} />
+);
+
 export const LoadingTreeGridStory: TableStory = {
   args: {
     'aria-label': 'TableView with loading',
     width: 500,
     height: 400
   },
-  render: (args) => (
-    <LoadingStateTable {...args} />
-  ),
+  render: (args) => <LoadingTreeGridStoryRender {...args} />,
   name: 'isLoading'
 };
 

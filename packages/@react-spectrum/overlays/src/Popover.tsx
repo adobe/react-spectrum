@@ -12,7 +12,7 @@
 
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
 import {mergeProps, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {Overlay} from './Overlay';
@@ -67,7 +67,9 @@ let arrowPlacement = {
   bottom: 'bottom'
 };
 
-export const Popover = forwardRef(function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const Popover:
+  React.ForwardRefExoticComponent<PopoverProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     state,

@@ -127,12 +127,12 @@ export interface TableContextValue<T> {
   renderEmptyState?: () => ReactElement
 }
 
-export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
+export const TableContext: React.Context<TableContextValue<unknown> | null> = React.createContext<TableContextValue<unknown> | null>(null);
 export function useTableContext(): TableContextValue<unknown> {
   return useContext(TableContext)!;
 }
 
-export const VirtualizerContext = React.createContext<{width: number, key: Key | null} | null>(null);
+export const VirtualizerContext: React.Context<{width: number, key: Key | null} | null> = React.createContext<{width: number, key: Key | null} | null>(null);
 export function useVirtualizerContext(): {
   width: number,
   key: Key | null

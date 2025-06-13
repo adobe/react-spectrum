@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
@@ -21,7 +21,9 @@ import {useProviderProps} from '@react-spectrum/provider';
 /**
  * Image is used to insert and display an image within a component.
  */
-export const Image = React.forwardRef(// incomplete component for show right now
+export const Image:
+  React.ForwardRefExoticComponent<SpectrumImageProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(// incomplete component for show right now
 
 function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
@@ -59,7 +61,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
         src={src}
         alt={userProvidedAlt || alt}
         style={{objectFit}}
-        className={classNames(styles, 'spectrum-Image-img')} 
+        className={classNames(styles, 'spectrum-Image-img')}
         onError={props?.onError}
         onLoad={props?.onLoad} />
     </div>

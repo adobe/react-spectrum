@@ -16,8 +16,8 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumColorFieldProps} from '@react-types/color';
 
 // Ignore read only because it doesn't apply any distingishable visual features
@@ -70,7 +70,9 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<SpectrumColorFieldProps> = (args) => (
+export type ColorFieldStory = StoryObj<typeof ColorField>;
+
+const Template = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -82,7 +84,7 @@ const Template: StoryFn<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateSmall: StoryFn<SpectrumColorFieldProps> = (args) => (
+const TemplateSmall = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -94,7 +96,7 @@ const TemplateSmall: StoryFn<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-const NoLabelTemplate: StoryFn<SpectrumColorFieldProps> = (args) => (
+const NoLabelTemplate = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.filter(combo => combo.isRequired == null && combo.necessityIndicator == null).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -106,44 +108,44 @@ const NoLabelTemplate: StoryFn<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = {
-  render: Template,
+export const PropDefaults: ColorFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
-export const PropDefaultValue = {
-  render: Template,
+export const PropDefaultValue: ColorFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'default value',
   args: {...PropDefaults.args, defaultValue: '#abcdef'}
 };
 
-export const PropPlaceholder = {
-  render: Template,
+export const PropPlaceholder: ColorFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'placeholder',
   args: {...PropDefaults.args, placeholder: 'Enter a hex color'}
 };
 
-export const PropAriaLabelled = {
-  render: NoLabelTemplate,
+export const PropAriaLabelled: ColorFieldStory = {
+  render: (args) => <NoLabelTemplate {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
-export const PropLabelEnd = {
-  render: Template,
+export const PropLabelEnd: ColorFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end', defaultValue: '#abcdef'}
 };
 
-export const PropLabelSide = {
-  render: TemplateSmall,
+export const PropLabelSide: ColorFieldStory = {
+  render: (args) => <TemplateSmall {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'}
 };
 
-export const PropCustomWidth = {
-  render: Template,
+export const PropCustomWidth: ColorFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-3000'}
 };

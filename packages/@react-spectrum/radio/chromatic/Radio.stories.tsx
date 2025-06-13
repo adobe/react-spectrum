@@ -11,92 +11,95 @@
  */
 
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+import {Meta, StoryFn} from '@storybook/react';
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 
 export default {
   title: 'RadioGroup'
-};
+} as Meta<typeof RadioGroup>;
 
-export const ControlledDragons = () => render({value: 'dragons'});
+export type RadioGroupStory = StoryFn<typeof RadioGroup>;
+
+export const ControlledDragons: RadioGroupStory = () => render({value: 'dragons'});
 
 ControlledDragons.story = {
   name: 'controlled: dragons'
 };
 
-export const LabelAlignEnd = () => renderLabelPositions({labelAlign: 'end', value: 'dragons'});
+export const LabelAlignEnd: RadioGroupStory = () => renderLabelPositions({labelAlign: 'end', value: 'dragons'});
 
 LabelAlignEnd.story = {
   name: 'labelAlign: end'
 };
 
-export const LabelPositionSide = () =>
+export const LabelPositionSide: RadioGroupStory = () =>
   renderLabelPositions({labelPosition: 'side', value: 'dragons'});
 
 LabelPositionSide.story = {
   name: 'labelPosition: side'
 };
 
-export const LabelPositionSideLabelAlignEnd = () =>
+export const LabelPositionSideLabelAlignEnd: RadioGroupStory = () =>
   renderLabelPositions({labelPosition: 'side', labelAlign: 'end', value: 'dragons'});
 
 LabelPositionSideLabelAlignEnd.story = {
   name: 'labelPosition: side, labelAlign: end'
 };
 
-export const IsDisabled = () => render({isDisabled: true, value: 'dragons'});
+export const IsDisabled: RadioGroupStory = () => render({isDisabled: true, value: 'dragons'});
 
 IsDisabled.story = {
   name: 'isDisabled'
 };
 
-export const IsRequired = () => render({isRequired: true, value: 'dragons'});
+export const IsRequired: RadioGroupStory = () => render({isRequired: true, value: 'dragons'});
 
 IsRequired.story = {
   name: 'isRequired'
 };
 
-export const IsReadOnly = () => render({isReadOnly: true, value: 'dragons'});
+export const IsReadOnly: RadioGroupStory = () => render({isReadOnly: true, value: 'dragons'});
 
 IsReadOnly.story = {
   name: 'isReadOnly'
 };
 
-export const IsEmphasized = () => render({isEmphasized: true, value: 'dragons'});
+export const IsEmphasized: RadioGroupStory = () => render({isEmphasized: true, value: 'dragons'});
 
 IsEmphasized.story = {
   name: 'isEmphasized'
 };
 
-export const ValidationStateInvalid = () =>
+export const ValidationStateInvalid: RadioGroupStory = () =>
   render({isInvalid: true, value: 'dragons'});
 
 ValidationStateInvalid.story = {
   name: 'validationState: "invalid"'
 };
 
-export const NoVisibleLabel = () =>
+export const NoVisibleLabel: RadioGroupStory = () =>
   render({label: null, 'aria-label': 'Favorite pet', value: 'dragons'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const LongRadioLabel = () => renderLongLabel({value: 'dragons'});
+export const LongRadioLabel: RadioGroupStory = () => renderLongLabel({value: 'dragons'});
 
 LongRadioLabel.story = {
   name: 'long radio label'
 };
 
-export const ShowErrorIcon = () =>
+export const ShowErrorIcon: RadioGroupStory = () =>
   render({isInvalid: true, errorMessage: 'Error message.', showErrorIcon: true});
 
 ShowErrorIcon.story = {
   name: 'show error icon'
 };
 
-export const _ContextualHelp = (args) =>
+export const _ContextualHelp: RadioGroupStory = (args) =>
   render({
     ...args,
     contextualHelp: (

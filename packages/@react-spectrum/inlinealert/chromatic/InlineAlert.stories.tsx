@@ -13,7 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert, SpectrumInlineAlertProps} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta<SpectrumInlineAlertProps> = {
@@ -23,7 +23,9 @@ const meta: Meta<SpectrumInlineAlertProps> = {
 
 export default meta;
 
-export const Default = {
+export type InlineAlertStory = StoryObj<typeof InlineAlert>;
+
+export const Default: InlineAlertStory = {
   args: {
     children: (
       <>
@@ -34,7 +36,7 @@ export const Default = {
   }
 };
 
-export const Informative = {
+export const Informative: InlineAlertStory = {
   args: {
     variant: 'info',
     children: (
@@ -46,7 +48,7 @@ export const Informative = {
   }
 };
 
-export const Positive = {
+export const Positive: InlineAlertStory = {
   args: {
     variant: 'positive',
     children: (
@@ -58,7 +60,7 @@ export const Positive = {
   }
 };
 
-export const Notice = {
+export const Notice: InlineAlertStory = {
   args: {
     variant: 'notice',
     children: (
@@ -70,7 +72,7 @@ export const Notice = {
   }
 };
 
-export const Negative = {
+export const Negative: InlineAlertStory = {
   args: {
     variant: 'negative',
     children: (
@@ -82,7 +84,7 @@ export const Negative = {
   }
 };
 
-export const LongContent = {
+export const LongContent: InlineAlertStory = {
   args: {
     variant: 'info'
   },

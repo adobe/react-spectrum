@@ -41,47 +41,47 @@ export const Quiet: CardStory = {
   ...Default
 };
 
-export const QuietSquare = {
+export const QuietSquare: CardStory = {
   ...DefaultSquare
 };
 
-export const QuietTall = {
+export const QuietTall: CardStory = {
   ...DefaultTall
 };
 
-export const QuietNoDescription = {
+export const QuietNoDescription: CardStory = {
   ...NoDescription
 };
 
-export const QuietNoDescriptionSquare = {
+export const QuietNoDescriptionSquare: CardStory = {
   ...NoDescriptionSquare
 };
 
-export const QuietWithIllustration = {
+export const QuietWithIllustration: CardStory = {
   ...WithIllustration
 };
 
-export const QuietLongTitle = {
+export const QuietLongTitle: CardStory = {
   ...LongTitle
 };
 
-export const QuietLongDescription = {
+export const QuietLongDescription: CardStory = {
   ...LongDescription
 };
 
-export const QuietLongContentPoorWordSize = {
+export const QuietLongContentPoorWordSize: CardStory = {
   ...LongContentPoorWordSize
 };
 
-export const QuietLongDetail = {
+export const QuietLongDetail: CardStory = {
   ...LongDetail
 };
 
-export const QuietLongEverything = {
+export const QuietLongEverything: CardStory = {
   ...LongEverything
 };
 
-export const QuietSelected = {
+export const QuietSelected: CardStory = {
   ...Selected,
   name: 'Selected'
 };

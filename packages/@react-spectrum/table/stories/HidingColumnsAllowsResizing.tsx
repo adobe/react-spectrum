@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import React from 'react';
+import React, {JSX} from 'react';
 
 let columns = [
   {key: 'planName', title: 'Plan Name'},
@@ -33,7 +33,7 @@ let data = [
   {id: 6, planName: 'Plan 6: $800k, MRI', audienceType: 'Demo+strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'}
 ];
 
-export function HidingColumnsAllowsResizing(props) {
+export function HidingColumnsAllowsResizing(props: Omit<SpectrumTableProps<object>, 'children'>): JSX.Element {
   let [visibleColumns, setVisibleColumns] = React.useState(new Set(columns.map(c => c.key)));
   let toggleColumn = (key) => {
     let columns = new Set(visibleColumns);

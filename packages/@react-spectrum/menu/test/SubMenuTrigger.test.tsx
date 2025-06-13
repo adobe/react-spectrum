@@ -11,20 +11,12 @@
  */
 
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
-import {composeStories} from '@storybook/react';
+import {ComplexRender as Complex, SubmenuDynamicRender as SubmenuDynamic, SubmenuStaticRender as SubmenuStatic, TabBehaviorRender as TabBehaviorStory} from '../stories/Submenu.stories';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import type {Scale} from '@react-types/provider';
-import * as stories from '../stories/Submenu.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
-let {
-  SubmenuStatic,
-  SubmenuDynamic,
-  Complex,
-  TabBehaviorStory
-} = composeStories(stories);
 
 let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
   let tree = renderComponent(
@@ -472,7 +464,7 @@ describe('Submenu', function () {
       await user.tab();
       await openSubMenus();
 
-      
+
       // Tab do nothing.
       await user.tab();
       let activeElement = document.activeElement;

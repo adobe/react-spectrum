@@ -11,7 +11,7 @@
  */
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -24,7 +24,9 @@ import {useProviderProps} from '@react-spectrum/provider';
 /**
  * A LogicButton displays an operator within a boolean logic sequence.
  */
-export const LogicButton = React.forwardRef(function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const LogicButton:
+  React.ForwardRefExoticComponent<SpectrumLogicButtonProps & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+React.forwardRef(function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
     variant,

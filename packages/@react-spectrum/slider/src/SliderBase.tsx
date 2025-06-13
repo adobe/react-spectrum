@@ -11,7 +11,7 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef, RefObject} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, RefObject} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
@@ -32,7 +32,9 @@ export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> 
   style?: CSSProperties
 }
 
-export const SliderBase = React.forwardRef(function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
+export const SliderBase:
+  React.ForwardRefExoticComponent<SliderBaseProps<number[]> & React.RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
+React.forwardRef(function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     isDisabled,

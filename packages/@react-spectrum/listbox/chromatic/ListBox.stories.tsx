@@ -20,9 +20,9 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumListBoxProps} from '@react-types/listbox';
 import {Text} from '@react-spectrum/text';
 
@@ -91,13 +91,13 @@ const meta: Meta<SpectrumListBoxProps<object>> = {
 
 export default meta;
 
-const Template = (args: SpectrumListBoxProps<object>) => (
+const Template = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={flatOptions}>
     {(item) => <Item key={item.name}>{item.name}</Item>}
   </ListBox>
 );
 
-const TemplateWithSections = (args: SpectrumListBoxProps<object>) => (
+const TemplateWithSections = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={withSection}>
     {item => (
       <Section key={item.name} items={item.children} title={item.name}>
@@ -107,7 +107,7 @@ const TemplateWithSections = (args: SpectrumListBoxProps<object>) => (
   </ListBox>
 );
 
-const TemplateNoTitle = (args: SpectrumListBoxProps<object>) => (
+const TemplateNoTitle = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={withSection}>
     {item => (
       <Section key={item.name} items={item.children}>
@@ -117,7 +117,7 @@ const TemplateNoTitle = (args: SpectrumListBoxProps<object>) => (
   </ListBox>
 );
 
-let customOption = (item) => {
+let customOption = (item): JSX.Element => {
   let Icon = iconMap[item.icon];
   return (
     <Item textValue={item.name} key={item.name}>
@@ -127,7 +127,7 @@ let customOption = (item) => {
   );
 };
 
-const TemplateComplex = (args: SpectrumListBoxProps<object>) => (
+const TemplateComplex = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={hardModeProgrammatic}>
     {item => (
       <Section key={item.name} items={item.children} title={item.name}>
@@ -137,7 +137,7 @@ const TemplateComplex = (args: SpectrumListBoxProps<object>) => (
   </ListBox>
 );
 
-const TemplateAvatars = (args: SpectrumListBoxProps<object>) => (
+const TemplateAvatars = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={flatOptions}>
     {(item) => (
       <Item key={item.name}>
@@ -148,31 +148,31 @@ const TemplateAvatars = (args: SpectrumListBoxProps<object>) => (
   </ListBox>
 );
 
-export const Default = {
-  render: Template,
+export const Default: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'flat list with selection',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
-export const Sections = {
-  render: TemplateWithSections,
+export const Sections: StoryObj<typeof TemplateWithSections> = {
+  render: (args) => <TemplateWithSections {...args} />,
   name: 'with sections',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
-export const SectionsNoTitle = {
-  render: TemplateNoTitle,
+export const SectionsNoTitle: StoryObj<typeof TemplateNoTitle> = {
+  render: (args) => <TemplateNoTitle {...args} />,
   name: 'sections without titles',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
-export const ComplexItems = {
-  render: TemplateComplex,
+export const ComplexItems: StoryObj<typeof TemplateComplex> = {
+  render: (args) => <TemplateComplex {...args} />,
   name: 'complex items',
   args: {selectedKeys: ['Puppy', 'Cut'], disabledKeys: ['Paste'], selectionMode: 'multiple'}
 };
 
-export const WithAvatar = {
-  render: TemplateAvatars,
+export const WithAvatar: StoryObj<typeof TemplateAvatars> = {
+  render: (args) => <TemplateAvatars {...args} />,
   name: 'with avatar'
 };

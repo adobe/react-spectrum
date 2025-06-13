@@ -16,8 +16,8 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
 
 let states = [
@@ -59,7 +59,9 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<SpectrumColorSliderProps> = (args) => (
+export type ColorSliderStory = StoryObj<typeof ColorSlider>;
+
+const Template = (args: SpectrumColorSliderProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -71,7 +73,7 @@ const Template: StoryFn<SpectrumColorSliderProps> = (args) => (
   </Grid>
 );
 
-const VerticalTemplate: StoryFn<SpectrumColorSliderProps> = (args) => (
+const VerticalTemplate = (args: SpectrumColorSliderProps): JSX.Element => (
   <Grid columns={repeat(5, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -83,44 +85,44 @@ const VerticalTemplate: StoryFn<SpectrumColorSliderProps> = (args) => (
   </Grid>
 );
 
-export const PropChannelRed = {
-  render: Template,
+export const PropChannelRed: ColorSliderStory = {
+  render: (args) => <Template {...args} />,
   name: 'channel: red',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
-export const PropChannelAlpha = {
-  render: Template,
+export const PropChannelAlpha: ColorSliderStory = {
+  render: (args) => <Template {...args} />,
   name: 'channel: alpha',
   args: {channel: 'alpha', defaultValue: '#7f0000'}
 };
 
-export const PropChannelLightness = {
-  render: Template,
+export const PropChannelLightness: ColorSliderStory = {
+  render: (args) => <Template {...args} />,
   name: 'channel: lightness',
   args: {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'}
 };
 
-export const PropChannelBrightness = {
-  render: Template,
+export const PropChannelBrightness: ColorSliderStory = {
+  render: (args) => <Template {...args} />,
   name: 'channel: brightness',
   args: {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'}
 };
 
-export const PropVertical = {
-  render: VerticalTemplate,
+export const PropVertical: ColorSliderStory = {
+  render: (args) => <VerticalTemplate {...args} />,
   name: 'orientation: vertical',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
-export const PropCustomWidth = {
-  render: Template,
+export const PropCustomWidth: ColorSliderStory = {
+  render: (args) => <Template {...args} />,
   name: 'custom width',
   args: {channel: 'red', defaultValue: '#7f0000', width: 'size-3600'}
 };
 
-export const PropCustomHeight = {
-  render: VerticalTemplate,
+export const PropCustomHeight: ColorSliderStory = {
+  render: (args) => <VerticalTemplate {...args} />,
   name: 'custom height',
   args: {channel: 'red', defaultValue: '#7f0000', height: 'size-3600'}
 };

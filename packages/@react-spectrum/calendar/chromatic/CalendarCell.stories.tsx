@@ -13,14 +13,15 @@
 import {classNames} from '@react-spectrum/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import React from 'react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 export default {
   title: 'CalendarCall',
   excludeStories: ['AllStates']
-};
+} as Meta<typeof AllStates>;
 
 let states = [
   {isToday: true},
@@ -38,7 +39,9 @@ let states = [
   {isUnavailable: true}
 ];
 
-export const LightMedium = () => <AllStates />;
+export type AllStatesStory = StoryFn<typeof AllStates>;
+
+export const LightMedium: AllStatesStory = () => <AllStates />;
 LightMedium.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -47,7 +50,7 @@ LightMedium.parameters = {
   }
 };
 
-export const LightLarge = () => <AllStates />;
+export const LightLarge: AllStatesStory = () => <AllStates />;
 LightLarge.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -56,7 +59,7 @@ LightLarge.parameters = {
   }
 };
 
-export const DarkMedium = () => <AllStates />;
+export const DarkMedium: AllStatesStory = () => <AllStates />;
 DarkMedium.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -65,7 +68,7 @@ DarkMedium.parameters = {
   }
 };
 
-export const DarkLarge = () => <AllStates />;
+export const DarkLarge: AllStatesStory = () => <AllStates />;
 DarkLarge.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -74,7 +77,7 @@ DarkLarge.parameters = {
   }
 };
 
-export function AllStates() {
+export function AllStates(): JSX.Element {
   let {scale} = useProvider();
   let size = scale === 'medium' ? 40 : 50;
   return (

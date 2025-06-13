@@ -11,7 +11,7 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeaderProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
@@ -19,7 +19,9 @@ import React, {forwardRef} from 'react';
 /**
  * Header represents a header within a Spectrum container.
  */
-export const Header = forwardRef(function Header(props: HeaderProps, ref: DOMRef) {
+export const Header:
+  React.ForwardRefExoticComponent<HeaderProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
+forwardRef(function Header(props: HeaderProps, ref: DOMRef) {
   props = useSlotProps(props, 'header');
   let {
     children,
