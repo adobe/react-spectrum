@@ -16,7 +16,19 @@ export function Nav({pages, currentPage}: PageProps) {
   }
 
   return (
-    <nav className={style({position: 'sticky', top: 40, height: 'fit', maxHeight: 'screen', overflow: 'auto'})}>
+    <nav
+      style={{
+        // TODO: We may want a larger value, but we'll have to add it on scroll if so.
+        maskImage: 'linear-gradient(to bottom, transparent, black 16px)'
+      }}
+      className={style({
+        position: 'sticky',
+        top: 40,
+        height: 'fit',
+        maxHeight: 'screen',
+        overflow: 'auto',
+        paddingEnd: 32
+      })}>
       {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>

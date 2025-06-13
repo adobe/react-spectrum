@@ -71,8 +71,6 @@ export default function Header(props: PageProps) {
         <div
           className={style({
             width: 'full', 
-            // Matches search menu
-            maxWidth: 1240, 
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',

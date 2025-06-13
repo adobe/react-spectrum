@@ -53,12 +53,13 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
       </head>
-      <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxWidth: 1600, marginX: 'auto', paddingX: 12, paddingBottom: 12, paddingTop: 0})}>
+      <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxWidth: 1600, marginX: 'auto', paddingX: 12, paddingBottom: 12, paddingTop: 0, overflow: 'hidden'})}>
         <Header pages={pages} currentPage={currentPage}  />
-        <div className={style({display: 'flex', gap: 32, width: 'full'})}>
+        <div className={style({display: 'flex', width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}
+            style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
             className={style({
               backgroundColor: 'base',
               padding: 40,
@@ -68,7 +69,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               boxSizing: 'border-box',
               flexGrow: 1,
               display: 'flex',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              height: '[calc(100vh - 68px)]',
+              overflow: 'auto'
             })}>
             <article className={style({maxWidth: 768, width: 'full'})}>
               {React.cloneElement(children, {components})}

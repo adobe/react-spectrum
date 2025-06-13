@@ -113,8 +113,8 @@ let modalStyle = style({
   position: 'absolute',
   top: 8,
   width: 'full',
-  // Matches header
-  maxWidth: 1240,
+  // Matches body
+  maxWidth: 1600,
   backgroundColor: 'elevated',
   paddingX: 16,
   paddingY: 8,
@@ -127,7 +127,7 @@ let modalStyle = style({
   left: 0,
   right: 0,
   margin: 'auto',
-  maxHeight: '[90vh]'
+  height: '[90vh]'
 });
 
 const getCurrentLibrary = (currentPage: Page) => {
