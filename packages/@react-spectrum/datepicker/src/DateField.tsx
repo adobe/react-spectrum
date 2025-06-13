@@ -17,12 +17,13 @@ import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDateFieldProps} from '@react-types/datepicker';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
-import {Input} from './Input';
+import {Input, VALID_ICON_POSTFIX} from './Input';
 import React, {ReactElement, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
+import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -67,6 +68,9 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
+  let dateFieldInputId = useId();
+  let validIconId = validationState === 'valid' ? dateFieldInputId + VALID_ICON_POSTFIX : undefined;
+
   return (
     <Field
       {...props}
@@ -82,6 +86,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
       validationDetails={validationDetails}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <Input
+        id={dateFieldInputId}
         ref={fieldRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
@@ -92,6 +97,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
+            aria-describedby={i === 0 ? validIconId : undefined}
             key={i}
             segment={segment}
             state={state}
