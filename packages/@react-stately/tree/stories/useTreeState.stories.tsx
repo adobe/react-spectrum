@@ -12,20 +12,21 @@
 
 import {Collection, Key, Node} from '@react-types/shared';
 import {Item} from '@react-stately/collections';
-import React, {useMemo, useRef} from 'react';
+import React, {JSX, useMemo, useRef} from 'react';
 import {TreeCollection} from '../src/TreeCollection';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 import {useTreeState} from '../';
+import { Meta, StoryFn } from '@storybook/react';
 
 export default {
   title: 'useTreeState'
-};
+} as Meta<typeof TreeExample>;
 
-export const KeyboardNavigation = () => <TreeExample />;
+export const KeyboardNavigation: StoryFn<typeof TreeExample> = () => <TreeExample />;
 
 
-function TreeExample(props = {}) {
+function TreeExample(props = {}): JSX.Element {
   return (
     <Tree {...props}>
       <Item key="1" title="Animals">
