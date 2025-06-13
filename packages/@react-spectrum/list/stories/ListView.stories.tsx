@@ -2,7 +2,6 @@ import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -16,10 +15,11 @@ import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import {Item, ListView} from '../';
+import {Item, ListView, SpectrumListViewProps} from '../';
 import {Link} from '@react-spectrum/link';
+import {Meta, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
-import React, {useEffect, useState} from 'react';
+import React, {JSX, useEffect, useState} from 'react';
 import {useAsyncList, useListData} from '@react-stately/data';
 
 export const items: any = [
@@ -63,7 +63,7 @@ const itemsWithThumbs = [
   {key: '9', title: 'file of great boi', illustration: <File />}
 ];
 
-export function renderEmptyState() {
+export function renderEmptyState(): JSX.Element {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">
@@ -137,9 +137,9 @@ export default {
       options: ['selection', 'all']
     }
   }
-} as ComponentMeta<typeof ListView>;
+} as Meta<typeof ListView>;
 
-export type ListViewStory = ComponentStoryObj<typeof ListView>;
+export type ListViewStory = StoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (
@@ -460,13 +460,13 @@ function EmptyTest() {
   );
 }
 
-export const RemoveListItems = {
+export const RemoveListItems: StoryObj<typeof Demo> = {
   render: (args) => (
     <Demo {...args} />
   )
 };
 
-function Demo(props) {
+function Demo(props: Omit<SpectrumListViewProps<any>, 'children'>): JSX.Element {
   let [items, setItems] = useState<{key: number, label: string}[]>([
     {key: 1, label: 'utilities'}
   ]);
