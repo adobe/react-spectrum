@@ -2,7 +2,7 @@ import {ColorArea} from './ColorArea';
 import {ColorField} from './ColorField';
 import {ColorSlider} from './ColorSlider';
 import {ColorSpace} from '@react-types/color';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getColorChannels} from '@react-stately/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -20,7 +20,9 @@ export interface SpectrumColorEditorProps {
 /**
  * ColorEditor provides a default UI for editing colors within a ColorPicker.
  */
-export const ColorEditor = React.forwardRef(function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorEditor:
+  React.ForwardRefExoticComponent<SpectrumColorEditorProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement>) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
   let domRef = useDOMRef(ref);
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');

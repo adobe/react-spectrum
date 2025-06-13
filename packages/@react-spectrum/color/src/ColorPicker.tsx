@@ -11,7 +11,7 @@
  */
 
 import {ColorPicker as AriaColorPicker, Button, Color} from 'react-aria-components';
-import {AriaLabelingProps, FocusableRef, ValueBase} from '@react-types/shared';
+import {AriaLabelingProps, FocusableRef, FocusableRefValue, ValueBase} from '@react-types/shared';
 import {ColorSwatch} from './ColorSwatch';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -40,14 +40,16 @@ export interface SpectrumColorPickerProps extends ValueBase<string | Color, Colo
 /**
  * A ColorPicker combines a swatch with a customizable popover for editing a color.
  */
-export const ColorPicker = React.forwardRef(function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ColorPicker:
+  React.ForwardRefExoticComponent<SpectrumColorPickerProps & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+React.forwardRef(function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButtonElement>) {
   let swatchRef = useRef(null);
   let domRef = useFocusableRef(ref);
   let labelId = useId();
   return (
     <AriaColorPicker {...props}>
       <DialogTrigger type="popover" mobileType="tray" targetRef={unwrapDOMRef(swatchRef)}>
-        <Button 
+        <Button
           ref={domRef}
           className={style({
             backgroundColor: 'transparent',
@@ -91,13 +93,13 @@ export const ColorPicker = React.forwardRef(function ColorPicker(props: Spectrum
                   aria-describedby={props['aria-describedby']}
                   aria-details={props['aria-details']} />
               </div>
-              {props.label && 
+              {props.label &&
                 <span id={labelId}>{props.label}</span>
               }
             </>
           )}
         </Button>
-        <Dialog 
+        <Dialog
           aria-labelledby={props.label ? labelId : props['aria-labelledby']}
           aria-label={props['aria-label']}
           UNSAFE_style={{
@@ -105,7 +107,7 @@ export const ColorPicker = React.forwardRef(function ColorPicker(props: Spectrum
             minWidth: 0,
             margin: '0 auto' // Center within tray.
           }}>
-          <Content 
+          <Content
             UNSAFE_style={{
               position: 'relative',
               margin: 'calc(var(--spectrum-dialog-padding) * -1)',

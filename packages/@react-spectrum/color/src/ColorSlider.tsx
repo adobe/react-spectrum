@@ -13,7 +13,7 @@
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorSliderContext, useContextProps} from 'react-aria-components';
 import {ColorThumb} from './ColorThumb';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
@@ -27,7 +27,9 @@ import {useProviderProps} from '@react-spectrum/provider';
 /**
  * ColorSliders allow users to adjust an individual channel of a color value.
  */
-export const ColorSlider = React.forwardRef(function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const ColorSlider:
+  React.ForwardRefExoticComponent<SpectrumColorSliderProps & React.RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
+React.forwardRef(function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let trackRef = useRef(null);
