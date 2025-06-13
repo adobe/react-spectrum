@@ -37,6 +37,12 @@ describe('Table ', function () {
   let onSortChange = jest.fn();
   let testUtilRealTimer = new User({advanceTimer: (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))});
 
+  beforeAll(function () {
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+  });
+
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
     let setSortDescriptor = (sort) => {
