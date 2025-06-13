@@ -46,9 +46,11 @@ const CURSORS = {
   e: getCursor(eCursor, 'e-resize')
 };
 
-export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+export const ResizeStateContext: React.Context<TableColumnResizeState<unknown> | null> = createContext<TableColumnResizeState<unknown> | null>(null);
 
-export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
+export const Resizer:
+  React.ForwardRefExoticComponent<ResizerProps<unknown> & React.RefAttributes<HTMLInputElement | null>> =
+React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
   let {column, showResizer} = props;
   let objectRef = useObjectRef(ref);
   let {isEmpty, onFocusedResizer} = useTableContext();

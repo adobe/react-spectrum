@@ -19,8 +19,8 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 enableTableNestedRows();
 
@@ -120,7 +120,7 @@ let nestedItems = [
   ]}
 ];
 
-const Template = ({combos, columns, items, ...args}) => (
+const Template = ({combos, columns, items, ...args}: SpectrumTableProps<object> & {combos: any[], columns: any[], items: any[]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -166,7 +166,7 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = (args) =>
+const EmptyTemplate = (args: SpectrumTableProps<object>): JSX.Element =>
   (
     <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} UNSTABLE_allowsExpandableRows>
       <TableHeader columns={columns}>
@@ -184,116 +184,118 @@ const EmptyTemplate = (args) =>
     </TableView>
   );
 
-export const Default = {
-  render: Template,
+export type TreeGridTableStory = StoryObj<typeof Template>;
+
+export const Default: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'default items and columns 1 of 3',
   args: {combos: combo1, columns, items: nestedItems}
 };
 
-export const DefaultPt2 = {
-  render: Template,
+export const DefaultPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'default items and columns 2 of 3',
   args: {combos: combo2, columns, items: nestedItems}
 };
 
-export const DefaultPt3 = {
-  render: Template,
+export const DefaultPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'default items and columns 3 of 3',
   args: {combos: combo3, columns, items: nestedItems}
 };
 
-export const ColumnAlign = {
-  render: Template,
+export const ColumnAlign: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'column alignment 1 of 3',
   args: {combos: combo1, columns: alignColumns, items: nestedItems}
 };
 
-export const ColumnAlignPt2 = {
-  render: Template,
+export const ColumnAlignPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'column alignment 2 of 3',
   args: {combos: combo2, columns: alignColumns, items: nestedItems}
 };
 
-export const ColumnAlignPt3 = {
-  render: Template,
+export const ColumnAlignPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'column alignment 3 of 3',
   args: {combos: combo3, columns: alignColumns, items: nestedItems}
 };
 
-export const ColumnDividers = {
-  render: Template,
+export const ColumnDividers: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns dividers 1 of 3',
   args: {combos: combo1, columns: dividerColumns, items: nestedItems}
 };
 
-export const ColumnDividersPt2 = {
-  render: Template,
+export const ColumnDividersPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns dividers 2 of 3',
   args: {combos: combo2, columns: dividerColumns, items: nestedItems}
 };
 
-export const ColumnDividersPt3 = {
-  render: Template,
+export const ColumnDividersPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns dividers 3 of 3',
   args: {combos: combo3, columns: dividerColumns, items: nestedItems}
 };
 
-export const ColumnWidth = {
-  render: Template,
+export const ColumnWidth: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns widths 1 of 3',
   args: {combos: combo1, columns: customWidth, items: nestedItems}
 };
 
-export const ColumnWidthPt2 = {
-  render: Template,
+export const ColumnWidthPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns widths 2 of 3',
   args: {combos: combo2, columns: customWidth, items: nestedItems}
 };
 
-export const ColumnWidthPt3 = {
-  render: Template,
+export const ColumnWidthPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns widths 3 of 3',
   args: {combos: combo3, columns: customWidth, items: nestedItems}
 };
 
-export const HiddenColumns = {
-  render: Template,
+export const HiddenColumns: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'hidden columns 1 of 3',
   args: {combos: combo1, columns: hiddenColumns, items: nestedItems}
 };
 
-export const HiddenColumnsPt2 = {
-  render: Template,
+export const HiddenColumnsPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'hidden columns 2 of 3',
   args: {combos: combo2, columns: hiddenColumns, items: nestedItems}
 };
 
-export const HiddenColumnsPt3 = {
-  render: Template,
+export const HiddenColumnsPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'hidden columns 3 of 3',
   args: {combos: combo3, columns: hiddenColumns, items: nestedItems}
 };
 
-export const NestedColumns = {
-  render: Template,
+export const NestedColumns: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'nested columns 1 of 3',
   args: {combos: combo1, columns: nestedColumns, items: nestedItems}
 };
 
-export const NestedColumnsPt2 = {
-  render: Template,
+export const NestedColumnsPt2: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'nested columns 2 of 3',
   args: {combos: combo2, columns: nestedColumns, items: nestedItems}
 };
 
-export const NestedColumnsPt3 = {
-  render: Template,
+export const NestedColumnsPt3: TreeGridTableStory = {
+  render: (args) => <Template {...args} />,
   name: 'nested columns 3 of 3',
   args: {combos: combo3, columns: nestedColumns, items: nestedItems}
 };
 
 
-export const MaxHeight = () => (
+export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
   <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
     <TableHeader columns={columns}>
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
@@ -304,8 +306,8 @@ export const MaxHeight = () => (
   </TableView>
 );
 
-export const Empty = {
-  render: EmptyTemplate,
+export const Empty: TreeGridTableStory = {
+  render: (args) => <EmptyTemplate {...args} />,
   name: 'empty table',
   args: {}
 };
