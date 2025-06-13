@@ -14,10 +14,10 @@ import {
   TabRenderProps
 } from 'react-aria-components';
 // import {centerBaseline} from './CenterBaseline';
-import {baseColor, focusRing, size, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
-import {IconContext, Text, TextContext} from '@react-spectrum/s2';
+import {IconContext, TextContext} from '@react-spectrum/s2';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -113,25 +113,9 @@ const selectedIndicator = style({
   position: 'absolute',
   backgroundColor: {
     default: 'neutral',
-    forcedColors: {
-      default: 'Highlight'
-    }
+    forcedColors: 'Highlight'
   },
-  height: {
-    orientation: {
-      horizontal: '[2px]'
-    }
-  },
-  width: {
-    orientation: {
-      vertical: '[2px]'
-    }
-  },
-  bottom: {
-    orientation: {
-      horizontal: 0
-    }
-  },
+  width: 2,
   borderStyle: 'none',
   borderRadius: 'full',
   transitionDuration: 130,
@@ -164,14 +148,14 @@ function TabLine(props: TabLineProps) {
       styleObj.height = `${selectedTab.offsetHeight}px`;
       setStyle(styleObj);
     }
-  }, [direction, setStyle, selectedTab]);
+  }, [setStyle, selectedTab]);
 
   useLayoutEffect(() => {
     onResize();
   }, [onResize, state?.selectedItem?.key, direction]);
 
   return (
-    <div style={{...style}} className={selectedIndicator({orientation: 'vertical'})} />
+    <div style={{...style}} className={selectedIndicator} />
   );
 }
 
@@ -181,30 +165,18 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
-    isDisabled: 'disabled',
     forcedColors: {
-      isSelected: 'Highlight',
-      isDisabled: 'GrayText'
+      isSelected: 'Highlight'
     }
   },
   borderRadius: 'sm',
   gap: 'text-to-visual',
-  height: {
-    density: {
-      compact: 32,
-      regular: 48
-    }
-  },
+  height: 48,
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
   flexShrink: 0,
   transition: 'default',
-  paddingX: {
-    labelBehavior: {
-      hide: size(6)
-    }
-  },
   disableTapHighlight: true
 });
 
@@ -227,34 +199,19 @@ export function Tab(props: TabProps): ReactNode {
       originalProps={props}
       aria-labelledby={`${ariaLabelledBy}`}
       className={renderProps => tab({...renderProps})}>
-      {({
-          // @ts-ignore
-          isMenu
-        }) => {
-        if (isMenu) {
-          return props.children;
-        } else {
-          return (
-            <Provider
-              values={[
-                [TextContext, {
-                  // @ts-ignore
-                  id: contentId,
-                  styles:
-                    style({
-                      order: 1
-                    })
-                }],
-                [IconContext, {
-                  // render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-                  styles: icon
-                }]
-              ]}>
-              {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-            </Provider>
-          );
-        }
-      }}
+      <Provider
+        values={[
+          [TextContext, {
+            id: contentId,
+            styles: style({order: 1})
+          }],
+          [IconContext, {
+            // render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+            styles: icon
+          }]
+        ]}>
+        {props.children}
+      </Provider>
     </RACTab>
   );
 }
