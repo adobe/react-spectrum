@@ -25,7 +25,6 @@ import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form, SpectrumFormProps} from '../';
-import {FormTranslatedText, TranslateForm} from './../chromatic/FormLanguages.stories';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -40,6 +39,7 @@ import {StatusLight} from '@react-spectrum/statuslight';
 import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import {TranslateForm} from './../chromatic/FormLanguages.stories';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
 
