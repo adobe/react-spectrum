@@ -3,7 +3,7 @@
 import {ActionButton, Breadcrumb, Breadcrumbs, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Text} from '@react-spectrum/s2';
 import {Autocomplete, AutocompleteProps, Collection, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import type {TextFieldRef} from '@react-types/textfield';
 
@@ -106,6 +106,7 @@ export default function SearchResultsMenu({
           let foundItem: ComponentItem | null = null;
           for (const section of mainItems) {
             foundItem = section.children.find(child => child.id === key) || null;
+            // eslint-disable-next-line max-depth
             if (foundItem) {break;}
           }
           if (foundItem) {
@@ -124,6 +125,7 @@ export default function SearchResultsMenu({
         // --- Submenu Autocomplete ---
         <Autocomplete
           aria-label={`Submenu for ${submenuParentItem.name}`}>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
           <div onKeyDown={handleSubmenuKeyDown} role="region" aria-label="Submenu search">
             {/* Search Field for Submenu */}
             <div className={style({display: 'flex', marginX: 'auto', justifyContent: 'center', alignItems: 'center', marginInlineEnd: 64, marginInlineStart: 0})}>
@@ -150,7 +152,6 @@ export default function SearchResultsMenu({
 
             {/* Submenu Menu Wrapper */}
             <div className={style({marginX: 'auto', marginY: 0, maxWidth: '[500px]', maxHeight: '[calc(85vh - 80px)]', overflow: 'auto', padding: 16})}>
-              {/* Conditionally render Menu or No Results message */}
               {filteredSubmenuItems.length > 0 ? (
                 <Menu
                   size="L"
@@ -165,10 +166,9 @@ export default function SearchResultsMenu({
                 </Menu>
               ) : (
                 submenuSearchValue && (
-                <Text styles={style({display: 'block', textAlign: 'center', marginY: 32})}>
-                  {/* No results message using props */}
-                  No results for "{submenuSearchValue}" on the {submenuParentItem.name} page in {libraryName}
-                </Text>
+                  <div className={style({display: 'block', textAlign: 'center', marginY: 32})}>
+                    No results for "{submenuSearchValue}" on the {submenuParentItem.name} page in {libraryName}
+                  </div>
                 )
               )}
             </div>
@@ -185,7 +185,7 @@ export default function SearchResultsMenu({
               ref={searchRef}
               size="L"
               aria-label={`Search ${libraryName}`}
-              UNSAFE_style={{marginInlineEnd: 304, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'}}
+              UNSAFE_style={{marginInlineEnd: 304, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'} as CSSProperties}
               styles={style({width: '[500px]'})} />
           </div>
 
@@ -195,6 +195,7 @@ export default function SearchResultsMenu({
 
           <div style={{display: showCards ? 'none' : 'block'}} className={style({maxHeight: '[85vh]', overflow: 'auto'})}>
             {mainItems.length > 0 ? (
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <div
                 className={style({marginX: 'auto', marginY: 8, maxWidth: '[500px]'})}
                 onKeyDown={handleMainMenuKeyDown}
@@ -218,10 +219,9 @@ export default function SearchResultsMenu({
                 </Menu>
               </div>
               ) : (
-                // No Results View
-                <Text styles={style({display: 'block', textAlign: 'center', marginY: 32})}>
+                <div className={style({display: 'block', textAlign: 'center', marginY: 32})}>
                   {noResultsText(searchValue)}
-                </Text>
+                </div>
               )}
           </div>
         </Autocomplete>

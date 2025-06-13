@@ -5,7 +5,8 @@ import {AutocompleteProps, Button, ButtonProps, Modal, useFilter} from 'react-ar
 import CardList from './CardList';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Page} from '@parcel/rsc';
+import React, {CSSProperties, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
@@ -24,6 +25,16 @@ interface SubmenuItem {
   id: string,
   name: string,
   href: string
+}
+
+interface SearchMenuProps {
+  pages: Page[],
+  currentPage: Page,
+  toggleShowSearchMenu: () => void,
+  closeSearchMenu: () => void,
+  isSearchOpen: boolean,
+  isSubmenuOpen: boolean,
+  setIsSubmenuOpen: (isOpen: boolean) => void
 }
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
@@ -73,7 +84,7 @@ function FakeSearchFieldButton({onPress, onKeyDown, isSearchOpen, ...props}: Fak
           isFocusVisible: 2
         }
       })({isHovered, isFocusVisible})}
-      style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'}}>
+      style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'} as CSSProperties}>
       <Search
         UNSAFE_className={String(style({
           size: fontRelative(20),
@@ -119,20 +130,20 @@ let modalStyle = style({
   maxHeight: '[90vh]'
 });
 
-export default function SearchMenu(props) {
+const getCurrentLibrary = (currentPage: Page) => {
+  if (currentPage.url.includes('react-aria')) {
+    return 'react-aria';
+  } else if (currentPage.url.includes('react-internationalized')) {
+    return 'internationalized';
+  }
+  return 'react-spectrum';
+};
+
+export default function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
 
   let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
-  const getCurrentLibrary = (currentPage) => {
-    if (currentPage.url.includes('react-aria')) {
-      return 'react-aria';
-    } else if (currentPage.url.includes('react-internationalized')) {
-      return 'internationalized';
-    }
-    return 'react-spectrum';
-  };
-
   const currentLibrary = getCurrentLibrary(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(currentLibrary);
   let [searchValue, setSearchValue] = useState('');
@@ -405,7 +416,7 @@ export default function SearchMenu(props) {
             setSelectedLibrary(key as typeof selectedLibrary);
             // Focus main search field of the newly selected tab
             setTimeout(() => {
-            // Check ref exists and points to the correct main search field before focusing
+              // Check ref exists and points to the correct main search field before focusing
               const keyString = key as string;
               const expectedLabel = `Search ${keyString.charAt(0).toUpperCase() + keyString.slice(1).replace('-', ' ')}`;
               if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === expectedLabel) {
@@ -417,13 +428,11 @@ export default function SearchMenu(props) {
             {orderedTabs.map((tab, i) => (
               <Tab key={tab.id} id={tab.id}>
                 <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                  {/* @ts-ignore */}
-                  <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'}}>
+                  <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'} as CSSProperties}>
                     {tab.icon}
                   </div>
                   <div>
-                    {/* @ts-ignore */}
-                    <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'}} className={style({fontSize: 'heading-xs'})}>
+                    <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({fontSize: 'heading-xs'})}>
                       {tab.label}
                     </span>
                     <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>

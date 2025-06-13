@@ -7,7 +7,7 @@ import {flushSync} from 'react-dom';
 import {GithubLogo} from './icons/GithubLogo';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {PageProps} from '@parcel/rsc';
-import React, {useState} from 'react';
+import React, {CSSProperties, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import SearchMenu from './SearchMenu';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
@@ -71,7 +71,7 @@ export default function Header(props: PageProps) {
         <div
           className={style({
             width: 'full', 
-          // Matches search menu
+            // Matches search menu
             maxWidth: 1240, 
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
@@ -81,12 +81,10 @@ export default function Header(props: PageProps) {
           <div className={style({justifySelf: 'start'})}>
             <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu} UNSAFE_style={{paddingInlineStart: 10}}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
-                {/* @ts-ignore */}
-                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'}}>
+                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
                   {getButtonIcon(currentPage)}
                 </div>
-                {/* @ts-ignore */}
-                <span className={style({fontSize: 'heading-xs', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'}}>
+                <span className={style({fontSize: 'heading-xs', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
                   {getButtonText(currentPage)}
                 </span>
               </div>
