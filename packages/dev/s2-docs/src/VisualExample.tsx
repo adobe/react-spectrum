@@ -152,7 +152,13 @@ export function VisualExample({component, docs, links, importSource, props, init
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
-  let output = <CodeOutput code={code} files={files ? getFiles(files) : undefined} type={type} />;
+  let output = (
+    <CodeOutput
+      code={code}
+      files={files ? getFiles(files) : undefined}
+      type={type}
+      registryUrl={`http://localhost:8081/${docs.name}.json`} />
+  );
 
   // Render the corresponding client component to make the controls interactive.
   return (

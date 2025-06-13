@@ -4,12 +4,13 @@ import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Foo
 import {CodePlatter, Pre} from './CodePlatter';
 import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
+import {ExampleSwitcherContext} from './ExampleSwitcher';
+import {getColorChannels, parseColor} from 'react-stately';
 import {IconPicker} from './IconPicker';
+import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
 import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {useLocale} from 'react-aria';
-import { getColorChannels, parseColor } from 'react-stately';
-import { mergeStyles } from '../../../@react-spectrum/s2/style/runtime';
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -52,24 +53,37 @@ export function VisualExampleClient({component, name, importSource, controls, ch
     return props;
   });
 
+  let ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    let params = new URLSearchParams(location.search);
-    let newProps = {...props};
-    for (let name in controls) {
-      try {
-        let param = params.get(name);
-        if (param) {
-          newProps[name] = JSON.parse(param);
-        }
-      } catch {
-        // ignore
-      }
+    // Find previous heading element.
+    let node: Element | null = ref.current;
+    while (node && node.parentElement?.tagName !== 'ARTICLE') {
+      node = node.parentElement;
     }
-    setProps(newProps);
+    while (node && !(node instanceof HTMLHeadingElement)) {
+      node = node.previousElementSibling;
+    }
+
+    let id = node instanceof HTMLHeadingElement ? node.id : null;
+    if (id && location.hash === '#' + id) {
+      let params = new URLSearchParams(location.search);
+      let newProps = {...props};
+      for (let [name, value] of params) {
+        try {
+          if (value) {
+            newProps[name] = JSON.parse(value);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      setProps(newProps);
+    }
   }, []);
 
   return (
     <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
+      <div hidden ref={ref} />
       {children}
     </Context.Provider>
   );
@@ -106,20 +120,30 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
 interface CodeOutputProps {
   code?: ReactNode,
   files?: {[name: string]: string},
-  type?: 'vanilla' | 'tailwind' | 's2'
+  type?: 'vanilla' | 'tailwind' | 's2',
+  registryUrl?: string
 }
 
-export function CodeOutput({code, files, type}: CodeOutputProps) {
+export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   let {name, importSource, props, controls} = useContext(Context);
-  let url;
-  if (typeof location !== 'undefined') {
-    url = new URL(location.href);
-    for (let prop in props) {
-      if (props[prop] != null) {
-        url.searchParams.set(prop, JSON.stringify(props[prop]));
-      }
+  let searchParams = new URLSearchParams();
+  
+  let exampleType = useContext(ExampleSwitcherContext);
+  if (exampleType) {
+    searchParams.set('exampleType', String(exampleType));
+  }
+
+  for (let prop in props) {
+    if (
+      props[prop] != null && 
+      controls[prop] != null && 
+      (controls[prop].default == null || props[prop] !== controls[prop].default)
+    ) {
+      searchParams.set(prop, JSON.stringify(props[prop]));
     }
   }
+
+  let url = '?' + searchParams.toString();
 
   code ||= (
     <Pre>
@@ -131,7 +155,7 @@ export function CodeOutput({code, files, type}: CodeOutputProps) {
   );
 
   return (
-    <CodePlatter shareUrl={url?.toString()} files={files} type={type}>
+    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl}>
       {code}
     </CodePlatter>
   );
@@ -392,7 +416,8 @@ function UnionControl({control, value, onChange, isPicker = false}) {
       })({isLong: length > 12 || control.value.elements.length > 3})}>
       <ToggleButtonGroup
         aria-label={control.name}
-        disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]}
+        disallowEmptySelection={!control.optional || !!control.default}
+        selectedKeys={[value]}
         onSelectionChange={keys => onChange([...keys][0])}
         density="compact"
         styles={style({marginY: 4})}>
