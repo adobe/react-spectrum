@@ -136,6 +136,7 @@ export default function SearchResultsMenu({
                 ref={searchRef}
                 size="L"
                 aria-label={`Search sections within ${submenuParentItem.name}`}
+                UNSAFE_style={{marginInlineEnd: 308}}
                 styles={style({width: '[500px]'})} />
 
               <CloseButton closeSearchMenu={closeSearchMenu} />
@@ -185,7 +186,7 @@ export default function SearchResultsMenu({
               ref={searchRef}
               size="L"
               aria-label={`Search ${libraryName}`}
-              UNSAFE_style={{marginInlineEnd: 304, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'} as CSSProperties}
+              UNSAFE_style={{marginInlineEnd: 308, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'} as CSSProperties}
               styles={style({width: '[500px]'})} />
           </div>
 
