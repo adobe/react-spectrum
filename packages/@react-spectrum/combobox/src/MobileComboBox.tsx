@@ -45,7 +45,9 @@ import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileComboBox = React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
+export const MobileComboBox:
+  React.ForwardRefExoticComponent<SpectrumComboBoxProps<any> & React.RefAttributes<FocusableRefValue<HTMLElement, HTMLElement>>> =
+React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -166,7 +168,9 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   className?: string
 }
 
-export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBoxButton:
+  React.ForwardRefExoticComponent<ComboBoxButtonProps & React.RefAttributes<HTMLDivElement>> =
+React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivElement>) {
   let {
     isQuiet,
     isDisabled,

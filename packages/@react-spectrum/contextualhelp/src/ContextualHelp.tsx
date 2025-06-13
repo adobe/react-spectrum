@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
@@ -27,7 +27,9 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export const ContextualHelp = React.forwardRef(function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ContextualHelp:
+  React.ForwardRefExoticComponent<SpectrumContextualHelpProps & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+React.forwardRef(function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     variant = 'help',
     placement = 'bottom start',
