@@ -13,7 +13,7 @@
 import {Button} from '@react-spectrum/button';
 import {FileTrigger, FileTriggerProps} from 'react-aria-components';
 import {Link} from '@react-spectrum/link';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 type StoryArgs = FileTriggerProps;
@@ -21,11 +21,13 @@ type StoryArgs = FileTriggerProps;
 const meta: Meta<StoryArgs> = {
   title: 'FileTrigger',
   component: FileTrigger
-};
+} as Meta<typeof FileTrigger>;
 
 export default meta;
 
-export const DefaultWithButton = {
+export type FileTriggerStory = StoryObj<typeof FileTrigger>;
+
+export const DefaultWithButton: FileTriggerStory = {
   render: (args) => (
     <FileTrigger {...args} >
       <Button variant={'accent'}>Upload</Button>
@@ -33,7 +35,7 @@ export const DefaultWithButton = {
   )
 };
 
-export const DefaultWithLink = {
+export const DefaultWithLink: FileTriggerStory = {
   render: (args) => (
     <FileTrigger {...args} >
       <Link>Upload</Link>
