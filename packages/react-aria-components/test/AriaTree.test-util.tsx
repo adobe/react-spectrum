@@ -54,7 +54,7 @@ interface AriaTreeTestProps extends AriaBaseTestProps {
     allInteractionsDisabled?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
-export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => {
+export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): void => {
   describe(prefix ? prefix + 'AriaTree' : 'AriaTree', function () {
     let user;
     let testUtilUser = new User();

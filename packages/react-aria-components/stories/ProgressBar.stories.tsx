@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Label, ProgressBar} from 'react-aria-components';
 import React from 'react';
 
@@ -24,9 +25,11 @@ export default {
     minValue: {control: 'number'},
     maxValue: {control: 'number'}
   }
-};
+} as ComponentMeta<typeof ProgressBar>;
 
-export const ProgressBarExample = (args) => {
+export type ProgressBarStory = ComponentStoryFn<typeof ProgressBar>;
+
+export const ProgressBarExample: ProgressBarStory = (args) => {
   return (
     <ProgressBar {...args}>
       {({percentage, valueText}) => (

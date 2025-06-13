@@ -16,7 +16,7 @@ import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing,
 import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface DropZoneRenderProps {
@@ -49,12 +49,14 @@ export interface DropZoneRenderProps {
 
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
-export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
+export const DropZoneContext: Context<ContextValue<DropZoneProps, HTMLDivElement>> = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DropZone:
+  React.ForwardRefExoticComponent<DropZoneProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);

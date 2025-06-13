@@ -14,7 +14,7 @@ import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {forwardRefType, Orientation} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ToolbarRenderProps {
   /**
@@ -27,13 +27,15 @@ export interface ToolbarRenderProps {
 export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps> {
 }
 
-export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
+export const ToolbarContext: Context<ContextValue<ToolbarProps, HTMLDivElement>> = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
 
 /**
  * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
  * with arrow key navigation.
  */
-export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Toolbar:
+  (props: ToolbarProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
   let {toolbarProps} = useToolbar(props, ref);
   let renderProps = useRenderProps({

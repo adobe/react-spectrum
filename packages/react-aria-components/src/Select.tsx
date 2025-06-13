@@ -26,7 +26,7 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface SelectRenderProps {
@@ -70,13 +70,15 @@ export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps
   placeholder?: string
 }
 
-export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
-export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
+export const SelectContext: Context<ContextValue<SelectProps<any>, HTMLDivElement>> = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
+export const SelectStateContext: Context<SelectState<unknown> | null> = createContext<SelectState<unknown> | null>(null);
 
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-export const Select = /*#__PURE__*/ (forwardRef as forwardRefType)(function Select<T extends object = {}>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Select:
+  <T extends object = {}>(props: SelectProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Select<T extends object = {}>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (
@@ -239,13 +241,15 @@ export interface SelectValueRenderProps<T> {
 
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
-export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
+export const SelectValueContext: Context<ContextValue<SelectValueProps<any>, HTMLSpanElement>> = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
 
 /**
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+export const SelectValue:
+  <T extends object>(props: SelectValueProps<T> & React.RefAttributes<HTMLSpanElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
   let state = useContext(SelectStateContext)!;
   let {placeholder} = useSlottedContext(SelectContext)!;

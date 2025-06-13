@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import clsx from 'clsx';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
@@ -48,14 +49,17 @@ export default {
   },
   args: {
     onChange: action('OnChange')
-  }
-};
+  },
+  component: DateField
+} as ComponentMeta<typeof DateField>;
 
-export const DateFieldExample = (props) => (
+export type DateFieldStory = ComponentStoryFn<typeof DateField>;
+
+export const DateFieldExample: DateFieldStory = (props) => (
   <DateField
     {...props}
-    minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
-    maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
+    minValue={props.minValue ? fromAbsolute(props.minValue as unknown as number, getLocalTimeZone()) : undefined}
+    maxValue={props.maxValue ? fromAbsolute(props.maxValue as unknown as number, getLocalTimeZone()) : undefined}
     data-testid="date-field-example"
     defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>

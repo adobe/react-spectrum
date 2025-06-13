@@ -11,16 +11,20 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from 'react-aria-components';
+import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField} from 'react-aria-components';
+import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React from 'react';
+import React, {JSX} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components',
+  component: Menu
+} as ComponentMeta<typeof Menu>;
 
-export const MenuExample = () => (
+export type MenuStory = ComponentStoryFn<typeof Menu>;
+
+export const MenuExample: MenuStory = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -43,7 +47,7 @@ export const MenuExample = () => (
   </MenuTrigger>
 );
 
-export const MenuComplex = () => (
+export const MenuComplex: MenuStory = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -68,7 +72,7 @@ export const MenuComplex = () => (
   </MenuTrigger>
 );
 
-export const MenuScrollPaddingExample = () => (
+export const MenuScrollPaddingExample: MenuStory = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -116,30 +120,34 @@ export const MenuScrollPaddingExample = () => (
   </MenuTrigger>
 );
 
-export const SubmenuExample = (args) => (
-  <MenuTrigger>
-    <Button aria-label="Menu">☰</Button>
-    <Popover>
-      <Menu className={styles.menu} onAction={action('onAction')}>
-        <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubmenuTrigger {...args}>
-          <MyMenuItem id="Bar">Bar</MyMenuItem>
-          <Popover className={styles.popover}>
-            <Menu className={styles.menu} onAction={action('onAction')}>
-              <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
-              <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
-              <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
-            </Menu>
-          </Popover>
-        </SubmenuTrigger>
-        <MyMenuItem id="Baz">Baz</MyMenuItem>
-        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
-      </Menu>
-    </Popover>
-  </MenuTrigger>
-);
+function SubmenuExampleRender(args: Omit<SubmenuTriggerProps, 'children'> & {delay: number}): JSX.Element {
+  return (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+type SubmenuExampleStory = ComponentStoryFn<typeof SubmenuExampleRender>;
+export const SubmenuExample: SubmenuExampleStory = (args) => <SubmenuExampleRender {...args} />;
 
-export const SubmenuNestedExample = (args) => (
+export const SubmenuNestedExample: SubmenuExampleStory = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -201,7 +209,7 @@ let dynamicRenderFunc = (item, args) => {
   }
 };
 
-export const SubmenuManyItemsExample = (args) => (
+export const SubmenuManyItemsExample: SubmenuExampleStory = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -212,7 +220,7 @@ export const SubmenuManyItemsExample = (args) => (
   </MenuTrigger>
 );
 
-export const SubmenuDisabledExample = (args) => (
+export const SubmenuDisabledExample: SubmenuExampleStory = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -235,7 +243,7 @@ export const SubmenuDisabledExample = (args) => (
   </MenuTrigger>
 );
 
-export const SubmenuSectionsExample = (args) => (
+export const SubmenuSectionsExample: SubmenuExampleStory = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
@@ -280,7 +288,7 @@ export const SubmenuSectionsExample = (args) => (
 );
 
 // TODO: figure out why it is autofocusing the Menu in the SubDialog
-export const SubdialogExample = (args) => (
+export const SubdialogExample: SubmenuExampleStory = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>

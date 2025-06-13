@@ -24,7 +24,7 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface ComboBoxRenderProps {
@@ -63,13 +63,15 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   allowsEmptyCollection?: boolean
 }
 
-export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
-export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
+export const ComboBoxContext: Context<ContextValue<ComboBoxProps<any>, HTMLDivElement>> = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
+export const ComboBoxStateContext: Context<ComboBoxState<any> | null> = createContext<ComboBoxState<any> | null>(null);
 
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBox:
+  <T extends object>(props: ComboBoxProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (

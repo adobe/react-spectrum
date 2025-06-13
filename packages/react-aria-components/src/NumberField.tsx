@@ -21,7 +21,7 @@ import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface NumberFieldRenderProps {
@@ -48,13 +48,15 @@ export interface NumberFieldRenderProps {
 
 export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
-export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
-export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
+export const NumberFieldContext: Context<ContextValue<NumberFieldProps, HTMLDivElement>> = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
+export const NumberFieldStateContext: Context<NumberFieldState | null> = createContext<NumberFieldState | null>(null);
 
 /**
  * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
  */
-export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const NumberField:
+  (props: NumberFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';

@@ -63,7 +63,7 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
   selectionListener?: jest.Mock<any, any>,
   actionListener?: jest.Mock<any, any>
 }
-export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = 'menu', selectionListener, actionListener}: AriaAutocompleteTestProps) => {
+export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = 'menu', selectionListener, actionListener}: AriaAutocompleteTestProps): void => {
   describe(prefix ? prefix + ' AriaAutocomplete' : 'AriaAutocomplete', function () {
     let user;
     let collectionNodeRole;
@@ -706,7 +706,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         describe('pointer events', function () {
           installPointerEvent();
-          
+
           it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
             let {getByRole, getAllByRole} = (renderers.submenus!)();
             let menu = getByRole('menu');
