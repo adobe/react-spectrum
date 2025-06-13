@@ -591,7 +591,7 @@ function expandSpaceShorthand(
   }
 }
 
-export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string) {
+export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string): {hasMacros: boolean, usedLightDark: boolean} {
   let macroValues = new Map<string, object | string | number | boolean>;
   let dynamicValues = new Map<string, t.ObjectProperty['value']>;
   let conditions = new Map<string, t.ObjectProperty['value']>;

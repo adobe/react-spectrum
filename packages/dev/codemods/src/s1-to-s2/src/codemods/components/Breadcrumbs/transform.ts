@@ -14,7 +14,7 @@ import * as t from '@babel/types';
  * - Remove size="S" (Small is no longer a supported size in Spectrum 2).
  * - Add comment to wrap in nav element if needed.
  */
-export default function transformBreadcrumbs(path: NodePath<t.JSXElement>) {
+export default function transformBreadcrumbs(path: NodePath<t.JSXElement>): void {
   // Comment out showRoot
   commentOutProp(path, {propName: 'showRoot'});
 
@@ -31,4 +31,4 @@ export default function transformBreadcrumbs(path: NodePath<t.JSXElement>) {
   addCommentToElement(path, {
     comment: 'S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.'
   });
-} 
+}
