@@ -12,7 +12,7 @@
 
 import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
@@ -23,7 +23,9 @@ import {useLocale} from '@react-aria/i18n';
 /**
  * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const Slider:
+  React.ForwardRefExoticComponent<SpectrumSliderProps & React.RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
+React.forwardRef(function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, isFilled, fillOffset, trackGradient, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {

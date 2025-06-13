@@ -284,7 +284,7 @@ describe('Slider', function () {
           <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -305,7 +305,7 @@ describe('Slider', function () {
           <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} orientation="vertical" />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -321,7 +321,7 @@ describe('Slider', function () {
           <Slider label="Label" step={20} defaultValue={40} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -338,7 +338,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 230/10 = 23 and then snapped to 20 so it is a multiple of the step
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -355,7 +355,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 25/10 = 2.5, snaps to 2
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -372,7 +372,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -386,7 +386,7 @@ describe('Slider', function () {
           <Slider label="Label" minValue={-1} defaultValue={0} maxValue={1} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
   });
