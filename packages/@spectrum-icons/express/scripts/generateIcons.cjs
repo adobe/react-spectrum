@@ -30,11 +30,11 @@ for (let file of fs.readdirSync(dir)) {
 
   let jsx = compileSVG(path.join(dir, file));
   let wrapper = `import {Icon, IconPropsWithoutChildren} from '@react-spectrum/icon';
-import React from 'react';
+import React, {JSX} from 'react';
 
 ${jsx}
 
-export default function ${componentName}(props: IconPropsWithoutChildren) {
+export default function ${componentName}(props: IconPropsWithoutChildren): JSX.Element {
   return <Icon {...props}><IconComponent /></Icon>;
 }
 `;

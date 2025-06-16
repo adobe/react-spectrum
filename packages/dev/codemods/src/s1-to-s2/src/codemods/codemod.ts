@@ -33,7 +33,7 @@ interface Options {
   components?: string
 }
 
-export default function transformer(file: FileInfo, api: API, options: Options) {
+export default function transformer(file: FileInfo, api: API, options: Options):string {
   let j = api.jscodeshift.withParser({
     parse(source: string) {
       return recastParse(source, {

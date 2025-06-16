@@ -27,6 +27,9 @@ const meta: Meta<typeof SegmentedControl> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'SegmentedControl',
   args: {

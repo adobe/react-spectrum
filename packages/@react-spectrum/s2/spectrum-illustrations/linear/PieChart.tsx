@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../src/Icon';
 import PieChart_L from 'illustration:./S2_lin_pieChart_160.svg';
 import PieChart_M from 'illustration:./S2_lin_pieChart_96.svg';
 import PieChart_S from 'illustration:./S2_lin_pieChart_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function PieChart(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function PieChart(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

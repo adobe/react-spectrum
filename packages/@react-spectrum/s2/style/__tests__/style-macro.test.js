@@ -40,14 +40,14 @@ describe('style-macro', () => {
       "@layer _.a, _.b, _.c;
 
       @layer _.b {
-        .Jbs9:first-child {
+        .Jbs92:first-child {
           margin-top: 0.25rem;
         }
       }
 
       @layer _.c.p {
         @media (min-width: 64rem) {
-          .Jbpv9:first-child {
+          .Jbpv92:first-child {
             margin-top: 0.5rem;
           }
         }
@@ -55,7 +55,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" Jbs9 Jbpv9"');
+    expect(js).toMatchInlineSnapshot('" Jbs92 Jbpv92"');
   });
 
   it('should support self references', () => {
@@ -69,47 +69,47 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        ._kc9 {
+        ._kc92 {
           border-top-width: 2px;
         }
 
 
-        .hc9 {
+        .hc92 {
           border-bottom-width: 2px;
         }
 
 
-        .mCPFGYc9 {
+        .mCPFGYc92 {
           border-inline-start-width: var(--m);
         }
 
 
-        .lc9 {
+        .lc92 {
           border-inline-end-width: 2px;
         }
 
 
-        .SMBFGYc9 {
+        .SMBFGYc92 {
           padding-inline-start: var(--S);
         }
 
 
-        .Rv9 {
+        .Rv92 {
           padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
         }
 
 
-        .ZjUQgKd9 {
+        .ZjUQgKd92 {
           width: calc(200px - var(--m) - var(--S));
         }
 
 
-        .-m_-mc9 {
+        .-m_-mc92 {
           --m: 2px;
         }
 
 
-        .-S_-Sv9 {
+        .-S_-Sv92 {
           --S: calc(var(--F, var(--M)) * 3 / 8);
         }
       }
@@ -118,7 +118,7 @@ describe('style-macro', () => {
     `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _kc9 hc9 mCPFGYc9 lc9 SMBFGYc9 Rv9 ZjUQgKd9 -m_-mc9 -S_-Sv9"'
+      '" _kc92 hc92 mCPFGYc92 lc92 SMBFGYc92 Rv92 ZjUQgKd92 -m_-mc92 -S_-Sv92"'
     );
   });
 
@@ -136,9 +136,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw9 pg9"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb9 pHJ3AUd9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb9 pg9"');
+    expect(js()).toMatchInlineSnapshot('"  gw92 pg92"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb92 pHJ3AUd92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb92 pg92"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -153,9 +153,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B9 __Ya9"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D9 __Ya9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D9 __Ya9"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B92 __Ya92"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D92 __Ya92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D92 __Ya92"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -170,9 +170,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk9 Qk9 Sk9 Rk9"');
-    expect(overrides).toMatchInlineSnapshot('" Tm9 Qm9 Sm9 Rm9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm9 Qm9 Sm9 Rm9"');
+    expect(js()).toMatchInlineSnapshot('"  Tk92 Qk92 Sk92 Rk92"');
+    expect(overrides).toMatchInlineSnapshot('" Tm92 Qm92 Sm92 Rm92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm92 Qm92 Sm92 Rm92"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -187,9 +187,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE9"');
-    expect(overrides).toMatchInlineSnapshot('" Nk9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk9 gE9"');
+    expect(js()).toMatchInlineSnapshot('"  gE92"');
+    expect(overrides).toMatchInlineSnapshot('" Nk92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk92 gE92"');
   });
 
   it('should support runtime conditions', () => {
@@ -210,32 +210,32 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gH9 {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .gF9 {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .gE9 {
+        .gE92 {
           background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
 
 
-        .pt9 {
+        .pt92 {
           color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
         }
 
 
-        .po9 {
+        .po92 {
           color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
         }
 
 
-        .pm9 {
+        .pm92 {
           color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
         }
       }
@@ -243,9 +243,9 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH9 pt9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9 po9"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE9 pm9"');
+    expect(js({})).toMatchInlineSnapshot('"  gH92 pt92"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF92 po92"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE92 pm92"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -264,33 +264,33 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gH9 {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .gF9 {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .g_h9 {
+        .g_h92 {
           background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
         }
 
 
-        .g39 {
+        .g392 {
           background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
         }
       }
 
       "
     `);
-    expect(js({})).toMatchInlineSnapshot('"  gH9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h9"');
+    expect(js({})).toMatchInlineSnapshot('"  gH92"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF92"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h92"');
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  g39"'
+      '"  g392"'
     );
   });
 
@@ -305,9 +305,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY9"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe9"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw9"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY92"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe92"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw92"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -325,14 +325,14 @@ describe('style-macro', () => {
 
       @layer _.b.l {
         @media (forced-colors: active) {
-          .plb9 {
+          .plb92 {
             color: ButtonText;
           }
         }
 
 
         @media (forced-colors: active) {
-          .ple9 {
+          .ple92 {
             color: HighlightText;
           }
         }
@@ -341,8 +341,8 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple9"');
+    expect(js({})).toMatchInlineSnapshot('"  plb92"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple92"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -350,27 +350,27 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th9 Qh9 Sh9 Rh9"');
+    expect(js).toMatchInlineSnapshot('" Th92 Qh92 Sh92 Rh92"');
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a;
 
       @layer _.a {
-        .Th9 {
+        .Th92 {
           padding-top: 24px;
         }
 
 
-        .Qh9 {
+        .Qh92 {
           padding-bottom: 24px;
         }
 
 
-        .Sh9 {
+        .Sh92 {
           padding-inline-start: 24px;
         }
 
 
-        .Rh9 {
+        .Rh92 {
           padding-inline-end: 24px;
         }
       }
@@ -388,7 +388,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gpQzfVb9 {
+        .gpQzfVb92 {
           background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
         }
       }
@@ -409,7 +409,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .-FUeYm-gE9 {
+        .-FUeYm-gE92 {
           --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
       }

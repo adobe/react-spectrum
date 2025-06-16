@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../src/Icon';
 import NoFilter_L from 'illustration:./S2_lin_noFilter_160.svg';
 import NoFilter_M from 'illustration:./S2_lin_noFilter_96.svg';
 import NoFilter_S from 'illustration:./S2_lin_noFilter_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function NoFilter(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function NoFilter(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

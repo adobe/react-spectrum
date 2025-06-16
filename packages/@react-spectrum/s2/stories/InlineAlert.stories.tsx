@@ -19,6 +19,9 @@ const meta: Meta<typeof InlineAlert> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'InlineAlert'
 };

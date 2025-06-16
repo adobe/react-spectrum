@@ -39,7 +39,8 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
     value: {table: {disable: true}},
     textValue: {table: {disable: true}},
     onAction: {table: {disable: true}},
-    isDisabled: {table: {disable: true}}
+    isDisabled: {table: {disable: true}},
+    children: {table: {disable: true}}
   },
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading || false}>

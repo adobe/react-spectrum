@@ -75,7 +75,7 @@ export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {UNSTABLE_TreeLoadingSentinel, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
+export {UNSTABLE_TreeLoadingIndicator, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';
@@ -146,8 +146,7 @@ export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
-export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, DraggableCollectionState, DroppableCollectionState, Key, ListState, MultipleSelectionState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState} from 'react-stately';
+export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, Key, ListState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState} from 'react-stately';
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
-export type {VirtualizerState} from '@react-stately/virtualizer';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';

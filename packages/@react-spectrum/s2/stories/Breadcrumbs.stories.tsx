@@ -31,7 +31,8 @@ const meta: Meta<typeof Breadcrumbs> = {
     },
     onAction: {
       table: {category: 'Events'}
-    }
+    },
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'Breadcrumbs'
