@@ -14,7 +14,7 @@ import {DateField} from 'tailwind-starter/DateField';
 import {DateValue, I18nProvider, useLocale} from 'react-aria-components';
 import {getLocalTimeZone, now, ZonedDateTime} from '@internationalized/date';
 import {NumberField} from 'tailwind-starter/NumberField';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {Select, SelectItem, SelectSection} from 'tailwind-starter/Select';
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
@@ -102,7 +102,7 @@ function matchLocale(defaultLocale: string) {
   return p?.toString() || 'en-US';
 }
 
-export function I18n() {
+export function I18n(): ReactNode {
   let {locale: defaultLocale} = useLocale();
   let [locale, setLocale] = React.useState(() => matchLocale(defaultLocale));
   let [calendar, setCalendar] = React.useState(calendars[0].key);

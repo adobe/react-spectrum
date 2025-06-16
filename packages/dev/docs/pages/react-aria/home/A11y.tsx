@@ -18,7 +18,7 @@ import {Key, useDateFormatter} from 'react-aria';
 import {Label} from 'tailwind-starter/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
 import {Popover} from 'tailwind-starter/Popover';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {SelectItem} from 'tailwind-starter/Select';
 
 interface Point {
@@ -59,7 +59,7 @@ const doubleTapKeyframes: PropertyIndexedKeyframes = {
   easing: 'ease-in-out'
 };
 
-export function A11y() {
+export function A11y(): ReactNode {
   let ref = useRef<HTMLDivElement>(null);
   let fingerRef = useRef<HTMLDivElement>(null);
   let [cursorRect, setCursorRect] = useState<Rect | null>(null);

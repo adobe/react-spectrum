@@ -13,10 +13,11 @@
 import Brand_L from 'illustration:./S2_lin_brand_160.svg';
 import Brand_M from 'illustration:./S2_lin_brand_96.svg';
 import Brand_S from 'illustration:./S2_lin_brand_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Brand(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Brand(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

@@ -19,7 +19,6 @@ import {
   ButtonRenderProps,
   ContextValue,
   InputContext,
-  Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
@@ -245,7 +244,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                     </StepButton>
                   </div>}
                 </FieldGroup>
-                {descriptionMessage && <Text slot="description">{descriptionMessage}</Text>}
                 <HelpText
                   size={size}
                   isDisabled={isDisabled}

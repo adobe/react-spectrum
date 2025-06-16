@@ -8,7 +8,7 @@ import * as t from '@babel/types';
  * - Comment out getValueLabel (it has not been implemented yet).
  * - Comment out orientation (it has not been implemented yet).
  */
-export default function transformRangeSlider(path: NodePath<t.JSXElement>) {
+export default function transformRangeSlider(path: NodePath<t.JSXElement>): void {
   // Remove showValueLabel
   removeProp(path, {propName: 'showValueLabel'});
 
@@ -17,4 +17,4 @@ export default function transformRangeSlider(path: NodePath<t.JSXElement>) {
 
   // Comment out orientation
   commentOutProp(path, {propName: 'orientation'});
-} 
+}

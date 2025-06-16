@@ -24,7 +24,8 @@ const meta: Meta<typeof LinkButton> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp']),
+    children: {table: {disable: true}}
   },
   title: 'LinkButton'
 };

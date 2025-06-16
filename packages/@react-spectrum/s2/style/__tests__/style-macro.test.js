@@ -41,14 +41,14 @@ describe('style-macro', () => {
       "@layer _.a, _.b, _.c;
 
       @layer _.b {
-        .Jbs9:first-child {
+        .Jbs92:first-child {
           margin-top: 0.25rem;
         }
       }
 
       @layer _.c.p {
         @media (min-width: 64rem) {
-          .Jbpv9:first-child {
+          .Jbpv92:first-child {
             margin-top: 0.5rem;
           }
         }
@@ -70,47 +70,47 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        ._kc9 {
+        ._kc92 {
           border-top-width: 2px;
         }
 
 
-        .hc9 {
+        .hc92 {
           border-bottom-width: 2px;
         }
 
 
-        .mCPFGYc9 {
+        .mCPFGYc92 {
           border-inline-start-width: var(--m);
         }
 
 
-        .lc9 {
+        .lc92 {
           border-inline-end-width: 2px;
         }
 
 
-        .SMBFGYc9 {
+        .SMBFGYc92 {
           padding-inline-start: var(--S);
         }
 
 
-        .Rv9 {
+        .Rv92 {
           padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
         }
 
 
-        .ZjUQgKd9 {
+        .ZjUQgKd92 {
           width: calc(200px - var(--m) - var(--S));
         }
 
 
-        .-m_-mc9 {
+        .-m_-mc92 {
           --m: 2px;
         }
 
 
-        .-S_-Sv9 {
+        .-S_-Sv92 {
           --S: calc(var(--F, var(--M)) * 3 / 8);
         }
       }
@@ -223,32 +223,32 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gH9 {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .gF9 {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .gE9 {
+        .gE92 {
           background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
 
 
-        .pt9 {
+        .pt92 {
           color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
         }
 
 
-        .po9 {
+        .po92 {
           color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
         }
 
 
-        .pm9 {
+        .pm92 {
           color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
         }
       }
@@ -281,22 +281,22 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gH9 {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .gF9 {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .g_h9 {
+        .g_h92 {
           background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
         }
 
 
-        .g39 {
+        .g392 {
           background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
         }
       }
@@ -352,14 +352,14 @@ describe('style-macro', () => {
 
       @layer _.b.l {
         @media (forced-colors: active) {
-          .plb9 {
+          .plb92 {
             color: ButtonText;
           }
         }
 
 
         @media (forced-colors: active) {
-          .ple9 {
+          .ple92 {
             color: HighlightText;
           }
         }
@@ -384,22 +384,22 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .Th9 {
+        .Th92 {
           padding-top: 24px;
         }
 
 
-        .Qh9 {
+        .Qh92 {
           padding-bottom: 24px;
         }
 
 
-        .Sh9 {
+        .Sh92 {
           padding-inline-start: 24px;
         }
 
 
-        .Rh9 {
+        .Rh92 {
           padding-inline-end: 24px;
         }
       }
@@ -417,7 +417,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .gpQzfVb9 {
+        .gpQzfVb92 {
           background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
         }
       }
@@ -438,7 +438,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .-FUeYm-gE9 {
+        .-FUeYm-gE92 {
           --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
       }

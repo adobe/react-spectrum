@@ -30,6 +30,9 @@ const meta: Meta<typeof Popover> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'Popover'
 };
