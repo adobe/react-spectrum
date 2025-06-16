@@ -17,7 +17,7 @@ import type {ListState} from '@react-stately/list';
 import {ReactNode, useEffect, useRef, useState} from 'react';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useGridList} from '@react-aria/gridlist';
+import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
@@ -31,7 +31,7 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, Pick<AriaGridListProps<T>, 'escapeKeyBehavior'>, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Whether selection should occur on press up instead of press down. */
@@ -39,7 +39,16 @@ export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelecti
   /** Handler that is called when a user deletes a tag.  */
   onRemove?: (keys: Set<Key>) => void,
   /** An error message for the field. */
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode,
+  /**
+   * Whether pressing the escape key should clear selection in the TagGroup or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
 }
 
 export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'children'> {
