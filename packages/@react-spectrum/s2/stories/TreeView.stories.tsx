@@ -241,8 +241,14 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
   }
 };
 
+interface TreeViewItemType {
+  id: string,
+  name: string,
+  icon: ReactElement,
+  childItems?: TreeViewItemType[]
+}
 
-let rows = [
+let rows: TreeViewItemType[] = [
   {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
     {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
     {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
@@ -293,7 +299,7 @@ const DynamicTreeItem = (props): ReactElement => {
           </ActionMenu>
         </TreeViewItemContent>
         <Collection items={childItems}>
-          {(item: any) => (
+          {(item: TreeViewItemType) => (
             <DynamicTreeItem
               id={item.id}
               icon={item.icon}
@@ -313,7 +319,7 @@ const DynamicTreeItem = (props): ReactElement => {
 const TreeExampleDynamic = (args: TreeViewProps): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
     <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
-      {(item: any) => (
+      {(item) => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}

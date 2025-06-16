@@ -19,11 +19,13 @@
     "moduleResolution": "bundler",
     "module": "esnext",
     // Process & infer types from .js files.
-    "allowJs": true,
+    "allowJs": false,
     // Don't emit; allow Babel to transform files.
     "noEmit": true,
     // Disallow features that require cross-file information for emit.
     "isolatedModules": true,
+    "declaration": true,
+    "isolatedDeclarations": true,
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
