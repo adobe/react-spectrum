@@ -66,7 +66,9 @@ export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'chil
   children: ReactNode
 }
 
-export const BreadcrumbsContext: Context<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>> | null> = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>> | null>(null);
+export const BreadcrumbsContext:
+  Context<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>> =
+  createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   position: 'relative',

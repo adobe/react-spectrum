@@ -41,7 +41,7 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
 
 export const DropZoneContext:
   Context<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>> =
-createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
+  createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const dropzone = style<DropZoneRenderProps>({
   display: 'flex',

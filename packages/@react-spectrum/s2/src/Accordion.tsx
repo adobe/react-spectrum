@@ -43,7 +43,9 @@ const accordion = style({
   flexDirection: 'column'
 }, getAllowedOverrides({height: true}));
 
-export const AccordionContext: Context<ContextValue<Partial<AccordionProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<AccordionProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const AccordionContext:
+  Context<ContextValue<Partial<AccordionProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<AccordionProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * An accordion is a container for multiple disclosures.

@@ -61,8 +61,12 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
   children: ReactNode
 }
 
-export const ButtonContext: Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>> | null> = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>> | null>(null);
-export const LinkButtonContext: Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>> | null> = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>> | null>(null);
+export const ButtonContext:
+  Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const LinkButtonContext:
+  Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>> =
+  createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),

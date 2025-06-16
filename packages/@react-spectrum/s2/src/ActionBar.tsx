@@ -88,7 +88,9 @@ export interface ActionBarProps extends SlotProps {
   scrollRef?: RefObject<HTMLElement | null>
 }
 
-export const ActionBarContext: Context<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const ActionBarContext:
+  Context<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const ActionBar:
   ForwardRefExoticComponent<ActionBarProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =

@@ -55,7 +55,9 @@ export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, Bad
   children: ReactNode
 }
 
-export const BadgeContext: Context<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const BadgeContext:
+  Context<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style<BadgeStyleProps>({
   ...control({shape: 'default', wrap: true, icon: true}),

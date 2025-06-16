@@ -238,7 +238,9 @@ const avatarSize = {
   X: 26
 } as const;
 
-export const ActionButtonContext: Context<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>> | null> = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>> | null>(null);
+export const ActionButtonContext:
+  Context<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionButtons allow users to perform an action.

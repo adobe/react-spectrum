@@ -49,7 +49,9 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   isEmphasized?: boolean
 }
 
-export const CheckboxGroupContext: Context<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const CheckboxGroupContext:
+  Context<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.

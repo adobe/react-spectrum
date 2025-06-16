@@ -90,6 +90,7 @@ export interface PickerProps<T extends object> extends
 export const PickerContext:
   Context<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>> =
   createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+
 const inputButton = style({
   ...focusRing(),
   ...fieldInput(),

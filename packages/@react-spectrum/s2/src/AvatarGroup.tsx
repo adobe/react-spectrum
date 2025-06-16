@@ -35,7 +35,9 @@ export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingPr
   styles?: StylesPropWithoutWidth
 }
 
-export const AvatarGroupContext: Context<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const AvatarGroupContext:
+  Context<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const avatar = style({
   marginStart: {

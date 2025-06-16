@@ -37,7 +37,9 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   endName?: string
 }
 
-export const RangeSliderContext: Context<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>> = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
+export const RangeSliderContext:
+  Context<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 export const RangeSlider:
   ForwardRefExoticComponent<RangeSliderProps & RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =

@@ -347,7 +347,9 @@ let footer = style({
 });
 
 export const InternalCardViewContext: Context<'div' | typeof GridListItem> = createContext<'div' | typeof GridListItem>('div');
-export const CardContext: Context<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>> | null>(null);
+export const CardContext:
+  Context<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
   isQuiet: boolean,

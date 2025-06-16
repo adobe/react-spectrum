@@ -188,8 +188,8 @@ const wrapperStyles = style({
 }, getAllowedOverrides({height: true}));
 
 export const CardViewContext:
-  Context<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>> | null> =
-  createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>> | null>(null);
+  Context<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const CardView:
   <T extends object>(props: CardViewProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
