@@ -28,13 +28,15 @@ import {useControlledState} from '@react-stately/utils';
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
+  private itemCount: number = 0;
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
-    let {flattenedRows, keyMap} = flattenTree<T>(collection, {expandedKeys});
+    let {flattenedRows, keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     this.keyMap = keyMap;
+    this.itemCount = itemCount;
   }
 
   // TODO: should this collection's getters reflect the flattened structure or the original structure
@@ -44,7 +46,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   get size() {
-    return this.flattenedRows.length;
+    return this.itemCount;
   }
 
   getKeys() {
@@ -64,7 +66,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getLastKey() {
-    return this.flattenedRows[this.size - 1]?.key;
+    return this.flattenedRows[this.flattenedRows.length - 1]?.key;
   }
 
   getKeyAfter(key: Key) {
@@ -732,11 +734,12 @@ export const UNSTABLE_TreeLoadingSentinel = createLeafComponent('loader', functi
   let {rowProps, gridCellProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
   let ariaProps = {
     role: 'row',
-    'aria-level': rowProps['aria-level'],
-    'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize']
+    'aria-level': rowProps['aria-level']
   };
 
   let renderProps = useRenderProps({
@@ -786,7 +789,8 @@ interface TreeGridCollectionOptions {
 
 interface FlattenedTree<T> {
   flattenedRows: Node<T>[],
-  keyMap: Map<Key, CollectionNode<T>>
+  keyMap: Map<Key, CollectionNode<T>>,
+  itemCount: number
 }
 
 function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
@@ -795,6 +799,8 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   } = opts;
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
   let flattenedRows: Node<T>[] = [];
+  // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
+  let itemCount = 0;
 
   let visitNode = (node: Node<T>) => {
     if (node.type === 'item' || node.type === 'loader') {
@@ -822,6 +828,10 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
       // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
       let modifiedNode = keyMap.get(node.key) || node;
       if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && flattenedRows.find(row => row.key === modifiedNode.parentKey))) {
+        if (modifiedNode.type === 'item') {
+          itemCount++;
+        }
+
         flattenedRows.push(modifiedNode);
       }
     } else if (node.type !== null) {
@@ -839,7 +849,8 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
 
   return {
     flattenedRows,
-    keyMap
+    keyMap,
+    itemCount
   };
 }
 

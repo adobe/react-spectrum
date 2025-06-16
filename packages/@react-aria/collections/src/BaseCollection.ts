@@ -79,8 +79,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
+  private _itemCount: number = 0;
+
+  get itemCount(): number {
+    return this._itemCount;
+  }
 
   get size(): number {
+    // TODO: perhaps should return itemCount?
     return this.keyMap.size;
   }
 
@@ -184,6 +190,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     collection.keyMap = new Map(this.keyMap);
     collection.firstKey = this.firstKey;
     collection.lastKey = this.lastKey;
+    collection._itemCount = this.itemCount;
     return collection;
   }
 
@@ -192,12 +199,20 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       throw new Error('Cannot add a node to a frozen collection');
     }
 
+    if (node.type === 'item' && this.keyMap.get(node.key) == null) {
+      this._itemCount++;
+    }
+
     this.keyMap.set(node.key, node);
   }
 
   removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
+    }
+
+    if (this.keyMap.get(key)?.type === 'item' && this.keyMap.get(key) != null) {
+      this._itemCount--;
     }
 
     this.keyMap.delete(key);

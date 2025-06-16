@@ -155,6 +155,9 @@ export interface Collection<T> extends Iterable<T> {
   /** The number of items in the collection. */
   readonly size: number,
 
+  // /** TODO perhaps size should just return this. Use this if we*/
+  // readonly itemCount: number,
+
   /** Iterate over all keys in the collection. */
   getKeys(): Iterable<Key>,
 

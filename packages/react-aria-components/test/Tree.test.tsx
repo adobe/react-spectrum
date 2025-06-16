@@ -1445,8 +1445,8 @@ describe('Tree', () => {
         expect(rows).toHaveLength(8);
         let rootLoaderRow = rows[7];
         expect(rootLoaderRow).toHaveTextContent('Loading...');
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
+        expect(rootLoaderRow).not.toHaveAttribute('aria-posinset');
+        expect(rootLoaderRow).not.toHaveAttribute('aria-setsize');
         let rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
         // 8 items * 25px
         expect(rootLoaderParentStyles.top).toBe('200px');
@@ -1469,15 +1469,13 @@ describe('Tree', () => {
         rows = treeTester.rows;
         expect(rows).toHaveLength(9);
         rootLoaderRow = rows[8];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
         // 18 items * 25px + intermediate loader * 30px
         expect(rootLoaderParentStyles.top).toBe('480px');
         expect(rootLoaderParentStyles.height).toBe('30px');
         let projectsLoader = rows[7];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
+        expect(projectsLoader).not.toHaveAttribute('aria-posinset');
+        expect(projectsLoader).not.toHaveAttribute('aria-setsize');
         let projectsLoaderParentStyles = projectsLoader.parentElement!.style;
         // 13 items * 25px
         expect(projectsLoaderParentStyles.top).toBe('325px');
@@ -1501,24 +1499,20 @@ describe('Tree', () => {
         rows = treeTester.rows;
         expect(rows).toHaveLength(10);
         rootLoaderRow = rows[9];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
         // 28 items * 25px + 2 intermediate loaders * 30px
         expect(rootLoaderParentStyles.top).toBe('760px');
         expect(rootLoaderParentStyles.height).toBe('30px');
         // Project loader is still the 2nd to last item that is preserved since the projects-1 is a child folder
         projectsLoader = rows[8];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
         projectsLoaderParentStyles = projectsLoader.parentElement!.style;
         // 23 items * 25px + 1 intermediate loaders * 30px
         expect(projectsLoaderParentStyles.top).toBe('605px');
         expect(projectsLoaderParentStyles.height).toBe('30px');
         // Project-1 loader is 3rd to last item that is preserved since it is in the child folder of projects
         let projects1Loader = rows[7];
-        expect(projects1Loader).toHaveAttribute('aria-posinset', '11');
-        expect(projects1Loader).toHaveAttribute('aria-setsize', '11');
+        expect(projects1Loader).not.toHaveAttribute('aria-posinset');
+        expect(projects1Loader).not.toHaveAttribute('aria-setsize');
         let projectsLoader1ParentStyles = projects1Loader.parentElement!.style;
         // 15 items * 25px aka photos-1 -> 2 + projects + projects-0 -> 1 +  10 items in the folder
         expect(projectsLoader1ParentStyles.top).toBe('375px');
@@ -1542,32 +1536,26 @@ describe('Tree', () => {
         rows = treeTester.rows;
         expect(rows).toHaveLength(11);
         rootLoaderRow = rows[10];
-        expect(rootLoaderRow).toHaveAttribute('aria-posinset', '9');
-        expect(rootLoaderRow).toHaveAttribute('aria-setsize', '9');
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
         // 38 items * 25px + 3 intermediate loaders * 30px
         expect(rootLoaderParentStyles.top).toBe('1040px');
         expect(rootLoaderParentStyles.height).toBe('30px');
         // Project loader is now the 3nd to last item since document's loader is after it
         projectsLoader = rows[8];
-        expect(projectsLoader).toHaveAttribute('aria-posinset', '11');
-        expect(projectsLoader).toHaveAttribute('aria-setsize', '11');
         projectsLoaderParentStyles = projectsLoader.parentElement!.style;
         // 23 items * 25px + 1 intermediate loaders * 30px
         expect(projectsLoaderParentStyles.top).toBe('605px');
         expect(projectsLoaderParentStyles.height).toBe('30px');
         // Project-1 loader is 4th to last item
         projects1Loader = rows[7];
-        expect(projects1Loader).toHaveAttribute('aria-posinset', '11');
-        expect(projects1Loader).toHaveAttribute('aria-setsize', '11');
         projectsLoader1ParentStyles = projects1Loader.parentElement!.style;
         // 15 items * 25px aka photos-1 -> 2 + projects + projects-0 -> 1 +  10 items in the folder
         expect(projectsLoader1ParentStyles.top).toBe('375px');
         expect(projectsLoader1ParentStyles.height).toBe('30px');
         // Document loader is 2nd to last item
         let documentLoader = rows[9];
-        expect(documentLoader).toHaveAttribute('aria-posinset', '11');
-        expect(documentLoader).toHaveAttribute('aria-setsize', '11');
+        expect(documentLoader).not.toHaveAttribute('aria-posinset');
+        expect(documentLoader).not.toHaveAttribute('aria-setsize');
         let documentLoader1ParentStyles = documentLoader.parentElement!.style;
         // 36 items * 25px + 2 intermediate loaders * 30px
         expect(documentLoader1ParentStyles.top).toBe('960px');
