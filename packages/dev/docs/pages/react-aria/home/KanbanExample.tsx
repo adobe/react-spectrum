@@ -11,7 +11,7 @@
  */
 import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop} from 'react-aria-components';
 import {ListData, useListData} from 'react-stately';
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 const tickets = [
   {
@@ -106,7 +106,7 @@ const tickets = [
   }
 ];
 
-export function KanbanBoard() {
+export function KanbanBoard(): ReactNode {
   let list = useListData({
     initialItems: tickets
   });
