@@ -33,19 +33,16 @@ function getButtonIcon(currentPage) {
 export default function Header(props: PageProps) {
   const {pages, currentPage} = props;
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
   let toggleShowSearchMenu = () => {
     if (!document.startViewTransition) {
       setSearchOpen((prev) => !prev);
-      setIsSubmenuOpen(false);
       return;
     }
 
     document.startViewTransition(() => {
       flushSync(() => {
         setSearchOpen((prev) => !prev);
-        setIsSubmenuOpen(false);
       });
     });
   };
@@ -53,14 +50,12 @@ export default function Header(props: PageProps) {
   let closeSearchMenu = () => {
     if (!document.startViewTransition) {
       setSearchOpen(false);
-      setIsSubmenuOpen(false);
       return;
     }
 
     document.startViewTransition(() => {
       flushSync(() => {
         setSearchOpen(false);
-        setIsSubmenuOpen(false);
       });
     });
   };
@@ -90,7 +85,7 @@ export default function Header(props: PageProps) {
               <ChevronDown UNSAFE_className={'react-spectrum-select-chevron' + style({paddingEnd: 8})} UNSAFE_style={{width: 18}} />
             </ActionButton>
           </div>
-          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} setIsSubmenuOpen={setIsSubmenuOpen} isSearchOpen={searchOpen} isSubmenuOpen={isSubmenuOpen} />
+          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <ActionButton aria-label="React Spectrum GitHub repo" size="XL" isQuiet>
               <GithubLogo />

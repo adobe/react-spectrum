@@ -6,35 +6,19 @@ import CardList from './CardList';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
 
-interface ComponentItem {
-  id: string,
-  name: string,
-  category?: string,
-  description?: string,
-  href?: string
-}
-
-interface SubmenuItem {
-  id: string,
-  name: string,
-  href: string
-}
-
 interface SearchMenuProps {
   pages: Page[],
   currentPage: Page,
   toggleShowSearchMenu: () => void,
   closeSearchMenu: () => void,
-  isSearchOpen: boolean,
-  isSubmenuOpen: boolean,
-  setIsSubmenuOpen: (isOpen: boolean) => void
+  isSearchOpen: boolean
 }
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
@@ -140,7 +124,7 @@ const getCurrentLibrary = (currentPage: Page) => {
 };
 
 export default function SearchMenu(props: SearchMenuProps) {
-  let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen, isSubmenuOpen, setIsSubmenuOpen} = props;
+  let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen} = props;
 
   let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
@@ -181,12 +165,6 @@ export default function SearchMenu(props: SearchMenuProps) {
   };
 
   const orderedTabs = getOrderedTabs();
-
-  const [submenuItems, setSubmenuItems] = useState<SubmenuItem[]>([]);
-  const [previousSearchValue, setPreviousSearchValue] = useState('');
-  const [submenuSearchValue, setSubmenuSearchValue] = useState('');
-  const [submenuParentItem, setSubmenuParentItem] = useState<ComponentItem | null>(null);
-
   let searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
 
   // Transform pages data into component data structure
@@ -237,33 +215,12 @@ export default function SearchMenu(props: SearchMenuProps) {
     return sections;
   }, [transformedComponents]);
 
-    // Handler for Breadcrumb action and closing submenu via Left Arrow
-  const handleBreadcrumbAction = useCallback(() => {
-    setIsSubmenuOpen(false);
-    setSearchValue(previousSearchValue); // Restore main search value
-    setSubmenuSearchValue('');
-    setSubmenuParentItem(null);
-    setSubmenuItems([]);
-      // Focus the MAIN search field after state update allows it to render
-    setTimeout(() => {
-          // Check ref exists and points to the MAIN search field before focusing
-      if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === 'Search React Spectrum') {
-        searchRef.current.focus();
-      }
-    }, 10);
-  }, [previousSearchValue, searchRef, setIsSubmenuOpen, setSearchValue, setSubmenuItems, setSubmenuParentItem, setSubmenuSearchValue]);
-
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isSubmenuOpen) {
+      if (e.key === 'Escape') {
         e.preventDefault();
-        if (isSubmenuOpen) {
-          handleBreadcrumbAction();
-        } else {
-          closeSearchMenu();
-        }
-      } else if (!isSubmenuOpen &&
-        ((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) || e.key === '/')) {
+        closeSearchMenu();
+      } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) || e.key === '/')) {
         e.preventDefault();
         toggleShowSearchMenu();
       }
@@ -271,17 +228,17 @@ export default function SearchMenu(props: SearchMenuProps) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [closeSearchMenu, handleBreadcrumbAction, isMac, isSubmenuOpen, previousSearchValue, toggleShowSearchMenu]);
+  }, [closeSearchMenu, isMac, toggleShowSearchMenu]);
 
   let onFocusSearch = () => {
     toggleShowSearchMenu();
-    if (isSearchOpen && !isSubmenuOpen) {
+    if (isSearchOpen) {
       setTimeout(() => searchRef.current?.focus(), 10);
     }
   };
 
   useEffect(() => {
-    if (isSearchOpen && !isSubmenuOpen) {
+    if (isSearchOpen) {
       setTimeout(() => {
         // Focus the search field of the currently selected library
         if (searchRef.current) {
@@ -289,20 +246,15 @@ export default function SearchMenu(props: SearchMenuProps) {
         }
       }, 10);
     }
-  }, [isSearchOpen, isSubmenuOpen, selectedLibrary]);
+  }, [isSearchOpen, selectedLibrary]);
 
   useEffect(() => {
     if (!isSearchOpen) {
-      if (searchValue.trim() === '' && submenuSearchValue.trim() === '') {
+      if (searchValue.trim() === '') {
         setSelectedLibrary(currentLibrary);
       }
-      setIsSubmenuOpen(false);
-      setSubmenuParentItem(null);
-      setSubmenuItems([]);
-      setPreviousSearchValue('');
-      setSubmenuSearchValue('');
     }
-  }, [currentLibrary, isSearchOpen, searchValue, setIsSubmenuOpen, submenuSearchValue]);
+  }, [currentLibrary, isSearchOpen, searchValue]);
 
   let {contains} = useFilter({sensitivity: 'base'});
 
@@ -310,7 +262,7 @@ export default function SearchMenu(props: SearchMenuProps) {
     return textValue != null && contains(textValue, inputValue);
   };
 
-  let showCards = useMemo(() => searchValue.trim() === '' && !isSubmenuOpen, [searchValue, isSubmenuOpen]);
+  let showCards = useMemo(() => searchValue.trim() === '', [searchValue]);
 
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
@@ -321,56 +273,6 @@ export default function SearchMenu(props: SearchMenuProps) {
       children: section.children.filter(item => contains(item.name, searchValue))
     })).filter(section => section.children.length > 0);
   }, [componentSections, searchValue, contains]);
-
-  // Filter submenu items based on submenu search value
-  let filteredSubmenuItems = useMemo(() => {
-    if (!submenuSearchValue) {
-      return submenuItems; // Return all items if search is empty
-    }
-    return submenuItems.filter(item => contains(item.name, submenuSearchValue));
-  }, [submenuItems, submenuSearchValue, contains]);
-
-  // Handler to open the submenu
-  const handleOpenSubmenu = (item: ComponentItem, libraryKey: 'react-spectrum' | 'react-aria' | 'internationalized') => {
-    const page = pages.find(p => p.url === item.href);
-    let newSubmenuItems: SubmenuItem[] = [];
-
-    if (page && page.tableOfContents) {
-      const parentHref = `/${libraryKey}/${item.name}.html`;
-
-      const flattenToc = (items: any[]): SubmenuItem[] => {
-        let flattened: SubmenuItem[] = [];
-        for (const tocItem of items) {
-          if (tocItem.title) {
-            const id = tocItem.title.toLowerCase().replace(/\s+/g, '-');
-            flattened.push({
-              id,
-              name: tocItem.title,
-              href: `${parentHref}#${id}`
-            });
-          }
-          if (tocItem.children) {
-            flattened.push(...flattenToc(tocItem.children));
-          }
-        }
-        return flattened;
-      };
-
-      const topLevelToc = page.tableOfContents[0];
-      if (topLevelToc && topLevelToc.children) {
-        newSubmenuItems = flattenToc(topLevelToc.children);
-      }
-    } else {
-      console.error('Page or table of contents not found for item:', item);
-    }
-    
-    setPreviousSearchValue(searchValue);
-    setSearchValue('');
-    setSubmenuSearchValue('');
-    setSubmenuParentItem(item);
-    setSubmenuItems(newSubmenuItems);
-    setIsSubmenuOpen(true);
-  };
 
   // Type to search handler
   const handleButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -384,7 +286,6 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   let handleButtonPress = () => {
     toggleShowSearchMenu();
-    setIsSubmenuOpen(false);
   };
 
   return (
@@ -404,14 +305,9 @@ export default function SearchMenu(props: SearchMenuProps) {
           orientation="vertical"
           selectedKey={selectedLibrary}
           onSelectionChange={(key) => {
-            // Reset submenu state when changing tabs
-            setIsSubmenuOpen(false);
-            setSubmenuParentItem(null);
-            setSubmenuItems([]);
-            if (previousSearchValue && !searchValue && !submenuSearchValue) {
-              setSearchValue(previousSearchValue);
+            if (searchValue) {
+              setSearchValue('');
             }
-            setSubmenuSearchValue('');
             setSelectedLibrary(key as typeof selectedLibrary);
             // Focus main search field of the newly selected tab
             setTimeout(() => {
@@ -445,17 +341,10 @@ export default function SearchMenu(props: SearchMenuProps) {
               <SearchResultsMenu
                 libraryName={tab.label}
                 libraryKey={tab.id as 'react-spectrum' | 'react-aria' | 'internationalized'}
-                isSubmenuOpen={isSubmenuOpen}
-                submenuParentItem={submenuParentItem}
                 searchValue={searchValue}
                 onSearchValueChange={setSearchValue}
-                submenuSearchValue={submenuSearchValue}
-                onSubmenuSearchValueChange={setSubmenuSearchValue}
                 mainItems={filteredComponents}
-                filteredSubmenuItems={filteredSubmenuItems}
                 searchRef={searchRef}
-                onOpenSubmenu={(item, libraryKey) => handleOpenSubmenu(item, libraryKey)}
-                onCloseSubmenu={handleBreadcrumbAction}
                 showCards={showCards}
                 renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
                 filter={filter}
