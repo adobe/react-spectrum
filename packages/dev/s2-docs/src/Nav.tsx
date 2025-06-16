@@ -15,11 +15,13 @@ export function Nav({pages, currentPage}: PageProps) {
     sections.set(section, sectionPages);
   }
 
+  let [maskSize, setMaskSize] = useState(0);
+
   return (
     <nav
+      onScroll={e => setMaskSize(Math.min(e.currentTarget.scrollTop, 32))}
       style={{
-        // TODO: We may want a larger value, but we'll have to add it on scroll if so.
-        maskImage: 'linear-gradient(to bottom, transparent, black 16px)'
+        maskImage: maskSize > 0 ? `linear-gradient(to bottom, transparent, black ${maskSize}px)` : undefined
       }}
       className={style({
         position: 'sticky',
