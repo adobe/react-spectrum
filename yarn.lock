@@ -4321,7 +4321,7 @@ __metadata:
   dependencies:
     "@parcel/config-default": "npm:^2.13.1"
     "@parcel/core": "npm:^2.13.1"
-    "@parcel/resolver-storybook": "npm:^0.0.0"
+    "@parcel/resolver-storybook": "npm:>=0.0.0"
     "@parcel/transformer-js": "npm:^2.13.1"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.13.1"
     "@parcel/transformer-storybook": "npm:>=0.0.2"
@@ -4718,7 +4718,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/plugin@npm:^2.0.0, @parcel/plugin@npm:^2.10.2, @parcel/plugin@npm:^2.13.1, @parcel/plugin@npm:^2.14.0":
+"@parcel/plugin@npm:^2.0.0, @parcel/plugin@npm:^2.13.1, @parcel/plugin@npm:^2.14.0":
   version: 2.15.2
   resolution: "@parcel/plugin@npm:2.15.2"
   dependencies:
@@ -4811,17 +4811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/resolver-storybook@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@parcel/resolver-storybook@npm:0.0.0"
-  dependencies:
-    "@parcel/node-resolver-core": "npm:^3.1.2"
-    "@parcel/plugin": "npm:^2.10.2"
-  checksum: 10c0/730b440fef53e6c1817d0dec1b72c8f127cde5c4fd3e37ecd129c9f47101bbd23184c01d32d1553e0a4d2388d27d978d5346eb8d6fe52a2db2a74c6250c9a67a
-  languageName: node
-  linkType: hard
-
-"@parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook":
+"@parcel/resolver-storybook@npm:>=0.0.0, @parcel/resolver-storybook@npm:^0.0.0, @parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook":
   version: 0.0.0-use.local
   resolution: "@parcel/resolver-storybook@workspace:packages/dev/parcel-resolver-storybook"
   dependencies:
