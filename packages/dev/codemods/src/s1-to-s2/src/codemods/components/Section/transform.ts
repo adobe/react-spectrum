@@ -8,7 +8,7 @@ import * as t from '@babel/types';
  * - If within Picker: Update Section to be a PickerSection.
  * - If within ComboBox: Update Section to be a ComboBoxSection.
  */
-export default function transformSection(path: NodePath<t.JSXElement>) {
+export default function transformSection(path: NodePath<t.JSXElement>): void {
   // Update Sections based on parent collection component
   updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuSection'});
   updateComponentWithinCollection(path, {parentComponentName: 'Picker', newComponentName: 'PickerSection'});
@@ -36,4 +36,4 @@ export default function transformSection(path: NodePath<t.JSXElement>) {
 
   // Comment if parent collection not detected
   commentIfParentCollectionNotDetected(path);
-} 
+}

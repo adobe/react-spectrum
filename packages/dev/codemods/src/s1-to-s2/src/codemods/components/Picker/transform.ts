@@ -15,7 +15,7 @@ import * as t from '@babel/types';
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  * - Replace isLoading with loadingState.
  */
-export default function transformPicker(path: NodePath<t.JSXElement>) {
+export default function transformPicker(path: NodePath<t.JSXElement>): void {
   // Change menuWidth value from a DimensionValue to a pixel value
   convertDimensionValueToPx(path, {propName: 'menuWidth'});
 
