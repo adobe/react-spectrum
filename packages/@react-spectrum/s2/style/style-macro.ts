@@ -399,12 +399,22 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       let toStringFunc = new Function(`
 if (!globalThis.__macrosRegistry) {
   globalThis.__macrosRegistry = new globalThis.FinalizationRegistry((val) => {
-    console.log('deleting');
-    delete globalThis.__macros[val];
+    let refCount = globalThis.__macros[val].refCount;
+    if (refCount === 1) {
+      delete globalThis.__macros[val];
+    } else {
+      globalThis.__macros[val].refCount = refCount - 1;
+    }
   });
 }
-(globalThis.__macros ??= {})[${JSON.stringify(id)}] = ${JSON.stringify({loc, style})};
-globalThis.__macrosRegistry.register(this, ${JSON.stringify(id)});
+let id = ${JSON.stringify(id)};
+if (globalThis.__macros && globalThis.__macros[id]) {
+  let refCount = globalThis.__macros[id].refCount;
+  globalThis.__macros[id].refCount = refCount + 1;
+} else {
+  (globalThis.__macros ??= {})[id] = ${JSON.stringify({loc, style, refCount: 1})};
+}
+globalThis.__macrosRegistry.register(this, id);
 return ${JSON.stringify(className)};
       `);
 
@@ -424,11 +434,20 @@ styleObject.toString = function() {
   rules += " -macro$" + id;
   if (!globalThis.__macrosRegistry) {
     globalThis.__macrosRegistry = new globalThis.FinalizationRegistry((val) => {
-      console.log('deleting', val);
-      delete globalThis.__macros[val];
+      let refCount = globalThis.__macros[val].refCount;
+      if (refCount === 1) {
+        delete globalThis.__macros[val];
+      } else {
+        globalThis.__macros[val].refCount = refCount - 1;
+      }
     });
   }
-  (globalThis.__macros ??= {})[id] = {loc: ${JSON.stringify(loc)}, style: currentRules};
+  if (globalThis.__macros && globalThis.__macros[id]) {
+    let refCount = globalThis.__macros[id].refCount;
+    globalThis.__macros[id].refCount = refCount + 1;
+  } else {
+    (globalThis.__macros ??= {})[id] = {loc: ${JSON.stringify(loc)}, style: currentRules, refCount: 1};
+  }
   globalThis.__macrosRegistry.register(this, id);
   window.postMessage("update-macros", "*");
   return rules;
