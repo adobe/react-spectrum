@@ -1,5 +1,5 @@
 // Mappings between Spectrum 1 and Spectrum 2 icons
-export const iconMap = new Map([
+export const iconMap: Map<string, string> = new Map([
   [
     '123',
     'TextNumbers'
