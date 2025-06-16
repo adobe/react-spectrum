@@ -209,6 +209,11 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     isFocusVisible: 2
   },
   disableTapHighlight: true,
+  paddingX: {
+    default: 'edge-to-text',
+    [iconOnly]: 0,
+    [avatarOnly]: 0
+  },
   '--badgeTop': {
     type: 'top',
     value: {
@@ -226,13 +231,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       default: 'calc(self(paddingStart) + var(--iconWidth))',
       [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
-    }
-  },
-  '--avatarBorderRadius': {
-    type: 'borderTopStartRadius',
-    value: {
-      default: 'full',
-      [avatarOnly]: 'none'
     }
   }
 }, getAllowedOverrides());
@@ -299,10 +297,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [AvatarContext, {
             size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0}),
-            UNSAFE_style: {
-              borderRadius: 'var(--avatarBorderRadius)'
-            }
+            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,
