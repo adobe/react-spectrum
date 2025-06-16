@@ -13,10 +13,11 @@
 import Exposure_L from 'illustration:./S2_lin_exposure_160.svg';
 import Exposure_M from 'illustration:./S2_lin_exposure_96.svg';
 import Exposure_S from 'illustration:./S2_lin_exposure_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Exposure(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Exposure(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

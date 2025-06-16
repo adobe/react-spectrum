@@ -385,7 +385,9 @@ export function usePress(props: PressHookProps): PressResult {
             shouldStopPropagation = stopPressStart && stopPressUp && stopPressEnd;
           } else if (state.isPressed && state.pointerType !== 'keyboard') {
             let pointerType = state.pointerType || (e.nativeEvent as PointerEvent).pointerType as PointerType || 'virtual';
-            shouldStopPropagation = triggerPressEnd(createEvent(e.currentTarget, e), pointerType, true);
+            let stopPressUp = triggerPressUp(createEvent(e.currentTarget, e), pointerType);
+            let stopPressEnd =  triggerPressEnd(createEvent(e.currentTarget, e), pointerType, true);
+            shouldStopPropagation = stopPressUp && stopPressEnd;
             state.isOverTarget = false;
             triggerClick(e);
             cancel(e);
@@ -507,8 +509,8 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        // Only handle left clicks
-        if (e.button === 0) {
+        // Only handle left clicks. If isPressed is true, delay until onClick.
+        if (e.button === 0 && !state.isPressed) {
           triggerPressUp(e, state.pointerType || e.pointerType);
         }
       };
@@ -651,7 +653,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
+        if (!state.ignoreEmulatedMouseEvents && e.button === 0 && !state.isPressed) {
           triggerPressUp(e, state.pointerType || 'mouse');
         }
       };

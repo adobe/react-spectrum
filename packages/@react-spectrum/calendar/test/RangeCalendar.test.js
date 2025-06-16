@@ -923,6 +923,7 @@ describe('RangeCalendar', () => {
 
       // mouse up should
       fireEvent.mouseUp(getByText('10'), {detail: 1});
+      fireEvent.click(getByText('10'), {detail: 1});
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('10');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
@@ -967,6 +968,7 @@ describe('RangeCalendar', () => {
 
       // mouse up should
       fireEvent.mouseUp(getByText('20'), {detail: 1});
+      fireEvent.click(getByText('20'), {detail: 1});
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('20');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');

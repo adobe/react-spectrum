@@ -99,7 +99,7 @@
     "@parcel/transformer-svg-react": "^2.14.0",
     "@parcel/transformer-typescript-types": "^2.14.0",
     "@react-spectrum/parcel-namer-s2": "^0.3.0",
-    "@react-spectrum/s2-icon-builder": "^0.2.0",
+    "@react-spectrum/s2-icon-builder": "^0.3.0",
     "@spectrum-css/component-builder": "workspace:^",
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "patch:@storybook/addon-a11y@npm%3A^7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch",

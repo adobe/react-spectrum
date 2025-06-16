@@ -18,6 +18,9 @@ const meta: Meta<typeof FullscreenDialog> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'FullscreenDialog'
 };

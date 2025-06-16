@@ -14,7 +14,7 @@ import * as t from '@babel/types';
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
-export default function transformComboBox(path: NodePath<t.JSXElement>) {
+export default function transformComboBox(path: NodePath<t.JSXElement>): void {
   // Change menuWidth value from a DimensionValue to a pixel value
   convertDimensionValueToPx(path, {propName: 'menuWidth'});
 
@@ -34,4 +34,4 @@ export default function transformComboBox(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-} 
+}

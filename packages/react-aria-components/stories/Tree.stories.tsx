@@ -324,10 +324,7 @@ const MyTreeLoader = (props) => {
   let {omitChildren} = props;
   return (
     <UNSTABLE_TreeLoadingSentinel
-      className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible
-      })}
+      className={classNames(styles, 'tree-loader')}
       {...props}>
       {({level}) => {
         if (omitChildren) {

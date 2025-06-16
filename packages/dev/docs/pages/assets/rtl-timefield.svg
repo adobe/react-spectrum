@@ -23,7 +23,7 @@
       <rect width="124" height="32" rx="4" stroke="none"/>
       <rect x="0.5" y="0.5" width="123" height="31" rx="3.5" fill="none"/>
     </g>
-    <text id="Text-2" data-name="Text" transform="translate(28 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0" xml:space="preserve">8:45 ,  1.31.2025</tspan></text>
+    <text id="Text-2" data-name="Text" transform="translate(28 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0" xml:space="preserve">8:45 ,  31.1.2025</tspan></text>
   </g>
   <rect id="Rule-2" data-name="Rule" width="104" height="1" rx="0.5" transform="translate(140) rotate(90)" fill="var(--anatomy-gray-800)"/>
   <text id="Hover_Text_area_2" data-name="Hover (Text area)" transform="translate(175 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Correct (he-IL)</tspan></text>
