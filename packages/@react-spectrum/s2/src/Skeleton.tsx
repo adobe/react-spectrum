@@ -126,7 +126,8 @@ export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactN
       {isLoading ? cloneElement(children, {
         ref: mergeRefs(childRef, animation),
         className: (children.props.className || '') + ' ' + loadingStyle,
-        inert: 'true'
+        // @ts-ignore - compatibility with React < 19
+        inert: inertValue(true)
       }) : children}
     </SkeletonContext.Provider>
   );
