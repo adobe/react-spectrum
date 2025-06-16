@@ -754,7 +754,7 @@ function renderWithVerticalWrap(props = {}) {
       onSelectionChange={action('onSelectionChange')}>
       <TabList {...props}>
         <Item key="val1">User Profile Settings</Item>
-        <Item key="val2">Notification Preferences</Item>
+        <Item key="val2">Notification Preferences and yabba dabba doo yabba dabba doo yabba dabba doo</Item>
         <Item key="val3">Tab 3</Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
