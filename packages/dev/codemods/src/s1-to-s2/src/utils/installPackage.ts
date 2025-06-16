@@ -23,7 +23,7 @@ function hasPackageJson() {
   return fs.existsSync(path.join(process.cwd(), 'package.json'));
 }
 
-export default async function installPackage(packageName: string, options?: {dev?: boolean}) {
+export default async function installPackage(packageName: string, options?: {dev?: boolean}): Promise<boolean> {
   logger.info('Checking for package.json...');
   if (!hasPackageJson()) {
     logger.warn(`Could not find package.json in the current directory. Please install ${chalk.bold(packageName)} manually.\n`);

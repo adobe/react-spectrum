@@ -27,7 +27,12 @@ describe('Picker/Select ', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     simulateDesktop();
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
   });
 
   describe('with real timers', function () {

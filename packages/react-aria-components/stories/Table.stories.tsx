@@ -13,16 +13,15 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
-import {MyMenuItem} from './utils';
-import React, {Suspense, useMemo, useRef, useState} from 'react';
+import {LoadingSpinner, MyMenuItem} from './utils';
+import React, {startTransition, Suspense, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
+import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
-import {useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
-  excludeStories: ['DndTable']
+  excludeStories: ['DndTable', 'makePromise']
 };
 
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
@@ -465,7 +464,7 @@ export const DndTable = (props: DndTableProps) => {
             </Row>
           )}
         </Collection>
-        {props.isLoading && list.items.length > 0 && <MyTableLoadingIndicator />}
+        <MyTableLoadingIndicator isLoading={props.isLoading} />
       </TableBody>
     </Table>
   );
@@ -533,27 +532,26 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-const MyTableLoadingIndicator = ({tableWidth = 400}) => {
+const MyTableLoadingIndicator = (props) => {
+  let {tableWidth =  400, ...otherProps} = props;
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingIndicator style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
-      <span>
-        Load more spinner
-      </span>
-    </UNSTABLE_TableLoadingIndicator>
+    <UNSTABLE_TableLoadingSentinel style={{height: 30, width: tableWidth}} {...otherProps}>
+      <LoadingSpinner style={{height: 20, position: 'unset'}} />
+    </UNSTABLE_TableLoadingSentinel>
   );
 };
 
 function MyTableBody(props) {
-  let {rows, children, isLoadingMore, tableWidth, ...otherProps} = props;
+  let {rows, children, isLoading, onLoadMore, tableWidth, ...otherProps} = props;
   return (
     <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoadingMore && <MyTableLoadingIndicator tableWidth={tableWidth} />}
+      <MyTableLoadingIndicator tableWidth={tableWidth} isLoading={isLoading} onLoadMore={onLoadMore} />
     </TableBody>
   );
 }
@@ -566,7 +564,7 @@ const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} isLoadingMore={args.isLoadingMore}>
+      <MyTableBody rows={rows} isLoading={args.isLoadingMore}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -592,7 +590,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoadingMore && <MyTableLoadingIndicator />}
+      <MyTableLoadingIndicator isLoading={props.isLoadingMore} />
     </>
   );
 }
@@ -628,8 +626,8 @@ export const TableLoadingRowRenderWrapperStory = {
 
 
 function renderEmptyLoader({isLoading, tableWidth = 400}) {
-  let contents = isLoading ? 'Loading spinner' : 'No results found';
-  return <div style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
+  let contents = isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />  : 'No results found';
+  return <div style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
 }
 
 const RenderEmptyState = (args: {isLoading: boolean}) => {
@@ -675,7 +673,7 @@ interface Character {
   birth_year: number
 }
 
-const OnLoadMoreTable = () => {
+const OnLoadMoreTable = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -683,9 +681,10 @@ const OnLoadMoreTable = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
+
       return {
         items: json.results,
         cursor: json.next
@@ -693,17 +692,8 @@ const OnLoadMoreTable = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Table aria-label="Load more table">
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
@@ -714,7 +704,8 @@ const OnLoadMoreTable = () => {
         <MyTableBody
           tableWidth={400}
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -732,7 +723,10 @@ const OnLoadMoreTable = () => {
 
 export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
-  name: 'onLoadMore table'
+  name: 'onLoadMore table',
+  args: {
+    delay: 50
+  }
 };
 
 export function VirtualizedTable() {
@@ -850,7 +844,7 @@ function VirtualizedTableWithEmptyState(args) {
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
-            isLoadingMore={args.showRows && args.isLoading}
+            isLoading={args.isLoading}
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>
             {(item) => (
@@ -876,7 +870,7 @@ export const VirtualizedTableWithEmptyStateStory  = {
   name: 'Virtualized Table With Empty State'
 };
 
-const OnLoadMoreTableVirtualized = () => {
+const OnLoadMoreTableVirtualized = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -884,7 +878,7 @@ const OnLoadMoreTableVirtualized = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -894,23 +888,15 @@ const OnLoadMoreTableVirtualized = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLTableElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
     <Virtualizer
       layout={TableLayout}
       layoutOptions={{
         rowHeight: 25,
-        headingHeight: 25
+        headingHeight: 25,
+        loaderHeight: 30
       }}>
-      <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
           <Column id="height">Height</Column>
@@ -919,7 +905,8 @@ const OnLoadMoreTableVirtualized = () => {
         </TableHeader>
         <MyTableBody
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -937,10 +924,13 @@ const OnLoadMoreTableVirtualized = () => {
 
 export const OnLoadMoreTableStoryVirtualized  = {
   render: OnLoadMoreTableVirtualized,
-  name: 'Virtualized Table with async loading'
+  name: 'Virtualized Table with async loading',
+  args: {
+    delay: 50
+  }
 };
 
-const OnLoadMoreTableVirtualizedResizeWrapper = () => {
+const OnLoadMoreTableVirtualizedResizeWrapper = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -948,7 +938,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -958,22 +948,14 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
           rowHeight: 25,
-          headingHeight: 25
+          headingHeight: 25,
+          loaderHeight: 30
         }}>
         <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -984,7 +966,8 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
           </TableHeader>
           <MyTableBody
             renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-            isLoadingMore={list.loadingState === 'loadingMore'}
+            isLoading={list.loadingState === 'loadingMore'}
+            onLoadMore={list.loadMore}
             rows={list.items}>
             {(item) => (
               <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -1003,7 +986,15 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
-  name: 'Virtualized Table with async loading, resizable table container wrapper'
+  name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
+  args: {
+    delay: 50
+  },
+  parameters: {
+    description: {
+      data: 'This table has a ResizableTableContainer wrapper around the Virtualizer. The table itself doesnt have any resizablity, this is simply to test that it still loads/scrolls in this configuration.'
+    }
+  }
 };
 
 interface Launch {
@@ -1019,7 +1010,7 @@ const items: Launch[] = [
   {id: 3, mission_name: 'RatSat', launch_year: 2009}
 ];
 
-function makePromise(items: Launch[]) {
+export function makePromise(items: Launch[]) {
   return new Promise(resolve => setTimeout(() => resolve(items), 1000));
 }
 
@@ -1084,3 +1075,443 @@ export const TableWithSuspense = {
     }
   }
 };
+
+let rows1 = [
+  {
+    id: 25,
+    name: 'Web Development',
+    date: '7/10/2023',
+    type: 'File folder'
+  },
+  {
+    id: 26,
+    name: 'drivers',
+    date: '2/2/2022',
+    type: 'System file'
+  },
+  {
+    id: 27,
+    name: 'debug.txt',
+    date: '12/5/2024',
+    type: 'Text Document'
+  },
+  {
+    id: 28,
+    name: 'Marketing Plan.pptx',
+    date: '3/15/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 29,
+    name: 'Contract_v3.pdf',
+    date: '1/2/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 30,
+    name: 'Movies',
+    date: '5/20/2024',
+    type: 'File folder'
+  },
+  {
+    id: 31,
+    name: 'User Manual.docx',
+    date: '9/1/2024',
+    type: 'Word Document'
+  },
+  {
+    id: 32,
+    name: 'Sales Data_Q1.xlsx',
+    date: '4/10/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 33,
+    name: 'archive_old.rar',
+    date: '6/1/2023',
+    type: 'RAR archive'
+  },
+  {
+    id: 34,
+    name: 'logo.svg',
+    date: '11/22/2024',
+    type: 'SVG image'
+  },
+  {
+    id: 35,
+    name: 'main.py',
+    date: '10/1/2024',
+    type: 'Python file'
+  },
+  {
+    id: 36,
+    name: 'base.html',
+    date: '8/18/2024',
+    type: 'HTML file'
+  },
+  {
+    id: 37,
+    name: 'Configurations',
+    date: '4/5/2024',
+    type: 'File folder'
+  },
+  {
+    id: 38,
+    name: 'kernel32.dll',
+    date: '9/10/2018',
+    type: 'System file'
+  },
+  {
+    id: 39,
+    name: 'security_log.txt',
+    date: '3/28/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 40,
+    name: 'Project Proposal v2.pptx',
+    date: '1/15/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 41,
+    name: 'NDA_Signed.pdf',
+    date: '12/20/2024',
+    type: 'PDF Document'
+  },
+  {
+    id: 42,
+    name: 'Downloads',
+    date: '7/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 43,
+    name: 'Meeting Minutes.docx',
+    date: '4/12/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 44,
+    name: 'Financial Report_FY24.xlsx',
+    date: '3/5/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 45,
+    name: 'data_backup_v1.tar.gz',
+    date: '11/8/2024',
+    type: 'GZIP archive'
+  },
+  {
+    id: 46,
+    name: 'icon.ico',
+    date: '6/25/2024',
+    type: 'ICO file'
+  },
+  {
+    id: 47,
+    name: 'app.config',
+    date: '9/30/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 48,
+    name: 'Templates',
+    date: '2/10/2025',
+    type: 'File folder'
+  }
+];
+
+let rows2 = [
+  {
+    id: 100,
+    name: 'Assets',
+    date: '8/15/2024',
+    type: 'File folder'
+  },
+  {
+    id: 101,
+    name: 'drivers64',
+    date: '3/3/2023',
+    type: 'System file'
+  },
+  {
+    id: 102,
+    name: 'install.log',
+    date: '1/8/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 103,
+    name: 'Product Demo.pptx',
+    date: '4/20/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 104,
+    name: 'Terms_of_Service.pdf',
+    date: '2/5/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 105,
+    name: 'Animations',
+    date: '6/25/2024',
+    type: 'File folder'
+  },
+  {
+    id: 106,
+    name: 'Release Notes.docx',
+    date: '10/1/2024',
+    type: 'Word Document'
+  },
+  {
+    id: 107,
+    name: 'Financial Projections.xlsx',
+    date: '5/12/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 108,
+    name: 'backup_2023.tar',
+    date: '7/1/2024',
+    type: 'TAR archive'
+  },
+  {
+    id: 109,
+    name: 'thumbnail.jpg',
+    date: '12/1/2024',
+    type: 'JPEG image'
+  },
+  {
+    id: 110,
+    name: 'api_client.py',
+    date: '11/15/2024',
+    type: 'Python file'
+  },
+  {
+    id: 111,
+    name: 'index.html',
+    date: '9/28/2024',
+    type: 'HTML file'
+  },
+  {
+    id: 112,
+    name: 'Resources',
+    date: '5/5/2024',
+    type: 'File folder'
+  },
+  {
+    id: 113,
+    name: 'msvcr100.dll',
+    date: '10/10/2019',
+    type: 'System file'
+  },
+  {
+    id: 114,
+    name: 'system_events.txt',
+    date: '4/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 115,
+    name: 'Training Presentation.pptx',
+    date: '2/20/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 116,
+    name: 'Privacy_Policy.pdf',
+    date: '1/10/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 117,
+    name: 'Desktop',
+    date: '8/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 118,
+    name: 'Meeting Agenda.docx',
+    date: '5/15/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 119,
+    name: 'Budget_Forecast.xlsx',
+    date: '4/15/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 120,
+    name: 'code_backup.7z',
+    date: '12/1/2024',
+    type: '7Z archive'
+  },
+  {
+    id: 121,
+    name: 'icon_large.ico',
+    date: '7/1/2024',
+    type: 'ICO file'
+  },
+  {
+    id: 122,
+    name: 'settings.ini',
+    date: '10/5/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 123,
+    name: 'Project Docs',
+    date: '3/1/2025',
+    type: 'File folder'
+  },
+  {
+    id: 124,
+    name: 'winload.exe',
+    date: '11/1/2010',
+    type: 'System file'
+  },
+  {
+    id: 125,
+    name: 'application.log',
+    date: '6/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 126,
+    name: 'Client Presentation.pptx',
+    date: '3/1/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 127,
+    name: 'EULA.pdf',
+    date: '2/15/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 128,
+    name: 'Temporary',
+    date: '9/1/2024',
+    type: 'File folder'
+  },
+  {
+    id: 129,
+    name: 'Action Items.docx',
+    date: '6/1/2025',
+    type: 'Word Document'
+  },
+  {
+    id: 130,
+    name: 'Revenue_Report.xlsx',
+    date: '5/20/2025',
+    type: 'Excel file'
+  },
+  {
+    id: 131,
+    name: 'data_dump.sql',
+    date: '1/1/2025',
+    type: 'SQL Dump'
+  },
+  {
+    id: 132,
+    name: 'image_preview.bmp',
+    date: '8/20/2024',
+    type: 'Bitmap image'
+  },
+  {
+    id: 133,
+    name: 'server.conf',
+    date: '11/20/2024',
+    type: 'Configuration file'
+  },
+  {
+    id: 134,
+    name: 'Documentation',
+    date: '4/1/2025',
+    type: 'File folder'
+  },
+  {
+    id: 135,
+    name: 'hal.dll',
+    date: '12/25/2007',
+    type: 'System file'
+  },
+  {
+    id: 136,
+    name: 'access.log',
+    date: '7/1/2025',
+    type: 'Text Document'
+  },
+  {
+    id: 137,
+    name: 'Strategy Presentation.pptx',
+    date: '4/1/2025',
+    type: 'PowerPoint file'
+  },
+  {
+    id: 138,
+    name: 'Service Agreement.pdf',
+    date: '3/1/2025',
+    type: 'PDF Document'
+  },
+  {
+    id: 139,
+    name: 'Recycle Bin',
+    date: '1/1/2000',
+    type: 'System folder'
+  }
+];
+
+const columns1 = [
+  {
+    id: 'name',
+    name: 'Name',
+    isRowHeader: true,
+    allowsSorting: true
+  },
+  {
+    id: 'type',
+    name: 'Type',
+    allowsSorting: true
+  },
+  {
+    id: 'date',
+    name: 'Date Modified',
+    allowsSorting: true
+  }
+];
+
+export function TableWithReactTransition() {
+  const [show, setShow] = useState(true);
+  const items = show ? rows2 : rows1;
+
+  return (
+    <div>
+      <Button
+        onPress={() =>
+          startTransition(() => {
+            setShow((s) => !s);
+          })
+        }>
+        Toggle data using useState + startTransition
+      </Button>
+      <Table aria-label="test">
+        <TableHeader columns={columns1}>
+          {(column) => <Column {...column}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {(row: any) => (
+            <Row id={row.id} columns={columns1}>
+              {/* @ts-ignore */}
+              {(column) => <Cell>{row[column.id]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}

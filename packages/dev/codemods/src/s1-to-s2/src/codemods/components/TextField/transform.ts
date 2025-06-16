@@ -10,7 +10,7 @@ import * as t from '@babel/types';
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
-export default function transformTextField(path: NodePath<t.JSXElement>) {
+export default function transformTextField(path: NodePath<t.JSXElement>): void {
   // Comment out icon
   commentOutProp(path, {propName: 'icon'});
 
@@ -30,4 +30,4 @@ export default function transformTextField(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-} 
+}

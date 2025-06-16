@@ -1,12 +1,16 @@
 {
   "name": "@react-aria/dnd",
-  "version": "3.9.2",
+  "version": "3.10.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -22,15 +26,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/string": "^3.2.6",
-    "@react-aria/i18n": "^3.12.8",
-    "@react-aria/interactions": "^3.25.0",
-    "@react-aria/live-announcer": "^3.4.2",
-    "@react-aria/overlays": "^3.27.0",
-    "@react-aria/utils": "^3.28.2",
-    "@react-stately/dnd": "^3.5.3",
-    "@react-types/button": "^3.12.0",
-    "@react-types/shared": "^3.29.0",
+    "@internationalized/string": "^3.2.7",
+    "@react-aria/i18n": "^3.12.10",
+    "@react-aria/interactions": "^3.25.3",
+    "@react-aria/live-announcer": "^3.4.3",
+    "@react-aria/overlays": "^3.27.3",
+    "@react-aria/utils": "^3.29.1",
+    "@react-stately/collections": "^3.12.5",
+    "@react-stately/dnd": "^3.6.0",
+    "@react-types/button": "^3.12.2",
+    "@react-types/shared": "^3.30.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

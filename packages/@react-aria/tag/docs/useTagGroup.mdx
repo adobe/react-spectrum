@@ -134,14 +134,14 @@ interface TagProps<T> extends AriaTagProps<T> {
 function Tag<T>(props: TagProps<T>) {
   let {item, state} = props;
   let ref = React.useRef(null);
-  let {focusProps, isFocusVisible} = useFocusRing({within: true});
+  let {focusProps, isFocusVisible} = useFocusRing({within: false});
   let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag(props, state, ref);
 
   return (
     <div ref={ref} {...rowProps} {...focusProps} data-focus-visible={isFocusVisible}>
       <div {...gridCellProps}>
         {item.rendered}
-        {allowsRemoving && <Button {...removeButtonProps}>❎</Button>}
+        {allowsRemoving && <Button {...removeButtonProps}>ⓧ</Button>}
       </div>
     </div>
   );
@@ -172,13 +172,16 @@ function Tag<T>(props: TagProps<T>) {
 }
 
 .tag-group [role="row"] {
+  border: 1px solid gray;
+  forced-color-adjust: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
   display: flex;
   align-items: center;
-  border: 1px solid gray;
-  border-radius: 4px;
-  padding: 2px 5px;
-  cursor: default;
-  outline: none;
+  transition: border-color 200ms;
 
   &[data-focus-visible=true] {
     outline: 2px solid slateblue;
@@ -197,13 +200,24 @@ function Tag<T>(props: TagProps<T>) {
 }
 
 .tag-group [role="gridcell"] {
-  margin: 0 5px;
+  display: contents;
 }
 
 .tag-group [role="row"] button {
   background: none;
   border: none;
-  padding-right: 0;
+  padding: 0;
+  margin-left: 4px;
+  outline: none;
+  font-size: 0.95em;
+  border-radius: 100%;
+  aspect-ratio: 1/1;
+  height: 100%;
+
+  &[data-focus-visible=true] {
+    outline: 2px solid slateblue;
+    outline-offset: -1px;
+  }
 }
 
 .tag-group .description {
@@ -227,11 +241,13 @@ The `Button` component is used in the above example to remove a tag. It is built
 
 ```tsx example export=true render=false
 import {useButton} from '@react-aria/button';
+import {mergeProps} from '@react-aria/utils';
 
 function Button(props) {
   let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+  let {focusProps, isFocusVisible} = useFocusRing({within: false});
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} data-focus-visible={isFocusVisible}>{props.children}</button>;
 }
 ```
 

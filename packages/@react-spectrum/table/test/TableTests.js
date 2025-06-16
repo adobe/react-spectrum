@@ -1962,6 +1962,7 @@ export let tableTests = () => {
         let body = tree.getByRole('grid').childNodes[1];
 
         focusCell(tree, 'Baz 25');
+        act(() => jest.runAllTimers());
         expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
@@ -2009,14 +2010,17 @@ export let tableTests = () => {
         let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
+        act(() => jest.runAllTimers());
 
         body.scrollTop = 1000;
         fireEvent.scroll(body);
+        act(() => jest.runAllTimers());
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
+        act(() => jest.runAllTimers());
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
         expect(document.activeElement).toHaveTextContent('Bar');
         expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);

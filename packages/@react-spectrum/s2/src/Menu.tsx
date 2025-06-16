@@ -361,7 +361,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
-          [HeadingContext, {styles: sectionHeading}],
+          [HeadingContext, {
+            // @ts-ignore
+            role: 'presentation',
+            styles: sectionHeading
+          }],
           [TextContext, {
             slots: {
               'description': {styles: description({size})}

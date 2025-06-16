@@ -29,6 +29,7 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import {useAsyncList} from '@react-stately/data';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -38,7 +39,12 @@ const meta: Meta<typeof Picker<any>> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
+    ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange']),
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}},
+    contextualHelp: {table: {disable: true}}
   },
   title: 'Picker'
 };
@@ -131,6 +137,28 @@ export const WithIcons: Story = {
   }
 };
 
+function VirtualizedPicker(props) {
+  let items: IExampleItem[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i.toString(), label: `Item ${i}`});
+  }
+
+  return (
+    <Picker {...props} items={items}>
+      {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
+    </Picker>
+  );
+}
+
+export const ManyItems: Story = {
+  render: (args) => (
+    <VirtualizedPicker {...args} />
+  ),
+  args: {
+    label: 'Many items'
+  }
+};
+
 const ValidationRender = (props) => (
   <Form>
     <Picker {...props}>
@@ -199,5 +227,71 @@ export const ContextualHelpExample = {
   render: (args) => <ContextualHelpExampleRender {...args} />,
   args: {
     label: 'Ice cream flavor'
+  }
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const AsyncPicker = (args: any) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker {...args} loadingState={list.loadingState} onLoadMore={list.loadMore} items={list.items}>
+      {(item: Character) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+    </Picker>
+  );
+};
+
+export const AsyncPickerStory  = {
+  render: AsyncPicker,
+  args: {
+    ...Example.args,
+    label: 'Star Wars Character',
+    delay: 50
+  },
+  name: 'Async loading picker',
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+let list = useAsyncList({
+  async load({signal, cursor}) {
+    // API call here
+    ...
+  }
+});
+
+return (
+  <Picker
+    loadingState={list.loadingState}
+    onLoadMore={list.loadMore}
+    items={list.items}>
+    {item => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+  </Picker>
+);`;
+        }
+      }
+    }
   }
 };

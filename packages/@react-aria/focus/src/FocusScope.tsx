@@ -25,7 +25,7 @@ import {
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely, getInteractionModality} from '@react-aria/interactions';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 export interface FocusScopeProps {
   /** The contents of the focus scope. */
@@ -90,7 +90,7 @@ let activeScope: ScopeRef = null;
  * management interface that can be used to move focus forward and back in response
  * to user events.
  */
-export function FocusScope(props: FocusScopeProps): ReactNode {
+export function FocusScope(props: FocusScopeProps): JSX.Element {
   let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>(null);
   let endRef = useRef<HTMLSpanElement>(null);

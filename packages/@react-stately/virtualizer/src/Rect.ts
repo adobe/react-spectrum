@@ -92,7 +92,9 @@ export class Rect {
    * @param rect - The rectangle to check.
    */
   intersects(rect: Rect): boolean {
-    return this.x <= rect.x + rect.width
+    return this.area > 0 
+        && rect.area > 0 
+        && this.x <= rect.x + rect.width
         && rect.x <= this.x + this.width
         && this.y <= rect.y + rect.height
         && rect.y <= this.y + this.height;

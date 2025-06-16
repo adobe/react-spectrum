@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import Revert_L from 'illustration:./S2_fill_revert_generic1_160.svg';
 import Revert_M from 'illustration:./S2_fill_revert_generic1_96.svg';
 import Revert_S from 'illustration:./S2_fill_revert_generic1_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function Revert(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Revert(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

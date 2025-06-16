@@ -815,6 +815,7 @@ describe('TableView with expandable rows', function () {
         let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
 
         focusCell(treegrid, 'Row 4, Lvl 1, Foo');
+        act(() => jest.runAllTimers());
         expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
@@ -856,6 +857,7 @@ describe('TableView with expandable rows', function () {
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowRight');
+        act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Bar'));
         expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });

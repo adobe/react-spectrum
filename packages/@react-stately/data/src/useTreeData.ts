@@ -370,9 +370,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         // If parentKey is null, insert into the root.
         if (toParentKey == null) {
-          // safe to reuse the original map since no node was actually removed, so we just need to update the one moved node
-          newMap = new Map(originalMap);
-          newMap.set(movedNode.key, movedNode);
+          addNode(movedNode, newMap);
           return {items: [
             ...newItems.slice(0, index),
             movedNode,
@@ -406,7 +404,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           parent = nodeMap.get(toParentKey) ?? null;
         }
         let toIndex = parent?.children ? parent.children.indexOf(node) : items.indexOf(node);
-        return moveItems(prevState, keys, parent, toIndex, updateTree);
+        return moveItems(prevState, keys, parent, toIndex, updateTree, addNode);
       });
     },
     moveAfter(key: Key, keys: Iterable<Key>) {
@@ -423,7 +421,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         }
         let toIndex = parent?.children ? parent.children.indexOf(node) : items.indexOf(node);
         toIndex++;
-        return moveItems(prevState, keys, parent, toIndex, updateTree);
+        return moveItems(prevState, keys, parent, toIndex, updateTree, addNode);
       });
     },
     update(oldKey: Key, newValue: T) {
@@ -450,10 +448,11 @@ function moveItems<T extends object>(
   toIndex: number,
   updateTree: (
     items: TreeNode<T>[],
-    key: Key,
+    key: Key | null,
     update: (node: TreeNode<T>) => TreeNode<T> | null,
     originalMap: Map<Key, TreeNode<T>>
-  ) => TreeDataState<T>
+  ) => TreeDataState<T>,
+  addNode: (node: TreeNode<T>, map: Map<Key, TreeNode<T>>) => void
 ): TreeDataState<T> {
   let {items, nodeMap} = state;
 
@@ -515,8 +514,9 @@ function moveItems<T extends object>(
   let inOrderItems = removedItems.sort((a, b) => inOrderKeys.get(a.key)! > inOrderKeys.get(b.key)! ? 1 : -1);
   // If parentKey is null, insert into the root.
   if (!toParent || toParent.key == null) {
-    newMap = new Map(nodeMap);
-    inOrderItems.forEach(movedNode => newMap.set(movedNode.key, movedNode));
+    inOrderItems.forEach(movedNode => {
+      addNode(movedNode, newMap); 
+    });
     return {items: [
       ...newItems.slice(0, toIndex),
       ...inOrderItems,

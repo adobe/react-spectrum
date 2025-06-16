@@ -12,7 +12,7 @@
 import {animate, useIntersectionObserver} from './utils';
 import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, ListBox, Selection} from 'react-aria-components';
 import {itemStyles} from 'tailwind-starter/ListBox';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useRef, useState} from 'react';
 
 const keyframes = [
   {fill: 'transparent', offset: 0},
@@ -20,7 +20,7 @@ const keyframes = [
   {fill: 'transparent', offset: 1}
 ];
 
-export function ListBoxExample() {
+export function ListBoxExample(): ReactNode {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   let [focusedKey, setFocusedKey] = useState<Key | null>(null);
   let isAnimating = useRef(false);

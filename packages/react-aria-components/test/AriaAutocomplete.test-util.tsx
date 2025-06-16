@@ -537,7 +537,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(input).not.toHaveAttribute('aria-activedescendant');
 
           // Only sets aria-activedescendant after the collection updates and the delay passes
-          act(() => jest.advanceTimersToNextTimer());
+          act(() => jest.runAllTimers());
           expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
         });
       });

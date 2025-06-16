@@ -14,11 +14,11 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -194,9 +194,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
+  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: state.collection.size === 0,
+    isEmpty,
     isFocused,
     isFocusVisible,
     layout,
@@ -211,10 +213,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
-  if (state.collection.size === 0 && props.renderEmptyState) {
+
+  if (isEmpty && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
     emptyState = (
-      <div role="row" style={{display: 'contents'}}>
+      <div role="row" aria-rowindex={1} style={{display: 'contents'}}>
         <div role="gridcell" style={{display: 'contents'}}>
           {content}
         </div>
@@ -232,7 +235,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
-        data-empty={state.collection.size === 0 || undefined}
+        data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={layout}>
@@ -493,3 +496,61 @@ function RootDropIndicator() {
     </div>
   );
 }
+
+export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
+}
+
+export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(ListStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+
+  let sentinelRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [onLoadMore, scrollOffset, state?.collection]);
+  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+  let renderProps = useRenderProps({
+    ...otherProps,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-GridListLoadingIndicator',
+    values: null
+  });
+
+  return (
+    <>
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
+      </div>
+      {isLoading && renderProps.children && (
+        <div
+          {...renderProps}
+          {...mergeProps(filterDOMProps(props as any))}
+          role="row"
+          aria-rowindex={isVirtualized ? item.index + 1 : undefined}
+          ref={ref}>
+          <div
+            aria-colindex={isVirtualized ? 1 : undefined}
+            role="gridcell">
+            {renderProps.children}
+          </div>
+        </div>
+      )}
+    </>
+  );
+});

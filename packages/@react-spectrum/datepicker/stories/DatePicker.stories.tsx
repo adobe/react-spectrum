@@ -17,7 +17,7 @@ import {chain} from '@react-aria/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DatePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';

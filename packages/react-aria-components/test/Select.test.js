@@ -368,4 +368,49 @@ describe('Select', () => {
     await selectTester.selectOption({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
   });
+  
+  it('should support autoFocus', () => {
+    let {getByTestId} = render(<TestSelect autoFocus />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
+    });
+    let trigger = selectTester.trigger;
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it('should clear contexts inside popover', async () => {
+    let {getByTestId} = render(
+      <Select data-testid="select" defaultSelectedKey="cat">
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="popover">
+          <Label>Hello</Label>
+          <Button>Yo</Button>
+          <Text>hi</Text>
+          <ListBox>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+            <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    await selectTester.open();
+
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('for');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
+  });
 });

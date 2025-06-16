@@ -147,3 +147,36 @@ function Color({name, className}) {
     </div>
   );
 }
+
+export function IconColors() {
+  return (
+    <div className="sb-unstyled" style={{columnWidth: 100}}>
+      <Color name="white" className={colorSwatch('white', 'fill')} />
+      <Color name="black" className={colorSwatch('black', 'fill')} />
+      <Color name="accent" className={colorSwatch('accent', 'fill')} />
+      <Color name="neutral" className={colorSwatch('neutral', 'fill')} />
+      <Color name="negative" className={colorSwatch('negative', 'fill')} />
+      <Color name="informative" className={colorSwatch('informative', 'fill')} />
+      <Color name="positive" className={colorSwatch('positive', 'fill')} />
+      <Color name="notice" className={colorSwatch('notice', 'fill')} />
+      <Color name="gray" className={colorSwatch('gray', 'fill')} />
+      <Color name="red" className={colorSwatch('red', 'fill')} />
+      <Color name="orange" className={colorSwatch('orange', 'fill')} />
+      <Color name="yellow" className={colorSwatch('yellow', 'fill')} />
+      <Color name="chartreuse" className={colorSwatch('chartreuse', 'fill')} />
+      <Color name="celery" className={colorSwatch('celery', 'fill')} />
+      <Color name="seafoam" className={colorSwatch('seafoam', 'fill')} />
+      <Color name="cyan" className={colorSwatch('cyan', 'fill')} />
+      <Color name="blue" className={colorSwatch('blue', 'fill')} />
+      <Color name="indigo" className={colorSwatch('indigo', 'fill')} />
+      <Color name="purple" className={colorSwatch('purple', 'fill')} />
+      <Color name="fuchsia" className={colorSwatch('fuchsia', 'fill')} />
+      <Color name="magenta" className={colorSwatch('magenta', 'fill')} />
+      <Color name="pink" className={colorSwatch('pink', 'fill')} />
+      <Color name="turquoise" className={colorSwatch('turquoise', 'fill')} />
+      <Color name="cinnamon" className={colorSwatch('cinnamon', 'fill')} />
+      <Color name="brown" className={colorSwatch('brown', 'fill')} />
+      <Color name="silver" className={colorSwatch('silver', 'fill')} />
+    </div>
+  )
+}

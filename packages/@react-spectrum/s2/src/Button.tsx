@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -112,8 +112,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         variant: {
           primary: baseColor('neutral'),
           secondary: baseColor('gray-100'),
-          accent: baseColor('accent'),
-          negative: baseColor('negative'),
+          accent: {
+            default: lightDark('accent-900', 'accent-700'),
+            isHovered: lightDark('accent-1000', 'accent-600'),
+            isPressed: lightDark('accent-1000', 'accent-600'),
+            isFocusVisible: lightDark('accent-1000', 'accent-600')
+          },
+          negative: {
+            default: lightDark('negative-900', 'negative-700'),
+            isHovered: lightDark('negative-1000', 'negative-600'),
+            isPressed: lightDark('negative-1000', 'negative-600'),
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
+          },
           premium: 'gray-100',
           genai: 'gray-100'
         },
@@ -337,7 +347,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({

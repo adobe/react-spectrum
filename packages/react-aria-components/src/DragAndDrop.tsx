@@ -32,7 +32,7 @@ export interface DropIndicatorRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropIndicatorProps extends AriaDropIndicatorProps, RenderProps<DropIndicatorRenderProps> { }
+export interface DropIndicatorProps extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> { }
 interface DropIndicatorContextValue {
   render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }

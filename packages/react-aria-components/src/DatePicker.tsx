@@ -72,6 +72,9 @@ export const DateRangePickerContext = createContext<ContextValue<DateRangePicker
 export const DatePickerStateContext = createContext<DatePickerState | null>(null);
 export const DateRangePickerStateContext = createContext<DateRangePickerState | null>(null);
 
+// Contexts to clear inside the popover.
+const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
+
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
@@ -148,7 +151,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           trigger: 'DatePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties
+          style: {'--trigger-width': groupWidth} as React.CSSProperties,
+          clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
         [TextContext, {
@@ -251,7 +255,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
           trigger: 'DateRangePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties
+          style: {'--trigger-width': groupWidth} as React.CSSProperties,
+          clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
         [DateFieldContext, {

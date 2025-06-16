@@ -29,7 +29,7 @@ export interface ListLayoutOptions {
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
   estimatedHeadingHeight?: number,
-  /** 
+  /**
    * The fixed height of a loader element in px. This loader is specifically for
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
@@ -184,7 +184,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected isVisible(node: LayoutNode, rect: Rect): boolean {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || node.layoutInfo.type === 'loader' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
@@ -255,9 +255,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let collection = this.virtualizer!.collection;
     let skipped = 0;
     let nodes: LayoutNode[] = [];
+    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    if (isEmptyOrLoading) {
+      y = 0;
+    }
+
     for (let node of collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
-
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -268,15 +272,28 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       let layoutNode = this.buildChild(node, this.padding, y, null);
       y = layoutNode.layoutInfo.rect.maxY + this.gap;
       nodes.push(layoutNode);
-
       if (node.type === 'item' && y > this.requestedRect.maxY) {
-        y += (collection.size - (nodes.length + skipped)) * rowHeight;
+        let itemsAfterRect = collection.size - (nodes.length + skipped);
+        let lastNode = collection.getItem(collection.getLastKey()!);
+        if (lastNode?.type === 'loader') {
+          itemsAfterRect--;
+        }
+
+        y += itemsAfterRect * rowHeight;
+
+        // Always add the loader sentinel if present. This assumes the loader is the last option/row
+        // will need to refactor when handling multi section loading
+        if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
+          let loader = this.buildChild(lastNode, this.padding, y, null);
+          nodes.push(loader);
+          y = loader.layoutInfo.rect.maxY;
+        }
         break;
       }
     }
 
     y -= this.gap;
-    y += this.padding;
+    y += isEmptyOrLoading ? 0 : this.padding;
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
     return nodes;
   }
@@ -301,6 +318,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let layoutNode = this.buildNode(node, x, y);
 
     layoutNode.layoutInfo.parentKey = parentKey ?? null;
+    layoutNode.layoutInfo.allowOverflow = true;
     this.layoutNodes.set(node.key, layoutNode);
     return layoutNode;
   }
@@ -315,6 +333,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         return this.buildSectionHeader(node, x, y);
       case 'loader':
         return this.buildLoader(node, x, y);
+      case 'separator':
+        return this.buildItem(node, x, y);
       default:
         throw new Error('Unsupported node type: ' + node.type);
     }
@@ -324,7 +344,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, this.padding, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
     rect.width = this.virtualizer!.contentSize.width - this.padding - x;
-    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight || DEFAULT_HEIGHT;
+    // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
+    // room for the loader alongside rendering the emptyState
+    rect.height = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
 
     return {
       layoutInfo,
@@ -506,7 +528,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     y += this.virtualizer!.visibleRect.y;
 
     // Find the closest item within on either side of the point using the gap width.
-    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, Math.max(1, this.gap * 2));
     let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
     let minDistance = Infinity;

@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
@@ -91,7 +91,12 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     },
     isSelected: {
       default: baseColor('neutral'),
-      isEmphasized: baseColor('accent'),
+      isEmphasized: {
+        default: lightDark('accent-900', 'accent-700'),
+        isHovered: lightDark('accent-1000', 'accent-600'),
+        isPressed: lightDark('accent-1000', 'accent-600'),
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
+      },
       isDisabled: {
         default: 'gray-100',
         isQuiet: 'transparent'

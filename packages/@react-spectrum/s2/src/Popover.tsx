@@ -220,7 +220,9 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
+export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {
+}
+
 
 const dialogStyle = style({
   padding: 8,
@@ -238,11 +240,13 @@ const dialogStyle = style({
  */
 export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
+  const {triggerRef, isOpen, onOpenChange, ...otherProps} = props;
+
 
   return (
-    <PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+    <PopoverBase  isOpen={isOpen} onOpenChange={onOpenChange} triggerRef={triggerRef} size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
       <Dialog
-        {...props}
+        {...otherProps}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogStyle(null, props.styles)}>
