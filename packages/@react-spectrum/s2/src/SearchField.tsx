@@ -19,7 +19,7 @@ import {
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, Ref, RefAttributes, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -40,12 +40,16 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
+export const SearchFieldContext:
+  Context<ContextValue<Partial<SearchFieldProps>, TextFieldRef>> =
+  createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
 
 /**
  * A SearchField is a text field designed for searches.
  */
-export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
+export const SearchField:
+  ForwardRefExoticComponent<SearchFieldProps & RefAttributes<TextFieldRef<HTMLInputElement>>> =
+/*#__PURE__*/ forwardRef(function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

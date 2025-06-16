@@ -13,8 +13,8 @@
 import {ButtonGroupContext} from './ButtonGroup';
 import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ContentContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef} from '@react-types/shared';
-import {forwardRef} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
@@ -120,7 +120,9 @@ export const dialogInner = style({
 /**
  * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be used for modal experiences with complex workflows.
  */
-export const FullscreenDialog = forwardRef(function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
+export const FullscreenDialog:
+  ForwardRefExoticComponent<FullscreenDialogProps & RefAttributes<DOMRefValue<HTMLElement>>> =
+forwardRef(function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
   let {variant = 'fullscreen', isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 

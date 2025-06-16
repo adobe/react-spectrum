@@ -17,7 +17,7 @@ import {
   ContextValue,
   parseColor
 } from 'react-aria-components';
-import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, JSX, ReactElement, RefAttributes, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -43,13 +43,17 @@ interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' 
   useWrapper: (swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) => JSX.Element
 }
 
-export const ColorSwatchContext = createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
-export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
+export const ColorSwatchContext:
+  Context<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const InternalColorSwatchContext: Context<SpectrumColorSwatchContextValue | null> = createContext<SpectrumColorSwatchContextValue | null>(null);
 
 /**
  * A ColorSwatch displays a preview of a selected color.
  */
-export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+export const ColorSwatch:
+  ForwardRefExoticComponent<ColorSwatchProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchContext);
   let domRef = useDOMRef(ref);
   let ctx = useContext(InternalColorSwatchContext);

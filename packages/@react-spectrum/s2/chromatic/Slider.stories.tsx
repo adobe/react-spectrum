@@ -13,7 +13,7 @@
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {Slider} from '../src/Slider';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
@@ -27,9 +27,10 @@ const meta: Meta<typeof Slider> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Slider>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>
@@ -40,8 +41,8 @@ export const Example = {
   }
 };
 
-export const FillOffset = {
-  render: (args: any) => (
+export const FillOffset: Story = {
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>
@@ -57,8 +58,8 @@ export const FillOffset = {
   }
 };
 
-export const FormatOptions = {
-  render: (args: any) => (
+export const FormatOptions: Story = {
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} styles={style({width: 300})} />
     </div>
@@ -71,8 +72,8 @@ export const FormatOptions = {
   }
 };
 
-export const MinMaxValue = {
-  render: (args: any) => (
+export const MinMaxValue: Story = {
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>
@@ -84,8 +85,8 @@ export const MinMaxValue = {
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => (
+export const ContextualHelpExample: Story = {
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>

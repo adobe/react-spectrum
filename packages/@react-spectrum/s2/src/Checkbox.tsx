@@ -14,8 +14,8 @@ import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGr
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext, useRef} from 'react';
 import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
@@ -41,7 +41,9 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'st
   children?: ReactNode
 }
 
-export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>>>(null);
+export const CheckboxContext:
+  Context<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>> | null> =
+  createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>> | null>(null);
 
 const wrapper = style({
   display: 'flex',
@@ -130,7 +132,9 @@ const iconSize = {
  * Checkboxes allow users to select multiple items from a list of individual items,
  * or to mark one individual item as selected.
  */
-export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Checkbox:
+  ForwardRefExoticComponent<CheckboxProps & RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
+forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes, useContext, useRef} from 'react';
 import {
   ContextValue,
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-import {createContext, forwardRef, useContext, useRef} from 'react';
 import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
@@ -37,9 +37,11 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   endName?: string
 }
 
-export const RangeSliderContext = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
+export const RangeSliderContext: Context<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>> = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
-export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider:
+  ForwardRefExoticComponent<RangeSliderProps & RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
+/*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);

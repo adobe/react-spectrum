@@ -18,7 +18,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
-import React, {createContext, forwardRef} from 'react';
+import React, {Context, createContext, forwardRef, ForwardRefExoticComponent} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -44,7 +44,9 @@ interface NotificationBadgeContextProps extends Partial<NotificationBadgeProps> 
   staticColor?: 'black' | 'white' | 'auto'
 }
 
-export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const NotificationBadgeContext:
+  Context<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style({
   display: {
@@ -115,7 +117,9 @@ const badge = style({
 /**
  * Notification badges are used to indicate new or pending activity .
  */
-export const NotificationBadge = forwardRef(function Badge(props: NotificationBadgeProps, ref: DOMRef<HTMLDivElement>) {
+export const NotificationBadge:
+  ForwardRefExoticComponent<NotificationBadgeProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Badge(props: NotificationBadgeProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, NotificationBadgeContext);
   let {

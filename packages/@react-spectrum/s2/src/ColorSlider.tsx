@@ -19,8 +19,8 @@ import {
   useLocale
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes, useRef} from 'react';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {style} from '../style' with {type: 'macro'};
@@ -31,12 +31,16 @@ export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' 
   label?: string
 }
 
-export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorSliderContext:
+  Context<ContextValue<Partial<ColorSliderProps>, DOMRefValue<HTMLDivElement>>> =
+createContext<ContextValue<Partial<ColorSliderProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorSlider allows users to adjust an individual channel of a color value.
  */
-export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorSlider:
+  ForwardRefExoticComponent<ColorSliderProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSliderContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);

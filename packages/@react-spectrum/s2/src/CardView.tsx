@@ -23,7 +23,7 @@ import {
   WaterfallLayout
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
+import {Context, createContext, forwardRef, ReactElement, RefAttributes, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -187,9 +187,13 @@ const wrapperStyles = style({
   size: 'fit'
 }, getAllowedOverrides({height: true}));
 
-export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const CardViewContext:
+  Context<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>> | null> =
+  createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>> | null>(null);
 
-export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView:
+  <T extends object>(props: CardViewProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
     children,

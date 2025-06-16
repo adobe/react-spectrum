@@ -17,7 +17,7 @@ import {Checkbox} from './Checkbox';
 import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
-import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
+import {Context, createContext, CSSProperties, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps, inertValue} from '@react-aria/utils';
@@ -346,8 +346,8 @@ let footer = style({
   paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
-export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
-export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const InternalCardViewContext: Context<'div' | typeof GridListItem> = createContext<'div' | typeof GridListItem>('div');
+export const CardContext: Context<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>> | null>(null);
 
 interface InternalCardContextValue {
   isQuiet: boolean,
@@ -377,7 +377,9 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const Card:
+  ForwardRefExoticComponent<CardProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let domRef = useDOMRef(ref);
   let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
@@ -498,7 +500,9 @@ export interface CardPreviewProps extends UnsafeStyles, DOMProps {
   children: ReactNode
 }
 
-export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
+export const CardPreview:
+  ForwardRefExoticComponent<CardPreviewProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} = useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
@@ -544,7 +548,9 @@ const collectionImage = style({
   userSelect: 'none'
 });
 
-export const CollectionCardPreview = forwardRef(function CollectionCardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
+export const CollectionCardPreview:
+  ForwardRefExoticComponent<CardPreviewProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function CollectionCardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size} = useContext(InternalCardContext)!;
   return (
     <CardPreview {...props} ref={ref}>
@@ -559,7 +565,9 @@ export const CollectionCardPreview = forwardRef(function CollectionCardPreview(p
 
 export interface AssetCardProps extends Omit<CardProps, 'density'> {}
 
-export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
+export const AssetCard:
+  ForwardRefExoticComponent<AssetCardProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Card {...props} ref={ref} density="regular">
       {composeRenderProps(props.children, children => (
@@ -620,7 +628,9 @@ export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
-export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const UserCard:
+  ForwardRefExoticComponent<CardProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
@@ -672,7 +682,9 @@ export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'>
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
-export const ProductCard = forwardRef(function ProductCard(props: ProductCardProps, ref: DOMRef<HTMLDivElement>) {
+export const ProductCard:
+  ForwardRefExoticComponent<ProductCardProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function ProductCard(props: ProductCardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">

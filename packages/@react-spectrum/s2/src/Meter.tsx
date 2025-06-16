@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {createContext, forwardRef, ReactNode} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -53,7 +53,9 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
   label?: ReactNode
 }
 
-export const MeterContext = createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const MeterContext:
+  Context<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style({
   ...bar()
@@ -97,7 +99,9 @@ const fillStyles = style<MeterStyleProps & {isStaticColor: boolean}>({
  * Meters are visual representations of a quantity or an achievement.
  * Their progress is determined by user actions, rather than system actions.
  */
-export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+export const Meter:
+  ForwardRefExoticComponent<MeterProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 

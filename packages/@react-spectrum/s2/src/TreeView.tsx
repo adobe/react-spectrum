@@ -30,11 +30,11 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ForwardRefExoticComponent, JSXElementConstructor, ReactElement, ReactNode, RefAttributes, useContext, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
@@ -441,5 +441,5 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-const _TreeView = forwardRef(TreeView);
+const _TreeView: ForwardRefExoticComponent<TreeViewProps & RefAttributes<DOMRefValue<HTMLDivElement>>> = forwardRef(TreeView);
 export {_TreeView as TreeView};

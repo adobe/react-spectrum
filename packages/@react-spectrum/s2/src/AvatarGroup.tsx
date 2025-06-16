@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
+import {Context, createContext, CSSProperties, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -35,7 +35,7 @@ export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingPr
   styles?: StylesPropWithoutWidth
 }
 
-export const AvatarGroupContext = createContext<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const AvatarGroupContext: Context<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>> | null> = createContext<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>> | null>(null);
 
 const avatar = style({
   marginStart: {
@@ -68,7 +68,9 @@ const container = style({
 /**
  * An avatar group is a grouping of avatars that are related to each other.
  */
-export const AvatarGroup = forwardRef(function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const AvatarGroup:
+  ForwardRefExoticComponent<AvatarGroupProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarGroupContext);
   let domRef = useDOMRef(ref);
   let {children, label, size = 24, styles, UNSAFE_style, UNSAFE_className, ...otherProps} = props;

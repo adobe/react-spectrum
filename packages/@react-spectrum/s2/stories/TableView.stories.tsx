@@ -11,15 +11,15 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, Text} from '../src';
+import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, TableViewProps, Text} from '../src';
 import {categorizeArgTypes} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
-import {useState} from 'react';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -61,7 +61,7 @@ const meta: Meta<typeof TableView> = {
 
 export default meta;
 
-const StaticTable = (args: any) => (
+const StaticTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
@@ -96,18 +96,18 @@ const StaticTable = (args: any) => (
   </TableView>
 );
 
-export const Example = {
+export const Example: StoryObj<typeof StaticTable> = {
   render: StaticTable,
   args: {
     selectionMode: 'multiple',
-    onResize: null,
-    onResizeStart: null,
-    onResizeEnd: null,
-    onLoadMore: null
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
   }
 };
 
-export const DisabledRows = {
+export const DisabledRows: StoryObj<typeof StaticTable> = {
   ...Example,
   args: {
     ...Example.args,
@@ -135,7 +135,7 @@ let items = [
   {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10', yah: 'Yah long long long 10'}
 ];
 
-const DynamicTable = (args: any) => (
+const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
       {(column) => (
@@ -154,8 +154,8 @@ const DynamicTable = (args: any) => (
   </TableView>
 );
 
-export const DynamicColumns = {
-  render: function DynamicColumnsExample(args: any) {
+export const DynamicColumns: StoryObj<typeof DynamicTable> = {
+  render: function DynamicColumnsExample(args) {
     let [cols, setColumns] = useState(columns);
     return (
       <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
@@ -187,7 +187,7 @@ export const DynamicColumns = {
   }
 };
 
-const DynamicTableWithCustomMenus = (args: any) => (
+const DynamicTableWithCustomMenus = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
       {(column) => (
@@ -221,9 +221,9 @@ const DynamicTableWithCustomMenus = (args: any) => (
 );
 
 let sortItems = items;
-const DynamicSortableTableWithCustomMenus = (args: any) => {
+const DynamicSortableTableWithCustomMenus = (args: TableViewProps): ReactElement => {
   let [items, setItems] = useState(sortItems);
-  let [sortDescriptor, setSortDescriptor] = useState({});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
   let onSortChange = (sortDescriptor: SortDescriptor) => {
     let {direction = 'ascending', column = 'name'} = sortDescriptor;
 
@@ -274,7 +274,7 @@ const DynamicSortableTableWithCustomMenus = (args: any) => {
   );
 };
 
-export const Dynamic = {
+export const Dynamic: StoryObj<typeof DynamicTable> = {
   render: DynamicTable,
   args: {
     ...Example.args,
@@ -282,7 +282,7 @@ export const Dynamic = {
   }
 };
 
-export const DynamicCustomMenus = {
+export const DynamicCustomMenus: StoryObj<typeof DynamicTableWithCustomMenus> = {
   render: DynamicTableWithCustomMenus,
   args: {
     ...Example.args,
@@ -290,7 +290,7 @@ export const DynamicCustomMenus = {
   }
 };
 
-export const DynamicSortableCustomMenus = {
+export const DynamicSortableCustomMenus: StoryObj<typeof DynamicSortableTableWithCustomMenus> = {
   render: DynamicSortableTableWithCustomMenus,
   args: {
     ...Example.args,
@@ -312,7 +312,7 @@ function renderEmptyState() {
   );
 }
 
-const EmptyStateTable = (args: any) => (
+const EmptyStateTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Empty state" {...args} styles={style({height: 320, width: 320})}>
     <TableHeader columns={columns}>
       {(column) => (
@@ -325,14 +325,14 @@ const EmptyStateTable = (args: any) => (
   </TableView>
 );
 
-export const EmptyState = {
+export const EmptyState: StoryObj<typeof EmptyStateTable> = {
   render: EmptyStateTable,
   args: {
     ...Example.args
   }
 };
 
-export const LoadingStateNoItems = {
+export const LoadingStateNoItems: StoryObj<typeof EmptyStateTable> = {
   render: EmptyStateTable,
   args: {
     ...Example.args,
@@ -346,7 +346,7 @@ export const LoadingStateNoItems = {
   }
 };
 
-export const LoadingStateWithItems = {
+export const LoadingStateWithItems: StoryObj<typeof DynamicTable> = {
   render: DynamicTable,
   args: {
     ...Example.args,
@@ -360,7 +360,7 @@ export const LoadingStateWithItems = {
   }
 };
 
-export const LoadingStateWithItemsStatic = {
+export const LoadingStateWithItemsStatic: StoryObj<typeof StaticTable> = {
   render: StaticTable,
   args: {
     ...Example.args,
@@ -381,7 +381,7 @@ let dividerColumns = [
   {name: 'Yah', id: 'yah'}
 ];
 
-const ShowDividers = (args: any) => {
+const ShowDividers = (args: TableViewProps): ReactElement => {
   return (
     <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={dividerColumns}>
@@ -402,7 +402,7 @@ const ShowDividers = (args: any) => {
   );
 };
 
-export const ShowDividersStory = {
+export const ShowDividersStory: StoryObj<typeof ShowDividers> = {
   render: ShowDividers,
   args: {
     ...Example.args
@@ -417,7 +417,7 @@ let alignColumns = [
   {name: 'Yah', id: 'yah', align: 'end'}
 ];
 
-const TextAlign = (args: any) => {
+const TextAlign = (args: TableViewProps): ReactElement => {
   return (
     <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
@@ -438,7 +438,7 @@ const TextAlign = (args: any) => {
   );
 };
 
-export const TextAlignStory = {
+export const TextAlignStory: StoryObj<typeof TextAlign> = {
   render: TextAlign,
   args: {
     ...Example.args
@@ -453,7 +453,7 @@ interface Character {
   birth_year: number
 }
 
-const OnLoadMoreTable = (args: any) => {
+const OnLoadMoreTable = (args: TableViewProps & {delay: number}): ReactElement => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -494,7 +494,7 @@ const OnLoadMoreTable = (args: any) => {
   );
 };
 
-export const OnLoadMoreTableStory  = {
+export const OnLoadMoreTableStory: StoryObj<typeof OnLoadMoreTable> = {
   render: OnLoadMoreTable,
   args: {
     ...Example.args,
@@ -532,9 +532,9 @@ let sortitems = [
   {id: 20, name: 'T', height: '20', weight: '2'}
 ];
 
-const SortableTable = (args: any) => {
+const SortableTable = (args: TableViewProps): ReactElement => {
   let [items, setItems] = useState(sortitems);
-  let [sortDescriptor, setSortDescriptor] = useState({});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
   let onSortChange = (sortDescriptor: SortDescriptor) => {
     let {direction = 'ascending', column = 'name'} = sortDescriptor;
 
@@ -570,28 +570,38 @@ const SortableTable = (args: any) => {
   );
 };
 
-export const Sorting = {
+export const Sorting: StoryObj<typeof SortableTable> = {
   ...Example,
   render: SortableTable,
   name: 'sortable'
 };
 
+type ResizeColumn = Array<{
+  name: string,
+  id: string,
+  isRowHeader?: boolean,
+  allowsResizing?: boolean,
+  showDivider: boolean,
+  align: 'start' | 'center' | 'end',
+  allowsSorting?: boolean
+}>;
+
 let resizeColumn = [
   {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, align: 'end'},
   {name: 'Height', id: 'height', align: 'center'},
   {name: 'Weight', id: 'weight', allowsResizing: true, align: 'center'}
-];
+] as ResizeColumn;
 
 let sortResizeColumns = [
   {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, allowsSorting: true},
   {name: 'Height', id: 'height', allowsSorting: true},
   {name: 'Weight', id: 'weight', allowsResizing: true, allowsSorting: true}
-];
+] as ResizeColumn;
 
-const SortableResizableTable = (args: any) => {
+const SortableResizableTable = (args: TableViewProps & {isSortable: boolean, columns: ResizeColumn}): ReactElement => {
   let {isSortable} = args;
   let [items, setItems] = useState(sortitems);
-  let [sortDescriptor, setSortDescriptor] = useState({});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
   let onSortChange = (sortDescriptor: SortDescriptor) => {
     let {direction = 'ascending', column = 'name'} = sortDescriptor;
 
@@ -608,7 +618,7 @@ const SortableResizableTable = (args: any) => {
   };
 
   return (
-    <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : null} onSortChange={isSortable ? onSortChange : null} styles={style({width: 384, height: 320})}>
+    <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : undefined} onSortChange={isSortable ? onSortChange : undefined} styles={style({width: 384, height: 320})}>
       <TableHeader columns={args.columns}>
         {(column: any) => (
           <Column {...column}>{column.name}</Column>
@@ -627,7 +637,7 @@ const SortableResizableTable = (args: any) => {
   );
 };
 
-export const ResizingTable = {
+export const ResizingTable: StoryObj<typeof SortableResizableTable> = {
   render: SortableResizableTable,
   args: {
     onResizeStart: action('onResizeStart'),
@@ -638,7 +648,7 @@ export const ResizingTable = {
   name: 'resizing only table'
 };
 
-export const ResizingSortableTable = {
+export const ResizingSortableTable: StoryObj<typeof SortableResizableTable> = {
   render: SortableResizableTable,
   args: {
     onResizeStart: action('onResizeStart'),
@@ -649,7 +659,7 @@ export const ResizingSortableTable = {
   name: 'resizing and sortable table'
 };
 
-function AsyncLoadingExample(props) {
+function AsyncLoadingExample(props: TableViewProps): ReactElement {
   interface Item {
     data: {
       id: string,
@@ -720,7 +730,7 @@ function AsyncLoadingExample(props) {
   );
 }
 
-export const ResizingUncontrolledSortableColumns = {
+export const ResizingUncontrolledSortableColumns: StoryObj<typeof AsyncLoadingExample> = {
   render: (args) => <AsyncLoadingExample {...args} />,
   args: {
     ...Example.args,
@@ -750,7 +760,7 @@ for (let i = 0; i < 1000; i++) {
   manyRows.push(row);
 }
 
-export const ManyItems = {
+export const ManyItems: StoryObj<typeof TableView> = {
   render: (args) => (
     <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
       <TableHeader columns={manyColumns}>
@@ -780,7 +790,7 @@ export const ManyItems = {
   }
 };
 
-export const FlexHeight = {
+export const FlexHeight: StoryObj<typeof TableView> = {
   render: (args) => (
     <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch', flexDirection: 'column'})}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
@@ -815,7 +825,7 @@ export const FlexHeight = {
 };
 
 
-export const FlexWidth = {
+export const FlexWidth: StoryObj<typeof TableView> = {
   render: (args) => (
     <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch'})}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
@@ -850,7 +860,7 @@ export const FlexWidth = {
 };
 
 
-function ColSpanExample(args: any) {
+function ColSpanExample(args: TableViewProps): ReactElement {
   let [hide, setHide] = useState(false);
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
@@ -891,8 +901,8 @@ function ColSpanExample(args: any) {
 }
 
 
-export const ColSpan = {
-  render: (args: any) => (
+export const ColSpan: StoryObj<typeof ColSpanExample> = {
+  render: (args) => (
     <ColSpanExample {...args} />
   ),
   parameters: {

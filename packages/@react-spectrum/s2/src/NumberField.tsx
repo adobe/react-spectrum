@@ -22,8 +22,8 @@ import {
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {Context, createContext, CSSProperties, ForwardedRef, forwardRef, ForwardRefExoticComponent, ReactNode, Ref, RefAttributes, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -54,7 +54,9 @@ export interface NumberFieldProps extends
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
+export const NumberFieldContext:
+  Context<ContextValue<Partial<NumberFieldProps>, TextFieldRef>> =
+  createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
 const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
   ...controlBorderRadius('sm'),
@@ -137,7 +139,9 @@ const stepperContainerStyles = style({
 /**
  * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
  */
-export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+export const NumberField:
+  ForwardRefExoticComponent<NumberFieldProps & RefAttributes<TextFieldRef<HTMLInputElement>>> =
+forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,

@@ -1,8 +1,8 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {ContentContext, FooterContext, HeadingContext} from './Content';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
@@ -46,12 +46,16 @@ const popover = style({
   padding: 24
 });
 
-export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ContextualHelpContext:
+  Context<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export const ContextualHelp = forwardRef(function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ContextualHelp:
+  ForwardRefExoticComponent<ContextualHelpProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+forwardRef(function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {

@@ -12,8 +12,8 @@
 
 import {colorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DOMRef} from '@react-types/shared';
-import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {forwardRef, ForwardRefExoticComponent, MutableRefObject, RefAttributes, useCallback, useContext} from 'react';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -50,7 +50,9 @@ const modalOverlayStyles = style({
 /**
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+export const Modal:
+  ForwardRefExoticComponent<ModalProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();

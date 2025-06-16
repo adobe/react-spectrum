@@ -29,7 +29,7 @@ import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
-import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -76,7 +76,9 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
   children: ReactNode
 }
 
-export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const TabsContext:
+  Context<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
 const InternalTabsContext = createContext<Partial<TabsProps>>({});
 const CollapseContext = createContext({
   showTabs: true,
@@ -99,7 +101,9 @@ const tabs = style({
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
  */
-export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+export const Tabs:
+  ForwardRefExoticComponent<TabsProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
     density = 'regular',

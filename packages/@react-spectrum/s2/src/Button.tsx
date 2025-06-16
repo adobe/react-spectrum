@@ -13,8 +13,8 @@
 import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext, useEffect, useState} from 'react';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -61,8 +61,8 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
   children: ReactNode
 }
 
-export const ButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
-export const LinkButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const ButtonContext: Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>> | null> = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>> | null>(null);
+export const LinkButtonContext: Context<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>> | null> = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>> | null>(null);
 
 const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
@@ -297,7 +297,9 @@ const gradient = style({
  * They have multiple styles for various needs, and are ideal for calling attention to
  * where a user needs to do something in order to move forward in a flow.
  */
-export const Button = forwardRef(function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const Button:
+  ForwardRefExoticComponent<ButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+forwardRef(function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -426,7 +428,9 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
 /**
  * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
  */
-export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+export const LinkButton:
+  ForwardRefExoticComponent<LinkButtonProps & RefAttributes<FocusableRefValue<HTMLAnchorElement, HTMLAnchorElement>>> =
+forwardRef(function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);

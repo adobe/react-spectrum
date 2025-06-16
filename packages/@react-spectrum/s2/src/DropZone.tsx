@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
@@ -39,7 +39,9 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
     size?: 'S' | 'M' | 'L'
 }
 
-export const DropZoneContext = createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const DropZoneContext:
+  Context<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>> =
+createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const dropzone = style<DropZoneRenderProps>({
   display: 'flex',
@@ -92,7 +94,9 @@ const banner = style({
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+export const DropZone:
+  ForwardRefExoticComponent<DropZoneProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+/*#__PURE__*/ forwardRef(function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let {

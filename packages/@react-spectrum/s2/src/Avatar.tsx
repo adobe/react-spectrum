@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -53,12 +53,14 @@ const imageStyles = style({
   }
 }, getAllowedOverrides({width: false}));
 
-export const AvatarContext = createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>>>(null);
+export const AvatarContext: Context<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>> | null> = createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>> | null>(null);
 
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
  */
-export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+export const Avatar:
+  ForwardRefExoticComponent<AvatarProps & RefAttributes<DOMRefValue<HTMLImageElement>>> =
+forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {

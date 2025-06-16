@@ -13,7 +13,7 @@
 import {ActionButton, Text} from '../src';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
@@ -28,6 +28,8 @@ const meta: Meta<typeof ActionButton> = {
 };
 
 export default meta;
+
+type ActionButtonStory = StoryObj<typeof ActionButton>;
 
 let states = [
   {isQuiet: true},
@@ -64,19 +66,19 @@ const Template = (args) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: ActionButtonStory = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithIcon = {
-  render: Template,
+export const WithIcon: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><NewIcon /><Text>Press me</Text></>
   }
 };
 
-export const IconOnly = {
-  render: Template,
+export const IconOnly: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
   }
