@@ -391,7 +391,6 @@ export default function SearchMenu(props: SearchMenuProps) {
     <div
       className={style({ 
         width: 'full', 
-        maxWidth: '[1280px]', 
         display: 'grid',
         gridTemplateColumns: 'auto 1fr auto',
         alignItems: 'center',

@@ -53,9 +53,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
       </head>
-      <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxWidth: 1600, marginX: 'auto', paddingX: 12, paddingBottom: 12, paddingTop: 0, overflow: 'hidden'})}>
+      <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginX: 'auto', paddingX: 12, paddingBottom: 12, paddingTop: 0, overflow: 'hidden'})}>
         <Header pages={pages} currentPage={currentPage}  />
-        <div className={style({display: 'flex', width: 'full'})}>
+        <div className={style({display: 'flex', width: 'full', maxWidth: 1600})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}
@@ -65,7 +65,6 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               padding: 40,
               borderRadius: 'xl',
               boxShadow: 'emphasized',
-              maxWidth: 1280,
               boxSizing: 'border-box',
               flexGrow: 1,
               display: 'flex',

@@ -71,6 +71,7 @@ export default function Header(props: PageProps) {
         <div
           className={style({
             width: 'full', 
+            maxWidth: 1600,
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
