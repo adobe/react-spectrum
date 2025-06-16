@@ -61,6 +61,7 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
+const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
@@ -226,6 +227,13 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
+  },
+  '--avatarBorderRadius': {
+    type: 'borderTopStartRadius',
+    value: {
+      default: 'full',
+      [avatarOnly]: 'none'
+    }
   }
 }, getAllowedOverrides());
 
@@ -291,7 +299,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [AvatarContext, {
             size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0}),
+            UNSAFE_style: {
+              borderRadius: 'var(--avatarBorderRadius)'
+            }
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,
