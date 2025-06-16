@@ -21,5 +21,17 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "parcel": {
+    "watch": {
+      "ignore": [
+        "../../packages/@react-spectrum/**/*",
+        "../../packages/@react-stately/**/*",
+        "../../packages/@react-aria/**/*",
+        "../../packages/@react-types/**/*",
+        "../../packages/@internationalized/**/*",
+        "../../packages/@adobe/**/*"
+      ]
+    }
   }
 }

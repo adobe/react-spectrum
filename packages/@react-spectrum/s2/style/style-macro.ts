@@ -393,20 +393,48 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className));
       className += ` -macro$${id}`;
-      return {toString: new Function(`
-        (globalThis.__macros ??= {})[${JSON.stringify(id)}] = ${JSON.stringify({loc, style})};
-        return ${JSON.stringify(className)};
-      `)};
+
+      let styleObject = {};
+
+      let toStringFunc = new Function(`
+if (!globalThis.__macrosRegistry) {
+  globalThis.__macrosRegistry = new globalThis.FinalizationRegistry((val) => {
+    console.log('deleting');
+    delete globalThis.__macros[val];
+  });
+}
+(globalThis.__macros ??= {})[${JSON.stringify(id)}] = ${JSON.stringify({loc, style})};
+globalThis.__macrosRegistry.register(this, ${JSON.stringify(id)});
+return ${JSON.stringify(className)};
+      `);
+
+      styleObject.toString = toStringFunc as () => string;
+
+      return styleObject;
     }
 
-    // TODO: Why can't i move this inside the string? that way people can strip out the macro data in production?
-    if (process.env.NODE_ENV !== 'production') {
-      js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
-      js += 'rules += " -macro$" + hash.toString(36);\n';
-      js += `(globalThis.__macros ??= {})[hash.toString(36)] = {loc: ${JSON.stringify(loc)}, style: currentRules};\n`;
-      js += 'window.postMessage("update-macros", "*");\n';
-    }
-    js += 'return rules;';
+    js += `
+let styleObject = {};
+styleObject.toString = function() {
+  let hash = 5381;
+  for (let i = 0; i < rules.length; i++) {
+    hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0;
+  }
+  let id = hash.toString(36);
+  rules += " -macro$" + id;
+  if (!globalThis.__macrosRegistry) {
+    globalThis.__macrosRegistry = new globalThis.FinalizationRegistry((val) => {
+      console.log('deleting', val);
+      delete globalThis.__macros[val];
+    });
+  }
+  (globalThis.__macros ??= {})[id] = {loc: ${JSON.stringify(loc)}, style: currentRules};
+  globalThis.__macrosRegistry.register(this, id);
+  window.postMessage("update-macros", "*");
+  return rules;
+};
+    `;
+    js += 'return styleObject;';
     if (allowedOverrides) {
       return new Function('props', 'overrides', js) as any;
     }
