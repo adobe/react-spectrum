@@ -160,6 +160,72 @@ function generatePropTable(componentName, file) {
   return `${header}\n${body}`;
 }
 
+function generateInterfaceTable(interfaceName, file) {
+  // Attempt to resolve the file containing the interface.
+  let ifacePath = resolveComponentPath(interfaceName, file);
+
+  // Fallback: deep search for interface declaration if resolveComponentPath failed.
+  if (!ifacePath) {
+    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
+    // Also scan other packages if not found in component roots.
+    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
+
+    const matches = glob.sync(patterns, {
+      absolute: true,
+      suppressErrors: true,
+      deep: 4
+    }).filter(p => {
+      try {
+        const txt = fs.readFileSync(p, 'utf8');
+        return new RegExp(`(interface|type)\\s+${interfaceName}\\b`).test(txt);
+      } catch {
+        return false;
+      }
+    });
+    ifacePath = matches[0] || null;
+  }
+
+  if (!ifacePath) {return null;}
+
+  const source = project.addSourceFileAtPathIfExists(ifacePath);
+  if (!source) {return null;}
+
+  const ifaceDecl = source.getInterface(interfaceName);
+  if (!ifaceDecl) {return null;}
+
+  const propSymbols = ifaceDecl.getType().getProperties();
+  if (!propSymbols.length) {return null;}
+
+  const rows = propSymbols.map((sym) => {
+    const name = sym.getName();
+    const type = cleanTypeText(sym.getTypeAtLocation(ifaceDecl).getText(ifaceDecl));
+    const decl = sym.getDeclarations()?.[0];
+    let description = '';
+    if (decl && typeof decl.getJsDocs === 'function') {
+      const docsArr = decl.getJsDocs();
+      if (docsArr.length) {
+        description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
+      }
+    }
+
+    return {name, type, description};
+  });
+
+  if (!rows.length) {return null;}
+
+  const header = '| Name | Type | Description |\n|------|------|-------------|';
+  const body = rows
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((r) => {
+      const typeStr = r.type.includes('|') || r.type.includes('&') ? `<code>${r.type}</code>` : `\`${r.type}\``;
+      return `| ${r.name} | ${typeStr} | ${r.description || '—'} |`;
+    })
+    .join('\n');
+
+  return `${header}\n${body}`;
+}
+
 /**
  * Custom remark plugin that removes MDX import/export statements.
  */
@@ -177,6 +243,7 @@ function remarkRemoveImportsExports() {
  */
 function remarkDocsComponentsToMarkdown() {
   return (tree, file) => {
+    const relatedTypes = new Set();
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node, index, parent) => {
       const name = node.name;
       if (name === 'PageDescription') {
@@ -400,13 +467,24 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'TypeLink') {
         const typeAttr = node.attributes?.find((a) => a.name === 'type');
         if (typeAttr && typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-          const m = typeAttr.value.value.match(/docs\.exports\.([\w$]+)/);
-          if (m) {
-            parent.children[index] = {type: 'inlineCode', value: m[1]};
+          const expr = typeAttr.value.value.trim();
+          // Match anyVar.exports.TypeName or docs.exports.TypeName
+          let m = expr.match(/\.exports\.([\w$]+)/);
+          let typeName = m ? m[1] : null;
+
+          if (!typeName) {
+            // Fall back to the last identifier segment e.g. "PressEvent" in typesDocs.exports.PressEvent or just PressEvent
+            typeName = expr.split('.')?.pop()?.replace(/[^\w$]/g, '') || null;
+          }
+
+          if (typeName) {
+            relatedTypes.add(typeName);
+            parent.children[index] = {type: 'inlineCode', value: typeName};
             return;
           }
         }
-        parent.children.splice(index, 1);
+        // Fallback – replace with empty string to avoid unhandled component.
+        parent.children[index] = {type: 'text', value: ''};
         return index;
       }
       if (name === 'StateTable') {
@@ -480,10 +558,42 @@ function remarkDocsComponentsToMarkdown() {
       // Remove docs rendering-specific comments.
       node.value = node.value
         .split('\n')
-        .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
+        .filter(l => !/^\s*\/\/\/\-\s*(begin|end)/i.test(l))
         .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
         .join('\n');
     });
+
+    // Append "Related Types" section if we collected any.
+    if (relatedTypes.size > 0) {
+      const newNodes = [
+        {type: 'heading', depth: 2, children: [{type: 'text', value: 'Related Types'}]}
+      ];
+
+      for (const typeName of Array.from(relatedTypes)) {
+        // ### {typeName}
+        newNodes.push({type: 'heading', depth: 3, children: [{type: 'text', value: typeName}]});
+
+        const desc = getComponentDescription(typeName, file);
+        if (desc) {
+          newNodes.push({type: 'paragraph', children: [{type: 'text', value: desc}]});
+        }
+
+        // Try to generate a table with the interface definition first.
+        let tableMd = generateInterfaceTable(typeName, file);
+
+        // Fallback to prop table (e.g., when typeName is a component).
+        if (!tableMd) {
+          tableMd = generatePropTable(typeName, file);
+        }
+
+        if (tableMd) {
+          const tableTree = unified().use(remarkParse).parse(tableMd);
+          newNodes.push(...tableTree.children);
+        }
+      }
+
+      tree.children.push(...newNodes);
+    }
   };
 }
 
