@@ -239,11 +239,164 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
-      // Remove other custom components like VisualExample, ExampleSwitcher etc. Can handle later.
-      if (['VisualExample', 'ExampleSwitcher', 'Anatomy'].includes(name)) {
+      
+      if (name === 'ExampleSwitcher') {
+        // Helper to evaluate a simple JS expression (arrays/objects, literals).
+        const evalExpression = (expr) => {
+          try {
+            return Function(`"use strict"; return (${expr});`)();
+          } catch {
+            return null;
+          }
+        };
+
+        const examplesAttr = node.attributes?.find(a => a.name === 'examples');
+        let exampleTitles = [];
+        if (examplesAttr && examplesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          exampleTitles = evalExpression(examplesAttr.value.value) || [];
+        }
+
+        // Fallback default titles when none were provided.
+        if (exampleTitles.length === 0) {
+          exampleTitles = ['Vanilla CSS', 'Tailwind'];
+        }
+
+        // Children may include whitespace/text nodes – filter to VisualExample elements.
+        const visualChildren = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample');
+
+        // Build replacement markdown nodes.
+        const newNodes = [];
+
+        visualChildren.forEach((vChild, i) => {
+          const title = exampleTitles[i] || `Example ${i + 1}`;
+
+          // ## {title} example
+          newNodes.push({
+            type: 'heading',
+            depth: 2,
+            children: [{type: 'text', value: `${title} example`}]
+          });
+
+          // Extract files attribute from VisualExample
+          const filesAttr = vChild.attributes?.find(a => a.name === 'files');
+          let fileList = [];
+          if (filesAttr) {
+            if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+              fileList = evalExpression(filesAttr.value.value) || [];
+            } else if (Array.isArray(filesAttr.value)) {
+              fileList = filesAttr.value;
+            }
+          }
+
+          fileList.forEach(fp => {
+            const absPath = path.join(REPO_ROOT, fp);
+            if (!fs.existsSync(absPath)) {return;}
+            const contents = fs.readFileSync(absPath, 'utf8');
+            const ext = path.extname(fp).slice(1);
+
+            // ### {filename}
+            newNodes.push({
+              type: 'heading',
+              depth: 3,
+              children: [{type: 'text', value: path.basename(fp)}]
+            });
+
+            // ```{lang}\n{contents}\n```
+            newNodes.push({
+              type: 'code',
+              lang: ext || undefined,
+              meta: '',
+              value: contents
+            });
+          });
+        });
+
+        // Replace ExampleSwitcher node with generated markdown.
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
+
+      // Handle standalone VisualExample, generate a minimal snippet
+      if (name === 'VisualExample') {
+        const evalExpression = (expr) => {
+          try {
+            return Function(`"use strict"; return (${expr});`)();
+          } catch {
+            return null;
+          }
+        };
+
+        const componentAttr = node.attributes?.find(a => a.name === 'component');
+        const importSourceAttr = node.attributes?.find(a => a.name === 'importSource');
+        const initialPropsAttr = node.attributes?.find(a => a.name === 'initialProps');
+
+        let componentName = 'Component';
+        if (componentAttr && componentAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          componentName = componentAttr.value.value.trim();
+        }
+
+        let importSource = '@react-spectrum/s2';
+        if (importSourceAttr) {
+          if (importSourceAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            importSource = importSourceAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof importSourceAttr.value === 'string') {
+            importSource = importSourceAttr.value;
+          }
+        }
+
+        let initialProps = {};
+        if (initialPropsAttr && initialPropsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          initialProps = evalExpression(initialPropsAttr.value.value) || {};
+        }
+
+        const {children: childrenProp, ...otherProps} = initialProps;
+
+        const propsString = Object.entries(otherProps)
+          .map(([k, v]) => {
+            if (typeof v === 'string') {
+              return `${k}="${v}"`;
+            }
+            if (typeof v === 'boolean') {
+              return v ? k : '';
+            }
+            return `${k}={${JSON.stringify(v)}}`;
+          })
+          .filter(Boolean)
+          .join(' ');
+
+        let jsxSnippet;
+        if (childrenProp === undefined) {
+          // self-closing tag if no children provided
+          jsxSnippet = `<${componentName}${propsString ? ' ' + propsString : ''} />`;
+        } else {
+          const opening = `<${componentName}${propsString ? ' ' + propsString : ''}>`;
+          const closing = `</${componentName}>`;
+          jsxSnippet = `${opening}${childrenProp}${closing}`;
+        }
+
+        const snippetLines = [
+          `import {${componentName}} from '${importSource}';`,
+          '',
+          jsxSnippet
+        ].join('\n');
+
+        const codeNode = {
+          type: 'code',
+          lang: 'tsx',
+          meta: '',
+          value: snippetLines
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index + 1;
+      }
+
+      // Remove unsupported components.
+      if (['Anatomy'].includes(name)) {
         parent.children.splice(index, 1);
         return index;
       }
+
       if (name === 'TypeLink') {
         const typeAttr = node.attributes?.find((a) => a.name === 'type');
         if (typeAttr && typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
