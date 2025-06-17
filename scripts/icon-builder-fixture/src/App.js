@@ -17,6 +17,7 @@ import {
   Text
 } from '@react-spectrum/s2';
 import AlignRight from '@react-spectrum/icon-library-test/AlignRight';
+import ThreeD from '@react-spectrum/icon-library-test/3D';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <AlignRight />
         <Text>Action Button</Text>
       </ActionButton>
+      <ThreeD />
     </main>
   );
 }

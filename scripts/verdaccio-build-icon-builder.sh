@@ -37,71 +37,11 @@ mkdir -p $verdaccio_path
 echo 'test icon builder'
 cd examples/s2-webpack-5-example
 mkdir icon-test
-cat > ./package.json << EOF
-{
-  "name": "@react-spectrum/icon-test",
-  "version": "1.0.0",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "exports": {
-    "./*": {
-      "types": "./*.d.ts",
-      "module": "./*.mjs",
-      "import": "./*.mjs",
-      "require": "./*.cjs"
-    }
-  },
-  "peerDependencies": {
-    "@react-spectrum/s2": ">=0.8.0",
-    "react": "^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
-  },
-  "devDependencies": {
-    "@react-spectrum/s2-icon-builder": "latest",
-    "@react-spectrum/s2": "latest",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "typescript": "^5.7.3"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "tsc": "tsc"
-  }
-}
-EOF
-
-cat > ./tsconfig.json << EOF
-{
-  "compilerOptions": {
-    "target": "es2018",
-    "noImplicitAny": false,
-    "module": "esnext",
-    "moduleResolution": "nodenext",
-    "strict": true,
-    "noEmit": true,
-    "jsx": "preserve",
-  },
-  "include": [
-    "icon-dist/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}
-EOF
-
-yarn install --no-immutable
 
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
 npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
-yarn tsc
 echo 'concluded icon builder'
 
 echo 'testing icon builder library'
@@ -142,13 +82,16 @@ cat > icon-library-test/package.json << EOF
 EOF
 
 mkdir icon-library-test/src
+mkdir icon-library-test/src/illustrations
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_AlignRight_20_N.svg icon-library-test/src/S2_Icon_AlignRight_20_N.svg
+cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-library-test/src/illustrations/S2_lin_3D_48.svg
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
+yarn transform-icons --type illustration -i './src/illustrations/*.svg' -o ./ --isLibrary
 
 ls .
 
