@@ -233,6 +233,64 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
+      if (name === 'StateTable') {
+        // Extract interface name from properties attribute
+        const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
+        let ifaceName = null;
+        if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const m = propertiesAttr.value.value.match(/docs\.exports\.([\w$]+)\.properties/);
+          if (m) {
+            ifaceName = m[1];
+          }
+        }
+
+        if (!ifaceName) {
+          // Could not determine interface, remove node
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        // Parse other attributes
+        const defaultClassAttr = node.attributes?.find(a => a.name === 'defaultClassName');
+        let defaultClassName = null;
+        if (defaultClassAttr) {
+          if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            // Expression like "'react-aria-ComboBox'"
+            const m = defaultClassAttr.value.value.match(/['"]([\w-]+)['"]/);
+            if (m) {defaultClassName = m[1];}
+          } else if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueLiteral') {
+            defaultClassName = defaultClassAttr.value.value;
+          } else if (typeof defaultClassAttr.value === 'string') {
+            defaultClassName = defaultClassAttr.value;
+          }
+        }
+
+        const showOptionalAttr = node.attributes?.find(a => a.name === 'showOptional');
+        const hideSelectorAttr = node.attributes?.find(a => a.name === 'hideSelector');
+
+        const table = generateStateTable(ifaceName, {
+          showOptional: !!showOptionalAttr,
+          hideSelector: !!hideSelectorAttr
+        });
+
+        if (table) {
+          const nodesToInsert = [];
+          if (defaultClassName) {
+            nodesToInsert.push({
+              type: 'paragraph',
+              children: [{type: 'text', value: `Default className: \`${defaultClassName}\``}]
+            });
+          }
+          const tableTree = unified().use(remarkParse).parse(table);
+          nodesToInsert.push(...tableTree.children);
+          parent.children.splice(index, 1, ...nodesToInsert);
+          return index + nodesToInsert.length;
+        }
+
+        // Fallback: remove node
+        parent.children.splice(index, 1);
+        return index;
+      }
     });
 
     // Clean up code block language specifiers. E.g. "tsx render" -> "tsx"
@@ -276,6 +334,99 @@ function cleanTypeText(t) {
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
   return cleaned;
+}
+
+/**
+ * Generate a markdown table for render props.
+ */
+function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}) {
+  // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
+  let componentName = renderPropsName.replace(/RenderProps$/, '');
+  let componentPath = resolveComponentPath(componentName);
+
+  // If not found, fall back to searching all component roots.
+  if (!componentPath) {
+    const matches = glob.sync(COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
+      absolute: true,
+      suppressErrors: true,
+      deep: 4
+    }).filter(p => fs.readFileSync(p, 'utf8').includes(`interface ${renderPropsName}`));
+    componentPath = matches[0] || null;
+  }
+
+  if (!componentPath) {
+    return null;
+  }
+
+  const source = project.addSourceFileAtPathIfExists(componentPath);
+  if (!source) {
+    return null;
+  }
+
+  const iface = source.getInterface(renderPropsName);
+  if (!iface) {
+    return null;
+  }
+
+  const propSymbols = iface.getType().getProperties();
+  if (!propSymbols.length) {
+    return null;
+  }
+
+  // Build rows
+  const rows = propSymbols.map(sym => {
+    const name = sym.getName();
+
+    const decl = sym.getDeclarations()?.[0];
+    let description = '';
+    let selector = '';
+    let optional = false;
+
+    if (decl) {
+      optional = decl.hasQuestionToken?.() || false;
+      if (typeof decl.getJsDocs === 'function') {
+        const docsArr = decl.getJsDocs();
+        if (docsArr.length) {
+          description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
+          const selTag = docsArr[0].getTags().find(t => t.getTagName() === 'selector');
+          if (selTag) {
+            selector = selTag.getCommentText();
+          }
+        }
+      }
+    }
+
+    return {name, selector: selector || '—', description, optional};
+  });
+
+  // Filter optional props if showOptional is false
+  const filteredRows = showOptional ? rows : rows.filter(r => !r.optional);
+
+  if (!filteredRows.length) {
+    return null;
+  }
+
+  const hasSelectorColumn = !hideSelector && filteredRows.some(r => r.selector && r.selector !== '—');
+
+  const headerColumns = ['Render Prop'];
+  if (hasSelectorColumn) {headerColumns.push('CSS Selector');}
+  headerColumns.push('Description');
+
+  const header = `| ${headerColumns.join(' | ')} |\n|${headerColumns.map(() => '------').join('|')}|`;
+
+  const body = filteredRows
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(r => {
+      const cols = [
+        `\`${r.name}\``,
+        ...(hasSelectorColumn ? [r.selector ? `\`${r.selector}\`` : '—'] : []),
+        r.description || '—'
+      ];
+      return `| ${cols.join(' | ')} |`;
+    })
+    .join('\n');
+
+  return `${header}\n${body}`;
 }
 
 /* *
