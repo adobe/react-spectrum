@@ -110,10 +110,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     yield this.body;
   }
 
-  get size() {
-    return this.itemCount;
-  }
-
   getFirstKey() {
     return this.body.firstChildKey;
   }
