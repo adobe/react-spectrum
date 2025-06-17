@@ -14,7 +14,7 @@ import {AriaProgressBarProps, useProgressBar} from 'react-aria';
 import {clamp} from '@react-stately/utils';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps {}
 
@@ -35,13 +35,15 @@ export interface ProgressBarRenderProps {
   isIndeterminate: boolean
 }
 
-export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
+export const ProgressBarContext: Context<ContextValue<ProgressBarProps, HTMLDivElement>> = createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
 
 /**
  * Progress bars show either determinate or indeterminate progress of an operation
  * over time.
  */
-export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ProgressBar:
+  React.ForwardRefExoticComponent<ProgressBarProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef(function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ProgressBarContext);
   let {
     value = 0,

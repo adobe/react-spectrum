@@ -14,7 +14,7 @@ import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, 
 import {ButtonRenderProps} from './Button';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType, Key} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
@@ -35,12 +35,14 @@ export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children
   id?: Key
 }
 
-export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
+export const ToggleButtonContext: Context<ContextValue<ToggleButtonProps, HTMLButtonElement>> = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 
 /**
  * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
  */
-export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+export const ToggleButton:
+  (props: ToggleButtonProps & React.RefAttributes<HTMLButtonElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonContext);
   let groupState = useContext(ToggleGroupStateContext);
   let state = useToggleState(groupState && props.id != null ? {

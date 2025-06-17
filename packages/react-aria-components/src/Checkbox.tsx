@@ -18,7 +18,7 @@ import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
@@ -109,13 +109,15 @@ export interface CheckboxRenderProps {
   isRequired: boolean
 }
 
-export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
-export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
+export const CheckboxGroupContext: Context<ContextValue<CheckboxGroupProps, HTMLDivElement>> = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
+export const CheckboxGroupStateContext: Context<CheckboxGroupState | null> = createContext<CheckboxGroupState | null>(null);
 
 /**
  * A checkbox group allows a user to select multiple items from a list of options.
  */
-export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const CheckboxGroup:
+  (props: CheckboxGroupProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -176,7 +178,9 @@ export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
  * A checkbox allows a user to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
  */
-export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
+export const Checkbox:
+  (props: CheckboxProps & React.RefAttributes<HTMLLabelElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps

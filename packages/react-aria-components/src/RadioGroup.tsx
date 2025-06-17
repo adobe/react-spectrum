@@ -18,7 +18,7 @@ import {FormContext} from './Form';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -109,14 +109,16 @@ export interface RadioRenderProps {
   isRequired: boolean
 }
 
-export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
-export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
-export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
+export const RadioGroupContext: Context<ContextValue<RadioGroupProps, HTMLDivElement>> = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
+export const RadioContext: Context<ContextValue<Partial<RadioProps>, HTMLLabelElement>> = createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
+export const RadioGroupStateContext: Context<RadioGroupState | null> = createContext<RadioGroupState | null>(null);
 
 /**
  * A radio group allows a user to select a single item from a list of mutually exclusive options.
  */
-export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const RadioGroup:
+  (props: RadioGroupProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -179,7 +181,9 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 /**
  * A radio represents an individual option within a radio group.
  */
-export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
+export const Radio:
+  (props: RadioProps & React.RefAttributes<HTMLLabelElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps

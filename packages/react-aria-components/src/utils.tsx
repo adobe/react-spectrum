@@ -14,7 +14,7 @@ import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
-export const DEFAULT_SLOT = Symbol('default');
+export const DEFAULT_SLOT: symbol = Symbol('default');
 
 interface SlottedValue<T> {
   slots?: Record<string | symbol, T>

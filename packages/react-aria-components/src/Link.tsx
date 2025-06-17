@@ -13,7 +13,7 @@
 import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
+import React, {Context, createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
 export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps {}
 
@@ -50,13 +50,15 @@ export interface LinkRenderProps {
   isDisabled: boolean
 }
 
-export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
+export const LinkContext: Context<ContextValue<LinkProps, HTMLAnchorElement>> = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
 
 /**
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
+export const Link:
+  (props: LinkProps & React.RefAttributes<HTMLAnchorElement>) => React.ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
   let ElementType: ElementType = props.href && !props.isDisabled ? 'a' : 'span';
