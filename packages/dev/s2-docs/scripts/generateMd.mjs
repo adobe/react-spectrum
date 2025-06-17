@@ -196,6 +196,24 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
         }
+        // Fallback: use literal text content inside <PageDescription> if present.
+        const textContent = (node.children || [])
+          .filter(c => c.type === 'text' || c.type === 'mdxText')
+          .map(c => c.value)
+          .join('')
+          .trim();
+
+        if (textContent) {
+          if (node.type === 'mdxJsxFlowElement') {
+            parent.children[index] = {
+              type: 'paragraph',
+              children: [{type: 'text', value: textContent}]
+            };
+          } else {
+            parent.children[index] = {type: 'text', value: textContent};
+          }
+          return;
+        }
         // If failed, wipe element.
         parent.children.splice(index, 1);
         return index;
