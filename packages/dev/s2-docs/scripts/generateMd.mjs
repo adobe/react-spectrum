@@ -26,8 +26,13 @@ const project = new Project({
 /**
  * Resolve the absolute path to a component source file given its name.
  */
-function resolveComponentPath(componentName) {
-  for (let root of COMPONENT_SRC_ROOTS) {
+function resolveComponentPath(componentName, file) {
+  let roots = COMPONENT_SRC_ROOTS;
+  if (file?.path && file.path.includes(path.join('pages', 'react-aria'))) {
+    roots = [RAC_SRC_ROOT, S2_SRC_ROOT];
+  }
+
+  for (let root of roots) {
     for (let ext of ['tsx', 'ts']) {
       const candidate = path.join(root, `${componentName}.${ext}`);
       if (fs.existsSync(candidate)) {return candidate;}
@@ -41,7 +46,7 @@ function resolveComponentPath(componentName) {
     return global.__componentPathCache.get(componentName);
   }
 
-  const matches = glob.sync(COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, `**/${componentName}.{ts,tsx}`)), {
+  const matches = glob.sync(roots.map(r => path.posix.join(r, `**/${componentName}.{ts,tsx}`)), {
     absolute: true,
     suppressErrors: true,
     deep: 3
@@ -54,8 +59,8 @@ function resolveComponentPath(componentName) {
 /**
  * Extract the leading JSDoc description comment placed immediately above the export for a component.
  */
-function getComponentDescription(componentName) {
-  const componentPath = resolveComponentPath(componentName);
+function getComponentDescription(componentName, file) {
+  const componentPath = resolveComponentPath(componentName, file);
   if (!componentPath) {return null;}
 
   // Lazily add the source file to the ts-morph project.
@@ -107,9 +112,9 @@ function getComponentDescription(componentName) {
 /**
  * Build a markdown table of props for the given component by analyzing its interface.
  */
-function generatePropTable(componentName) {
+function generatePropTable(componentName, file) {
   const interfaceName = `${componentName}Props`;
-  const componentPath = resolveComponentPath(componentName);
+  const componentPath = resolveComponentPath(componentName, file);
   if (!componentPath) {return null;}
 
   const source = project.addSourceFileAtPathIfExists(componentPath);
@@ -180,7 +185,7 @@ function remarkDocsComponentsToMarkdown() {
         if (exprNode) {
           const m = exprNode.value.match(/docs\.exports\.([\w$]+)\.description/);
           if (m) {
-            const desc = getComponentDescription(m[1]);
+            const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
               // eslint-disable-next-line max-depth
@@ -223,7 +228,7 @@ function remarkDocsComponentsToMarkdown() {
         if (compAttr && compAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const m = compAttr.value.value.match(/docs\.exports\.([\w$]+)/);
           if (m) {
-            const table = generatePropTable(m[1]);
+            const table = generatePropTable(m[1], file);
             if (table) {
               const tableTree = unified().use(remarkParse).parse(table);
               parent.children.splice(index, 1, ...tableTree.children);
@@ -289,7 +294,7 @@ function remarkDocsComponentsToMarkdown() {
         const table = generateStateTable(ifaceName, {
           showOptional: !!showOptionalAttr,
           hideSelector: !!hideSelectorAttr
-        });
+        }, file);
 
         if (table) {
           const nodesToInsert = [];
@@ -357,14 +362,18 @@ function cleanTypeText(t) {
 /**
  * Generate a markdown table for render props.
  */
-function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}) {
+function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}, file) {
   // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
   let componentName = renderPropsName.replace(/RenderProps$/, '');
-  let componentPath = resolveComponentPath(componentName);
+  let componentPath = resolveComponentPath(componentName, file);
 
   // If not found, fall back to searching all component roots.
   if (!componentPath) {
-    const matches = glob.sync(COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
+    let roots = COMPONENT_SRC_ROOTS;
+    if (file?.path && file.path.includes(path.join('pages', 'react-aria'))) {
+      roots = [RAC_SRC_ROOT, S2_SRC_ROOT];
+    }
+    const matches = glob.sync(roots.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
       absolute: true,
       suppressErrors: true,
       deep: 4
@@ -467,7 +476,7 @@ async function main() {
         listItemIndent: 'one'
       });
 
-    const markdown = String(await processor.process(mdContent));
+    const markdown = String(await processor.process({value: mdContent, path: filePath}));
 
     const relativePath = path.relative(S2_DOCS_PAGES_ROOT, filePath);
     const outPath = path.join(DIST_ROOT, relativePath).replace(/\.mdx$/, '.md');
