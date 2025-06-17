@@ -4,7 +4,7 @@ import {ActionButton, Text} from '@react-spectrum/s2';
 import {H2, H3, P, Code, Pre, Link} from './typography';
 import {highlight} from './highlight' with {type: 'macro'};
 import {IconColors} from './Colors';
-import CheckmarkCircle from '../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {iconStyle} from '../../packages/@react-spectrum/s2/style' with {type: 'macro'};
 
 export function Icons() {

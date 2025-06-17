@@ -100,6 +100,44 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   );
 };
 
+const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
+  return (
+    <TreeItem
+      {...props}
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior}) => (
+          <>
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              <MyCheckbox slot="selection" />
+            )}
+            <div
+              className={classNames(styles, 'content-wrapper')}
+              style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+              {hasChildItems && (
+                <Button className={styles.chevron} slot="chevron">
+                  <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+                    <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </div>
+                </Button>
+                )}
+              <Text className={styles.title}>{props.title || props.children}</Text>
+            </div>
+          </>
+        )}
+      </TreeItemContent>
+      {props.title && props.children}
+    </TreeItem>
+  );
+};
+
 const TreeExampleStaticRender = (args) => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
@@ -147,6 +185,53 @@ const TreeExampleStaticRender = (args) => (
   </Tree>
 );
 
+const TreeExampleStaticNoActionsRender = (args) => (
+  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <StaticTreeItemNoActions id="Photos" textValue="Photos">Photos</StaticTreeItemNoActions>
+    <StaticTreeItemNoActions id="projects" textValue="Projects" title="Projects">
+      <StaticTreeItemNoActions id="projects-1" textValue="Projects-1" title="Projects-1">
+        <StaticTreeItemNoActions id="projects-1A" textValue="Projects-1A">
+          Projects-1A
+        </StaticTreeItemNoActions>
+      </StaticTreeItemNoActions>
+      <StaticTreeItemNoActions id="projects-2" textValue="Projects-2">
+        Projects-2
+      </StaticTreeItemNoActions>
+      <StaticTreeItemNoActions id="projects-3" textValue="Projects-3">
+        Projects-3
+      </StaticTreeItemNoActions>
+    </StaticTreeItemNoActions>
+    <StaticTreeItemNoActions
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
+    </StaticTreeItemNoActions>
+    <StaticTreeItemNoActions
+      id="Tests"
+      textValue="Tests"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isFocused}) => (
+          <Text>{`${isFocused} Tests`}</Text>
+        )}
+      </TreeItemContent>
+    </StaticTreeItemNoActions>
+  </Tree>
+);
+
 export const TreeExampleStatic = {
   render: TreeExampleStaticRender,
   args: {
@@ -172,6 +257,35 @@ export const TreeExampleStatic = {
   parameters: {
     description: {
       data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
+    }
+  }
+};
+
+export const TreeExampleStaticNoActions = {
+  render: TreeExampleStaticNoActionsRender,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    disallowClearAll: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp. This story specifically tests tab behaviour when there are no additional actions in the tree.'
     }
   }
 };
@@ -392,7 +506,7 @@ function LoadingStoryDepOnCollection(args) {
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
-  
+
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
@@ -567,15 +681,26 @@ function TreeDragAndDropExample(args) {
 
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
     return {
       'text/plain': item.value.name,
-      'tree-item': JSON.stringify(item.value)
+      'tree-item': JSON.stringify(serializeItem(item))
     };
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
     getAllowedDropOperations: () => ['move'],
+    renderDragPreview(items) {
+      return (
+        <div style={{background: 'blue', color: 'white', padding: '4px'}}>{items.length} items</div>
+      );
+    },
     shouldAcceptItemDrop: (target) => {
       if (args.shouldAcceptItemDrop === 'folders') {
         let item = treeData.getItem(target.key);
@@ -626,7 +751,7 @@ function SecondTree(args) {
     getChildren: item => item.childItems
   });
 
-  let getItems = async (e) => {
+  let processIncomingItems = async (e) => {
     return await Promise.all(e.items.filter(isTextDropItem).map(async item => {
       let parsed = JSON.parse(await item.getText('tree-item'));
       let convertItem = item => ({
@@ -638,32 +763,80 @@ function SecondTree(args) {
     }));
   };
 
+  let getItems = (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
+    return {
+      'text/plain': item.value.name,
+      'tree-item': JSON.stringify(serializeItem(item))
+    };
+  });
+
+  let onInsert = async (e)  => {
+    let items = await processIncomingItems(e);
+    if (e.target.dropPosition === 'before') {
+      treeData.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      treeData.insertAfter(e.target.key, ...items);
+    }
+  };
+
   let {dragAndDropHooks} = useDragAndDrop({
+    getItems, // Enable dragging FROM this tree
+    getAllowedDropOperations: () => ['move'],
     acceptedDragTypes: ['tree-item'],
-    async onInsert(e) {
-      let items = await getItems(e);
-      if (e.target.dropPosition === 'before') {
-        treeData.insertBefore(e.target.key, ...items);
-      } else if (e.target.dropPosition === 'after') {
-        treeData.insertAfter(e.target.key, ...items);
-      }
-    },
+    onInsert: args.shouldAllowInsert ? onInsert : undefined,
     async onItemDrop(e) {
-      let items = await getItems(e);
+      let items = await processIncomingItems(e);
       treeData.insert(e.target.key, 0, ...items);
     },
     async onRootDrop(e) {
-      let items = await getItems(e);
+      let items = await processIncomingItems(e);
       treeData.insert(null, 0, ...items);
+    },
+    shouldAcceptItemDrop: (target) => {
+      if (args.shouldAcceptItemDrop === 'folders') {
+        let item = treeData.getItem(target.key);
+        return item?.value?.childItems?.length > 0;
+      }
+      return true;
+    },
+    [args.dropFunction]: (e: DroppableCollectionReorderEvent) => {
+      console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key} in SecondTree`);
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   });
 
   return (
-    <Tree 
-      dragAndDropHooks={dragAndDropHooks} 
-      {...args} 
-      className={styles.tree} 
-      aria-label="Tree with drag and drop" 
+    <Tree
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}
+      className={styles.tree}
+      aria-label="Tree with drag and drop"
       items={treeData.items}
       renderEmptyState={() => 'Drop items here'}>
       {(item: any) => (
@@ -679,7 +852,7 @@ export const TreeWithDragAndDrop = {
   ...TreeExampleDynamic,
   render: function TreeDndExample(args) {
     return (
-      <div style={{display: 'flex', gap: 12}}>
+      <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
         <TreeDragAndDropExample {...args} />
         <SecondTree {...args} />
       </div>
@@ -688,6 +861,7 @@ export const TreeWithDragAndDrop = {
   args: {
     dropFunction: 'onMove',
     shouldAcceptItemDrop: 'all',
+    shouldAllowInsert: true,
     ...TreeExampleDynamic.args
   },
   argTypes: {

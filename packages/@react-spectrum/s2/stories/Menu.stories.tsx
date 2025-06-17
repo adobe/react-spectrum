@@ -42,7 +42,8 @@ const meta: Meta<typeof CombinedMenu> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
+    ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange']),
+    children: {table: {disable: true}}
   },
   title: 'Menu'
 };

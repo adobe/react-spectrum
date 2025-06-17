@@ -29,6 +29,12 @@ const meta: Meta<typeof NumberField> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    contextualHelp: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'NumberField'
 };

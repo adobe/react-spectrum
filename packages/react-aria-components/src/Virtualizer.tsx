@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps} from './Collection';
-import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
+import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
@@ -137,13 +137,13 @@ function renderWrapper(
   );
 
   let {collection, layout} = reusableView.virtualizer;
-  let {key, type} = reusableView.content!;
-  if (type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
+  let node = reusableView.content;
+  if (node?.type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
     rendered = (
       <React.Fragment key={reusableView.key}>
-        {renderDropIndicatorWrapper(parent, reusableView, 'before', renderDropIndicator)}
+        {renderDropIndicatorWrapper(parent, reusableView, {type: 'item', key: reusableView.content!.key, dropPosition: 'before'}, renderDropIndicator)}
         {rendered}
-        {collection.getKeyAfter(key) == null && renderDropIndicatorWrapper(parent, reusableView, 'after', renderDropIndicator)}
+        {renderAfterDropIndicators(collection, node, target => renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator))}
       </React.Fragment>
     );
   }
@@ -154,10 +154,9 @@ function renderWrapper(
 function renderDropIndicatorWrapper(
   parent: View | null,
   reusableView: View,
-  dropPosition: DropPosition,
+  target: ItemDropTarget,
   renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let target: DropTarget = {type: 'item', key: reusableView.content!.key, dropPosition};
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);

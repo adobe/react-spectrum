@@ -1,12 +1,16 @@
 {
   "name": "@react-aria/checkbox",
-  "version": "3.15.5",
+  "version": "3.15.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -22,16 +26,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/form": "^3.0.16",
-    "@react-aria/interactions": "^3.25.1",
-    "@react-aria/label": "^3.7.18",
-    "@react-aria/toggle": "^3.11.3",
-    "@react-aria/utils": "^3.29.0",
-    "@react-stately/checkbox": "^3.6.14",
-    "@react-stately/form": "^3.1.4",
-    "@react-stately/toggle": "^3.8.4",
-    "@react-types/checkbox": "^3.9.4",
-    "@react-types/shared": "^3.29.1",
+    "@react-aria/form": "^3.0.18",
+    "@react-aria/interactions": "^3.25.3",
+    "@react-aria/label": "^3.7.19",
+    "@react-aria/toggle": "^3.11.5",
+    "@react-aria/utils": "^3.29.1",
+    "@react-stately/checkbox": "^3.6.15",
+    "@react-stately/form": "^3.1.5",
+    "@react-stately/toggle": "^3.8.5",
+    "@react-types/checkbox": "^3.9.5",
+    "@react-types/shared": "^3.30.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

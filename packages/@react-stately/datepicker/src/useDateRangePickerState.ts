@@ -131,7 +131,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let setDateRange = (range: RangeValue<DateValue | null>) => {
     let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (isCompleteRange(range) && timeRange?.start && timeRange?.end) {
+      // Set a placeholder time if the popover is closing so we don't leave the field in an incomplete state.
+      if (isCompleteRange(range) && (shouldClose || (timeRange?.start && timeRange?.end))) {
         commitValue(range, {
           start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
           end: timeRange?.end || getPlaceholderTime(props.placeholderValue)

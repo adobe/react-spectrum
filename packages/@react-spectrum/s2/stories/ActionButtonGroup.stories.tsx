@@ -23,6 +23,9 @@ const meta: Meta<typeof ActionButtonGroup> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   title: 'ActionButtonGroup'
