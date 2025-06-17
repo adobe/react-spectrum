@@ -87,7 +87,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
 
   get size(): number {
     // TODO: perhaps should return itemCount?
-    return this.keyMap.size;
+    return this._itemCount;
   }
 
   getKeys(): IterableIterator<Key> {

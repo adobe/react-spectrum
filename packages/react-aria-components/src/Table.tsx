@@ -111,7 +111,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   get size() {
-    return this.rows.length;
+    return this.itemCount;
   }
 
   getFirstKey() {
@@ -931,7 +931,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
-  let isEmpty = collection.size === 0 || (collection.rows.length === 1 && collection.rows[0].type === 'loader');
+  let isEmpty = collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty
@@ -954,7 +954,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     let rowHeaderProps = {};
     let style = {};
     if (isVirtualized) {
-      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
       rowHeaderProps['aria-colspan'] = numColumns;
       style = {display: 'contents'};
     } else {
@@ -1388,7 +1387,9 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
   let style = {};
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = item.index + 1 + state.collection.headerRows.length;
+    // For now don't include aria-rowindex on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // row count
     rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {

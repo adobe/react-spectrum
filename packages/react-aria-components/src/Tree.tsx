@@ -363,9 +363,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     let {isEmpty, ...values} = renderValues;
     let content = props.renderEmptyState({...values});
     let treeGridRowProps = {
-      'aria-level': 1,
-      'aria-posinset': 1,
-      'aria-setsize': 1
+      'aria-level': 1
     };
 
     emptyState = (

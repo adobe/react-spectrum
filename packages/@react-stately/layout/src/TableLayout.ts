@@ -274,9 +274,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       if (y > this.requestedRect.maxY) {
         let rowsAfterRect = collection.size - (children.length + skipped);
         let lastNode = getLastItem(childNodes);
-        if (lastNode?.type === 'loader') {
-          rowsAfterRect--;
-        }
 
         // Estimate the remaining height for rows that we don't need to layout right now.
         y += rowsAfterRect * rowHeight;

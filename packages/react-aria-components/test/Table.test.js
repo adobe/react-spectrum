@@ -2090,7 +2090,7 @@ describe('Table', () => {
         expect(rows).toHaveLength(7);
         let loaderRow = rows[6];
         expect(loaderRow).toHaveTextContent('spinner');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -2144,7 +2144,7 @@ describe('Table', () => {
         expect(rows).toHaveLength(1);
 
         let loaderRow = rows[0];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '2');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         expect(loaderRow).toHaveTextContent('loading');
         for (let [index, row] of rows.entries()) {
           // the header row is the first row but isn't included in "rows" so add +2
@@ -2163,7 +2163,7 @@ describe('Table', () => {
         rows = tableTester.rows;
         expect(rows).toHaveLength(7);
         loaderRow = rows[6];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 6) {
             continue;

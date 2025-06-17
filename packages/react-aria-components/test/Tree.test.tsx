@@ -1091,8 +1091,8 @@ describe('Tree', () => {
 
       let row = getAllByRole('row')[0];
       expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(row).not.toHaveAttribute('aria-posinset');
+      expect(row).not.toHaveAttribute('aria-setsize');
       let gridCell = within(row).getByRole('gridcell');
       expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
 
