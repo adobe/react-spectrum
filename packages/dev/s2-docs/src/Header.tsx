@@ -6,6 +6,7 @@ import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {flushSync} from 'react-dom';
 import {GithubLogo} from './icons/GithubLogo';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
+import {MarkdownMenu} from './MarkdownMenu';
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
@@ -87,6 +88,7 @@ export default function Header(props: PageProps) {
           </div>
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
+            <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="XL" isQuiet>
               <GithubLogo />
             </ActionButton>
