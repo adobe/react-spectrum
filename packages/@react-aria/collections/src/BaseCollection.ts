@@ -79,10 +79,10 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
-  private _itemCount: number = 0;
+  private itemCount: number = 0;
 
   get size(): number {
-    return this._itemCount;
+    return this.itemCount;
   }
 
   getKeys(): IterableIterator<Key> {
@@ -185,7 +185,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     collection.keyMap = new Map(this.keyMap);
     collection.firstKey = this.firstKey;
     collection.lastKey = this.lastKey;
-    collection._itemCount = this.itemCount;
+    collection.itemCount = this.itemCount;
     return collection;
   }
 
@@ -195,7 +195,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     }
 
     if (node.type === 'item' && this.keyMap.get(node.key) == null) {
-      this._itemCount++;
+      this.itemCount++;
     }
 
     this.keyMap.set(node.key, node);
@@ -207,7 +207,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     }
 
     if (this.keyMap.get(key)?.type === 'item' && this.keyMap.get(key) != null) {
-      this._itemCount--;
+      this.itemCount--;
     }
 
     this.keyMap.delete(key);
