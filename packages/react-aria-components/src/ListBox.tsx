@@ -202,7 +202,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
@@ -478,7 +478,6 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
 
 export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
   let sentinelRef = useRef<HTMLDivElement>(null);
@@ -500,12 +499,10 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
   let optionProps = {
     // For Android talkback
     tabIndex: -1
+    // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // item count
   };
-
-  if (isVirtualized) {
-    optionProps['aria-posinset'] = item.index + 1;
-    optionProps['aria-setsize'] = state.collection.size;
-  }
 
   return (
     <>

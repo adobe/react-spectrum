@@ -1110,8 +1110,8 @@ describe('Tree', () => {
       expect(tree).not.toHaveAttribute('data-focus-visible');
       expect(tree).toHaveClass('isFocused: false, isFocusVisible: false');
       expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(row).not.toHaveAttribute('aria-posinset');
+      expect(row).not.toHaveAttribute('aria-setsize');
       expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
     });
   });

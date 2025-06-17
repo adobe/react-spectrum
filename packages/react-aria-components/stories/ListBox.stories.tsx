@@ -292,7 +292,7 @@ export function VirtualizedListBoxEmpty() {
         estimatedHeadingHeight: 26
       }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
-        <></>
+        <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
   );

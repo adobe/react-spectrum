@@ -194,8 +194,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
@@ -529,6 +528,9 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
     defaultClassName: 'react-aria-GridListLoadingIndicator',
     values: null
   });
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
 
   return (
     <>
@@ -542,7 +544,6 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
           {...renderProps}
           {...mergeProps(filterDOMProps(props as any))}
           role="row"
-          aria-rowindex={isVirtualized ? item.index + 1 : undefined}
           ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}

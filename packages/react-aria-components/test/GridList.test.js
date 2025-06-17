@@ -1227,7 +1227,7 @@ describe('GridList', () => {
         expect(rows).toHaveLength(8);
         let loaderRow = rows[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -1302,7 +1302,7 @@ describe('GridList', () => {
         rows = gridListTester.rows;
         expect(rows).toHaveLength(8);
         loaderRow = rows[7];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 7) {
             continue;

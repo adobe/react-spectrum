@@ -2146,10 +2146,7 @@ describe('Table', () => {
         let loaderRow = rows[0];
         expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         expect(loaderRow).toHaveTextContent('loading');
-        for (let [index, row] of rows.entries()) {
-          // the header row is the first row but isn't included in "rows" so add +2
-          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
-        }
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
 
         tree.rerender(<VirtualizedTableLoad items={items} />);
         rows = tableTester.rows;

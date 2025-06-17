@@ -1698,8 +1698,8 @@ describe('ListBox', () => {
         expect(options).toHaveLength(8);
         let loaderRow = options[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-posinset', '51');
-        expect(loaderRow).toHaveAttribute('aria-setSize', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-posinset');
+        expect(loaderRow).not.toHaveAttribute('aria-setSize');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250

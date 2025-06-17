@@ -293,7 +293,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     }
 
     // Make sure that the table body gets a height if empty or performing initial load
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     if (isEmptyOrLoading) {
       y = this.virtualizer!.visibleRect.maxY;
     } else {
