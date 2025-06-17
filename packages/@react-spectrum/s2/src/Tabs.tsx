@@ -213,7 +213,7 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
@@ -221,16 +221,17 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
       {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
     </div>
   );
 }
 
-interface TabLineProps {
+interface TabLineProps<T extends object> {
   disabledKeys: Iterable<Key> | undefined,
   isDisabled: boolean | undefined,
   selectedTab: HTMLElement | undefined,
   orientation?: Orientation,
+  tabList: TabListProps<T>,
   density?: 'compact' | 'regular'
 }
 
@@ -265,12 +266,13 @@ const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}
   transitionTimingFunction: 'in-out'
 });
 
-function TabLine(props: TabLineProps) {
+function TabLine<T extends object>(props: TabLineProps<T>) {
   let {
     disabledKeys,
     isDisabled: isTabsDisabled,
     selectedTab,
     orientation,
+    tabList,
     density
   } = props;
   let {direction} = useLocale();
@@ -314,7 +316,7 @@ function TabLine(props: TabLineProps) {
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedItem?.key, density, direction, orientation]);
+  }, [onResize, state?.selectedItem?.key, density, direction, orientation, tabList]);
 
   return (
     <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />

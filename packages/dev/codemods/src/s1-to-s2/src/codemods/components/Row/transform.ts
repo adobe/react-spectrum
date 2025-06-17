@@ -8,10 +8,10 @@ import {updateKeyToId} from '../../shared/transforms';
  */
 function updateRowFunctionArg(
   path: NodePath<t.JSXElement>
-) {
+): void {
   // Find the export function passed as a child
-  let functionChild = path.get('children').find(childPath => 
-    childPath.isJSXExpressionContainer() && 
+  let functionChild = path.get('children').find(childPath =>
+    childPath.isJSXExpressionContainer() &&
     childPath.get('expression').isArrowFunctionExpression()
   );
 
@@ -38,8 +38,8 @@ function updateRowFunctionArg(
           getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) === 'Column'
         ) {
           let openingElement = columnPath.get('openingElement');
-          let keyPropPath = openingElement.get('attributes').find(attr => 
-            t.isJSXAttribute(attr.node) && 
+          let keyPropPath = openingElement.get('attributes').find(attr =>
+            t.isJSXAttribute(attr.node) &&
             (attr.node.name.name === 'key' || attr.node.name.name === 'id')
           );
           keyPropPath?.traverse({
@@ -99,9 +99,9 @@ function updateRowFunctionArg(
  * - Update key to id.
  * - Update function signature.
  */
-export default function transformRow(path: NodePath<t.JSXElement>) {
+export default function transformRow(path: NodePath<t.JSXElement>): void {
   // Update key to id
   updateKeyToId(path);
 
   updateRowFunctionArg(path);
-} 
+}

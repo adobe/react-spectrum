@@ -13,10 +13,11 @@
 import Briefcase_L from 'illustration:./S2_lin_briefcase_160.svg';
 import Briefcase_M from 'illustration:./S2_lin_briefcase_96.svg';
 import Briefcase_S from 'illustration:./S2_lin_briefcase_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Briefcase(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Briefcase(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

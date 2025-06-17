@@ -11,8 +11,8 @@
  */
 
 import {act, within} from '@testing-library/react';
+import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {ListBoxTesterOpts, UserOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
 
 interface ListBoxToggleOptionOpts {
   /**
@@ -31,7 +31,16 @@ interface ListBoxToggleOptionOpts {
   /**
    * Whether the option needs to be long pressed to be selected. Depends on the listbox's implementation.
    */
-  needsLongPress?: boolean
+  needsLongPress?: boolean,
+  /**
+   * Whether the listbox has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
+   * required to toggle option selection by adding modifier keys during user actions, useful when performing multi-option selection in a "selectionBehavior: 'replace'" listbox.
+   * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" listbox, simply omit this option.
+   * See the [RAC Listbox docs](https://react-spectrum.adobe.com/react-aria/ListBox.html#selection-behavior) for more info on this behavior.
+   *
+   * @default 'toggle'
+   */
+    selectionBehavior?: 'toggle' | 'replace'
 }
 
 interface ListBoxOptionActionOpts extends Omit<ListBoxToggleOptionOpts, 'keyboardActivation' | 'needsLongPress'> {
@@ -85,36 +94,34 @@ export class ListBoxTester {
 
   // TODO: this is basically the same as menu except for the error message, refactor later so that they share
   // TODO: this also doesn't support grid layout yet
-  private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
-    let {option} = opts;
+  private async keyboardNavigateToOption(opts: {option: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+    let {option, selectionOnNav = 'default'} = opts;
+    let altKey = getAltKey();
     let options = this.options();
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+    if (document.activeElement !== this._listbox && !this._listbox.contains(document.activeElement)) {
       act(() => this._listbox.focus());
-    }
-
-    await this.user.keyboard('[ArrowDown]');
-
-    // TODO: not sure about doing same while loop that exists in other implementations of keyboardNavigateToOption,
-    // feels like it could break easily
-    if (document.activeElement?.getAttribute('role') !== 'option') {
-      await act(async () => {
-        option.focus();
-      });
+      await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     }
 
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
     }
-    let direction = targetIndex > currIndex ? 'down' : 'up';
 
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[${altKey}>]`);
+    }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[/${altKey}]`);
     }
   };
 
@@ -122,7 +129,16 @@ export class ListBoxTester {
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
   async toggleOptionSelection(opts: ListBoxToggleOptionOpts): Promise<void> {
-    let {option, needsLongPress, keyboardActivation = 'Enter', interactionType = this._interactionType} = opts;
+    let {
+      option,
+      needsLongPress,
+      keyboardActivation = 'Enter',
+      interactionType = this._interactionType,
+      selectionBehavior = 'toggle'
+    } = opts;
+
+    let altKey = getAltKey();
+    let metaKey = getMetaKey();
 
     if (typeof option === 'string' || typeof option === 'number') {
       option = this.findOption({optionIndexOrText: option});
@@ -137,8 +153,14 @@ export class ListBoxTester {
         return;
       }
 
-      await this.keyboardNavigateToOption({option});
+      await this.keyboardNavigateToOption({option, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
       await this.user.keyboard(`[${keyboardActivation}]`);
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
     } else {
       if (needsLongPress && interactionType === 'touch') {
         if (this._advanceTimer == null) {
@@ -147,7 +169,13 @@ export class ListBoxTester {
 
         await triggerLongPress({element: option, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${metaKey}>]`);
+        }
         await pressElement(this.user, option, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${metaKey}]`);
+        }
       }
     }
   }
@@ -177,7 +205,7 @@ export class ListBoxTester {
         return;
       }
 
-      await this.keyboardNavigateToOption({option});
+      await this.keyboardNavigateToOption({option, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, option, interactionType);
