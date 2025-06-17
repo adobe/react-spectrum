@@ -201,7 +201,7 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
         }
-        // Fallback: use literal text content inside <PageDescription> if present.
+        // Use literal text content inside <PageDescription> if present.
         const textContent = (node.children || [])
           .filter(c => c.type === 'text' || c.type === 'mdxText')
           .map(c => c.value)
@@ -240,7 +240,7 @@ function remarkDocsComponentsToMarkdown() {
         return index;
       }
       // Remove other custom components like VisualExample, ExampleSwitcher etc. Can handle later.
-      if (['VisualExample', 'ExampleSwitcher', 'HeaderInfo', 'Example', 'DisclosureRow', 'Anatomy'].includes(name)) {
+      if (['VisualExample', 'ExampleSwitcher', 'Anatomy'].includes(name)) {
         parent.children.splice(index, 1);
         return index;
       }
