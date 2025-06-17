@@ -81,6 +81,7 @@ cat > ./tsconfig.json << EOF
     "target": "es2018",
     "noImplicitAny": false,
     "module": "esnext",
+    "moduleResolution": "nodenext",
     "strict": true,
     "noEmit": true,
     "jsx": "preserve",
