@@ -81,12 +81,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private frozen = false;
   private _itemCount: number = 0;
 
-  get itemCount(): number {
-    return this._itemCount;
-  }
-
   get size(): number {
-    // TODO: perhaps should return itemCount?
     return this._itemCount;
   }
 

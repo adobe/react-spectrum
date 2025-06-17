@@ -256,7 +256,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let collectionNodes = [...collection];
     let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
-
     let isEmptyOrLoading = collection?.size === 0;
     if (isEmptyOrLoading) {
       y = 0;
