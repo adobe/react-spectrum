@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../../src/Icon';
 import MegaphonePromote2_L from 'illustration:./S2_fill_megaphonePromote2_generic2_160.svg';
 import MegaphonePromote2_M from 'illustration:./S2_fill_megaphonePromote2_generic2_96.svg';
 import MegaphonePromote2_S from 'illustration:./S2_fill_megaphonePromote2_generic2_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function MegaphonePromote2(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function MegaphonePromote2(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

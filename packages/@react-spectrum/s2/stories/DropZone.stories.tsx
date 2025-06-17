@@ -27,7 +27,8 @@ const meta: Meta<typeof DropZone> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
+    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove']),
+    children: {table: {disable: true}}
   },
   title: 'DropZone'
 };

@@ -60,7 +60,7 @@ export interface DragAndDropHooks {
   dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element}
 }
 
-export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, Omit<DroppableCollectionProps, 'onMove'> {
   /**
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []

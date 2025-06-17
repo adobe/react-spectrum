@@ -23,6 +23,9 @@ const meta: Meta<typeof ActionBar> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'ActionBar'
 };

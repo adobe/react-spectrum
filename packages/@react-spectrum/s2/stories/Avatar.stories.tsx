@@ -16,7 +16,11 @@ import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
-  argTypes: {},
+  argTypes: {
+    size: {
+      control: 'number'
+    }
+  },
   parameters: {
     layout: 'centered'
   },

@@ -16,12 +16,13 @@ import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
+import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -114,6 +115,16 @@ export interface TreeRenderProps {
    */
   isFocusVisible: boolean,
   /**
+   * The type of selection that is allowed in the collection.
+   * @selector [data-selection-mode="single | multiple"]
+   */
+  selectionMode: SelectionMode,
+  /**
+   * Whether the tree allows dragging.
+   * @selector [data-allows-dragging]
+   */
+  allowsDragging: boolean,
+  /**
    * State of the tree.
    */
   state: TreeState<unknown>
@@ -132,13 +143,7 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks,
-
-  /**
-   * An optional keyboard delegate implementation for type to select,
-   * to override the default.
-   */
-  keyboardDelegate?: KeyboardDelegate
+  dragAndDropHooks?: DragAndDropHooks
 }
 
 
@@ -185,6 +190,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
+
   useEffect(() => {
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
@@ -251,13 +257,16 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       : null;
   }
 
+  let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
   if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
-    let keyboardDelegate = props.keyboardDelegate ||
+    treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
+
+    let keyboardDelegate =
       new ListKeyboardDelegate({
         collection: state.collection,
         collator,
@@ -270,26 +279,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
-        dropTargetDelegate: {
-          getDropTargetFromPoint(x, y, isValidDropTarget) {
-            let target = dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
-            if (target?.type === 'item' && target.dropPosition === 'after') {
-              let nextKey = state.collection.getKeyAfter(target.key);
-              if (nextKey != null) {
-                let beforeTarget = {
-                  type: 'item',
-                  key: nextKey,
-                  dropPosition: 'before'
-                } as const;
-                if (isValidDropTarget(beforeTarget)) {
-                  return beforeTarget;
-                }
-              }
-            }
-
-            return target;
-          }
-        },
+        dropTargetDelegate: treeDropTargetDelegate,
         onDropActivate: (e) => {
           // Expand collapsed item when dragging over. For keyboard, allow collapsing.
           if (e.target.type === 'item') {
@@ -324,7 +314,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       let currentDraggingKeys = dragState?.draggingKeys ?? new Set();
 
       if (isInternal && target.type === 'item' && currentDraggingKeys.size > 0) {
-        if (currentDraggingKeys.has(target.key)) {
+        if (currentDraggingKeys.has(target.key) && target.dropPosition === 'on') {
           return 'cancel';
         }
 
@@ -345,12 +335,16 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let isTreeDraggable = !!(hasDragHooks && !dragState?.isDisabled);
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
     isEmpty: state.collection.size === 0,
     isFocused,
     isFocusVisible,
     isDropTarget: isRootDropTarget,
+    selectionMode: state.selectionManager.selectionMode,
+    allowsDragging: !!isTreeDraggable,
     state
   };
 
@@ -390,11 +384,12 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
-          onScroll={props.onScroll}
           data-empty={state.collection.size === 0 || undefined}
           data-focused={isFocused || undefined}
           data-drop-target={isRootDropTarget || undefined}
-          data-focus-visible={isFocusVisible || undefined}>
+          data-focus-visible={isFocusVisible || undefined}
+          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+          data-allows-dragging={!!isTreeDraggable || undefined}>
           <Provider
             values={[
               [TreeStateContext, state],
@@ -699,7 +694,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps extends Pick<TreeItemRenderProps, 'isFocused' | 'isFocusVisible'> {
+export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -711,19 +706,16 @@ export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicat
 
 export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
-  ref = useObjectRef<HTMLDivElement>(ref);
-  let {rowProps, gridCellProps, ...states} = useTreeItem({node: item}, state, ref);
+  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
+  // @ts-ignore
+  let {rowProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
   let ariaProps = {
-    role: 'row',
     'aria-level': rowProps['aria-level'],
     'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize'],
-    tabIndex: rowProps.tabIndex
+    'aria-setsize': rowProps['aria-setsize']
   };
-
-  let {isFocusVisible, focusProps} = useFocusRing();
 
   let renderProps = useRenderProps({
     ...props,
@@ -731,24 +723,19 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
     values: {
-      level,
-      isFocused: states.isFocused,
-      isFocusVisible
+      level
     }
   });
 
   return (
     <>
       <div
+        role="row"
         ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps, focusProps)}
+        {...mergeProps(filterDOMProps(props as any), ariaProps)}
         {...renderProps}
-        data-key={rowProps['data-key']}
-        data-collection={rowProps['data-collection']}
-        data-focused={states.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
         data-level={level}>
-        <div {...gridCellProps}>
+        <div role="gridcell" aria-colindex={1}>
           {renderProps.children}
         </div>
       </div>
@@ -842,9 +829,8 @@ function TreeDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<H
   }
 
   let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
-
   return (
-    <TreeDropIndicatorForwardRef 
+    <TreeDropIndicatorForwardRef
       {...props}
       dropIndicatorProps={dropIndicatorProps}
       isDropTarget={isDropTarget}
@@ -874,6 +860,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
     ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     defaultStyle: {
+      position: 'relative',
       // @ts-ignore
       '--tree-item-level': level
     },

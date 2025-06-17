@@ -18,7 +18,7 @@ import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -186,7 +186,7 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let groupState = useContext(CheckboxGroupStateContext);
-  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
+  let inputRef = useObjectRef(useMemo(() => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null), [userProvidedInputRef, props.inputRef]));
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
