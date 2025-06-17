@@ -78,9 +78,12 @@ EOF
 cat > ./tsconfig.json << EOF
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "strict": true
+    "target": "es2018",
+    "noImplicitAny": false,
+    "module": "esnext",
+    "strict": true,
+    "noEmit": true,
+    "jsx": "preserve",
   },
   "include": [
     "icon-dist/**/*"
