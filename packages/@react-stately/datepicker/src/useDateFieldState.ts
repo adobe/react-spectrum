@@ -260,7 +260,19 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
-    } else if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
+    } else if (
+      validKeys.length === 0 || 
+      validKeys.length >= allKeys.length || 
+      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod') ||
+      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
+    ) {
+      // If the field was empty (no valid segments) or all segments are completed, commit the new value.
+      // When committing from an empty state, mark every segment as valid so value is committed.
+      if (validKeys.length === 0) {
+        validSegments = {...allSegments};
+        setValidSegments(validSegments);
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
