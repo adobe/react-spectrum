@@ -532,7 +532,10 @@ function remarkDocsComponentsToMarkdown() {
           if (defaultClassName) {
             nodesToInsert.push({
               type: 'paragraph',
-              children: [{type: 'text', value: `Default className: \`${defaultClassName}\``}]
+              children: [
+                {type: 'text', value: 'Default className: '},
+                {type: 'inlineCode', value: defaultClassName}
+              ]
             });
           }
           const tableTree = unified().use(remarkParse).parse(table);
