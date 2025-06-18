@@ -30,11 +30,11 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ForwardRefExoticComponent, JSXElementConstructor, ReactElement, ReactNode, RefAttributes, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
@@ -48,12 +48,16 @@ interface S2TreeProps {
   isEmphasized?: boolean
 }
 
-export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'children' | 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight,
+  /**
+   * The contents of the tree.
+   */
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps<T> extends Omit<RACTreeItemProps<T>, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
 }
@@ -91,7 +95,7 @@ const tree = style({
   }
 }, getAllowedOverrides({height: true}));
 
-function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
+const TreeView = (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
@@ -123,7 +127,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
       </TreeRendererContext.Provider>
     </Virtualizer>
   );
-}
+});
 
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
 const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
@@ -293,7 +297,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
+export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>): ReactNode => {
   let {
     href
   } = props;
@@ -441,5 +445,5 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-const _TreeView: ForwardRefExoticComponent<TreeViewProps & RefAttributes<DOMRefValue<HTMLDivElement>>> = forwardRef(TreeView);
+const _TreeView: <T extends object>(props: TreeViewProps<T> & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null = TreeView;
 export {_TreeView as TreeView};
