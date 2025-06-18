@@ -93,28 +93,31 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
       onChange: (e) => {
         let targetString = e.target.value.toString();
         if (targetString) {
-          let targetValue: CalendarDateTime | CalendarDate = parseDateTime(targetString);
-          if (state.granularity === 'day') {
-            targetValue = parseDate(targetString);
-          }
-          // We check to to see if setSegment exists in the state since it only exists in DateFieldState and not DatePickerState.
-          // The setValue method has different behavior depending on if it's coming from DateFieldState or DatePickerState.
-          // In DateFieldState, setValue firsts checks to make sure that each segment is filled before committing the newValue 
-          // which is why in the code below we first set each segment to validate it before committing the new value. 
-          // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are also able to 
-          // set a new value when the field itself is empty.
-          if ('setSegment' in state) {
-            for (let type in targetValue) {
-              if (dateSegments.includes(type)) {
-                state.setSegment(type as DateSegmentType, targetValue[type]);
-              }
-              if (timeSegments.includes(type)) {
-                state.setSegment(type as DateSegmentType, targetValue[type]);
+          try {
+            let targetValue: CalendarDateTime | CalendarDate = parseDateTime(targetString);
+            if (state.granularity === 'day') {
+              targetValue = parseDate(targetString);
+            }
+            // We check to to see if setSegment exists in the state since it only exists in DateFieldState and not DatePickerState.
+            // The setValue method has different behavior depending on if it's coming from DateFieldState or DatePickerState.
+            // In DateFieldState, setValue firsts checks to make sure that each segment is filled before committing the newValue 
+            // which is why in the code below we first set each segment to validate it before committing the new value. 
+            // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are also able to 
+            // set a new value when the field itself is empty.
+            if ('setSegment' in state) {
+              for (let type in targetValue) {
+                if (dateSegments.includes(type)) {
+                  state.setSegment(type as DateSegmentType, targetValue[type]);
+                }
+                if (timeSegments.includes(type)) {
+                  state.setSegment(type as DateSegmentType, targetValue[type]);
+                }
               }
             }
-            
+            state.setValue(targetValue);
+          } catch {
+            // ignore
           }
-          state.setValue(targetValue);
         }
       }
     }
