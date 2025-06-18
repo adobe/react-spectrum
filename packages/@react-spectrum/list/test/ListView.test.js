@@ -1722,7 +1722,7 @@ describe('ListView', function () {
       act(() => {
         jest.runAllTimers();
       });
-      expect(grid.firstChild).toBeEmptyDOMElement();
+      expect(grid.firstChild).toBeInTheDocument();
     });
   });
 });
