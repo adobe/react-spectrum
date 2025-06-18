@@ -112,6 +112,7 @@ yarn npm publish --tag latest
 echo "Building icon builder fixture"
 cd ../../../scripts/icon-builder-fixture
 yarn install --no-immutable
+yarn tsc
 yarn build --public-url ./
 
 echo "Moving icon builder fixture to verdaccio"
