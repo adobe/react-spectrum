@@ -253,6 +253,9 @@ afterAll(() => {
 
 ### Virtualized components
 
+**Note:** As of [3.41](https://www.npmjs.com/package/@adobe/react-spectrum/v/3.41.0), Virtualizer behavior is disabled in tests automatically so the below mocks are now unnecessary for most test cases. However, if you are writing tests for interactions
+that depend on item size calculations such as scroll into view, you will need to provide the mocks below as well as enable Virtualizer via the `VIRT_ON=1` process environment variable when running your tests.
+
 Many of our collection components are virtualized out of the box and thus rely on DOM node measurement to know how large a item should be and how many items can be rendered at once.
 To properly render virtualized components in a test environment, you'll have to to mock the `clientHeight` and `clientWidth` getters of the `HTMLElement` prototype.
 `scrollHeight` and `scrollWidth` should also be mocked to set the height and width of each item. See below for an example implementation in Jest.
