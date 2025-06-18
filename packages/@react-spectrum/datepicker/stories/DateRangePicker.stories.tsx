@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@react-types/datepicker';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';

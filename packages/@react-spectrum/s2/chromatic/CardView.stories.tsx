@@ -27,26 +27,17 @@ const meta: Meta<typeof CardView> = {
 export default meta;
 
 const cardViewStyles = style({
-  width: {
-    default: 'screen',
-    viewMode: {
-      docs: 'full'
-    }
-  },
-  height: {
-    default: 'screen',
-    viewMode: {
-      docs: 600
-    }
-  }
+  width: 'screen',
+  maxWidth: 'full',
+  height: 600
 });
 
-export const Empty = (args: CardViewProps<any>, {viewMode}) => {
+export const Empty = (args: CardViewProps<any>) => {
   return (
     <CardView
       aria-label="Assets"
       {...args}
-      styles={cardViewStyles({viewMode})}
+      styles={cardViewStyles}
       renderEmptyState={() => (
         <IllustratedMessage size="L">
           <EmptyIcon />

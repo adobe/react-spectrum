@@ -13,10 +13,11 @@
 import Addproject_L from 'illustration:./S2_lin_addproject_160.svg';
 import Addproject_M from 'illustration:./S2_lin_addproject_96.svg';
 import Addproject_S from 'illustration:./S2_lin_addproject_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Addproject(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Addproject(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

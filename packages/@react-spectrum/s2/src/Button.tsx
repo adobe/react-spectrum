@@ -116,13 +116,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
             default: lightDark('accent-900', 'accent-700'),
             isHovered: lightDark('accent-1000', 'accent-600'),
             isPressed: lightDark('accent-1000', 'accent-600'),
-            isFocused: lightDark('accent-1000', 'accent-600')
+            isFocusVisible: lightDark('accent-1000', 'accent-600')
           },
           negative: {
             default: lightDark('negative-900', 'negative-700'),
             isHovered: lightDark('negative-1000', 'negative-600'),
             isPressed: lightDark('negative-1000', 'negative-600'),
-            isFocused: lightDark('negative-1000', 'negative-600')
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
           },
           premium: 'gray-100',
           genai: 'gray-100'
@@ -347,7 +347,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({

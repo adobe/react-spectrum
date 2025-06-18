@@ -14,6 +14,7 @@ import {ColorArea} from '../';
 import {composeStories} from '@storybook/react';
 import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {parseColor} from '@react-stately/color';
+import {ProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import * as stories from '../stories/ColorArea.stories';
 import userEvent from '@testing-library/user-event';
@@ -209,7 +210,7 @@ describe('ColorArea', () => {
               {...props}
               onChange={onChangeSpy}
               onChangeEnd={onChangeEndSpy} />
-          , undefined, {locale: 'ar-AE'});
+          , undefined, {locale: 'ar-AE'} as ProviderProps);
           let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([
