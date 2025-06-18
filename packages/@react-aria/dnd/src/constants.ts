@@ -60,28 +60,16 @@ interface EffectAllowed {
 export const EFFECT_ALLOWED: EffectAllowed = invert(DROP_OPERATION_ALLOWED) as unknown as EffectAllowed;
 EFFECT_ALLOWED[DROP_OPERATION.all] = 'all'; // ensure we don't map to 'uninitialized'.
 
-interface DropEffect {
-  0: 'none' | 'cancel',
-  1: 'move',
-  2: 'copy',
-  4: 'link',
-  7: 'all'
-}
-export const DROP_EFFECT: DropEffect = invert(DROP_OPERATION) as unknown as DropEffect;
-export const DROP_EFFECT_TO_DROP_OPERATION: {[name: string]: DropOperation} = {
+type DropEffect = 'none' | 'link' | 'copy' | 'move';
+
+export const DROP_EFFECT_TO_DROP_OPERATION: {[K in DropEffect]: DropOperation} = {
   none: 'cancel',
   link: 'link',
   copy: 'copy',
   move: 'move'
 };
 
-interface DropOperationToDropEffect {
-  'cancel': 'none',
-  'link': 'link',
-  'copy': 'copy',
-  'move': 'move'
-}
-export const DROP_OPERATION_TO_DROP_EFFECT: DropOperationToDropEffect = invert(DROP_EFFECT_TO_DROP_OPERATION) as unknown as DropOperationToDropEffect;
+export const DROP_OPERATION_TO_DROP_EFFECT: {[K in DropOperation]: DropEffect} = invert(DROP_EFFECT_TO_DROP_OPERATION);
 
 function invert<T extends string | number, C extends string | number>(object: Record<T, C>): Record<C, T> {
   let res: Record<C, T> = {} as Record<C, T>;
