@@ -40,7 +40,6 @@ function ProviderUpdater(props) {
   }, []);
 
   if (props.options.mainElement == null) {
-    console.log('mainElement is null', storyReady);
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
         <main>

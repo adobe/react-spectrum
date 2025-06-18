@@ -122,7 +122,6 @@ function ProviderFieldSetter({api}) {
 }
 
 addons.register('ProviderSwitcher', (api) => {
-  console.log('ProviderSwitcher registering');
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
