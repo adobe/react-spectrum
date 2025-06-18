@@ -280,7 +280,7 @@ let rows: TreeViewItemType[] = [
   ]}
 ];
 
-const DynamicTreeItem = <T extends object>(props: Omit<TreeViewItemProps<T>, 'children'> & TreeViewItemType): ReactElement => {
+const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType): ReactElement => {
   let {childItems, name, icon} = props;
   return (
     <>

@@ -48,16 +48,12 @@ interface S2TreeProps {
   isEmphasized?: boolean
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'children' | 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
-  /**
-   * The contents of the tree.
-   */
-  children?: ReactNode | ((item: T) => ReactNode)
+  styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps<T> extends Omit<RACTreeItemProps<T>, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
 }
@@ -297,7 +293,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>): ReactNode => {
+export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
