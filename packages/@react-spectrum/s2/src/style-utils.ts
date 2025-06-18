@@ -210,11 +210,12 @@ interface ControlResult {
   display?: 'flex',
   alignItems?: 'center' | {default: 'baseline', [iconOnly]: 'center'},
   columnGap?: 'text-to-visual',
-  paddingX?: 'pill' | 'edge-to-text' | {default: 'pill' | 'edge-to-text', [iconOnly]: 0},
+  paddingX?: 'pill' | 'edge-to-text' | {default: 'pill' | 'edge-to-text', [iconOnly]: 0, [avatarOnly]: 0},
   paddingY?: 0 | `[${string}]`
 }
 
 const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
+const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 
 /**
  * Common styles for a pill or round rect shaped container with text and icon slots.
@@ -241,7 +242,8 @@ export function control(options: ControlOptions): ControlResult {
     result.columnGap = 'text-to-visual';
     result.paddingX = {
       default: paddingX,
-      [iconOnly]: 0
+      [iconOnly]: 0,
+      [avatarOnly]: 0
     };
     result['--iconMargin'] = {
       type: 'marginStart',

@@ -61,7 +61,6 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
-const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
@@ -209,11 +208,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     isFocusVisible: 2
   },
   disableTapHighlight: true,
-  paddingX: {
-    default: 'edge-to-text',
-    [iconOnly]: 0,
-    [avatarOnly]: 0
-  },
   '--badgeTop': {
     type: 'top',
     value: {
