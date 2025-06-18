@@ -584,7 +584,7 @@ function remarkDocsComponentsToMarkdown() {
       // Remove docs rendering-specific comments.
       node.value = node.value
         .split('\n')
-        .filter(l => !/^\s*\/\/\/\-\s*(begin|end)/i.test(l))
+        .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
         .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
         .join('\n');
     });
