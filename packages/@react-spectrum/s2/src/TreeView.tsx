@@ -91,7 +91,7 @@ const tree = style({
   }
 }, getAllowedOverrides({height: true}));
 
-const TreeView = (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
