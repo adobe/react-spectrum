@@ -51,6 +51,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
         <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
       </head>
       <body className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginX: 'auto', paddingX: 12, paddingBottom: 12, paddingTop: 0, overflow: 'hidden'})}>
