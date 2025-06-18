@@ -97,9 +97,46 @@ export function useDynamicDescription(initialDescription?: string): DynamicDescr
 
   useLayoutEffect(() => {
     if (initialDescription) {
-      getOrCreateNode(initialDescription);
+      if (!elementRef.current) {
+        getOrCreateNode(initialDescription);
+        return;
+      }
+
+      if (elementRef.current.textContent === initialDescription) {
+        return;
+      }
+
+      for (let [key, value] of dynamicDescriptionNodes) {
+        if (value.element === elementRef.current) {
+          dynamicDescriptionNodes.delete(key);
+          break;
+        }
+      }
+
+      dynamicDescriptionNodes.set(initialDescription, descRef.current!);
+      elementRef.current.textContent = initialDescription;
+      return;
     }
 
+    if (elementRef.current && descRef.current) {
+      descRef.current.refCount--;
+      if (descRef.current.refCount === 0) {
+        descRef.current.element.remove();
+        for (let [key, value] of dynamicDescriptionNodes) {
+          if (value === descRef.current) {
+            dynamicDescriptionNodes.delete(key);
+            break;
+          }
+        }
+      }
+
+      elementRef.current = null;
+      descRef.current = null;
+      setIdState(undefined);
+    }
+  }, [initialDescription, getOrCreateNode]);
+
+  useLayoutEffect(() => {
     return () => {
       if (descRef.current) {
         descRef.current.refCount--;
@@ -114,45 +151,42 @@ export function useDynamicDescription(initialDescription?: string): DynamicDescr
         }
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useLayoutEffect(() => {
-    if (!initialDescription) {
-      return;
-    }
-
-    if (!elementRef.current) {
-      getOrCreateNode(initialDescription);
-      return;
-    }
-
-    if (elementRef.current.textContent === initialDescription) {
-      return;
-    }
-
-    for (let [key, value] of dynamicDescriptionNodes) {
-      if (value.element === elementRef.current) {
-        dynamicDescriptionNodes.delete(key);
-        break;
-      }
-    }
-
-    dynamicDescriptionNodes.set(initialDescription, descRef.current!);
-    elementRef.current.textContent = initialDescription;
-  }, [initialDescription, getOrCreateNode]);
-
   let setDescription = useCallback((description?: string) => {
-    if (!description) {
+    if (description === undefined) {
       return;
     }
+
+    if (!description) {
+      if (elementRef.current && descRef.current) {
+        descRef.current.refCount--;
+        if (descRef.current.refCount === 0) {
+          descRef.current.element.remove();
+          for (let [key, value] of dynamicDescriptionNodes) {
+            // eslint-disable-next-line max-depth
+            if (value === descRef.current) {
+              dynamicDescriptionNodes.delete(key);
+              break;
+            }
+          }
+        }
+        elementRef.current = null;
+        descRef.current = null;
+        setIdState(undefined);
+      }
+      return;
+    }
+
     if (!elementRef.current) {
       getOrCreateNode(description);
       return;
     }
+
     if (elementRef.current.textContent === description) {
       return;
     }
+
     for (let [key, value] of dynamicDescriptionNodes) {
       if (value.element === elementRef.current) {
         dynamicDescriptionNodes.delete(key);
