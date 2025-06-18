@@ -78,6 +78,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     isJustified: 0
   },
   fontWeight: 'medium',
+  width: 'fit',
   userSelect: 'none',
   transition: 'default',
   forcedColorAdjust: 'none',
