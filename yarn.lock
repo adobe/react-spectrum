@@ -155,10 +155,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@adobe/spectrum-tokens@npm:^13.0.0-beta.56":
-  version: 13.0.0-beta.56
-  resolution: "@adobe/spectrum-tokens@npm:13.0.0-beta.56"
-  checksum: 10c0/473a7e3cfb9317862584045b31c16e67122512f310c490c8cb9e11c1d200bbd78f79885e970e16034b375c19f2a27da27397a4ba3ee0cec1a8424a34582a85ad
+"@adobe/spectrum-tokens@npm:^13.10.0":
+  version: 13.10.0
+  resolution: "@adobe/spectrum-tokens@npm:13.10.0"
+  checksum: 10c0/1bd8007826ef22292ffd0eab96b5a7d90aa1619adccdc141991d08d3b48bc62cdd2eacc57a63bd6c5ab4eb1e52d081f619bac9b8bad2eafe4efad0073c5ef266
   languageName: node
   linkType: hard
 
@@ -7843,7 +7843,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
+    "@adobe/spectrum-tokens": "npm:^13.10.0"
     "@parcel/plugin": "npm:^2.0.0"
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
@@ -7973,7 +7973,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
+    "@adobe/spectrum-tokens": "npm:^13.10.0"
     "@internationalized/number": "npm:^3.6.3"
     "@parcel/macros": "npm:^2.14.0"
     "@react-aria/collections": "npm:3.0.0-rc.3"
