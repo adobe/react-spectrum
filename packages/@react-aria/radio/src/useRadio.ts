@@ -93,7 +93,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
-  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
+  let {name, form, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
@@ -103,6 +103,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       ...interactions,
       type: 'radio',
       name,
+      form,
       tabIndex,
       disabled: isDisabled,
       required: state.isRequired && validationBehavior === 'native',

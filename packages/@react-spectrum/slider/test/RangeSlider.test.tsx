@@ -189,11 +189,13 @@ describe('RangeSlider', function () {
   });
 
   it('supports form name', () => {
-    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" />);
+    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" form="test" />);
     let inputs = getAllByRole('slider');
     expect(inputs[0]).toHaveAttribute('name', 'minCookies');
+    expect(inputs[0]).toHaveAttribute('form', 'test');
     expect(inputs[0]).toHaveValue('10');
     expect(inputs[1]).toHaveAttribute('name', 'maxCookies');
+    expect(inputs[1]).toHaveAttribute('form', 'test');
     expect(inputs[1]).toHaveValue('40');
   });
 

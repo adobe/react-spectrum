@@ -43,6 +43,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isReadOnly = false,
     value,
     name,
+    form,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -94,6 +95,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
       name,
+      form,
       type: 'checkbox',
       ...interactions
     }),

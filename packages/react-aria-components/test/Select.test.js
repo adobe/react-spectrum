@@ -413,4 +413,13 @@ describe('Select', () => {
     let text = popover.querySelector('.react-aria-Text');
     expect(text).not.toHaveAttribute('id');
   });
+
+  it('should support form prop', () => {
+    render(
+      <TestSelect name="select" form="test" />
+    );
+
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });

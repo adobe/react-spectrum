@@ -34,7 +34,13 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   /**
    * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string
+  endName?: string,
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }
 
 export const RangeSliderContext = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
@@ -82,6 +88,7 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
               className={thumbContainer}
               index={0}
               name={props.startName}
+              form={props.form}
               aria-label={stringFormatter.format('slider.minimum')}
               ref={lowerThumbRef}
               style={(renderProps) => pressScale(lowerThumbRef, {
@@ -103,6 +110,7 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
               className={thumbContainer}
               index={1}
               name={props.endName}
+              form={props.form}
               aria-label={stringFormatter.format('slider.maximum')}
               ref={upperThumbRef}
               style={(renderProps) => pressScale(upperThumbRef, {

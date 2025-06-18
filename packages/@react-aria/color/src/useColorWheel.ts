@@ -45,7 +45,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel,
-    name
+    name,
+    form
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -325,6 +326,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         name,
+        form,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
         },
