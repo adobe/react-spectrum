@@ -153,14 +153,13 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
     };
 
     if (validationBehavior === 'native') {
-      // Use a visually hidden <input type="text"> rather than <input type="hidden">
+      // Use a hidden <input type="text"> rather than <input type="hidden">
       // so that an empty value blocks HTML form submission when the field is required.
       return (
         <input
-          {...containerProps}
           {...inputProps}
+          style={{display: 'none'}}
           type="text"
-          tabIndex={-1}
           required={selectProps.required}
           onChange={() => {/** Ignore react warning. */}}
           onInvalid={(e) => {
