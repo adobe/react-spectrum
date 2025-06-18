@@ -114,7 +114,30 @@ function getComponentDescription(componentName, file) {
  */
 function generatePropTable(componentName, file) {
   const interfaceName = `${componentName}Props`;
-  const componentPath = resolveComponentPath(componentName, file);
+  let componentPath = resolveComponentPath(componentName, file);
+
+  // Fallback: deep search for the interface declaration if resolveComponentPath failed.
+  if (!componentPath) {
+    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
+    // Also scan other packages if not found in component roots.
+    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
+
+    const matches = glob.sync(patterns, {
+      absolute: true,
+      suppressErrors: true,
+      deep: 4
+    }).filter(p => {
+      try {
+        const txt = fs.readFileSync(p, 'utf8');
+        return new RegExp(`(interface|type)\\s+${interfaceName}\\b`).test(txt) || new RegExp(`export\\s+(function|const|class)\\s+${componentName}\\b`).test(txt);
+      } catch {
+        return false;
+      }
+    });
+    componentPath = matches[0] || null;
+  }
+
   if (!componentPath) {return null;}
 
   const source = project.addSourceFileAtPathIfExists(componentPath);
