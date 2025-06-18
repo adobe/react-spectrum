@@ -297,7 +297,14 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [AvatarContext, {
             size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+            styles: style({
+              marginStart: {
+                default: '--iconMargin',
+                ':last-child': 0
+              },
+              flexShrink: 0,
+              order: 0
+            })
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,
