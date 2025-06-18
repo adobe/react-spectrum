@@ -11,11 +11,12 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
+import {useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
-import {useState} from 'react';
 
 let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: Element}>();
+const dynamicDescriptionNodes = new Map<string, {refCount: number, element: Element}>();
 
 export function useDescription(description?: string): AriaLabelingProps {
   let [id, setId] = useState<string | undefined>();
@@ -52,5 +53,120 @@ export function useDescription(description?: string): AriaLabelingProps {
 
   return {
     'aria-describedby': description ? id : undefined
+  };
+}
+
+export type DynamicDescriptionResult = {
+  /** Props for the description element. */
+  descriptionProps: AriaLabelingProps,
+  /** Setter for updating the description text. */
+  setDescription: (description?: string) => void
+}
+
+/**
+ * Similar to `useDescription`, but optimized for cases where the description text
+ * changes over time (e.g. drag modality changes) and multiple consumers are on the page.
+ * Instead of destroying and recreating the description element, this hook keeps the
+ * same element (and id) for the lifetime of the component and updates the element's text
+ * content when needed, avoiding unnecessary re-renders (e.g. many drop targets on the page).
+ */
+export function useDynamicDescription(initialDescription?: string): DynamicDescriptionResult {
+  let [idState, setIdState] = useState<string | undefined>();
+
+  let elementRef = useRef<Element | null>(null);
+  let descRef = useRef<{refCount: number, element: Element} | null>(null);
+
+  let getOrCreateNode = useCallback((text: string): Element => {
+    let desc = dynamicDescriptionNodes.get(text);
+    if (!desc) {
+      let node = document.createElement('div');
+      node.id = `react-aria-description-${descriptionId++}`;
+      node.style.display = 'none';
+      node.textContent = text;
+      document.body.appendChild(node);
+      desc = {refCount: 0, element: node};
+      dynamicDescriptionNodes.set(text, desc);
+    }
+
+    desc.refCount++;
+    descRef.current = desc;
+    elementRef.current = desc.element;
+    setIdState(desc.element.id);
+    return desc.element;
+  }, []);
+
+  useLayoutEffect(() => {
+    if (initialDescription) {
+      getOrCreateNode(initialDescription);
+    }
+
+    return () => {
+      if (descRef.current) {
+        descRef.current.refCount--;
+        if (descRef.current.refCount === 0) {
+          descRef.current.element.remove();
+          for (let [key, value] of dynamicDescriptionNodes) {
+            if (value === descRef.current) {
+              dynamicDescriptionNodes.delete(key);
+              break;
+            }
+          }
+        }
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!initialDescription) {
+      return;
+    }
+
+    if (!elementRef.current) {
+      getOrCreateNode(initialDescription);
+      return;
+    }
+
+    if (elementRef.current.textContent === initialDescription) {
+      return;
+    }
+
+    for (let [key, value] of dynamicDescriptionNodes) {
+      if (value.element === elementRef.current) {
+        dynamicDescriptionNodes.delete(key);
+        break;
+      }
+    }
+
+    dynamicDescriptionNodes.set(initialDescription, descRef.current!);
+    elementRef.current.textContent = initialDescription;
+  }, [initialDescription, getOrCreateNode]);
+
+  let setDescription = useCallback((description?: string) => {
+    if (!description) {
+      return;
+    }
+    if (!elementRef.current) {
+      getOrCreateNode(description);
+      return;
+    }
+    if (elementRef.current.textContent === description) {
+      return;
+    }
+    for (let [key, value] of dynamicDescriptionNodes) {
+      if (value.element === elementRef.current) {
+        dynamicDescriptionNodes.delete(key);
+        break;
+      }
+    }
+    dynamicDescriptionNodes.set(description, descRef.current!);
+    elementRef.current.textContent = description;
+  }, [getOrCreateNode]);
+
+  return {
+    descriptionProps: {
+      'aria-describedby': idState
+    },
+    setDescription
   };
 }

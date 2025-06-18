@@ -15,8 +15,8 @@ import {DOMAttributes} from 'react';
 import * as DragManager from './DragManager';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDescription} from '@react-aria/utils';
 import {useDragModality} from './utils';
+import {useDynamicDescription, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface VirtualDropResult {
@@ -33,7 +33,10 @@ export function useVirtualDrop(): VirtualDropResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let modality = useDragModality();
   let dragSession = DragManager.useDragSession();
-  let descriptionProps = useDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');
+  let {descriptionProps, setDescription} = useDynamicDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');
+  useLayoutEffect(() => {
+    setDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');
+  }, [dragSession, modality, setDescription, stringFormatter]);
 
   return {
     dropProps: {
