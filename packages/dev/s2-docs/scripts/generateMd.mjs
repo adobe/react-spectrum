@@ -612,6 +612,11 @@ function remarkDocsComponentsToMarkdown() {
           tableMd = generatePropTable(typeName, file);
         }
 
+        // For functions like hooks, attempt to document their options interface.
+        if (!tableMd) {
+          tableMd = generateFunctionOptionsTable(typeName, file);
+        }
+
         if (tableMd) {
           const tableTree = unified().use(remarkParse).parse(tableMd);
           newNodes.push(...tableTree.children);
@@ -743,6 +748,92 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
     .join('\n');
 
   return `${header}\n${body}`;
+}
+
+/**
+ * Generate a markdown table for the options interface of a function.
+ * Looks at the first parameter type of the exported function with the given name.
+ */
+function generateFunctionOptionsTable(functionName, file) {
+  // Resolve the source file containing the function declaration.
+  let funcPath = resolveComponentPath(functionName, file);
+
+  if (!funcPath) {
+    // Fallback deep search similar to other helpers.
+    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
+    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
+
+    const matches = glob.sync(patterns, {
+      absolute: true,
+      suppressErrors: true,
+      deep: 4
+    }).filter(p => {
+      try {
+        const txt = fs.readFileSync(p, 'utf8');
+        return new RegExp(`(function|const)\\s+${functionName}\\b`).test(txt);
+      } catch {
+        return false;
+      }
+    });
+    funcPath = matches[0] || null;
+  }
+
+  if (!funcPath) {
+    return null;
+  }
+
+  const source = project.addSourceFileAtPathIfExists(funcPath);
+  if (!source) {
+    return null;
+  }
+
+  // Attempt to get an exported declaration for the function.
+  const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
+  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+
+  let funcDecl = possibleDecls.find(Boolean);
+  if (!funcDecl) {
+    return null;
+  }
+
+  // Retrieve call signature via type to support arrow functions.
+  const type = funcDecl.getType?.() || funcDecl.getType?.();
+  const callSig = type?.getCallSignatures?.()[0];
+  if (!callSig) {
+    return null;
+  }
+
+  const params = callSig.getParameters();
+  if (!params.length) {
+    return null;
+  }
+
+  // Inspect the first parameter's declared type.
+  for (const paramSym of params) {
+    const paramDecl = paramSym.getDeclarations()?.[0];
+    if (!paramDecl) {continue;}
+
+    // Try to extract a simple type reference name.
+    const typeNode = paramDecl.getTypeNode?.();
+    let typeName = null;
+    if (typeNode) {
+      // For TypeReference nodes, the text usually contains the identifier name.
+      typeName = typeNode.getText().split(/[<\s|&]/)[0];
+    } else {
+      // Fallback to type text.
+      typeName = paramDecl.getType?.().getText(paramDecl).split(/[<\s|&]/)[0];
+    }
+
+    if (typeName) {
+      const table = generateInterfaceTable(typeName, file);
+      if (table) {
+        return table;
+      }
+    }
+  }
+
+  return null;
 }
 
 /* *
