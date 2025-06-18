@@ -36,7 +36,7 @@ import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResize
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -77,7 +77,11 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<Partial<TabsProps>>({});
+const InternalTabsContext = createContext<Partial<TabsProps> & {
+  tablistRef?: RefObject<HTMLDivElement | null>,
+  tablineRef?: RefObject<HTMLDivElement | null>,
+  selectedKey?: Key | null
+}>({});
 const CollapseContext = createContext({
   showTabs: true,
   menuId: '',
@@ -110,10 +114,56 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
   } = props;
   let domRef = useDOMRef(ref);
   let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
+  // do not apply animation if a user has the prefers-reduced-motion setting
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     throw new Error('An aria-label or aria-labelledby prop is required on Tabs for accessibility.');
   }
+
+  let tablistRef = useRef<HTMLDivElement | null>(null);
+  let tablineRef = useRef<HTMLDivElement | null>(null);
+  let prevRef = useRef<DOMRect | null>(null);
+
+  let onChange = useEffectEvent((val: Key) => {
+    if (tablistRef.current) {
+      prevRef.current = tablistRef.current.querySelector('[role=tab][data-selected=true]')?.getBoundingClientRect() ?? null;
+    }
+    setValue(val);
+  });
+
+  useLayoutEffect(() => {
+    if (tablineRef.current && tablistRef.current && prevRef.current && !reduceMotion) {
+      let prevPosition = tablineRef.current.getBoundingClientRect();
+      let currentItem = tablistRef.current.querySelector('[role=tab][data-selected=true]')?.getBoundingClientRect();
+      if (orientation === 'horizontal') {
+        let deltaX = prevPosition?.left - (currentItem?.left ?? 0);
+        tablineRef.current.animate(
+          [
+            {transform: `translateX(${deltaX}px)`, width: `${prevPosition?.width}px`},
+            {transform: 'translateX(0px)', width: `${currentItem?.width}px`}
+          ],
+          {
+            duration: 200,
+            easing: 'ease-out'
+          }
+        );
+      } else {
+        let deltaY = prevPosition?.top - (currentItem?.top ?? 0);
+        tablineRef.current.animate(
+          [
+            {transform: `translateY(${deltaY}px)`, height: `${prevPosition?.height}px`},
+            {transform: 'translateY(0px)', height: `${currentItem?.height}px`}
+          ],
+          {
+            duration: 200,
+            easing: 'ease-out'
+          }
+        );
+      }
+    }
+    prevRef.current = null;
+  }, [value, reduceMotion, orientation]);
 
   return (
     <Provider
@@ -124,7 +174,9 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           orientation,
           disabledKeys,
           selectedKey: value,
-          onSelectionChange: setValue,
+          tablistRef,
+          tablineRef,
+          onSelectionChange: onChange,
           labelBehavior,
           'aria-label': props['aria-label'],
           'aria-labelledby': props['aria-labelledby']
@@ -135,7 +187,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           <CollapsingTabs
             {...props}
             selectedKey={value}
-            onSelectionChange={setValue}
+            onSelectionChange={onChange}
             collection={collection}
             containerRef={domRef} />
         )}
@@ -193,46 +245,49 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, labelBehavior, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy} = useContext(InternalTabsContext) ?? {};
-  let state = useContext(TabListStateContext);
-  let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
-  let tablistRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (tablistRef?.current) {
-      let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
-
-      if (tab != null) {
-        setSelectedTab(tab);
-      }
-    }
-  }, [tablistRef, state?.selectedItem?.key]);
+  let {
+    tablistRef,
+    tablineRef,
+    density,
+    isDisabled,
+    disabledKeys,
+    orientation,
+    labelBehavior,
+    selectedKey,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy
+  } = useContext(InternalTabsContext) ?? {};
 
   return (
     <div
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
-      {orientation === 'vertical' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
-      {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} tabList={props} density={density} />}
+      <TabLine
+        tablistRef={tablistRef}
+        tablineRef={tablineRef}
+        disabledKeys={disabledKeys}
+        isDisabled={isDisabled}
+        selectedKey={selectedKey}
+        orientation={orientation}
+        density={density} />
     </div>
   );
 }
 
-interface TabLineProps<T extends object> {
+interface TabLineProps {
   disabledKeys: Iterable<Key> | undefined,
   isDisabled: boolean | undefined,
-  selectedTab: HTMLElement | undefined,
+  selectedKey?: Key | null,
   orientation?: Orientation,
-  tabList: TabListProps<T>,
-  density?: 'compact' | 'regular'
+  density?: 'compact' | 'regular',
+  tablistRef?: RefObject<HTMLDivElement | null>,
+  tablineRef?: RefObject<HTMLDivElement | null>
 }
 
 const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}>({
@@ -261,65 +316,85 @@ const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}
     }
   },
   borderStyle: 'none',
-  borderRadius: 'full',
-  transitionDuration: 130,
-  transitionTimingFunction: 'in-out'
+  borderRadius: 'full'
 });
 
-function TabLine<T extends object>(props: TabLineProps<T>) {
+function TabLine(props: TabLineProps) {
   let {
     disabledKeys,
     isDisabled: isTabsDisabled,
-    selectedTab,
+    selectedKey,
     orientation,
-    tabList,
+    tablistRef,
+    tablineRef,
     density
   } = props;
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);
 
   // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
-  let [isDisabled, setIsDisabled] = useState<boolean>(false);
-  useEffect(() => {
-    let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
-    setIsDisabled(isDisabled);
-  }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled]);
+  let isDisabled = useMemo(() =>
+    isTabsDisabled || isEveryTabDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null)),
+    [state?.collection, disabledKeys, isTabsDisabled]);
 
-  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
-    transform: undefined,
+  let [style, setStyle] = useState<{
+    top?: string | undefined,
+    left?: string, right?: string,
+    width: string | undefined,
+    height: string | undefined
+  }>({
     width: undefined,
     height: undefined
   });
 
+  let prevSelectedTab = useRef<HTMLElement | null>(null);
+  let [force, setForce] = useState(false);
   let onResize = useCallback(() => {
-    if (selectedTab) {
-      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
-        transform: undefined,
+    let tab = tablistRef?.current?.querySelector('[role=tab][data-selected=true]') as HTMLElement | null;
+    if (tab && (tab !== prevSelectedTab.current || force)) {
+      console.log('onResize', force, 'remeasuring', tab.getBoundingClientRect().height);
+      let styleObj: {
+        top?: string | undefined,
+        left?: string, right?: string,
+        width: string | undefined,
+        height: string | undefined
+      } = {
         width: undefined,
         height: undefined
       };
 
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
-      let offset = direction === 'rtl' ? -1 * ((selectedTab.offsetParent as HTMLElement)?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
-      styleObj.transform = orientation === 'vertical'
-        ? `translateY(${selectedTab.offsetTop}px)`
-        : `translateX(${offset}px)`;
-
-      if (orientation === 'horizontal') {
-        styleObj.width = `${selectedTab.offsetWidth}px`;
+      let offset = tab.offsetLeft;
+      if (orientation === 'vertical') {
+        styleObj.top = `${tab.offsetTop}px`;
+        styleObj.height = `${tab.offsetHeight}px`;
       } else {
-        styleObj.height = `${selectedTab.offsetHeight}px`;
+        styleObj.left = `${offset}px`;
+        styleObj.width = `${tab.offsetWidth}px`;
       }
+
       setStyle(styleObj);
+      setForce(false);
     }
-  }, [direction, setStyle, selectedTab, orientation]);
+    prevSelectedTab.current = tab;
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedKey, tablistRef, force]);
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedItem?.key, density, direction, orientation, tabList]);
+  }, [onResize]);
+
+  useLayoutEffect(() => {
+    // TabList renders a collection, which means it takes two renders before the layout in the browser
+    // is complete. This means that we have to delay a render so that we measure the updated width/height of the tab.
+    // This is only needed for props that control the layout.
+    // I tried using a resize observer, but it was too slow and there was noticeable lag.
+    setForce(true);
+  }, [density, orientation, direction]);
 
   return (
-    <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
+    <div ref={tablineRef} style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
   );
 }
 
@@ -460,7 +535,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
   );
 }
 
-function isAllTabsDisabled<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
+function isEveryTabDisabled<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
   let testKey: Key | null = null;
   if (collection && collection.size > 0) {
     testKey = collection.getFirstKey();
@@ -530,7 +605,7 @@ let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionCha
   }, [_onSelectionChange]);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
-    return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
+    return isEveryTabDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
   }, [state?.collection, disabledKeys]);
   let labelProps = useLabels({
     id,
