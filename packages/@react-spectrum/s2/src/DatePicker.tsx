@@ -25,7 +25,7 @@ import {
   Provider
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import {Calendar, Heading, IconContext, Popover} from '../';
+import {Calendar, Heading, IconContext} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext, useRef, useState} from 'react';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -33,6 +33,7 @@ import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {PopoverBase} from './Popover';
 
 
 export interface DatePickerProps<T extends DateValue> extends
@@ -167,7 +168,6 @@ export const DatePicker:
               contextualHelp={contextualHelp}>
               {label}
             </FieldLabel>
-
             <FieldGroup
               role="presentation"
               shouldTurnOffFocusRing={buttonHasFocus}
@@ -204,7 +204,7 @@ export const DatePicker:
                 </Provider>
               </Button>
             </FieldGroup>
-            <Popover hideArrow>
+            <PopoverBase hideArrow>
               <Calendar>
                 <header>
                   <Button slot="previous">◀</Button>
@@ -215,7 +215,7 @@ export const DatePicker:
                   {(date) => <CalendarCell date={date} />}
                 </CalendarGrid>
               </Calendar>
-            </Popover>
+            </PopoverBase>
             <HelpText
               size={size}
               isDisabled={isDisabled}
