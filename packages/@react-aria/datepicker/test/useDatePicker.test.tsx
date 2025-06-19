@@ -10,28 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {createCalendar, parseDate} from '@internationalized/date';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
-import React, {ReactElement, useRef} from 'react';
-import {useDateField} from '../src';
-import {useDateFieldState} from '@react-stately/datepicker';
-import {useLocale} from '@react-aria/i18n';
+import {ProgrammaticSetValueExampleRender} from '../stories/useDatePicker.stories';
+import React, {} from 'react';
 import userEvent from '@testing-library/user-event';
-
-function ProgrammaticSetValueExample(): ReactElement {
-  let {locale} = useLocale();
-  let state = useDateFieldState({locale, createCalendar});
-  let ref = useRef<HTMLDivElement>(null);
-  let {fieldProps} = useDateField({'aria-label': 'Date'}, state, ref);
-  return (
-    <div>
-      <div {...fieldProps} ref={ref} data-testid="field">
-        {state.segments.map((seg, i) => <span key={i}>{seg.text}</span>)}
-      </div>
-      <button onClick={() => state.setValue(parseDate('2020-01-01'))} data-testid="set">Set</button>
-    </div>
-  );
-}
 
 describe('useDatePicker', function () {
   let user;
@@ -41,7 +23,7 @@ describe('useDatePicker', function () {
   });
 
   it('should commit programmatically setValue when field is empty', async () => {
-    let {getByTestId} = render(<ProgrammaticSetValueExample />);
+    let {getByTestId} = render(<ProgrammaticSetValueExampleRender />);
 
     expect(getByTestId('field')).toHaveTextContent('mm/dd/yyyy');
     await user.click(getByTestId('set'));
