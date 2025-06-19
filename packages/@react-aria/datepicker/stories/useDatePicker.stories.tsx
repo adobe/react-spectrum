@@ -11,12 +11,13 @@
  */
 
 import {createCalendar, parseDate} from '@internationalized/date';
-import React, {useRef} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {ReactElement, useRef} from 'react';
 import {useDateField} from '../src';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
 
-export function ProgrammaticSetValueExample() {
+function ProgrammaticSetValueExampleRender(): ReactElement {
   let {locale} = useLocale();
   let state = useDateFieldState({locale, createCalendar});
   let ref = useRef<HTMLDivElement>(null);
@@ -33,4 +34,10 @@ export function ProgrammaticSetValueExample() {
 
 export default {
   title: 'Date and Time/useDatePicker'
+} as Meta<typeof ProgrammaticSetValueExampleRender>;
+
+type Story = StoryObj<typeof ProgrammaticSetValueExampleRender>;
+
+export const ProgrammaticSetValueExample: Story = {
+  render: () => <ProgrammaticSetValueExampleRender />
 };
