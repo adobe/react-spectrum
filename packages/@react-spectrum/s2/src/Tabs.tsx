@@ -79,7 +79,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
 const InternalTabsContext = createContext<Partial<TabsProps> & {
   tablistRef?: RefObject<HTMLDivElement | null>,
-  tablineRef?: RefObject<HTMLDivElement | null>,
+  prevRef?: RefObject<DOMRect | null>,
   selectedKey?: Key | null
 }>({});
 const CollapseContext = createContext({
@@ -114,15 +114,12 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
   } = props;
   let domRef = useDOMRef(ref);
   let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
-  // do not apply animation if a user has the prefers-reduced-motion setting
-  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     throw new Error('An aria-label or aria-labelledby prop is required on Tabs for accessibility.');
   }
 
   let tablistRef = useRef<HTMLDivElement | null>(null);
-  let tablineRef = useRef<HTMLDivElement | null>(null);
   let prevRef = useRef<DOMRect | null>(null);
 
   let onChange = useEffectEvent((val: Key) => {
@@ -131,39 +128,6 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
     }
     setValue(val);
   });
-
-  useLayoutEffect(() => {
-    if (tablineRef.current && tablistRef.current && prevRef.current && !reduceMotion) {
-      let prevPosition = tablineRef.current.getBoundingClientRect();
-      let currentItem = tablistRef.current.querySelector('[role=tab][data-selected=true]')?.getBoundingClientRect();
-      if (orientation === 'horizontal') {
-        let deltaX = prevPosition?.left - (currentItem?.left ?? 0);
-        tablineRef.current.animate(
-          [
-            {transform: `translateX(${deltaX}px)`, width: `${prevPosition?.width}px`},
-            {transform: 'translateX(0px)', width: `${currentItem?.width}px`}
-          ],
-          {
-            duration: 200,
-            easing: 'ease-out'
-          }
-        );
-      } else {
-        let deltaY = prevPosition?.top - (currentItem?.top ?? 0);
-        tablineRef.current.animate(
-          [
-            {transform: `translateY(${deltaY}px)`, height: `${prevPosition?.height}px`},
-            {transform: 'translateY(0px)', height: `${currentItem?.height}px`}
-          ],
-          {
-            duration: 200,
-            easing: 'ease-out'
-          }
-        );
-      }
-    }
-    prevRef.current = null;
-  }, [value, reduceMotion, orientation]);
 
   return (
     <Provider
@@ -175,7 +139,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           disabledKeys,
           selectedKey: value,
           tablistRef,
-          tablineRef,
+          prevRef,
           onSelectionChange: onChange,
           labelBehavior,
           'aria-label': props['aria-label'],
@@ -247,13 +211,8 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
 function TabListInner<T extends object>(props: TabListProps<T>) {
   let {
     tablistRef,
-    tablineRef,
     density,
-    isDisabled,
-    disabledKeys,
-    orientation,
     labelBehavior,
-    selectedKey,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy
   } = useContext(InternalTabsContext) ?? {};
@@ -268,26 +227,8 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
         aria-labelledby={ariaLabelledBy}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
-      <TabLine
-        tablistRef={tablistRef}
-        tablineRef={tablineRef}
-        disabledKeys={disabledKeys}
-        isDisabled={isDisabled}
-        selectedKey={selectedKey}
-        orientation={orientation}
-        density={density} />
     </div>
   );
-}
-
-interface TabLineProps {
-  disabledKeys: Iterable<Key> | undefined,
-  isDisabled: boolean | undefined,
-  selectedKey?: Key | null,
-  orientation?: Orientation,
-  density?: 'compact' | 'regular',
-  tablistRef?: RefObject<HTMLDivElement | null>,
-  tablineRef?: RefObject<HTMLDivElement | null>
 }
 
 const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}>({
@@ -301,102 +242,38 @@ const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}
     }
   },
   height: {
+    default: 'full',
     orientation: {
       horizontal: '[2px]'
     }
   },
   width: {
+    default: 'full',
     orientation: {
       vertical: '[2px]'
     }
   },
   bottom: {
+    default: 0
+  },
+  top: {
+    orientation: {
+      vertical: 0
+    }
+  },
+  left: {
     orientation: {
       horizontal: 0
+    }
+  },
+  insetStart: {
+    orientation: {
+      vertical: -12
     }
   },
   borderStyle: 'none',
   borderRadius: 'full'
 });
-
-function TabLine(props: TabLineProps) {
-  let {
-    disabledKeys,
-    isDisabled: isTabsDisabled,
-    selectedKey,
-    orientation,
-    tablistRef,
-    tablineRef,
-    density
-  } = props;
-  let {direction} = useLocale();
-  let state = useContext(TabListStateContext);
-
-  // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
-  let isDisabled = useMemo(() =>
-    isTabsDisabled || isEveryTabDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null)),
-    [state?.collection, disabledKeys, isTabsDisabled]);
-
-  let [style, setStyle] = useState<{
-    top?: string | undefined,
-    left?: string, right?: string,
-    width: string | undefined,
-    height: string | undefined
-  }>({
-    width: undefined,
-    height: undefined
-  });
-
-  let prevSelectedTab = useRef<HTMLElement | null>(null);
-  let [force, setForce] = useState(false);
-  let onResize = useCallback(() => {
-    let tab = tablistRef?.current?.querySelector('[role=tab][data-selected=true]') as HTMLElement | null;
-    if (tab && (tab !== prevSelectedTab.current || force)) {
-      console.log('onResize', force, 'remeasuring', tab.getBoundingClientRect().height);
-      let styleObj: {
-        top?: string | undefined,
-        left?: string, right?: string,
-        width: string | undefined,
-        height: string | undefined
-      } = {
-        width: undefined,
-        height: undefined
-      };
-
-      // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
-      let offset = tab.offsetLeft;
-      if (orientation === 'vertical') {
-        styleObj.top = `${tab.offsetTop}px`;
-        styleObj.height = `${tab.offsetHeight}px`;
-      } else {
-        styleObj.left = `${offset}px`;
-        styleObj.width = `${tab.offsetWidth}px`;
-      }
-
-      setStyle(styleObj);
-      setForce(false);
-    }
-    prevSelectedTab.current = tab;
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKey, tablistRef, force]);
-
-  useLayoutEffect(() => {
-    onResize();
-  }, [onResize]);
-
-  useLayoutEffect(() => {
-    // TabList renders a collection, which means it takes two renders before the layout in the browser
-    // is complete. This means that we have to delay a render so that we measure the updated width/height of the tab.
-    // This is only needed for props that control the layout.
-    // I tried using a resize observer, but it was too slow and there was noticeable lag.
-    setForce(true);
-  }, [density, orientation, direction]);
-
-  return (
-    <div ref={tablineRef} style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
-  );
-}
 
 const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
   ...focusRing(),
@@ -441,10 +318,11 @@ const icon = style({
 });
 
 export function Tab(props: TabProps): ReactNode {
-  let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
+  let {density, orientation, labelBehavior, prevRef} = useContext(InternalTabsContext) ?? {};
 
   let contentId = useId();
   let ariaLabelledBy = props['aria-labelledby'] || '';
+
   return (
     <RACTab
       {...props}
@@ -455,7 +333,9 @@ export function Tab(props: TabProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
       {({
           // @ts-ignore
-          isMenu
+          isMenu,
+          isSelected,
+          isDisabled
         }) => {
         if (isMenu) {
           return props.children;
@@ -480,7 +360,13 @@ export function Tab(props: TabProps): ReactNode {
                   styles: icon
                 }]
               ]}>
-              {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+              <TabInner
+                isSelected={isSelected}
+                orientation={orientation!}
+                isDisabled={isDisabled}
+                prevRef={prevRef}>
+                {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+              </TabInner>
             </Provider>
           );
         }
@@ -488,6 +374,59 @@ export function Tab(props: TabProps): ReactNode {
     </RACTab>
   );
 }
+
+function TabInner({isSelected, isDisabled, orientation, children, prevRef}: {
+  isSelected: boolean,
+  isDisabled: boolean,
+  orientation: Orientation,
+  children: ReactNode,
+  prevRef?: RefObject<DOMRect | null>
+}) {
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  let ref = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (isSelected && prevRef?.current && ref?.current && !reduceMotion) {
+      let currentItem = ref?.current.getBoundingClientRect();
+
+      if (orientation === 'horizontal') {
+        let deltaX = prevRef.current.left - currentItem.left;
+        ref.current.animate(
+          [
+            {transform: `translateX(${deltaX}px)`, width: `${prevRef.current.width}px`},
+            {transform: 'translateX(0px)', width: '100%'}
+          ],
+          {
+            duration: 200,
+            easing: 'ease-out'
+          }
+        );
+      } else {
+        let deltaY = prevRef.current.top - currentItem.top;
+        ref.current.animate(
+          [
+            {transform: `translateY(${deltaY}px)`, height: `${prevRef.current.height}px`},
+            {transform: 'translateY(0px)', height: '100%'}
+          ],
+          {
+            duration: 200,
+            easing: 'ease-out'
+          }
+        );
+      }
+
+      prevRef.current = null;
+    }
+  }, [isSelected, reduceMotion, prevRef, orientation]);
+
+  return (
+    <>
+      {isSelected && <div ref={ref} className={selectedIndicator({isDisabled, orientation})} />}
+      {children}
+    </>
+  );
+}
+
 
 const tabPanel = style({
   ...focusRing(),
