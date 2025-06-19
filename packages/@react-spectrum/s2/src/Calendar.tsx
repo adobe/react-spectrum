@@ -16,17 +16,22 @@ import {
   Button,
   CalendarCell,
   CalendarGrid,
+  ContextValue,
   DateValue,
   Heading,
   Text
 } from 'react-aria-components';
-import {ReactNode} from 'react';
+import {Context, createContext, ReactNode} from 'react';
 
 
 export interface CalendarProps<T extends DateValue>
   extends AriaCalendarProps<T> {
   errorMessage?: string
 }
+
+export const CalendarContext:
+  Context<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>> =
+  createContext<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>>(null);
 
 export function Calendar<T extends DateValue>(
   {errorMessage, ...props}: CalendarProps<T>

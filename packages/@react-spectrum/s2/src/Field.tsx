@@ -22,6 +22,7 @@ import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusVisible} from '@react-aria/interactions';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -152,7 +153,8 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
   children: ReactNode,
-  styles?: StyleString
+  styles?: StyleString,
+  shouldTurnOffFocusRing?: boolean
 }
 
 const fieldGroupStyles = style({
@@ -187,10 +189,11 @@ const fieldGroupStyles = style({
 });
 
 export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {shouldTurnOffFocusRing, ...otherProps} = props;
   return (
     <Group
       ref={ref}
-      {...props}
+      {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
         if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
@@ -206,7 +209,12 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
       }}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
-        fieldGroupStyles({...renderProps, size: props.size || 'M'}),
+        fieldGroupStyles({
+          ...renderProps,
+          isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
+          isFocusVisible: shouldTurnOffFocusRing ? false : renderProps.isFocusVisible,
+          size: props.size || 'M'
+        }),
         props.styles
       )} />
   );
