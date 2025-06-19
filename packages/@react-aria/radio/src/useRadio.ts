@@ -57,8 +57,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   let checked = state.selectedValue === value;
 
-  let onChange = (e) => {
-    e.stopPropagation();
+  let onChange = () => {
     state.setSelectedValue(value);
   };
 

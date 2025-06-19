@@ -244,4 +244,20 @@ describe('Checkbox', () => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
     expect(contextInputRef.current).toBe(getByRole('checkbox'));
   });
+
+  it('should allow onChange event to bubble to the form', async () => {
+    let onChange = jest.fn();
+
+    let {getByRole} = render(
+      <form onChange={onChange}>
+        <Checkbox name="test">Test</Checkbox>
+      </form>
+    );
+
+    let checkbox = getByRole('checkbox');
+    await user.click(checkbox);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.lastCall[0].target.name).toBe('test');
+  });
 });
