@@ -24,10 +24,9 @@ import {
   FormContext,
   Provider
 } from 'react-aria-components';
-import {baseColor, focusRing, fontRelative, iconStyle, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {Calendar, Heading, IconContext, Popover} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {centerBaseline} from './CenterBaseline';
 import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext, useRef, useState} from 'react';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
