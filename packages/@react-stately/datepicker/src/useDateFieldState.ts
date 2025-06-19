@@ -263,7 +263,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     } else if (
       validKeys.length === 0 || 
       validKeys.length >= allKeys.length || 
-      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod') ||
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
     ) {
       // If the field was empty (no valid segments) or all segments are completed, commit the new value.
