@@ -22,7 +22,7 @@ export default {
 };
 
 export const SelectExample = () => (
-  <Select data-testid="select-example" id="select-example-id">
+  <Select data-testid="select-example" id="select-example-id" style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -43,7 +43,7 @@ export const SelectExample = () => (
 );
 
 export const SelectRenderProps = () => (
-  <Select data-testid="select-render-props">
+  <Select data-testid="select-render-props" style={{position: 'relative'}}>
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -67,7 +67,7 @@ export const SelectRenderProps = () => (
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
 export const SelectManyItems = () => (
-  <Select>
+  <Select style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -85,7 +85,7 @@ export const SelectManyItems = () => (
 );
 
 export const VirtualizedSelect = () => (
-  <Select>
+  <Select style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -138,7 +138,7 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   });
 
   return (
-    <Select>
+    <Select style={{position: 'relative'}}>
       <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
       <Button style={{position: 'relative'}}>
         <SelectValue />
