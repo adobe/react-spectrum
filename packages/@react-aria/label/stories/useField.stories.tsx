@@ -1,5 +1,5 @@
-import {Meta, StoryFn} from '@storybook/react';
-import React, {useRef} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, useRef} from 'react';
 import {useField} from '../';
 import {ValidationState} from '@react-types/shared';
 
@@ -11,7 +11,7 @@ interface TextFieldProps {
   validationState?: ValidationState
 }
 
-const TextInputField = (props: TextFieldProps) => {
+const TextInputField = (props: TextFieldProps): JSX.Element => {
   const {label, description, errorMessage, validationState} = props;
   const ref = useRef<HTMLInputElement>(null);
   const {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
@@ -30,10 +30,8 @@ export default {
   title: 'useField'
 } as Meta;
 
-const TextInputFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextInputField {...args} />;
-
-export const NoError = {
-  render: TextInputFieldTemplate,
+export const NoError: StoryObj<typeof TextInputField> = {
+  render: (args) => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value',
@@ -42,8 +40,8 @@ export const NoError = {
   }
 };
 
-export const WithError = {
-  render: TextInputFieldTemplate,
+export const WithError: StoryObj<typeof TextInputField> = {
+  render: (args) => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value',
