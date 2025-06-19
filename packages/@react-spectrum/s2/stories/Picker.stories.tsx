@@ -295,3 +295,113 @@ return (
     }
   }
 };
+
+
+export const SelectScrollBug = () => {
+  return (
+    <div style={{display: 'flex', flexDirection: 'row', height: '100vh'}}>
+      <div style={{flex: 3}}>
+        Step 1:
+        <br />
+        - Place your cursor here and scroll
+        <br />- Notice how the ENTIRE page is scrolled
+      </div>
+
+      <div style={{flex: 1, overflowY: 'auto'}}>
+        Step 2:
+        <br />
+        - Place your cursor here and scroll
+        <br />
+        - Notice how a 2nd scroll apears and only the content on the right is
+        scrolled
+        <br />
+        <br />
+        Step 3:
+        <br />
+        - Move the "Select" component up in the code in the middle of the "Lorem
+        ipsum"
+        <br />
+        - Notice how the first scroll on the ENTIRE page doesn't exist anyhmore
+        <br />
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        <Picker aria-label="Favorite ice cream flavor">
+          <PickerItem>Chocolate</PickerItem>
+          <PickerItem>Mint</PickerItem>
+          <PickerItem>Strawberry</PickerItem>
+          <PickerItem>Vanilla</PickerItem>
+          <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+        </Picker>
+      </div>
+    </div>
+  );
+};
