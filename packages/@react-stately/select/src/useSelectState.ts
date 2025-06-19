@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, FocusStrategy} from '@react-types/shared';
+import {CollectionStateBase, FocusStrategy, Key} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useMemo, useState} from 'react';
+import {useStateEvent} from '@react-stately/utils';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
@@ -33,7 +34,10 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
   open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void
+  toggle(focusStrategy?: FocusStrategy | null): void,
+
+  /** Registers a function that is called when the user changes the selected key. */
+  onSelectionChange(fn: (key: Key | null) => void): () => void
 }
 
 /**
@@ -44,6 +48,7 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+  let [subscribe, emit] = useStateEvent();
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: (key) => {
@@ -51,6 +56,7 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
         props.onSelectionChange(key);
       }
 
+      emit(key);
       triggerState.close();
       validationState.commitValidation();
     }
@@ -83,6 +89,7 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
       }
     },
     isFocused,
-    setFocused
+    setFocused,
+    onSelectionChange: subscribe
   };
 }

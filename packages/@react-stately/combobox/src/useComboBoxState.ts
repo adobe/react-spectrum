@@ -20,7 +20,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
+export interface ComboBoxState<T> extends Omit<SelectState<T>, 'onSelectionChange'>, FormValidationState{
   /** The current value of the combo box input. */
   inputValue: string,
   /** Sets the value of the combo box input. */

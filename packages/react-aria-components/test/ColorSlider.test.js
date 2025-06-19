@@ -186,4 +186,33 @@ describe('ColorSlider', () => {
     expect(wrapper).toHaveClass('vertical');
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   });
+
+  it('onChange event bubbles to form', async () => {
+    let onChange = jest.fn();
+    let onInput = jest.fn();
+    let onChangeNative = jest.fn();
+    let ref = React.createRef();
+    render(
+      <form
+        onChange={onChange}
+        onInput={onInput}
+        ref={ref}>
+        <TestColorSlider sliderProps={{defaultValue: '#000'}} />
+      </form>
+    );
+
+    ref.current.addEventListener('change', onChangeNative);
+
+    let track = document.querySelector('.react-aria-SliderTrack');
+    await user.pointer([{target: track, keys: '[MouseLeft>]', coords: {x: 20}}]);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onInput).toHaveBeenCalledTimes(1);
+    expect(onChangeNative).toHaveBeenCalledTimes(0);
+
+    await user.pointer([{target: track, keys: '[/MouseLeft]', coords: {x: 20}}]);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onInput).toHaveBeenCalledTimes(1);
+    expect(onChangeNative).toHaveBeenCalledTimes(1);
+  });
 });
