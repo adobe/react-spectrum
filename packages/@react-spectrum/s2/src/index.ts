@@ -101,6 +101,7 @@ export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {BadgeProps} from './Badge';
 export type {ButtonProps, LinkButtonProps} from './Button';
 export type {ButtonGroupProps} from './ButtonGroup';
+export type {CalendarProps} from './Calendar';
 export type {CardProps, CardPreviewProps, AssetCardProps, ProductCardProps, UserCardProps} from './Card';
 export type {CardViewProps} from './CardView';
 export type {CheckboxProps} from './Checkbox';

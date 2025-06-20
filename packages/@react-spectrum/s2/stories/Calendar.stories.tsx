@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar} from '../src';
+import {ActionButton, Calendar, CalendarProps} from '../src';
+import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
 import {categorizeArgTypes} from './utils';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
+import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Calendar> = {
   component: Calendar,
@@ -25,7 +30,13 @@ const meta: Meta<typeof Calendar> = {
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    visibleMonths: {
+      control: {
+        type: 'select'
+      },
+      options: [1, 2, 3]
+    }
   },
   title: 'Calendar'
 };
@@ -34,3 +45,45 @@ export default meta;
 type Story = StoryObj<typeof Calendar>;
 
 export const Example: Story = {};
+
+export const DateUnavailable: Story = {
+  args: {
+    isDateUnavailable: (date: DateValue) => {
+      const disabledIntervals = [[today(getLocalTimeZone()).subtract({days: 13}), today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+    }
+  }
+};
+
+export const MinValue: Story = {
+  args: {
+    minValue: today(getLocalTimeZone()).add({days: 1})
+  }
+};
+
+function ControlledFocus(props: CalendarProps<DateValue>): ReactElement {
+  const defaultFocusedDate = props.focusedValue ?? new CalendarDate(2019, 6, 5);
+  let [focusedDate, setFocusedDate] = useState(defaultFocusedDate);
+  return (
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'start',
+        gap: 16
+      })}>
+      <ActionButton onPress={() => setFocusedDate(defaultFocusedDate)}>Reset focused date</ActionButton>
+      <Calendar {...props} focusedValue={focusedDate} onFocusChange={setFocusedDate} />
+    </div>
+  );
+}
+
+function CustomCalendar(props: CalendarProps<DateValue>): ReactElement {
+  return (
+    <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
+  );
+}
+
+export const Custom454Example: Story = {
+  render: (args) => <CustomCalendar {...args} />
+};

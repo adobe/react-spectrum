@@ -150,6 +150,7 @@
   },
   "dependencies": {
     "@internationalized/number": "^3.6.3",
+    "@react-aria/calendar": "^3.8.3",
     "@react-aria/collections": "3.0.0-rc.3",
     "@react-aria/focus": "^3.20.5",
     "@react-aria/i18n": "^3.12.10",

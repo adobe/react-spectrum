@@ -10,38 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton, Header, Heading} from './';
 import {
   Calendar as AriaCalendar,
   CalendarProps as AriaCalendarProps,
-  Button,
   ButtonProps,
   CalendarCell,
   CalendarGrid,
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCell,
+  CalendarStateContext,
   ContextValue,
   DateValue,
   Text
 } from 'react-aria-components';
-import {ActionButton} from './';
-import {Context, createContext, ReactNode, useRef} from 'react';
-import {style} from '../style' with {type: 'macro'};
-import { Header, Heading } from './Content';
-import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
-import { pressScale } from '..';
-
+import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {Context, createContext, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo} from 'react';
+import {forwardRefType} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getEraFormat} from '@react-aria/calendar';
+import {useDateFormatter} from '@react-aria/i18n';
 
 
 export interface CalendarProps<T extends DateValue>
-  extends AriaCalendarProps<T> {
-  errorMessage?: string
+  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles'>,
+  StyleProps {
+  errorMessage?: string,
+  visibleMonths?: number
 }
 
 export const CalendarContext:
   Context<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>> =
   createContext<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>>(null);
+
+const calendarStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 24,
+  width: 'full'
+}, getAllowedOverrides());
 
 const headerStyles = style({
   display: 'flex',
@@ -50,64 +60,190 @@ const headerStyles = style({
   width: 'full'
 });
 
+const headingStyles = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  margin: 0,
+  width: 'full'
+});
+
 const titleStyles = style({
   font: 'title-lg',
   textAlign: 'center',
-  flexGrow: 1
+  flexGrow: 1,
+  flexShrink: 0,
+  flexBasis: '0%',
+  minWidth: 0
 });
 
 const headerCellStyles = style({
   font: 'title-sm',
+  cursor: 'default',
   textAlign: 'center',
   flexGrow: 1
 });
 
 const cellStyles = style({
-  outlineStyle: 'none',
+  ...focusRing(),
+  position: 'relative',
   font: 'body-sm',
-  width: 24,
-  height: 24,
+  cursor: 'default',
+  width: 32,
+  height: 32,
   margin: 2,
   borderRadius: 'full',
-  display: 'flex',
+  display: {
+    default: 'flex',
+    isOutsideMonth: 'none'
+  },
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: {
-    isSelected: 'blue-600'
+    isToday: {
+      default: baseColor('gray-300'),
+      isDisabled: 'disabled'
+    },
+    isSelected: {
+      default: lightDark('accent-900', 'accent-700'),
+      isHovered: lightDark('accent-1000', 'accent-600'),
+      isPressed: lightDark('accent-1000', 'accent-600'),
+      isFocusVisible: lightDark('accent-1000', 'accent-600')
+    }
+  },
+  color: {
+    isSelected: 'white',
+    isDisabled: 'disabled'
   }
 });
 
+const unavailableStyles = style({
+  position: 'absolute',
+  top: 'calc(50% - 1px)',
+  left: 'calc(25% - 1px)',
+  right: 'calc(25% - 1px)',
+  height: 2,
+  transform: 'rotate(-16deg)',
+  borderRadius: 'full',
+  backgroundColor: '[currentColor]'
+});
 
-export function Calendar<T extends DateValue>(
-  {errorMessage, ...props}: CalendarProps<T>
-): ReactNode {
+
+export const Calendar:
+  <T extends DateValue>(props: CalendarProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  let {
+    visibleMonths = 1,
+    errorMessage,
+    UNSAFE_style,
+    UNSAFE_className,
+    styles,
+    ...otherProps
+  } = props;
   return (
-    <AriaCalendar {...props}>
+    <AriaCalendar
+      {...otherProps}
+      ref={ref}
+      visibleDuration={{months: visibleMonths}}
+      style={UNSAFE_style}
+      className={UNSAFE_className + calendarStyles(null, styles)}>
       <Header styles={headerStyles}>
         <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-        <Heading styles={titleStyles} />
+        <CalendarHeading />
         <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
       </Header>
-      <CalendarGrid>
-        <CalendarGridHeader>
-          {(day) => (
-            <CalendarHeaderCell className={headerCellStyles}>
-              {day}
-            </CalendarHeaderCell>
-          )}
-        </CalendarGridHeader>
-        <CalendarGridBody>
-          {(date) => (
-            <CalendarCell
-              date={date}
-              className={cellStyles} />
-          )}
-        </CalendarGridBody>
-      </CalendarGrid>
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 24,
+          width: 'full'
+        })}>
+        {Array.from({length: visibleMonths}).map((_, i) => (
+          <CalendarGrid offset={{months: i}} key={i}>
+            <CalendarGridHeader>
+              {(day) => (
+                <CalendarHeaderCell className={headerCellStyles}>
+                  {day}
+                </CalendarHeaderCell>
+              )}
+            </CalendarGridHeader>
+            <CalendarGridBody>
+              {(date) => (
+                <CalendarCell
+                  date={date}
+                  className={cellStyles}>
+                  {({isUnavailable, formattedDate}) => (
+                    <>
+                      <div>
+                        {formattedDate}
+                      </div>
+                      {isUnavailable && <div className={unavailableStyles} />}
+                    </>
+                  )}
+                </CalendarCell>
+              )}
+            </CalendarGridBody>
+          </CalendarGrid>
+        ))}
+      </div>
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </AriaCalendar>
   );
-}
+});
+
+// Ordinarily the heading is a formatted date range, ie January 2025 - February 2025.
+// However, we want to show each month individually.
+const CalendarHeading = () => {
+  let {visibleRange, timeZone} = useContext(CalendarStateContext) ?? {};
+  let era: any = getEraFormat(visibleRange?.start) || getEraFormat(visibleRange?.end);
+  let monthFormatter = useDateFormatter({
+    month: 'long',
+    year: 'numeric',
+    era,
+    calendar: visibleRange?.start.calendar.identifier,
+    timeZone
+  });
+  let months = useMemo(() => {
+    if (!visibleRange) {
+      return [];
+    }
+    let months: string[] = [];
+    for (let i = visibleRange.start; i.compare(visibleRange.end) <= 0; i = i.add({months: 1})) {
+      // TODO: account for the first week possibly overlapping, like with a custom 454 calendar.
+      // there has to be a better way to do this...
+      if (i.month === visibleRange.start.month) {
+        i = i.add({weeks: 1});
+      }
+      months.push(monthFormatter.format(i.toDate(timeZone!)));
+    }
+    return months;
+  }, [visibleRange, monthFormatter, timeZone]);
+
+  return (
+    <Heading styles={headingStyles}>
+      {months.map((month, i) => {
+        if (i === 0) {
+          return (
+            <Fragment key={month}>
+              <div className={titleStyles}>{month}</div>
+            </Fragment>
+          );
+        } else {
+          return (
+            <Fragment key={month}>
+              {/* Spacers to account for Next/Previous buttons and gap, spelled out to show the math */}
+              <div className={style({visibility: 'hidden', width: 32})} role="presentation" />
+              <div className={style({visibility: 'hidden', width: 24})} role="presentation" />
+              <div className={style({visibility: 'hidden', width: 32})} role="presentation" />
+              <div className={titleStyles}>{month}</div>
+            </Fragment>
+          );
+        }
+      })}
+    </Heading>
+  );
+};
 
 const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactNode}) => {
   return (

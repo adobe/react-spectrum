@@ -15,8 +15,6 @@ import {
   DatePickerProps as AriaDatePickerProps,
   Button,
   ButtonRenderProps,
-  CalendarCell,
-  CalendarGrid,
   ContextValue,
   DateInput,
   DateSegment,
@@ -25,15 +23,15 @@ import {
   Provider
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import {Calendar, Heading, IconContext} from '../';
+import {Calendar, IconContext} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext, useRef, useState} from 'react';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {PopoverBase} from './Popover';
 
 
 export interface DatePickerProps<T extends DateValue> extends
@@ -81,6 +79,7 @@ const iconStyles = style({
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   ...focusRing(),
   ...controlBorderRadius('sm'),
+  cursor: 'default',
   display: 'flex',
   textAlign: 'center',
   borderStyle: 'none',
@@ -204,17 +203,10 @@ export const DatePicker:
                 </Provider>
               </Button>
             </FieldGroup>
-            <PopoverBase hideArrow>
-              <Calendar>
-                <header>
-                  <Button slot="previous">◀</Button>
-                  <Heading />
-                  <Button slot="next">▶</Button>
-                </header>
-                <CalendarGrid>
-                  {(date) => <CalendarCell date={date} />}
-                </CalendarGrid>
-              </Calendar>
+            <PopoverBase
+              hideArrow
+              styles={style({paddingX: 16, paddingY: 32})}>
+              <Calendar />
             </PopoverBase>
             <HelpText
               size={size}
