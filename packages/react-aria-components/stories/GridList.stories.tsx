@@ -276,9 +276,6 @@ export const AsyncGridList = (args) => {
   );
 };
 
-{/* <MyGridListLoaderIndicator
-isLoading={list.loadingState === 'loadingMore'}
-onLoadMore={list.onLoadMore} /> */}
 AsyncGridList.story = {
   args: {
     delay: 50
