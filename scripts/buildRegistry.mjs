@@ -5,7 +5,7 @@ import {parse} from '@babel/parser';
 import path from 'path';
 import postcss from 'postcss';
 
-const publicUrl = process.env.PUBLIC_URL || 'http://localhost:8081';
+const publicUrl = process.env.REGISTRY_URL || 'http://localhost:8081';
 
 fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/tailwind/registry');

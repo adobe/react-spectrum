@@ -157,7 +157,7 @@ export function VisualExample({component, docs, links, importSource, props, init
       code={code}
       files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={`http://localhost:8081/${docs.name}.json`} />
+      registryUrl={type === 's2' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
   );
 
   // Render the corresponding client component to make the controls interactive.

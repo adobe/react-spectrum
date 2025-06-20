@@ -144,8 +144,8 @@ s2-api-diff:
 
 s2-docs:
 	node scripts/extractStarter.mjs
-	PUBLIC_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
-	yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs
+	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
+	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
 	mkdir -p dist/$$(git rev-parse HEAD)
 	mv packages/dev/s2-docs/dist dist/$$(git rev-parse HEAD)/s2-docs
 	mkdir -p dist/$$(git rev-parse HEAD)/s2-docs/registry
