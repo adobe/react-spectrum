@@ -12,7 +12,7 @@
 @import 'tailwindcss' source(none);
 @source "*.mdx";
 @source "home/*.tsx";
-@source "../tailwind-starter/**/*.{ts,tsx}";
+@source "../../../../../starters/tailwind/**/*.{ts,tsx}";
 @plugin "tailwindcss-react-aria-components";
 @plugin "tailwindcss-animate";
 

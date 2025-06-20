@@ -5,12 +5,14 @@ import {parse} from '@babel/parser';
 import path from 'path';
 import postcss from 'postcss';
 
+const publicUrl = process.env.PUBLIC_URL || 'http://localhost:8081';
+
 fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/tailwind/registry');
 
 for (let file of glob.sync('starters/tailwind/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
-  let {dependencies, registryDependencies, content} = analyzeDeps(file);
+  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'tailwind');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -40,7 +42,7 @@ fs.mkdirSync('starters/docs/registry');
 
 for (let file of glob.sync('starters/docs/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
-  let {dependencies, registryDependencies, content} = analyzeDeps(file);
+  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'vanilla');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -66,7 +68,7 @@ for (let file of glob.sync('starters/docs/src/*.{ts,tsx}')) {
   fs.writeFileSync('starters/docs/registry/' + name + '.json', JSON.stringify(item, null, 2) + '\n');
 }
 
-function analyzeDeps(file) {
+function analyzeDeps(file, type) {
   let content = fs.readFileSync(file, 'utf8');
   let ast = recast.parse(content, {
     parser: {
@@ -89,7 +91,7 @@ function analyzeDeps(file) {
       let source = node.source.value;
       if (source.startsWith('./')) {
         if (!source.endsWith('.css')) {
-          registryDependencies.add('https://localhost:8081/' + source.slice(2) + '.json');
+          registryDependencies.add(publicUrl + '/' + type + '/' + source.slice(2) + '.json');
           node.source.value = source === './utils' ? '@/registry/react-aria/lib/react-aria-utils' : '@/registry/react-aria/ui/' + source.slice(2);
         }
       } else {
