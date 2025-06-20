@@ -16,7 +16,7 @@ import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/co
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
@@ -182,7 +182,7 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** A unique id for the tag. */
   id?: Key,
   /**
@@ -232,6 +232,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
 
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <div

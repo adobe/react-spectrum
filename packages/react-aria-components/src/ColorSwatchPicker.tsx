@@ -1,4 +1,4 @@
-import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, ValueBase} from '@react-types/shared';
+import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, PressEvents, ValueBase} from '@react-types/shared';
 import {Color, parseColor, useColorPickerState} from 'react-stately';
 import {ColorSwatchContext} from './ColorSwatch';
 import {composeRenderProps, ContextValue, RenderProps, StyleRenderProps, useContextProps} from './utils';
@@ -61,7 +61,7 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
   color: Color
 }
 
-export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The color of the swatch. */
   color: string | Color,
   /** Whether the color swatch is disabled. */

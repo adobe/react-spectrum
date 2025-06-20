@@ -1,4 +1,4 @@
-import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -1000,7 +1000,7 @@ export interface RowRenderProps extends ItemRenderProps {
   id?: Key
 }
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents, GlobalDOMAttributes<HTMLTableRowElement> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
@@ -1105,6 +1105,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let TD = useElementType('td');
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
+    delete DOMProps.onClick;
 
     return (
       <>

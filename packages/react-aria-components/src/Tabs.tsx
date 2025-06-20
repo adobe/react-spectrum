@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
@@ -43,7 +43,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the tab. */
   id?: Key,
   /** Whether the tab is disabled. */
@@ -268,6 +268,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <ElementType

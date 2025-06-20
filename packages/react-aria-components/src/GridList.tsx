@@ -19,7 +19,7 @@ import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPers
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -261,7 +261,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
-export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, GlobalDOMAttributes<HTMLDivElement> {
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -356,6 +356,10 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     }
   }, [item.textValue]);
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
   return (
     <>
       {dropIndicator && !dropIndicator.isHidden &&
@@ -366,7 +370,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
         </div>
       }
       <div
-        {...mergeProps(filterDOMProps(props as any, {global: true}), renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         ref={ref}
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
