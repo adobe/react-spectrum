@@ -59,6 +59,7 @@ export class TableViewLayout<T> extends TableLayout<T> {
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = layoutInfo.key;
       empty.isSticky = true;
+      empty.allowOverflow = true;
       let node = {
         layoutInfo: empty,
         validRect: empty.rect

@@ -20,14 +20,14 @@ import {
   isMac,
   isWebKit
 } from '../src';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 export default {
   title: 'platform'
 } as Meta<object>;
 
-const Template = (args) => (
+const Template = (args: any): JSX.Element => (
   <table {...args}>
     <tr>
       <th>Platform</th>
@@ -44,8 +44,8 @@ const Template = (args) => (
   </table>
 );
 
-export const Default = {
-  render: Template,
+export const Default: StoryObj<typeof Template> = {
+  render: (args: any) => <Template {...args} />,
   name: 'all platforms',
   args: {}
 };

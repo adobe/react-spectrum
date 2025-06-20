@@ -129,6 +129,7 @@
     "dist",
     "style",
     "page.css",
+    "page.css.map",
     "icons",
     "illustrations",
     "src"
@@ -139,7 +140,7 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.56",
+    "@adobe/spectrum-tokens": "^13.10.0",
     "@parcel/macros": "^2.14.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
