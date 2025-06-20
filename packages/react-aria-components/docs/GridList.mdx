@@ -612,13 +612,13 @@ This accepts a list of item ids that are disabled. An item is considered disable
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the `<UNSTABLE_GridListLoadingSentinel>` after the `GridList`'s items render function as shown in the example below.
+infinite scroll to load more data, be sure to include the `<GridListLoadMoreItem>` after the `GridList`'s items render function as shown in the example below.
 
-Note that `<UNSTABLE_GridListLoadingSentinel>` is meant to render the spinner specifically when loading additional items,
+Note that `<GridListLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
 the initial loading state and empty state should instead be handled via [renderEmptyState](./empty-state).
 
 ```tsx example
-import {Collection, UNSTABLE_GridListLoadingSentinel} from 'react-aria-components';
+import {Collection, GridListLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -654,11 +654,11 @@ function AsyncList() {
           <MyItem id={item.name}>{item.name}</MyItem>
         )}
       </Collection>
-      <UNSTABLE_GridListLoadingSentinel
+      <GridListLoadMoreItem
         onLoadMore={list.loadMore}
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
-      </UNSTABLE_GridListLoadingSentinel>
+      </GridListLoadMoreItem>
       {/*- end highlight -*/}
     </MyGridList>
   );
@@ -706,7 +706,7 @@ export function MyProgressCircle(props: ProgressBarProps) {
 
 ### GridListLoadingSentinel
 
-<PropTable component={docs.exports.UNSTABLE_GridListLoadingSentinel} links={docs.links} />
+<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} />
 
 ## Empty state
 

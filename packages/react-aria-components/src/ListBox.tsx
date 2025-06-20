@@ -465,7 +465,7 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -476,7 +476,7 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
   isLoading?: boolean
 }
 
-export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 

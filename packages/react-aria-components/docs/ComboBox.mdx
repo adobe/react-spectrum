@@ -907,13 +907,13 @@ The example below has `menuTrigger` set to `focus`.
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
 and filtering of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the [`<UNSTABLE_ListBoxLoadingSentinel>`](../react-aria/ListBox.html#listboxloadingsentinel) after the `Listbox`'s items render function as shown in the example below.
+infinite scroll to load more data, be sure to include the [`<ListBoxLoadMoreItem>`](../react-aria/ListBox.html#listboxloadingsentinel) after the `Listbox`'s items render function as shown in the example below.
 
-Note that `<UNSTABLE_ListBoxLoadingSentinel>` is meant to render the spinner specifically when loading additional items,
+Note that `<ListBoxLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
 the initial loading state and empty state should instead be handled via [renderEmptyState](../react-aria/ListBox.html#empty-state).
 
 ```tsx example
-import {Collection, UNSTABLE_ListBoxLoadingSentinel} from 'react-aria-components';
+import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -953,11 +953,11 @@ function AsyncLoadingExample() {
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
         )}
       </Collection>
-      <UNSTABLE_ListBoxLoadingSentinel
+      <ListBoxLoadMoreItem
         onLoadMore={list.loadMore}
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
-      </UNSTABLE_ListBoxLoadingSentinel>
+      </ListBoxLoadMoreItem>
       {/*- end highlight -*/}
     </MyComboBox>
   );

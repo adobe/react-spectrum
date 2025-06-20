@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, UNSTABLE_TableLoadingSentinel, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -1873,9 +1873,9 @@ describe('Table', () => {
                   </MyRow>
                 )}
               </Collection>
-              <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <TableLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 <div>spinner</div>
-              </UNSTABLE_TableLoadingSentinel>
+              </TableLoadMoreItem>
             </TableBody>
           </Table>
         </ResizableTableContainer>
@@ -2074,9 +2074,9 @@ describe('Table', () => {
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                   <div>spinner</div>
-                </UNSTABLE_TableLoadingSentinel>
+                </TableLoadMoreItem>
               </TableBody>
             </Table>
           </Virtualizer>

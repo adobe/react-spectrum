@@ -801,13 +801,13 @@ This accepts a list of row ids that are disabled. A row is considered disabled i
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
 of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the `<UNSTABLE_TableLoadingSentinel>` after the `Table`'s items render function as shown in the example below.
+infinite scroll to load more data, be sure to include the `<TableLoadMoreItem>` after the `Table`'s items render function as shown in the example below.
 
-Note that `<UNSTABLE_TableLoadingSentinel>` is meant to render the spinner specifically when loading additional items,
+Note that `<TableLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
 the initial loading state and empty state should instead be handled via [renderEmptyState](#empty-state).
 
 ```tsx example
-import {Collection, UNSTABLE_TableLoadingSentinel} from 'react-aria-components';
+import {Collection, TableLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -858,11 +858,11 @@ function AsyncSortTable() {
               </Row>
             )}
           </Collection>
-          <UNSTABLE_TableLoadingSentinel
+          <TableLoadMoreItem
             onLoadMore={list.loadMore}
             isLoading={list.loadingState === 'loadingMore'}>
             <MyProgressCircle isIndeterminate aria-label="Loading more..." />
-          </UNSTABLE_TableLoadingSentinel>
+          </TableLoadMoreItem>
           {/*- end highlight -*/}
         </TableBody>
       </Table>
@@ -928,7 +928,7 @@ export function MyProgressCircle(props: ProgressBarProps) {
 
 ### TableLoadingSentinel
 
-<PropTable component={docs.exports.UNSTABLE_TableLoadingSentinel} links={docs.links} />
+<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} />
 
 ## Sorting
 

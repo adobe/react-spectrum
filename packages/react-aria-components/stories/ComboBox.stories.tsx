@@ -11,10 +11,10 @@
  */
 
 import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
@@ -314,10 +314,10 @@ AsyncVirtualizedDynamicCombobox.story = {
 
 const MyListBoxLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       style={{height: 30, width: '100%'}}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };

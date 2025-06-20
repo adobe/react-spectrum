@@ -32,9 +32,9 @@ import {
   Virtualizer
 } from '../';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -1099,9 +1099,9 @@ describe('GridList', () => {
               <GridListItem id={item.name}>{item.name}</GridListItem>
             )}
           </Collection>
-          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_GridListLoadingSentinel>
+          </GridListLoadMoreItem>
         </GridList>
       );
     };
@@ -1211,9 +1211,9 @@ describe('GridList', () => {
                   <GridListItem id={item.name}>{item.name}</GridListItem>
                 )}
               </Collection>
-              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+              <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_GridListLoadingSentinel>
+              </GridListLoadMoreItem>
             </GridList>
           </Virtualizer>
         );

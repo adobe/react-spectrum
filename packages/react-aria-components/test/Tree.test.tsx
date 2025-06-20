@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeItem, TreeItemContent, UNSTABLE_TreeLoadingSentinel, useDragAndDrop, Virtualizer} from '../';
+import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeItem, TreeItemContent, TreeLoadMoreItem, useDragAndDrop, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
@@ -1238,9 +1238,9 @@ describe('Tree', () => {
               <StaticTreeItem id="projects-1A" textValue="Projects-1A">
                 Projects-1A
               </StaticTreeItem>
-              <UNSTABLE_TreeLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <TreeLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_TreeLoadingSentinel>
+              </TreeLoadMoreItem>
             </StaticTreeItem>
             <StaticTreeItem id="projects-2" textValue="Projects-2">
               Projects-2
@@ -1249,9 +1249,9 @@ describe('Tree', () => {
               Projects-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <UNSTABLE_TreeLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <TreeLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_TreeLoadingSentinel>
+          </TreeLoadMoreItem>
         </Tree>
       );
     };
@@ -1388,17 +1388,17 @@ describe('Tree', () => {
                                       </StaticTreeItem>
                                     )}
                                   </Collection>
-                                  <UNSTABLE_TreeLoadingSentinel isLoading={projects3IsLoading}>
+                                  <TreeLoadMoreItem isLoading={projects3IsLoading}>
                                     Loading...
-                                  </UNSTABLE_TreeLoadingSentinel>
+                                  </TreeLoadMoreItem>
                                 </StaticTreeItem>
                               );
                           }
                         }
                         </Collection>
-                        <UNSTABLE_TreeLoadingSentinel isLoading={projectsIsLoading}>
+                        <TreeLoadMoreItem isLoading={projectsIsLoading}>
                           Loading...
-                        </UNSTABLE_TreeLoadingSentinel>
+                        </TreeLoadMoreItem>
                       </StaticTreeItem>
                     );
                   } else if (item.id === 'documents') {
@@ -1411,9 +1411,9 @@ describe('Tree', () => {
                             </StaticTreeItem>
                           )}
                         </Collection>
-                        <UNSTABLE_TreeLoadingSentinel isLoading={documentsIsLoading}>
+                        <TreeLoadMoreItem isLoading={documentsIsLoading}>
                           Loading...
-                        </UNSTABLE_TreeLoadingSentinel>
+                        </TreeLoadMoreItem>
                       </StaticTreeItem>
                     );
                   } else {
@@ -1423,9 +1423,9 @@ describe('Tree', () => {
                   }
                 }}
               </Collection>
-              <UNSTABLE_TreeLoadingSentinel isLoading={rootIsLoading}>
+              <TreeLoadMoreItem isLoading={rootIsLoading}>
                 Loading...
-              </UNSTABLE_TreeLoadingSentinel>
+              </TreeLoadMoreItem>
             </Tree>
           </Virtualizer>
         );

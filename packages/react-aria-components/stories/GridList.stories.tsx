@@ -36,11 +36,11 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
   title: 'React Aria Components'
@@ -228,7 +228,7 @@ interface Character {
 
 const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       style={{
         height: 30,
         width: '100%',
@@ -238,7 +238,7 @@ const MyGridListLoaderIndicator = (props) => {
       }}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_GridListLoadingSentinel>
+    </GridListLoadMoreItem>
   );
 };
 
@@ -276,6 +276,9 @@ export const AsyncGridList = (args) => {
   );
 };
 
+{/* <MyGridListLoaderIndicator
+isLoading={list.loadingState === 'loadingMore'}
+onLoadMore={list.onLoadMore} /> */}
 AsyncGridList.story = {
   args: {
     delay: 50
