@@ -19,7 +19,7 @@ import {
   SearchField,
   Text
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
@@ -31,16 +31,17 @@ const meta: Meta<typeof SearchField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof SearchField>;
 
-export const Example = {
-  render: (args: any) => <SearchField {...args} />,
+export const Example: Story = {
+  render: (args) => <SearchField {...args} />,
   args: {
     label: 'Search'
   }
 };
 
-export const CustomWidth = {
-  render: (args: any) => <SearchField {...args} styles={style({width: 256})} />,
+export const CustomWidth: Story = {
+  render: (args) => <SearchField {...args} styles={style({width: 256})} />,
   args: {
     label: 'Search'
   },
@@ -51,8 +52,8 @@ export const CustomWidth = {
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => <SearchField {...args} />,
+export const ContextualHelpExample: Story = {
+  render: (args) => <SearchField {...args} />,
   args: {
     label: 'Search',
     contextualHelp: (

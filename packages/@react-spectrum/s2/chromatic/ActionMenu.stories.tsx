@@ -26,20 +26,22 @@ const meta: Meta<typeof ActionMenu<any>> = {
 export default meta;
 type Story = StoryObj<typeof ActionMenu<any>>;
 
-export const Static: Story = {...Example};
-
-Static.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Static: Story = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };
 
-export const Dynamic = {...DynamicExample};
-
-Dynamic.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Dynamic: Story = {
+  ...DynamicExample,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };

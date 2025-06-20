@@ -12,7 +12,7 @@
 
 import type {ColorScheme, Router} from '@react-types/provider';
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, JSX, ReactNode, useContext} from 'react';
+import {Context, createContext, JSX, ReactNode, useContext} from 'react';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
@@ -48,7 +48,9 @@ export interface ProviderProps extends UnsafeStyles {
   elementType?: keyof JSX.IntrinsicElements
 }
 
-export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | null>(null);
+export const ColorSchemeContext:
+  Context<ColorScheme | 'light dark' | null> =
+  createContext<ColorScheme | 'light dark' | null>(null);
 
 export function Provider(props: ProviderProps): ReactNode {
   let result = <ProviderInner {...props} />;

@@ -11,8 +11,8 @@
  */
 
 import {ActionButtonGroupProps, actionGroupStyle} from './ActionButtonGroup';
+import {Context, createContext, ForwardedRef, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {ContextValue, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps as RACToggleButtonGroupProps} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef} from 'react';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className'> {
@@ -20,12 +20,16 @@ export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RAC
   isEmphasized?: boolean
 }
 
-export const ToggleButtonGroupContext = createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
+export const ToggleButtonGroupContext:
+  Context<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>> =
+  createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.
  */
-export const ToggleButtonGroup = forwardRef(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ToggleButtonGroup:
+  ForwardRefExoticComponent<ToggleButtonGroupProps & RefAttributes<HTMLDivElement>> =
+forwardRef(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonGroupContext);
   let {
     density = 'regular',

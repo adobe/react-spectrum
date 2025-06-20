@@ -18,7 +18,7 @@ import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import React, {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -39,7 +39,9 @@ export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 
   children: ReactNode
 }
 
-export const DisclosureContext = createContext<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const DisclosureContext:
+  Context<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const disclosure = style({
   color: 'heading',
@@ -68,7 +70,9 @@ const disclosure = style({
 /**
  * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
+export const Disclosure:
+  React.ForwardRefExoticComponent<DisclosureProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
   let {
     size = 'M',
@@ -99,7 +103,7 @@ export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps,
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
-   * 
+   *
    * @default 3
    */
   level?: number,
@@ -245,12 +249,16 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
 /**
  * A wrapper element for the disclosure title that can contain other elements not part of the trigger.
  */
-export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
+export const DisclosureHeader:
+  (props: DisclosureHeaderProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => React.ReactElement | null =
+  /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
 
 /**
  * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
  */
-export const DisclosureTitle = forwardRef(function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
+export const DisclosureTitle:
+  ForwardRefExoticComponent<DisclosureTitleProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -318,7 +326,9 @@ const panelStyles = style({
 /**
  * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
  */
-export const DisclosurePanel = forwardRef(function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
+export const DisclosurePanel:
+  ForwardRefExoticComponent<DisclosurePanelProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className = '',

@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {createContext, forwardRef, ReactNode} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -55,7 +55,9 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
   label?: ReactNode
 }
 
-export const ProgressBarContext = createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressBarContext:
+  Context<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const indeterminateLTR = keyframes(`
   0% {
@@ -170,7 +172,9 @@ const indeterminateAnimation = style({
  * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
  * They can represent either determinate or indeterminate progress.
  */
-export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressBar:
+  ForwardRefExoticComponent<ProgressBarProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+/*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label, size = 'M',

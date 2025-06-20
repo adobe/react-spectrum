@@ -22,7 +22,9 @@ import {
   Text,
   TreeView,
   TreeViewItem,
-  TreeViewItemContent
+  TreeViewItemContent,
+  TreeViewItemProps,
+  TreeViewProps
 } from '../src';
 import {categorizeArgTypes} from './utils';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
@@ -30,8 +32,8 @@ import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
-import type {Meta} from '@storybook/react';
-import React from 'react';
+import type {Meta, StoryObj} from '@storybook/react';
+import React, {ReactElement} from 'react';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -70,8 +72,7 @@ const meta: Meta<typeof TreeView> = {
 
 export default meta;
 
-
-const TreeExampleStatic = (args) => (
+const TreeExampleStatic = (args: TreeViewProps<any>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
@@ -179,14 +180,14 @@ const TreeExampleStatic = (args) => (
   </div>
 );
 
-export const Example = {
+export const Example: StoryObj<typeof TreeExampleStatic> = {
   render: TreeExampleStatic,
   args: {
     selectionMode: 'multiple'
   }
 };
 
-const TreeExampleStaticNoActions = (args) => (
+const TreeExampleStaticNoActions = (args: TreeViewProps<any>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
@@ -234,15 +235,21 @@ const TreeExampleStaticNoActions = (args) => (
   </div>
 );
 
-export const ExampleNoActions = {
+export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
   render: TreeExampleStaticNoActions,
   args: {
     selectionMode: 'multiple'
   }
 };
 
+interface TreeViewItemType {
+  id: string,
+  name: string,
+  icon: ReactElement,
+  childItems?: TreeViewItemType[]
+}
 
-let rows = [
+let rows: TreeViewItemType[] = [
   {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
     {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
     {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
@@ -273,7 +280,7 @@ let rows = [
   ]}
 ];
 
-const DynamicTreeItem = (props) => {
+const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType): ReactElement => {
   let {childItems, name, icon} = props;
   return (
     <>
@@ -293,16 +300,14 @@ const DynamicTreeItem = (props) => {
           </ActionMenu>
         </TreeViewItemContent>
         <Collection items={childItems}>
-          {(item: any) => (
+          {(item) => (
             <DynamicTreeItem
               id={item.id}
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
               name={item.name}
-              href={props.href}>
-              {item.name}
-            </DynamicTreeItem>
+              href={props.href} />
           )}
         </Collection>
       </TreeViewItem>
@@ -310,10 +315,10 @@ const DynamicTreeItem = (props) => {
   );
 };
 
-const TreeExampleDynamic = (args) => (
+const TreeExampleDynamic = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
     <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
-      {(item: any) => (
+      {(item) => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
@@ -325,7 +330,7 @@ const TreeExampleDynamic = (args) => (
   </div>
 );
 
-export const Dynamic = {
+export const Dynamic: StoryObj<typeof TreeExampleDynamic> = {
   render: TreeExampleDynamic,
   args: {
     ...Example.args,
@@ -333,7 +338,7 @@ export const Dynamic = {
   }
 };
 
-function renderEmptyState() {
+function renderEmptyState(): ReactElement {
   return (
     <IllustratedMessage>
       <FolderOpen />
@@ -347,7 +352,7 @@ function renderEmptyState() {
   );
 }
 
-export const Empty = {
+export const Empty: StoryObj<typeof TreeExampleDynamic> = {
   render: TreeExampleDynamic,
   args: {
     renderEmptyState,
@@ -355,7 +360,7 @@ export const Empty = {
   }
 };
 
-const TreeExampleWithLinks = (args) => (
+const TreeExampleWithLinks = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
@@ -371,7 +376,7 @@ const TreeExampleWithLinks = (args) => (
   </div>
 );
 
-export const WithLinks = {
+export const WithLinks: StoryObj<typeof TreeExampleWithLinks> = {
   ...Dynamic,
   render: TreeExampleWithLinks,
   name: 'Tree with links',

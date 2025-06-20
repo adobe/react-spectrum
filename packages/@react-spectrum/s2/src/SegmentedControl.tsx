@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
+import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, FocusableRefValue, Key} from '@react-types/shared';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, RefObject, useCallback, useContext, useRef} from 'react';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
@@ -52,7 +52,9 @@ export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps
   isDisabled?: boolean
 }
 
-export const SegmentedControlContext = createContext<ContextValue<Partial<SegmentedControlProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const SegmentedControlContext:
+  Context<ContextValue<Partial<SegmentedControlProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<SegmentedControlProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const segmentedControl = style({
   display: 'flex',
@@ -149,7 +151,9 @@ const InternalSegmentedControlContext = createContext<InternalSegmentedControlCo
 /**
  * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
  */
-export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
+export const SegmentedControl:
+  ForwardRefExoticComponent<SegmentedControlProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+/*#__PURE__*/ forwardRef(function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
     defaultSelectedKey,
@@ -218,7 +222,9 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 /**
  * A SegmentedControlItem represents an option within a SegmentedControl.
  */
-export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
+export const SegmentedControlItem:
+  ForwardRefExoticComponent<SegmentedControlItemProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+/*#__PURE__*/ forwardRef(function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
   let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);

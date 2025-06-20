@@ -1,5 +1,5 @@
+import {Context, createContext, ForwardedRef, forwardRef, ForwardRefExoticComponent, HTMLAttributeReferrerPolicy, ReactNode, RefAttributes, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
@@ -57,7 +57,9 @@ interface ImageContextValue extends ImageProps {
   hidden?: boolean
 }
 
-export const ImageContext = createContext<ContextValue<Partial<ImageContextValue>, HTMLDivElement>>(null);
+export const ImageContext:
+  Context<ContextValue<Partial<ImageContextValue>, HTMLDivElement>> =
+  createContext<ContextValue<Partial<ImageContextValue>, HTMLDivElement>>(null);
 
 type ImageState = 'loading' | 'loaded' | 'revealed' | 'error';
 interface State {
@@ -67,7 +69,7 @@ interface State {
   loadTime: number
 }
 
-type Action = 
+type Action =
   | {type: 'update', src: string}
   | {type: 'loaded'}
   | {type: 'revealed'}
@@ -133,7 +135,9 @@ const imgStyles = style({
   transitionDuration: 500
 });
 
-export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
+export const Image:
+  ForwardRefExoticComponent<ImageProps & RefAttributes<HTMLDivElement>> =
+forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
   [props, domRef] = useSpectrumContextProps(props, domRef, ImageContext);
 
   let {
@@ -155,7 +159,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     slot
   } = props;
   let hidden = (props as ImageContextValue).hidden;
-  
+
   let {revealAll, register, unregister, load} = useContext(group);
   let [{state, src: lastSrc, loadTime}, dispatch] = useReducer(reducer, src, createState);
 

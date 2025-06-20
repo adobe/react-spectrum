@@ -26,11 +26,12 @@ const meta: Meta<typeof AlertDialog> = {
 
 export default meta;
 
-export const Example = {...Base} as StoryObj;
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('alertdialog');
+export const Example: StoryObj<typeof AlertDialog> = {
+  ...Base,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('alertdialog');
+  }
 };

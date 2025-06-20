@@ -70,7 +70,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, forwardRef, ReactElement, ReactNode, RefAttributes, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -122,7 +122,9 @@ export interface PickerProps<T extends object> extends
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 
-export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const PickerContext:
+  Context<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
@@ -262,7 +264,9 @@ let InsideSelectValueContext = createContext(false);
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const Picker:
+  <T extends object>(props: PickerProps<T> & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);

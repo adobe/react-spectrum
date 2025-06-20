@@ -13,7 +13,7 @@
 import {categorizeArgTypes} from './utils';
 
 import {ColorSlider} from '../src/ColorSlider';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,
@@ -29,11 +29,13 @@ const meta: Meta<typeof ColorSlider> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorSlider>;
 
-export const Example = (args: any) => <ColorSlider {...args} onChange={undefined} />;
-
-Example.args = {
-  label: 'Red Opacity',
-  defaultValue: '#f00',
-  channel: 'alpha'
+export const Example: Story = {
+  render: (args) => <ColorSlider {...args} onChange={undefined} />,
+  args: {
+    label: 'Red Opacity',
+    defaultValue: '#f00',
+    channel: 'alpha'
+  }
 };

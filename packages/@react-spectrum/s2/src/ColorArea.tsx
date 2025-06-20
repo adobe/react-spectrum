@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
-import {createContext, forwardRef} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -25,12 +25,16 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style'>, StyleProps {}
 
-export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorAreaContext:
+  Context<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>> =
+  createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
-export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorArea:
+  ForwardRefExoticComponent<ColorAreaProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorAreaContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);

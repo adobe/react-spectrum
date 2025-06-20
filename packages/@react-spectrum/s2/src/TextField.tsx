@@ -21,7 +21,7 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, Ref, RefAttributes, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -41,14 +41,18 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
+export const TextFieldContext:
+  Context<ContextValue<Partial<TextFieldProps>, TextFieldRef>> =
+  createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-export const TextField = forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
+export const TextField:
+  ForwardRefExoticComponent<TextFieldProps & RefAttributes<TextFieldRef<HTMLInputElement>>> =
+forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
   return (
     <TextFieldBase
@@ -61,14 +65,18 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
-export const TextAreaContext = createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
+export const TextAreaContext:
+  Context<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>> =
+  createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
-export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+export const TextArea:
+  ForwardRefExoticComponent<TextAreaProps & RefAttributes<TextFieldRef<HTMLTextAreaElement>>> =
+forwardRef(function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
   [props, ref] = useSpectrumContextProps(props, ref, TextAreaContext);
   return (
     <TextFieldBase
@@ -83,7 +91,12 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
   );
 });
 
-export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase:
+  ForwardRefExoticComponent<TextFieldProps & {
+    children: ReactNode,
+    fieldGroupCss?: StyleString
+  } & RefAttributes<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>> =
+forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);

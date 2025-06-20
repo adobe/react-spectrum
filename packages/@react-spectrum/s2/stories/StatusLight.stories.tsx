@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {StatusLight} from '../src';
 import {style} from '../style' with {type: 'macro'};
 
@@ -27,15 +27,18 @@ const meta: Meta<typeof StatusLight> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof StatusLight>;
 
-export const Example = (args: any) => <StatusLight {...args}>Status</StatusLight>;
-
-Example.args = {
-  variant: 'positive'
+export const Example: Story = {
+  render: (args) => <StatusLight {...args}>Status</StatusLight>,
+  args: {
+    variant: 'positive'
+  }
 };
 
-export const LongLabel = (args: any) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>;
-
-LongLabel.args = {
-  variant: 'positive'
+export const LongLabel: Story = {
+  render: (args) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>,
+  args: {
+    variant: 'positive'
+  }
 };

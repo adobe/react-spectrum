@@ -12,8 +12,8 @@
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps, ContextValue} from 'react-aria-components';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 // @ts-ignore
@@ -79,12 +79,16 @@ const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boo
   }
 }, getAllowedOverrides());
 
-export const CloseButtonContext = createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const CloseButtonContext:
+  Context<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * A CloseButton allows a user to dismiss a dialog.
  */
-export const CloseButton = forwardRef(function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const CloseButton:
+  ForwardRefExoticComponent<CloseButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+forwardRef(function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);

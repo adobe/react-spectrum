@@ -12,8 +12,8 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
+import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -33,13 +33,17 @@ export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className
   isEmphasized?: boolean
 }
 
-export const ToggleButtonContext = createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ToggleButtonContext:
+  Context<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>> =
+  createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example
  * switching between two states or modes.
  */
-export const ToggleButton = forwardRef(function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ToggleButton:
+  ForwardRefExoticComponent<ToggleButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
+forwardRef(function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);

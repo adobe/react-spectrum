@@ -11,14 +11,14 @@
  */
 
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
-import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
+import {Alignment, DOMRef, DOMRefValue, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {ForwardedRef, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -42,7 +42,9 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   children?: ReactNode
 }
 
-export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
+export const FieldLabel:
+  ForwardRefExoticComponent<FieldLabelProps & RefAttributes<DOMRefValue<HTMLLabelElement>>> =
+forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isDisabled,
@@ -186,7 +188,9 @@ const fieldGroupStyles = style({
   }
 });
 
-export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const FieldGroup:
+  ForwardRefExoticComponent<FieldGroupProps & RefAttributes<HTMLDivElement>> =
+forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Group
       ref={ref}
@@ -214,7 +218,9 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
 
 export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
-export const Input = forwardRef(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+export const Input:
+  ForwardRefExoticComponent<InputProps & RefAttributes<HTMLInputElement>> =
+forwardRef(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   let {UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   return (
     <RACInput

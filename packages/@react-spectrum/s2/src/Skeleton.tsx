@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
+import {cloneElement, Context, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {color, style} from '../style' with {type: 'macro'};
 import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
@@ -51,7 +51,7 @@ export type SkeletonElement = ReactElement<{
   inert?: boolean | 'true'
 }>;
 
-export const SkeletonContext = createContext<boolean | null>(null);
+export const SkeletonContext: Context<boolean | null> = createContext<boolean | null>(null);
 export function useIsSkeleton(): boolean {
   return useContext(SkeletonContext) || false;
 }

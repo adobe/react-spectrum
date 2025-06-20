@@ -11,8 +11,8 @@
  */
 
 import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
-import {DOMRef} from '@react-types/shared';
-import {forwardRef} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
@@ -58,7 +58,9 @@ const dialogStyle = style({
 /**
  * A CustomDialog is a floating window with a custom layout.
  */
-export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
+export const CustomDialog:
+  ForwardRefExoticComponent<CustomDialogProps & RefAttributes<DOMRefValue<HTMLElement>>> =
+forwardRef(function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
   let {
     size,
     isDismissible,
