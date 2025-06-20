@@ -281,6 +281,10 @@ export default function SearchMenu(props: SearchMenuProps) {
       onFocusSearch(); // Open the search overlay
       setSearchValue(e.key); // Set the initial search value
     }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      toggleShowSearchMenu();
+    }
   };
 
   let handleButtonPress = () => {
