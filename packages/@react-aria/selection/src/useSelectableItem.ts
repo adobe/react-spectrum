@@ -381,7 +381,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).
-  let onClick = manager.isLink(key) ? e => {
+  let onClick = linkBehavior !== 'none' && manager.isLink(key) ? e => {
     if (!(openLink as any).isOpening) {
       e.preventDefault();
     }

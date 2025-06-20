@@ -316,7 +316,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         focusProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
         data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
-        {onClick}
+        isDisabled ? undefined : {onClick}
       ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
       tabIndex: itemProps.tabIndex != null && isTriggerExpanded && !data.shouldUseVirtualFocus ? -1 : itemProps.tabIndex
