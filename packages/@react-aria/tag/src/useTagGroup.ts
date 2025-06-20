@@ -54,7 +54,7 @@ interface HookData {
   onRemove?: (keys: Set<Key>) => void
 }
 
-export const hookData = new WeakMap<ListState<any>, HookData>();
+export const hookData: WeakMap<ListState<any>, HookData> = new WeakMap<ListState<any>, HookData>();
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.

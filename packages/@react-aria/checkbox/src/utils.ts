@@ -19,4 +19,4 @@ interface CheckboxGroupData {
   validationBehavior: 'aria' | 'native'
 }
 
-export const checkboxGroupData = new WeakMap<CheckboxGroupState, CheckboxGroupData>();
+export const checkboxGroupData: WeakMap<CheckboxGroupState, CheckboxGroupData> = new WeakMap<CheckboxGroupState, CheckboxGroupData>();

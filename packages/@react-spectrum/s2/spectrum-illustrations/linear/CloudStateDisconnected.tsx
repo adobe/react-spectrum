@@ -13,10 +13,11 @@
 import CloudStateDisconnected_L from 'illustration:./S2_lin_cloudStateDisconnected_160.svg';
 import CloudStateDisconnected_M from 'illustration:./S2_lin_cloudStateDisconnected_96.svg';
 import CloudStateDisconnected_S from 'illustration:./S2_lin_cloudStateDisconnected_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function CloudStateDisconnected(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function CloudStateDisconnected(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

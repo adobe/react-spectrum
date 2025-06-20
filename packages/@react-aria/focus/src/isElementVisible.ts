@@ -10,9 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from './domHelpers';
-
-const supportsCheckVisibility = typeof Element !== 'undefined' && 'checkVisibility' in Element.prototype;
+import {getOwnerWindow} from '@react-aria/utils';
 
 function isStyleVisible(element: Element) {
   const windowObject = getOwnerWindow(element);
@@ -62,10 +60,6 @@ function isAttributeVisible(element: Element, childElement?: Element) {
  * @param element - Element to evaluate for display or visibility.
  */
 export function isElementVisible(element: Element, childElement?: Element): boolean {
-  if (supportsCheckVisibility) {
-    return element.checkVisibility();
-  }
-  
   return (
     element.nodeName !== '#comment' &&
     isStyleVisible(element) &&

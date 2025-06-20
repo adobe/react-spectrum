@@ -199,9 +199,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   {label}
                 </FieldLabel>
                 <FieldGroup
-                  role="presentation"
-                  isDisabled={isDisabled}
-                  isInvalid={isInvalid}
                   size={size}
                   styles={style({
                     ...fieldInput(),

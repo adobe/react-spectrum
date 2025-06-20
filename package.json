@@ -27,7 +27,7 @@
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
-    "test": "cross-env STRICT_MODE=1 yarn jest",
+    "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
     "test-storybook": "test-storybook --url http://localhost:9003  --browsers chromium --no-cache",

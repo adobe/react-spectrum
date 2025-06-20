@@ -103,8 +103,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
         scrollRef={menuRef}
         placement={initialPlacement}
         hideArrow
-        shouldFlip={shouldFlip}
-        shouldContainFocus>
+        shouldFlip={shouldFlip}>
         {menu}
       </Popover>
     );
