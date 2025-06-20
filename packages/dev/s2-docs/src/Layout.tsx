@@ -71,6 +71,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             default: 0,
             lg: 12
           },
+          paddingBottom: 0,
           gap: {
             default: 0,
             lg: 12
@@ -103,8 +104,12 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               flexGrow: 1,
               display: 'flex',
               justifyContent: 'space-between',
-              height: '[calc(100vh - 68px)]',
-              overflow: 'auto'
+              height: {
+                lg: '[calc(100vh - 72px)]'
+              },
+              overflow: {
+                lg: 'auto'
+              }
             })}>
             <article
               className={style({

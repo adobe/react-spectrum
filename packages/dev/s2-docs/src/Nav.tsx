@@ -27,7 +27,7 @@ export function Nav({pages, currentPage}: PageProps) {
         position: 'sticky',
         top: 40,
         height: 'fit',
-        maxHeight: 'screen',
+        maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         display: {
           default: 'none',
