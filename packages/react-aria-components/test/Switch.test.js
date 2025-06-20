@@ -229,4 +229,20 @@ describe('Switch', () => {
     expect(inputRef.current).toBe(getByRole('switch'));
     expect(contextInputRef.current).toBe(getByRole('switch'));
   });
+
+  it('should allow onChange event to bubble to the form', async () => {
+    let onChange = jest.fn();
+
+    let {getByRole} = render(
+      <form onChange={onChange}>
+        <Switch name="test">Test</Switch>
+      </form>
+    );
+
+    let input = getByRole('switch');
+    await user.click(input);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.lastCall[0].target.name).toBe('test');
+  });
 });

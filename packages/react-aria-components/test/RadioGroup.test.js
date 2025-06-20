@@ -557,4 +557,21 @@ describe('RadioGroup', () => {
     expect(inputRef.current).toBe(radio);
     expect(contextInputRef.current).toBe(radio);
   });
+
+  it('should allow onChange event to bubble to the form', async () => {
+    let onChange = jest.fn();
+
+    let {getAllByRole} = render(
+      <form onChange={onChange}>
+        <TestRadioGroup groupProps={{name: 'test'}} />
+      </form>
+    );
+
+    let radios = getAllByRole('radio');
+    await user.click(radios[1]);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.lastCall[0].target.name).toBe('test');
+    expect(onChange.mock.lastCall[0].target.value).toBe('b');
+  });
 });
