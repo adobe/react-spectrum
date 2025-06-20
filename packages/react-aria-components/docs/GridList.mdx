@@ -612,7 +612,9 @@ This accepts a list of item ids that are disabled. An item is considered disable
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the UNSTABLE_GridListLoadingSentinel after the GridList's items render function as shown in the example below. Note that UNSTABLE_GridListLoadingSentinel is meant to render the spinner specifically when loading additional items,
+infinite scroll to load more data, be sure to include the `<UNSTABLE_GridListLoadingSentinel>` after the `GridList`'s items render function as shown in the example below.
+
+Note that `<UNSTABLE_GridListLoadingSentinel>` is meant to render the spinner specifically when loading additional items,
 the initial loading state and empty state should instead be handled via [renderEmptyState](./empty-state).
 
 ```tsx example
