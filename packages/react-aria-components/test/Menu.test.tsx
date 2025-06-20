@@ -534,11 +534,12 @@ describe('Menu', () => {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault();
+        let onClick = mockClickDefault({capture: true});
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.click(items[1]);
           fireEvent.keyUp(items[1], {key: 'Enter'});
         }
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1440,6 +1441,136 @@ describe('Menu', () => {
     act(() => {jest.runAllTimers();});
     expect(menu).toBeInTheDocument();
     expect(document.activeElement).toBe(activeElement);
+  });
+
+  it('should support press events on menu items', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items with closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when dragging and releasing', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await user.pointer({target: menuTester.trigger, keys: '[MouseLeft>]'});
+    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).not.toHaveBeenCalled();
+    expect(onPressEnd).not.toHaveBeenCalled();
+    expect(onPress).not.toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).not.toHaveBeenCalled();
+    expect(onPress).not.toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard and closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
 

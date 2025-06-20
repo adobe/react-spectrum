@@ -16,7 +16,7 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Nod
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
+import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
@@ -339,7 +339,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, GlobalDOMAttributes<HTMLDivElement> {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -368,7 +368,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
 
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
     ...props,
-    onClick: undefined,
     id,
     key: item.key,
     selectionManager
@@ -396,6 +395,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <ElementType

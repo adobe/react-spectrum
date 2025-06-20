@@ -103,7 +103,7 @@ const propRe = /^(data-.*)$/;
  * @param props - The component props to be filtered.
  * @param opts - Props to override.
  */
-export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProps & GlobalDOMAttributes, opts: Options = {}): DOMProps & AriaLabelingProps {
+export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProps & GlobalDOMAttributes, opts: Options = {}): DOMProps & AriaLabelingProps & GlobalDOMAttributes {
   let {labelable, isLink, global, events = global, propNames} = opts;
   let filteredProps = {};
 
