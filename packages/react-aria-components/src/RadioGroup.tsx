@@ -22,7 +22,7 @@ import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps, GlobalDOMAttributes<HTMLLabelElement> {
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * A ref for the HTML input element.
    */
@@ -219,6 +219,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

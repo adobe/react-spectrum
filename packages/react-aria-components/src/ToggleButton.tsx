@@ -68,6 +68,7 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <button

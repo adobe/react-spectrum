@@ -22,7 +22,7 @@ import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} fro
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLLabelElement> {
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * A ref for the HTML input element.
    */
@@ -232,6 +232,7 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

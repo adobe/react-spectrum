@@ -17,7 +17,7 @@ import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/share
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps, GlobalDOMAttributes<HTMLLabelElement> {
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * A ref for the HTML input element.
    */
@@ -109,6 +109,7 @@ export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Swit
 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

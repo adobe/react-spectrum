@@ -159,6 +159,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
   let DOMProps = filterDOMProps(props, {global: true, propNames: additionalButtonHTMLAttributes});
+  delete DOMProps.onClick;
 
   return (
     <button

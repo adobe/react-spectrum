@@ -80,6 +80,7 @@ export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(p
   });
 
   let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.onClick;
 
   return (
     <ElementType
