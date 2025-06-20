@@ -106,11 +106,24 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       if (parent) {
         // siblings must exist because our original node exists, same with lastItem
         let siblings = state.collection.getChildren?.(parent.key)!;
-        setSize = getLastItem(siblings)!.index + 1;
+        let lastItemOfParent = getLastItem(siblings)!;
+        // Don't include loaders as part of the item count, to be revisited when we support focusing the loaders
+        // Also assumes only one loader per tree parent row
+        if (lastItemOfParent.type === 'loader') {
+          setSize = lastItemOfParent.index;
+        } else {
+          setSize = lastItemOfParent.index + 1;
+        }
       }
     } else {
-      setSize = ([...state.collection].filter(row => row.level === 0).at(-1)?.index ?? 0) + 1;
+      let lastItemOfParent = ([...state.collection].filter(row => row.level === 0).at(-1))!;
+      if (lastItemOfParent.type === 'loader') {
+        setSize = lastItemOfParent.index;
+      } else {
+        setSize = lastItemOfParent.index + 1;
+      }
     }
+
     treeGridRowProps = {
       'aria-expanded': isExpanded,
       'aria-level': node.level + 1,

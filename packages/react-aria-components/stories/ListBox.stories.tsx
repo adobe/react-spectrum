@@ -241,13 +241,13 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-export function VirtualizedListBox({variableHeight}) {
+export function VirtualizedListBox(args) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
       const l = (s * 5) + i + 10;
-      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${args.variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
@@ -256,24 +256,31 @@ export function VirtualizedListBox({variableHeight}) {
     <Virtualizer
       layout={new ListLayout({
         estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26
+        estimatedHeadingHeight: 26,
+        loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
-        {section => (
-          <ListBoxSection className={styles.group}>
-            <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
-            <Collection items={section.children}>
-              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-            </Collection>
-          </ListBoxSection>
-        )}
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+        <Collection items={sections}>
+          {section => (
+            <ListBoxSection className={styles.group}>
+              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <Collection items={section.children}>
+                {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+              </Collection>
+            </ListBoxSection>
+          )}
+        </Collection>
+        <MyListBoxLoaderIndicator orientation="vertical" isLoading={args.isLoading} />
       </ListBox>
     </Virtualizer>
   );
 }
 
-VirtualizedListBox.args = {
-  variableHeight: false
+VirtualizedListBox.story = {
+  args: {
+    variableHeight: false,
+    isLoading: false
+  }
 };
 
 export function VirtualizedListBoxEmpty() {
@@ -285,7 +292,7 @@ export function VirtualizedListBoxEmpty() {
         estimatedHeadingHeight: 26
       }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
-        <></>
+        <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
   );
