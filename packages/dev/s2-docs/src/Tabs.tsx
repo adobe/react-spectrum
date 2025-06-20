@@ -46,7 +46,8 @@ const tabs = style({
   position: 'relative',
   display: 'flex',
   flexShrink: 0,
-  font: 'ui'
+  font: 'ui',
+  height: 'full'
 });
 
 /**
@@ -223,7 +224,9 @@ const tabPanel = style({
   flexGrow: 1,
   flexBasis: '[0%]',
   minHeight: 0,
-  minWidth: 0
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column'
 });
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {

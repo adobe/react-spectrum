@@ -12,7 +12,7 @@ import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
 import {MobileHeader} from './MobileHeader';
-import {PickerItem, SearchField} from '@react-spectrum/s2';
+import {PickerItem} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -70,9 +70,13 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           padding: {
             default: 0,
             lg: 12
+          },
+          gap: {
+            default: 0,
+            lg: 12
           }
         })}>
-        <Header pages={pages} currentPage={currentPage}  />
+        <Header pages={pages} currentPage={currentPage} />
         <MobileHeader
           toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
           nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />

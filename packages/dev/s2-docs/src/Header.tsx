@@ -63,15 +63,13 @@ export default function Header(props: PageProps) {
 
   return (
     <>
-      <header className={style({width: 'full', display: 'flex', justifyContent: 'center'})}>
+      <header className={style({width: 'full', display: {default: 'none', lg: 'flex'}, justifyContent: 'center'})}>
         <div
           className={style({
             width: 'full', 
-            maxWidth: 1600,
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
-            alignItems: 'center',
-            paddingX: 16
+            alignItems: 'center'
           })}>
           <div className={style({justifySelf: 'start'})}>
             <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu} UNSAFE_style={{paddingInlineStart: 10}}>

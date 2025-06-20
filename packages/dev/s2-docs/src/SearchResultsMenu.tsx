@@ -86,7 +86,7 @@ export default function SearchResultsMenu({
 
         {showCards && renderCardList()}
 
-        <div style={{display: showCards ? 'none' : 'block'}} className={style({maxHeight: '[85vh]', overflow: 'auto'})}>
+        <div style={{display: showCards ? 'none' : 'block'}} className={style({height: 'full', overflow: 'auto'})}>
           {mainItems.length > 0 ? (
              
             <div

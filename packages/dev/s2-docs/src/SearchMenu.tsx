@@ -1,7 +1,7 @@
 'use client';
 
 import {AdobeLogo} from './icons/AdobeLogo';
-import {AutocompleteProps, Button, ButtonProps, Modal, useFilter} from 'react-aria-components';
+import {AutocompleteProps, Button, ButtonProps, Dialog, Modal, useFilter} from 'react-aria-components';
 import CardList from './CardList';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
@@ -98,7 +98,7 @@ let modalStyle = style({
   top: 8,
   width: 'full',
   // Matches body
-  maxWidth: 1600,
+  maxWidth: 1280,
   backgroundColor: 'elevated',
   paddingX: 16,
   paddingY: 8,
@@ -125,8 +125,6 @@ const getCurrentLibrary = (currentPage: Page) => {
 
 export default function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen} = props;
-
-  let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
   
   const currentLibrary = getCurrentLibrary(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(currentLibrary);
@@ -216,6 +214,7 @@ export default function SearchMenu(props: SearchMenuProps) {
   }, [transformedComponents]);
 
   useEffect(() => {
+    let isMac = /Mac/.test(navigator.platform);
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -228,7 +227,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [closeSearchMenu, isMac, toggleShowSearchMenu]);
+  }, [closeSearchMenu, toggleShowSearchMenu]);
 
   let onFocusSearch = () => {
     toggleShowSearchMenu();
@@ -299,61 +298,63 @@ export default function SearchMenu(props: SearchMenuProps) {
       })}>
       <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
-        <Tabs
-          aria-label="Libraries"
-          keyboardActivation="manual"
-          orientation="vertical"
-          selectedKey={selectedLibrary}
-          onSelectionChange={(key) => {
-            if (searchValue) {
-              setSearchValue('');
-            }
-            setSelectedLibrary(key as typeof selectedLibrary);
-            // Focus main search field of the newly selected tab
-            setTimeout(() => {
-              // Check ref exists and points to the correct main search field before focusing
-              const keyString = key as string;
-              const expectedLabel = `Search ${keyString.charAt(0).toUpperCase() + keyString.slice(1).replace('-', ' ')}`;
-              if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === expectedLabel) {
-                searchRef.current.focus();
+        <Dialog className={style({height: 'full'})}>
+          <Tabs
+            aria-label="Libraries"
+            keyboardActivation="manual"
+            orientation="vertical"
+            selectedKey={selectedLibrary}
+            onSelectionChange={(key) => {
+              if (searchValue) {
+                setSearchValue('');
               }
-            }, 10);
-          }}>
-          <TabList aria-label="Library">
+              setSelectedLibrary(key as typeof selectedLibrary);
+              // Focus main search field of the newly selected tab
+              setTimeout(() => {
+                // Check ref exists and points to the correct main search field before focusing
+                const keyString = key as string;
+                const expectedLabel = `Search ${keyString.charAt(0).toUpperCase() + keyString.slice(1).replace('-', ' ')}`;
+                if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === expectedLabel) {
+                  searchRef.current.focus();
+                }
+              }, 10);
+            }}>
+            <TabList aria-label="Library">
+              {orderedTabs.map((tab, i) => (
+                <Tab key={tab.id} id={tab.id}>
+                  <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
+                    <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                      {tab.icon}
+                    </div>
+                    <div>
+                      <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({fontSize: 'heading-xs'})}>
+                        {tab.label}
+                      </span>
+                      <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
+                    </div>
+                  </div>
+                </Tab>
+              ))}
+            </TabList>
             {orderedTabs.map((tab, i) => (
-              <Tab key={tab.id} id={tab.id}>
-                <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                  <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'} as CSSProperties}>
-                    {tab.icon}
-                  </div>
-                  <div>
-                    <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({fontSize: 'heading-xs'})}>
-                      {tab.label}
-                    </span>
-                    <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
-                  </div>
-                </div>
-              </Tab>
+              <TabPanel key={tab.id} id={tab.id}>
+                <SearchResultsMenu
+                  libraryName={tab.label}
+                  libraryKey={tab.id as 'react-spectrum' | 'react-aria' | 'internationalized'}
+                  searchValue={searchValue}
+                  onSearchValueChange={setSearchValue}
+                  mainItems={filteredComponents}
+                  searchRef={searchRef}
+                  showCards={showCards}
+                  renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
+                  filter={filter}
+                  noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
+                  closeSearchMenu={closeSearchMenu}
+                  isPrimary={i === 0} />
+              </TabPanel>
             ))}
-          </TabList>
-          {orderedTabs.map((tab, i) => (
-            <TabPanel key={tab.id} id={tab.id}>
-              <SearchResultsMenu
-                libraryName={tab.label}
-                libraryKey={tab.id as 'react-spectrum' | 'react-aria' | 'internationalized'}
-                searchValue={searchValue}
-                onSearchValueChange={setSearchValue}
-                mainItems={filteredComponents}
-                searchRef={searchRef}
-                showCards={showCards}
-                renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
-                filter={filter}
-                noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
-                closeSearchMenu={closeSearchMenu}
-                isPrimary={i === 0} />
-            </TabPanel>
-          ))}
-        </Tabs>
+          </Tabs>
+        </Dialog>
       </Modal>
     </div>
   );

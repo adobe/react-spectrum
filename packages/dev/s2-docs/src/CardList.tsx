@@ -93,7 +93,7 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
   return (
     <nav
       className={style({ 
-        maxHeight: '[80vh]',
+        flexGrow: 1,
         overflow: 'auto',
         margin: 16,
         padding: 16
