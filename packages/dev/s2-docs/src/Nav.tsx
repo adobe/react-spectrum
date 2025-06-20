@@ -1,9 +1,9 @@
 'use client';
 
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
 import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
@@ -69,7 +69,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
         </MenuSection>
       ))}
     </Menu>
-  )
+  );
 }
 
 function title(page) {

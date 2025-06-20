@@ -1,12 +1,11 @@
 'use client';
 
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { keyframes } from "../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-import { CSSProperties, useEffect, useRef } from "react";
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton, MenuTrigger} from '@react-spectrum/s2';
+import {AdobeLogo} from './AdobeLogo';
+import {CSSProperties, useEffect, useRef} from 'react';
+import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
-import { AdobeLogo } from "./AdobeLogo";
-import { MenuTrigger } from "@react-spectrum/s2";
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let fadeOut = keyframes(`
   0% {
