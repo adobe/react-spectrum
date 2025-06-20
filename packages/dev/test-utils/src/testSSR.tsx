@@ -30,7 +30,7 @@ try {
   // ignore.
 }
 
-export async function testSSR(filename, source, runAfterServer) {
+export async function testSSR(filename: string, source: string, runAfterServer?: () => void): Promise<void> {
   // Transform the code with babel so JSX becomes JS.
   source = babel.transformSync(source, {filename, plugins: ['@babel/plugin-syntax-import-attributes']}).code;
 
@@ -58,7 +58,7 @@ export async function testSSR(filename, source, runAfterServer) {
         }
 
         // Capture React errors/warning and make them fail the tests.
-        let errors = [];
+        let errors: string[] = [];
         console.error = console.warn = (...messages) => {
           errors.push(util.format(...messages));
         };
@@ -72,9 +72,9 @@ export async function testSSR(filename, source, runAfterServer) {
           if (ReactDOMClient) {
             act(() => ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>));
           } else {
-            act(() => {ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);});
+            act(() => {(ReactDOM as any).hydrate(<SSRProvider>{element}</SSRProvider>, container);});
           }
-        } catch (err) {
+        } catch (err: any) {
           errors.push(err.stack);
         }
 

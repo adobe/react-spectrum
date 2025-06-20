@@ -17,7 +17,7 @@ let availableComponents = getComponents();
  * - Apply isDisabled directly on each ActionButton/ToggleButton instead of disabledKeys.
  * - Convert dynamic collections render function to items.map.
  */
-export default function transformActionGroup(path: NodePath<t.JSXElement>) {
+export default function transformActionGroup(path: NodePath<t.JSXElement>): void {
   // Comment out overflowMode
   commentOutProp(path, {propName: 'overflowMode'});
 
@@ -148,7 +148,7 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>) {
             t.jsxAttribute(
               t.jsxIdentifier('onPress'),
               t.jsxExpressionContainer(
-                keyValue 
+                keyValue
                   ? t.arrowFunctionExpression([], t.callExpression(onAction.node.value.expression, [keyValue]))
                   : onAction.node.value.expression
               )
@@ -185,4 +185,4 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>) {
   if (path.node.closingElement) {
     path.node.closingElement.name = t.jsxIdentifier(localName);
   }
-} 
+}

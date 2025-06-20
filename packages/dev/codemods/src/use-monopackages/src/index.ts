@@ -4,7 +4,7 @@ import {UseMonopackagesCodemodOptions} from '../..';
 
 const transformPath = path.join(__dirname, 'codemod.js');
 
-export async function use_monopackages(options: UseMonopackagesCodemodOptions) {
+export async function use_monopackages(options: UseMonopackagesCodemodOptions): Promise<ReturnType<typeof jscodeshift>> {
   let {
     path: filePath = '.',
     ...rest

@@ -51,6 +51,7 @@ const meta: Meta<typeof TreeView> = {
   },
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onSelectionChange']),
+    children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
       mapping: onActionOptions, // Maps serializable option values to complex arg values

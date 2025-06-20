@@ -12,7 +12,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <PageDescription>{docs.exports.Table.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css", "starters/docs/src/theme.css"]}
   "use client";
   import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
   import {TableBody, Cell} from 'react-aria-components';
@@ -48,7 +48,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   </Table>
   ```
 
-  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} files={["starters/tailwind/src/Table.tsx"]}
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/Table.tsx"]}
   "use client";
   import {Table, TableHeader, Column, Row, Cell} from 'tailwind-starter/Table';
   import {TableBody} from 'react-aria-components';
@@ -177,8 +177,10 @@ function FileTable() {
             </Column>
           )}
         </TableHeader>
+        {/*- begin highlight -*/}
         <TableBody items={rows} dependencies={[visibleColumns]}>
           {item => (
+            /*- end highlight -*/
             <Row columns={visibleColumns}>
               {column => <Cell>{item[column.id]}</Cell>}
             </Row>
@@ -268,7 +270,9 @@ import {TableBody, Cell} from 'react-aria-components';
     <Column>Date added</Column>
   </TableHeader>
   <TableBody>
+    {/*- begin highlight -*/}
     <Row href="https://adobe.com/" target="_blank">
+      {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>

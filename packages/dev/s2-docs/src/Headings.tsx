@@ -56,7 +56,7 @@ export function H3({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h3 {...props} id={id} className={style({font: 'heading', marginTop: 32, marginBottom: 2})} {...hoverProps}>
+    <h3 {...props} id={id} className={style({font: 'heading', marginTop: 32, marginBottom: 24})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>

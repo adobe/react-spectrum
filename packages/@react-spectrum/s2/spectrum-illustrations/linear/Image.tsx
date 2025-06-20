@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../src/Icon';
 import Image_L from 'illustration:./S2_lin_image_160.svg';
 import Image_M from 'illustration:./S2_lin_image_96.svg';
 import Image_S from 'illustration:./S2_lin_image_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Image(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Image(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

@@ -13,10 +13,11 @@
 import BrowserNotCompatible_L from 'illustration:./S2_lin_browserNotCompatible_160.svg';
 import BrowserNotCompatible_M from 'illustration:./S2_lin_browserNotCompatible_96.svg';
 import BrowserNotCompatible_S from 'illustration:./S2_lin_browserNotCompatible_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function BrowserNotCompatible(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function BrowserNotCompatible(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

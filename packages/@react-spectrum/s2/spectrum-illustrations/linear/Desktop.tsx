@@ -13,10 +13,11 @@
 import Desktop_L from 'illustration:./S2_lin_desktop_160.svg';
 import Desktop_M from 'illustration:./S2_lin_desktop_96.svg';
 import Desktop_S from 'illustration:./S2_lin_desktop_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Desktop(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Desktop(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

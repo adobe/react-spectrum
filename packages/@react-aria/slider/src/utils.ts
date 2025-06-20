@@ -6,7 +6,7 @@ interface SliderData {
   'aria-details'?: string
 }
 
-export const sliderData = new WeakMap<SliderState, SliderData>();
+export const sliderData: WeakMap<SliderState, SliderData> = new WeakMap<SliderState, SliderData>();
 
 export function getSliderThumbId(state: SliderState, index: number): string {
   let data = sliderData.get(state);

@@ -11,7 +11,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 <PageDescription>{docs.exports.Select.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
   "use client";
   import {Select, SelectItem} from 'vanilla-starter/Select';
 
@@ -25,7 +25,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
   </Select>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} files={["starters/tailwind/src/Select.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/Select.tsx"]}
   "use client";
   import {Select, SelectItem} from 'tailwind-starter/Select';
 
@@ -87,6 +87,7 @@ import {Select} from 'vanilla-starter/Select';
 import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
 
 function Example() {
+  /*- begin collapse -*/
   let options = [
     {name: 'Fruit', children: [
       {name: 'Apple'},
@@ -109,6 +110,7 @@ function Example() {
       {name: 'Potatoes'}
     ]}
   ];
+  /*- end collapse -*/
 
   return (
     <Select label="Preferred fruit or vegetable" items={options}>
@@ -145,9 +147,11 @@ function Example() {
         <span aria-hidden="true">▼</span>
       </Button>
       <Popover>
+        {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField label="Search tags" autoFocus />
           <ListBox>
+            {/*- end highlight -*/}
             <ListBoxItem>News</ListBoxItem>
             <ListBoxItem>Travel</ListBoxItem>
             <ListBoxItem>Shopping</ListBoxItem>

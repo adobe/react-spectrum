@@ -1,12 +1,15 @@
 'use client';
 
-import {Avatar, Collection, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
+import {ExampleSwitcherContext} from './ExampleSwitcher';
+import {getColorChannels, parseColor} from 'react-stately';
 import {IconPicker} from './IconPicker';
+import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {useLocale} from 'react-aria';
 
 type Props = {[name: string]: any};
@@ -50,24 +53,37 @@ export function VisualExampleClient({component, name, importSource, controls, ch
     return props;
   });
 
+  let ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    let params = new URLSearchParams(location.search);
-    let newProps = {...props};
-    for (let name in controls) {
-      try {
-        let param = params.get(name);
-        if (param) {
-          newProps[name] = JSON.parse(param);
-        }
-      } catch {
-        // ignore
-      }
+    // Find previous heading element.
+    let node: Element | null = ref.current;
+    while (node && node.parentElement?.tagName !== 'ARTICLE') {
+      node = node.parentElement;
     }
-    setProps(newProps);
+    while (node && !(node instanceof HTMLHeadingElement)) {
+      node = node.previousElementSibling;
+    }
+
+    let id = node instanceof HTMLHeadingElement ? node.id : null;
+    if (id && location.hash === '#' + id) {
+      let params = new URLSearchParams(location.search);
+      let newProps = {...props};
+      for (let [name, value] of params) {
+        try {
+          if (value) {
+            newProps[name] = JSON.parse(value);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      setProps(newProps);
+    }
   }, []);
 
   return (
     <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
+      <div hidden ref={ref} />
       {children}
     </Context.Provider>
   );
@@ -101,17 +117,33 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
   );
 }
 
-export function CodeOutput({code}: {code?: ReactNode}) {
+interface CodeOutputProps {
+  code?: ReactNode,
+  files?: {[name: string]: string},
+  type?: 'vanilla' | 'tailwind' | 's2',
+  registryUrl?: string
+}
+
+export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   let {name, importSource, props, controls} = useContext(Context);
-  let url;
-  if (typeof location !== 'undefined') {
-    url = new URL(location.href);
-    for (let prop in props) {
-      if (props[prop] != null) {
-        url.searchParams.set(prop, JSON.stringify(props[prop]));
-      }
+  let searchParams = new URLSearchParams();
+  
+  let exampleType = useContext(ExampleSwitcherContext);
+  if (exampleType) {
+    searchParams.set('exampleType', String(exampleType));
+  }
+
+  for (let prop in props) {
+    if (
+      props[prop] != null && 
+      controls[prop] != null && 
+      (controls[prop].default == null || props[prop] !== controls[prop].default)
+    ) {
+      searchParams.set(prop, JSON.stringify(props[prop]));
     }
   }
+
+  let url = '?' + searchParams.toString();
 
   code ||= (
     <Pre>
@@ -123,7 +155,7 @@ export function CodeOutput({code}: {code?: ReactNode}) {
   );
 
   return (
-    <CodePlatter shareUrl={url?.toString()}>
+    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl}>
       {code}
     </CodePlatter>
   );
@@ -131,10 +163,19 @@ export function CodeOutput({code}: {code?: ReactNode}) {
 
 export function CodeProps({indent = ''}) {
   let {props, controls} = useContext(Context);
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
   let newlines = indent.length > 0 || countChars(renderedProps) > 40;
-  let separator = newlines ? '\n' + (indent || '  ') : ' ';
-  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines && indent && i === 0 ? '' : separator}{p}</Fragment>);
+  let separator = newlines ? (indent || '  ') : ' ';
+  renderedProps = renderedProps.map((p, i) => {
+    let sep = separator;
+    if (newlines) {
+      sep = (indent && i === 0 ? '' : '\n') + separator;
+    }
+    return <Fragment key={i}>{sep}{p}</Fragment>;
+  });
+  if (newlines && indent && renderedProps.length) {
+    renderedProps.push('\n');
+  }
   return renderedProps;
 }
 
@@ -235,13 +276,20 @@ function renderValue(value: any) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
       let entries = Object.entries(value);
-      return (<>{'{'}{entries.map(([name, value], i) => {
+      let res: ReactNode[] = entries.map(([name, value], i) => {
         let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
         return <Fragment key={i}>{result}</Fragment>;
-      })}{'}'}</>);
+      });
+
+      if (countChars(res) > 40) {
+        res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
+        res.push('\n  ');
+      }
+
+      return <>{'{'}{res}{'}'}</>;
     }
   }
 }
@@ -286,6 +334,12 @@ export function Control({name}: {name: string}) {
     case 'boolean':
       return <BooleanControl control={control} value={value} onChange={onChange} />;
     case 'union':
+      if (name === 'channel' || name === 'xChannel' || name === 'yChannel') {
+        return <ChannelControl control={control} value={value} onChange={onChange} />;
+      }
+      if (name === 'colorSpace') {
+        return <ColorSpaceControl control={control} value={value} />;
+      }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;
@@ -332,10 +386,16 @@ function BooleanControl({control, value, onChange}: ControlProps) {
   );
 }
 
-function UnionControl({control, value, onChange}) {
-  if (control.value.elements.reduce((p, v) => p + v.value).length > 30) {
+function UnionControl({control, value, onChange, isPicker = false}) {
+  let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
+  if (isPicker || length > 18) {
     return (
-      <Picker label={control.name} contextualHelp={<PropContextualHelp control={control} />} selectedKey={value == null && control.optional && !control.default ? '__none' : value} onSelectionChange={v => onChange(v === '__none' ? null : v)} styles={style({width: 130})}>
+      <Picker 
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        selectedKey={value == null && control.optional && !control.default ? '__none' : value}
+        onSelectionChange={v => onChange(v === '__none' ? null : v)}
+        styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.map(element => (
           <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
@@ -345,20 +405,50 @@ function UnionControl({control, value, onChange}) {
   }
 
   return (
-    <Wrapper control={control}>
-      <ToggleButtonGroup aria-label={control.name} disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]} onSelectionChange={keys => onChange([...keys][0])} density="compact" styles={style({marginY: 4})}>
+    <Wrapper
+      control={control}
+      styles={style({
+        gridColumnStart: 1,
+        gridColumnEnd: {
+          default: 1,
+          isLong: -1
+        }
+      })({isLong: length > 12 || control.value.elements.length > 3})}>
+      <ToggleButtonGroup
+        aria-label={control.name}
+        disallowEmptySelection={!control.optional || !!control.default}
+        selectedKeys={[value]}
+        onSelectionChange={keys => onChange([...keys][0])}
+        density="compact"
+        styles={style({marginY: 4})}>
         {control.value.elements.map(element => (
-          <ToggleButton key={element.value} id={element.value}>{element.value}</ToggleButton>
+          <ToggleButton
+            key={element.value}
+            id={element.value}
+            styles={style({
+              flexGrow: {
+                default: 1,
+                lg: 0
+              }
+            })}>
+            {element.value}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
     </Wrapper>
   );
 }
 
-function Wrapper({control, children}: {control: PropControl, children: ReactNode}) {
+function Wrapper({control, children, styles}: {control: PropControl, children: ReactNode, styles?: StyleString}) {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <span className={style({font: 'ui', color: 'neutral-subdued'})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
+    <div className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
+      <span className={style({font: 'ui', color: 'neutral-subdued', wordBreak: 'break-all'})}>
+        {control.name}
+        <span className={style({whiteSpace: 'nowrap'})}>
+          &nbsp;
+          {control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}
+        </span>
+      </span>
       {children}
     </div>
   );
@@ -391,32 +481,105 @@ function NumberControl({control, value, onChange}: ControlProps) {
 
 function NumberFormatControl({control, value, onChange}: ControlProps) {
   return (
-    <Picker
-      label={control.name}
-      contextualHelp={<PropContextualHelp control={control} />}
-      selectedKey={value?.style || 'decimal'}
-      onSelectionChange={id => {
-        switch (id) {
-          case 'decimal':
-            onChange({style: 'decimal'});
-            break;
-          case 'percent':
-            onChange({style: 'percent'});
-            break;
-          case 'currency':
-            onChange({style: 'currency', currency: 'USD'});
-            break;
-          case 'unit':
-            onChange({style: 'unit', unit: 'inch'});
-            break;
-        }
-      }}
-      styles={style({width: 130})}>
-      <PickerItem id="decimal">Decimal</PickerItem>
-      <PickerItem id="percent">Percent</PickerItem>
-      <PickerItem id="currency">Currency</PickerItem>
-      <PickerItem id="unit">Unit</PickerItem>
-    </Picker>
+    <>
+      <Picker
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        selectedKey={value?.style || 'decimal'}
+        onSelectionChange={id => {
+          switch (id) {
+            case 'decimal':
+              onChange({style: 'decimal'});
+              break;
+            case 'percent':
+              onChange({style: 'percent'});
+              break;
+            case 'currency':
+              onChange({style: 'currency', currency: 'USD'});
+              break;
+            case 'unit':
+              onChange({style: 'unit', unit: 'inch'});
+              break;
+          }
+        }}
+        styles={style({width: 130})}>
+        <PickerItem id="decimal">Decimal</PickerItem>
+        <PickerItem id="percent">Percent</PickerItem>
+        <PickerItem id="currency">Currency</PickerItem>
+        <PickerItem id="unit">Unit</PickerItem>
+      </Picker>
+      {control.options?.showDetails && <>
+        <RangeSlider
+          label="Decimals"
+          value={{start: value?.minimumFractionDigits ?? 0, end: value?.maximumFractionDigits ?? 5}}
+          minValue={0}
+          maxValue={5}
+          onChange={v => onChange({...value, minimumFractionDigits: v.start, maximumFractionDigits: v.end})}
+          styles={style({width: 130})} />
+        {value?.style === 'decimal' && (
+          <Picker
+            label="Sign Display"
+            selectedKey={value?.signDisplay ?? 'auto'}
+            onSelectionChange={signDisplay => onChange({...value, signDisplay})}
+            styles={style({width: 130})}>
+            <PickerItem id="auto">Auto</PickerItem>
+            <PickerItem id="always">Always</PickerItem>
+            <PickerItem id="exceptZero">Except zero</PickerItem>
+            <PickerItem id="negative">Negative</PickerItem>
+            <PickerItem id="never">Never</PickerItem>
+          </Picker>
+        )}
+        {value?.style === 'currency' && <>
+          <ComboBox
+            label="Currency"
+            selectedKey={value.currency}
+            onSelectionChange={currency => onChange({...value, currency})}
+            styles={style({width: 130})}>
+            {Intl.supportedValuesOf('currency').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
+          </ComboBox>
+          <UnionControl
+            control={{
+              name: 'Currency Display',
+              optional: true,
+              default: 'symbol',
+              value: {
+                elements: [
+                  {value: 'code'},
+                  {value: 'symbol'},
+                  {value: 'narrowSymbol'},
+                  {value: 'name'}
+                ]
+              }
+            }}
+            value={value.currencyDisplay ?? 'symbol'}
+            onChange={currencyDisplay => onChange({...value, currencyDisplay})} />
+        </>}
+        {value?.style === 'unit' && <>
+          <ComboBox
+            label="Unit"
+            selectedKey={value.unit}
+            onSelectionChange={unit => onChange({...value, unit})}
+            styles={style({width: 130})}>
+            {Intl.supportedValuesOf('unit').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
+          </ComboBox>
+          <UnionControl
+            control={{
+              name: 'Unit Display',
+              optional: true,
+              default: 'short',
+              value: {
+                elements: [
+                  {value: 'narrow'},
+                  {value: 'short'},
+                  {value: 'long'}
+                ]
+              }
+            }}
+            value={value.unitDisplay ?? 'short'}
+            onChange={unitDisplay => onChange({...value, unitDisplay})} />
+        </>}
+      </>}
+    </>
   );
 }
 
@@ -435,7 +598,7 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
   if (control.slots) {
     let objectValue = typeof value === 'string' ? {text: value} : value;
     return (
-      <Wrapper control={control}>
+      <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
         {control.slots.icon && (
           <div className={style({display: 'flex', gap: 4})}>
             <TextField
@@ -568,7 +731,7 @@ function matchLocale(defaultLocale: string) {
 }
 
 
-function LocaleControl({value, onChange}: ControlProps) {
+function LocaleControl({control, value, onChange}: ControlProps) {
   let {locale: defaultLocale} = useLocale();
   let langDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
   let regionDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
@@ -588,9 +751,20 @@ function LocaleControl({value, onChange}: ControlProps) {
   let preferredCalendars: Array<{key: string, name: string}> = useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
   let otherCalendars = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
 
+  let extension = control.options ?? 'calendar';
   let updateLocale = locale => {
+    let calendar, numberingSystem;
+    if (extension === 'calendar') {
+      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]; 
+    } else if (extension === 'numberingSystem') {
+      numberingSystem = new Intl.NumberFormat(locale).resolvedOptions().numberingSystem;
+      if (numberingSystem === 'arabext') {
+        numberingSystem = 'arab';
+      }
+    }
     let newLocale = new Intl.Locale(locale, {
-      calendar: (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]
+      calendar,
+      numberingSystem
     });
     onChange(newLocale.toString());
   };
@@ -602,13 +776,22 @@ function LocaleControl({value, onChange}: ControlProps) {
     onChange(newLocale.toString());
   };
 
+  let updateNumberingSystem = numberingSystem => {
+    let newLocale = new Intl.Locale(value, {
+      numberingSystem
+    });
+    onChange(newLocale.toString());
+  };
+
   let lang: string | null = null;
   let calendar: string | null = null;
+  let numberingSystem: string | null = null;
 
   if (value) {
     let locale = new Intl.Locale(value);
     lang = locale.baseName;
     calendar = locale.calendar || null;
+    numberingSystem = locale.numberingSystem || null;
   }
 
   return (
@@ -616,24 +799,35 @@ function LocaleControl({value, onChange}: ControlProps) {
       <Picker label="Locale" items={locales} selectedKey={lang} onSelectionChange={updateLocale}>
         {item => <PickerItem id={item.value}>{item.label}</PickerItem>}
       </Picker>
-      <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
-        <PickerSection>
-          <Header>
-            <Heading>Preferred</Heading>
-          </Header>
-          <Collection items={preferredCalendars}>
-            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
-          </Collection>
-        </PickerSection>
-        <PickerSection>
-          <Header>
-            <Heading>Other</Heading>
-          </Header>
-          <Collection items={otherCalendars}>
-            {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
-          </Collection>
-        </PickerSection>
-      </Picker>
+      {extension === 'calendar' && (
+        <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+          <PickerSection>
+            <Header>
+              <Heading>Preferred</Heading>
+            </Header>
+            <Collection items={preferredCalendars}>
+              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+          <PickerSection>
+            <Header>
+              <Heading>Other</Heading>
+            </Header>
+            <Collection items={otherCalendars}>
+              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+        </Picker>
+      )}
+      {extension === 'numberingSystem' && (
+        <Picker label="Numbering system" selectedKey={numberingSystem} onSelectionChange={updateNumberingSystem}>
+          <PickerItem id="latn">Latin</PickerItem>
+          <PickerItem id="arab">Arabic</PickerItem>
+          <PickerItem id="hanidec">Hanidec</PickerItem>
+          <PickerItem id="deva">Devanagari</PickerItem>
+          <PickerItem id="beng">Bengali</PickerItem>
+        </Picker>
+      )}
     </>
   );
 }
@@ -651,6 +845,55 @@ function DurationControl({control, value, onChange}: ControlProps) {
         style: 'unit',
         unit: 'month',
         unitDisplay: 'long'
+      }} />
+  );
+}
+
+function ChannelControl({control, value, onChange}) {
+  let {props} = useContext(Context);
+  let colorSpace = props.colorSpace;
+  if (!colorSpace && props.defaultValue) {
+    let color = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
+    colorSpace = color.getColorSpace();
+  }
+  return (
+    <UnionControl
+      isPicker
+      control={{
+        ...control,
+        value: {
+          type: 'union',
+          elements: [
+            ...getColorChannels(colorSpace).map(v => ({type: 'string', value: v})),
+            {type: 'string', value: 'alpha'}
+          ]
+        }
+      }}
+      value={value}
+      onChange={onChange} />
+  );
+}
+
+function ColorSpaceControl({control, value}) {
+  let {setProps} = useContext(Context);
+  return (
+    <UnionControl
+      control={{
+        ...control,
+        optional: false
+      }}
+      value={value}
+      onChange={colorSpace => {
+        setProps(props => {
+          props = {...props, colorSpace};
+          if (props.channel) {
+            props.channel = getColorChannels(colorSpace)[0];
+          }
+          
+          delete props.xChannel;
+          delete props.yChannel;
+          return props;
+        });
       }} />
   );
 }

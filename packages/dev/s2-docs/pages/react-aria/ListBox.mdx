@@ -13,7 +13,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <PageDescription>{docs.exports.ListBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} type="vanilla" files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css", "starters/docs/src/theme.css"]}
   "use client";
   import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
@@ -27,7 +27,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   </ListBox>
   ```
 
-  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} files={["starters/tailwind/src/ListBox.tsx"]}
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} type="tailwind" files={["starters/tailwind/src/ListBox.tsx"]}
   "use client";
   import {ListBox, ListBoxItem} from 'tailwind-starter/ListBox';
 
@@ -87,9 +87,11 @@ function Example() {
   ];
 
   return (
+    /*- begin highlight -*/
     <ListBox aria-label="Animals" items={options} selectionMode="single">
       {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
     </ListBox>
+    /*- end highlight -*/
   );
 }
 ```
@@ -104,8 +106,10 @@ import {ListBox, ListBoxItem, Text} from 'react-aria-components';
 
 <ListBox aria-label="Permissions" selectionMode="single">
   <ListBoxItem textValue="Read">
+    {/*- begin highlight -*/}
     <Text slot="label">Read</Text>
     <Text slot="description">Read only</Text>
+    {/*- end highlight -*/}
   </ListBoxItem>
   <ListBoxItem textValue="Write">
     <Text slot="label">Write</Text>
@@ -132,8 +136,10 @@ Use the `<ListBoxSection>` component to group options. A `<Header>` element may 
 import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-components';
 
 <ListBox aria-label="Sandwich contents" selectionMode="multiple">
+  {/*- begin highlight -*/}
   <ListBoxSection>
     <Header>Veggies</Header>
+    {/*- end highlight -*/}
     <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
     <ListBoxItem id="tomato">Tomato</ListBoxItem>
     <ListBoxItem id="onion">Onion</ListBoxItem>
@@ -168,6 +174,7 @@ interface Character {
 }
 
 function AsyncLoadingExample() {
+  /*- begin highlight -*/
   let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
@@ -181,6 +188,7 @@ function AsyncLoadingExample() {
       };
     }
   });
+  /*- end highlight -*/
 
   return (
     <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
@@ -201,7 +209,9 @@ By default, link items in a ListBox are not selectable, and only perform navigat
 import {ListBox, ListBoxItem} from 'react-aria-components';
 
 <ListBox aria-label="Links" selectionMode="multiple">
+  {/*- begin highlight -*/}
   <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  {/*- end highlight -*/}
   <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
   <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
   <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
@@ -302,8 +312,10 @@ let albums = [
 ///- end collapse -///
 
 <ListBox
-  /* PROPS */
   aria-label="Albums"
+  /*- begin highlight -*/
+  /* PROPS */
+  /*- end highlight -*/
   items={albums}
   selectionMode="multiple">
   {item => (

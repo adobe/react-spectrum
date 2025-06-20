@@ -3,7 +3,7 @@
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import {pressScale} from '@react-spectrum/s2';
+import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
@@ -29,7 +29,10 @@ export function Nav({pages, currentPage}: PageProps) {
         height: 'fit',
         maxHeight: 'screen',
         overflow: 'auto',
-        paddingEnd: 32
+        display: {
+          default: 'none',
+          lg: 'block'
+        }
       })}>
       {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
@@ -42,6 +45,31 @@ export function Nav({pages, currentPage}: PageProps) {
       ))}
     </nav>
   );
+}
+
+export function MobileNav({pages, currentPage}: PageProps) {
+  let sections = new Map();
+  for (let page of pages) {
+    let section = page.exports?.section ?? 'React Aria';
+    let sectionPages = sections.get(section) ?? [];
+    sectionPages.push(page);
+    sections.set(section, sectionPages);
+  }
+
+  return (
+    <Menu size="L" selectionMode="single" selectedKeys={[currentPage.url]}>
+      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
+        <MenuSection key={name}>
+          <Header>
+            <Heading>{name}</Heading>
+          </Header>
+          {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
+            <MenuItem key={page.url} id={page.url} href={page.url}>{title(page)}</MenuItem>
+          ))}
+        </MenuSection>
+      ))}
+    </Menu>
+  )
 }
 
 function title(page) {
@@ -137,7 +165,7 @@ export function SideNavLink(props) {
   );
 }
 
-export function OnPageNav({children}) {
+function useCurrentSection() {
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
@@ -165,9 +193,59 @@ export function OnPageNav({children}) {
     return () => observer.disconnect();
   }, []);
 
+  return selected;
+}
+
+export function OnPageNav({children}) {
+  let selected = useCurrentSection();
+
   return (
     <SideNavContext.Provider value={selected}>
       {children}
     </SideNavContext.Provider>
+  );
+}
+
+export function MobileOnPageNav({children}) {
+  let [selected, setSelected] = useState('');
+
+  useEffect(() => {
+    let elements = Array.from(document.querySelectorAll('article > :is(h1,h2,h3,h4,h5)'));
+    elements.reverse();
+
+    let visible = new Set();
+    let observer = new IntersectionObserver(entries => {
+      for (let entry of entries) {
+        if (entry.isIntersecting) {
+          visible.add(entry.target);
+        } else {
+          visible.delete(entry.target);
+        }
+      }
+      
+      let lastVisible = elements.find(e => visible.has(e));
+      if (lastVisible) {
+        setSelected('#' + lastVisible.id!);
+      } else {
+        setSelected('#' + elements.at(-1)!.id);
+      }
+    }, {
+      rootMargin: '9999999px 0px -100% 0px',
+      // @ts-ignore
+      scrollMargin: '0px 0px 62px 0px',
+      threshold: 0.5
+    });
+
+    for (let element of elements) {
+      observer.observe(element);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <Picker aria-label="Table of contents" selectedKey={selected} isQuiet size="L">
+      {children}
+    </Picker>
   );
 }

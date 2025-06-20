@@ -221,7 +221,7 @@ To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Win
 
 These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
 
-```tsx render wide docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
+```tsx render wide docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {ListBox, ListBoxItem} from 'react-aria-components';
 import {useState} from 'react';
@@ -233,7 +233,10 @@ function Example(props) {
     <ListBox
       {...props}
       aria-label="ListBox"
+      selectionMode="multiple"
+      /*- begin highlight -*/
       /* PROPS */
+      /*- end highlight -*/
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}>
       <ListBoxItem id="one">One</ListBoxItem>
@@ -290,7 +293,9 @@ In the `"replace"` selection behavior, selection is the primary interaction. Cli
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 <GridList/* PROPS */>
+  {/*- begin highlight -*/}
   <GridListItem onAction={() => alert('Opening Games')}>
+    {/*- end highlight -*/}
     Games
   </GridListItem>
   <GridListItem onAction={() => alert('Opening Documents')}>
@@ -320,7 +325,9 @@ const files = [
   aria-label="Files"
   /* PROPS */
   items={files}
+  /*- begin highlight -*/
   onAction={id => alert(`Opening ${id}`)}>
+  {/*- end highlight -*/}
   {item => <GridListItem>{item.name}</GridListItem>}
 </GridList>
 ```

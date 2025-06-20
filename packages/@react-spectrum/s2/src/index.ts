@@ -121,7 +121,7 @@ export type {DisclosureProps, DisclosurePanelProps} from './Disclosure';
 export type {DividerProps} from './Divider';
 export type {DropZoneProps} from './DropZone';
 export type {FormProps} from './Form';
-export type {IconProps, IconContextValue} from './Icon';
+export type {IconProps, IconContextValue, IllustrationProps, IllustrationContextValue} from './Icon';
 export type {InlineAlertProps} from './InlineAlert';
 export type {ImageProps} from './Image';
 export type {ImageCoordinatorProps} from './ImageCoordinator';

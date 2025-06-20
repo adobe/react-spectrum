@@ -1,5 +1,5 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
-import {Files} from './CodeBlock';
+import {Files, getFiles} from './CodeBlock';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
@@ -7,27 +7,66 @@ import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
-  padding: 24,
-  marginTop: 20,
+  padding: {
+    default: 12,
+    lg: 24
+  },
+  marginTop: {
+    default: 20,
+    ':is([data-example-switcher] > *)': 0
+  },
   borderRadius: 'xl',
   display: 'grid',
   gridTemplateAreas: {
-    layout: {
-      narrow: [
-        'example controls',
-        'files controls'
-      ],
-      wide: [
-        'example controls',
-        'files files'
-      ]
+    default: [
+      'example',
+      'controls',
+      'files'
+    ],
+    lg: {
+      layout: {
+        narrow: [
+          'example controls',
+          'files controls'
+        ],
+        wide: [
+          'example controls',
+          'files files'
+        ]
+      }
     }
   },
-  gridTemplateColumns: ['1fr', 'auto'],
-  gridTemplateRows: ['1fr', 'auto'],
-  gap: 24,
+  gridTemplateColumns: {
+    default: ['1fr'],
+    lg: ['1fr', 'auto']
+  },
+  gridTemplateRows: {
+    default: ['auto', 'auto', 'auto'],
+    lg: ['1fr', 'auto']
+  },
+  gap: {
+    default: 12,
+    lg: 24
+  },
   width: 'full',
   boxSizing: 'border-box'
+});
+
+const controlsStyle = style({
+  display: 'grid',
+  gridTemplateColumns: {
+    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    lg: ['1fr']
+  },
+  gridAutoFlow: 'dense',
+  gridAutoRows: 'min-content',
+  maxWidth: 'full',
+  // overflow: 'hidden',
+  gap: {
+    default: 12,
+    lg: 16
+  },
+  gridArea: 'controls'
 });
 
 export interface VisualExampleProps {
@@ -42,9 +81,11 @@ export interface VisualExampleProps {
   slots?: {[slot: string]: boolean},
   /** Initial values for the prop controls. */
   initialProps?: {[prop: string]: any},
+  controlOptions?: {[prop: string]: any},
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
+  type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
   align?: 'center' | 'start' | 'end'
@@ -54,13 +95,14 @@ export interface PropControl extends Omit<TProperty, 'description'> {
   description: ReactNode,
   default: any,
   valueType: ReactNode,
-  slots?: {[slot: string]: boolean}
+  slots?: {[slot: string]: boolean},
+  options?: any
 }
 
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, files, code, wide, slots, align}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type}: VisualExampleProps) {
   let componentProps = docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -99,7 +141,8 @@ export function VisualExample({component, docs, links, importSource, props, init
       description: renderHTMLfromMarkdown(prop.description, {forceInline: true}),
       default: defaultValue,
       valueType: <Type type={prop.value} />,
-      slots: name === 'children' ? slots : undefined
+      slots: name === 'children' ? slots : undefined,
+      options: controlOptions?.[name]
     };
 
     return [name, renderedProp];
@@ -109,17 +152,23 @@ export function VisualExample({component, docs, links, importSource, props, init
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
-  let output = <CodeOutput code={code} />;
+  let output = (
+    <CodeOutput
+      code={code}
+      files={files ? getFiles(files) : undefined}
+      type={type}
+      registryUrl={`http://localhost:8081/${docs.name}.json`} />
+  );
 
   // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
       <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} />
-        <div className={style({display: 'flex', flexDirection: 'column', gap: 16, gridArea: 'controls'})}>
+        <div className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
-        <div style={{gridArea: 'files'}}>
+        <div style={{gridArea: 'files', overflow: 'hidden'}}>
           {files ? <Files files={files}>{output}</Files> : output}
         </div>
       </div>

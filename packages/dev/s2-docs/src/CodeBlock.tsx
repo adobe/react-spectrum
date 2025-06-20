@@ -16,7 +16,10 @@ const example = style({
     default: 32,
     ':is([data-example-switcher] > *)': 0
   },
-  padding: 24
+  padding: {
+    default: 12,
+    lg: 24
+  }
 });
 
 const standaloneCode = style({
@@ -28,7 +31,10 @@ const standaloneCode = style({
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
-  font: 'code-sm',
+  font: {
+    default: 'code-xs',
+    lg: 'code-sm'
+  },
   whiteSpace: 'pre-wrap'
 });
 
@@ -100,7 +106,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   let lines = children.split('\n');
   return lines.length > maxLines
   ? (
-    <ExpandableCode hasHighlightedLine={children.includes('///- begin highlight')}>
+    <ExpandableCode hasHighlightedLine={children.includes('- begin highlight')}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>
@@ -133,4 +139,37 @@ export function File({filename}: {filename: string}) {
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false}>{contents}</TruncatedCode>
     </CodePlatter>
   );
+}
+
+// Reads files, parses imports, and loads recursively.
+export function getFiles(files: string[]) {
+  let queue: string[] = [...files];
+  let fileContents = {};
+  for (let i = 0; i < queue.length; i++) {
+    let file = path.isAbsolute(queue[i]) ? queue[i] : path.resolve('../../../' + queue[i]);
+    if (path.extname(file) === '') {
+      if (fs.existsSync(file + '.tsx')) {
+        file += '.tsx';
+      } else if (fs.existsSync(file + '.ts')) {
+        file += '.ts';
+      }
+    }
+
+    let name = path.basename(file);
+    let contents = fs.readFileSync(file, 'utf8');
+    fileContents[name] = contents;
+
+    for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
+      if (!specifier.startsWith('.')) {
+        continue;
+      }
+
+      let resolved = path.resolve(path.dirname(file), specifier);
+      if (!fileContents[path.basename(resolved)]) {
+        queue.push(resolved);
+      }
+    }
+  }
+  
+  return fileContents;
 }

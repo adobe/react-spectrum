@@ -19,6 +19,9 @@ const meta: Meta<typeof Meter> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    label: {control: {type: 'text'}}
+  },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   title: 'Meter'
