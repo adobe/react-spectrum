@@ -654,6 +654,7 @@ function AsyncLoadingExample() {
 
   return (
     <MySelect label="Pick a Pokemon">
+      {/*- begin highlight -*/}
       <Collection items={list.items}>
         {(item: Character) => (
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
@@ -664,6 +665,7 @@ function AsyncLoadingExample() {
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
       </UNSTABLE_ListBoxLoadingSentinel>
+      {/*- end highlight -*/}
     </MySelect>
   );
 }

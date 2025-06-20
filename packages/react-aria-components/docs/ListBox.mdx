@@ -782,7 +782,7 @@ of data from a server. If you want to display a spinner to indicate the loading 
 infinite scroll to load more data, be sure to include the `<UNSTABLE_ListBoxLoadingSentinel>` after the `Listbox`'s items render function as shown in the example below.
 
 Note that `<UNSTABLE_ListBoxLoadingSentinel>` is meant to render the spinner specifically when loading additional items,
-the initial loading state and empty state should instead be handled via [renderEmptyState](./empty-state).
+the initial loading state and empty state should instead be handled via [renderEmptyState](#empty-state).
 
 ```tsx example
 import {Collection, UNSTABLE_ListBoxLoadingSentinel} from 'react-aria-components';
@@ -812,6 +812,7 @@ function AsyncLoadingExample() {
 
   return (
     <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
+      {/*- begin highlight -*/}
       <Collection items={list.items}>
         {(item: Character) => (
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
@@ -822,6 +823,7 @@ function AsyncLoadingExample() {
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
       </UNSTABLE_ListBoxLoadingSentinel>
+      {/*- end highlight -*/}
     </ListBox>
   );
 }

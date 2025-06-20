@@ -947,6 +947,7 @@ function AsyncLoadingExample() {
       label="Star Wars Character Lookup"
       inputValue={list.filterText}
       onInputChange={list.setFilterText}>
+      {/*- begin highlight -*/}
       <Collection items={list.items}>
         {(item: Character) => (
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
@@ -957,6 +958,7 @@ function AsyncLoadingExample() {
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
       </UNSTABLE_ListBoxLoadingSentinel>
+      {/*- end highlight -*/}
     </MyComboBox>
   );
 }

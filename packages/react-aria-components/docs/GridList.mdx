@@ -648,6 +648,7 @@ function AsyncList() {
     <MyGridList
       selectionMode="multiple"
       aria-label="Async loading ListView example">
+      {/*- begin highlight -*/}
       <Collection items={list.items}>
         {(item: Character) => (
           <MyItem id={item.name}>{item.name}</MyItem>
@@ -658,6 +659,7 @@ function AsyncList() {
         isLoading={list.loadingState === 'loadingMore'}>
         <MyProgressCircle isIndeterminate aria-label="Loading more..." />
       </UNSTABLE_GridListLoadingSentinel>
+      {/*- end highlight -*/}
     </MyGridList>
   );
 }
