@@ -12,11 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
@@ -460,7 +460,7 @@ interface Character {
 const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       style={{
         height: orientation === 'horizontal' ? 100 : 30,
         width: orientation === 'horizontal' ? 30 : '100%',
@@ -471,7 +471,7 @@ const MyListBoxLoaderIndicator = (props) => {
       }}
       {...otherProps}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };
 

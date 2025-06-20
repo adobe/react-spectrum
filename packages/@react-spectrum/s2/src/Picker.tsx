@@ -23,12 +23,12 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   Provider,
   SectionProps,
   SelectValue,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
@@ -308,12 +308,12 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   let spinnerId = useSlotId([showButtonSpinner]);
 
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       className={loadingWrapperStyles}
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}>
       <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function' && items) {

@@ -16,9 +16,9 @@ import {
   ContextValue,
   GridLayout,
   GridListItem,
+  GridListLoadMoreItem,
   GridListProps,
   Size,
-  UNSTABLE_GridListLoadingSentinel,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
@@ -244,7 +244,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   let renderer;
   let cardLoadingSentinel = (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       onLoadMore={onLoadMore} />
   );
 

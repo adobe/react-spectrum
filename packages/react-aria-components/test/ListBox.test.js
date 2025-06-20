@@ -28,8 +28,8 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import React, {useState} from 'react';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1566,9 +1566,9 @@ describe('ListBox', () => {
               <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
             )}
           </Collection>
-          <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_ListBoxLoadingSentinel>
+          </ListBoxLoadMoreItem>
         </ListBox>
       );
     };
@@ -1683,9 +1683,9 @@ describe('ListBox', () => {
                   <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
                 )}
               </Collection>
-              <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_ListBoxLoadingSentinel>
+              </ListBoxLoadMoreItem>
             </ListBox>
           </Virtualizer>
         );

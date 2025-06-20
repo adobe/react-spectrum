@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TreeLoadingSentinel} from '../src/Tree';
+import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 
 export default {
@@ -323,7 +323,7 @@ let rows = [
 const MyTreeLoader = (props) => {
   let {omitChildren} = props;
   return (
-    <UNSTABLE_TreeLoadingSentinel
+    <TreeLoadMoreItem
       className={classNames(styles, 'tree-loader')}
       {...props}>
       {({level}) => {
@@ -341,7 +341,7 @@ const MyTreeLoader = (props) => {
           </span>
         );
       }}
-    </UNSTABLE_TreeLoadingSentinel>
+    </TreeLoadMoreItem>
   );
 };
 
