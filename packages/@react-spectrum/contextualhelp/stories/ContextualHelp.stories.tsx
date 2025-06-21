@@ -11,8 +11,8 @@
  */
 
 import {Button, Content, Flex, Footer, Heading, Link, Text} from '@adobe/react-spectrum';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {ContextualHelp} from '../src';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -61,9 +61,9 @@ export default {
       table: {disable: true}
     }
   }
-} as ComponentMeta<typeof ContextualHelp>;
+} as Meta<typeof ContextualHelp>;
 
-export type ContextualHelpStory = ComponentStoryObj<typeof ContextualHelp>;
+export type ContextualHelpStory = StoryObj<typeof ContextualHelp>;
 
 const helpText = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem.</Text>;
 

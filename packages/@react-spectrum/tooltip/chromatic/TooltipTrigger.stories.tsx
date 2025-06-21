@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import {ActionButton} from '@react-spectrum/button';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Tooltip, TooltipTrigger} from '../';
 
-type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
+type TooltipTriggerStory = StoryObj<typeof TooltipTrigger>;
 
 export default {
   title: 'TooltipTrigger',
@@ -39,7 +39,7 @@ export default {
       pauseAnimationAtEnd: true
     }
   }
-} as ComponentMeta<typeof TooltipTrigger>;
+} as Meta<typeof TooltipTrigger>;
 
 export const Default: TooltipTriggerStory = {};
 

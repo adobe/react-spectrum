@@ -11,11 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {LogicButton} from '../';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-export type LogicButtonStory = ComponentStoryObj<typeof LogicButton>;
+export type LogicButtonStory = StoryObj<typeof LogicButton>;
 
 export default {
   title: 'Button/LogicButton',
@@ -50,7 +50,7 @@ export default {
       defaultValue: 'and'
     }
   }
-} as ComponentMeta<typeof LogicButton>;
+} as Meta<typeof LogicButton>;
 
 export const Default: LogicButtonStory = {
   render: (args) => render(args)

@@ -12,17 +12,17 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
-export type RangeCalendarStory = ComponentStoryObj<typeof RangeCalendar>;
+export type RangeCalendarStory = StoryObj<typeof RangeCalendar>;
 
 export default {
   title: 'Date and Time/RangeCalendar',
@@ -86,7 +86,7 @@ export default {
       control: 'text'
     }
   }
-} as ComponentMeta<typeof RangeCalendar>;
+} as Meta<typeof RangeCalendar>;
 
 export const Default: RangeCalendarStory = {
   render: (args) => render(args)

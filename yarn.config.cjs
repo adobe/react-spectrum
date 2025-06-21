@@ -18,6 +18,9 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
     if (dependency.type === 'peerDependencies') {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
+        if (dependency.workspace.ident === 'storybook-react-parcel') {
+          continue;
+        }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
         } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {

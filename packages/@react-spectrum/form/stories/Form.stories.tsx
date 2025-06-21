@@ -18,7 +18,6 @@ import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
@@ -30,6 +29,7 @@ import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Key, ValidationState} from '@react-types/shared';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useEffect, useState} from 'react';
@@ -47,9 +47,9 @@ export default {
   title: 'Form',
   component: Form,
   providerSwitcher: {status: 'positive'}
-} as ComponentMeta<typeof Form>;
+} as Meta<typeof Form>;
 
-export type FormStory = ComponentStoryObj<typeof Form>;
+export type FormStory = StoryObj<typeof Form>;
 
 export const Default: FormStory = {
   render: () => <Render />
