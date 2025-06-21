@@ -30,6 +30,13 @@ export interface AriaHiddenSelectProps {
   /** HTML form input name. */
   name?: string,
 
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string,
+
   /** Sets the disabled state of the select and input. */
   isDisabled?: boolean
 }
@@ -65,7 +72,7 @@ export interface HiddenSelectAria {
  */
 export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
   let data = selectData.get(state) || {};
-  let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
+  let {autoComplete, name = data.name, form = data.form, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -99,6 +106,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
+      form,
       value: state.selectedKey ?? undefined,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
@@ -110,7 +118,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
  * form autofill, mobile form navigation, and native form submission.
  */
 export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null {
-  let {state, triggerRef, label, name, isDisabled} = props;
+  let {state, triggerRef, label, name, form, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
@@ -146,6 +154,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
         type="hidden"
         autoComplete={selectProps.autoComplete}
         name={name}
+        form={form}
         disabled={isDisabled}
         value={state.selectedKey ?? ''} />
     );

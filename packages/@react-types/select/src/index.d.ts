@@ -47,7 +47,13 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
   /**
    * The name of the input, used when submitting an HTML form.
    */
-  name?: string
+  name?: string,
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }
 
 export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {

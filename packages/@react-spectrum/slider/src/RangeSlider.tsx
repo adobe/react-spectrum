@@ -62,7 +62,8 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
               trackRef={trackRef}
               inputRef={inputRef}
               state={state}
-              name={props.startName} />
+              name={props.startName}
+              form={props.form} />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{
@@ -75,7 +76,8 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
               isDisabled={props.isDisabled}
               trackRef={trackRef}
               state={state}
-              name={props.endName} />
+              name={props.endName}
+              form={props.form} />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{

@@ -2108,6 +2108,21 @@ describe('Picker', function () {
       expect(input).toHaveValue('one');
     });
 
+    it('should support form prop', () => {
+      render(
+        <Provider theme={theme}>
+          <Picker label="Test" name="picker" form="test">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let input = document.querySelector('[name=picker]');
+      expect(input).toHaveAttribute('form', 'test');
+    });
+
     describe('validation', () => {
       describe('validationBehavior=native', () => {
         it('supports isRequired', async () => {
