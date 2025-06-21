@@ -104,6 +104,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               flexGrow: 1,
               display: 'flex',
               justifyContent: 'space-between',
+              position: 'relative',
               height: {
                 lg: '[calc(100vh - 72px)]'
               },
