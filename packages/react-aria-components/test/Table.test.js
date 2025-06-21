@@ -300,12 +300,14 @@ describe('Table', () => {
     }
   });
 
-  it('should support DOM props', () => {
+  it('should support DOM props', async () => {
+    const onScrollHeader = jest.fn();
+    const onScrollBody = jest.fn();
     let {getByRole, getAllByRole} = renderTable({
       tableProps: {'data-testid': 'table'},
-      tableHeaderProps: {'data-testid': 'table-header'},
+      tableHeaderProps: {'data-testid': 'table-header', onScroll: onScrollHeader},
       columnProps: {'data-testid': 'column'},
-      tableBodyProps: {'data-testid': 'table-body'},
+      tableBodyProps: {'data-testid': 'table-body', onScroll: onScrollBody},
       rowProps: {'data-testid': 'row'},
       cellProps: {'data-testid': 'cell'}
     });
@@ -332,6 +334,12 @@ describe('Table', () => {
     for (let cell of getAllByRole('gridcell')) {
       expect(cell).toHaveAttribute('data-testid', 'cell');
     }
+
+    // trigger scrolls
+    fireEvent.scroll(rowGroups[0]);
+    fireEvent.scroll(rowGroups[1]);
+    expect(onScrollHeader).toBeCalledTimes(1);
+    expect(onScrollBody).toBeCalledTimes(1);
   });
 
   it('should render checkboxes for selection', async () => {
