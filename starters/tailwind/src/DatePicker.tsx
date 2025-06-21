@@ -1,5 +1,5 @@
 import { CalendarIcon } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   DatePicker as AriaDatePicker,
   DatePickerProps as AriaDatePickerProps,
@@ -23,7 +23,7 @@ export interface DatePickerProps<T extends DateValue>
 
 export function DatePicker<T extends DateValue>(
   { label, description, errorMessage, ...props }: DatePickerProps<T>
-) {
+): ReactNode {
   return (
     <AriaDatePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Link as AriaLink, LinkProps as AriaLinkProps, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
@@ -21,6 +21,6 @@ const styles = tv({
   }
 });
 
-export function Link(props: LinkProps) {
+export function Link(props: LinkProps): ReactNode {
   return <AriaLink {...props} className={composeRenderProps(props.className, (className, renderProps) =>  styles({...renderProps, className, variant: props.variant}))} />;
 }

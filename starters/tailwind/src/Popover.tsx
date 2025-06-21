@@ -6,7 +6,7 @@ import {
   PopoverContext,
   useSlottedContext
 } from 'react-aria-components';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {tv} from 'tailwind-variants';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
@@ -26,7 +26,7 @@ const styles = tv({
   }
 });
 
-export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
+export function Popover({ children, showArrow, className, ...props }: PopoverProps): ReactNode {
   let popoverContext = useSlottedContext(PopoverContext)!;
   let isSubmenu = popoverContext?.trigger === 'SubmenuTrigger';
   let offset = showArrow ? 12 : 8;

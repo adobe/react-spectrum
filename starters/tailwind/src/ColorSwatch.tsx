@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {ColorSwatch as AriaColorSwatch, ColorSwatchProps} from 'react-aria-components';
 import { composeTailwindRenderProps } from './utils';
 
-export function ColorSwatch(props: ColorSwatchProps) {
+export function ColorSwatch(props: ColorSwatchProps): ReactNode {
   return (
-    <AriaColorSwatch 
+    <AriaColorSwatch
       {...props}
       className={composeTailwindRenderProps(props.className, 'w-8 h-8 rounded-xs border border-black/10')}
       style={({color}) => ({

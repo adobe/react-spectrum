@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
@@ -10,7 +10,7 @@ export interface ProgressBarProps extends AriaProgressBarProps {
   label?: string;
 }
 
-export function ProgressBar({ label, ...props }: ProgressBarProps) {
+export function ProgressBar({ label, ...props }: ProgressBarProps): ReactNode {
   return (
     <AriaProgressBar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {({ percentage, valueText, isIndeterminate }) => (

@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
@@ -18,7 +18,7 @@ interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'layout' | 'orientat
 
 export function ListBox<T extends object>(
   { children, ...props }: ListBoxProps<T>
-) {
+): ReactNode {
   return (
     <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg')}>
       {children}
@@ -38,9 +38,9 @@ export const itemStyles = tv({
       true: 'text-slate-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
     }
   }
-});
+}) as any;
 
-export function ListBoxItem(props: ListBoxItemProps) {
+export function ListBoxItem(props: ListBoxItemProps): ReactNode {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaListBoxItem {...props} textValue={textValue} className={itemStyles}>
@@ -70,9 +70,9 @@ export const dropdownItemStyles = tv({
       className: 'bg-gray-100 dark:bg-zinc-700/60'
     }
   ]
-});
+}) as any;
 
-export function DropdownItem(props: ListBoxItemProps) {
+export function DropdownItem(props: ListBoxItemProps): ReactNode {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaListBoxItem {...props} textValue={textValue} className={dropdownItemStyles}>
@@ -93,7 +93,7 @@ export interface DropdownSectionProps<T> extends SectionProps<T> {
   items?: any
 }
 
-export function DropdownSection<T extends object>(props: DropdownSectionProps<T>) {
+export function DropdownSection<T extends object>(props: DropdownSectionProps<T>): ReactNode {
   return (
     <ListBoxSection className="first:-mt-[5px] after:content-[''] after:block after:h-[5px]">
       <Header className="text-sm font-semibold text-gray-500 dark:text-zinc-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 border-y border-y-gray-200 dark:border-y-zinc-700 [&+*]:mt-1">{props.title}</Header>

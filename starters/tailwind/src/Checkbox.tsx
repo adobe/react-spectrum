@@ -12,7 +12,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'childr
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function CheckboxGroup(props: CheckboxGroupProps) {
+export function CheckboxGroup(props: CheckboxGroupProps): ReactNode {
   return (
     <AriaCheckboxGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2')}>
       <Label>{props.label}</Label>
@@ -52,7 +52,7 @@ const boxStyles = tv({
 
 const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-slate-900 dark:group-disabled:text-slate-600 forced-colors:text-[HighlightText]';
 
-export function Checkbox(props: CheckboxProps) {
+export function Checkbox(props: CheckboxProps): ReactNode {
   return (
     <AriaCheckbox {...props} className={composeRenderProps(props.className, (className, renderProps) => checkboxStyles({...renderProps, className}))}>
       {({isSelected, isIndeterminate, ...renderProps}) => (

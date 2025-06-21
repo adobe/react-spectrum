@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ModalOverlay, ModalOverlayProps, Modal as RACModal } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
@@ -26,7 +26,7 @@ const modalStyles = tv({
   }
 });
 
-export function Modal(props: ModalOverlayProps) {
+export function Modal(props: ModalOverlayProps): ReactNode {
   return (
     <ModalOverlay {...props} className={overlayStyles}>
       <RACModal {...props} className={modalStyles} />

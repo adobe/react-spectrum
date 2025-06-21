@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   DateField as AriaDateField,
   DateFieldProps as AriaDateFieldProps,
@@ -20,7 +20,7 @@ export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<
 
 export function DateField<T extends DateValue>(
   { label, description, errorMessage, ...props }: DateFieldProps<T>
-) {
+): ReactNode {
   return (
     <AriaDateField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
@@ -46,7 +46,7 @@ const segmentStyles = tv({
   }
 });
 
-export function DateInput(props: Omit<DateInputProps, 'children'>) {
+export function DateInput(props: Omit<DateInputProps, 'children'>): ReactNode {
   return (
     <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'block min-w-[150px] px-2 py-1.5 text-sm'})} {...props}>
       {(segment) => <DateSegment segment={segment} className={segmentStyles} />}

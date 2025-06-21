@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {Button, ColorPicker as AriaColorPicker, ColorPickerProps as AriaColorPickerProps, DialogTrigger} from 'react-aria-components';
 import {ColorSwatch} from './ColorSwatch';
 import {ColorArea} from './ColorArea';
@@ -19,7 +19,7 @@ export interface ColorPickerProps extends AriaColorPickerProps {
   children?: React.ReactNode;
 }
 
-export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
+export function ColorPicker({ label, children, ...props }: ColorPickerProps): ReactNode {
   return (
     <AriaColorPicker {...props}>
       <DialogTrigger>

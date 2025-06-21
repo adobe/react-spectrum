@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Switch as AriaSwitch,
   SwitchProps as AriaSwitchProps
@@ -37,7 +37,7 @@ const handle = tv({
   }
 });
 
-export function Switch({ children, ...props }: SwitchProps) {
+export function Switch({ children, ...props }: SwitchProps): ReactNode {
   return (
     <AriaSwitch {...props} className={composeTailwindRenderProps(props.className, 'group relative flex gap-2 items-center text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
       {(renderProps) => (

@@ -1,5 +1,5 @@
 import { XIcon } from 'lucide-react';
-import React, { createContext, useContext } from 'react';
+import React, { createContext, ReactNode, useContext } from 'react';
 import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
@@ -47,12 +47,12 @@ const tagStyles = tv({
     }
   },
   compoundVariants: (Object.keys(colors) as Color[]).map((color) => ({
-    isSelected: false,
-    isDisabled: false,
+    isSelected: undefined,
+    isDisabled: undefined,
     color,
     class: colors[color]
   }))
-});
+}) as any;
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
   color?: Color;
@@ -61,7 +61,8 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, P
   errorMessage?: string;
 }
 
-export interface TagProps extends AriaTagProps {
+export interface TagProps extends Omit<AriaTagProps, 'children'> {
+  children?: ReactNode;
   color?: Color
 }
 
@@ -75,7 +76,7 @@ export function TagGroup<T extends object>(
     renderEmptyState,
     ...props
   }: TagGroupProps<T>
-) {
+): ReactNode {
   return (
     <AriaTagGroup {...props} className={twMerge('flex flex-col gap-1', props.className)}>
       <Label>{label}</Label>
@@ -95,7 +96,7 @@ const removeButtonStyles = tv({
   base: 'cursor-default rounded-full transition-[background-color] p-0.5 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 pressed:bg-black/20 dark:pressed:bg-white/20'
 });
 
-export function Tag({ children, color, ...props }: TagProps) {
+export function Tag({ children, color, ...props }: TagProps): ReactNode {
   let textValue = typeof children === 'string' ? children : undefined;
   let groupColor = useContext(ColorContext);
   return (
