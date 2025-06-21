@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, iconStyle, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -90,10 +90,6 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   userSelect: 'none',
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
   // The selected item has lower z-index so that the sliding background
   // animation does not cover other items.
   zIndex: {
@@ -265,7 +261,8 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
           <Provider
             values={[
               [IconContext, {
-                render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
+                render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})}),
+                styles: iconStyle({color: 'currentColor'})
               }],
               [RACTextContext, {slots: {[DEFAULT_SLOT]: {}}}],
               [TextContext, {styles: style({order: 1, truncate: true})}]
