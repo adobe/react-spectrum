@@ -84,6 +84,8 @@ export interface TabRenderProps {
 }
 
 export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps> {
+  /** The unique id of the tab. */
+  id?: Key,
   /**
    * Whether to mount the tab panel in the DOM even when it is not currently selected.
    * Inactive tab panels are inert and cannot be interacted with. They must be styled appropriately so this is clear to the user visually.
