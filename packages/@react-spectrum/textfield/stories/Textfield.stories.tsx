@@ -115,6 +115,25 @@ export const WithErrorMessage: TextFieldStory = {
   name: 'with error message'
 };
 
+export const WithValidState: TextFieldStory = {
+  render: (args) => render({
+    ...args,
+    value: 'user@example.com',
+    validationState: 'valid'
+  }),
+  name: 'with valid state (shows validation icon)'
+};
+
+export const WithValidStateAndDescription: TextFieldStory = {
+  render: (args) => render({
+    ...args,
+    value: 'user@example.com',
+    validationState: 'valid',
+    description: 'This email address is valid and will be used for notifications.'
+  }),
+  name: 'with valid state and description'
+};
+
 export const WithDescriptionErrorMessageAndValidation: TextFieldStory = {
   render: (args) => renderWithDescriptionErrorMessageAndValidation(args),
   name: 'with description, error message and validation'
