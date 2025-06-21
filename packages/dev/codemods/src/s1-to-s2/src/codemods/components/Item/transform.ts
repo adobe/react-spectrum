@@ -12,7 +12,7 @@ import * as t from '@babel/types';
  * - If within ComboBox: Update Item to be a ComboBoxItem.
  * - Update key to id (and keep key if rendered inside array.map).
  */
-export default function transformItem(path: NodePath<t.JSXElement>) {
+export default function transformItem(path: NodePath<t.JSXElement>): void {
   // Update Items based on parent collection component
   updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuItem'});
   updateComponentWithinCollection(path, {parentComponentName: 'ActionMenu', newComponentName: 'MenuItem'});
@@ -23,4 +23,4 @@ export default function transformItem(path: NodePath<t.JSXElement>) {
 
   // Comment if parent collection not detected
   commentIfParentCollectionNotDetected(path);
-} 
+}

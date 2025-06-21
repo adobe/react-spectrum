@@ -37,7 +37,8 @@ const meta: Meta<typeof Disclosure> = {
     },
     isDisabled: {
       control: {type: 'boolean'}
-    }
+    },
+    children: {table: {disable: true}}
   },
   title: 'Disclosure'
 };

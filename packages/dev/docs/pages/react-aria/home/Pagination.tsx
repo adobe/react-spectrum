@@ -11,9 +11,9 @@
  */
 import {Button} from 'tailwind-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 
-export function Pagination({carousel, className}: {carousel: HTMLElement, className?: string}) {
+export function Pagination({carousel, className}: {carousel: HTMLElement, className?: string}): ReactNode {
   let scroll = (dir: number) => {
     let style = window.getComputedStyle(carousel);
     carousel.scrollBy({

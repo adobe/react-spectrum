@@ -9,7 +9,7 @@ import * as t from '@babel/types';
  * - Remove validationState (it is no longer supported in Spectrum 2).
  * - Remove validationBehavior (it is no longer supported in Spectrum 2).
  */
-export default function transformForm(path: NodePath<t.JSXElement>) {
+export default function transformForm(path: NodePath<t.JSXElement>): void {
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
 
@@ -21,4 +21,4 @@ export default function transformForm(path: NodePath<t.JSXElement>) {
 
   // Remove validationBehavior
   removeProp(path, {propName: 'validationBehavior'});
-} 
+}

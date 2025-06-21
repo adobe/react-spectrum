@@ -8,7 +8,7 @@ import * as t from '@babel/types';
  * - Comment out labelPosition (it has not been implemented yet).
  * - Comment out showValueLabel (it has not been implemented yet).
  */
-export default function transformProgressBar(path: NodePath<t.JSXElement>) {
+export default function transformProgressBar(path: NodePath<t.JSXElement>): void {
   // Change variant="overBackground" to staticColor="white"
   updatePropNameAndValue(path, {
     oldPropName: 'variant',
@@ -22,4 +22,4 @@ export default function transformProgressBar(path: NodePath<t.JSXElement>) {
 
   // Comment out showValueLabel
   removeProp(path, {propName: 'showValueLabel'});
-} 
+}

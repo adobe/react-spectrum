@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../src/Icon';
 import NoSearchResults_L from 'illustration:./S2_lin_noSearchResults_160.svg';
 import NoSearchResults_M from 'illustration:./S2_lin_noSearchResults_96.svg';
 import NoSearchResults_S from 'illustration:./S2_lin_noSearchResults_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function NoSearchResults(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function NoSearchResults(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

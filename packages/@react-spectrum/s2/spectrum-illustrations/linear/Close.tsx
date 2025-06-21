@@ -13,10 +13,11 @@
 import Close_L from 'illustration:./S2_lin_close_160.svg';
 import Close_M from 'illustration:./S2_lin_close_96.svg';
 import Close_S from 'illustration:./S2_lin_close_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Close(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Close(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

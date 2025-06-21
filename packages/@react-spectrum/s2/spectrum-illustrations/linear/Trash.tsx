@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import Trash_L from 'illustration:./S2_lin_trash_160.svg';
 import Trash_M from 'illustration:./S2_lin_trash_96.svg';
 import Trash_S from 'illustration:./S2_lin_trash_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function Trash(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Trash(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

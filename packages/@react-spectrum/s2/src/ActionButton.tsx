@@ -60,6 +60,7 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
 const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
@@ -95,7 +96,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
         default: lightDark('accent-900', 'accent-700'),
         isHovered: lightDark('accent-1000', 'accent-600'),
         isPressed: lightDark('accent-1000', 'accent-600'),
-        isFocused: lightDark('accent-1000', 'accent-600')
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
       },
       isDisabled: {
         default: 'gray-100',
@@ -226,6 +227,10 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
+  },
+  paddingX: {
+    default: controlStyle.paddingX,
+    [avatarOnly]: 0
   }
 }, getAllowedOverrides());
 
@@ -291,7 +296,14 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [AvatarContext, {
             size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+            styles: style({
+              marginStart: {
+                default: '--iconMargin',
+                ':last-child': 0
+              },
+              flexShrink: 0,
+              order: 0
+            })
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,

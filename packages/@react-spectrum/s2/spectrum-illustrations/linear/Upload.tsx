@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import Upload_L from 'illustration:./S2_lin_upload_160.svg';
 import Upload_M from 'illustration:./S2_lin_upload_96.svg';
 import Upload_S from 'illustration:./S2_lin_upload_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function Upload(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Upload(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

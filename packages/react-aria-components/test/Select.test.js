@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
+import {Button, FieldError, Form, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -376,5 +376,81 @@ describe('Select', () => {
     });
     let trigger = selectTester.trigger;
     expect(document.activeElement).toBe(trigger);
+  });
+
+  it('should clear contexts inside popover', async () => {
+    let {getByTestId} = render(
+      <Select data-testid="select" defaultSelectedKey="cat">
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="popover">
+          <Label>Hello</Label>
+          <Button>Yo</Button>
+          <Text>hi</Text>
+          <ListBox>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+            <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    await selectTester.open();
+
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('for');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
+  });
+
+  it('should not submit if required and selectedKey is null', async () => {
+    const onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
+  
+    function Test() {
+      const [selectedKey, setSelectedKey] = React.useState(null);
+      return (
+        <Form onSubmit={onSubmit}>
+          <TestSelect
+            isRequired
+            name="select"
+            selectedKey={selectedKey}
+            onSelectionChange={setSelectedKey} />
+          <Button data-testid="submit" type="submit">
+            Submit
+          </Button>
+          <Button data-testid="clear" onPress={() => setSelectedKey(null)}>
+            Reset
+          </Button>
+        </Form>
+      );
+    }
+  
+    const {getByTestId} = render(<Test />);
+    const wrapper = getByTestId('select');
+    const selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    const trigger = selectTester.trigger;
+    const submit = getByTestId('submit');
+  
+    expect(trigger).toHaveTextContent('Select an item');
+    await selectTester.selectOption({option: 'Cat'});
+    expect(trigger).toHaveTextContent('Cat');
+    await user.click(submit);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    await user.click(getByTestId('clear'));
+    expect(trigger).toHaveTextContent('Select an item');
+    await user.click(submit);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('[name=select]').value).toBe('');
   });
 });
