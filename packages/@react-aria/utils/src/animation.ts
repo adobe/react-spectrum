@@ -28,7 +28,7 @@ export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: b
     if (isAnimationReady && ref.current && 'getAnimations' in ref.current) {
       for (let animation of ref.current.getAnimations({subtree: true})) {
         if (animation instanceof CSSTransition) {
-          animation.cancel();
+          animation.finish();
         }
       }
     }
