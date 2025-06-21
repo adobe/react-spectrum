@@ -95,7 +95,8 @@ export interface DateFieldState extends FormValidationState {
   /** Formats the current date value using the given options. */
   formatValue(fieldOptions: FieldOptions): string,
   /** Gets a formatter based on state's props. */
-  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter,
+  constrain(): void,
 }
 
 const EDITABLE_SEGMENTS = {
@@ -189,6 +190,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let [placeholderDate, setPlaceholderDate] = useState(
     () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
   );
+
 
   let val = calendarValue || placeholderDate;
   let showEra = calendar.identifier === 'gregory' && val.era === 'BC';
@@ -419,6 +421,19 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let newOptions = {...formatOpts, ...formatOptions};
       let newFormatOptions = getFormatOptions({}, newOptions);
       return new DateFormatter(locale, newFormatOptions);
+    },
+    constrain() {
+      setValidSegments(validSegments => {
+        let validKeys = Object.keys(validSegments);
+        let allKeys = Object.keys(allSegments);
+
+        if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
+          const value = Math.max(1, Math.min( displayValue.calendar.getDaysInMonth(displayValue),displayValue.day));
+          console.log(value)
+          setValue(setSegment(displayValue, "day", value, resolvedOptions))
+        } 
+        return validSegments
+      })
     }
   };
 }
@@ -437,9 +452,24 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
     let isPlaceholder = EDITABLE_SEGMENTS[type] && !validSegments[type];
     let placeholder = EDITABLE_SEGMENTS[type] ? getPlaceholder(type, segment.value, locale) : null;
 
+    let numberFormatter = new Intl.NumberFormat(locale, {
+      useGrouping: false
+    });
+
+    let twoDigitFormatter = new Intl.NumberFormat(locale, {
+      useGrouping: false,
+      minimumIntegerDigits: 2
+    })
+
+    let segmentValue
+    if(segment.type === "day") segmentValue = displayValue.day
+    else if(segment.type === "month") segmentValue = displayValue.month
+
+    let value = segment.type === "day" || segment.type === "month" ? twoDigitFormatter.format(segmentValue) : segment.value
+
     let dateSegment = {
       type,
-      text: isPlaceholder ? placeholder : segment.value,
+      text: isPlaceholder ? placeholder : value,
       ...getSegmentLimits(displayValue, type, resolvedOptions),
       isPlaceholder,
       placeholder,
@@ -517,7 +547,7 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
       return {
         value: date.day,
         minValue: getMinimumDayInMonth(date),
-        maxValue: date.calendar.getDaysInMonth(date)
+        maxValue: 31
       };
   }
 
