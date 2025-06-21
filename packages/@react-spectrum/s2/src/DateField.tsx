@@ -13,33 +13,133 @@
 import {
   DateField as AriaDateField,
   DateFieldProps as AriaDateFieldProps,
+  ContextValue,
   DateInput,
   DateSegment,
   DateValue,
-  FieldError,
-  Label,
-  Text
+  FormContext
 } from 'react-aria-components';
-import {HelpTextProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext} from 'react';
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
+import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {style} from '../style' with {type: 'macro'};
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
-export interface DateFieldProps<T extends DateValue>
-  extends AriaDateFieldProps<T>, HelpTextProps {
-  label?: ReactNode
+export interface DateFieldProps<T extends DateValue> extends
+  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style'>,
+  StyleProps,
+  SpectrumLabelableProps,
+  HelpTextProps {
+    /**
+     * The size of the DateField.
+     *
+     * @default 'M'
+     */
+    size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export function DateField<T extends DateValue>(
-  {label, description, errorMessage, ...props}: DateFieldProps<T>
-): ReactNode {
+export const DateFieldContext:
+  Context<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>> =
+  createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
+
+const segmentContainer = style({
+  flexGrow: 1
+});
+
+const dateInput = style({
+  outlineStyle: 'none',
+  caretColor: 'transparent',
+  backgroundColor: {
+    default: 'transparent',
+    isFocused: 'blue-900'
+  },
+  color: {
+    isFocused: 'white'
+  },
+  borderRadius: '[2px]',
+  paddingX: 2
+});
+
+const iconStyles = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'end'
+});
+
+export const DateField:
+  <T extends DateValue>(props: DateFieldProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
+/*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
+  props: DateFieldProps<T>, ref: Ref<HTMLDivElement>
+): ReactElement {
+  [props, ref] = useSpectrumContextProps(props, ref, DateFieldContext);
+  let {
+    label,
+    contextualHelp,
+    description: descriptionMessage,
+    errorMessage,
+    isRequired,
+    size = 'M',
+    labelPosition = 'top',
+    necessityIndicator,
+    labelAlign = 'start',
+    UNSAFE_style,
+    UNSAFE_className,
+    styles,
+    ...dateFieldProps
+  } = props;
+  let formContext = useContext(FormContext);
+
   return (
-    <AriaDateField {...props}>
-      <Label>{label}</Label>
-      <DateInput>
-        {(segment) => <DateSegment segment={segment} />}
-      </DateInput>
-      {description && <Text slot="description">{description}</Text>}
-      <FieldError>{errorMessage}</FieldError>
+    <AriaDateField
+      ref={ref}
+      isRequired={isRequired}
+      {...dateFieldProps}
+      style={UNSAFE_style}
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+        isInForm: !!formContext,
+        labelPosition,
+        size
+      }, styles)}>
+      {({isDisabled, isInvalid}) => {
+        return (
+          <>
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={isRequired}
+              size={size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={contextualHelp}>
+              {label}
+            </FieldLabel>
+
+            <FieldGroup
+              role="presentation"
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              size={size}
+              styles={style({
+                ...fieldInput(),
+                paddingX: 'edge-to-text'
+              })({size})}>
+              <DateInput className={segmentContainer}>
+                {(segment) => <DateSegment className={dateInput} segment={segment} />}
+              </DateInput>
+              {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
+            </FieldGroup>
+            <HelpText
+              size={size}
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              description={descriptionMessage}>
+              {errorMessage}
+            </HelpText>
+          </>
+        );
+      }}
     </AriaDateField>
   );
-}
+});
