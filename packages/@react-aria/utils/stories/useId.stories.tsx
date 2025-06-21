@@ -11,7 +11,8 @@
  */
 
 import {idsUpdaterMap} from '../src/useId';
-import React, {Suspense, useState} from 'react';
+import React, {JSX, Suspense, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useId} from '../';
 
 export default {
@@ -34,7 +35,7 @@ function AsyncComponent() {
   return null;
 }
 
-function TestUseId() {
+function TestUseId(): JSX.Element {
   let [show, setShow] = useState(true);
   return (
     <div>
@@ -66,7 +67,7 @@ function Box() {
   );
 }
 
-export const GCuseId = {
+export const GCuseId: StoryObj<typeof TestUseId> = {
   render: () => <TestUseId />,
   parameters: {
     description: {

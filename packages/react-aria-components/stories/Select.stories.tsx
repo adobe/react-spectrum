@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
+import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -184,6 +184,44 @@ AsyncVirtualizedCollectionRenderSelect.story = {
     delay: 50
   }
 };
+
+export const SelectSubmitExample = () => (
+  <Form>
+    <TextField
+      isRequired
+      autoComplete="username"
+      className={styles.textfieldExample}
+      name="username">
+      <Label>Username</Label>
+      <Input />
+      <FieldError className={styles.errorMessage} />
+    </TextField>
+    <Select isRequired autoComplete="organization" name="company">
+      <Label style={{display: 'block'}}>Company</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>
+          ▼
+        </span>
+      </Button>
+      <Popover>
+        <OverlayArrow>
+          <svg height={12} width={12}>
+            <path d="M0 0,L6 6,L12 0" />
+          </svg>
+        </OverlayArrow>
+        <ListBox className={styles.menu}>
+          <MyListBoxItem>Adobe</MyListBoxItem>
+          <MyListBoxItem>Google</MyListBoxItem>
+          <MyListBoxItem>Microsoft</MyListBoxItem>
+        </ListBox>
+      </Popover>
+      <FieldError className={styles.errorMessage} />
+    </Select>
+    <Button type="submit">Submit</Button>
+    <Button type="reset">Reset</Button>
+  </Form>
+);
 
 // Test case for https://github.com/adobe/react-spectrum/issues/8034
 // Required select validation cannot currently be tested in the jsdom environment.

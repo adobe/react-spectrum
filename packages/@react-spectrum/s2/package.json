@@ -129,6 +129,7 @@
     "dist",
     "style",
     "page.css",
+    "page.css.map",
     "icons",
     "illustrations",
     "src"
