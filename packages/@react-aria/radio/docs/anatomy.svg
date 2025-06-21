@@ -1,4 +1,4 @@
-<svg style="max-height: 246px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 295.139 246">
+<svg style="max-height: 246px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 295.139 246">
   <title>Radio group anatomy diagram</title>
   <desc>Shows a radio group component with labels pointing to its parts, including the radio group label, and radio group element containing three radios with input and label elements.</desc>
   <g transform="translate(-138 -76)">

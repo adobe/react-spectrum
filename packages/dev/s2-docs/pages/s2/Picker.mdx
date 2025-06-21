@@ -1,0 +1,224 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const section = 'S2';
+
+# Picker
+
+<PageDescription>{docs.exports.Picker.description}</PageDescription>
+
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isQuiet', 'isDisabled', 'isInvalid']} initialProps={{label: 'Ice cream flavor'}} expanded type="s2"
+import {Picker, PickerItem} from '@react-spectrum/s2';
+
+<Picker/* PROPS */>
+  <PickerItem>Chocolate</PickerItem>
+  <PickerItem>Mint</PickerItem>
+  <PickerItem>Strawberry</PickerItem>
+  <PickerItem>Vanilla</PickerItem>
+  <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+</Picker>
+```
+
+## Content
+
+`Picker` follows the Collection Components API. It supports features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the Collections docs for more details.
+
+The following example shows a dynamic collection of items, grouped into sections.
+
+```tsx render hideImports
+"use client";
+import {Picker, PickerItem, PickerSection, Header, Heading, Text, Collection} from '@react-spectrum/s2';
+
+function Example() {
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+
+  return (
+    <Picker label="Preferred fruit or vegetable" items={options}>
+      {section => (
+        <PickerSection id={section.name}>
+          <Header>
+            <Heading>{section.name}</Heading>
+            <Text slot="description">These flavors are common</Text>
+          </Header>
+          <Collection items={section.children}>
+            {item => <PickerItem id={item.name}>{item.name}</PickerItem>}
+          </Collection>
+        </PickerSection>
+      )}
+    </Picker>
+  );
+}
+```
+
+### Slots
+
+Use the `"label"` and `"description"` slots to separate primary and secondary content. Items can also include an icon.
+
+```tsx render
+"use client";
+import {Picker, PickerItem, Text} from '@react-spectrum/s2';
+import Comment from '@react-spectrum/s2/icons/Comment';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import UserSettings from '@react-spectrum/s2/icons/UserSettings';
+
+<Picker label="Permissions" defaultSelectedKey="read">
+  <PickerItem id="read" textValue="Read">
+    <Comment />
+    <Text slot="label">Read</Text>
+    <Text slot="description">Comment only</Text>
+  </PickerItem>
+  <PickerItem id="write" textValue="Write">
+    <Edit />
+    <Text slot="label">Write</Text>
+    <Text slot="description">Read and write only</Text>
+  </PickerItem>
+  <PickerItem id="admin" textValue="Admin">
+    <UserSettings />
+    <Text slot="label">Admin</Text>
+    <Text slot="description">Full access</Text>
+  </PickerItem>
+</Picker>
+```
+
+### Links
+
+Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
+
+```tsx render hideImports
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+
+<Picker label="Project">
+  <PickerItem href="https://example.com/" target="_blank">Create new…</PickerItem>
+  <PickerItem>Proposal</PickerItem>
+  <PickerItem>Budget</PickerItem>
+  <PickerItem>Onboarding</PickerItem>
+</Picker>
+```
+
+## Selection
+
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
+When `Picker` is used with a dynamic collection as described above, the id of each item is derived from the data.
+See the Selection guide for more details.
+
+```tsx render hideImports
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [animal, setAnimal] = useState<Key>("Bison");
+
+  return (
+    <>
+      <Picker
+        label="Pick an animal"
+        selectedKey={animal}
+        onSelectionChange={selected => setAnimal(selected)}>
+        <PickerItem id="Koala">Koala</PickerItem>
+        <PickerItem id="Kangaroo">Kangaroo</PickerItem>
+        <PickerItem id="Platypus">Platypus</PickerItem>
+        <PickerItem id="Bald Eagle">Bald Eagle</PickerItem>
+        <PickerItem id="Bison">Bison</PickerItem>
+      </Picker>
+      <p>You selected {animal}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the Forms guide to learn more.
+
+```tsx render hideImports
+"use client";
+import {Picker, PickerItem, ButtonGroup, Button, Form} from '@react-spectrum/s2';
+
+<Form>
+  <Picker
+    label="Select an animal"
+    name="animal"
+    isRequired
+    description="Please select an animal.">
+    <PickerItem>Aardvark</PickerItem>
+    <PickerItem>Cat</PickerItem>
+    <PickerItem>Dog</PickerItem>
+    <PickerItem>Kangaroo</PickerItem>
+    <PickerItem>Panda</PickerItem>
+    <PickerItem>Snake</PickerItem>
+  </Picker>
+  <ButtonGroup>
+    <Button type="submit">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Popover options
+
+The open state of the Picker can be controlled via the `defaultOpen` and `isOpen` props. The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavior of the popover.
+
+```tsx render hideImports docs={docs.exports.Picker} links={docs.links} props={['align', 'direction', 'shouldFlip', 'menuWidth']}
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [open, setOpen] = useState(false);
+
+  return (
+    <div>
+      <p>Select is {open ? 'open' : 'closed'}</p>
+      <Picker
+        {...props}/* PROPS */
+        label="Choose frequency"
+        isOpen={open}
+        onOpenChange={setOpen}>
+        <PickerItem id="rarely">Rarely</PickerItem>
+        <PickerItem id="sometimes">Sometimes</PickerItem>
+        <PickerItem id="always">Always</PickerItem>
+      </Picker>
+    </div>
+  );
+}
+```
+
+## Props
+
+### Picker
+
+<PropTable component={docs.exports.Picker} links={docs.links} />
+
+### PickerItem
+
+<PropTable component={docs.exports.PickerItem} links={docs.links} />
+
+### PickerSection
+
+<PropTable component={docs.exports.PickerSection} links={docs.links} />
+

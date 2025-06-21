@@ -1,0 +1,142 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {Slider as VanillaSlider} from 'vanilla-starter/Slider';
+import {Slider as TailwindSlider} from 'tailwind-starter/Slider';
+import tailwindDocs from 'docs:tailwind-starter/Slider';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/slider/docs/anatomy.svg';
+
+# Slider
+
+<PageDescription>{docs.exports.Slider.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaSlider}
+    docs={docs.exports.Slider}
+    links={docs.links}
+    props={['orientation', 'isDisabled', 'formatOptions']}
+    initialProps={{label: 'Opacity'}}
+    type="vanilla"
+    files={["starters/docs/src/Slider.tsx", "starters/docs/src/Slider.css", "starters/docs/src/theme.css"]} />
+  <VisualExample
+    component={TailwindSlider}
+    docs={tailwindDocs.exports.Slider}
+    links={tailwindDocs.links}
+    props={['orientation', 'isDisabled', 'formatOptions']}
+    initialProps={{label: 'Opacity'}}
+    type="tailwind"
+    files={["starters/tailwind/src/Slider.tsx"]} />
+</ExampleSwitcher>
+
+## Anatomy
+
+<Anatomy />
+
+A `Slider` consists of a `<SliderTrack>` displaying the range of available values, one or more `<SliderThumb>`s showing the current values, an optional `<SliderOutput>` displaying the current values textually, and a `<Label>`. The thumbs can be dragged to allow a user to change their value. The track can be clicked to move the nearest thumb to that position.
+
+If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
+
+```tsx
+import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
+
+<Slider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+    <SliderThumb>
+      <Label />
+    </SliderThumb>
+  </SliderTrack>
+</Slider>
+```
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the slider's value. The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released.
+
+```tsx render
+"use client";
+import {Slider} from 'vanilla-starter/Slider';
+import {useState} from 'react';
+
+function Example() {
+  let [currentValue, setCurrentValue] = useState(25);
+  let [finalValue, setFinalValue] = useState(currentValue);
+
+  return (
+    <>
+      <Slider
+        label="Cookies to buy"
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        onChange value: {currentValue}{'\n'}
+        onChangeEnd value: {finalValue}
+      </pre>
+    </>
+  );
+}
+```
+
+### Multi-thumb
+
+Set the `value` or `defaultValue` to an array of numbers to render multiple thumbs. Each thumb should have an `aria-label` to describe it for assistive technologies (provided via `thumbLabels` here).
+
+```tsx render
+import {Slider} from 'vanilla-starter/Slider';
+
+<Slider
+  label="Range"
+  defaultValue={[30, 60]}
+  thumbLabels={['start', 'end']} />
+```
+
+### Value scale
+
+By default, slider values are percentages between 0 and 100. Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Steps are calculated starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={VanillaSlider}
+  docs={docs.exports.Slider}
+  links={docs.links}
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: 50,
+    step: 5
+  }} />
+
+## API
+
+### Slider
+
+<PropTable component={docs.exports.Slider} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-Slider" properties={docs.exports.SliderRenderProps.properties} />
+
+### SliderOutput
+
+<PropTable component={docs.exports.SliderOutput} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-SliderOutput" properties={docs.exports.SliderRenderProps.properties} />
+
+### SliderTrack
+
+<PropTable component={docs.exports.SliderTrack} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-SliderTrack" properties={docs.exports.SliderTrackRenderProps.properties} />
+
+### SliderThumb
+
+<PropTable component={docs.exports.SliderThumb} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-SliderThumb" properties={docs.exports.SliderThumbRenderProps.properties} />

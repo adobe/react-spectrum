@@ -1,0 +1,377 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+
+export const section = 'Guides';
+
+# Selection
+
+<PageDescription>Many collection components support selecting items by clicking or tapping them, or by using the keyboard. This page discusses how to handle selection events, how to control selection programmatically, and the data structures used to represent a selection.</PageDescription>
+
+## Multiple selection
+
+Most collection components support item selection, which is handled by the `onSelectionChange` event. Use the `selectedKeys` prop to control the selected items programmatically, or `defaultSelectedKeys` for uncontrolled behavior.
+
+Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) containing the `id` of each selected item. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props, but the `onSelectionChange` event will always pass back a Set.
+
+<ExampleSwitcher examples={['ListBox', 'GridList', 'Table']}>
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem, type Selection} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <ListBox
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+        <ListBoxItem id="tomato">Tomato</ListBoxItem>
+        <ListBoxItem id="cheese">Cheese</ListBoxItem>
+        <ListBoxItem id="tuna">Tuna Salad</ListBoxItem>
+        <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+        <ListBoxItem id="ham">Ham</ListBoxItem>
+      </ListBox>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {Button} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useState} from 'react';
+
+export default function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set(['cheese']));
+
+  return (
+    <div>
+      <GridList
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <SandwichItem id="lettuce">Lettuce</SandwichItem>
+        <SandwichItem id="tomato">Tomato</SandwichItem>
+        <SandwichItem id="cheese">Cheese</SandwichItem>
+        <SandwichItem id="tuna">Tuna Salad</SandwichItem>
+        <SandwichItem id="egg">Egg Salad</SandwichItem>
+        <SandwichItem id="ham">Ham</SandwichItem>
+      </GridList>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+
+///- begin collapse -///
+function SandwichItem(props: GridListItemProps) {
+  return (
+    <GridListItem {...props} textValue={props.children}>
+      {props.children}
+      <Button aria-label="Info">ⓘ</Button>
+    </GridListItem>
+  );
+}
+///- end collapse -///
+```
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
+import {TableBody, Cell} from 'react-aria-components';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 'lettuce', name: 'Lettuce', type: 'Vegetable', calories: 4},
+  {id: 'tomato', name: 'Tomato', type: 'Vegetable', calories: 5},
+  {id: 'cheese', name: 'Cheddar', type: 'Cheese', calories: 113},
+  {id: 'tuna', name: 'Tuna salad', type: 'Salad', calories: 187},
+  {id: 'egg', name: 'Egg salad', type: 'Salad', calories: 200},
+  {id: 'ham', name: 'Ham', type: 'Meat', calories: 205}
+];
+///- end collapse -///
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set(['cheese']));
+
+  return (
+    <div>
+      <Table
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Calories</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.calories}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+### Select all
+
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <Keyboard>⌘ Cmd</Keyboard> + <Keyboard>A</Keyboard>. This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network. For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded. For this reason, it makes sense for select all to represent all items, not just the loaded ones.
+
+When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
+and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. The application must adjust its handling of bulk actions in this case to apply to the entire collection rather than only the keys available to it locally.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {Checkbox} from 'vanilla-starter/Checkbox';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+///- end collapse -///
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  ///- begin highlight -///
+  function performBulkAction() {
+    if (selectedKeys === 'all') {
+      // perform action on all items
+    } else {
+      // perform action on selected items in selectedKeys
+    }
+  }
+  ///- end highlight -///
+
+  ///- begin collapse -///
+  return (
+    <div>
+      <Table
+        aria-label="Files"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}>
+        <TableHeader>
+          <Column><Checkbox slot="selection" /></Column>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Date Modified</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row id={item.name}>
+              <Cell><Checkbox slot="selection" /></Cell>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+  ///- end collapse -///
+}
+```
+
+### Selection behavior
+
+By default, React Aria uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+
+```tsx render wide docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="ListBox"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      /* PROPS */
+      /*- end highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <ListBoxItem id="one">One</ListBoxItem>
+      <ListBoxItem id="two">Two</ListBoxItem>
+      <ListBoxItem id="three">Three</ListBoxItem>
+    </ListBox>
+  );
+}
+```
+
+## Single selection
+
+In some components, like a [Select](Select.html) or [ComboBox](ComboBox.html), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKey, setSelectedKey] = useState<Key | null>(null);
+
+  return (
+    <div>
+      <ComboBox
+        label="ComboBox"
+        ///- begin highlight -///
+        selectedKey={selectedKey}
+        ///- end highlight -///
+        onSelectionChange={setSelectedKey}>
+        <ComboBoxItem id="one">One</ComboBoxItem>
+        <ComboBoxItem id="two">Two</ComboBoxItem>
+        <ComboBoxItem id="three">Three</ComboBoxItem>
+      </ComboBox>
+      <p>selectedKey: {String(selectedKey)}</p>
+    </div>
+  );
+}
+```
+
+In components which support multiple selection, you can limit the selection to a single item using the
+`selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
+only contain a single id at a time.
+
+## Item actions
+
+In addition to selection, collection items support actions via the `onAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking, tapping, or pressing the <Keyboard>Enter</Keyboard> key triggers the item action. Items may be selected using the checkbox, or by pressing the <Keyboard>Space</Keyboard> key. When at least one item is selected, clicking or tapping a row toggles the selection.
+
+In the `"replace"` selection behavior, selection is the primary interaction. Clicking an item with a mouse selects it, and double clicking performs the action. On touch devices, actions remain the primary tap interaction. Long pressing enters selection mode, which temporarily swaps the selection behavior to `"toggle"`. Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+<GridList/* PROPS */>
+  {/*- begin highlight -*/}
+  <GridListItem onAction={() => alert('Opening Games')}>
+    {/*- end highlight -*/}
+    Games
+  </GridListItem>
+  <GridListItem onAction={() => alert('Opening Documents')}>
+    Documents
+  </GridListItem>
+  <GridListItem onAction={() => alert('Opening Photos')}>
+    Photos
+  </GridListItem>
+</GridList>
+```
+
+In dynamic collections, it may be more convenient to use the `onAction` prop at the collection level instead of on individual items. This receives the id of the pressed item.
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+///- begin collapse -///
+const files = [
+  {id: 'games', name: 'Games'},
+  {id: 'documents', name: 'Documents'},
+  {id: 'photos', name: 'Photos'}
+];
+///- end collapse -///
+
+<GridList
+  aria-label="Files"
+  /* PROPS */
+  items={files}
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening ${id}`)}>
+  {/*- end highlight -*/}
+  {item => <GridListItem>{item.name}</GridListItem>}
+</GridList>
+```
+
+## Disabled items
+
+An item can be disabled with the `isDisabled` prop. By default, disabled items are not focusable, selectable, or actionable. When `disabledBehavior="selection"`, only selection is disabled.
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+<GridList/* PROPS */>
+  <GridListItem>Charizard</GridListItem>
+  <GridListItem>Blastoise</GridListItem>
+  {/*- begin highlight -*/}
+  <GridListItem isDisabled>Venusaur</GridListItem>
+  {/*- end highlight -*/}
+  <GridListItem>Pikachu</GridListItem>
+</GridList>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `GridList` level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{selectionMode: 'multiple'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+///- end collapse -///
+
+<GridList
+  aria-label="Pokemon"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  items={items}>
+  {item => <GridListItem>{item.name}</GridListItem>}
+</GridList>
+```

@@ -1,0 +1,99 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const section = 'S2';
+
+# Button
+
+<PageDescription>{docs.exports.Button.description}</PageDescription>
+
+<VisualExample
+  component={Button}
+  docs={docs.exports.Button}
+  props={['children', 'variant', 'staticColor', 'fillStyle', 'size', 'isDisabled', 'isPending']}
+  initialProps={{children: 'Save'}}
+  slots={{icon: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Content
+
+Buttons must have a visible label, and can optionally have an icon. Text only buttons accept a string
+as children. Icons can also be added as children, with a sibling `<Text>` element for the label.
+
+```tsx render expanded
+"use client";
+import {Button, Text} from '@react-spectrum/s2';
+import Bell from '@react-spectrum/s2/icons/Bell';
+
+<Button variant="secondary">
+  <Bell />
+  <Text>Icon + Label</Text>
+</Button>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+### Internationalization
+
+In order to internationalize a button, a localized string should be passed to the `children` or `aria-label` prop.
+
+## Events
+
+Buttons support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress`
+prop.
+
+The following example uses an `onPress` handler to update a counter stored in React state.
+
+```tsx render hideImports
+"use client";
+import {Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [count, setCount] = useState(0);
+
+  return (
+    <Button variant="primary" onPress={() => setCount(c => c + 1)}>{`${count} Dogs`}</Button>
+  );
+}
+```
+
+## Pending
+
+Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true.
+
+```tsx render
+"use client";
+import {Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [isLoading, setIsLoading] = useState(false);
+
+  let handlePress = () => {
+    // Trigger button pending state
+    setIsLoading(true);
+
+    setTimeout(() => {
+      // Cancel button pending state
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  return (
+    <Button variant="primary" isPending={isLoading} onPress={handlePress}>Click me!</Button>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.Button} links={docs.links} />

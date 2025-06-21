@@ -85,6 +85,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
 
 .react-aria-Select {
   color: var(--text-color);
+  max-width: 250px;
+  width: fit-content;
 
   .react-aria-Button {
     box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
@@ -93,7 +95,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     display: flex;
     align-items: center;
-    max-width: 250px;
+    width: 100%;
 
     &[data-focus-visible] {
       outline: 2px solid var(--focus-ring-color);

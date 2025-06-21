@@ -133,7 +133,10 @@ export interface TreeRenderProps {
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
 export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
-  /** How multiple selection should behave in the tree. */
+  /**
+   * How multiple selection should behave in the tree.
+   * @default "toggle"
+   */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode,

@@ -1,4 +1,4 @@
-<svg style="max-height: 48px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 249 48">
+<svg style="max-height: 48px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 249 48">
   <title>Checkbox anatomy diagram</title>
   <desc>Shows a checkbox component with labels pointing to its parts, including the input, and label elements.</desc>
   <g transform="translate(-72 -88)">
