@@ -341,7 +341,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+      className={UNSAFE_className + style({...field(), position: 'relative'}, getAllowedOverrides())({
         isInForm: !!formContext,
         labelPosition,
         size

@@ -213,14 +213,16 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      <HiddenSelect
-        autoComplete={props.autoComplete}
-        state={state}
-        triggerRef={buttonRef}
-        label={label}
-        name={props.name}
-        isDisabled={props.isDisabled} />
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        <HiddenSelect
+          autoComplete={props.autoComplete}
+          state={state}
+          triggerRef={buttonRef}
+          label={label}
+          name={props.name}
+          isDisabled={props.isDisabled} />
+      </div>
     </Provider>
   );
 }
