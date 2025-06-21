@@ -19,7 +19,7 @@ import {
 } from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {Context} from './context';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
@@ -38,7 +38,9 @@ const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
  * It defines the theme, locale, and other application level settings,
  * and can also be used to provide common properties to a group of components.
  */
-export const Provider = React.forwardRef(function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+export const Provider:
+  React.ForwardRefExoticComponent<ProviderProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useContext(Context);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;

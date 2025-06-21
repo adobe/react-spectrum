@@ -6,7 +6,7 @@ import {Icon} from '@react-spectrum/icon';
 import {Item, TagGroup} from '@react-spectrum/tag';
 import {Link} from '@react-spectrum/link';
 import {ProgressBar} from '@react-spectrum/progress';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {Text} from '@react-spectrum/text';
 
@@ -94,7 +94,7 @@ const getData = (rowNumber: number, columnNumber: number) => {
   };
 };
 
-export function Performance() {
+export function Performance(): JSX.Element {
   const {data, columns} = getData(DATA_SIZE, COLUMN_SIZE);
   return (
     <TableView

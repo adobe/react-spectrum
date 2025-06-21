@@ -14,7 +14,7 @@ import {Badge} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
 import {Text} from '@react-spectrum/text';
 
@@ -29,7 +29,7 @@ export default {
   excludeStories: ['renderVariants']
 } as ComponentMeta<typeof Badge>;
 
-export const renderVariants = (args) => (
+export const renderVariants = (args: SpectrumBadgeProps): JSX.Element => (
   <Flex wrap gap={8}>
     {variants.map((variant) => <Badge {...args} variant={variant} />)}
   </Flex>

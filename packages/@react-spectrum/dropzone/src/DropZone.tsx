@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DropZoneProps, HeadingContext, Provider, DropZone as RACDropZone} from 'react-aria-components';
 // @ts-ignore
@@ -39,7 +39,9 @@ let filterProps = (props) => {
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = React.forwardRef(function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
+export const DropZone:
+  React.ForwardRefExoticComponent<SpectrumDropZoneProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+React.forwardRef(function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);

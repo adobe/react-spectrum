@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
@@ -22,7 +22,9 @@ import {useProviderProps} from '@react-spectrum/provider';
  * Status lights are used to color code categories and labels commonly found in data visualization.
  * When status lights have a semantic meaning, they should use semantic variant colors.
  */
-export const StatusLight = forwardRef(function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
+export const StatusLight:
+  React.ForwardRefExoticComponent<SpectrumStatusLightProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
   let {
     variant,
     children,

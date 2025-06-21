@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressBarProps} from '@react-types/progress';
@@ -22,6 +22,8 @@ const meta: Meta<SpectrumProgressBarProps> = {
 
 export default meta;
 
+export type ProgressBarStory = StoryObj<SpectrumProgressBarProps>;
+
 const grayedBoxStyle: CSSProperties = {
   width: '250px',
   height: '60px',
@@ -31,23 +33,23 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-export const Default = {
+export const Default: ProgressBarStory = {
   args: {label: 'Progress label', value: 50}
 };
 
-export const SizeS = {
+export const SizeS: ProgressBarStory = {
   args: {...Default.args, size: 'S'}
 };
 
-export const ShowValueLabelFalse = {
+export const ShowValueLabelFalse: ProgressBarStory = {
   args: {...Default.args, showValueLabel: false}
 };
 
-export const LabelPositionSide = {
+export const LabelPositionSide: ProgressBarStory = {
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const OverBackground = {
+export const OverBackground: ProgressBarStory = {
   args: {...Default.args, variant: 'overBackground'},
   decorators: [
     (Story) => (
@@ -58,7 +60,7 @@ export const OverBackground = {
   ]
 };
 
-export const StaticColorWhite = {
+export const StaticColorWhite: ProgressBarStory = {
   args: {...Default.args, staticColor: 'white'},
   decorators: [
     (Story) => (
@@ -69,7 +71,7 @@ export const StaticColorWhite = {
   ]
 };
 
-export const StaticColorBlack = {
+export const StaticColorBlack: ProgressBarStory = {
   args: {...Default.args, staticColor: 'black'},
   decorators: [
     (Story) => (
@@ -80,10 +82,10 @@ export const StaticColorBlack = {
   ]
 };
 
-export const Value0 = {
+export const Value0: ProgressBarStory = {
   args: {...Default.args, value: 0}
 };
 
-export const Value100 = {
+export const Value100: ProgressBarStory = {
   args: {...Default.args, value: 100}
 };

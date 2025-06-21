@@ -17,8 +17,9 @@ import customTheme from './custom-theme.css';
 import {theme as expressTheme} from '@react-spectrum/theme-express';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Meta, StoryFn} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
-import {Provider} from '../';
+import {Provider, ProviderProps} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
@@ -39,22 +40,24 @@ export default {
   parameters: {
     providerSwitcher: {status: 'positive'}
   }
-};
+} as Meta<ProviderProps>;
 
-export const ColorSchemeDark = () =>
+export type ProviderStory = StoryFn<typeof Provider>;
+
+export const ColorSchemeDark: ProviderStory = () =>
   render({colorScheme: 'dark', style: {padding: 50, textAlign: 'center', width: 500}});
 
 ColorSchemeDark.story = {
   name: 'colorScheme: dark'
 };
 
-export const ScaleLarge = () => render({scale: 'large'});
+export const ScaleLarge: ProviderStory = () => render({scale: 'large'});
 
 ScaleLarge.story = {
   name: 'scale: large'
 };
 
-export const NestedColorSchemes = () => (
+export const NestedColorSchemes: ProviderStory = () => (
   <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}>
     <Button variant="primary">I am a dark button</Button>
     <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
@@ -67,7 +70,7 @@ NestedColorSchemes.story = {
   name: 'nested color schemes'
 };
 
-export const NestedProps = () => (
+export const NestedProps: ProviderStory = () => (
   <Provider isDisabled>
     <Button variant="primary">I am disabled</Button>
     <Provider isQuiet>
@@ -80,49 +83,49 @@ NestedProps.story = {
   name: 'nested props'
 };
 
-export const IsQuiet = () => render({isQuiet: true});
+export const IsQuiet: ProviderStory = () => render({isQuiet: true});
 
 IsQuiet.story = {
   name: 'isQuiet'
 };
 
-export const IsEmphasized = () => render({isEmphasized: true});
+export const IsEmphasized: ProviderStory = () => render({isEmphasized: true});
 
 IsEmphasized.story = {
   name: 'isEmphasized'
 };
 
-export const IsDisabled = () => render({isDisabled: true});
+export const IsDisabled: ProviderStory = () => render({isDisabled: true});
 
 IsDisabled.story = {
   name: 'isDisabled'
 };
 
-export const IsReadOnly = () => render({isReadOnly: true});
+export const IsReadOnly: ProviderStory = () => render({isReadOnly: true});
 
 IsReadOnly.story = {
   name: 'isReadOnly'
 };
 
-export const IsRequired = () => render({isRequired: true});
+export const IsRequired: ProviderStory = () => render({isRequired: true});
 
 IsRequired.story = {
   name: 'isRequired'
 };
 
-export const CustomTheme = () => render({theme: THEME});
+export const CustomTheme: ProviderStory = () => render({theme: THEME});
 
 CustomTheme.story = {
   name: 'custom theme'
 };
 
-export const ExpressTheme = () => render({theme: expressTheme});
+export const ExpressTheme: ProviderStory = () => render({theme: expressTheme});
 
 ExpressTheme.story = {
   name: 'express theme'
 };
 
-export const ResponsiveStyleProps = () => (
+export const ResponsiveStyleProps: ProviderStory = () => (
   <Provider UNSAFE_style={{padding: 50}}>
     <div>
       <TextField
@@ -142,7 +145,7 @@ ResponsiveStyleProps.story = {
   name: 'responsive styleProps'
 };
 
-export const CustomResponsiveStyleProps = () => {
+export const CustomResponsiveStyleProps: ProviderStory = () => {
   let Breakpoint = () => {
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
@@ -175,7 +178,7 @@ CustomResponsiveStyleProps.story = {
   name: 'custom responsive styleProps'
 };
 
-export const BreakpointOmitted = () => {
+export const BreakpointOmitted: ProviderStory = () => {
   let Breakpoint = () => {
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
@@ -200,7 +203,7 @@ BreakpointOmitted.story = {
   name: 'breakpoint omitted'
 };
 
-export const LocaleZhHant = () => (
+export const LocaleZhHant: ProviderStory = () => (
   <div>
     <div>Heaven and earth are mysterious and yellow, the universe is prehistoric</div>
     <Provider locale="zh-Hant">

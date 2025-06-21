@@ -12,12 +12,15 @@
 
 import {Breadcrumbs} from '../';
 import {Default as ChromaticDefault} from '../chromatic/Breadcrumbs.stories';
+import {Meta, StoryObj} from '@storybook/react';
 
 export default {
   title: 'Breadcrumbs',
   component: Breadcrumbs
-};
+} as Meta<typeof Breadcrumbs>;
 
-export const Default = {
+export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
+
+export const Default: BreadcrumbsStory = {
   ...ChromaticDefault
 };

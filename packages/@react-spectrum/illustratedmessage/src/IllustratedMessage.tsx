@@ -11,7 +11,7 @@
  */
 
 import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
@@ -22,7 +22,9 @@ import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.
  * An IllustratedMessage displays an illustration and a message, usually
  * for an empty state or an error page.
  */
-export const IllustratedMessage = forwardRef(function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+export const IllustratedMessage:
+  React.ForwardRefExoticComponent<SpectrumIllustratedMessageProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
+forwardRef(function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'illustration');
   let {
     children,

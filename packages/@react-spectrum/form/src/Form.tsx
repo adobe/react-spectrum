@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
+import {Alignment, DOMRef, DOMRefValue, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormValidationContext} from '@react-stately/form';
@@ -47,7 +47,9 @@ const formPropNames = new Set([
 /**
  * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
-export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
+export const Form:
+  React.ForwardRefExoticComponent<SpectrumFormProps & React.RefAttributes<DOMRefValue<HTMLFormElement>>> =
+React.forwardRef(function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   props = useProviderProps(props);
   let {
     children,

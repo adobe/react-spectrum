@@ -15,5 +15,5 @@ import React from 'react';
 
 // Context is placed in a separate file to avoid fast refresh issue where the old provider context values
 // are immediately replaced with the null default. Stopgap solution until we fix this in parcel.
-export const Context = React.createContext<ProviderContext | null>(null);
+export const Context: React.Context<ProviderContext | null> = React.createContext<ProviderContext | null>(null);
 Context.displayName = 'ProviderContext';

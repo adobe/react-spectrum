@@ -16,9 +16,9 @@ import {Alignment} from '@react-types/shared';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
@@ -29,7 +29,7 @@ const meta: Meta<SpectrumActionMenuProps<object>> = {
 
 export default meta;
 
-const Template = (args) => (
+const Template = (args: Omit<SpectrumActionMenuProps<object>, 'children'>): JSX.Element => (
   <ActionMenu onAction={action('action')} {...args}>
     <Item key="one">One</Item>
     <Item key="two">Two</Item>
@@ -119,47 +119,50 @@ function DirectionAlignment() {
   </Flex>);
 }
 
-export const Default = {
-  render: Template,
+export type ActionMenuStoryFn = StoryFn<typeof Template>;
+export type ActionMenuStory = StoryObj<typeof Template>;
+
+export const Default: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {}
 };
 
-export const AriaLabel = {
-  render: Template,
+export const AriaLabel: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {'aria-label': 'Some more actions'}
 };
 
-export const DOMId = {
-  render: Template,
+export const DOMId: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {id: 'my-action-menu'}
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {isQuiet: true}
 };
 
-export const Disabled = {
-  render: Template,
+export const Disabled: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {isDisabled: true}
 };
 
-export const DisabledKeys = {
-  render: Template,
+export const DisabledKeys: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {disabledKeys: ['two']}
 };
 
-export const AutoFocus = {
-  render: Template,
+export const AutoFocus: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {autoFocus: true}
 };
 
-export const DefaultOpen = {
-  render: Template,
+export const DefaultOpen: ActionMenuStory = {
+  render: (args) => <Template {...args} />,
   args: {onOpenChange: action('openChange'), defaultOpen: true}
 };
 
-export const ControlledOpen = () => {
+export const ControlledOpen: ActionMenuStoryFn = () => {
   let [open, setOpen] = React.useState(false);
 
   return (
@@ -174,9 +177,9 @@ export const ControlledOpen = () => {
   );
 };
 
-export const DirectionAlignFlip = () => <DirectionAlignment />;
+export const DirectionAlignFlip: ActionMenuStoryFn = () => <DirectionAlignment />;
 
-export const WithTooltip = () => (
+export const WithTooltip: ActionMenuStoryFn = () => (
   <TooltipTrigger delay={0}>
     <ActionMenu>
       <Item key="cut">Cut</Item>
@@ -187,7 +190,7 @@ export const WithTooltip = () => (
   </TooltipTrigger>
 );
 
-export const Dynamic = () => {
+export const Dynamic: ActionMenuStoryFn = () => {
   const items = [
     {key: 'cut', label: 'Cut'},
     {key: 'copy', label: 'Copy'},

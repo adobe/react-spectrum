@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
+import {Meta, StoryFn} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';
@@ -57,46 +58,48 @@ export default {
       }
     }
   }
-};
+} as Meta<typeof RadioGroup>;
 
-export const Default = (args) => render(args);
+export type RadioGroupStory = StoryFn<typeof RadioGroup>;
+
+export const Default: RadioGroupStory = (args) => render(args);
 
 Default.story = {
   name: 'default'
 };
 
-export const DefaultValueDragons = (args) => render({...args, defaultValue: 'dragons'});
+export const DefaultValueDragons: RadioGroupStory = (args) => render({...args, defaultValue: 'dragons'});
 
 DefaultValueDragons.story = {
   name: 'defaultValue: dragons'
 };
 
-export const ControlledDragons = (args) => render({...args, value: 'dragons'});
+export const ControlledDragons: RadioGroupStory = (args) => render({...args, value: 'dragons'});
 
 ControlledDragons.story = {
   name: 'controlled: dragons'
 };
 
-export const IsDisabledOnOneRadio = (args) => render(args, [{}, {isDisabled: true}, {}]);
+export const IsDisabledOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {isDisabled: true}, {}]);
 
 IsDisabledOnOneRadio.story = {
   name: 'isDisabled on one radio'
 };
 
-export const WithDescription = (args) => render({...args, description: 'Please select a pet.'});
+export const WithDescription: RadioGroupStory = (args) => render({...args, description: 'Please select a pet.'});
 
 WithDescription.story = {
   name: 'with description'
 };
 
-export const WithErrorMessage = (args) =>
+export const WithErrorMessage: RadioGroupStory = (args) =>
   render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
 
 WithErrorMessage.story = {
   name: 'with error message'
 };
 
-export const WithErrorMessageAndErrorIcon = (args) =>
+export const WithErrorMessageAndErrorIcon: RadioGroupStory = (args) =>
   render({
     ...args,
     errorMessage: 'Please select a pet.',
@@ -108,14 +111,14 @@ WithErrorMessageAndErrorIcon.story = {
   name: 'with error message and error icon'
 };
 
-export const WithDescriptionErrorMessageAndValidationFixedWidth = (args) =>
+export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = (args) =>
   renderWithDescriptionErrorMessageAndValidation(args);
 
 WithDescriptionErrorMessageAndValidationFixedWidth.story = {
   name: 'with description, error message and validation, fixed width'
 };
 
-export const _ContextualHelp = (args) =>
+export const _ContextualHelp: RadioGroupStory = (args) =>
   render({
     ...args,
     contextualHelp: (
@@ -133,26 +136,26 @@ _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const NoVisibleLabel = (args) =>
+export const NoVisibleLabel: RadioGroupStory = (args) =>
   render({...args, label: null, 'aria-label': 'Favorite pet'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const LongRadioLabel = (args) => renderLongLabel(args);
+export const LongRadioLabel: RadioGroupStory = (args) => renderLongLabel(args);
 
 LongRadioLabel.story = {
   name: 'long radio label'
 };
 
-export const ProviderControlIsDisabled = () => renderFormControl();
+export const ProviderControlIsDisabled: RadioGroupStory = () => renderFormControl();
 
 ProviderControlIsDisabled.story = {
   name: 'provider control: isDisabled'
 };
 
-export const AutoFocusOnOneRadio = (args) => render(args, [{}, {autoFocus: true}, {}]);
+export const AutoFocusOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {autoFocus: true}, {}]);
 
 AutoFocusOnOneRadio.story = {
   name: 'autoFocus on one radio'
@@ -254,7 +257,7 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
   return <Example />;
 }
 
-export const ControlledRovingTab = () => {
+export const ControlledRovingTab: RadioGroupStory = () => {
   const [selected, setSelected] = useState('1');
 
   return (

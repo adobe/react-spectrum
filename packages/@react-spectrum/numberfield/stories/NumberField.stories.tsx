@@ -19,60 +19,63 @@ import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
-import {NumberField} from '../src';
+import {Meta, StoryFn} from '@storybook/react';
+import {NumberField, SpectrumNumberFieldProps} from '../src';
 import React, {ReactNode, useState} from 'react';
 
 export default {
   title: 'NumberField',
   decorators: [(story) => <ErrorBoundary>{story()}</ErrorBoundary>],
   providerSwitcher: {status: 'notice'}
-};
+} as Meta<SpectrumNumberFieldProps>;
 
-export const Default = () => render({});
+export type NumberFieldStory = StoryFn<SpectrumNumberFieldProps>;
+
+export const Default: NumberFieldStory = () => render({});
 
 Default.story = {
   name: 'default'
 };
 
-export const DefaultValue10 = () => render({defaultValue: 10});
+export const DefaultValue10: NumberFieldStory = () => render({defaultValue: 10});
 
 DefaultValue10.story = {
   name: 'defaultValue: 10'
 };
 
-export const Value10 = () => render({value: 10});
+export const Value10: NumberFieldStory = () => render({value: 10});
 
 Value10.story = {
   name: 'value: 10'
 };
 
-export const MaximumFractionDigits0 = () => render({formatOptions: {maximumFractionDigits: 0}});
+export const MaximumFractionDigits0: NumberFieldStory = () => render({formatOptions: {maximumFractionDigits: 0}});
 
 MaximumFractionDigits0.story = {
   name: 'maximumFractionDigits = 0'
 };
 
-export const Currency = () =>
+export const Currency: NumberFieldStory = () =>
   render({formatOptions: {style: 'currency', currency: 'EUR'}, label: 'Price'});
 
 Currency.story = {
   name: 'currency'
 };
 
-export const Percent = () => render({formatOptions: {style: 'percent'}, label: 'Tax'});
+export const Percent: NumberFieldStory = () => render({formatOptions: {style: 'percent'}, label: 'Tax'});
 
 Percent.story = {
   name: 'percent'
 };
 
-export const PercentMaxFractionDigits2NoMinFractionDigits = () =>
+export const PercentMaxFractionDigits2NoMinFractionDigits: NumberFieldStory = () =>
   render({formatOptions: {style: 'percent', maximumFractionDigits: 2}, label: 'Tax'});
 
 PercentMaxFractionDigits2NoMinFractionDigits.story = {
   name: 'percent, max fraction digits: 2, no min fraction digits'
 };
 
-export const PercentMin2Max2FractionDigits = () =>
+export const PercentMin2Max2FractionDigits: NumberFieldStory = () =>
   render({
     formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2},
     label: 'Tax'
@@ -82,7 +85,7 @@ PercentMin2Max2FractionDigits.story = {
   name: 'percent min = 2 max = 2 fraction digits'
 };
 
-export const PercentMin2Max3FractionDigits = () =>
+export const PercentMin2Max3FractionDigits: NumberFieldStory = () =>
   render({
     formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 3},
     label: 'Tax'
@@ -92,188 +95,188 @@ PercentMin2Max3FractionDigits.story = {
   name: 'percent min = 2 max = 3 fraction digits'
 };
 
-export const MinValue00FractionDigits = () =>
+export const MinValue00FractionDigits: NumberFieldStory = () =>
   render({minValue: 0, formatOptions: {maximumFractionDigits: 0}});
 
 MinValue00FractionDigits.story = {
   name: 'minValue = 0, 0 fraction digits'
 };
 
-export const PercentUsingSign = () =>
+export const PercentUsingSign: NumberFieldStory = () =>
   render({formatOptions: {style: 'percent', signDisplay: 'always'}, label: 'Tax'});
 
 PercentUsingSign.story = {
   name: 'percent using sign'
 };
 
-export const Disabled = () => render({isDisabled: true});
+export const Disabled: NumberFieldStory = () => render({isDisabled: true});
 
 Disabled.story = {
   name: 'disabled'
 };
 
-export const Readonly = () => render({defaultValue: 10, isReadOnly: true});
+export const Readonly: NumberFieldStory = () => render({defaultValue: 10, isReadOnly: true});
 
 Readonly.story = {
   name: 'readonly'
 };
 
-export const IsQuiet = () => render({isQuiet: true});
+export const IsQuiet: NumberFieldStory = () => render({isQuiet: true});
 
 IsQuiet.story = {
   name: 'isQuiet'
 };
 
-export const QuietDisabled = () => render({isQuiet: true, isDisabled: true, defaultValue: 10});
+export const QuietDisabled: NumberFieldStory = () => render({isQuiet: true, isDisabled: true, defaultValue: 10});
 
 QuietDisabled.story = {
   name: 'quiet disabled'
 };
 
-export const QuietReadonly = () => render({isQuiet: true, isReadOnly: true, defaultValue: 10});
+export const QuietReadonly: NumberFieldStory = () => render({isQuiet: true, isReadOnly: true, defaultValue: 10});
 
 QuietReadonly.story = {
   name: 'quiet readonly'
 };
 
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+export const ValidationStateInvalid: NumberFieldStory = () => render({validationState: 'invalid'});
 
 ValidationStateInvalid.story = {
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid = () => render({validationState: 'valid'});
+export const ValidationStateValid: NumberFieldStory = () => render({validationState: 'valid'});
 
 ValidationStateValid.story = {
   name: 'validationState: valid'
 };
 
-export const ValidationStateInvalidIsQuiet = () =>
+export const ValidationStateInvalidIsQuiet: NumberFieldStory = () =>
   render({validationState: 'invalid', isQuiet: true});
 
 ValidationStateInvalidIsQuiet.story = {
   name: 'validationState: invalid, isQuiet'
 };
 
-export const ValidationStateValidIsQuiet = () =>
+export const ValidationStateValidIsQuiet: NumberFieldStory = () =>
   render({validationState: 'valid', isQuiet: true});
 
 ValidationStateValidIsQuiet.story = {
   name: 'validationState: valid, isQuiet'
 };
 
-export const MinValue0MaxValue20 = () => render({minValue: 0, maxValue: 20});
+export const MinValue0MaxValue20: NumberFieldStory = () => render({minValue: 0, maxValue: 20});
 
 MinValue0MaxValue20.story = {
   name: 'minValue = 0, maxValue = 20'
 };
 
-export const MinValue0MaxValue20Quiet = () => render({isQuiet: true, minValue: 0, maxValue: 20});
+export const MinValue0MaxValue20Quiet: NumberFieldStory = () => render({isQuiet: true, minValue: 0, maxValue: 20});
 
 MinValue0MaxValue20Quiet.story = {
   name: 'minValue = 0, maxValue = 20, quiet'
 };
 
-export const MinValue50MaxValue20 = () => render({minValue: -50, maxValue: -20});
+export const MinValue50MaxValue20: NumberFieldStory = () => render({minValue: -50, maxValue: -20});
 
 MinValue50MaxValue20.story = {
   name: 'minValue = -50, maxValue = -20'
 };
 
-export const MinValue20MaxValue50 = () => render({minValue: 20, maxValue: 50});
+export const MinValue20MaxValue50: NumberFieldStory = () => render({minValue: 20, maxValue: 50});
 
 MinValue20MaxValue50.story = {
   name: 'minValue = 20, maxValue = 50'
 };
 
-export const MinValue0DefaultValue0 = () => render({minValue: 0, defaultValue: 0});
+export const MinValue0DefaultValue0: NumberFieldStory = () => render({minValue: 0, defaultValue: 0});
 
 MinValue0DefaultValue0.story = {
   name: 'minValue = 0, defaultValue = 0'
 };
 
-export const Step5 = () => render({step: 5});
+export const Step5: NumberFieldStory = () => render({step: 5});
 
 Step5.story = {
   name: 'step = 5'
 };
 
-export const Step3WithMin2Max21 = () => render({step: 3, minValue: 2, maxValue: 21});
+export const Step3WithMin2Max21: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21});
 
 Step3WithMin2Max21.story = {
   name: 'step = 3 with min = 2, max = 21'
 };
 
-export const AutoFocus = () => render({autoFocus: true});
+export const AutoFocus: NumberFieldStory = () => render({autoFocus: true});
 
 AutoFocus.story = {
   name: 'autoFocus'
 };
 
-export const HideStepper = () => render({hideStepper: true});
+export const HideStepper: NumberFieldStory = () => render({hideStepper: true});
 
 HideStepper.story = {
   name: 'hideStepper'
 };
 
-export const IsQuietHideStepper = () => render({isQuiet: true, hideStepper: true});
+export const IsQuietHideStepper: NumberFieldStory = () => render({isQuiet: true, hideStepper: true});
 
 IsQuietHideStepper.story = {
   name: 'isQuiet, hideStepper'
 };
 
-export const Required = () => render({isRequired: true});
+export const Required: NumberFieldStory = () => render({isRequired: true});
 
 Required.story = {
   name: 'required'
 };
 
-export const Optional = () => render({necessityIndicator: 'label'});
+export const Optional: NumberFieldStory = () => render({necessityIndicator: 'label'});
 
 Optional.story = {
   name: 'optional'
 };
 
-export const RequiredWithLabel = () => render({isRequired: true, necessityIndicator: 'label'});
+export const RequiredWithLabel: NumberFieldStory = () => render({isRequired: true, necessityIndicator: 'label'});
 
 RequiredWithLabel.story = {
   name: 'required with label'
 };
 
-export const LabelTopEnd = () =>
+export const LabelTopEnd: NumberFieldStory = () =>
   render({isRequired: true, labelPosition: 'top', labelAlign: 'end'});
 
 LabelTopEnd.story = {
   name: 'label top end'
 };
 
-export const LabelSide = () => render({isRequired: true, labelPosition: 'side'});
+export const LabelSide: NumberFieldStory = () => render({isRequired: true, labelPosition: 'side'});
 
 LabelSide.story = {
   name: 'label side'
 };
 
-export const NoVisibleLabel = () => renderNoLabel({isRequired: true, 'aria-label': 'Width'});
+export const NoVisibleLabel: NumberFieldStory = () => renderNoLabel({isRequired: true, 'aria-label': 'Width'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const QuietNoVisibleLabel = () =>
+export const QuietNoVisibleLabel: NumberFieldStory = () =>
   renderNoLabel({isQuiet: true, isRequired: true, 'aria-label': 'Width'});
 
 QuietNoVisibleLabel.story = {
   name: 'quiet no visible label'
 };
 
-export const QuietNoVisibleLabelHidestepper = () =>
+export const QuietNoVisibleLabelHidestepper: NumberFieldStory = () =>
   renderNoLabel({hideStepper: true, isQuiet: true, isRequired: true, 'aria-label': 'Width'});
 
 QuietNoVisibleLabelHidestepper.story = {
   name: 'quiet no visible label hidestepper'
 };
 
-export const AriaLabelledby = () => (
+export const AriaLabelledby: NumberFieldStory = () => (
   <>
     <label htmlFor="numberfield" id="label">
       Width
@@ -286,14 +289,14 @@ AriaLabelledby.story = {
   name: 'aria-labelledby'
 };
 
-export const WithDescriptionNoVisibleLabel = () =>
+export const WithDescriptionNoVisibleLabel: NumberFieldStory = () =>
   renderNoLabel({'aria-label': 'Age', description: 'Please select your age.'});
 
 WithDescriptionNoVisibleLabel.story = {
   name: 'with description, no visible label'
 };
 
-export const WithErrorMessageLabelPositionSide = () =>
+export const WithErrorMessageLabelPositionSide: NumberFieldStory = () =>
   render({
     labelPosition: 'side',
     errorMessage: 'Please enter a positive number.',
@@ -304,7 +307,7 @@ WithErrorMessageLabelPositionSide.story = {
   name: 'with error message, labelPosition: side'
 };
 
-export const _ContextualHelp = () =>
+export const _ContextualHelp: NumberFieldStory = () =>
   render({
     contextualHelp: (
       <ContextualHelp>
@@ -321,57 +324,57 @@ _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const CustomWidth = () => render({width: 'size-3000'});
+export const CustomWidth: NumberFieldStory = () => render({width: 'size-3000'});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const QuietCustomWidth = () => render({isQuiet: true, width: 'size-3000'});
+export const QuietCustomWidth: NumberFieldStory = () => render({isQuiet: true, width: 'size-3000'});
 
 QuietCustomWidth.story = {
   name: 'quiet custom width'
 };
 
-export const CustomWidthNoVisibleLabel = () =>
+export const CustomWidthNoVisibleLabel: NumberFieldStory = () =>
   renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Width'});
 
 CustomWidthNoVisibleLabel.story = {
   name: 'custom width no visible label'
 };
 
-export const CustomWidthLabelPositionSide = () =>
+export const CustomWidthLabelPositionSide: NumberFieldStory = () =>
   render({width: 'size-3000', labelPosition: 'side'});
 
 CustomWidthLabelPositionSide.story = {
   name: 'custom width, labelPosition=side'
 };
 
-export const Controlled = () => <NumberFieldControlled />;
+export const Controlled: NumberFieldStory = () => <NumberFieldControlled />;
 
 Controlled.story = {
   name: 'controlled'
 };
 
-export const CurrencySwitcher = () => <NumberFieldWithCurrencySelect />;
+export const CurrencySwitcher: NumberFieldStory = () => <NumberFieldWithCurrencySelect />;
 
 CurrencySwitcher.story = {
   name: 'currency switcher'
 };
 
-export const Flexed = () => renderSet();
+export const Flexed: NumberFieldStory = () => renderSet();
 
 Flexed.story = {
   name: 'flexed'
 };
 
-export const MinWidth = () => render({width: 0});
+export const MinWidth: NumberFieldStory = () => render({width: 0});
 
 MinWidth.story = {
   name: 'min width'
 };
 
-export const FocusEvents = () =>
+export const FocusEvents: NumberFieldStory = () =>
   render({
     onBlur: action('onBlur'),
     onFocus: action('onFocus'),
@@ -384,7 +387,7 @@ FocusEvents.story = {
   name: 'focus events'
 };
 
-export const InputDomEvents = () =>
+export const InputDomEvents: NumberFieldStory = () =>
   render({
     onCopy: action('onCopy'),
     onCut: action('onCut'),
@@ -401,7 +404,7 @@ InputDomEvents.story = {
   name: 'input dom events'
 };
 
-export const ResetControlledStateToBlankWithNull = () => <NumberFieldControlledStateReset />;
+export const ResetControlledStateToBlankWithNull: NumberFieldStory = () => <NumberFieldControlledStateReset />;
 
 ResetControlledStateToBlankWithNull.story = {
   name: 'reset controlled state to blank with null'

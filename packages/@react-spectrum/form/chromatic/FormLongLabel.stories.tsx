@@ -15,10 +15,10 @@ import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
@@ -26,9 +26,11 @@ import {TextArea, TextField} from '@react-spectrum/textfield';
 const meta: Meta<SpectrumFormProps> = {
   title: 'Form/LongLabel',
   component: Form
-};
+} as Meta<typeof Form>;
 
 export default meta;
+
+export type FormStory = StoryObj<typeof Form>;
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -36,7 +38,7 @@ let flatOptions = [
   {id: 3, name: 'Snake'}
 ];
 
-const Template = (args) => (
+const Template = (args: Omit<SpectrumFormProps, 'children'>): JSX.Element => (
   <Form {...args}>
     <CheckboxGroup defaultValue={['dragons']} label="Pets are family fun for all, two real and two fantasy">
       <Checkbox value="dogs">Dogs</Checkbox>
@@ -66,44 +68,44 @@ const Template = (args) => (
   </Form>
 );
 
-export const Default = {
-  render: Template,
+export const Default: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
-export const DefaultNarrow = {
-  render: Template,
+export const DefaultNarrow: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'default, width: 200px',
   args: {width: '200px'}
 };
 
-export const LabelPositionSide = {
-  render: Template,
+export const LabelPositionSide: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label position: side',
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const LabelAlignEnd = {
-  render: Template,
+export const LabelAlignEnd: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label align: end',
   args: {...Default.args, labelAlign: 'end'}
 };
 
-export const NecessityIndicatorLabel = {
-  render: Template,
+export const NecessityIndicatorLabel: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'necessity indicator: label',
   args: {...Default.args, necessityIndicator: 'label'}
 };
 
-export const LabelPositionSideRequiredNecessityIndicatorLabel = {
-  render: Template,
+export const LabelPositionSideRequiredNecessityIndicatorLabel: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label position: side, isRequired, necessity indicator: label',
   args: {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true}
 };
 
-export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow = {
-  render: Template,
+export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label position: side, isRequired, necessity indicator: label, width: 200px',
   args: {
     ...Default.args,
@@ -114,20 +116,20 @@ export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow = {
   }
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isQuiet',
   args: {...Default.args, isQuiet: true}
 };
 
-export const QuietLabelPositionSideAlignEnd = {
-  render: Template,
+export const QuietLabelPositionSideAlignEnd: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isQuiet, label position: side, label align: end',
   args: {...Default.args, isQuiet: true, labelPosition: 'side', labelAlign: 'end'}
 };
 
-export const QuietLabelPositionSideNarrow = {
-  render: Template,
+export const QuietLabelPositionSideNarrow: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isQuiet, label position: side, width: 200px',
   args: {...Default.args, isQuiet: true, labelPosition: 'side', width: '200px'}
 };

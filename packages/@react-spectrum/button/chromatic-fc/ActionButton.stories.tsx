@@ -10,24 +10,73 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '../';
+import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
-import {IconText, StaticColorBlack, StaticColorWhite} from '../chromatic/ActionButton.stories';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 
 export default {
   title: 'Button/ActionButtons'
-};
+} as Meta<typeof ActionButton>;
 
-export const All = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>icon + text</h2>
-    <IconText />
-    <h2>static color: white</h2>
-    <StaticColorWhite />
-    <h2>static color: black</h2>
-    <StaticColorBlack />
-  </Flex>
-);
-All.story = {
+export type ActionButtonStory = StoryObj<typeof ActionButton>;
+
+export const All: ActionButtonStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>icon + text</h2>
+      <Flex gap="size-100">
+        <ActionButton>
+          <Add />
+          <Text>Default</Text>
+        </ActionButton>
+        <ActionButton isQuiet>
+          <Add />
+          <Text>Quiet</Text>
+        </ActionButton>
+        <ActionButton isDisabled>
+          <Text>Disabled</Text>
+          <Add />
+        </ActionButton>
+      </Flex>
+      <h2>static color: white</h2>
+      <View backgroundColor="static-blue-700" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          <ActionButton staticColor="white">
+            <Add />
+            <Text>Default</Text>
+          </ActionButton>
+          <ActionButton staticColor="white" isQuiet>
+            <Add />
+            <Text>Quiet</Text>
+          </ActionButton>
+          <ActionButton staticColor="white" isDisabled>
+            <Text>Disabled</Text>
+            <Add />
+          </ActionButton>
+        </Flex>
+      </View>
+      <h2>static color: black</h2>
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          <ActionButton staticColor="black">
+            <Add />
+            <Text>Default</Text>
+          </ActionButton>
+          <ActionButton staticColor="black" isQuiet>
+            <Add />
+            <Text>Quiet</Text>
+          </ActionButton>
+          <ActionButton staticColor="black" isDisabled>
+            <Text>Disabled</Text>
+            <Add />
+          </ActionButton>
+        </Flex>
+      </View>
+    </Flex>
+  ),
   name: 'all'
 };

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, StyleProps} from '@react-types/shared';
 import {Button, DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -30,7 +30,9 @@ export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'clas
 const InternalAccordionContext = createContext<{isQuiet: boolean} | null>(null);
 
 /** A group of disclosures that can be expanded and collapsed. */
-export const Accordion = /*#__PURE__*/(forwardRef as forwardRefType)(function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
+export const Accordion:
+  (props: SpectrumAccordionProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => React.ReactElement | null =
+/*#__PURE__*/(forwardRef as forwardRefType)(function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -55,7 +57,9 @@ export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'classNam
 }
 
 /** A collapsible section of content composed of a heading that expands and collapses a panel. */
-export const Disclosure = /*#__PURE__*/(forwardRef as forwardRefType)(function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
+export const Disclosure:
+  (props: SpectrumDisclosureProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => React.ReactElement | null =
+/*#__PURE__*/(forwardRef as forwardRefType)(function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -82,14 +86,16 @@ export interface SpectrumDisclosurePanelProps extends Omit<DisclosurePanelProps,
 }
 
 /** The panel that contains the content of the disclosure. */
-export const DisclosurePanel = /*#__PURE__*/(forwardRef as forwardRefType)(function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
+export const DisclosurePanel:
+  (props: SpectrumDisclosurePanelProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => React.ReactElement | null =
+/*#__PURE__*/(forwardRef as forwardRefType)(function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
       ref={domRef}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'role'>}
-      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)} 
+      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)}
       {...props}>
       {props.children}
     </RACDisclosurePanel>
@@ -107,7 +113,9 @@ export interface SpectrumDisclosureTitleProps extends DOMProps, AriaLabelingProp
 }
 
 /** The heading of the disclosure. */
-export const DisclosureTitle = /*#__PURE__*/(forwardRef as forwardRefType)(function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHeadingElement>) {
+export const DisclosureTitle:
+  (props: SpectrumDisclosureTitleProps & React.RefAttributes<DOMRefValue<HTMLHeadingElement>>) => React.ReactElement | null =
+/*#__PURE__*/(forwardRef as forwardRefType)(function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHeadingElement>) {
   let {styleProps} = useStyleProps(props);
   let {level = 3} = props;
   let {direction} = useLocale();

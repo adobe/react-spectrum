@@ -11,34 +11,34 @@
  */
 
 import {Link} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 
 const meta: Meta<SpectrumLinkProps> = {
   title: 'Link',
   component: Link
-};
+} as Meta<SpectrumLinkProps>;
 
 export default meta;
 
-const Template = (args) => <Link {...args}>This is a React Spectrum Link</Link>;
+export type LinkStory = StoryObj<SpectrumLinkProps>;
 
-export const Default = {
-  render: Template
+export const Default: LinkStory = {
+  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>
 };
 
-export const Secondary = {
-  render: Template,
+export const Secondary: LinkStory = {
+  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {variant: 'secondary'}
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: LinkStory = {
+  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {isQuiet: true}
 };
 
-export const QuietSecondary = {
-  render: Template,
+export const QuietSecondary: LinkStory = {
+  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {...Secondary.args, ...Quiet.args}
 };
