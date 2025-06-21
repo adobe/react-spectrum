@@ -288,14 +288,22 @@ function Example() {
     background: none;
     border: none;
     padding: 0;
-    margin-left: 8px;
+    margin-left: 2px;
     color: var(--text-color-base);
     transition: color 200ms;
     outline: none;
     font-size: 0.95em;
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    height: 100%;
 
     &[data-hovered] {
       color: var(--text-color-hover);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 

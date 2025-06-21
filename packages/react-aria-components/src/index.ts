@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridList, GridListItem, GridListContext} from './GridList';
+export {UNSTABLE_GridListLoadingSentinel, GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
@@ -49,7 +49,7 @@ export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createB
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
-export {ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
+export {UNSTABLE_ListBoxLoadingSentinel, ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
 export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
@@ -63,7 +63,7 @@ export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateConte
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {UNSTABLE_TableLoadingIndicator, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
+export {UNSTABLE_TableLoadingSentinel, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
 export {TableLayout} from './TableLayout';
 export {Tabs, TabList, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGroup';
@@ -146,6 +146,7 @@ export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
-export type {Color, ColorSpace, ColorFormat, Key, QueuedToast, Selection, SortDescriptor, SortDirection, SelectionMode, ToastOptions} from 'react-stately';
-export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, Key, ListState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState} from 'react-stately';
+export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
+export type {ValidationResult, RouterConfig} from '@react-types/shared';

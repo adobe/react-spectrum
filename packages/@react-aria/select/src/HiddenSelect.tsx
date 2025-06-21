@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {ReactNode, useRef} from 'react';
+import React, {JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -75,6 +75,9 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
     focus: () => triggerRef.current?.focus()
   }, state, props.selectRef);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement> | React.FormEvent<HTMLSelectElement>) => state.setSelectedKey(e.currentTarget.value), [state.setSelectedKey]);
+
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
   // seem to identify it just by surrounding text.
@@ -99,8 +102,9 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? undefined,
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
+      value: state.selectedKey ?? '',
+      onChange,
+      onInput: onChange
     }
   };
 }
@@ -109,7 +113,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
  * Renders a hidden native `<select>` element, which can be used to support browser
  * form autofill, mobile form navigation, and native form submission.
  */
-export function HiddenSelect<T>(props: HiddenSelectProps<T>): ReactNode | null {
+export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);

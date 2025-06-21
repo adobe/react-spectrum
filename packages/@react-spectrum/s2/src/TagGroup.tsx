@@ -28,15 +28,15 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
+import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {FieldLabel} from './Field';
+import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
-import {focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
@@ -82,25 +82,6 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
 }
 
 export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
-
-const helpTextStyles = style({
-  gridArea: 'helptext',
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 'text-to-visual',
-  font: 'control',
-  color: {
-    default: 'neutral-subdued',
-    isInvalid: 'negative'
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  contain: 'inline-size',
-  paddingTop: '--field-gap',
-  cursor: 'text'
-});
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
@@ -440,17 +421,13 @@ function ActionGroup(props) {
 
 const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?: boolean, isLink?: boolean, allowsRemoving?: boolean}>({
   ...focusRing(),
+  ...control({shape: 'default', icon: true}),
   display: 'inline-flex',
-  boxSizing: 'border-box',
   maxWidth: 'full',
   verticalAlign: 'middle',
-  alignItems: 'center',
   justifyContent: 'center',
-  font: 'control',
-  height: 'control',
   transition: 'default',
-  minWidth: 0,
-  // maxWidth: '[calc(self(height) * 7)]', // s2 designs show a max width on tags but we pushed back on this in v3
+  // maxWidth: 'calc(self(height) * 7)', // s2 designs show a max width on tags but we pushed back on this in v3
   backgroundColor: {
     default: 'gray-100',
     isHovered: {
@@ -460,9 +437,12 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
       default: 'gray-200'
     },
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: {
-        default: 'accent'
+        default: lightDark('accent-900', 'accent-700'),
+        isHovered: lightDark('accent-1000', 'accent-600'),
+        isPressed: lightDark('accent-1000', 'accent-600'),
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
       }
     },
     isDisabled: 'disabled',
@@ -472,7 +452,7 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isSelected: {
       default: 'gray-25',
       isEmphasized: 'white'
@@ -485,25 +465,14 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
     }
   },
   borderStyle: 'none',
-  paddingStart: {
-    default: 'edge-to-text'
-  },
   paddingEnd: {
     default: 'edge-to-text',
     allowsRemoving: 0
   },
-  paddingY: 0,
   margin: 4,
-  borderRadius: 'control',
   cursor: {
     default: 'default',
     isLink: 'pointer'
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2)
-    }
   },
   '--iconPrimary': {
     type: 'fill',
@@ -536,13 +505,13 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
       style={pressScale(domRef)}
       className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
+        <TagWrapper isInRealDOM={isInRealDOM} isEmphasized={isEmphasized} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
       ))}
     </AriaTag>
   );
 });
 
-function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
+function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
@@ -587,6 +556,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
         <ClearButton
           slot="remove"
           size={size}
+          isStaticColor={isEmphasized && isSelected}
           isDisabled={isDisabled} />
       )}
     </>

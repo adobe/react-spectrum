@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {
   Button,
   Checkbox,
+  Collection,
   Dialog,
   DialogTrigger,
   DropIndicator,
@@ -31,8 +32,9 @@ import {
   Virtualizer
 } from '../';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
+import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -63,6 +65,7 @@ let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{list
 describe('GridList', () => {
   let user;
   let testUtilUser = new User();
+  let onSelectionChange = jest.fn();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -408,6 +411,220 @@ describe('GridList', () => {
     expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
     expect(items[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  describe('selectionBehavior="replace"', () => {
+    // Required for proper touch detection
+    installPointerEvent();
+    let GridListNoCheckboxes = ({listBoxProps, itemProps}) => (
+      <GridList aria-label="Test" {...listBoxProps}>
+        <GridListItem {...itemProps} id="cat" textValue="Cat">Cat</GridListItem>
+        <GridListItem {...itemProps} id="dog" textValue="Dog">Dog</GridListItem>
+        <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+      it('should perform selection with single selection', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'single', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'single');
+        }
+
+        let row2 = rows[2];
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+        await gridListTester.toggleRowSelection({row: 'Kangaroo', selectionBehavior: 'replace'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called twice because initial focus will select the first keyboard focused row
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row1);
+
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(4);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
+        expect(gridListTester.selectedRows).toHaveLength(0);
+      });
+
+      it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await gridListTester.toggleRowSelection({row: 'Kangaroo', selectionBehavior: 'replace'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(2);
+          expect(gridListTester.selectedRows[1]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row2);
+        }
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'dog', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(3);
+          expect(gridListTester.selectedRows[1]).toBe(row1);
+          expect(gridListTester.selectedRows[2]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(2);
+          expect(gridListTester.selectedRows[0]).toBe(row1);
+          expect(gridListTester.selectedRows[1]).toBe(row2);
+        }
+
+        // With modifier key, you should be able to deselect on press of the same row
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(2);
+          expect(gridListTester.selectedRows[1]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row2);
+        }
+      });
+
+      it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await gridListTester.toggleRowSelection({row: 'Kangaroo'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called multiple times since selection changes on option focus as we arrow down to the target option
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1});
+        if (type !== 'touch') {
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row1);
+
+          // pressing without modifier keys won't deselect the row
+          await gridListTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(gridListTester.selectedRows).toHaveLength(1);
+        } else {
+          // touch always behaves as toggle
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(2);
+          expect(gridListTester.selectedRows[0]).toBe(row1);
+
+          await gridListTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row2);
+        }
+      });
+    });
   });
 
   it('should support virtualizer', async () => {
@@ -827,9 +1044,9 @@ describe('GridList', () => {
       let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -839,9 +1056,9 @@ describe('GridList', () => {
       let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -851,11 +1068,249 @@ describe('GridList', () => {
       let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('async loading', () => {
+    let items = [
+      {name: 'Foo'},
+      {name: 'Bar'},
+      {name: 'Baz'}
+    ];
+    let renderEmptyState = (loadingState) => {
+      return (
+        loadingState === 'loading' ? <div>loading</div> : <div>empty state</div>
+      );
+    };
+    let AsyncGridList = (props) => {
+      let {items, isLoading, onLoadMore, ...listBoxProps} = props;
+      return (
+        <GridList
+          {...listBoxProps}
+          aria-label="async gridlist"
+          renderEmptyState={() => renderEmptyState()}>
+          <Collection items={items}>
+            {(item) => (
+              <GridListItem id={item.name}>{item.name}</GridListItem>
+            )}
+          </Collection>
+          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+            Loading...
+          </UNSTABLE_GridListLoadingSentinel>
+        </GridList>
+      );
+    };
+
+    let onLoadMore = jest.fn();
+    let observe = jest.fn();
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should render the loading element when loading', async () => {
+      let tree = render(<AsyncGridList isLoading items={items} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(4);
+      let loaderRow = rows[3];
+      expect(loaderRow).toHaveTextContent('Loading...');
+
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(sentinel.parentElement).toHaveAttribute('inert');
+    });
+
+    it('should render the sentinel but not the loading indicator when not loading', async () => {
+      let tree = render(<AsyncGridList items={items} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(3);
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should properly render the renderEmptyState if gridlist is empty', async () => {
+      let tree = render(<AsyncGridList items={[]} />);
+
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      let rows = gridListTester.rows;
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+
+      // Even if the gridlist is empty, providing isLoading will render the loader
+      tree.rerender(<AsyncGridList items={[]} isLoading />);
+      rows = gridListTester.rows;
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeTruthy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should only fire loadMore when intersection is detected regardless of loading state', async () => {
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
+
+      let tree = render(<AsyncGridList items={items} onLoadMore={onLoadMore} isLoading />);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      observe.mockClear();
+
+      tree.rerender(<AsyncGridList items={items} onLoadMore={onLoadMore} />);
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
+    });
+
+    describe('virtualized', () => {
+      let items = [];
+      for (let i = 0; i < 50; i++) {
+        items.push({name: 'Foo' + i});
+      }
+      let clientWidth, clientHeight;
+
+      beforeAll(() => {
+        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+      });
+
+      afterAll(function () {
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      let VirtualizedAsyncGridList = (props) => {
+        let {items, loadingState, onLoadMore, ...listBoxProps} = props;
+        return (
+          <Virtualizer
+            layout={ListLayout}
+            layoutOptions={{
+              rowHeight: 25,
+              loaderHeight: 30
+            }}>
+            <GridList
+              {...listBoxProps}
+              aria-label="async virtualized gridlist"
+              renderEmptyState={() => renderEmptyState(loadingState)}>
+              <Collection items={items}>
+                {(item) => (
+                  <GridListItem id={item.name}>{item.name}</GridListItem>
+                )}
+              </Collection>
+              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                Loading...
+              </UNSTABLE_GridListLoadingSentinel>
+            </GridList>
+          </Virtualizer>
+        );
+      };
+
+      it('should always render the sentinel even when virtualized', async () => {
+        let tree = render(<VirtualizedAsyncGridList loadingState="loadingMore" items={items} />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(8);
+        let loaderRow = rows[7];
+        expect(loaderRow).toHaveTextContent('Loading...');
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        let loaderParentStyles = loaderRow.parentElement.style;
+
+        // 50 items * 25px = 1250
+        expect(loaderParentStyles.top).toBe('1250px');
+        expect(loaderParentStyles.height).toBe('30px');
+
+        let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
+      });
+
+      it('should not reserve room for the loader if isLoading is false', async () => {
+        let tree = render(<VirtualizedAsyncGridList items={items} />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(7);
+        expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();
+
+        let sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        let sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('1250px');
+        expect(sentinelParentStyles.height).toBe('0px');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
+
+        tree.rerender(<VirtualizedAsyncGridList items={[]} />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+        let emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('empty state');
+        expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();
+
+        sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('0px');
+
+        tree.rerender(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+        emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('loading');
+
+        sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('0px');
+      });
+
+      it('should have the correct row indicies after loading more items', async () => {
+        let tree = render(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+
+        let loaderRow = rows[0];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '1');
+        expect(loaderRow).toHaveTextContent('loading');
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(7);
+        expect(within(gridListTester.gridlist).queryByText('loading')).toBeFalsy();
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} loadingState="loadingMore" />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(8);
+        loaderRow = rows[7];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        for (let [index, row] of rows.entries()) {
+          if (index === 7) {
+            continue;
+          } else {
+            expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+          }
+        }
+      });
     });
   });
 });

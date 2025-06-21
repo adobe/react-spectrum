@@ -27,6 +27,7 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  JSX,
   ReactElement,
   ReactNode,
   RefObject,
@@ -49,7 +50,7 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode
 }
 
-export function MenuTrigger(props: MenuTriggerProps): ReactNode {
+export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({

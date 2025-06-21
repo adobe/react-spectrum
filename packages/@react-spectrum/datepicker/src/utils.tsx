@@ -31,11 +31,12 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
     if (props.showFormatHelpText) {
       return (
         formatter.formatToParts(new Date()).map((s, i) => {
-          if (s.type === 'literal') {
+          if (s.type === 'literal' || s.type === 'unknown' || (s.type as string) === 'yearName') {
             return <span key={i}>{` ${s.value} `}</span>;
           }
 
-          return <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(s.type)}</span>;
+          let type = s.type as string === 'relatedYear' ? 'year' : s.type;
+          return <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(type)}</span>;
         })
       );
     }

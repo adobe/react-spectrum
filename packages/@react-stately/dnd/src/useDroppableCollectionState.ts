@@ -59,6 +59,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     onRootDrop,
     onItemDrop,
     onReorder,
+    onMove,
     shouldAcceptItemDrop,
     collection,
     selectionManager,
@@ -71,11 +72,15 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
   let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget | null => {
     if (target.dropPosition === 'before') {
-      let key = collection.getKeyBefore(target.key);
-      return key != null ? {type: 'item', key, dropPosition: 'after'} : null;
+      let node = collection.getItem(target.key);
+      return node && node.prevKey != null
+        ? {type: 'item', key: node.prevKey, dropPosition: 'after'} 
+        : null;
     } else if (target.dropPosition === 'after') {
-      let key = collection.getKeyAfter(target.key);
-      return key != null ? {type: 'item', key, dropPosition: 'before'} : null;
+      let node = collection.getItem(target.key);
+      return node && node.nextKey != null
+        ? {type: 'item', key: node.nextKey, dropPosition: 'before'} 
+        : null;
     }
     return null;
   };
@@ -95,13 +100,32 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
     if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => types.has(type))) {
       let isValidInsert = onInsert && target.type === 'item' && !isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');
-      let isValidReorder = onReorder && target.type === 'item' && isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');
+      let isValidReorder = onReorder
+        && target.type === 'item'
+        && isInternal
+        && (target.dropPosition === 'before' || target.dropPosition === 'after')
+        && isDraggingWithinParent(collection, target, draggingKeys);
+
+      let isItemDropAllowed = target.type !== 'item'
+        || target.dropPosition !== 'on'
+        || (!shouldAcceptItemDrop || shouldAcceptItemDrop(target, types));
+
+      let isValidMove = onMove
+        && target.type === 'item'
+        && isInternal
+        && isItemDropAllowed;
+
       // Feedback was that internal root drop was weird so preventing that from happening
       let isValidRootDrop = onRootDrop && target.type === 'root' && !isInternal;
+      
       // Automatically prevent items (i.e. folders) from being dropped on themselves.
-      let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternal && target.key != null && draggingKeys.has(target.key)) && (!shouldAcceptItemDrop || shouldAcceptItemDrop(target, types));
+      let isValidOnItemDrop = onItemDrop 
+        && target.type === 'item' 
+        && target.dropPosition === 'on' 
+        && !(isInternal && target.key != null && draggingKeys.has(target.key)) 
+        && isItemDropAllowed;
 
-      if (onDrop || isValidInsert || isValidReorder || isValidRootDrop || isValidOnItemDrop) {
+      if (onDrop || isValidInsert || isValidReorder || isValidMove || isValidRootDrop || isValidOnItemDrop) {
         if (getDropOperation) {
           return getDropOperation(target, types, allowedOperations);
         } else {
@@ -111,7 +135,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return 'cancel';
-  }, [isDisabled, acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
+  }, [isDisabled, collection, acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onMove, onDrop]);
 
   return {
     collection,
@@ -186,4 +210,17 @@ function isEqualDropTarget(a?: DropTarget | null, b?: DropTarget | null) {
     case 'item':
       return b?.type === 'item' && b?.key === a.key && b?.dropPosition === a.dropPosition;
   }
+}
+
+function isDraggingWithinParent(collection: Collection<Node<unknown>>, target: ItemDropTarget, draggingKeys: Set<Key>) {
+  let targetNode = collection.getItem(target.key);
+
+  for (let key of draggingKeys) {
+    let node = collection.getItem(key);
+    if (node?.parentKey !== targetNode?.parentKey) {
+      return false;
+    }
+  }
+
+  return true;
 }

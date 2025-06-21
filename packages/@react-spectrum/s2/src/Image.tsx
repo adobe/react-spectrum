@@ -120,8 +120,8 @@ const imgStyles = style({
   display: 'block',
   width: 'full',
   height: 'full',
-  objectFit: '[inherit]',
-  objectPosition: '[inherit]',
+  objectFit: 'inherit',
+  objectPosition: 'inherit',
   opacity: {
     default: 0,
     isRevealed: 1
@@ -228,7 +228,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
       {!errorState && (
         <img
           {...getFetchPriorityProp(fetchPriority)}
-          src={src}
+          src={src || undefined}
           alt={alt}
           crossOrigin={crossOrigin}
           decoding={decoding}

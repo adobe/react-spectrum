@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {AsyncComboBoxStory, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithIcons} from '../stories/ComboBox.stories';
 import {ComboBox} from '../src';
-import {ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/ComboBox.stories';
+import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, waitFor, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    chromatic: {ignoreSelectors: ['[role="progressbar"]']}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/ComboBox'
@@ -69,3 +71,89 @@ export const WithCustomWidth = {
   ...CustomWidth,
   play: async (context) => await Static.play!(context)
 } as StoryObj;
+
+export const WithEmptyState = {
+  ...EmptyCombobox,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await within(listbox).findByText('No results');
+  }
+};
+
+export const WithInitialLoading = {
+  ...EmptyCombobox,
+  args: {
+    loadingState: 'loading',
+    label: 'Initial loading'
+  },
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await within(listbox).findByText('Loading', {exact: false});
+  }
+};
+
+export const WithLoadMore = {
+  ...Example,
+  args: {
+    loadingState: 'loadingMore',
+    label: 'Loading more'
+  },
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await within(listbox).findByRole('progressbar');
+  }
+};
+
+export const AsyncResults = {
+  ...AsyncComboBoxStory,
+  args: {
+    ...AsyncComboBoxStory.args,
+    delay: 2000
+  },
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await waitFor(() => {
+      expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
+    }, {timeout: 5000});
+  }
+};
+
+export const Filtering = {
+  ...AsyncComboBoxStory,
+  args: {
+    ...AsyncComboBoxStory.args,
+    delay: 2000
+  },
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await waitFor(() => {
+      expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
+    }, {timeout: 5000});
+
+    let combobox = await within(body).findByRole('combobox');
+    await userEvent.type(combobox, 'R2');
+
+    await waitFor(() => {
+      expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+    }, {timeout: 5000});
+
+    await waitFor(() => {
+      expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+    }, {timeout: 5000});
+  }
+};

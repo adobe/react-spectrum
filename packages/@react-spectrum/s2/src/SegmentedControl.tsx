@@ -11,11 +11,11 @@
  */
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
+import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
-import {focusRing, space, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
@@ -64,14 +64,13 @@ const segmentedControl = style({
 
 const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   ...focusRing(),
+  ...control({shape: 'default', icon: true}),
+  justifyContent: 'center',
   position: 'relative',
-  display: 'flex',
   forcedColorAdjust: 'none',
-  font: 'control',
   color: {
-    default: 'gray-700',
-    isHovered: 'neutral-subdued',
-    isSelected: 'neutral',
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
@@ -79,13 +78,6 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
       isSelected: 'HighlightText'
     }
   },
-  // TODO: update this padding for icon-only items when we introduce the non-track style back
-  paddingX: {
-    default: 'edge-to-text',
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': space(6)
-  },
-  height: 32,
-  alignItems: 'center',
   flexGrow: {
     isJustified: 1
   },
@@ -93,17 +85,20 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
     isJustified: 0
   },
   flexShrink: 0,
-  minWidth: 0,
-  justifyContent: 'center',
   whiteSpace: 'nowrap',
   disableTapHighlight: true,
   userSelect: 'none',
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  borderRadius: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  // The selected item has lower z-index so that the sliding background
+  // animation does not cover other items.
+  zIndex: {
+    default: 1,
+    isSelected: 0
   }
 }, getAllowedOverrides());
 
@@ -208,6 +203,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
       isRegistered.current = true;
       state.toggleKey(value);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -234,7 +230,7 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
 
   useLayoutEffect(() => {
     register?.(props.id);
-  }, []);
+  }, [register, props.id]);
 
   useLayoutEffect(() => {
     if (isSelected && prevRef?.current && currentSelectedRef?.current && !reduceMotion) {
@@ -255,7 +251,7 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
 
       prevRef.current = null;
     }
-  }, [isSelected, reduceMotion]);
+  }, [isSelected, reduceMotion, prevRef, currentSelectedRef]);
 
   return (
     <ToggleButton

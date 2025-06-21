@@ -13,20 +13,26 @@
 import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {useCallback, useRef} from 'react';
+import React, {JSX, useCallback, useRef} from 'react';
+import {TableProps} from '@react-types/table';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
 import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 
-export function Table(props) {
+export function Table<T extends object>(props: TableProps<T> & {
+  onResizeStart?: (columnKey: string) => void,
+  onResize?: (columnKey: string, width: number) => void,
+  onResizeEnd?: (columnKey: string, width: number) => void
+}): JSX.Element {
   let {
     onResizeStart,
     onResize,
-    onResizeEnd
+    onResizeEnd,
+    ...rest
   } = props;
 
-  let state = useTableState(props);
+  let state = useTableState(rest);
   let ref = useRef<HTMLTableElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable(

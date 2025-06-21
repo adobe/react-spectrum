@@ -11,14 +11,14 @@
  */
 
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
+import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -49,10 +49,10 @@ const wrapper = style({
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  font: 'control',
+  font: controlFont(),
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -66,13 +66,13 @@ const wrapper = style({
 
 export const box = style<RenderProps>({
   ...focusRing(),
-  size: 'control-sm',
-  borderRadius: 'control-sm',
+  ...controlBorderRadius('sm'),
+  size: controlSize('sm'),
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  borderWidth: 2,
+  borderWidth: space(2),
   boxSizing: 'border-box',
   borderStyle: 'solid',
   transition: 'default',
@@ -81,7 +81,7 @@ export const box = style<RenderProps>({
     default: 'gray-25',
     forcedColors: 'Background',
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: baseColor('accent-900'),
       forcedColors: 'Highlight',
       isInvalid: {
@@ -98,7 +98,7 @@ export const box = style<RenderProps>({
     default: baseColor('gray-800'),
     forcedColors: 'ButtonBorder',
     isInvalid: {
-      default: 'negative',
+      default: baseColor('negative'),
       forcedColors: 'Mark'
     },
     isDisabled: {

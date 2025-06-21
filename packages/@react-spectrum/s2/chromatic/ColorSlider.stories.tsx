@@ -41,7 +41,7 @@ let states = [
 let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
 
 const Template = (args) => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
     {combinations.map(c => {
       let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -54,7 +54,7 @@ const Template = (args) => (
 );
 
 const VerticalTemplate = (args) => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
     {combinations.map(c => {
       let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');

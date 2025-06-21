@@ -48,11 +48,11 @@ const dialogStyle = style({
   },
   boxSizing: 'border-box',
   outlineStyle: 'none',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto',
   position: 'relative',
   size: 'full',
-  maxSize: '[inherit]'
+  maxSize: 'inherit'
 }, getAllowedOverrides({height: true}));
 
 /**

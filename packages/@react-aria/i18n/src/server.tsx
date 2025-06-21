@@ -11,7 +11,7 @@
  */
 
 import type {LocalizedString} from '@internationalized/string';
-import React, {ReactNode} from 'react';
+import React, {JSX} from 'react';
 
 type PackageLocalizedStrings = {
   [packageName: string]: Record<string, LocalizedString>
@@ -27,7 +27,7 @@ interface PackageLocalizationProviderProps {
  * A PackageLocalizationProvider can be rendered on the server to inject the localized strings
  * needed by the client into the initial HTML.
  */
-export function PackageLocalizationProvider(props: PackageLocalizationProviderProps): ReactNode | null {
+export function PackageLocalizationProvider(props: PackageLocalizationProviderProps): JSX.Element | null {
   if (typeof document !== 'undefined') {
     console.log('PackageLocalizationProvider should only be rendered on the server.');
     return null;

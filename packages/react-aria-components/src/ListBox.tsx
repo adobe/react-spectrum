@@ -13,11 +13,11 @@
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -92,7 +92,6 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The first copy sends a collection document via context which we render the collection portal into.
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
-
   if (state) {
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
@@ -203,9 +202,10 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: state.collection.size === 0,
+    isEmpty,
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
@@ -219,7 +219,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   });
 
   let emptyState: JSX.Element | null = null;
-  if (state.collection.size === 0 && props.renderEmptyState) {
+  if (isEmpty && props.renderEmptyState) {
     emptyState = (
       <div
         // eslint-disable-next-line
@@ -240,7 +240,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
-        data-empty={state.collection.size === 0 || undefined}
+        data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
@@ -464,3 +464,67 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 }
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
+
+export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
+}
+
+export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(ListStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+
+  let sentinelRef = useRef<HTMLDivElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [onLoadMore, scrollOffset, state?.collection]);
+  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  let renderProps = useRenderProps({
+    ...otherProps,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-ListBoxLoadingIndicator',
+    values: null
+  });
+
+  let optionProps = {
+    // For Android talkback
+    tabIndex: -1
+  };
+
+  if (isVirtualized) {
+    optionProps['aria-posinset'] = item.index + 1;
+    optionProps['aria-setsize'] = state.collection.size;
+  }
+
+  return (
+    <>
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
+      </div>
+      {isLoading && renderProps.children && (
+        <div
+          {...mergeProps(filterDOMProps(props as any), optionProps)}
+          {...renderProps}
+          // aria-selected isn't needed here since this option is not selectable.
+          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+          role="option"
+          ref={ref}>
+          {renderProps.children}
+        </div>
+      )}
+    </>
+  );
+});

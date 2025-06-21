@@ -1,13 +1,13 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Button, LinkButton, ButtonGroup, Checkbox, Content, Dialog, DialogTrigger, Footer, Header, Heading, Image, InlineAlert, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Switch, Text} from '@react-spectrum/s2';
-import NewIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_New_20_N.svg';
-import ImgIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Image_20_N.svg';
-import CopyIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Copy_20_N.svg';
-import CommentTextIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_CommentText_20_N.svg';
-import ClockPendingIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_ClockPending_20_N.svg';
-import CommunityIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Community_20_N.svg';
-import DeviceTabletIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
-import DeviceDesktopIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
+import {Button, ButtonGroup, Checkbox, Content, Dialog, DialogTrigger, Footer, Header, Heading, Image, InlineAlert, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Switch, Text} from '@react-spectrum/s2';
+import NewIcon from '@react-spectrum/s2/icons/New';
+import ImgIcon from '@react-spectrum/s2/icons/Image';
+import CopyIcon from '@react-spectrum/s2/icons/Copy';
+import CommentTextIcon from '@react-spectrum/s2/icons/CommentText';
+import ClockPendingIcon from '@react-spectrum/s2/icons/ClockPending';
+import CommunityIcon from '@react-spectrum/s2/icons/Community';
+import DeviceTabletIcon from '@react-spectrum/s2/icons/DeviceTablet';
+import DeviceDesktopIcon from '@react-spectrum/s2/icons/DeviceDesktop';
 import {highlight} from './highlight' with {type: 'macro'};
 import {H2, H3, H4, P, Pre, Code, Strong, Link} from './typography';
 
@@ -193,7 +193,7 @@ import {ActionButton} from '@react-spectrum/s2';
           <Content>See the <Link href="?path=/docs/style-macro--docs" variant="secondary" target="_top">full docs</Link> to learn about using the style macro to build custom components.</Content>
         </InlineAlert>
         <H3>Supported CSS properties on Spectrum components</H3>
-        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', columns: 3, padding: 0, listStyleType: 'none'})}>
+        <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', padding: 0, listStyleType: 'none'})} style={{columns: 3}}>
           <li><Code>margin</Code></li>
           <li><Code>marginStart</Code></li>
           <li><Code>marginEnd</Code></li>

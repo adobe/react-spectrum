@@ -15,8 +15,9 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spect
 import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {JSX, useEffect, useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {StoryObj} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
 
@@ -51,7 +52,9 @@ export default {
   title: 'useFocusRing'
 };
 
-export const SearchTableview = {
+export type SearchTableviewStory = StoryObj<typeof SearchExample>;
+
+export const SearchTableview: SearchTableviewStory = {
   render: () => <SearchExample />,
   name: 'search + tableview',
   parameters: {
@@ -64,12 +67,12 @@ export const SearchTableview = {
   }
 };
 
-export const IFrame = {
+export const IFrame: SearchTableviewStory = {
   render: () => <IFrameExample />,
   name: 'focus state in dynamic iframe'
 };
 
-function SearchExample() {
+function SearchExample(): JSX.Element {
   const [items, setItems] = useState(manyRows);
 
   return (

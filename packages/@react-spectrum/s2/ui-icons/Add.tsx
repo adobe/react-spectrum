@@ -16,19 +16,41 @@ import Add_S from './S2_AddSize75.svg';
 import Add_XL from './S2_AddSize300.svg';
 import Add_XS from './S2_AddSize50.svg';
 import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
+
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 12,
+      XS: 8,
+      S: 8
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 12,
+      XS: 8,
+      S: 8
+    }
+  }
+});
 
 export default function Add(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Add_M {...otherProps} />;
+      return <Add_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <Add_L {...otherProps} />;
+      return <Add_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <Add_XL {...otherProps} />;
+      return <Add_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XS':
-      return <Add_XS {...otherProps} />;
+      return <Add_XS {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'S':
-      return <Add_S {...otherProps} />;
+      return <Add_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

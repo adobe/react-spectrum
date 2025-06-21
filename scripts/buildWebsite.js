@@ -39,7 +39,8 @@ async function build() {
     workspaces: [
       'packages/@internationalized/string-compiler',
       'packages/dev/*',
-      'packages/@adobe/spectrum-css-temp'
+      'packages/@adobe/spectrum-css-temp',
+      'packages/@adobe/spectrum-css-builder-temp'
     ],
     packageManager: 'yarn@4.2.2',
     devDependencies: Object.fromEntries(
@@ -83,7 +84,10 @@ async function build() {
       postinstall: 'patch-package',
       createRssFeed: "node scripts/createFeed.mjs"
     },
-    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css'],
+    '@parcel/resolver-default': {
+      packageExports: true
+    }
   };
 
 
@@ -129,6 +133,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
+  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
@@ -152,26 +157,13 @@ async function build() {
   }
 
   // Only copy babel and parcel patches over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('@spectrum-css') || name.startsWith('postcss'));
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('postcss'));
   for (let patch of patches) {
     fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
   }
 
   // Install dependencies from npm
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
-
-  // Copy package.json for each package into docs dir so we can find the correct version numbers
-  for (let p of packages) {
-    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
-      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
-    }
-  }
-
-  // Patch react-aria-components package.json for example CSS.
-  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
-  let json = JSON.parse(fs.readFileSync(p));
-  json.sideEffects = ['*.css'];
-  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});

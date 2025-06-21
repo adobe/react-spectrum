@@ -25,7 +25,7 @@ type Message = string | {'aria-labelledby': string};
 export function announce(
   message: Message,
   assertiveness: Assertiveness = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY
+  timeout: number = LIVEREGION_TIMEOUT_DELAY
 ): void {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();

@@ -40,14 +40,14 @@ describe('style-macro', () => {
       "@layer _.a, _.b, _.c;
 
       @layer _.b {
-        .jnb:first-child {
+        .Jbs92:first-child {
           margin-top: 0.25rem;
         }
       }
 
-      @layer _.c.YxLy {
-        @media (min-width: 1024px) {
-          .jnYxLyf:first-child {
+      @layer _.c.p {
+        @media (min-width: 64rem) {
+          .Jbpv92:first-child {
             margin-top: 0.5rem;
           }
         }
@@ -55,62 +55,62 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" jnb jnYxLyf"');
+    expect(js).toMatchInlineSnapshot('" Jbs92 Jbpv92"');
   });
 
   it('should support self references', () => {
     let {css, js} = testStyle({
       borderWidth: 2,
       paddingX: 'edge-to-text',
-      width: '[calc(200px - self(borderStartWidth) - self(paddingStart))]'
+      width: 'calc(200px - self(borderStartWidth) - self(paddingStart))'
     });
 
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a;
 
       @layer _.a {
-        ._nb {
+        ._kc92 {
           border-top-width: 2px;
         }
 
 
-        ._ma {
+        .hc92 {
           border-bottom-width: 2px;
         }
 
 
-        ._twdjPYd {
-          border-inline-start-width: var(--_t);
+        .mCPFGYc92 {
+          border-inline-start-width: var(--m);
         }
 
 
-        ._sa {
+        .lc92 {
           border-inline-end-width: 2px;
         }
 
 
-        .oGQFGYc {
-          padding-inline-start: var(--o);
+        .SMBFGYc92 {
+          padding-inline-start: var(--S);
         }
 
 
-        .nb {
-          padding-inline-end: calc(var(--e, var(--s)) * 3 / 8);
+        .Rv92 {
+          padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
         }
 
 
-        .fNANddc {
-          width: calc(200px - var(--_t) - var(--o));
+        .ZjUQgKd92 {
+          width: calc(200px - var(--m) - var(--S));
         }
 
 
-        .-_t_-_ta {
-          --_t: 2px;
+        .-m_-mc92 {
+          --m: 2px;
         }
 
 
-        .-o_-ob {
-          --o: calc(var(--e, var(--s)) * 3 / 8);
+        .-S_-Sv92 {
+          --S: calc(var(--F, var(--M)) * 3 / 8);
         }
       }
 
@@ -118,7 +118,7 @@ describe('style-macro', () => {
     `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _nb _ma _twdjPYd _sa oGQFGYc nb fNANddc -_t_-_ta -o_-ob"'
+      '" _kc92 hc92 mCPFGYc92 lc92 SMBFGYc92 Rv92 ZjUQgKd92 -m_-mc92 -S_-Sv92"'
     );
   });
 
@@ -136,9 +136,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  cE dj"');
-    expect(overrides).toMatchInlineSnapshot('" c8tmWqb dHJ3AUd"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  c8tmWqb dj"');
+    expect(js()).toMatchInlineSnapshot('"  gw92 pg92"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb92 pHJ3AUd92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb92 pg92"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -153,9 +153,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-zTRurc _Ia"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-Kr5lvc _Ia"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-Kr5lvc _Ia"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B92 __Ya92"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D92 __Ya92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D92 __Ya92"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -170,9 +170,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  rg vd of ng"');
-    expect(overrides).toMatchInlineSnapshot('" rw vw oy ny"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  rw vw oy ny"');
+    expect(js()).toMatchInlineSnapshot('"  Tk92 Qk92 Sk92 Rk92"');
+    expect(overrides).toMatchInlineSnapshot('" Tm92 Qm92 Sm92 Rm92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm92 Qm92 Sm92 Rm92"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -187,9 +187,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  cz"');
-    expect(overrides).toMatchInlineSnapshot('" ue"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  ue cz"');
+    expect(js()).toMatchInlineSnapshot('"  gE92"');
+    expect(overrides).toMatchInlineSnapshot('" Nk92"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk92 gE92"');
   });
 
   it('should support runtime conditions', () => {
@@ -210,32 +210,32 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .ca {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .ce {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .cz {
+        .gE92 {
           background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
 
 
-        .da {
+        .pt92 {
           color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
         }
 
 
-        .db {
+        .po92 {
           color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
         }
 
 
-        .dv {
+        .pm92 {
           color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
         }
       }
@@ -243,9 +243,9 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  ca da"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  ce db"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  cz dv"');
+    expect(js({})).toMatchInlineSnapshot('"  gH92 pt92"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF92 po92"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE92 pm92"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -264,33 +264,33 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .ca {
+        .gH92 {
           background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
         }
 
 
-        .ce {
+        .gF92 {
           background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
         }
 
 
-        .c_k {
+        .g_h92 {
           background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
         }
 
 
-        .cK {
+        .g392 {
           background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
         }
       }
 
       "
     `);
-    expect(js({})).toMatchInlineSnapshot('"  ca"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  ce"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  c_k"');
+    expect(js({})).toMatchInlineSnapshot('"  gH92"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF92"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h92"');
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  cK"'
+      '"  g392"'
     );
   });
 
@@ -305,9 +305,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  cw"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  cjQquMe"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  cE"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY92"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe92"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw92"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -323,16 +323,16 @@ describe('style-macro', () => {
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a, _.b;
 
-      @layer _.b.b {
+      @layer _.b.l {
         @media (forced-colors: active) {
-          .dbf {
+          .plb92 {
             color: ButtonText;
           }
         }
 
 
         @media (forced-colors: active) {
-          .dbm {
+          .ple92 {
             color: HighlightText;
           }
         }
@@ -341,8 +341,8 @@ describe('style-macro', () => {
       "
     `);
 
-    expect(js({})).toMatchInlineSnapshot('"  dbf"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  dbm"');
+    expect(js({})).toMatchInlineSnapshot('"  plb92"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple92"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -350,28 +350,28 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" rc vc od nd"');
+    expect(js).toMatchInlineSnapshot('" Th92 Qh92 Sh92 Rh92"');
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a;
 
       @layer _.a {
-        .rc {
-          padding-top: 1.5rem;
+        .Th92 {
+          padding-top: 24px;
         }
 
 
-        .vc {
-          padding-bottom: 1.5rem;
+        .Qh92 {
+          padding-bottom: 24px;
         }
 
 
-        .od {
-          padding-inline-start: 1.5rem;
+        .Sh92 {
+          padding-inline-start: 24px;
         }
 
 
-        .nd {
-          padding-inline-end: 1.5rem;
+        .Rh92 {
+          padding-inline-end: 24px;
         }
       }
 
@@ -388,7 +388,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .cpQzfVb {
+        .gpQzfVb92 {
           background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
         }
       }
@@ -409,7 +409,7 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        .-FUeYm-cz {
+        .-FUeYm-gE92 {
           --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
         }
       }

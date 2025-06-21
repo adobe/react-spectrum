@@ -23,6 +23,9 @@ const meta: Meta<typeof Tabs> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'Tabs'
 };
@@ -32,7 +35,7 @@ export default meta;
 const tabs = style({width: 'full', height: 'full'});
 
 export const Example = (args: any) => (
-  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={tabs} aria-label="History of Ancient Rome">
       <TabList>
         <Tab id="FoR">Founding of Rome</Tab>
@@ -58,7 +61,7 @@ export const Example = (args: any) => (
 );
 
 export const Disabled = (args: any) => (
-  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={tabs} disabledKeys={['FoR', 'MaR', 'Emp']} aria-label="History of Ancient Rome">
       <TabList>
         <Tab id="FoR">Founding of Rome</Tab>
@@ -79,7 +82,7 @@ export const Disabled = (args: any) => (
 );
 
 const IconsRender = (props) => (
-  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...props} styles={tabs} aria-label="History of Ancient Rome">
       <TabList>
         <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
@@ -115,7 +118,7 @@ let items: Item[] = [
 ];
 
 export const Dynamic = (args: any) => (
-  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <div id="the-label" className={style({font: 'ui'})}>External label for tabs</div>
     <Tabs {...args} styles={tabs} disabledKeys={new Set([2])} aria-labelledby="the-label">
       <TabList items={items}>

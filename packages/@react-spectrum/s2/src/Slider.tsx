@@ -20,8 +20,8 @@ import {
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
+import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
@@ -70,7 +70,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
 export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
-  font: 'control',
+  font: controlFont(),
   alignItems: {
     labelPosition: {
       side: 'center'
@@ -173,7 +173,7 @@ export let thumbContainer = style({
   },
   display: 'inline-block',
   position: 'absolute',
-  top: '[50%]'
+  top: '50%'
 });
 
 // if precision thumb should have a smaller hit area, then remove this
@@ -205,8 +205,8 @@ export let thumb = style<SliderThumbRenderProps & {size: 'S' | 'M' | 'L' | 'XL',
   display: 'inline-block',
   boxSizing: 'border-box',
   position: 'absolute',
-  top: '[50%]',
-  left: '[50%]',
+  top: '50%',
+  left: '50%',
   transform: 'translateY(-50%) translateX(-50%)',
   width: {
     thumbStyle: {
@@ -263,7 +263,7 @@ const trackStyling = {
       thick: 16
     }
   },
-  top: '[50%]',
+  top: '50%',
   borderRadius: {
     trackStyle: {
       thin: 'lg',
@@ -279,7 +279,7 @@ export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick
     default: 'gray-300',
     isDisabled: 'disabled'
   },
-  translateY: '[-50%]',
+  translateY: '-50%',
   width: 'full',
   boxSizing: 'border-box',
   borderStyle: 'solid',
@@ -315,7 +315,7 @@ export let filledTrack = style<{isDisabled?: boolean, isEmphasized?: boolean, tr
       isDisabled: 'GrayText'
     }
   },
-  translateY: '[-50%]'
+  translateY: '-50%'
 });
 
 export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}): ReactNode {

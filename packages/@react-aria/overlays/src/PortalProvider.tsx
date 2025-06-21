@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, ReactNode, useContext} from 'react';
+import React, {createContext, JSX, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
   /** Should return the element where we should portal to. Can clear the context by passing null. */
-  getContainer?: () => HTMLElement | null,
+  getContainer?: (() => HTMLElement | null) | null,
   /** The content of the PortalProvider. Should contain all children that want to portal their overlays to the element returned by the provided `getContainer()`. */
   children: ReactNode
 }
 
 export interface PortalProviderContextValue extends Omit<PortalProviderProps, 'children'>{};
 
-export const PortalContext = createContext<PortalProviderContextValue>({});
+export const PortalContext: React.Context<PortalProviderContextValue> = createContext<PortalProviderContextValue>({});
 
 /**
  * Sets the portal container for all overlay elements rendered by its children.
  */
-export function UNSAFE_PortalProvider(props: PortalProviderProps): ReactNode {
+export function UNSAFE_PortalProvider(props: PortalProviderProps): JSX.Element {
   let {getContainer} = props;
   let {getContainer: ctxGetContainer} = useUNSAFE_PortalContext();
   return (

@@ -39,7 +39,8 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
     value: {table: {disable: true}},
     textValue: {table: {disable: true}},
     onAction: {table: {disable: true}},
-    isDisabled: {table: {disable: true}}
+    isDisabled: {table: {disable: true}},
+    children: {table: {disable: true}}
   },
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading || false}>
@@ -234,7 +235,7 @@ export const Collection = (args: any) => (
 export const PreviewOverlay = (args: any) => (
   <Card {...args}>
     <CardPreview>
-      <Image alt="" src={new URL('assets/preview.png', import.meta.url).toString()} styles={style({width: 'full', aspectRatio: '[1/1]', objectFit: 'cover', pointerEvents: 'none'})} />
+      <Image alt="" src={new URL('assets/preview.png', import.meta.url).toString()} styles={style({width: 'full', aspectRatio: 'square', objectFit: 'cover', pointerEvents: 'none'})} />
       <Badge
         variant="positive"
         styles={style({

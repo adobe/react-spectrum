@@ -19,14 +19,13 @@ import {
   ButtonRenderProps,
   ContextValue,
   InputContext,
-  Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -58,30 +57,11 @@ export interface NumberFieldProps extends
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
 const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
+  ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
-  borderTopRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    }
-  },
-  borderBottomRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    }
-  },
   alignItems: 'center',
   justifyContent: 'center',
   width: {
@@ -116,7 +96,7 @@ const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', typ
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonFace'
@@ -144,7 +124,7 @@ const stepperContainerStyles = style({
       XL: 8
     }
   },
-  paddingEnd: {
+  marginEnd: {
     size: {
       S: 2,
       M: 4,
@@ -219,9 +199,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   {label}
                 </FieldLabel>
                 <FieldGroup
-                  role="presentation"
-                  isDisabled={isDisabled}
-                  isInvalid={isInvalid}
                   size={size}
                   styles={style({
                     ...fieldInput(),
@@ -264,7 +241,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                     </StepButton>
                   </div>}
                 </FieldGroup>
-                {descriptionMessage && <Text slot="description">{descriptionMessage}</Text>}
                 <HelpText
                   size={size}
                   isDisabled={isDisabled}

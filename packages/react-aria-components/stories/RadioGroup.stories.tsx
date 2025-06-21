@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
+import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 
@@ -94,5 +94,24 @@ export const RadioGroupInDialogExample = () => {
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
+  );
+};
+
+export const RadioGroupSubmitExample = () => {
+  return (
+    <Form>
+      <RadioGroup
+        className={styles.radiogroup}
+        data-testid="radio-group-example"
+        isRequired>
+        <Label>Favorite pet</Label>
+        <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+        <Radio className={styles.radio} value="cats">Cat</Radio>
+        <Radio className={styles.radio} value="dragon">Dragon</Radio>
+        <FieldError className={styles.errorMessage} />
+      </RadioGroup>
+      <Button type="submit">Submit</Button>
+      <Button type="reset">Reset</Button>
+    </Form>
   );
 };

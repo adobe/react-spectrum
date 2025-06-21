@@ -26,7 +26,6 @@ import {FocusScope, useModalOverlay} from 'react-aria';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeStyles} from '../style/runtime';
 import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastList as ToastList, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
 import {Text} from './Content';
 import toastCss from './Toast.module.css';
@@ -232,17 +231,12 @@ const toastList = style({
   }
 });
 
-// Separate style macro for focus ring and toast so that
-// isFocusVisible doesn't cause toast background to change.
-const toastFocusRing = style({
+const toastStyle = style({
   ...focusRing(),
   outlineColor: {
     default: 'focus-ring',
     isExpanded: 'white'
-  }
-});
-
-const toastStyle = style({
+  },
   display: 'flex',
   gap: 16,
   paddingStart: 16,
@@ -254,7 +248,7 @@ const toastStyle = style({
     type: 'maxWidth',
     value: 336
   },
-  maxWidth: '[min(var(--maxWidth), 90vw)]',
+  maxWidth: 'min(var(--maxWidth), 90vw)',
   boxSizing: 'border-box',
   flexShrink: 0,
   font: 'ui',
@@ -494,7 +488,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           [placement === 'top' ? 'bottom' : 'top']: 0,
           left: 0,
           width: '100%',
-          translate: `0 0 ${(-12 * index)}px`,
+          translate: `0 0 ${(-12 * index) / 16}rem`,
           // Only 3 toasts are visible in the stack at once, but all toasts are in the DOM.
           // This allows view transitions to smoothly animate them from where they would be 
           // in the collapsed stack to their final position in the expanded list.
@@ -519,14 +513,12 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
         viewTransitionName: toast.key,
         viewTransitionClass: [toastCss.toast, !isMain ? toastCss['background-toast'] : '', toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
       }}
-      className={renderProps => toastCss.toast + mergeStyles(
-        toastFocusRing({...renderProps, isExpanded}),
-        toastStyle({
-          variant: toast.content.variant || 'info',
-          index,
-          isExpanded
-        })
-      )}>
+      className={renderProps => toastCss.toast + toastStyle({
+        ...renderProps,
+        variant: toast.content.variant || 'info',
+        index,
+        isExpanded
+      })}>
       <div role="presentation" className={toastBody({isSingle: !isMain || visibleToasts.length <= 1 || isExpanded})}>
         <ToastContent className={toastContent + (ctx && isMain ? ` ${toastCss['toast-content']}` : null)}>
           {Icon &&

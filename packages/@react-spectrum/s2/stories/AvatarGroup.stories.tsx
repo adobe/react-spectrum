@@ -16,9 +16,11 @@ import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof AvatarGroup> = {
   component: AvatarGroup,
-  argTypes: {},
   parameters: {
     layout: 'centered'
+  },
+  argTypes: {
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'AvatarGroup'

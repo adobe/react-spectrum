@@ -10,11 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import {FunctionComponent} from 'react';
+import {IconProps} from '../src';
+import {iconStyle} from '../style' with {type: 'macro'};
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 
-const meta: Meta<typeof NewIcon> = {
-  component: NewIcon,
+const Alert = AlertIcon as FunctionComponent<IconProps>;
+
+const meta: Meta<FunctionComponent<IconProps>> = {
+  component: NewIcon as FunctionComponent<IconProps>,
   parameters: {
     layout: 'centered'
   },
@@ -24,12 +30,12 @@ const meta: Meta<typeof NewIcon> = {
 export default meta;
 
 type Story = StoryObj<typeof NewIcon>;
-export const Example: Story = {
+export const Example: Story = {};
+
+export const ColorAndSize: Story = {
   render: (args) => {
     return (
-      <div style={{display: 'flex', gap: 8, justifyContent: 'center'}}>
-        <NewIcon {...args} />
-      </div>
+      <Alert {...args} styles={iconStyle({color: 'negative', size: 'XL'})} />
     );
   }
 };

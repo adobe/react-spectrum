@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng', 'fullwide'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -108,6 +108,19 @@ class NumberParserImpl {
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;
+    // see https://tc39.es/ecma402/#sec-setnfdigitoptions, when using roundingIncrement, the maximumFractionDigits and minimumFractionDigits must be equal
+    // by default, they are 0 and 3 respectively, so we set them to 0 if neither are set
+    if (options.roundingIncrement !== 1 && options.roundingIncrement != null) {
+      if (options.maximumFractionDigits == null && options.minimumFractionDigits == null) {
+        options.maximumFractionDigits = 0;
+        options.minimumFractionDigits = 0;
+      } else if (options.maximumFractionDigits == null) {
+        options.maximumFractionDigits = options.minimumFractionDigits;
+      } else if (options.minimumFractionDigits == null) {
+        options.minimumFractionDigits = options.maximumFractionDigits;
+      }
+      // if both are specified, let the normal Range Error be thrown
+    }
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
     this.symbols = getSymbols(locale, this.formatter, this.options, options);
@@ -136,6 +149,7 @@ class NumberParserImpl {
       // javascript is bad at dividing by 100 and maintaining the same significant figures, so perform it on the string before parsing
       let isNegative = fullySanitizedValue.indexOf('-');
       fullySanitizedValue = fullySanitizedValue.replace('-', '');
+      fullySanitizedValue = fullySanitizedValue.replace('+', '');
       let index = fullySanitizedValue.indexOf('.');
       if (index === -1) {
         index = fullySanitizedValue.length;

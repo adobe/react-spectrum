@@ -12,29 +12,32 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {OverlayContainer, OverlayProvider, useModal} from '../src';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 
 export default {
   title: 'useModal'
 };
 
-export const DefaultContainer = {
+export type AppStory = StoryObj<typeof App>;
+
+export const DefaultContainer: AppStory = {
   render: () => <App />,
   name: 'default container'
 };
 
-export const DifferentContainer = {
+export const DifferentContainer: AppStory = {
   render: () => <App useAlternateContainer />,
   name: 'different container'
 };
 
-export const BadContainer = {
+export const BadContainer: AppStory = {
   render: () => <BadApp />,
   name: 'bad container',
   parameters: {description: {data: 'this story should crash'}}
 };
 
-function App(props) {
+function App(props: {useAlternateContainer?: boolean}): JSX.Element {
   let [showModal, setShowModal] = useState(false);
   return (
     <>

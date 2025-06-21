@@ -12,11 +12,13 @@
 
 import {
   GridList as AriaGridList,
+  Collection,
   ContextValue,
   GridLayout,
   GridListItem,
   GridListProps,
   Size,
+  UNSTABLE_GridListLoadingSentinel,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
@@ -28,10 +30,10 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {ImageCoordinator} from './ImageCoordinator';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading'>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -176,20 +178,34 @@ const cardViewStyles = style({
       isFocusVisible: 'solid'
     }
   },
-  outlineOffset: -2
+  outlineOffset: -2,
+  height: {
+    isActionBar: 'full'
+  }
 }, getAllowedOverrides({height: true}));
 
 const wrapperStyles = style({
-  position: 'relative', 
-  overflow: 'clip', 
-  size: 'fit'
+  position: 'relative',
+  overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
-  let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let {
+    children,
+    layout: layoutName = 'grid',
+    size: sizeProp = 'M',
+    density = 'regular',
+    variant = 'primary',
+    selectionStyle = 'checkbox',
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    onLoadMore,
+    items,
+    ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
   let scrollRef = props.renderActionBar ? innerRef : domRef;
@@ -224,15 +240,33 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   let layout = layoutName === 'waterfall' ? WaterfallLayout : GridLayout;
   let options = layoutOptions[size][density];
 
-  useLoadMore({
-    isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
-    items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
-    onLoadMore: props.onLoadMore
-  }, scrollRef);
-
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+
+  let renderer;
+  let cardLoadingSentinel = (
+    <UNSTABLE_GridListLoadingSentinel
+      onLoadMore={onLoadMore} />
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items} dependencies={props.dependencies}>
+          {children}
+        </Collection>
+        {cardLoadingSentinel}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {cardLoadingSentinel}
+      </>
+    );
+  }
 
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
@@ -242,6 +276,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              items={items}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               selectedKeys={selectedKeys}
@@ -255,8 +290,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
-              {children}
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading', isActionBar: !!props.renderActionBar}, !props.renderActionBar ? styles : undefined)}>
+              {renderer}
             </AriaGridList>
           </ImageCoordinator>
         </CardContext.Provider>

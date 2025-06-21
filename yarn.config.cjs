@@ -20,7 +20,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods') {
+        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
@@ -182,7 +182,11 @@ function enforceWorkspaceDependencies({Yarn}) {
 function enforceCSS({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (!name.startsWith('@react-spectrum/docs') && !name.startsWith('@react-spectrum/test-utils') && name.startsWith('@react-spectrum') && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
+    if (!name.startsWith('@react-spectrum/docs')
+      && !name.startsWith('@react-spectrum/test-utils')
+      && name.startsWith('@react-spectrum')
+      && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
+
       workspace.set('targets', {
         main: {includeNodeModules: ['@adobe/spectrum-css-temp']},
         module: {includeNodeModules: ['@adobe/spectrum-css-temp']}

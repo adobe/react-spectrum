@@ -13,13 +13,29 @@
 import Arrow_M from './S2_ArrowSize100.svg';
 import Arrow_XXL from './S2_ArrowSize400.svg';
 import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
+
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      XXL: 16
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      XXL: 16
+    }
+  }
+});
 
 export default function Arrow(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'XXL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Arrow_M {...otherProps} />;
+      return <Arrow_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XXL':
-      return <Arrow_XXL {...otherProps} />;
+      return <Arrow_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

@@ -110,7 +110,7 @@ function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchPro
               outlineWidth: 2,
               outlineOffset: -4,
               forcedColorAdjust: 'none',
-              borderRadius: '[inherit]'
+              borderRadius: 'inherit'
             })} />
         )}
       </>)}
