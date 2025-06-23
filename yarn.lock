@@ -7974,6 +7974,7 @@ __metadata:
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.10.0"
+    "@internationalized/date": "npm:^3.8.2"
     "@internationalized/number": "npm:^3.6.3"
     "@parcel/macros": "npm:^2.14.0"
     "@react-aria/calendar": "npm:^3.8.3"
