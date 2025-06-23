@@ -16,7 +16,7 @@ async function update(pkg) {
 async function updateDeps(deps = {}) {
   for (let dep in deps) {
     if (dep.startsWith('@parcel/') || dep === 'parcel') {
-      deps[dep] = await getVersion(dep);
+      deps[dep] = '^' + await getVersion(dep);
     }
   }
 }
