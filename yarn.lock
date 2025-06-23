@@ -6288,7 +6288,6 @@ __metadata:
     "@react-aria/interactions": "npm:^3.25.3"
     "@react-aria/selection": "npm:^3.24.3"
     "@react-aria/utils": "npm:^3.29.1"
-    "@react-stately/collections": "npm:^3.12.5"
     "@react-stately/list": "npm:^3.12.3"
     "@react-stately/tree": "npm:^3.9.0"
     "@react-types/shared": "npm:^3.30.0"
