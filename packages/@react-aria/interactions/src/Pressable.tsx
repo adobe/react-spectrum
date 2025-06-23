@@ -20,7 +20,9 @@ interface PressableProps extends PressProps {
   children: ReactElement<DOMAttributes, string>
 }
 
-export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
+export const Pressable:
+  React.ForwardRefExoticComponent<PressableProps & React.RefAttributes<FocusableElement>> =
+React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
   ref = useObjectRef(ref);
   let {pressProps} = usePress({...props, ref});
   let {focusableProps} = useFocusable(props, ref);

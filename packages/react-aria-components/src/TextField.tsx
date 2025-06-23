@@ -16,6 +16,7 @@ import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
@@ -110,6 +111,7 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
           [LabelContext, {...labelProps, ref: labelRef}],
           [InputContext, {...mergeProps(inputProps, inputContextProps), ref: inputOrTextAreaRef}],
           [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
+          [GroupContext, {role: 'presentation', isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
           [TextContext, {
             slots: {
               description: descriptionProps,
