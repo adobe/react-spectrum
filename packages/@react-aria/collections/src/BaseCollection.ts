@@ -206,7 +206,8 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       throw new Error('Cannot remove a node to a frozen collection');
     }
 
-    if (this.keyMap.get(key)?.type === 'item' && this.keyMap.get(key) != null) {
+    let node = this.keyMap.get(key);
+    if (node != null && node.type === 'item') {
       this.itemCount--;
     }
 
