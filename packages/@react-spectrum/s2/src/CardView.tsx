@@ -178,13 +178,15 @@ const cardViewStyles = style({
       isFocusVisible: 'solid'
     }
   },
-  outlineOffset: -2
+  outlineOffset: -2,
+  height: {
+    isActionBar: 'full'
+  }
 }, getAllowedOverrides({height: true}));
 
 const wrapperStyles = style({
   position: 'relative',
-  overflow: 'clip',
-  size: 'fit'
+  overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
 export const CardViewContext:
@@ -292,7 +294,7 @@ export const CardView:
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading', isActionBar: !!props.renderActionBar}, !props.renderActionBar ? styles : undefined)}>
               {renderer}
             </AriaGridList>
           </ImageCoordinator>

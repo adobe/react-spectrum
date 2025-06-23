@@ -203,9 +203,6 @@ forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>)
                   {label}
                 </FieldLabel>
                 <FieldGroup
-                  role="presentation"
-                  isDisabled={isDisabled}
-                  isInvalid={isInvalid}
                   size={size}
                   styles={style({
                     ...fieldInput(),

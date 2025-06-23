@@ -12,12 +12,12 @@
 
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useFocus} from '@react-aria/interactions';
 import {useGrid, useGridCell, useGridRow} from '../';
 import {useListState} from '@react-stately/list';
 
-export function Grid(props) {
+export function Grid(props: any): JSX.Element {
   let {gridFocusMode = 'row', cellFocusMode = 'child'} = props;
   let state = useListState(props);
   let gridState = useGridState({

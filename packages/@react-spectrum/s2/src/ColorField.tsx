@@ -96,7 +96,7 @@ forwardRef(function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size}>
+        <FieldGroup size={props.size}>
           <Input ref={inputRef} />
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>

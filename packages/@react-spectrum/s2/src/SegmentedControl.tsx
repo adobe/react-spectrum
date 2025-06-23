@@ -207,6 +207,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
       isRegistered.current = true;
       state.toggleKey(value);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -235,7 +236,7 @@ export const SegmentedControlItem:
 
   useLayoutEffect(() => {
     register?.(props.id);
-  }, []);
+  }, [register, props.id]);
 
   useLayoutEffect(() => {
     if (isSelected && prevRef?.current && currentSelectedRef?.current && !reduceMotion) {
@@ -256,7 +257,7 @@ export const SegmentedControlItem:
 
       prevRef.current = null;
     }
-  }, [isSelected, reduceMotion]);
+  }, [isSelected, reduceMotion, prevRef, currentSelectedRef]);
 
   return (
     <ToggleButton

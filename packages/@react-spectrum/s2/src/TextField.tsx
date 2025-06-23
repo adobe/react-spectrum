@@ -148,8 +148,7 @@ forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, 
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        {/* TODO: set GroupContext in RAC TextField */}
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} styles={fieldGroupCss}>
+        <FieldGroup size={props.size} styles={fieldGroupCss}>
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>

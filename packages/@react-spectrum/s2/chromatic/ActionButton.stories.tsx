@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Text} from '../src';
+import {ActionButton, Avatar, Text} from '../src';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -81,6 +81,20 @@ export const IconOnly: ActionButtonStory = {
   render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
+  }
+};
+
+export const WithAvatar = {
+  render: Template,
+  args: {
+    children: <><Avatar src="https://i.imgur.com/xIe7Wlb.png" /><Text>Press me</Text></>
+  }
+};
+
+export const AvatarOnly = {
+  render: Template,
+  args: {
+    children: <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
   }
 };
 
