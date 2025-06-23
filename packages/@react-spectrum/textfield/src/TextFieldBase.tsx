@@ -98,7 +98,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldB
   let validId = useId();
   let validationIcon = isInvalid
     ? <AlertMedium />
-    : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
+    : <CheckmarkMedium id={validId} aria-hidden aria-label={stringFormatter.format('valid')} />;
   let validation = cloneElement(validationIcon, {
     UNSAFE_className: classNames(
       styles,

@@ -179,9 +179,10 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let valueId = useId();
   let invalidId = useId();
+  let validId = useId();
   let validationIcon = validationState === 'invalid'
     ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
-    : <CheckmarkMedium />;
+    : <CheckmarkMedium id={validId} aria-hidden aria-label={stringFormatter.format('valid')} />;
 
   let validation = React.cloneElement(validationIcon, {
     UNSAFE_className: classNames(
@@ -212,7 +213,17 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(hoverProps, buttonProps)}
+        {...mergeProps(
+          hoverProps,
+          buttonProps,
+          validationState === 'valid' && !isDisabled
+            ? {
+              'aria-describedby': buttonProps['aria-describedby']
+                  ? `${buttonProps['aria-describedby']} ${validId}`
+                  : validId
+            }
+            : undefined
+        )}
         aria-haspopup="dialog"
         ref={objRef}
         style={{...style, outline: 'none'}}
