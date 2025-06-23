@@ -86,6 +86,11 @@ const headerCellStyles = style({
 
 const cellStyles = style({
   ...focusRing(),
+  outlineOffset: {
+    default: -2,
+    isToday: 2,
+    isSelected: 2
+  },
   position: 'relative',
   font: 'body-sm',
   cursor: 'default',
