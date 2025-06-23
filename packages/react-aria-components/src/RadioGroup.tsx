@@ -15,14 +15,14 @@ import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * A ref for the HTML input element.
    */
@@ -147,10 +147,11 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     defaultClassName: 'react-aria-RadioGroup'
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...radioGroupProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, radioGroupProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'vertical'}
@@ -216,8 +217,9 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

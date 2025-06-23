@@ -686,6 +686,7 @@ describe('Submenu', function () {
 
       // Hit enter on the menu's submenu trigger
       await user.keyboard('[Enter]');
+      act(() => jest.runAllTimers());
       expect(onSelectionChange).not.toHaveBeenCalled();
       let menus = tree.getAllByRole('menu', {hidden: true});
       let submenu1Items = within(menus[1]).getAllByRole('menuitemradio');

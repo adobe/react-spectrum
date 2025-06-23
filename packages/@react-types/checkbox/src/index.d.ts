@@ -22,6 +22,7 @@ import {
   InputDOMProps,
   LabelableProps,
   Orientation,
+  PressEvents,
   SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
@@ -56,7 +57,7 @@ export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, Fo
   value?: string
 }
 
-export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps {
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps, PressEvents {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, GlobalDOMAttributes, LinkDOMProps} from '@react-types/shared';
 
 const DOMPropNames = new Set([
   'id'
@@ -34,6 +34,51 @@ const linkPropNames = new Set([
   'referrerPolicy'
 ]);
 
+const globalAttrs = new Set([
+  'dir',
+  'lang',
+  'hidden',
+  'inert',
+  'translate'
+]);
+
+const globalEvents = new Set([
+  'onClick',
+  'onAuxClick',
+  'onContextMenu',
+  'onDoubleClick',
+  'onMouseDown',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseMove',
+  'onMouseOut',
+  'onMouseOver',
+  'onMouseUp',
+  'onTouchCancel',
+  'onTouchEnd',
+  'onTouchMove',
+  'onTouchStart',
+  'onPointerDown',
+  'onPointerMove',
+  'onPointerUp',
+  'onPointerCancel',
+  'onPointerEnter',
+  'onPointerLeave',
+  'onPointerOver',
+  'onPointerOut',
+  'onGotPointerCapture',
+  'onLostPointerCapture',
+  'onScroll',
+  'onWheel',
+  'onAnimationStart',
+  'onAnimationEnd',
+  'onAnimationIteration',
+  'onTransitionCancel',
+  'onTransitionEnd',
+  'onTransitionRun',
+  'onTransitionStart'
+]);
+
 interface Options {
   /**
    * If labelling associated aria properties should be included in the filter.
@@ -41,6 +86,10 @@ interface Options {
   labelable?: boolean,
   /** Whether the element is a link and should include DOM props for <a> elements. */
   isLink?: boolean,
+  /** Whether to include global DOM attributes. */
+  global?: boolean,
+  /** Whether to include DOM events. */
+  events?: boolean,
   /**
    * A Set of other property names that should be included in the filter.
    */
@@ -54,8 +103,8 @@ const propRe = /^(data-.*)$/;
  * @param props - The component props to be filtered.
  * @param opts - Props to override.
  */
-export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProps, opts: Options = {}): DOMProps & AriaLabelingProps {
-  let {labelable, isLink, propNames} = opts;
+export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProps & GlobalDOMAttributes, opts: Options = {}): DOMProps & AriaLabelingProps & GlobalDOMAttributes {
+  let {labelable, isLink, global, events = global, propNames} = opts;
   let filteredProps = {};
 
   for (const prop in props) {
@@ -64,6 +113,8 @@ export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProp
         DOMPropNames.has(prop) ||
         (labelable && labelablePropNames.has(prop)) ||
         (isLink && linkPropNames.has(prop)) ||
+        (global && globalAttrs.has(prop)) ||
+        (events && globalEvents.has(prop) || (prop.endsWith('Capture') && globalEvents.has(prop.slice(0, -7)))) ||
         propNames?.has(prop) ||
         propRe.test(prop)
       )

@@ -677,10 +677,10 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           let options = within(menu).getAllByRole(collectionItemRole);
           expect(options[2].tagName).toBe('A');
           expect(options[2]).toHaveAttribute('href', 'https://google.com');
-          let onClick = mockClickDefault();
+          let onClick = mockClickDefault({capture: true});
 
           await user.keyboard('{Enter}');
-          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick).toHaveBeenCalled(); // count differs between menu and listbox because useSelectableItem prevents default on one of them
           window.removeEventListener('click', onClick);
         });
       });

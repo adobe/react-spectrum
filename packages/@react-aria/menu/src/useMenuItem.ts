@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
+import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
+import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
@@ -112,9 +113,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-haspopup': hasPopup,
     onPressStart: pressStartProp,
     onPressUp: pressUpProp,
-    onPress: pressProp,
-    onPressChange,
+    onPress,
+    onPressChange: pressChangeProp,
     onPressEnd,
+    onClick: onClickProp,
     onHoverStart: hoverStartProp,
     onHoverChange,
     onHoverEnd,
@@ -134,7 +136,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
   let router = useRouter();
-  let performAction = (e: PressEvent) => {
+  let performAction = () => {
     if (isTrigger) {
       return;
     }
@@ -149,10 +151,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
       let onAction = data.onAction;
       onAction(key);
-    }
-
-    if (e.target instanceof HTMLAnchorElement && item) {
-      router.open(e.target, e, item.props.href, item.props.routerOptions as RouterOptions);
     }
   };
 
@@ -191,39 +189,41 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType === 'keyboard') {
-      performAction(e);
+    // Trigger native click event on keydown unless this is a link (the browser will trigger onClick then).
+    if (e.pointerType === 'keyboard' && !selectionManager.isLink(key)) {
+      (e.target as HTMLElement).click();
     }
 
     pressStartProp?.(e);
   };
-
-  let maybeClose = () => {
-    // Pressing a menu item should close by default in single selection mode but not multiple
-    // selection mode, except if overridden by the closeOnSelect prop.
-    if (!isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
-      onClose();
-    }
+  let isPressedRef = useRef(false);
+  let onPressChange = (isPressed: boolean) => {
+    pressChangeProp?.(isPressed);
+    isPressedRef.current = isPressed;
   };
 
   let onPressUp = (e: PressEvent) => {
     // If interacting with mouse, allow the user to mouse down on the trigger button,
     // drag, and release over an item (matching native behavior).
     if (e.pointerType === 'mouse') {
-      performAction(e);
-      maybeClose();
+      if (!isPressedRef.current) {
+        (e.target as HTMLElement).click();
+      }
+    }
+
+    // Pressing a menu item should close by default in single selection mode but not multiple
+    // selection mode, except if overridden by the closeOnSelect prop.
+    if (e.pointerType !== 'keyboard' && !isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
+      onClose();
     }
 
     pressUpProp?.(e);
   };
 
-  let onPress = (e: PressEvent) => {
-    if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse') {
-      performAction(e);
-      maybeClose();
-    }
-
-    pressProp?.(e);
+  let onClick = (e: MouseEvent<FocusableElement>) => {
+    onClickProp?.(e);
+    performAction();
+    handleLinkClick(e, router, item!.props.href, item?.props.routerOptions);
   };
 
   let {itemProps, isFocused} = useSelectableItem({
@@ -315,7 +315,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         keyboardProps,
         focusProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
-        data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined
+        data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
+        isDisabled ? undefined : {onClick}
       ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
       tabIndex: itemProps.tabIndex != null && isTriggerExpanded && !data.shouldUseVirtualFocus ? -1 : itemProps.tabIndex

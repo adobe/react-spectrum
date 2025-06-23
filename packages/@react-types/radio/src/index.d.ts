@@ -21,6 +21,7 @@ import {
   InputDOMProps,
   LabelableProps,
   Orientation,
+  PressEvents,
   SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
@@ -67,5 +68,5 @@ export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLa
   isEmphasized?: boolean
 }
 
-export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps {}
+export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps, PressEvents {}
 export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}

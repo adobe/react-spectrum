@@ -167,7 +167,9 @@ describe('RadioGroup', () => {
   });
 
   it('should support press state', async () => {
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -180,6 +182,31 @@ describe('RadioGroup', () => {
     await user.pointer({target: radio, keys: '[/MouseLeft]'});
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press state with keyboard', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
+    let radio = getAllByRole('radio')[0].closest('label');
+
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    await user.tab();
+    await user.keyboard('[Space>]');
+    expect(radio).toHaveAttribute('data-pressed', 'true');
+    expect(radio).toHaveClass('pressed');
+
+    await user.keyboard('[/Space]');
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state on radio', () => {
