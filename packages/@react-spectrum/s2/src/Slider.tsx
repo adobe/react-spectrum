@@ -392,6 +392,9 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 export const Slider:
   ForwardRefExoticComponent<SliderProps & RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
 /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {

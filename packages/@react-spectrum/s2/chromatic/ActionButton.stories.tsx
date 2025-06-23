@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Text} from '../src';
+import {ActionButton, ActionButtonProps, Avatar, Text} from '../src';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -18,6 +18,7 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
+import { ReactElement } from 'react';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -40,7 +41,7 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args) => {
+const Template = (args: ActionButtonProps): ReactElement => {
   let {children, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
@@ -84,15 +85,15 @@ export const IconOnly: ActionButtonStory = {
   }
 };
 
-export const WithAvatar = {
-  render: Template,
+export const WithAvatar: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><Avatar src="https://i.imgur.com/xIe7Wlb.png" /><Text>Press me</Text></>
   }
 };
 
-export const AvatarOnly = {
-  render: Template,
+export const AvatarOnly: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
   }

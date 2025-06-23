@@ -78,7 +78,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 
 export const TabsContext:
   Context<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>> =
-createContext(null);
+createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const InternalTabsContext = createContext<Partial<TabsProps> & {
   tablistRef?: RefObject<HTMLDivElement | null>,

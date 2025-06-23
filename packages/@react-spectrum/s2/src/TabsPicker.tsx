@@ -125,7 +125,7 @@ const inputButton = style({
   },
   boxSizing: 'border-box'
 });
-export let menu = style({
+let menu = style({
   outlineStyle: 'none',
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
