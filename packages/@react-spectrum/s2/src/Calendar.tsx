@@ -105,6 +105,8 @@ const cellStyles = style({
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: {
+    default: 'transparent',
+    isHovered: 'gray-100',
     isToday: {
       default: baseColor('gray-300'),
       isDisabled: 'disabled'
