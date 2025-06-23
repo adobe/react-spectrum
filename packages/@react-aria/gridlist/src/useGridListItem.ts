@@ -13,7 +13,6 @@
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -104,24 +103,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (node.level > 0 && node?.parentKey != null) {
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
-        // siblings must exist because our original node exists, same with lastItem
+        // siblings must exist because our original node exists
         let siblings = state.collection.getChildren?.(parent.key)!;
-        let lastItemOfParent = getLastItem(siblings)!;
-        // Don't include loaders as part of the item count, to be revisited when we support focusing the loaders
-        // Also assumes only one loader per tree parent row
-        if (lastItemOfParent.type === 'loader') {
-          setSize = lastItemOfParent.index;
-        } else {
-          setSize = lastItemOfParent.index + 1;
-        }
+        setSize = [...siblings].filter(row => row.type === 'item').length;
       }
     } else {
-      let lastItemOfParent = ([...state.collection].filter(row => row.level === 0).at(-1))!;
-      if (lastItemOfParent.type === 'loader') {
-        setSize = lastItemOfParent.index;
-      } else {
-        setSize = lastItemOfParent.index + 1;
-      }
+      setSize = [...state.collection].filter(row => row.level === 0 && row.type === 'item').length;
     }
 
     treeGridRowProps = {
