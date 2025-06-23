@@ -180,7 +180,7 @@ export const Calendar:
                       <div>
                         {formattedDate}
                       </div>
-                      {isUnavailable && <div className={unavailableStyles} />}
+                      {isUnavailable && <div className={unavailableStyles} role="presentation" />}
                     </>
                   )}
                 </CalendarCell>
