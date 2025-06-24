@@ -59,7 +59,8 @@ export default [{
         "packages/dev/parcel-resolver-storybook/*",
         "packages/dev/parcel-transformer-storybook/*",
         "packages/dev/storybook-builder-parcel/*",
-        "packages/dev/storybook-react-parcel/*"
+        "packages/dev/storybook-react-parcel/*",
+        "packages/dev/s2-docs/pages/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
@@ -498,7 +499,7 @@ export default [{
         }],
     },
 }, {
-    files: ["packages/@react-spectrum/s2/**"],
+    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,
