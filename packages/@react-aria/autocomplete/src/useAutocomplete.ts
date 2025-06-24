@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -163,14 +163,19 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
 
-  // TODO: update to see if we can tell what kind of event (paste vs backspace vs typing) is happening instead
+
+  let lastInputType = useRef('');
+  useEvent(inputRef, 'input', e => {
+    let {inputType} = e as InputEvent;
+    lastInputType.current = inputType;
+  });
+
   let onChange = (value: string) => {
-    // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
-    // for screen reader announcements
-    if (state.inputValue !== value && state.inputValue.length <= value.length && !disableAutoFocusFirst) {
+    // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when modifying the text via
+    // copy paste/backspacing/undo/redo for screen reader announcements
+    if (lastInputType.current === 'insertText' && !disableAutoFocusFirst) {
       focusFirstItem();
-    } else {
-      // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
+    } else if (lastInputType.current.includes('insert') || lastInputType.current.includes('delete') || lastInputType.current.includes('history')) {
       clearVirtualFocus(true);
     }
 
