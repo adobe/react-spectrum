@@ -812,7 +812,7 @@ function AsyncSortTable() {
             <MyTreeItem id={item.name} title={item.name} />
           )}
         </Collection>
-        <MyTreeLoader isLoading={pokemonList.items} onLoadMore={pokemonList.loadMore} />
+        <MyTreeLoader isLoading={pokemonList.isLoading} onLoadMore={pokemonList.loadMore} />
         {/*- end highlight -*/}
       </MyTreeItem>
       <MyTreeItem id="starwars" title="Star Wars">
@@ -822,7 +822,7 @@ function AsyncSortTable() {
             <MyTreeItem id={item.name} title={item.name} />
           )}
         </Collection>
-        <MyTreeLoader isLoading={starWarsList.items} onLoadMore={starWarsList.loadMore} />
+        <MyTreeLoader isLoading={starWarsList.isLoading} onLoadMore={starWarsList.loadMore} />
         {/*- end highlight -*/}
       </MyTreeItem>
     </Tree>
