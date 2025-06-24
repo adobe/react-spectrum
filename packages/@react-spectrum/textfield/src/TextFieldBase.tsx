@@ -107,6 +107,15 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldB
     )
   });
 
+  // Add validation icon IDREF to aria-describedby when validationState is valid
+  let inputPropsAriaDescribedBy = inputProps['aria-describedby'];
+  if (
+    !isInvalid && validationState === 'valid' && !isLoading && !isDisabled &&
+    (!inputPropsAriaDescribedBy || !inputPropsAriaDescribedBy.includes(validId))
+  ) {
+    inputProps['aria-describedby'] = [inputPropsAriaDescribedBy, validId].join(' ').trim();
+  }
+
   let {focusProps, isFocusVisible} = useFocusRing({
     isTextInput: true,
     autoFocus
@@ -129,18 +138,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldB
         )
       }>
       <ElementType
-        {...mergeProps(
-            inputProps,
-            hoverProps,
-            focusProps,
-            validationState === 'valid' && !isLoading && !isDisabled
-              ? {
-                'aria-describedby': inputProps['aria-describedby']
-                    ? `${inputProps['aria-describedby']} ${validId}`
-                    : validId
-              }
-              : undefined
-          )}
+        {...mergeProps(inputProps, hoverProps, focusProps)}
         ref={inputRef as any}
         rows={multiLine ? 1 : undefined}
         className={
