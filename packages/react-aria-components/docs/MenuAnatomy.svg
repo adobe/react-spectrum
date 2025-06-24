@@ -1,4 +1,4 @@
-<svg style="max-height: 340px; background: var(--anatomy-gray-100); padding: 12px; margin-bottom: 16px; width: calc(100% - 24px); border-radius: 4px;" viewBox="-135 0 540 340">
+<svg style="max-height: 340px; background: var(--anatomy-gray-100); padding: 12px; margin-bottom: 16px; width: calc(100% - 24px); border-radius: var(--anatomy-radius);" viewBox="-135 0 540 340">
   <title>Menu anatomy diagram</title>
   <desc>Shows a menu component with labels pointing to its parts, including the trigger, menu, group, section heading, menu item, menu item label, menu item description, and menu item keyboard shortcut elements.</desc>
   <defs>
