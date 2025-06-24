@@ -58,7 +58,7 @@ interface SelectData {
   validationBehavior?: 'aria' | 'native'
 }
 
-export const selectData = new WeakMap<SelectState<any>, SelectData>();
+export const selectData: WeakMap<SelectState<any>, SelectData> = new WeakMap<SelectState<any>, SelectData>();
 
 /**
  * Provides the behavior and accessibility implementation for a select component.
