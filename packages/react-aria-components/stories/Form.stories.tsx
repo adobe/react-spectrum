@@ -47,7 +47,7 @@ export const FormAutoFillExample: FormStory = () => {
         <Label>Zip</Label>
         <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
       </TextField>
-      <Select name="country" id="country" autoComplete="shipping country">
+      <Select style={{position: 'relative'}} name="country" id="country" autoComplete="shipping country">
         <Label>Country</Label>
         <Button>
           <SelectValue />

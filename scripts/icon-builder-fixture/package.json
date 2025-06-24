@@ -2,7 +2,8 @@
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
     "parcel": "^2.13.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@react-spectrum/s2": "latest",
@@ -11,6 +12,7 @@
     "react-dom": "^18.2.0"
   },
   "scripts": {
+    "tsc": "tsc",
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },

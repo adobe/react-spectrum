@@ -11,8 +11,9 @@
  */
 
 import {Item} from '@react-stately/collections';
-import React from 'react';
+import React, {JSX} from 'react';
 import {Select} from './example';
+import {StoryObj} from '@storybook/react';
 
 const meta = {
   title: 'useSelect'
@@ -20,17 +21,19 @@ const meta = {
 
 export default meta;
 
+export type TemplateStory = StoryObj<typeof Select>;
+
 let lotsOfItems: any[] = [];
 for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = () => (
+const Template = (): JSX.Element => (
   <Select label="Example" items={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </Select>
 );
 
-export const ScrollTesting = {
-  render: Template
+export const ScrollTesting: TemplateStory = {
+  render: (args) => <Template {...args} />
 };

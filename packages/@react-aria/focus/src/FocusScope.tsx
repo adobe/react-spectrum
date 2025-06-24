@@ -886,15 +886,15 @@ class Tree {
     this.fastMap.set(null, this.root);
   }
 
-  get size() {
+  get size(): number {
     return this.fastMap.size;
   }
 
-  getTreeNode(data: ScopeRef) {
+  getTreeNode(data: ScopeRef): TreeNode | undefined {
     return this.fastMap.get(data);
   }
 
-  addTreeNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: FocusableElement) {
+  addTreeNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: FocusableElement): void {
     let parentNode = this.fastMap.get(parent ?? null);
     if (!parentNode) {
       return;
@@ -908,11 +908,11 @@ class Tree {
     }
   }
 
-  addNode(node: TreeNode) {
+  addNode(node: TreeNode): void {
     this.fastMap.set(node.scopeRef, node);
   }
 
-  removeTreeNode(scopeRef: ScopeRef) {
+  removeTreeNode(scopeRef: ScopeRef): void {
     // never remove the root
     if (scopeRef === null) {
       return;
@@ -978,14 +978,14 @@ class TreeNode {
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
   }
-  addChild(node: TreeNode) {
+  addChild(node: TreeNode): void {
     this.children.add(node);
     node.parent = this;
   }
-  removeChild(node: TreeNode) {
+  removeChild(node: TreeNode): void {
     this.children.delete(node);
     node.parent = undefined;
   }
 }
 
-export let focusScopeTree = new Tree();
+export let focusScopeTree: Tree = new Tree();

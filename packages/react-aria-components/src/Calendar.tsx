@@ -508,9 +508,11 @@ export const CalendarCell: (props: CalendarCellProps & React.RefAttributes<HTMLT
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
+  let isOutsideMonth = !isSameMonth(currentMonth, date);
+
   let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
-    {date},
+    {date, isOutsideMonth},
     state,
     buttonRef
   );
@@ -518,7 +520,6 @@ export const CalendarCell: (props: CalendarCellProps & React.RefAttributes<HTMLT
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
   isFocusVisible &&= states.isFocused;
-  let isOutsideMonth = !isSameMonth(currentMonth, date);
   let isSelectionStart = false;
   let isSelectionEnd = false;
   if ('highlightedRange' in state && state.highlightedRange) {

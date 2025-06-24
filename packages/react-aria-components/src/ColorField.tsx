@@ -15,6 +15,7 @@ import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, us
 import {ColorFieldContext} from './RSPContexts';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {InputDOMProps, ValidationResult} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -192,6 +193,7 @@ function useChildren(
         [ColorFieldStateContext, state],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef}],
+        [GroupContext, {role: 'presentation', isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [TextContext, {
           slots: {
             description: descriptionProps,
