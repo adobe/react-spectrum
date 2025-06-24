@@ -44,20 +44,26 @@ const meta: Meta<typeof Calendar> = {
 export default meta;
 type Story = StoryObj<typeof Calendar>;
 
-export const Example: Story = {};
+export const Example: Story = {
+  args: {
+    'aria-label': 'Birthday'
+  }
+};
 
 export const DateUnavailable: Story = {
   args: {
     isDateUnavailable: (date: DateValue) => {
       const disabledIntervals = [[today(getLocalTimeZone()).subtract({days: 13}), today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-    }
+    },
+    'aria-label': 'Birthday'
   }
 };
 
 export const MinValue: Story = {
   args: {
-    minValue: today(getLocalTimeZone()).add({days: 1})
+    minValue: today(getLocalTimeZone()).add({days: 1}),
+    'aria-label': 'Birthday'
   }
 };
 
@@ -85,5 +91,8 @@ function CustomCalendar(props: CalendarProps<DateValue>): ReactElement {
 }
 
 export const Custom454Example: Story = {
-  render: (args) => <CustomCalendar {...args} />
+  render: (args) => <CustomCalendar {...args} />,
+  args: {
+    'aria-label': 'Birthday'
+  }
 };

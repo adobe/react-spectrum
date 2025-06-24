@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Content, ContextualHelp, DatePicker, Footer, Form, Heading, Link, Text} from '../src';
+import {Button, Content, ContextualHelp, Footer, Form, Heading, Link, Text, TimeField} from '../src';
 import {categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
-const meta: Meta<typeof DatePicker> = {
-  component: DatePicker,
+const meta: Meta<typeof TimeField> = {
+  component: TimeField,
   parameters: {
     layout: 'centered'
   },
@@ -28,43 +28,43 @@ const meta: Meta<typeof DatePicker> = {
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
   },
-  title: 'DatePicker'
+  title: 'TimeField'
 };
 
 export default meta;
-type Story = StoryObj<typeof DatePicker>;
+type Story = StoryObj<typeof TimeField>;
 
 export const Example: Story = {
   args: {
-    'aria-label': 'Birthday'
+    'aria-label': 'Launch time'
   }
 };
 
 export const Validation: Story = {
   render: (args) => (
     <Form>
-      <DatePicker {...args} />
+      <TimeField {...args} />
       <Button type="submit" variant="primary">Submit</Button>
     </Form>
   ),
   args: {
-    label: 'Birthday',
+    label: 'Launch time',
     isRequired: true
   }
 };
 
 export const CustomWidth: Story = {
   render: (args) => (
-    <DatePicker {...args} styles={style({width: 384})} />
+    <TimeField {...args} styles={style({width: 384})} />
   ),
   args: {
-    label: 'Birthday'
+    label: 'Launch time'
   }
 };
 
 export const ContextualHelpExample: Story = {
   render: (args) => (
-    <DatePicker
+    <TimeField
       {...args}
       contextualHelp={
         <ContextualHelp>
