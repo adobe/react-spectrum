@@ -129,6 +129,7 @@
     "dist",
     "style",
     "page.css",
+    "page.css.map",
     "icons",
     "illustrations",
     "src"
@@ -140,7 +141,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.10.0",
-    "@parcel/macros": "^2.14.0",
+    "@parcel/macros": "^2.15.4",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
