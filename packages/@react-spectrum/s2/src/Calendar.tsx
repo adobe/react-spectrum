@@ -34,6 +34,7 @@ import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {getEraFormat} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface CalendarProps<T extends DateValue>
@@ -149,6 +150,7 @@ const unavailableStyles = style({
 export const Calendar:
   <T extends DateValue>(props: CalendarProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
 /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {
     visibleMonths = 1,
     errorMessage,

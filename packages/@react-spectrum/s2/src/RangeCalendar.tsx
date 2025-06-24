@@ -35,6 +35,7 @@ import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {getEraFormat} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface RangeCalendarProps<T extends DateValue>
@@ -192,6 +193,7 @@ const selectionSpanStyles = style({
 export const RangeCalendar:
   <T extends DateValue>(props: RangeCalendarProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
 /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, RangeCalendarContext);
   let {
     visibleMonths = 1,
     errorMessage,
