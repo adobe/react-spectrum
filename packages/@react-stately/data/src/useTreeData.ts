@@ -502,7 +502,8 @@ function moveItems<T extends object>(
       newMap = nextMap;
     }
     // decrement the index if the child being removed is in the target parent and before the target index
-    if (child.parentKey === toParent?.key
+    // eslint-disable-next-line eqeqeq
+    if (child.parentKey == toParent?.key
       && keyArray.includes(child.key)
       && (toParent?.children ? toParent.children.indexOf(child) : items.indexOf(child)) < originalToIndex) {
       toIndex--;
