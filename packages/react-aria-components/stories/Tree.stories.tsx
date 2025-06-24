@@ -722,7 +722,7 @@ function MultiLoaderTreeMockAsync(args) {
   let [isDocumentsLoading, setDocumentsLoading] = useState(false);
 
   let onRootLoadMore = useCallback(() => {
-    if (!isRootLoading) {
+    if (!isRootLoading && rootData.items.length < 30) {
       action('root loading')();
       setRootLoading(true);
       setTimeout(() => {
@@ -738,7 +738,7 @@ function MultiLoaderTreeMockAsync(args) {
   }, [isRootLoading, rootData, args.delay]);
 
   let onProjectsLoadMore = useCallback(() => {
-    if (!isProjectsLoading) {
+    if (!isProjectsLoading && projectsData.items.length < 30) {
       action('projects loading')();
       setProjectsLoading(true);
       setTimeout(() => {
@@ -754,7 +754,7 @@ function MultiLoaderTreeMockAsync(args) {
   }, [isProjectsLoading, projectsData, args.delay]);
 
   let onProjectsLevel3LoadMore = useCallback(() => {
-    if (!isProjectsLevel3Loading) {
+    if (!isProjectsLevel3Loading && projects3Data.items.length < 30) {
       action('projects level 3 loading')();
       setProjects3Loading(true);
       setTimeout(() => {
@@ -770,7 +770,7 @@ function MultiLoaderTreeMockAsync(args) {
   }, [isProjectsLevel3Loading, projects3Data, args.delay]);
 
   let onDocumentsLoadMore = useCallback(() => {
-    if (!isDocumentsLoading) {
+    if (!isDocumentsLoading && documentsData.items.length < 30) {
       action('documents loading')();
       setDocumentsLoading(true);
       setTimeout(() => {
@@ -797,7 +797,6 @@ function MultiLoaderTreeMockAsync(args) {
             if (item.id === 'projects') {
               return (
                 <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-
                   <Collection items={projectsData.items}>
                     {(item: any) => {
                       return item.id !== 'projects-1' ?
