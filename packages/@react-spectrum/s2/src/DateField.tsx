@@ -97,7 +97,7 @@ export const DateField:
       isRequired={isRequired}
       {...dateFieldProps}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+      className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
         labelPosition,
         size

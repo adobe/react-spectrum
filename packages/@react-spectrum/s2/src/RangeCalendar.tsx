@@ -209,7 +209,7 @@ export const RangeCalendar:
       ref={ref}
       visibleDuration={{months: visibleMonths}}
       style={UNSAFE_style}
-      className={UNSAFE_className + calendarStyles(null, styles)}>
+      className={(UNSAFE_className || '') + calendarStyles(null, styles)}>
       <Header styles={headerStyles}>
         <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
         <CalendarHeading />
