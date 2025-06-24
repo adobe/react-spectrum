@@ -143,6 +143,7 @@ export const DateRangePicker:
   let buttonRef = useRef<HTMLButtonElement>(null);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
 
+  // TODO: fix width
   return (
     <AriaDateRangePicker
       ref={ref}
