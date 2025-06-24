@@ -16,6 +16,7 @@ import {
   CalendarProps as AriaCalendarProps,
   ButtonProps,
   CalendarCell,
+  CalendarCellRenderProps,
   CalendarGrid,
   CalendarGridBody,
   CalendarGridHeader,
@@ -84,8 +85,22 @@ const headerCellStyles = style({
   flexGrow: 1
 });
 
-const cellStyles = style({
+const cellStyles = style<CalendarCellRenderProps>({
+  paddingX: 4,
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
+  paddingY: 2
+});
+
+const cellInnerStyles = style({
   ...focusRing(),
+  outlineOffset: {
+    default: -2,
+    isToday: 2,
+    isSelected: 2
+  },
   position: 'relative',
   font: 'body-sm',
   cursor: 'default',
@@ -174,7 +189,8 @@ export const Calendar:
               {(date) => (
                 <CalendarCell
                   date={date}
-                  className={cellStyles}>
+                  cellClassName={cellStyles}
+                  className={cellInnerStyles}>
                   {({isUnavailable, formattedDate}) => (
                     <>
                       <div>

@@ -88,7 +88,11 @@ const headerCellStyles = style({
 });
 
 const cellStyles = style<CalendarCellRenderProps>({
-  paddingX: 0,
+  paddingX: 4,
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
   paddingY: 2
 });
 
@@ -109,13 +113,18 @@ const cellInnerWrapperStyles = style<CalendarCellRenderProps>({
 
 const innerCellStyles = style<CalendarCellRenderProps>({
   ...focusRing(),
+  outlineOffset: {
+    default: -2,
+    isToday: 2,
+    isSelected: 2
+  },
   position: 'relative',
   font: 'body-sm',
   cursor: 'default',
   width: 32,
   '--cell-width': {
     type: 'width',
-    value: '[self(width)]' // keep in sync with innerCellStyles.width
+    value: '[self(width)]'
   },
   height: 32,
   borderRadius: 'full',
@@ -169,7 +178,7 @@ const selectionSpanStyles = style({
   position: 'absolute',
   zIndex: -1,
   top: 0,
-  insetStart: 'calc(-1 * var(--selection-span) * var(--cell-width))',
+  insetStart: 'calc(-1 * var(--selection-span) * (var(--cell-width) + var(--cell-gap) + var(--cell-gap)))',
   insetEnd: 0,
   bottom: 0,
   borderWidth: 2,
