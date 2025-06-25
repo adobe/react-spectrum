@@ -587,6 +587,22 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     if (target.dropPosition === 'before') {
       rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
     } else if (target.dropPosition === 'after') {
+      // Render after last visible descendant of the drop target.
+      let targetNode = this.collection.getItem(target.key);
+      if (targetNode) {
+        let targetLevel = targetNode.level ?? 0;
+        let currentKey = this.collection.getKeyAfter(target.key);
+
+        while (currentKey != null) {
+          let node = this.collection.getItem(currentKey);
+          if (!node || node.level <= targetLevel) {
+            break;
+          }
+
+          layoutInfo = this.getLayoutInfo(currentKey) || layoutInfo;
+          currentKey = this.collection.getKeyAfter(currentKey);
+        }
+      }
       rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
     } else {
       rect = layoutInfo.rect;

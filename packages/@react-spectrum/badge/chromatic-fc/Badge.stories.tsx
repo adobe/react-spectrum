@@ -11,19 +11,19 @@
  */
 
 import {Badge} from '..';
-import {BadgeStory, renderVariants} from '../chromatic/Badge.stories';
+import {BadgeStory, RenderVariants} from '../chromatic/Badge.stories';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
-import {ComponentMeta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 
 export default {
   title: 'Badge',
   component: Badge
-} as ComponentMeta<typeof Badge>;
+} as Meta<typeof Badge>;
 
 export const TextIcon: BadgeStory = {
   name: 'Text & icon',
   args: {children: <><Text>Badge text</Text><CheckmarkCircle /></>},
-  render: renderVariants
+  render: (args) => <RenderVariants {...args} />
 };

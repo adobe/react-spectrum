@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import { MoreHorizontal } from 'lucide-react';
 import React from 'react';
 import { MenuTrigger, SubmenuTrigger } from 'react-aria-components';
