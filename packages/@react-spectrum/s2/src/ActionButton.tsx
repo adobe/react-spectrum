@@ -93,7 +93,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   gridTemplateColumns: {
     default: ['auto', 'auto'],
     [iconOnly]: ['auto'],
-    [textOnly]: ['auto'],
+    [textOnly]: ['auto']
   },
   backgroundColor: {
     default: {
@@ -314,7 +314,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 ':last-child': 0
               },
               gridArea: 'icon',
-              flexShrink: 0,
+              flexShrink: 0
             })
           }],
           [NotificationBadgeContext, {
