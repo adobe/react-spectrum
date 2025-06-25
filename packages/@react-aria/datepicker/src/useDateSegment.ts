@@ -257,7 +257,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
             focusManager.focusNext();
           }
         } else if (shouldSetValue) {
-          // Don't accept leading zeros except for fields that accept 0 as a value (aka minutes/seconds/etc)
+          // Don't accept leading zeros except for fields that accept 0 as a entire value (aka 00 for minutes/seconds/etc)
           enteredKeys.current = newValue;
         }
         break;
