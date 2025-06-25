@@ -92,7 +92,7 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size}>
+        <FieldGroup size={props.size}>
           <Input ref={inputRef} />
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>

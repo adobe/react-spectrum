@@ -1718,6 +1718,7 @@ describe('Picker', function () {
       expect(options.length).toBe(60);
       options.forEach((option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name));
 
+      fireEvent.input(hiddenSelect, {target: {value: 'CA'}});
       fireEvent.change(hiddenSelect, {target: {value: 'CA'}});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('CA');

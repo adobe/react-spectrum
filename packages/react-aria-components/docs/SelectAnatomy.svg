@@ -1,4 +1,4 @@
-<svg style="max-height: 403px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 594.5 403">
+<svg style="max-height: 403px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 594.5 403">
   <defs>
     <filter id="rectangle-12" x="310.5" y="121" width="226" height="251" filterUnits="userSpaceOnUse">
       <feOffset dy="1" input="SourceAlpha"/>
