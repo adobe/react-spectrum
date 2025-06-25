@@ -35,6 +35,23 @@ export interface DragOptions {
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /**
+   * A function that computes the offset of the drag preview relative to the pointer.
+   *
+   * If not provided, a default offset is automatically calculated based on the click/touch
+   * position, falling back to the center of the preview in cases where the preview is smaller
+   * than the interaction point.
+   */
+  getPreviewOffset?: (options: {
+    /** Bounding rect for the preview element returned from `preview`. */
+    previewRect: DOMRect,
+    /** Bounding rect for the element that initiated the drag. */
+    sourceRect: DOMRect,
+    /** The pointer coordinates at the start of the drag. */
+    pointerPosition: {x: number, y: number},
+    /** The default offset that would be used if no custom offset is provided. */
+    defaultOffset: {x: number, y: number}
+  }) => {x: number, y: number},
+  /**
    * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
    * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
    */
@@ -143,18 +160,48 @@ export function useDrag(options: DragOptions): DragResult {
         // If the preview is much smaller, then just use the center point of the preview.
         let size = node.getBoundingClientRect();
         let rect = e.currentTarget.getBoundingClientRect();
-        let x = e.clientX - rect.x;
-        let y = e.clientY - rect.y;
-        if (x > size.width || y > size.height) {
-          x = size.width / 2;
-          y = size.height / 2;
+        let defaultX = e.clientX - rect.x;
+        let defaultY = e.clientY - rect.y;
+        if (defaultX > size.width || defaultY > size.height) {
+          defaultX = size.width / 2;
+          defaultY = size.height / 2;
         }
+
+        // Allow callers to override the preview offset.
+        let {getPreviewOffset} = options;
+        let offsetX = defaultX;
+        let offsetY = defaultY;
+        if (typeof getPreviewOffset === 'function') {
+          try {
+            let custom = getPreviewOffset({
+              previewRect: size,
+              sourceRect: rect,
+              pointerPosition: {x: e.clientX, y: e.clientY},
+              defaultOffset: {x: defaultX, y: defaultY}
+            });
+
+            if (custom && typeof custom.x === 'number' && typeof custom.y === 'number') {
+              offsetX = custom.x;
+              offsetY = custom.y;
+            }
+          } catch (err) {
+            // Fail gracefully if the callback throws, and use the default offset instead.
+            console.error('Error in getPreviewOffset callback', err);
+          }
+        }
+
+        // Clamp the offset so it stays within the preview bounds. Browsers
+        // automatically clamp out-of-range values, but doing it ourselves
+        // prevents the visible "snap" that can occur when the browser adjusts
+        // them after the first drag update.
+        offsetX = Math.max(0, Math.min(offsetX, size.width));
+        offsetY = Math.max(0, Math.min(offsetY, size.height));
 
         // Rounding height to an even number prevents blurry preview seen on some screens
         let height = 2 * Math.round(size.height / 2);
         node.style.height = `${height}px`;
 
-        e.dataTransfer.setDragImage(node, x, y);
+        e.dataTransfer.setDragImage(node, offsetX, offsetY);
       });
     }
 
