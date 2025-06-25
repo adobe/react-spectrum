@@ -14,7 +14,7 @@ import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/sh
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
-import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
+import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -177,6 +177,12 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       focusFirstItem();
     } else if (lastInputType.current.includes('insert') || lastInputType.current.includes('delete') || lastInputType.current.includes('history')) {
       clearVirtualFocus(true);
+
+      // If onChange was triggered before the timeout actually updated the activedescendant, we need to fire
+      // our own dispatchVirtualFocus so focusVisible gets reapplied on the input
+      if (getVirtuallyFocusedElement(document) === inputRef.current) {
+        dispatchVirtualFocus(inputRef.current!, null);
+      }
     }
 
     state.setInputValue(value);
