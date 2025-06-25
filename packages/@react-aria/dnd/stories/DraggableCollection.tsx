@@ -100,7 +100,8 @@ function DraggableCollection(props) {
     preview,
     onDragStart: props.onDragStart,
     onDragMove: props.onDragMove,
-    onDragEnd: props.onDragEnd
+    onDragEnd: props.onDragEnd,
+    ...props.draggableCollectionStateProps
   });
   useDraggableCollection({}, dragState, ref);
 

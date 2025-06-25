@@ -118,7 +118,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      return getItems(getKeys(key));
+      return getItems(getKeys(key), key);
     },
     isDisabled,
     preview,

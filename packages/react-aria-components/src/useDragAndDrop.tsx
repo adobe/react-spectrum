@@ -76,7 +76,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
    */
-  getItems?: (keys: Set<Key>) => DragItem[],
+  getItems?: (keys: Set<Key>, draggedKey: Key) => DragItem[],
   /**
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
