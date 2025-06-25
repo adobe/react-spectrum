@@ -13,26 +13,25 @@ export default ExampleLayout;
 import docs from 'docs:react-aria-components';
 import styles from '@react-spectrum/docs/src/docs.css';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
-import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
-keywords: [example, menu, popover, dialog, aria, accessibility, react, component]
+keywords: [example, menu, popover, aria, accessibility, react, component]
 type: component
 image: account-menu.png
-description: A Menu with an interactive header, built with a Dialog and Popover.
+description: A Menu with an interactive header, built with a Popover.
 ---
 
 # Account Menu
 
-A [Menu](../Menu.html) with an interactive header, built with a [Dialog](../Dialog.html) and [Popover](../Popover.html).
+A [Menu](../Menu.html) with an interactive header, built with a [Popover](../Popover.html).
 
 ## Example
 
-For accessibility reasons, standalone Menus cannot contain any children other than menu items (optionally grouped into sections). To build patterns that include such elements, place the Menu into a Dialog with additional interactive elements as siblings.
+For accessibility reasons, standalone Menus cannot contain any children other than menu items (optionally grouped into sections). To build patterns that include such elements, place the Menu into a Popover with additional interactive elements as siblings.
 
 ```tsx import
 import './tailwind.global.css';
