@@ -372,4 +372,20 @@ describe('DateField', () => {
     let segmentTypes = segments.map(s => s.getAttribute('data-type'));
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
+
+  it('should support autofill', async() => {
+    let {getByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let hiddenDateInput = document.querySelector('input[type=date]');
+    await user.type(hiddenDateInput, '2000-05-30');
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('5/30/2000');
+  });
 });
