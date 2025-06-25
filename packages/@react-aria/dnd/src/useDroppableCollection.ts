@@ -38,7 +38,6 @@ import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {navigate} from './DropTargetKeyboardNavigation';
-import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useLocale} from '@react-aria/i18n';
@@ -277,11 +276,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             if (first != null) {
               state.selectionManager.setFocusedKey(first);
             }
-
-            // eslint-disable-next-line max-depth
-            if (state.selectionManager.selectionMode === 'none') {
-              setInteractionModality('keyboard');
-            }
           }
         }
       } else if (
@@ -294,7 +288,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       ) {
         // Focus row instead of cell when reordering.
         state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey)?.parentKey ?? null);
-        setInteractionModality('keyboard');
       } else if (
         state.selectionManager.focusedKey === prevFocusedKey &&
         target.type === 'item' &&
@@ -305,9 +298,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // focus that item and show the focus ring to give the user feedback that the drop occurred.
         // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
         state.selectionManager.setFocusedKey(target.key);
-        setInteractionModality('keyboard');
-      } else if (state.selectionManager.focusedKey != null && !state.selectionManager.isSelected(state.selectionManager.focusedKey)) {
-        setInteractionModality('keyboard');
       }
 
       state.selectionManager.setFocused(true);
