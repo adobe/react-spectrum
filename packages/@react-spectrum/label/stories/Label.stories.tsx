@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Label} from '../';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 
-type LabelStory = ComponentStoryObj<typeof Label>;
+type LabelStory = StoryObj<typeof Label>;
 
 const argTypes = {
   labelAlign: {
@@ -50,7 +50,7 @@ export default {
       <TextField id={Context.args.htmlFor} isRequired={Context.args.isRequired} />
     </div>
   )]
-} as ComponentMeta<typeof Label>;
+} as Meta<typeof Label>;
 
 export let Default: LabelStory = {};
 

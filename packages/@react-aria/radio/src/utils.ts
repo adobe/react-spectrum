@@ -20,4 +20,4 @@ interface RadioGroupData {
   validationBehavior: 'aria' | 'native'
 }
 
-export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();
+export const radioGroupData: WeakMap<RadioGroupState, RadioGroupData> = new WeakMap<RadioGroupState, RadioGroupData>();

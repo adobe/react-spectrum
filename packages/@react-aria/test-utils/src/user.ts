@@ -32,7 +32,16 @@ import {TabsTester} from './tabs';
 import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
-let keyToUtil = {
+let keyToUtil: {
+  'Select': typeof SelectTester,
+  'Table': typeof TableTester,
+  'Menu': typeof MenuTester,
+  'ComboBox': typeof ComboBoxTester,
+  'GridList': typeof GridListTester,
+  'ListBox': typeof ListBoxTester,
+  'Tabs': typeof TabsTester,
+  'Tree': typeof TreeTester
+} = {
   'Select': SelectTester,
   'Table': TableTester,
   'Menu': MenuTester,

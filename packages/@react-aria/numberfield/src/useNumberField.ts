@@ -183,6 +183,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let domProps = filterDOMProps(props);
   let onKeyDownEnter = useCallback((e) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
+
     if (e.key === 'Enter') {
       commit();
       commitValidation();
