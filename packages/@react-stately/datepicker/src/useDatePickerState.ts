@@ -30,6 +30,8 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
 export interface DatePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date. */
   value: DateValue | null,
+  /** The default date. */
+  defaultValue: DateValue | null,
   /** Sets the selected date. */
   setValue(value: DateValue | null): void,
   /**
@@ -74,6 +76,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
 export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [initialValue] = useState(value);
 
   let v = (value || props.placeholderValue || null);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
@@ -161,6 +164,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   return {
     ...validation,
     value,
+    defaultValue: props.defaultValue ?? initialValue,
     setValue,
     dateValue: selectedDate,
     timeValue: selectedTime,
