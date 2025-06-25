@@ -284,12 +284,7 @@ export interface DraggableCollectionProps {
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
-  /**
-   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
-   * @param keys - The set of keys that will be affected by the drag (e.g. the current selection).
-   * @param draggedKey - The key of the item the user actually dragged.
-   * @default () => []
-   */
+  /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>, draggedKey: Key) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>,
