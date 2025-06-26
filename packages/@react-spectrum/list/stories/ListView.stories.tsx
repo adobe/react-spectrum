@@ -3,6 +3,7 @@ import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {Content} from '@react-spectrum/view';
+import {Badge} from '@react-spectrum/badge';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -144,7 +145,7 @@ export type ListViewStory = StoryObj<typeof ListView>;
 export const Default: ListViewStory = {
   render: (args) => (
     <ListView disabledKeys={['3']} width="250px" aria-label="default ListView" {...args}>
-      <Item key="1" textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item key="1" textValue="Adobe Photoshop"><Badge variant="neutral">2</Badge>Adobe Photoshop</Item>
       <Item key="2" textValue="Adobe Illustrator">Adobe Illustrator</Item>
       <Item key="3" textValue="Adobe XD">Adobe XD</Item>
     </ListView>
