@@ -11,7 +11,7 @@
  */
 
 import {createLeafComponent} from '@react-aria/collections';
-import {ReactElement, ReactNode, RefAttributes} from 'react';
+import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 
 export interface SkeletonCollectionProps {
@@ -23,9 +23,7 @@ let cache = new WeakMap();
 /**
  * A SkeletonCollection generates placeholder content within a collection component such as CardView.
  */
-export const SkeletonCollection:
-  (props: SkeletonCollectionProps & RefAttributes<object>) => ReactElement | null =
-createLeafComponent('skeleton', (props: SkeletonCollectionProps, ref, node) => {
+export const SkeletonCollection = createLeafComponent('skeleton', (props: SkeletonCollectionProps, ref, node) => {
   // Cache rendering based on node object identity. This allows the children function to randomize
   // its content (e.g. heights) and preserve on re-renders.
   // TODO: do we need a `dependencies` prop here?

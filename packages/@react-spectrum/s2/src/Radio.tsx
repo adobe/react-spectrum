@@ -18,9 +18,9 @@ import {
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext, useRef} from 'react';
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
@@ -107,9 +107,7 @@ const circle = style<RenderProps>({
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio:
-  ForwardRefExoticComponent<RadioProps & RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
-/*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);

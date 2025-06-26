@@ -48,7 +48,7 @@ import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {Context, createContext, forwardRef, ReactElement, ReactNode, RefAttributes, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -87,10 +87,7 @@ export interface PickerProps<T extends object> extends
     /** Id for the SelectedValue so we can label using it. */
     valueId?: string
 }
-export const PickerContext:
-  Context<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>> =
-  createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
-
+export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
 const inputButton = style({
   ...focusRing(),
   ...fieldInput(),
@@ -125,7 +122,7 @@ const inputButton = style({
   },
   boxSizing: 'border-box'
 });
-let menu = style({
+export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
@@ -284,9 +281,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
-let _Picker: <
-  T extends object>(props: PickerProps<T> & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
+let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
 

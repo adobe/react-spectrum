@@ -11,8 +11,8 @@
  */
 
 import {ButtonContext, LinkButtonContext} from './Button';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useCallback, useRef} from 'react';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -57,9 +57,7 @@ interface ButtonGroupContextValue extends Partial<ButtonGroupProps> {
   isHidden?: boolean
 }
 
-export const ButtonGroupContext:
-  Context<ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>>(null);
+export const ButtonGroupContext = createContext<ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>>({});
 
 const buttongroup = style<ButtonGroupStyleProps>({
   display: 'inline-flex',
@@ -106,9 +104,7 @@ const buttongroup = style<ButtonGroupStyleProps>({
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
-export const ButtonGroup:
-  ForwardRefExoticComponent<ButtonGroupProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonGroupContext);
   let domRef = useDOMRef(ref);
   let {

@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {Context, createContext, ForwardedRef, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, SlotProps, Toolbar} from 'react-aria-components';
+import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -72,16 +72,12 @@ export const actionGroupStyle = style({
 }, getAllowedOverrides({height: true}));
 
 
-export const ActionButtonGroupContext:
-  Context<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>> =
-  createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
+export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.
  */
-export const ActionButtonGroup:
-  ForwardRefExoticComponent<ActionButtonGroupProps & RefAttributes<HTMLDivElement>> =
-forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ActionButtonGroup = forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonGroupContext);
   let {
     density = 'regular',

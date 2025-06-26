@@ -17,7 +17,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
+import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
@@ -31,16 +31,12 @@ export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 
   size?: number
 }
 
-export const ColorWheelContext:
-  Context<ContextValue<Partial<ColorWheelProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<ColorWheelProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorWheel allows users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export const ColorWheel:
-  ForwardRefExoticComponent<ColorWheelProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorWheelContext);
   let {UNSAFE_className = '', UNSAFE_style, styles = ''} = props;
   let containerRef = useDOMRef(ref);
@@ -50,7 +46,7 @@ forwardRef(function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElemen
   let thickness = 24;
   let innerRadius = outerRadius - 24;
   return (
-    <AriaColorWheel
+    <AriaColorWheel 
       {...props}
       outerRadius={outerRadius}
       innerRadius={innerRadius}

@@ -12,8 +12,8 @@
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {Context, createContext, forwardRef, ReactElement, RefAttributes} from 'react';
 import {ContextValue} from 'react-aria-components';
+import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType} from './types';
 // @ts-ignore
@@ -32,16 +32,12 @@ export interface ActionMenuProps<T> extends
   menuSize?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const ActionMenuContext:
-Context<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>> =
-createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionMenuContext = createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-export const ActionMenu:
-  <T extends object>(props: ActionMenuProps<T> & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>) => ReactElement | null =
-/*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});

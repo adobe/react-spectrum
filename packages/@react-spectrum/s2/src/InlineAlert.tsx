@@ -12,7 +12,7 @@
 
 import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
-import {ComponentType, Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useEffect, useRef} from 'react';
+import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} from 'react';
 import {ContentContext, HeadingContext} from './Content';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
@@ -53,9 +53,7 @@ interface InlineStylesProps {
   fillStyle?: 'border' | 'subtleFill' | 'boldFill'
 }
 
-export const InlineAlertContext:
-  Context<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const InlineAlertContext = createContext<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   ...focusRing(),
@@ -214,9 +212,7 @@ const content = style({
  * Inline alerts display a non-modal message associated with objects in a view.
  * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
  */
-export const InlineAlert:
-  ForwardRefExoticComponent<InlineAlertProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, InlineAlertContext);
   let {

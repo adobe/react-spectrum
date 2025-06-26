@@ -20,8 +20,8 @@ import {
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, RefObject, useContext, useRef} from 'react';
 import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
@@ -67,9 +67,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
   fillOffset?: number
 }
 
-export const SliderContext:
-  Context<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
+export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
   font: controlFont(),
@@ -395,9 +393,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
 /**
  * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const Slider:
-  ForwardRefExoticComponent<SliderProps & RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

@@ -28,8 +28,8 @@ import {
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
-import {Context, createContext, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 import {inertValue, useLayoutEffect} from '@react-aria/utils';
@@ -67,9 +67,7 @@ export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'chil
   children: ReactNode
 }
 
-export const BreadcrumbsContext:
-  Context<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>> =
-  createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   position: 'relative',
@@ -102,9 +100,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
 const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
 /** Breadcrumbs show hierarchy and navigational context for a user's location within an application. */
-export const Breadcrumbs:
-  <T extends object>(props: BreadcrumbsProps<T> & RefAttributes<DOMRefValue<HTMLOListElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
   let {
@@ -301,9 +297,7 @@ export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children
 }
 
 /** An individual Breadcrumb for Breadcrumbs. */
-export const Breadcrumb:
-  (props: BreadcrumbProps & RefAttributes<DOMRefValue<HTMLLIElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
+export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
   let {href, target, rel, download, ping, referrerPolicy} = props;
   let {size = 'M'} = useContext(InternalBreadcrumbsContext) ?? {};
   let domRef = useDOMRef(ref);

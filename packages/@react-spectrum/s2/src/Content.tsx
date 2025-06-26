@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
@@ -31,13 +31,9 @@ interface HeadingProps extends ContentProps {
   level?: number
 }
 
-export const HeadingContext:
-  Context<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>> =
-  createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
+export const HeadingContext = createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
 
-export const Heading:
-  ForwardRefExoticComponent<HeadingProps & RefAttributes<DOMRefValue<HTMLHeadingElement>>> =
-forwardRef(// Wrapper around RAC Heading to unmount when hidden.
+export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when hidden.
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
   let domRef = useDOMRef(ref);
@@ -56,13 +52,9 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   );
 });
 
-export const HeaderContext:
-  Context<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>> =
-  createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
+export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
 
-export const Header:
-  ForwardRefExoticComponent<ContentProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Header(props: ContentProps, ref: DOMRef) {
+export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
@@ -80,13 +72,9 @@ forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   );
 });
 
-export const ContentContext:
-  Context<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ContentContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-export const Content:
-  ForwardRefExoticComponent<ContentProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
+export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
@@ -103,13 +91,9 @@ forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
   );
 });
 
-export const TextContext:
-  Context<ContextValue<Partial<ContentProps>, DOMRefValue>> =
-  createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
+export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
 
-export const Text:
-  ForwardRefExoticComponent<ContentProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Text(props: ContentProps, ref: DOMRef) {
+export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, children, ...otherProps} = props;
@@ -141,13 +125,9 @@ forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   return text;
 });
 
-export const KeyboardContext:
-  Context<ContextValue<Partial<ContentProps>, DOMRefValue>> =
-  createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
+export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
 
-export const Keyboard:
-  ForwardRefExoticComponent<ContentProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
+export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, KeyboardContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
@@ -164,13 +144,9 @@ forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
   );
 });
 
-export const FooterContext:
-  Context<ContextValue<Partial<ContentProps>, DOMRefValue>> =
-  createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
+export const FooterContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
 
-export const Footer:
-  ForwardRefExoticComponent<ContentProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
+export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, FooterContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;

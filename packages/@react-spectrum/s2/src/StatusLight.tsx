@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from './Content';
@@ -49,9 +49,7 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
   role?: 'status'
 }
 
-export const StatusLightContext:
-  Context<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const StatusLightContext = createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<StatusLightStyleProps>({
   display: 'flex',
@@ -108,9 +106,7 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
  * Status lights are used to color code categories and labels commonly found in data visualization.
  * When status lights have a semantic meaning, they should use semantic variant colors.
  */
-export const StatusLight:
-  ForwardRefExoticComponent<StatusLightProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
   let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);

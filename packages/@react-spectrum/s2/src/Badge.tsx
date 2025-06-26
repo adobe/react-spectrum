@@ -17,7 +17,7 @@ import {control, getAllowedOverrides, StyleProps} from './style-utils' with {typ
 import {filterDOMProps} from '@react-aria/utils';
 import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
-import React, {Context, createContext, forwardRef, ReactNode} from 'react';
+import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -55,9 +55,7 @@ export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, Bad
   children: ReactNode
 }
 
-export const BadgeContext:
-  Context<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const BadgeContext = createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style<BadgeStyleProps>({
   ...control({shape: 'default', wrap: true, icon: true}),
@@ -167,9 +165,7 @@ const badge = style<BadgeStyleProps>({
 /**
  * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
  */
-export const Badge:
-  React.ForwardRefExoticComponent<BadgeProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
+export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);
   let {
     children,

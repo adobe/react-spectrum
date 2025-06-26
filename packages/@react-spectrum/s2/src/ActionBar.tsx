@@ -13,8 +13,8 @@
 import {ActionButtonGroup} from './ActionButtonGroup';
 import {announce} from '@react-aria/live-announcer';
 import {CloseButton} from './CloseButton';
-import {Context, createContext, ForwardedRef, forwardRef, ForwardRefExoticComponent, ReactElement, ReactNode, RefAttributes, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
+import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
@@ -88,13 +88,9 @@ export interface ActionBarProps extends SlotProps {
   scrollRef?: RefObject<HTMLElement | null>
 }
 
-export const ActionBarContext:
-  Context<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-export const ActionBar:
-  ForwardRefExoticComponent<ActionBarProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
+export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);
 

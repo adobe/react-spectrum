@@ -19,7 +19,7 @@ import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps}
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import React, {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -47,17 +47,13 @@ export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' |
   isEmphasized?: boolean
 }
 
-export const RadioGroupContext:
-  Context<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const RadioGroupContext = createContext<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const RadioGroup:
-  ForwardRefExoticComponent<RadioGroupProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, RadioGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

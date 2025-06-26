@@ -31,7 +31,7 @@ const defaultContext: ImageGroupValue = {
   load() {}
 };
 
-export const DefaultImageGroup: ImageGroup = createImageGroup();
+export const DefaultImageGroup = createImageGroup();
 
 export function createImageGroup(): ImageGroup {
   return createContext(defaultContext);

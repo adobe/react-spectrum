@@ -15,8 +15,8 @@ import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {NotificationBadgeContext} from './NotificationBadge';
@@ -243,17 +243,13 @@ const avatarSize = {
   X: 26
 } as const;
 
-export const ActionButtonContext:
-  Context<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>> =
-  createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionButtonContext = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionButtons allow users to perform an action.
  * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
-export const ActionButton:
-  ForwardRefExoticComponent<ActionButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
-forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);

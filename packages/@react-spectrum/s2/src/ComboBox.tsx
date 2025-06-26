@@ -46,7 +46,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Context, createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, Ref, RefAttributes, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -104,9 +104,7 @@ export interface ComboBoxProps<T extends object> extends
     loadingState?: LoadingState
 }
 
-export const ComboBoxContext:
-  Context<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>> =
-  createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
+export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   ...controlBorderRadius('sm'),
@@ -330,9 +328,7 @@ let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({siz
 /**
  * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const ComboBox:
-  <T extends object>(props: ComboBoxProps<T> & RefAttributes<TextFieldRef<HTMLInputElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
 
   let formContext = useContext(FormContext);

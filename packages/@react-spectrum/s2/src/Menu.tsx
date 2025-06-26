@@ -34,7 +34,7 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {Context, createContext, forwardRef, JSX, ReactElement, ReactNode, RefAttributes, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
@@ -88,9 +88,7 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   hideLinkOutIcon?: boolean
 }
 
-export const MenuContext:
-  Context<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const MenuContext = createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const menuItemGrid = {
   size: {
@@ -325,9 +323,7 @@ let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'
 /**
  * Menus display a list of actions or options that a user can choose.
  */
-export const Menu:
-  <T extends object>(props: MenuProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {

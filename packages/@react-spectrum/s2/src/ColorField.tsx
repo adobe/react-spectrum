@@ -15,7 +15,7 @@ import {
   ColorFieldProps as AriaColorFieldProps,
   ContextValue
 } from 'react-aria-components';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, Ref, RefAttributes, useContext, useImperativeHandle, useRef} from 'react';
+import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -34,16 +34,12 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const ColorFieldContext:
-  Context<ContextValue<Partial<ColorFieldProps>, TextFieldRef>> =
-  createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
+export const ColorFieldContext = createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField:
-  ForwardRefExoticComponent<ColorFieldProps & RefAttributes<TextFieldRef<HTMLInputElement>>> =
-forwardRef(function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
+export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

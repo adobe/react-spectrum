@@ -11,8 +11,8 @@
  */
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
 import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
@@ -38,9 +38,7 @@ export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className'
   children: ReactNode
 }
 
-export const LinkContext:
-  Context<ContextValue<Partial<LinkProps>, FocusableRefValue<HTMLAnchorElement>>> =
-  createContext<ContextValue<Partial<LinkProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const LinkContext = createContext<ContextValue<Partial<LinkProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isStaticColor: boolean}>({
   ...focusRing(),
@@ -84,9 +82,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isSt
  * Links allow users to navigate to a different location.
  * They can be presented inline inside a paragraph or as standalone text.
  */
-export const Link:
-  ForwardRefExoticComponent<LinkProps & RefAttributes<FocusableRefValue<HTMLAnchorElement, HTMLAnchorElement>>> =
-/*#__PURE__*/ forwardRef(function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
+export const Link = /*#__PURE__*/ forwardRef(function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkContext);
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles, children} = props;
 

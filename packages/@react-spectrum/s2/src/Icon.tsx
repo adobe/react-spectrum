@@ -75,12 +75,8 @@ export interface IllustrationContextValue extends IconContextValue {
   size?: 'S' | 'M' | 'L'
 }
 
-export const IconContext:
-  Context<ContextValue<Partial<IconContextValue>, SVGElement>> =
-  createContext<ContextValue<Partial<IconContextValue>, SVGElement>>({});
-export const IllustrationContext:
-  Context<ContextValue<Partial<IllustrationContextValue>, SVGElement>> =
-  createContext<ContextValue<Partial<IllustrationContextValue>, SVGElement>>({});
+export const IconContext = createContext<ContextValue<Partial<IconContextValue>, SVGElement>>({});
+export const IllustrationContext = createContext<ContextValue<Partial<IllustrationContextValue>, SVGElement>>({});
 
 const iconStyles = style({
   size: 20,

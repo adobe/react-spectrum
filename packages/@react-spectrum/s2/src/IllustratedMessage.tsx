@@ -12,9 +12,9 @@
 
 import {ButtonGroupContext} from './ButtonGroup';
 import {ContentContext, HeadingContext} from './Content';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
 import {ContextValue, Provider} from 'react-aria-components';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {IllustrationContext} from './Icon';
@@ -147,17 +147,13 @@ interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMe
   isDropTarget?: boolean
 }
 
-export const IllustratedMessageContext:
-  Context<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const IllustratedMessageContext = createContext<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * An IllustratedMessage displays an illustration and a message, usually
  * for an empty state or an error page.
  */
-export const IllustratedMessage:
-  ForwardRefExoticComponent<S2SpectrumIllustratedMessageProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, IllustratedMessageContext);
   let domRef = useDOMRef(ref);
   let {

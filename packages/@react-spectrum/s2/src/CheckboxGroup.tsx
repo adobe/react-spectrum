@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {CheckboxContext} from './Checkbox';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
@@ -49,16 +49,12 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   isEmphasized?: boolean
 }
 
-export const CheckboxGroupContext:
-  Context<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const CheckboxGroupContext = createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
-export const CheckboxGroup:
-  ForwardRefExoticComponent<CheckboxGroupProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

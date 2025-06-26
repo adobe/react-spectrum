@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
+import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -40,9 +40,7 @@ interface DividerSpectrumProps {
 // TODO: allow overriding height (only when orientation is vertical)??
 export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
 
-export const DividerContext:
-  Context<ContextValue<Partial<DividerProps>, DOMRefValue>> =
-  createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
+export const DividerContext = createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
 
 export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
   ...staticColor(),
@@ -94,9 +92,7 @@ export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
  * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
  * They can also be used to establish rhythm and hierarchy.
  */
-export const Divider:
-  ForwardRefExoticComponent<DividerProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-/*#__PURE__*/ forwardRef(function Divider(props: DividerProps, ref: DOMRef) {
+export const Divider = /*#__PURE__*/ forwardRef(function Divider(props: DividerProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, DividerContext);
   let domRef = useDOMRef(ref);
 

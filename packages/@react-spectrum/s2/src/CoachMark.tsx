@@ -31,14 +31,10 @@ import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with 
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {
-  Context,
   createContext,
   ForwardedRef,
   forwardRef,
-  ForwardRefExoticComponent,
-  ReactElement,
   ReactNode,
-  RefAttributes,
   useContext,
   useRef
 } from 'react';
@@ -324,11 +320,9 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const CoachMarkContext: Context<ContextValue<CoachMarkProps, HTMLElement>> = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
+export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
 
-export const CoachMark:
-  ForwardRefExoticComponent<CoachMarkProps & RefAttributes<HTMLElement>> =
-forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
+export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);
   [props, ref] = useContextProps(props, ref, CoachMarkContext);
   let {UNSAFE_style} = props;
@@ -486,9 +480,7 @@ interface CoachMarkIndicatorProps {
   children: ReactNode,
   isActive?: boolean
 }
-export const CoachMarkIndicator:
-  (props: CoachMarkIndicatorProps & RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function CoachMarkIndicator(props: CoachMarkIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
+export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachMarkIndicator(props: CoachMarkIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
   const {children, isActive} = props;
   let objRef = useObjectRef(ref);
 

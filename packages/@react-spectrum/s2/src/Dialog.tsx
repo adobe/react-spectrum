@@ -14,8 +14,8 @@ import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
@@ -95,9 +95,7 @@ export const dialogInner = style({
  * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
  * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
  */
-export const Dialog:
-  ForwardRefExoticComponent<DialogProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Dialog(props: DialogProps, ref: DOMRef) {
+export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef) {
   let {size = 'M', isDismissible, isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
@@ -180,7 +178,7 @@ forwardRef(function Dialog(props: DialogProps, ref: DOMRef) {
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible &&
+              {props.isDismissible && 
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>

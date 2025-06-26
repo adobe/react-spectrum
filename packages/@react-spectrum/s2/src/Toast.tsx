@@ -490,7 +490,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           width: '100%',
           translate: `0 0 ${(-12 * index) / 16}rem`,
           // Only 3 toasts are visible in the stack at once, but all toasts are in the DOM.
-          // This allows view transitions to smoothly animate them from where they would be
+          // This allows view transitions to smoothly animate them from where they would be 
           // in the collapsed stack to their final position in the expanded list.
           opacity: index >= 3 ? 0 : 1,
           zIndex: visibleToasts.length - index - 1,
@@ -528,7 +528,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {!isExpanded && visibleToasts.length > 1 &&
+        {!isExpanded && visibleToasts.length > 1 && 
           <ActionButton
             isQuiet
             staticColor="white"

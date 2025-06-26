@@ -59,7 +59,7 @@ import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactElement, ReactNode, RefAttributes, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
@@ -262,16 +262,12 @@ export class S2TableLayout<T> extends TableLayout<T> {
   }
 }
 
-export const TableContext:
-  Context<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const TableContext = createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-export const TableView:
-  ForwardRefExoticComponent<TableViewProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+export const TableView = forwardRef(function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
@@ -382,9 +378,7 @@ export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody:
-  <T extends object>(props: TableBodyProps<T> & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {items, renderEmptyState, children, dependencies = []} = props;
   let domRef = useDOMRef(ref);
   let {loadingState, onLoadMore} = useContext(InternalTableContext);
@@ -532,9 +526,7 @@ export interface ColumnProps extends RACColumnProps {
 /**
  * A column within a `<Table>`.
  */
-export const Column:
-  ForwardRefExoticComponent<ColumnProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
+export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
@@ -876,9 +868,7 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader:
-  <T extends object>(props: TableHeaderProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -1025,9 +1015,7 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
 /**
  * A cell within a table row.
  */
-export const Cell:
-  ForwardRefExoticComponent<CellProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
+export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
@@ -1136,9 +1124,7 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'ch
 /**
  * A row within a `<Table>`.
  */
-export const Row:
-  <T extends object>(props: RowProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);

@@ -32,8 +32,8 @@ import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' wi
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
-import {Context, createContext, forwardRef, ReactElement, ReactNode, RefAttributes, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
@@ -81,16 +81,12 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   onGroupAction?: () => void
 }
 
-export const TagGroupContext:
-  Context<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
 /** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-export const TagGroup:
-  <T extends object>(props: TagGroupProps<T> & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
@@ -491,9 +487,7 @@ const avatarSize = {
 } as const;
 
 /** An individual Tag for TagGroups. */
-export const Tag:
-  (props: TagProps & RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);

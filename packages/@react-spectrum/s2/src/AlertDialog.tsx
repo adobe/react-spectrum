@@ -17,8 +17,8 @@ import {CenterBaseline} from './CenterBaseline';
 import {chain} from '@react-aria/utils';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes} from 'react';
+import {DOMProps, DOMRef} from '@react-types/shared';
+import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -77,9 +77,7 @@ const icon = style({
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
-export const AlertDialog:
-  ForwardRefExoticComponent<AlertDialogProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
+export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     autoFocusButton,

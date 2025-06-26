@@ -18,8 +18,8 @@ import {
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext, useRef} from 'react';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
@@ -45,9 +45,7 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style'
   children?: ReactNode
 }
 
-export const SwitchContext:
-  Context<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>> =
-  createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
+export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',
@@ -155,9 +153,7 @@ const transformStyle = ({isSelected}: SwitchRenderProps) => ({
  * Switches allow users to turn an individual option on or off.
  * They are usually used to activate or deactivate a specific setting.
  */
-export const Switch:
-  ForwardRefExoticComponent<SwitchProps & RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
-/*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
 import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
+import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -34,9 +34,7 @@ export interface ProgressCircleStyleProps {
   isIndeterminate?: boolean
 }
 
-export const ProgressCircleContext:
-  Context<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>> =
-  createContext<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressCircleContext = createContext<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 // Double check the types passed to each style, may not need all for each
 const wrapper = style<ProgressCircleStyleProps>({
@@ -101,9 +99,7 @@ let pxToRem = px => (px / 16) + 'rem';
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
  */
-export const ProgressCircle:
-  ForwardRefExoticComponent<ProgressCircleProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-/*#__PURE__*/ forwardRef(function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {
     size = 'M',

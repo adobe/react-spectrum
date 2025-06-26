@@ -22,8 +22,8 @@ import {
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, ForwardRefExoticComponent, MutableRefObject, ReactNode, RefAttributes, useCallback, useContext, useState} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
+import {DOMRef} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -130,9 +130,7 @@ let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>(
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
  */
-export const Tooltip:
-  ForwardRefExoticComponent<TooltipProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   let {

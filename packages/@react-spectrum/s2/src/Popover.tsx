@@ -22,8 +22,8 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {forwardRef, ForwardRefExoticComponent, MutableRefObject, RefAttributes, useCallback, useContext} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
@@ -150,9 +150,7 @@ let arrow = style({
   }
 });
 
-export const PopoverBase:
-  ForwardRefExoticComponent<PopoverProps & RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -241,9 +239,7 @@ const dialogStyle = style({
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-export const Popover:
-  ForwardRefExoticComponent<PopoverDialogProps & RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
+export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   const {triggerRef, isOpen, onOpenChange, ...otherProps} = props;
 

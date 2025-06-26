@@ -17,9 +17,9 @@ import {
 } from 'react-aria-components';
 import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {forwardRef, ForwardRefExoticComponent, RefAttributes} from 'react';
+import {forwardRef} from 'react';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 interface ClearButtonStyleProps {
@@ -63,9 +63,7 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   }
 });
 
-export const ClearButton:
-  ForwardRefExoticComponent<ClearButtonProps & RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
-forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
   return (

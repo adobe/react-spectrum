@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Context, createContext, forwardRef, ForwardRefExoticComponent, ReactNode, RefAttributes, useContext, useMemo} from 'react';
-import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
+import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
@@ -34,7 +34,7 @@ export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className
   children: ReactNode
 }
 
-export const FormContext: Context<Partial<FormStyleProps | null>> = createContext<Partial<FormStyleProps | null>>(null);
+export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
   let isSkeleton = useIsSkeleton();
@@ -65,9 +65,7 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 /**
  * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
-export const Form:
-  ForwardRefExoticComponent<FormProps & RefAttributes<DOMRefValue<HTMLFormElement>>> =
-/*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let {
     labelPosition = 'top',
     labelAlign,
