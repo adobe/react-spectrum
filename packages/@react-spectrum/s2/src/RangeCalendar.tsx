@@ -228,9 +228,9 @@ export const RangeCalendar:
                 )}
               </CalendarGridHeader>
               <CalendarGridBody>
-                {(date, weekIndex) => {
+                {(date, weekIndex, dayIndex) => {
                   return (
-                    <CalendarCell date={date} weekIndex={weekIndex} />
+                    <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
                   );
                 }}
               </CalendarGridBody>
@@ -306,7 +306,7 @@ const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactN
   );
 };
 
-const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number}) => {
+const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, dayIndex: number}) => {
 
   return (
     <AriaCalendarCell
@@ -320,20 +320,26 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: n
   );
 };
 
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, renderProps: CalendarCellRenderProps, date: DateValue}) => {
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, dayIndex: number, renderProps: CalendarCellRenderProps, date: DateValue}) => {
   let state = useContext(RangeCalendarStateContext)!;
   let {getDatesInWeek} = state;
-  let {weekIndex, renderProps} = props;
+  let {weekIndex, dayIndex, renderProps} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate} = renderProps;
   let datesInWeek = getDatesInWeek(weekIndex);
-  let firstSelectedInWeek = datesInWeek.findIndex(date => date && state.isSelected(date));
-  let indexOfCurrentDate = datesInWeek.findIndex(date => date && date.compare(props.date) === 0);
+
+  // Starting from the current day, find the first day before it in the current week that is not selected.
+  // Then, the span of selected days is the current day minus the first unselected day.
+  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => date && i > 0 && !state.isSelected(date));
+  let selectionSpan = -1;
+  if (firstUnselectedInRangeInWeek > -1 && renderProps.isSelected) {
+    selectionSpan = firstUnselectedInRangeInWeek - 1;
+  } else if (renderProps.isSelected) {
+    selectionSpan = dayIndex;
+  }
 
   let isBackgroundStyleApplied = (
     renderProps.isSelected
-    && firstSelectedInWeek !== -1
-    && indexOfCurrentDate !== -1
     && (state.isSelected(props.date.subtract({days: 1}))
       || state.isSelected(props.date.add({days: 1}))
     ));
@@ -357,7 +363,7 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekInd
         </div>
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
-      {isBackgroundStyleApplied && <div style={{'--selection-span': indexOfCurrentDate - firstSelectedInWeek} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
+      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
     </div>
   );
 };

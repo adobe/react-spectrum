@@ -11,15 +11,16 @@
  */
 
 import {ActionButton, RangeCalendar, RangeCalendarProps} from '../src';
-import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, isWeekend, today} from '@internationalized/date';
 import {categorizeArgTypes} from './utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
+import { useLocale } from '@react-aria/i18n';
 
-const meta: Meta<typeof RangeCalendar> = {
+const meta: Meta<typeof RangeCalendar<any>> = {
   component: RangeCalendar,
   parameters: {
     layout: 'centered'
@@ -27,15 +28,17 @@ const meta: Meta<typeof RangeCalendar> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange']),
-    label: {control: {type: 'text'}},
-    description: {control: {type: 'text'}},
-    errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}},
     visibleMonths: {
       control: {
         type: 'select'
       },
       options: [1, 2, 3]
+    },
+    firstDayOfWeek: {
+      control: {
+        type: 'select'
+      },
+      options: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
     }
   },
   title: 'RangeCalendar'
@@ -56,7 +59,22 @@ export const DateUnavailable: Story = {
       const disabledIntervals = [[today(getLocalTimeZone()).subtract({days: 13}), today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     },
-    'aria-label': 'Reservation'
+    'aria-label': 'Reservation',
+    allowsNonContiguousRanges: true
+  }
+};
+
+export const WeekendsUnavailable: Story = {
+  render: function UnavailableWeekendsRender(args) {
+    let {locale} = useLocale();
+
+    return (
+      <RangeCalendar {...args} isDateUnavailable={(date) => isWeekend(date, locale)} />
+    );
+  },
+  args: {
+    'aria-label': 'Reservation',
+    allowsNonContiguousRanges: true
   }
 };
 
