@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, Heading} from './';
+import {ActionButton, Header, Heading, pressScale} from './';
 import {
   Calendar as AriaCalendar,
+  CalendarCell as AriaCalendarCell,
   CalendarProps as AriaCalendarProps,
   ButtonProps,
-  CalendarCell,
+  CalendarCellProps,
   CalendarCellRenderProps,
   CalendarGrid,
   CalendarGridBody,
@@ -29,7 +30,7 @@ import {
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {Context, createContext, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo} from 'react';
+import {Context, createContext, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo, useRef} from 'react';
 import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {getEraFormat} from '@react-aria/calendar';
@@ -189,19 +190,7 @@ export const Calendar:
             </CalendarGridHeader>
             <CalendarGridBody>
               {(date) => (
-                <CalendarCell
-                  date={date}
-                  cellClassName={cellStyles}
-                  className={cellInnerStyles}>
-                  {({isUnavailable, formattedDate}) => (
-                    <>
-                      <div>
-                        {formattedDate}
-                      </div>
-                      {isUnavailable && <div className={unavailableStyles} role="presentation" />}
-                    </>
-                  )}
-                </CalendarCell>
+                <CalendarCell date={date} />
               )}
             </CalendarGridBody>
           </CalendarGrid>
@@ -272,5 +261,26 @@ const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactN
       isQuiet>
       {props.children}
     </ActionButton>
+  );
+};
+
+const CalendarCell = (props: Omit<CalendarCellProps, 'children'>) => {
+  let ref = useRef<HTMLTableCellElement>(null);
+  return (
+    <AriaCalendarCell
+      ref={ref}
+      date={props.date}
+      cellClassName={cellStyles}
+      style={pressScale(ref, {})}
+      className={cellInnerStyles}>
+      {({isUnavailable, formattedDate}) => (
+        <>
+          <div>
+            {formattedDate}
+          </div>
+          {isUnavailable && <div className={unavailableStyles} role="presentation" />}
+        </>
+      )}
+    </AriaCalendarCell>
   );
 };

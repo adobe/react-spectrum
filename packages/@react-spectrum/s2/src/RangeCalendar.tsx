@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, Heading} from './';
+import {ActionButton, Header, Heading, pressScale} from './';
 import {
   CalendarCell as AriaCalendarCell,
   RangeCalendar as AriaRangeCalendar,
@@ -30,7 +30,7 @@ import {
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {Context, createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo} from 'react';
+import {Context, createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo, useRef} from 'react';
 import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {getEraFormat} from '@react-aria/calendar';
@@ -122,11 +122,6 @@ const innerCellStyles = style<CalendarCellRenderProps>({
   position: 'relative',
   font: 'body-sm',
   cursor: 'default',
-  width: 32,
-  '--cell-width': {
-    type: 'width',
-    value: '[self(width)]'
-  },
   height: 32,
   borderRadius: 'full',
   display: {
@@ -312,10 +307,6 @@ const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactN
 };
 
 const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number}) => {
-  let state = useContext(RangeCalendarStateContext)!;
-  let {getDatesInWeek} = state;
-  let {weekIndex} = props;
-  let datesInWeek = getDatesInWeek(weekIndex);
 
   return (
     <AriaCalendarCell
@@ -323,23 +314,50 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: n
       className={cellInnerWrapperStyles}
       cellClassName={cellStyles}>
       {(renderProps) => {
-        let {isUnavailable, formattedDate} = renderProps;
-        let isBackgroundStyleApplied = false;
-        let firstSelectedInWeek = datesInWeek.findIndex(date => date && state.isSelected(date));
-        let indexOfCurrentDate = datesInWeek.findIndex(date => date && date.compare(props.date) === 0);
-        if (renderProps.isSelected && firstSelectedInWeek !== -1 && indexOfCurrentDate !== -1) {
-          isBackgroundStyleApplied = true;
-        }
-        return (
-          <div className={innerCellStyles(renderProps)}>
-            <div>
-              {formattedDate}
-            </div>
-            {isUnavailable && <div className={unavailableStyles} role="presentation" />}
-            {isBackgroundStyleApplied && <div style={{'--selection-span': indexOfCurrentDate - firstSelectedInWeek} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
-          </div>
-        );
+        return <CalendarCellInner {...props} renderProps={renderProps} />;
       }}
     </AriaCalendarCell>
+  );
+};
+
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, renderProps: CalendarCellRenderProps, date: DateValue}) => {
+  let state = useContext(RangeCalendarStateContext)!;
+  let {getDatesInWeek} = state;
+  let {weekIndex, renderProps} = props;
+  let ref = useRef<HTMLDivElement>(null);
+  let {isUnavailable, formattedDate} = renderProps;
+  let datesInWeek = getDatesInWeek(weekIndex);
+  let firstSelectedInWeek = datesInWeek.findIndex(date => date && state.isSelected(date));
+  let indexOfCurrentDate = datesInWeek.findIndex(date => date && date.compare(props.date) === 0);
+
+  let isBackgroundStyleApplied = (
+    renderProps.isSelected
+    && firstSelectedInWeek !== -1
+    && indexOfCurrentDate !== -1
+    && (state.isSelected(props.date.subtract({days: 1}))
+      || state.isSelected(props.date.add({days: 1}))
+    ));
+
+  return (
+    <div
+      className={style({
+        position: 'relative',
+        width: 32,
+        '--cell-width': {
+          type: 'width',
+          value: '[self(width)]'
+        }
+      })}>
+      <div
+        ref={ref}
+        style={pressScale(ref, {})(renderProps)}
+        className={innerCellStyles(renderProps)}>
+        <div>
+          {formattedDate}
+        </div>
+        {isUnavailable && <div className={unavailableStyles} role="presentation" />}
+      </div>
+      {isBackgroundStyleApplied && <div style={{'--selection-span': indexOfCurrentDate - firstSelectedInWeek} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
+    </div>
   );
 };
