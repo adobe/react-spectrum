@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 export default {
   title: 'DateRangePicker',

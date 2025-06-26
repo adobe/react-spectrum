@@ -13,7 +13,7 @@
 import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport} from '../stories/Menu.stories';
 import {Menu} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof Menu<any>> = {
   component: Menu,
