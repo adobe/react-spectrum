@@ -814,7 +814,7 @@ function AsyncLoadingExample() {
     <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
       {/*- begin highlight -*/}
       <Collection items={list.items}>
-        {(item: Character) => (
+        {(item) => (
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
         )}
       </Collection>

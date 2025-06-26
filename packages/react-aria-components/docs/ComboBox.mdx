@@ -949,7 +949,7 @@ function AsyncLoadingExample() {
       onInputChange={list.setFilterText}>
       {/*- begin highlight -*/}
       <Collection items={list.items}>
-        {(item: Character) => (
+        {(item) => (
           <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
         )}
       </Collection>
