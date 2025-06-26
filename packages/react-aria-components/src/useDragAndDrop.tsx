@@ -59,7 +59,7 @@ interface DropHooks {
   useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableCollectionResult,
   useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableItemResult,
   useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
-  renderDropIndicator?: (target: DropTarget) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget, keys: Set<Key>, draggedKey?: Key) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
@@ -87,7 +87,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
-  renderDropIndicator?: (target: DropTarget) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget, keys: Set<Key>, draggedKey?: Key) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate,
   /** Whether the drag and drop events should be disabled. */
