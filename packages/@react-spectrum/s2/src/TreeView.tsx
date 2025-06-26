@@ -29,10 +29,11 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, iconStyle, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Content';
@@ -242,11 +243,7 @@ const treeCheckbox = style({
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
+  marginEnd: 'text-to-visual'
 });
 
 const treeContent = style({
@@ -353,7 +350,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                 [TextContext, {styles: treeContent}],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                  styles: style({size: fontRelative(20), flexShrink: 0})
+                  styles: mergeStyles(iconStyle({color: 'currentColor'}), style({size: fontRelative(20), flexShrink: 0}))
                 }],
                 [ActionButtonGroupContext, {styles: treeActions}],
                 [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]

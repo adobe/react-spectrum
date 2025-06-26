@@ -43,7 +43,7 @@ export const focusRing = () => ({
 
 interface IconStyle {
   size?: 'XS' | 'S' | 'M' | 'L' |'XL',
-  color?: 'white' | 'black' | 'accent' | 'neutral' | 'negative' | 'informative' | 'positive' | 'notice' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
+  color?: 'white' | 'black' | 'accent' | 'neutral' | 'negative' | 'informative' | 'positive' | 'notice' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver' | 'currentColor',
   margin?: Spacing,
   marginStart?: Spacing,
   marginEnd?: Spacing,
@@ -81,7 +81,7 @@ const iconSizes = {
 
 export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
-  
+
   if (color) {
     styles['--iconPrimary'] = {
       type: 'fill',

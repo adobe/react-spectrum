@@ -12,13 +12,14 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, iconStyle, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {mergeStyles} from '../style/runtime';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -144,10 +145,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
         default: 'GrayText'
       }
     }
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
   },
   outlineColor: {
     default: 'focus-ring',
@@ -292,7 +289,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           [TextContext, {styles: style({order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: mergeStyles(
+              iconStyle({color: 'currentColor'}),
+              style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            )
           }],
           [AvatarContext, {
             size: avatarSize[size],

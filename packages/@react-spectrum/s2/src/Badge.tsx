@@ -15,8 +15,9 @@ import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, TextContext as RACTextContext, SlotProps} from 'react-aria-components';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {filterDOMProps} from '@react-aria/utils';
-import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {fontRelative, iconStyle, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {mergeStyles} from '../style/runtime';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
@@ -155,10 +156,6 @@ const badge = style<BadgeStyleProps>({
         }
       }
     }
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
   }
 }, getAllowedOverrides());
 
@@ -194,7 +191,7 @@ export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HT
         [RACTextContext, {}],
         [IconContext, {
           render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-          styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          styles: mergeStyles(iconStyle({color: 'currentColor'}), style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0}))
         }]
       ]}>
       <SkeletonWrapper>

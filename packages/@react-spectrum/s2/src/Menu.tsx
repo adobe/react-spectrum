@@ -28,7 +28,7 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, fontRelative, iconStyle, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -221,11 +221,7 @@ export let icon = style({
   size: fontRelative(20),
   // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
   // reminder, size of WF is applied via font size
-  marginEnd: 'text-to-visual',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
+  marginEnd: 'text-to-visual'
 });
 
 export let iconCenterWrapper = style({
@@ -305,11 +301,7 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
 
 let descriptor = style({
   gridArea: 'descriptor',
-  marginStart: 8,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
+  marginStart: 8
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean, hideLinkOutIcon: boolean}>({
@@ -486,8 +478,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon},
-                    descriptor: {render: centerBaseline({slot: 'descriptor', styles: descriptor})} // TODO: remove once we have default?
+                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)},
+                    descriptor: {render: centerBaseline({slot: 'descriptor', styles: descriptor}), styles: iconStyle({color: 'currentColor'})} // TODO: remove once we have default?
                   }
                 }],
                 [TextContext, {
@@ -517,6 +509,10 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                         direction: {
                           rtl: -1
                         }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
                     })({direction})} />
                 </div>
@@ -530,6 +526,10 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                         direction: {
                           rtl: -1
                         }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
                     })({direction})} />
                 </div>

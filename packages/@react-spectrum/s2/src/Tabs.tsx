@@ -25,7 +25,7 @@ import {
   TabListStateContext,
   TabRenderProps
 } from 'react-aria-components';
-import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, iconStyle, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
@@ -33,6 +33,7 @@ import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeStyles} from '../style/runtime';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
@@ -310,11 +311,7 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
 
 const icon = style({
   display: 'block',
-  flexShrink: 0,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
+  flexShrink: 0
 });
 
 export function Tab(props: TabProps): ReactNode {
@@ -357,7 +354,7 @@ export function Tab(props: TabProps): ReactNode {
                 }],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-                  styles: icon
+                  styles: mergeStyles(iconStyle({color: 'currentColor'}), icon)
                 }]
               ]}>
               <TabInner
