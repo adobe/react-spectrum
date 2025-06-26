@@ -16,7 +16,7 @@ import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
 import React, {startTransition, Suspense, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
+import {TableLoadMoreItem} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
@@ -538,9 +538,9 @@ const MyTableLoadingIndicator = (props) => {
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingSentinel style={{height: 30, width: tableWidth}} {...otherProps}>
+    <TableLoadMoreItem style={{height: 30, width: tableWidth}} {...otherProps}>
       <LoadingSpinner style={{height: 20, position: 'unset'}} />
-    </UNSTABLE_TableLoadingSentinel>
+    </TableLoadMoreItem>
   );
 };
 

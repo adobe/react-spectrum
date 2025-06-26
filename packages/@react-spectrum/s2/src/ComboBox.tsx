@@ -24,12 +24,12 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   ListStateContext,
   Provider,
   SectionProps,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
@@ -542,7 +542,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 
   let renderer;
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       // Only show the spinner in the list when loading more
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
@@ -553,7 +553,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function') {

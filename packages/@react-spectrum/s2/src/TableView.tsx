@@ -38,8 +38,8 @@ import {
   RowRenderProps,
   TableBodyRenderProps,
   TableLayout,
+  TableLoadMoreItem,
   TableRenderProps,
-  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -389,13 +389,13 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingSentinel>
+    </TableLoadMoreItem>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
