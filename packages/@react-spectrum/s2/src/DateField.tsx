@@ -19,7 +19,7 @@ import {
   DateValue,
   FormContext
 } from 'react-aria-components';
-import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext} from 'react';
+import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -40,9 +40,7 @@ export interface DateFieldProps<T extends DateValue> extends
     size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const DateFieldContext:
-  Context<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>> =
-  createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
+export const DateFieldContext = createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
   flexGrow: 1
@@ -68,9 +66,7 @@ const iconStyles = style({
   justifyContent: 'end'
 });
 
-export const DateField:
-  <T extends DateValue>(props: DateFieldProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
+export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
   props: DateFieldProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, DateFieldContext);

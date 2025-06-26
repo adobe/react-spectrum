@@ -24,8 +24,8 @@ import {
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext, useRef, useState} from 'react';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactElement, Ref, useContext, useRef, useState} from 'react';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext, RangeCalendar} from '../';
@@ -47,9 +47,7 @@ export interface DateRangePickerProps<T extends DateValue> extends
     size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const DateRangePickerContext:
-  Context<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>> =
-  createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
+export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
   flexGrow: 0,
@@ -118,9 +116,7 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
   }
 });
 
-export const DateRangePicker:
-  <T extends DateValue>(props: DateRangePickerProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
+export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
   props: DateRangePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, DateRangePickerContext);

@@ -19,7 +19,7 @@ import {
   FormContext,
   TimeValue
 } from 'react-aria-components';
-import {Context, createContext, forwardRef, ReactElement, Ref, RefAttributes, useContext} from 'react';
+import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -40,9 +40,7 @@ export interface TimeFieldProps<T extends TimeValue> extends
     size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const TimeFieldContext:
-  Context<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>> =
-  createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
+export const TimeFieldContext = createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
   flexGrow: 1
@@ -69,9 +67,7 @@ const iconStyles = style({
   justifyContent: 'end'
 });
 
-export const TimeField:
-  <T extends TimeValue>(props: TimeFieldProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(
+export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(
   props: TimeFieldProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, TimeFieldContext);

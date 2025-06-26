@@ -30,7 +30,7 @@ import {
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {Context, createContext, ForwardedRef, forwardRef, Fragment, ReactElement, ReactNode, RefAttributes, useContext, useMemo, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, Fragment, ReactNode, useContext, useMemo, useRef} from 'react';
 import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {getEraFormat} from '@react-aria/calendar';
@@ -45,9 +45,7 @@ export interface CalendarProps<T extends DateValue>
   visibleMonths?: number
 }
 
-export const CalendarContext:
-  Context<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>> =
-  createContext<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>>(null);
+export const CalendarContext = createContext<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>>(null);
 
 const calendarStyles = style({
   display: 'flex',
@@ -148,9 +146,7 @@ const unavailableStyles = style({
 });
 
 
-export const Calendar:
-  <T extends DateValue>(props: CalendarProps<T> & RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {
     visibleMonths = 1,
