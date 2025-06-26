@@ -304,7 +304,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           [TextContext, {styles: style({truncate: true, gridArea: 'text'})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin'})
           }],
           [AvatarContext, {
             size: avatarSize[size],
@@ -313,8 +313,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 default: '--iconMargin',
                 ':last-child': 0
               },
-              gridArea: 'icon',
-              flexShrink: 0
+              gridArea: 'icon'
             })
           }],
           [NotificationBadgeContext, {
