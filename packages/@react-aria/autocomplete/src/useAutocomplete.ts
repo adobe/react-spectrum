@@ -163,7 +163,6 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
 
-
   let lastInputType = useRef('');
   useEvent(inputRef, 'input', e => {
     let {inputType} = e as InputEvent;

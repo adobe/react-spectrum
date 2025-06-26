@@ -416,11 +416,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let updateActiveDescendant = useEffectEvent(() => {
     let keyToFocus = delegate.getFirstKey?.() ?? null;
 
-    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
+    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
+    // the original active element (e.g. the autocomplete input)
     if (keyToFocus == null) {
       let previousActiveElement = getActiveElement();
-      // TODO: Bit gross, but we need the first moveVirtualFocus to clear the previous aria-activeDescendant, then
-      // we need to refocus the input element so the focus ring comes back...
       moveVirtualFocus(ref.current);
       dispatchVirtualFocus(previousActiveElement!, null);
 
