@@ -18,7 +18,7 @@ import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import { useLocale } from '@react-aria/i18n';
+import {useLocale} from '@react-aria/i18n';
 
 const meta: Meta<typeof RangeCalendar<any>> = {
   component: RangeCalendar,
