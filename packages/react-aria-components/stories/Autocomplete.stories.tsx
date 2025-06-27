@@ -23,7 +23,7 @@ export default {
   title: 'React Aria Components',
   component: Autocomplete,
   args: {
-    onAction: action('onAction') as () => void,
+    onAction: action('onAction'),
     selectionMode: 'multiple',
     escapeKeyBehavior: 'clearSelection'
   },
@@ -40,11 +40,11 @@ export default {
     },
     selectionMode: {
       control: 'radio',
-      options: ['none', 'single', 'multiple'] as const
+      options: ['none', 'single', 'multiple']
     },
     escapeKeyBehavior: {
       control: 'radio',
-      options: ['clearSelection', 'none'] as const
+      options: ['clearSelection', 'none']
     }
   }
 } as Meta<typeof Autocomplete>;
