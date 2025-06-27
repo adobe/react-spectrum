@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, ProgressBar, Text} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {mergeProps} from '@react-aria/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
@@ -21,9 +21,9 @@ import * as styles2 from './button-pending.css';
 export default {
   title: 'React Aria Components',
   component: Button
-} as ComponentMeta<typeof Button>;
+} as Meta<typeof Button>;
 
-export type ButtonStory = ComponentStoryObj<typeof Button>;
+export type ButtonStory = StoryObj<typeof Button>;
 
 export const ButtonExample: ButtonStory = {
   render: () => (

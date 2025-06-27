@@ -11,15 +11,15 @@
  */
 
 import {Breadcrumb, Breadcrumbs, Link} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Breadcrumbs
-} as ComponentMeta<typeof Breadcrumbs>;
+} as Meta<typeof Breadcrumbs>;
 
-export type BreadcrumbsStory = ComponentStoryObj<typeof Breadcrumbs>;
+export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
 
 export const BreadcrumbsExample: BreadcrumbsStory = {
   render: (args: any) => (

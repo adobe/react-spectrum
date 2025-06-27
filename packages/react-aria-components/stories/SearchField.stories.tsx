@@ -12,16 +12,16 @@
 
 import {Button, Input, Label, SearchField} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: SearchField
-} as ComponentMeta<typeof SearchField>;
+} as Meta<typeof SearchField>;
 
-export type SearchFieldStory = ComponentStoryFn<typeof SearchField>;
+export type SearchFieldStory = StoryFn<typeof SearchField>;
 
 export const SearchFieldExample: SearchFieldStory = () => {
   return (

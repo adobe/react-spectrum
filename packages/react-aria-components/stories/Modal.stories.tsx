@@ -11,15 +11,15 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useEffect} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Modal
-} as ComponentMeta<typeof Modal>;
+} as Meta<typeof Modal>;
 
-export type ModalStory = ComponentStoryFn<typeof Modal>;
+export type ModalStory = StoryFn<typeof Modal>;
 
 export const ModalExample: ModalStory = () => (
   <DialogTrigger>

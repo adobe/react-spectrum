@@ -12,15 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, FileTrigger, Link} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'React Aria Components',
   component: FileTrigger
-} as ComponentMeta<typeof FileTrigger>;
+} as Meta<typeof FileTrigger>;
 
-export type FileTriggerStory = ComponentStoryFn<typeof FileTrigger>;
+export type FileTriggerStory = StoryFn<typeof FileTrigger>;
 
 export const FileTriggerButton: FileTriggerStory = (props) => (
   <FileTrigger

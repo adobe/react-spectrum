@@ -11,7 +11,7 @@
  */
 
 import {ColorField, ColorFieldProps, Input, Label} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -27,10 +27,10 @@ export default {
     }
   },
   component: ColorField
-} as ComponentMeta<typeof ColorField>;
+} as Meta<typeof ColorField>;
 
 ;
-export type ColorFieldStory = ComponentStoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
+export type ColorFieldStory = StoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
 
 export const ColorFieldExample: ColorFieldStory = {
   render: (args) => (

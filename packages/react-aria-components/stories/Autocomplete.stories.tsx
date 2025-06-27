@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -47,11 +47,11 @@ export default {
       options: ['clearSelection', 'none'] as const
     }
   }
-} as ComponentMeta<typeof Autocomplete>;
+} as Meta<typeof Autocomplete>;
 
-export type AutocompleteStory = ComponentStoryObj<typeof Autocomplete>;
-export type MenuStory = ComponentStoryObj<typeof Menu>;
-export type ListBoxStory = ComponentStoryObj<typeof ListBox>;
+export type AutocompleteStory = StoryObj<typeof Autocomplete>;
+export type MenuStory = StoryObj<typeof Menu>;
+export type ListBoxStory = StoryObj<typeof ListBox>;
 
 let StaticMenu = (props) => {
   return (
@@ -418,7 +418,7 @@ const AsyncExample = (args: any): React.ReactElement => {
   );
 };
 
-export const AutocompleteAsyncLoadingExample: ComponentStoryObj<typeof AsyncExample> = {
+export const AutocompleteAsyncLoadingExample: StoryObj<typeof AsyncExample> = {
   render: (args) => {
     return <AsyncExample {...args} />;
   },

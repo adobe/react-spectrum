@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Label, Meter} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -25,9 +25,9 @@ export default {
     minValue: {control: 'number'},
     maxValue: {control: 'number'}
   }
-} as ComponentMeta<typeof Meter>;
+} as Meta<typeof Meter>;
 
-export type MeterStory = ComponentStoryFn<typeof Meter>;
+export type MeterStory = StoryFn<typeof Meter>;
 
 export const MeterExample: MeterStory = (args) => {
   return (

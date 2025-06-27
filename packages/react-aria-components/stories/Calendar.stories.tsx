@@ -11,15 +11,15 @@
  */
 
 import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, RangeCalendar} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Calendar
-} as ComponentMeta<typeof Calendar>;
+} as Meta<typeof Calendar>;
 
-export type CalendarStory = ComponentStoryObj<typeof Calendar>;
+export type CalendarStory = StoryObj<typeof Calendar>;
 
 
 function Footer() {

@@ -11,16 +11,16 @@
  */
 
 import {ColorSlider, ColorSliderProps, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: ColorSlider,
   excludeStories: ['ColorSliderExampleRender']
-} as ComponentMeta<typeof ColorSlider>;
+} as Meta<typeof ColorSlider>;
 
-export type ColorSliderStory = ComponentStoryObj<typeof ColorSlider>;
+export type ColorSliderStory = StoryObj<typeof ColorSlider>;
 
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;

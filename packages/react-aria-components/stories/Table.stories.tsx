@@ -12,9 +12,9 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
@@ -24,10 +24,10 @@ export default {
   title: 'React Aria Components',
   component: Table,
   excludeStories: ['DndTable', 'makePromise']
-} as ComponentMeta<typeof Table>;
+} as Meta<typeof Table>;
 
-export type TableStory = ComponentStoryFn<typeof Table>;
-export type TableStoryObj = ComponentStoryObj<typeof Table>;
+export type TableStory = StoryFn<typeof Table>;
+export type TableStoryObj = StoryObj<typeof Table>;
 
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
   let list = useListData({initialItems});
@@ -475,7 +475,7 @@ function DndTableRender(props: DndTableProps): JSX.Element {
   );
 };
 
-export const DndTable: ComponentStoryFn<typeof DndTableRender> = (props) => {
+export const DndTable: StoryFn<typeof DndTableRender> = (props) => {
   return (
     <DndTableRender {...props} />
   );
@@ -518,7 +518,7 @@ function DndTableExampleRender(props: DndTableExampleProps): JSX.Element {
   );
 };
 
-export const DndTableExample: ComponentStoryFn<typeof DndTableExampleRender> = (props) => {
+export const DndTableExample: StoryFn<typeof DndTableExampleRender> = (props) => {
   return <DndTableExampleRender {...props} />;
 };
 
@@ -592,7 +592,7 @@ const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}): JSX.Element =>
   );
 };
 
-export const TableLoadingBodyWrapperStory: ComponentStoryObj<typeof TableLoadingBodyWrapper> = {
+export const TableLoadingBodyWrapperStory: StoryObj<typeof TableLoadingBodyWrapper> = {
   render: TableLoadingBodyWrapper,
   args: {
     isLoadingMore: false
@@ -631,7 +631,7 @@ const TableLoadingRowRenderWrapper = (args: {isLoadingMore: boolean}): JSX.Eleme
   );
 };
 
-export const TableLoadingRowRenderWrapperStory: ComponentStoryObj<typeof TableLoadingRowRenderWrapper> = {
+export const TableLoadingRowRenderWrapperStory: StoryObj<typeof TableLoadingRowRenderWrapper> = {
   render: TableLoadingRowRenderWrapper,
   args: {
     isLoadingMore: false
@@ -673,7 +673,7 @@ const RenderEmptyState = (args: {isLoading: boolean}): JSX.Element => {
   );
 };
 
-export const RenderEmptyStateStory: ComponentStoryObj<typeof RenderEmptyState> = {
+export const RenderEmptyStateStory: StoryObj<typeof RenderEmptyState> = {
   render: RenderEmptyState,
   args: {
     isLoading: false
@@ -736,7 +736,7 @@ const OnLoadMoreTable = (args: {delay: number}): JSX.Element => {
   );
 };
 
-export const OnLoadMoreTableStory: ComponentStoryObj<typeof OnLoadMoreTable> = {
+export const OnLoadMoreTableStory: StoryObj<typeof OnLoadMoreTable> = {
   render: OnLoadMoreTable,
   name: 'onLoadMore table',
   args: {
@@ -876,7 +876,7 @@ function VirtualizedTableWithEmptyState(args: {isLoading: boolean, showRows: boo
   );
 }
 
-export const VirtualizedTableWithEmptyStateStory: ComponentStoryObj<typeof VirtualizedTableWithEmptyState> = {
+export const VirtualizedTableWithEmptyStateStory: StoryObj<typeof VirtualizedTableWithEmptyState> = {
   render: VirtualizedTableWithEmptyState,
   args: {
     isLoading: false,
@@ -937,7 +937,7 @@ const OnLoadMoreTableVirtualized = (args: {delay: number}): JSX.Element => {
   );
 };
 
-export const OnLoadMoreTableStoryVirtualized: ComponentStoryObj<typeof OnLoadMoreTableVirtualized> = {
+export const OnLoadMoreTableStoryVirtualized: StoryObj<typeof OnLoadMoreTableVirtualized> = {
   render: OnLoadMoreTableVirtualized,
   name: 'Virtualized Table with async loading',
   args: {
@@ -999,7 +999,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = (args: {delay: number}): JSX.Ele
   );
 };
 
-export const OnLoadMoreTableVirtualizedResizeWrapperStory: ComponentStoryObj<typeof OnLoadMoreTableVirtualizedResizeWrapper> = {
+export const OnLoadMoreTableVirtualizedResizeWrapperStory: StoryObj<typeof OnLoadMoreTableVirtualizedResizeWrapper> = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
   args: {
@@ -1079,7 +1079,7 @@ function LocationsTableBody({promise}) {
   ));
 }
 
-export const TableWithSuspense: ComponentStoryObj<typeof TableSuspense> = {
+export const TableWithSuspense: StoryObj<typeof TableSuspense> = {
   render: React.use != null ? (args) => <TableSuspense {...args} /> : () => <>'This story requires React 19.'</>,
   args: {
     reactTransition: false

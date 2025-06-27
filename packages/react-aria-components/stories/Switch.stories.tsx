@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import {Switch} from 'react-aria-components';
@@ -19,9 +19,9 @@ import {Switch} from 'react-aria-components';
 export default {
   title: 'React Aria Components',
   component: Switch
-} as ComponentMeta<typeof Switch>;
+} as Meta<typeof Switch>;
 
-export type SwitchStory = ComponentStoryFn<typeof Switch>;
+export type SwitchStory = StoryFn<typeof Switch>;
 
 export const SwitchExample: SwitchStory = () => {
   return (

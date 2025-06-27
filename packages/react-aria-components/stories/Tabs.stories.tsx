@@ -11,7 +11,7 @@
  */
 
 import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, Tooltip, TooltipTrigger} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {Orientation} from 'react-aria';
 import React, {useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
@@ -19,9 +19,9 @@ import {RouterProvider} from '@react-aria/utils';
 export default {
   title: 'React Aria Components',
   component: Tabs
-} as ComponentMeta<typeof Tabs>;
+} as Meta<typeof Tabs>;
 
-export type TabsStory = ComponentStoryFn<typeof Tabs>;
+export type TabsStory = StoryFn<typeof Tabs>;
 
 export const TabsExample: TabsStory = () => {
   let [url, setUrl] = useState('/FoR');

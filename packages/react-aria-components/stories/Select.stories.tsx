@@ -11,8 +11,8 @@
  */
 
 import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {LoadingSpinner, MyListBoxItem} from './utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
@@ -21,9 +21,9 @@ import {useAsyncList} from 'react-stately';
 export default {
   title: 'React Aria Components',
   component: Select
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
-export type SelectStory = ComponentStoryFn<typeof Select>;
+export type SelectStory = StoryFn<typeof Select>;
 
 export const SelectExample: SelectStory = () => (
   <Select data-testid="select-example" id="select-example-id" style={{position: 'relative'}}>
@@ -173,7 +173,7 @@ function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JS
   );
 };
 
-export const AsyncVirtualizedCollectionRenderSelect: ComponentStoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
+export const AsyncVirtualizedCollectionRenderSelect: StoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
   render: (args) => <AsyncVirtualizedCollectionRenderSelectRender {...args} />,
   args: {
     delay: 50

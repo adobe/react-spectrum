@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Label, Slider, SliderOutput, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: Slider
-} as ComponentMeta<typeof Slider>;
+} as Meta<typeof Slider>;
 
-export type SliderStory = ComponentStoryFn<typeof Slider>;
+export type SliderStory = StoryFn<typeof Slider>;
 
 export const SliderExample: SliderStory = () => {
   const [value, setValue] = React.useState([30, 60]);

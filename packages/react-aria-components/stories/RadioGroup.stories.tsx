@@ -11,16 +11,16 @@
  */
 
 import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: RadioGroup
-} as ComponentMeta<typeof RadioGroup>;
+} as Meta<typeof RadioGroup>;
 
-export type RadioGroupStory = ComponentStoryFn<typeof RadioGroup>;
+export type RadioGroupStory = StoryFn<typeof RadioGroup>;
 
 export const RadioGroupExample: RadioGroupStory = () => {
   return (

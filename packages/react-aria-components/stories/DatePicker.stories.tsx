@@ -12,16 +12,16 @@
 
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar} from 'react-aria-components';
 import clsx from 'clsx';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: DatePicker
-} as ComponentMeta<typeof DatePicker>;
+} as Meta<typeof DatePicker>;
 
-export type DatePickerStory = ComponentStoryFn<typeof DatePicker>;
+export type DatePickerStory = StoryFn<typeof DatePicker>;
 
 export const DatePickerExample: DatePickerStory = () => (
   <DatePicker data-testid="date-picker-example">

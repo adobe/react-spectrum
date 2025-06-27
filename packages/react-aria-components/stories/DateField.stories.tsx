@@ -12,9 +12,9 @@
 
 import {action} from '@storybook/addon-actions';
 import clsx from 'clsx';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
@@ -51,9 +51,9 @@ export default {
     onChange: action('OnChange')
   },
   component: DateField
-} as ComponentMeta<typeof DateField>;
+} as Meta<typeof DateField>;
 
-export type DateFieldStory = ComponentStoryFn<typeof DateField>;
+export type DateFieldStory = StoryFn<typeof DateField>;
 
 export const DateFieldExample: DateFieldStory = (props) => (
   <DateField

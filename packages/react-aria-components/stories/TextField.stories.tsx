@@ -12,16 +12,16 @@
 
 import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: TextField
-} as ComponentMeta<typeof TextField>;
+} as Meta<typeof TextField>;
 
-export type TextFieldStory = ComponentStoryFn<typeof TextField>;
+export type TextFieldStory = StoryFn<typeof TextField>;
 
 export const TextfieldExample: TextFieldStory = () => {
   return (

@@ -13,18 +13,18 @@
 import {action} from '@storybook/addon-actions';
 import {Button, DropZone, FileTrigger, Link, Text} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components',
   component: DropZone
-} as ComponentMeta<typeof DropZone>;
+} as Meta<typeof DropZone>;
 
-export type DropzoneStory = ComponentStoryFn<typeof DropZone>;
-export type DropzoneStoryObj = ComponentStoryObj<typeof DropZone>;
+export type DropzoneStory = StoryFn<typeof DropZone>;
+export type DropzoneStoryObj = StoryObj<typeof DropZone>;
 
 export const DropzoneExampleWithFileTriggerLink: DropzoneStory = (props) => (
   <div>

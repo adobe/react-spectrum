@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Link} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Link
-} as ComponentMeta<typeof Link>;
+} as Meta<typeof Link>;
 
-export type LinkStory = ComponentStoryFn<typeof Link>;
+export type LinkStory = StoryFn<typeof Link>;
 
 export const LinkExample: LinkStory = () => {
   return (

@@ -1,5 +1,5 @@
 import {Button, Checkbox, CheckboxGroup, FieldError, Form, Label} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 import styles from '../example/index.css';
@@ -7,9 +7,9 @@ import styles from '../example/index.css';
 export default {
   title: 'React Aria Components',
   component: CheckboxGroup
-} as ComponentMeta<typeof CheckboxGroup>;
+} as Meta<typeof CheckboxGroup>;
 
-export type CheckboxGroupStory = ComponentStoryObj<typeof CheckboxGroup>;
+export type CheckboxGroupStory = StoryObj<typeof CheckboxGroup>;
 
 export const CheckboxGroupExample: CheckboxGroupStory = {
   render: () => (

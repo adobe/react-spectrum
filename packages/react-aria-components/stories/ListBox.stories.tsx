@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {LoadingSpinner, MyListBoxItem} from './utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
@@ -23,10 +23,10 @@ import {useAsyncList, useListData} from 'react-stately';
 export default {
   title: 'React Aria Components',
   component: ListBox
-} as ComponentMeta<typeof ListBox>;
+} as Meta<typeof ListBox>;
 
-export type ListBoxStory = ComponentStoryFn<typeof ListBox>;
-export type ListBoxStoryObj = ComponentStoryObj<typeof ListBox>;
+export type ListBoxStory = StoryFn<typeof ListBox>;
+export type ListBoxStoryObj = StoryObj<typeof ListBox>;
 
 export const ListBoxExample: ListBoxStory = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
@@ -141,7 +141,7 @@ let albums: Album[] = [
   }
 ];
 
-type AlbumListBoxStory = ComponentStoryFn<typeof ListBox<Album>>;
+type AlbumListBoxStory = StoryFn<typeof ListBox<Album>>;
 export const ListBoxDnd: AlbumListBoxStory = (props) => {
   let list = useListData({
     initialItems: albums
@@ -284,7 +284,7 @@ function VirtualizedListBoxRender({variableHeight}: {variableHeight: boolean}): 
   );
 }
 
-export const VirtualizedListBox: ComponentStoryObj<typeof VirtualizedListBoxRender> = {
+export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
   render: (args) => <VirtualizedListBoxRender {...args} />,
   args: {
     variableHeight: false
@@ -406,7 +406,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
   );
 }
 
-export const VirtualizedListBoxGrid: ComponentStoryObj<typeof VirtualizedListBoxGridExample> = {
+export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExample> = {
   render: (args) => {
     return <VirtualizedListBoxGridExample {...args} />;
   },
@@ -530,7 +530,7 @@ function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'v
   );
 };
 
-export const AsyncListBox: ComponentStoryObj<typeof AsyncListBoxRender> = {
+export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
   render: (args) => <AsyncListBoxRender {...args} />,
   args: {
     orientation: 'horizontal',
@@ -544,7 +544,7 @@ export const AsyncListBox: ComponentStoryObj<typeof AsyncListBoxRender> = {
   }
 };
 
-export const AsyncListBoxVirtualized: ComponentStoryFn<typeof AsyncListBoxRender> = (args) => {
+export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {

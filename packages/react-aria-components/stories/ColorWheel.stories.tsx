@@ -11,15 +11,15 @@
  */
 
 import {ColorThumb, ColorWheel, ColorWheelTrack} from '../src';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'React Aria Components',
   component: ColorWheel
-} as ComponentMeta<typeof ColorWheel>;
+} as Meta<typeof ColorWheel>;
 
-export type ColorWheelStory = ComponentStoryFn<typeof ColorWheel>;
+export type ColorWheelStory = StoryFn<typeof ColorWheel>;
 
 const RADIUS = 100;
 const TRACK_THICKNESS = 28;

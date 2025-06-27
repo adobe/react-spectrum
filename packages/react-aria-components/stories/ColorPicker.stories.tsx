@@ -16,15 +16,15 @@ import {ColorField} from '../src/ColorField';
 import {ColorPicker} from '../src/ColorPicker';
 import {ColorSliderExampleRender} from './ColorSlider.stories';
 import {ColorSwatchExampleRender} from './ColorSwatch.stories';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: ColorPicker
-} as ComponentMeta<typeof ColorPicker>;
+} as Meta<typeof ColorPicker>;
 
-export type ColorPickerStory = ComponentStoryObj<typeof ColorPicker>;
+export type ColorPickerStory = StoryObj<typeof ColorPicker>;
 
 function ColorPickerExampleRender(args) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');

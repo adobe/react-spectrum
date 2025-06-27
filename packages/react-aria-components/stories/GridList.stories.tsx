@@ -37,9 +37,9 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
@@ -47,9 +47,9 @@ import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 export default {
   title: 'React Aria Components',
   component: GridList
-} as ComponentMeta<typeof GridList>;
+} as Meta<typeof GridList>;
 
-export type GridListStory = ComponentStoryFn<typeof GridList>;
+export type GridListStory = StoryFn<typeof GridList>;
 
 export const GridListExample: GridListStory = (args) => (
   <GridList
@@ -272,7 +272,7 @@ function AsyncGridListRender(props: {delay: number}): JSX.Element {
   );
 }
 
-export let AsyncGridList: ComponentStoryObj<typeof AsyncGridListRender> = {
+export let AsyncGridList: StoryObj<typeof AsyncGridListRender> = {
   render: (args) => <AsyncGridListRender {...args} />,
   args: {
     delay: 50
@@ -317,7 +317,7 @@ function AsyncGridListVirtualizedRender(props: {delay: number}): JSX.Element {
   );
 };
 
-export let AsyncGridListVirtualized: ComponentStoryObj<typeof AsyncGridListVirtualizedRender> = {
+export let AsyncGridListVirtualized: StoryObj<typeof AsyncGridListVirtualizedRender> = {
   render: (args) => <AsyncGridListVirtualizedRender {...args} />,
   args: {
     delay: 50
@@ -454,7 +454,7 @@ function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
   );
 }
 
-export let GridListInModalPicker: ComponentStoryObj<typeof GridListInModalPickerRender> = {
+export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
     docs: {

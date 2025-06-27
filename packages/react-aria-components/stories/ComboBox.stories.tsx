@@ -11,8 +11,8 @@
  */
 
 import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
 import {LoadingSpinner, MyListBoxItem} from './utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useMemo, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
@@ -21,10 +21,10 @@ import {useAsyncList} from 'react-stately';
 export default {
   title: 'React Aria Components',
   component: ComboBox
-} as ComponentMeta<typeof ComboBox>;
+} as Meta<typeof ComboBox>;
 
-export type ComboBoxStory = ComponentStoryFn<typeof ComboBox>;
-export type ComboBoxStoryObj = ComponentStoryObj<typeof ComboBox>;
+export type ComboBoxStory = StoryFn<typeof ComboBox>;
+export type ComboBoxStoryObj = StoryObj<typeof ComboBox>;
 
 export const ComboBoxExample: ComboBoxStory = () => (
   <ComboBox name="combo-box-example" data-testid="combo-box-example">
@@ -302,7 +302,7 @@ const AsyncVirtualizedDynamicComboboxRender = (props: {delay: number}): JSX.Elem
   );
 };
 
-export const AsyncVirtualizedDynamicCombobox: ComponentStoryObj<typeof AsyncVirtualizedDynamicComboboxRender> = {
+export const AsyncVirtualizedDynamicCombobox: StoryObj<typeof AsyncVirtualizedDynamicComboboxRender> = {
   render: (args) => <AsyncVirtualizedDynamicComboboxRender {...args} />,
   args: {
     delay: 50

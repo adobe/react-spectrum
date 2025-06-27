@@ -12,15 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, SelectValue, TextField} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Form
-} as ComponentMeta<typeof Form>;
+} as Meta<typeof Form>;
 
-export type FormStory = ComponentStoryFn<typeof Form>;
+export type FormStory = StoryFn<typeof Form>;
 
 
 export const FormAutoFillExample: FormStory = () => {

@@ -11,17 +11,17 @@
  */
 
 import {Button, Heading} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
 import {Disclosure, DisclosurePanel} from '../src/Disclosure';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
 export default {
   title: 'React Aria Components',
   component: Disclosure
-} as ComponentMeta<typeof Disclosure>;
+} as Meta<typeof Disclosure>;
 
-export type DisclosureStory = ComponentStoryFn<typeof Disclosure>;
+export type DisclosureStory = StoryFn<typeof Disclosure>;
 
 export const DisclosureExample: DisclosureStory = (args) => (
   <Disclosure {...args}>

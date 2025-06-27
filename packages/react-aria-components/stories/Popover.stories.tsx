@@ -11,15 +11,15 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Popover
-} as ComponentMeta<typeof Popover>;
+} as Meta<typeof Popover>;
 
-export type PopoverStory = ComponentStoryFn<typeof Popover>;
+export type PopoverStory = StoryFn<typeof Popover>;
 
 export const PopoverExample: PopoverStory = () => (
   <DialogTrigger>
@@ -122,7 +122,7 @@ function PopoverTriggerObserver(): JSX.Element {
 }
 
 
-export const PopoverTriggerObserverExample: ComponentStoryObj<typeof PopoverTriggerObserver> = {
+export const PopoverTriggerObserverExample: StoryObj<typeof PopoverTriggerObserver> = {
   render: () => <PopoverTriggerObserver />
 };
 
@@ -350,7 +350,7 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
   );
 }
 
-export const PopoverArrowBoundaryOffsetExample: ComponentStoryObj<typeof PopoverArrowBoundaryOffsetExampleRender> = {
+export const PopoverArrowBoundaryOffsetExample: StoryObj<typeof PopoverArrowBoundaryOffsetExampleRender> = {
   args: {
     topLeft: 25,
     topRight: 25,

@@ -12,7 +12,7 @@
 
 import {ColorArea, ColorAreaProps, ColorThumb} from '../src';
 import {ColorSliderExampleRender} from './ColorSlider.stories';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from 'react-stately';
 import React, {JSX, useState} from 'react';
 
@@ -33,9 +33,9 @@ export default {
   ],
   component: ColorArea,
   excludeStories: ['ColorAreaExampleRender']
-} as ComponentMeta<typeof ColorArea>;
+} as Meta<typeof ColorArea>;
 
-export type ColorAreaStory = ComponentStoryObj<typeof ColorArea>;
+export type ColorAreaStory = StoryObj<typeof ColorArea>;
 
 const SIZE = 192;
 const FOCUSED_THUMB_SIZE = 28;

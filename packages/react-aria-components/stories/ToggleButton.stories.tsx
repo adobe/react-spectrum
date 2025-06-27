@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
@@ -20,9 +20,9 @@ import {ToggleButton} from 'react-aria-components';
 export default {
   title: 'React Aria Components',
   component: ToggleButton
-} as ComponentMeta<typeof ToggleButton>;
+} as Meta<typeof ToggleButton>;
 
-export type ToggleButtonStory = ComponentStoryFn<typeof ToggleButton>;
+export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
 
 export const ToggleButtonExample: ToggleButtonStory = () => {
 

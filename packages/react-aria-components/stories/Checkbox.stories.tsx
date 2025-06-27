@@ -1,5 +1,5 @@
 import {Checkbox} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -7,9 +7,9 @@ import './styles.css';
 export default {
   title: 'React Aria Components',
   component: Checkbox
-} as ComponentMeta<typeof Checkbox>;
+} as Meta<typeof Checkbox>;
 
-export type CheckboxStory = ComponentStoryObj<typeof Checkbox>;
+export type CheckboxStory = StoryObj<typeof Checkbox>;
 
 export const CheckboxExample: CheckboxStory = {
   render: () => (

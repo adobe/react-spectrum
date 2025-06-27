@@ -11,16 +11,16 @@
  */
 
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: Tooltip
-} as ComponentMeta<typeof Tooltip>;
+} as Meta<typeof Tooltip>;
 
-export type TooltipStory = ComponentStoryFn<typeof Tooltip>;
-export type TooltipStoryObj = ComponentStoryObj<typeof Tooltip>;
+export type TooltipStory = StoryFn<typeof Tooltip>;
+export type TooltipStoryObj = StoryObj<typeof Tooltip>;
 
 export const TooltipExample: TooltipStory = () => (
   <TooltipTrigger>
@@ -261,7 +261,7 @@ function TooltipArrowBoundaryOffsetExampleRender(args: {
   );
 }
 
-export const TooltipArrowBoundaryOffsetExample: ComponentStoryObj<typeof TooltipArrowBoundaryOffsetExampleRender> = {
+export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoundaryOffsetExampleRender> = {
   args: {
     topLeft: 25,
     topRight: 25,

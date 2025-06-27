@@ -11,15 +11,15 @@
  */
 
 import {ColorSwatch, ColorSwatchProps} from '../src/ColorSwatch';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
   title: 'React Aria Components',
   component: ColorSwatch
-} as ComponentMeta<typeof ColorSwatch>;
+} as Meta<typeof ColorSwatch>;
 
-export type ColorSwatchStory = ComponentStoryObj<typeof ColorSwatch>;
+export type ColorSwatchStory = StoryObj<typeof ColorSwatch>;
 
 export const ColorSwatchExampleRender = (args: ColorSwatchProps): JSX.Element => (
   <ColorSwatch

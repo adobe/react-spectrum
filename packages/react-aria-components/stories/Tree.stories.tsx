@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryFn, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
 import React, {JSX, ReactNode} from 'react';
 import styles from '../example/index.css';
@@ -23,9 +23,9 @@ import {useTreeData} from '@react-stately/data';
 export default {
   title: 'React Aria Components',
   component: Tree
-} as ComponentMeta<typeof Tree>;
+} as Meta<typeof Tree>;
 
-export type TreeStory = ComponentStoryFn<typeof Tree>;
+export type TreeStory = StoryFn<typeof Tree>;
 
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string,
@@ -236,7 +236,7 @@ const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>):
   </Tree>
 );
 
-export const TreeExampleStatic: ComponentStoryObj<typeof TreeExampleStaticRender> = {
+export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   render: (args) => <TreeExampleStaticRender {...args} />,
   args: {
     selectionMode: 'none',
@@ -264,7 +264,7 @@ export const TreeExampleStatic: ComponentStoryObj<typeof TreeExampleStaticRender
   }
 };
 
-export const TreeExampleStaticNoActions: ComponentStoryObj<typeof TreeExampleStaticNoActionsRender> = {
+export const TreeExampleStaticNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
   render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
   args: {
     selectionMode: 'none',
@@ -431,13 +431,13 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
   );
 };
 
-export const TreeExampleDynamic: ComponentStoryObj<typeof TreeExampleDynamicRender> = {
+export const TreeExampleDynamic: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleStatic,
   render: (args) => <TreeExampleDynamicRender {...args} />,
   parameters: undefined
 };
 
-export const WithActions: ComponentStoryObj<typeof TreeExampleDynamicRender> = {
+export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleDynamic,
   args: {
     onAction: action('onAction'),
@@ -463,7 +463,7 @@ const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   );
 };
 
-export const WithLinks: ComponentStoryObj<typeof WithLinksRender> = {
+export const WithLinks: StoryObj<typeof WithLinksRender> = {
   ...TreeExampleDynamic,
   render: (args) => <WithLinksRender {...args} />,
   name: 'Tree with links',
@@ -494,7 +494,7 @@ const EmptyTreeStatic = <T extends object>(args: TreeProps<T> & {isLoading: bool
   </Tree>
 );
 
-export const EmptyTreeStaticStory: ComponentStoryObj<typeof EmptyTreeStatic> = {
+export const EmptyTreeStaticStory: StoryObj<typeof EmptyTreeStatic> = {
   render: (args) => <EmptyTreeStatic {...args} />,
   args: {
     isLoading: false
@@ -524,7 +524,7 @@ function LoadingStoryDepOnCollection<T extends object>(props: TreeProps<T> & {is
   );
 }
 
-export const LoadingStoryDepOnCollectionStory: ComponentStoryObj<typeof LoadingStoryDepOnCollection> = {
+export const LoadingStoryDepOnCollectionStory: StoryObj<typeof LoadingStoryDepOnCollection> = {
   render: (args) => <LoadingStoryDepOnCollection {...args} />,
   args: {
     isLoading: false
@@ -555,7 +555,7 @@ function LoadingStoryDepOnTop<T extends object>(args: TreeProps<T> & {isLoading:
   );
 }
 
-export const LoadingStoryDepOnTopStory: ComponentStoryObj<typeof LoadingStoryDepOnTop> = {
+export const LoadingStoryDepOnTopStory: StoryObj<typeof LoadingStoryDepOnTop> = {
   render: (args) => <LoadingStoryDepOnTop {...args} />,
   args: {
     isLoading: false
@@ -650,7 +650,7 @@ function ButtonLoadingIndicator<T extends object>(args: TreeProps<T> & {isLoadin
   );
 }
 
-export const ButtonLoadingIndicatorStory: ComponentStoryObj<typeof ButtonLoadingIndicator> = {
+export const ButtonLoadingIndicatorStory: StoryObj<typeof ButtonLoadingIndicator> = {
   render: (args) => <ButtonLoadingIndicator {...args} />,
   args: {
     isLoading: false
@@ -671,7 +671,7 @@ function VirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Elemen
   );
 }
 
-export const VirtualizedTree: ComponentStoryObj<typeof VirtualizedTreeRender> = {
+export const VirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
   ...TreeExampleDynamic,
   render: (args) => <VirtualizedTreeRender {...args} />
 };
@@ -852,7 +852,7 @@ function SecondTree(args) {
   );
 }
 
-export const TreeWithDragAndDrop: ComponentStoryObj<typeof TreeDragAndDropExample> = {
+export const TreeWithDragAndDrop: StoryObj<typeof TreeDragAndDropExample> = {
   ...TreeExampleDynamic,
   render: (args) => {
     return (
