@@ -12,6 +12,7 @@
 
 import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading, Link, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
@@ -22,11 +23,15 @@ const meta: Meta<typeof DateRangePicker> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange']),
+    ...categorizeArgTypes('Events', ['onChange', 'onOpenChange']),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
+  },
+  args: {
+    onOpenChange: fn(),
+    onChange: fn()
   },
   title: 'DateRangePicker'
 };

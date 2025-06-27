@@ -12,6 +12,7 @@
 
 import {Button, Content, ContextualHelp, DatePicker, Footer, Form, Heading, Link, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
@@ -27,6 +28,10 @@ const meta: Meta<typeof DatePicker> = {
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
+  },
+  args: {
+    onOpenChange: fn(),
+    onChange: fn()
   },
   title: 'DatePicker'
 };

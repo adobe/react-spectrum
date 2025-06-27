@@ -217,7 +217,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             </FieldGroup>
             <PopoverBase
               hideArrow
-              styles={style({paddingX: 16, paddingY: 32})}>
+              styles={style({paddingX: 16, paddingY: 32, overflow: 'auto'})}>
               <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
                 <Calendar />
                 {showTimeField && (
