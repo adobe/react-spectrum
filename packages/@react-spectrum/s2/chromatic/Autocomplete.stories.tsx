@@ -48,7 +48,7 @@ function AutocompleteStory() {
   );
 }
 
-export const CutPaste = {
+export const CutPaste: StoryObj<typeof AutocompleteStory> = {
   render: () => <AutocompleteStory />,
   play: async ({canvasElement}) => {
     await userEvent.tab();
