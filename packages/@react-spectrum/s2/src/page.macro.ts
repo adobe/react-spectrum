@@ -30,9 +30,11 @@ export function generatePageStyles(this: MacroContext | void): void {
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
         --s2-scale: 1;
+        --s2-font-size-base: 14;
 
         @media not ((hover: hover) and (pointer: fine)) {
           --s2-scale: 1.25;
+          --s2-font-size-base: 17;
         }
 
         &[data-color-scheme=light] {
@@ -70,6 +72,7 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
           --lightningcss-light: initial;
           --lightningcss-dark: ;
           --s2-scale: 1;
+          --s2-font-size-base: 14;
 
           @media (prefers-color-scheme: dark) {
             --lightningcss-light: ;
@@ -78,6 +81,7 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
 
           @media not ((hover: hover) and (pointer: fine)) {
             --s2-scale: 1.25;
+            --s2-font-size-base: 17;
           }
         }
       }`
