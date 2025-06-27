@@ -63,6 +63,7 @@ export default function Header(props: PageProps) {
 
   let handleActionButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'ArrowDown' && !searchOpen) {
+      e.preventDefault();
       toggleShowSearchMenu();
     }
   };

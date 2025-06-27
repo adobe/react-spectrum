@@ -283,6 +283,7 @@ export default function SearchMenu(props: SearchMenuProps) {
     }
 
     if (e.key === 'ArrowDown') {
+      e.preventDefault();
       toggleShowSearchMenu();
     }
   };
