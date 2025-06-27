@@ -19,6 +19,7 @@ import {
   DateInput,
   DateSegment,
   DateValue,
+  DialogContext,
   FormContext,
   Provider
 } from 'react-aria-components';
@@ -238,9 +239,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 </Button>
               </div>
             </FieldGroup>
-            <PopoverBase
-              hideArrow
-              styles={style({paddingX: 16, paddingY: 32, overflow: 'auto'})}>
+            <Popover>
               <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
                 <RangeCalendar />
                 {showTimeField && (
@@ -270,7 +269,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                   </div>
                 )}
               </div>
-            </PopoverBase>
+            </Popover>
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -285,3 +284,16 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   );
 });
 
+function Popover(props) {
+  // We don't have a dialog anymore, so we don't consume DialogContext. Have to place the
+  // id and aria label on something otherwise we get a violation.
+  let dialogProps = useContext(DialogContext) as any;
+  return (
+    <PopoverBase
+      {...dialogProps}
+      hideArrow
+      styles={style({paddingX: 16, paddingY: 32, overflow: 'auto'})}>
+      {props.children}
+    </PopoverBase>
+  );
+}
