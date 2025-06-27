@@ -43,7 +43,8 @@ const meta: Meta<typeof CardView> = {
   tags: ['autodocs'],
   args: {
     onLoadMore: fn()
-  }
+  },
+  excludeStories: ['ExampleRender']
 };
 
 export default meta;
@@ -114,7 +115,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
   );
 }
 
-const ExampleRender = (args: CardViewProps<any>) => {
+export const ExampleRender = (args: CardViewProps<any>) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
