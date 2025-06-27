@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getInteractionModality} from '@react-aria/interactions';
-import {getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -407,7 +407,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     let {detail} = e;
     e.stopPropagation();
     manager.setFocused(true);
-
     // If the user is typing forwards, autofocus the first option in the list.
     if (detail?.focusStrategy === 'first') {
       shouldVirtualFocusFirst.current = true;
@@ -417,9 +416,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let updateActiveDescendant = useEffectEvent(() => {
     let keyToFocus = delegate.getFirstKey?.() ?? null;
 
-    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
+    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
+    // the original active element (e.g. the autocomplete input)
     if (keyToFocus == null) {
+      let previousActiveElement = getActiveElement();
       moveVirtualFocus(ref.current);
+      dispatchVirtualFocus(previousActiveElement!, null);
 
       // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
       // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
