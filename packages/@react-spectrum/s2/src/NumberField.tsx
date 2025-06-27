@@ -176,6 +176,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
 
   return (
     <AriaNumberField
+      ref={domRef}
       isRequired={isRequired}
       {...numberFieldProps}
       style={UNSAFE_style}

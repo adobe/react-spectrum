@@ -24,13 +24,13 @@ import {
   VisuallyHidden
 } from 'react-aria';
 import {ButtonContext} from './Button';
-import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth} from '@internationalized/date';
+import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -315,7 +315,12 @@ export interface CalendarCellRenderProps {
    * Whether the cell is part of an invalid selection.
    * @selector [data-invalid]
    */
-  isInvalid: boolean
+  isInvalid: boolean,
+  /**
+   * Whether the cell is today.
+   * @selector [data-today]
+   */
+  isToday: boolean
 }
 
 export interface CalendarGridProps extends StyleProps {
@@ -448,7 +453,7 @@ export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
 export interface CalendarGridBodyProps extends StyleProps {
   /** A function to render a `<CalendarCell>` for a given date. */
-  children: (date: CalendarDate) => ReactElement
+  children: (date: CalendarDate, weekIndex: number, dayIndex: number) => ReactElement
 }
 
 function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTableSectionElement>) {
@@ -468,7 +473,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
         <tr key={weekIndex}>
           {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
             date
-              ? React.cloneElement(children(date), {key: i})
+              ? React.cloneElement(children(date, weekIndex, i), {key: i})
               : <td key={i} />
           ))}
         </tr>
@@ -485,7 +490,11 @@ export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
   /** The date to render in the cell. */
-  date: CalendarDate
+  date: CalendarDate,
+  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
+  cellClassName?: string | ((values: CalendarCellRenderProps & {defaultClassName: string | undefined}) => string),
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
+  cellStyle?: CSSProperties | ((values: CalendarCellRenderProps & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
 }
 
 /**
@@ -497,6 +506,8 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let isOutsideMonth = !isSameMonth(currentMonth, date);
+  // TODO: check api with team, this seemed useful though
+  let istoday = isToday(date, state.timeZone);
 
   let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
@@ -526,6 +537,23 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       isFocusVisible,
       isSelectionStart,
       isSelectionEnd,
+      isToday: istoday,
+      ...states
+    }
+  });
+
+  let cellRenderProps = useRenderProps({
+    className: otherProps.cellClassName,
+    style: otherProps.cellStyle,
+    defaultClassName: 'react-aria-CalendarCellWrapper',
+    values: {
+      date,
+      isHovered,
+      isOutsideMonth,
+      isFocusVisible,
+      isSelectionStart,
+      isSelectionEnd,
+      isToday: istoday,
       ...states
     }
   });
@@ -542,11 +570,12 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
     'data-selection-end': isSelectionEnd || undefined,
-    'data-invalid': states.isInvalid || undefined
+    'data-invalid': states.isInvalid || undefined,
+    'data-today': istoday || undefined
   };
 
   return (
-    <td {...cellProps} ref={ref}>
+    <td {...mergeProps(cellProps, cellRenderProps)} ref={ref}>
       <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
