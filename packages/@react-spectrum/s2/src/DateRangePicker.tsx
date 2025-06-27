@@ -28,9 +28,12 @@ import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps}
 import {createContext, forwardRef, ReactElement, Ref, useContext, useRef, useState} from 'react';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {IconContext, RangeCalendar} from '../';
+import {IconContext, RangeCalendar, TimeField} from '../';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -50,6 +53,14 @@ export interface DateRangePickerProps<T extends DateValue> extends
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
+  flexGrow: 0,
+  flexShrink: 1,
+  overflow: 'hidden',
+  textWrap: 'nowrap',
+  display: 'flex',
+  flexWrap: 'nowrap'
+});
+const segment = style({
   flexGrow: 0,
   flexShrink: 0
 });
@@ -120,6 +131,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   props: DateRangePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, DateRangePickerContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     label,
     contextualHelp,
@@ -133,13 +145,14 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     UNSAFE_style,
     UNSAFE_className,
     styles,
+    placeholderValue,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
 
-  // TODO: fix width
+  // TODO: fix width? default min width?
   return (
     <AriaDateRangePicker
       ref={ref}
@@ -151,7 +164,16 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         labelPosition,
         size
       }, styles)}>
-      {({isDisabled, isInvalid, isOpen}) => {
+      {({isDisabled, isInvalid, isOpen, state}) => {
+        let placeholder: DateValue | undefined = placeholderValue || undefined;
+        let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : undefined;
+        let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : undefined;
+        let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
+        let timeGranularity = state.granularity === 'hour'
+          || state.granularity === 'minute'
+          || state.granularity === 'second'
+            ? state.granularity : undefined;
+        let showTimeField = !!timeGranularity;
         return (
           <>
             <FieldLabel
@@ -172,18 +194,19 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               size={size}
               styles={style({
                 ...fieldInput(),
-                boxSizing: 'border-box',
-                minWidth: 'fit',
-                overflow: 'hidden',
-                paddingX: 'edge-to-text'
+                textWrap: 'nowrap',
+                paddingStart: 'edge-to-text',
+                paddingEnd: 4
               })({size})}>
-              <DateInput slot="start" className={segmentContainer}>
-                {(segment) => <DateSegment className={dateInput} segment={segment} />}
-              </DateInput>
-              <span aria-hidden="true" className={style({flexShrink: 0, flexGrow: 0})}>–</span>
-              <DateInput slot="end" className={segmentContainer}>
-                {(segment) => <DateSegment className={dateInput} segment={segment} />}
-              </DateInput>
+              <div className={segmentContainer}>
+                <DateInput slot="start" className={segment}>
+                  {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                </DateInput>
+                <span aria-hidden="true" className={style({flexShrink: 0, flexGrow: 0, paddingX: 2})}>–</span>
+                <DateInput slot="end" className={segment}>
+                  {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                </DateInput>
+              </div>
               {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
               <div
                 className={style({
@@ -218,7 +241,35 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
             <PopoverBase
               hideArrow
               styles={style({paddingX: 16, paddingY: 32})}>
-              <RangeCalendar />
+              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+                <RangeCalendar />
+                {showTimeField && (
+                  <div className={style({display: 'flex', gap: 16})}>
+                    <TimeField
+                      styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                      label={stringFormatter.format('rangeCalendar.startTime')}
+                      value={state.timeRange?.start || null}
+                      onChange={v => state.setTime('start', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone} />
+                    <TimeField
+                      styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                      label={stringFormatter.format('rangeCalendar.endTime')}
+                      value={state.timeRange?.end || null}
+                      onChange={v => state.setTime('end', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone} />
+                  </div>
+                )}
+              </div>
             </PopoverBase>
             <HelpText
               size={size}

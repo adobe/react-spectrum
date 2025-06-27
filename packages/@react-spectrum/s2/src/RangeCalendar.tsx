@@ -30,9 +30,9 @@ import {
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, ReactNode, useContext, useMemo, useRef} from 'react';
-import {forwardRefType} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRefType, ValidationResult} from '@react-types/shared';
 import {getEraFormat} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -41,7 +41,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface RangeCalendarProps<T extends DateValue>
   extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles'>,
   StyleProps {
-  errorMessage?: string,
+  errorMessage?: ReactNode | ((v: ValidationResult) => ReactNode),
   visibleMonths?: number
 }
 
@@ -52,7 +52,7 @@ const calendarStyles = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-  width: 'full'
+  width: 'fit'
 }, getAllowedOverrides());
 
 const headerStyles = style({
@@ -183,6 +183,29 @@ const selectionSpanStyles = style({
   backgroundColor: 'blue-subtle'
 });
 
+export const helpTextStyles = style({
+  gridArea: 'helptext',
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: 'text-to-visual',
+  font: controlFont(),
+  color: {
+    default: 'neutral-subdued',
+    isInvalid: 'negative',
+    isDisabled: 'disabled'
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  contain: 'inline-size',
+  paddingTop: '--field-gap',
+  cursor: {
+    default: 'text',
+    isDisabled: 'default'
+  }
+});
+
 export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, RangeCalendarContext);
   let {
@@ -201,40 +224,51 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
       visibleDuration={{months: visibleMonths}}
       style={UNSAFE_style}
       className={(UNSAFE_className || '') + calendarStyles(null, styles)}>
-      <Header styles={headerStyles}>
-        <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-        <CalendarHeading />
-        <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-      </Header>
-      <div
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 24,
-          width: 'full'
-        })}>
-        {Array.from({length: visibleMonths}).map((_, i) => {
-          return (
-            <CalendarGrid offset={{months: i}} key={i} className={style({borderSpacing: 0, borderCollapse: 'collapse'})}>
-              <CalendarGridHeader>
-                {(day) => (
-                  <CalendarHeaderCell className={headerCellStyles}>
-                    {day}
-                  </CalendarHeaderCell>
-                )}
-              </CalendarGridHeader>
-              <CalendarGridBody>
-                {(date, weekIndex, dayIndex) => {
-                  return (
-                    <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
-                  );
-                }}
-              </CalendarGridBody>
-            </CalendarGrid>
-          );
-        })}
-      </div>
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      {({isInvalid, isDisabled}) => {
+        return (
+          <>
+            <Header styles={headerStyles}>
+              <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
+              <CalendarHeading />
+              <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
+            </Header>
+            <div
+              className={style({
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 24,
+                width: 'full'
+              })}>
+              {Array.from({length: visibleMonths}).map((_, i) => {
+                return (
+                  <CalendarGrid offset={{months: i}} key={i} className={style({borderSpacing: 0, borderCollapse: 'collapse'})}>
+                    <CalendarGridHeader>
+                      {(day) => (
+                        <CalendarHeaderCell className={headerCellStyles}>
+                          {day}
+                        </CalendarHeaderCell>
+                      )}
+                    </CalendarGridHeader>
+                    <CalendarGridBody>
+                      {(date, weekIndex, dayIndex) => {
+                        return (
+                          <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
+                        );
+                      }}
+                    </CalendarGridBody>
+                  </CalendarGrid>
+                );
+              })}
+            </div>
+            {errorMessage && (
+              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled})}>
+                {/* @ts-ignore */}
+                {errorMessage}
+              </Text>
+            )}
+          </>
+        );
+      }}
     </AriaRangeCalendar>
   );
 });

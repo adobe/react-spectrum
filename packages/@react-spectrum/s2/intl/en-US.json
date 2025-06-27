@@ -35,5 +35,8 @@
   "breadcrumbs.more": "More items",
   "toast.clearAll": "Clear all",
   "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.showAll": "Show all",
+  "rangeCalendar.startTime": "Start time",
+  "rangeCalendar.endTime": "End time",
+  "calendar.time": "Time"
 }

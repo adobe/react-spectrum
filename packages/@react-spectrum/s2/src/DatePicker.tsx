@@ -20,17 +20,21 @@ import {
   DateSegment,
   DateValue,
   FormContext,
-  Provider
+  Provider,
+  TimeValue
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import {Calendar, IconContext} from '../';
+import {Calendar, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, Ref, useContext, useRef, useState} from 'react';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -50,7 +54,9 @@ export interface DatePickerProps<T extends DateValue> extends
 export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
-  flexGrow: 1
+  flexGrow: 1,
+  flexShrink: 1,
+  overflow: 'hidden'
 });
 
 const dateInput = style({
@@ -120,6 +126,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   props: DatePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, DatePickerContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     label,
     contextualHelp,
@@ -133,6 +140,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     UNSAFE_style,
     UNSAFE_className,
     styles,
+    placeholderValue,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -150,7 +158,13 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         labelPosition,
         size
       }, styles)}>
-      {({isDisabled, isInvalid, isOpen}) => {
+      {({isDisabled, isInvalid, isOpen, state}) => {
+        let placeholder: DateValue | undefined = placeholderValue ?? undefined;
+        let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : undefined;
+        let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : undefined;
+        let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
+        let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : undefined;
+        let showTimeField = !!timeGranularity;
         return (
           <>
             <FieldLabel
@@ -171,7 +185,9 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               size={size}
               styles={style({
                 ...fieldInput(),
-                paddingX: 'edge-to-text'
+                textWrap: 'nowrap',
+                paddingStart: 'edge-to-text',
+                paddingEnd: 4
               })({size})}>
               <DateInput className={segmentContainer}>
                 {(segment) => <DateSegment className={dateInput} segment={segment} />}
@@ -202,7 +218,23 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             <PopoverBase
               hideArrow
               styles={style({paddingX: 16, paddingY: 32})}>
-              <Calendar />
+              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+                <Calendar />
+                {showTimeField && (
+                  <TimeField
+                    styles={style({alignSelf: 'start'})}
+                    label={stringFormatter.format('calendar.time')}
+                    value={state.timeValue}
+                    // TODO: why do i need the cast?
+                    onChange={v => state.setTimeValue(v as TimeValue)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                )}
+              </div>
             </PopoverBase>
             <HelpText
               size={size}
