@@ -12,7 +12,7 @@
 
 import {expect} from '@storybook/jest';
 import {Menu, MenuItem, SearchField} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {userEvent, waitFor, within} from '@storybook/testing-library';
