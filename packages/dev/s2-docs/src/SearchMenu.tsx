@@ -295,9 +295,8 @@ export default function SearchMenu(props: SearchMenuProps) {
   return (
     <div
       className={style({ 
-        width: 'full', 
         display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto',
+        gridTemplateColumns: 'auto 1fr',
         alignItems: 'center',
         gap: 16
       })}>

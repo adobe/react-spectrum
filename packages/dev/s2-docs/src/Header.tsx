@@ -95,7 +95,7 @@ export default function Header(props: PageProps) {
                   {getButtonText(currentPage)}
                 </span>
               </div>
-              <ChevronDownIcon className={style({paddingEnd: 8, width: 18})} />
+              <ChevronDownIcon className={style({width: 18})} />
             </ActionButton>
           </div>
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
