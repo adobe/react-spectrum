@@ -540,7 +540,7 @@ export interface TableHeaderRenderProps {
   isHovered: boolean
 }
 
-export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents, Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
   /** A list of table columns. */
   columns?: Iterable<T>,
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -589,6 +589,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
       <THead
         {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
         {...renderProps}
+        onScroll={props.onScroll}
         ref={ref}
         data-hovered={isHovered || undefined}>
         {headerRows}
@@ -915,7 +916,7 @@ export interface TableBodyRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps> {
+export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps>, Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
@@ -979,6 +980,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     <TBody
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
+      onScroll={props.onScroll}
       ref={ref}
       data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
