@@ -14,21 +14,21 @@
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '..';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Default as DefaultCard, Selected as SelectedStory} from '../stories/Card.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'Card/default',
   component: Card,
   excludeStories: ['WithColorfulIllustratedMessage']
-} as ComponentMeta<typeof Card>;
+} as Meta<typeof Card>;
 
-export type CardStory = ComponentStoryObj<typeof Card>;
+export type CardStory = StoryObj<typeof Card>;
 
 export const Default: CardStory = DefaultCard;
 

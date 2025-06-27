@@ -30,8 +30,8 @@ import {
   StaticCardViewStory
 } from './GridCardView.stories';
 import {CardView, GalleryLayout} from '../';
-import {ComponentStoryObj, Meta} from '@storybook/react';
 import {GalleryLayoutOptions} from '../src/GalleryLayout';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
@@ -215,7 +215,7 @@ export const CustomLayoutOptions: CustomGalleryLayoutStory = {
 interface LayoutOptions {
   layoutOptions?: GalleryLayoutOptions
 }
-type CustomGalleryLayoutStory = ComponentStoryObj<typeof CustomGalleryLayout>;
+type CustomGalleryLayoutStory = StoryObj<typeof CustomGalleryLayout>;
 function CustomGalleryLayout(props: SpectrumCardViewProps<object> & LayoutOptions): JSX.Element {
   let {
     layoutOptions,

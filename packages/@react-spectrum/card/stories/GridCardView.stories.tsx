@@ -14,7 +14,6 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
-import {ComponentStoryObj, JSX, Meta} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
@@ -22,6 +21,7 @@ import {GridLayoutOptions} from '../src/GridLayout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
+import {JSX, Meta, StoryObj} from '@storybook/react';
 import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useMemo, useState} from 'react';
@@ -201,7 +201,7 @@ export const CustomLayoutOptions: CustomLayoutStory = {
   name: 'Custom layout options'
 };
 
-export type CardViewIdKeysStory = ComponentStoryObj<typeof CardViewIdKeys>;
+export type CardViewIdKeysStory = StoryObj<typeof CardViewIdKeys>;
 function CardViewIdKeys(props: SpectrumCardViewProps<object>): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -235,7 +235,7 @@ function CardViewIdKeys(props: SpectrumCardViewProps<object>): JSX.Element {
   );
 }
 
-export type DynamicCardViewStory = ComponentStoryObj<typeof DynamicCardView>;
+export type DynamicCardViewStory = StoryObj<typeof DynamicCardView>;
 function DynamicCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -282,7 +282,7 @@ function DynamicCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   );
 }
 
-export type ControlledCardViewStory = ComponentStoryObj<typeof ControlledCardView>;
+export type ControlledCardViewStory = StoryObj<typeof ControlledCardView>;
 function ControlledCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -331,7 +331,7 @@ function ControlledCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   );
 }
 
-export type NoItemCardViewStory = ComponentStoryObj<typeof NoItemCardView>;
+export type NoItemCardViewStory = StoryObj<typeof NoItemCardView>;
 function NoItemCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -365,7 +365,7 @@ function NoItemCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   );
 }
 
-export type StaticCardViewStory = ComponentStoryObj<typeof StaticCardView>;
+export type StaticCardViewStory = StoryObj<typeof StaticCardView>;
 function StaticCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -419,7 +419,7 @@ function StaticCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   );
 }
 
-export type AsyncLoadingCardViewStory = ComponentStoryObj<typeof AsyncLoadingCardView>;
+export type AsyncLoadingCardViewStory = StoryObj<typeof AsyncLoadingCardView>;
 function AsyncLoadingCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   interface StarWarsChar {
     name: string,
@@ -477,7 +477,7 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>): JSX.Element
 interface LayoutOptions {
   layoutOptions?: GridLayoutOptions
 }
-export type CustomLayoutStory = ComponentStoryObj<typeof CustomLayout>;
+export type CustomLayoutStory = StoryObj<typeof CustomLayout>;
 export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOptions): JSX.Element {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});

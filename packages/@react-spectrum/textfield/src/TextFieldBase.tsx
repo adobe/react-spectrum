@@ -14,13 +14,16 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {mergeProps} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {mergeProps, useId} from '@react-aria/utils';
 import {PressEvents, RefObject, ValidationResult} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | 'validate'>, PressEvents, Partial<ValidationResult> {
   wrapperChildren?: ReactElement | ReactElement[],
@@ -93,7 +96,11 @@ forwardRef(function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldR
     } as any);
   }
 
-  let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/textfield');
+  let validId = useId();
+  let validationIcon = isInvalid
+    ? <AlertMedium />
+    : <CheckmarkMedium id={validId} aria-hidden aria-label={stringFormatter.format('valid')} />;
   let validation = cloneElement(validationIcon, {
     UNSAFE_className: classNames(
       styles,
@@ -101,6 +108,15 @@ forwardRef(function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldR
       validationIconClassName
     )
   });
+
+  // Add validation icon IDREF to aria-describedby when validationState is valid
+  let inputPropsAriaDescribedBy = inputProps['aria-describedby'];
+  if (
+    !isInvalid && validationState === 'valid' && !isLoading && !isDisabled &&
+    (!inputPropsAriaDescribedBy || !inputPropsAriaDescribedBy.includes(validId))
+  ) {
+    inputProps['aria-describedby'] = [inputPropsAriaDescribedBy, validId].join(' ').trim();
+  }
 
   let {focusProps, isFocusVisible} = useFocusRing({
     isTextInput: true,

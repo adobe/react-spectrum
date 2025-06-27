@@ -12,49 +12,49 @@
 
 import {Badge} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {JSX} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
 import {Text} from '@react-spectrum/text';
 
 let variants: SpectrumBadgeProps['variant'][] =
   ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
 
-export type BadgeStory = ComponentStoryObj<typeof Badge>;
+export type BadgeStory = StoryObj<typeof Badge>;
 
 export default {
   title: 'Badge',
   component: Badge,
-  excludeStories: ['renderVariants']
-} as ComponentMeta<typeof Badge>;
+  excludeStories: ['RenderVariants']
+} as Meta<typeof Badge>;
 
-export const renderVariants = (args: SpectrumBadgeProps): JSX.Element => (
+export const RenderVariants = (args) => (
   <Flex wrap gap={8}>
-    {variants.map((variant) => <Badge {...args} variant={variant} />)}
+    {variants.map((variant) => <Badge key={variant} {...args} variant={variant} />)}
   </Flex>
 );
 
 export const TextOnly: BadgeStory = {
   args: {children: 'Badge text'},
-  render: renderVariants
+  render: (args) => <RenderVariants {...args} />
 };
 
 export const IconOnly: BadgeStory = {
   args: {children: <CheckmarkCircle />},
-  render: renderVariants
+  render: (args) => <RenderVariants {...args} />
 };
 
 export const IconText: BadgeStory = {
   name: 'Icon & text',
   args: {children: <><CheckmarkCircle /><Text>Badge text</Text></>},
-  render: renderVariants
+  render: (args) => <RenderVariants {...args} />
 };
 
 export const TextIcon: BadgeStory = {
   name: 'Text & icon',
   args: {children: <><Text>Badge text</Text><CheckmarkCircle /></>},
-  render: renderVariants
+  render: (args) => <RenderVariants {...args} />
 };
 
 export const Overflow: BadgeStory = {

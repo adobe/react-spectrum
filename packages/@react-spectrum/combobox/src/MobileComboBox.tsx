@@ -183,9 +183,10 @@ React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: Forwar
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let valueId = useId();
   let invalidId = useId();
+  let validId = useId();
   let validationIcon = validationState === 'invalid'
     ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
-    : <CheckmarkMedium />;
+    : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
 
   let validation = React.cloneElement(validationIcon, {
     UNSAFE_className: classNames(
@@ -206,7 +207,8 @@ React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: Forwar
       props['aria-labelledby'],
       props['aria-label'] && !props['aria-labelledby'] ? props.id : null,
       valueId,
-      validationState === 'invalid' ? invalidId : null
+      validationState === 'invalid' ? invalidId : null,
+      validationState === 'valid' ? validId : null
     ].filter(Boolean).join(' '),
     elementType: 'div'
   }, objRef);

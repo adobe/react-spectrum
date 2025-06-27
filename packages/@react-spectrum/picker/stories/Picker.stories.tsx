@@ -16,7 +16,6 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import {Avatar} from '@react-spectrum/avatar';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
@@ -24,10 +23,11 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section, SpectrumPickerProps} from '../';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {JSX, useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -70,7 +70,7 @@ let withSection = [
   ]}
 ];
 
-export type PickerStory = ComponentStoryObj<typeof Picker>;
+export type PickerStory = StoryObj<typeof Picker>;
 
 export default {
   title: 'Picker',
@@ -168,9 +168,9 @@ export default {
       control: 'boolean'
     }
   }
-} as ComponentMeta<typeof Picker>;
+} as Meta<typeof Picker>;
 
-export type DefaultStory = ComponentStoryObj<typeof DefaultPicker>;
+export type DefaultStory = StoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
 };
@@ -223,7 +223,7 @@ export const DynamicSections: PickerStory = {
   name: 'dynamic with sections'
 };
 
-export type ComplexItemsStory = ComponentStoryObj<typeof ComplexItemsPicker>;
+export type ComplexItemsStory = StoryObj<typeof ComplexItemsPicker>;
 export const ComplexItems: ComplexItemsStory = {
   render: (args) => <ComplexItemsPicker {...args} />,
   name: 'complex items'
@@ -269,7 +269,7 @@ export const FalsyKey: PickerStory = {
   name: 'falsy item key'
 };
 
-export type LabelledByStory = ComponentStoryObj<any>;
+export type LabelledByStory = StoryObj<any>;
 export const LabelledBy: LabelledByStory = {
   args: {
     'aria-label': null,
@@ -341,13 +341,13 @@ export const Loading: PickerStory = {
   name: 'isLoading, no items'
 };
 
-export type AsyncLoadingStory = ComponentStoryObj<typeof AsyncLoadingExample>;
+export type AsyncLoadingStory = StoryObj<typeof AsyncLoadingExample>;
 export const AsyncLoading: AsyncLoadingStory = {
   render: (args) => <AsyncLoadingExample {...args} />,
   name: 'async loading'
 };
 
-export type FocusStory = ComponentStoryObj<any>;
+export type FocusStory = StoryObj<any>;
 export const Focus: FocusStory = {
   render: (args) => (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
@@ -363,13 +363,13 @@ export const Focus: FocusStory = {
   name: 'keyboard tab focus'
 };
 
-export type ResizePickerStory = ComponentStoryObj<typeof ResizePicker>;
+export type ResizePickerStory = StoryObj<typeof ResizePicker>;
 export const Resize: ResizePickerStory = {
   render: (args) => <ResizePicker {...args} />,
   name: 'resize'
 };
 
-export type ScrollingStory = ComponentStoryObj<any>;
+export type ScrollingStory = StoryObj<any>;
 export const Scrolling: ScrollingStory = {
   render: (args) => (
     <View width="300px" height="size-500" overflow="auto">

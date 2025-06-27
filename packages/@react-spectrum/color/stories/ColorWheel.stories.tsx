@@ -22,7 +22,6 @@ export type ColorWheelStory = StoryObj<typeof ColorWheel>;
 export default {
   title: 'ColorWheel',
   component: ColorWheel,
-  excludeStories: ['ControlledHSLRender'],
   args: {
     onChange: action('onChange'),
     onChangeEnd: action('onChangeEnd')

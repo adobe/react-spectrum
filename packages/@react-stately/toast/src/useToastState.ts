@@ -184,12 +184,12 @@ class Timer {
     this.callback = callback;
   }
 
-  reset(delay: number) {
+  reset(delay: number): void {
     this.remaining = delay;
     this.resume();
   }
 
-  pause() {
+  pause(): void {
     if (this.timerId == null) {
       return;
     }
@@ -199,7 +199,7 @@ class Timer {
     this.remaining -= Date.now() - this.startTime!;
   }
 
-  resume() {
+  resume(): void {
     if (this.remaining <= 0) {
       return;
     }

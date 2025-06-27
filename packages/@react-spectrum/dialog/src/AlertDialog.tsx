@@ -13,7 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {chain} from '@react-aria/utils';
+import {chain, filterDOMProps} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
@@ -73,7 +73,8 @@ forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
-      ref={ref}>
+      ref={ref}
+      {...filterDOMProps(props)}>
       <Heading>{title}</Heading>
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
@@ -87,7 +88,8 @@ forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
-            autoFocus={autoFocusButton === 'cancel'}>
+            autoFocus={autoFocusButton === 'cancel'}
+            data-testid="rsp-alertDialog-cancelButton">
             {cancelLabel}
           </Button>
         }
@@ -96,7 +98,8 @@ forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
             variant="secondary"
             onPress={() => chain(onClose(), onSecondaryAction())}
             isDisabled={isSecondaryActionDisabled}
-            autoFocus={autoFocusButton === 'secondary'}>
+            autoFocus={autoFocusButton === 'secondary'}
+            data-testid="rsp-alertDialog-secondaryButton">
             {secondaryActionLabel}
           </Button>
         }
@@ -104,7 +107,8 @@ forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
           variant={confirmVariant}
           onPress={() => chain(onClose(), onPrimaryAction())}
           isDisabled={isPrimaryActionDisabled}
-          autoFocus={autoFocusButton === 'primary'}>
+          autoFocus={autoFocusButton === 'primary'}
+          data-testid="rsp-alertDialog-confirmButton">
           {primaryActionLabel}
         </Button>
       </ButtonGroup>
