@@ -20,7 +20,8 @@ import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components',
+  excludeStories: ['MyListBoxLoaderIndicator', 'renderEmptyState']
 };
 
 export const ListBoxExample = (args) => (
@@ -435,7 +436,7 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
   );
 }
 
-let renderEmptyState = ({isLoading}) => {
+export let renderEmptyState = ({isLoading}) => {
   return  (
     <div style={{height: 30, width: '100%'}}>
       {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
@@ -450,7 +451,7 @@ interface Character {
   birth_year: number
 }
 
-const MyListBoxLoaderIndicator = (props) => {
+export const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
     <UNSTABLE_ListBoxLoadingSentinel

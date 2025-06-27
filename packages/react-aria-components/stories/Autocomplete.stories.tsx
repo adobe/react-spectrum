@@ -17,6 +17,7 @@ import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
+import { MyListBoxLoaderIndicator, renderEmptyState } from './ListBox.stories';
 
 export default {
   title: 'React Aria Components',
@@ -849,3 +850,85 @@ export const AutocompleteSelect = () => (
     </Popover>
   </Select>
 );
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+
+export const AutocompleteWithAsyncListBox = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 50,
+            padding: 4,
+            loaderHeight: 30
+          }}>
+          <ListBox
+            {...args}
+            style={{
+              height: 400,
+              width: 100,
+              border: '1px solid gray',
+              background: 'lightgray',
+              overflow: 'auto',
+              padding: 'unset',
+              display: 'flex'
+            }}
+            aria-label="async virtualized listbox"
+            renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+            <Collection items={list.items}>
+              {(item: Character) => (
+                <MyListBoxItem
+                  style={{
+                    backgroundColor: 'lightgrey',
+                    border: '1px solid black',
+                    boxSizing: 'border-box',
+                    height: '100%',
+                    width: '100%'
+                  }}
+                  id={item.name}>
+                  {item.name}
+                </MyListBoxItem>
+              )}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+AutocompleteWithAsyncListBox.story = {
+  args: {
+    delay: 50
+  }
+};

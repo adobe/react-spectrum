@@ -296,11 +296,16 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
             newCollection.firstKey = clonedNode.key;
           }
 
-          if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
-            lastNode.nextKey = clonedNode.key;
-            clonedNode.prevKey = lastNode.key;
-          } else {
-            clonedNode.prevKey = null;
+          if (lastNode != null) {
+            if (
+              (lastNode.type !== 'section' && lastNode.type !== 'separator' && lastNode.parentKey === clonedNode.parentKey) ||
+              (clonedNode.type === 'loader')
+            ) {
+              lastNode.nextKey = clonedNode.key;
+              clonedNode.prevKey = lastNode.key;
+            } else {
+              clonedNode.prevKey = null;
+            }
           }
 
           clonedNode.nextKey = null;
@@ -338,7 +343,9 @@ function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boole
     } else {
       return false;
     }
-  } else if (node.type === 'header') {
+  } else if (node.type === 'header' || node.type === 'loader') {
+    // TODO what about tree multiple loaders? Should a loader still be preserved if its parent row is filtered out
+    // Actually how should a tree structure be filtered? Do levels no longer matter or does it filter at each level?
     return true;
   } else {
     return filterFn(node.textValue);
