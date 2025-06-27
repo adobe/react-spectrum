@@ -1359,7 +1359,7 @@ export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator(props: TableLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -1409,7 +1409,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
           {...mergeProps(filterDOMProps(props as any), rowProps)}
           {...renderProps}
           role="row"
-          ref={ref}>
+          ref={ref as ForwardedRef<HTMLTableRowElement>}>
           <TD role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
           </TD>
