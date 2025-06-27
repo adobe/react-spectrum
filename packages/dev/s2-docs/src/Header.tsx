@@ -3,7 +3,7 @@
 import {ActionButton} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
 import {flushSync} from 'react-dom';
-import {GithubLogo} from './icons/GithubLogo';
+import GithubLogo from './icons/GithubLogo';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {MarkdownMenu} from './MarkdownMenu';
 import {PageProps} from '@parcel/rsc';
@@ -101,7 +101,7 @@ export default function Header(props: PageProps) {
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <MarkdownMenu url={currentPage.url} />
-            <ActionButton aria-label="React Spectrum GitHub repo" size="XL" isQuiet>
+            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet>
               <GithubLogo />
             </ActionButton>
           </div>
