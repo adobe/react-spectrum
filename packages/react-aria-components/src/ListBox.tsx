@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -304,10 +304,19 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
   );
 }
 
+
+// todo make a class here
+
+class SectionNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('section', key);
+  }
+}
+
 /**
  * A ListBoxSection represents a section within a ListBox.
  */
-export const ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner);
+export const ListBoxSection = /*#__PURE__*/ createBranchComponent(SectionNode, ListBoxSectionInner);
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
@@ -329,10 +338,19 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   onAction?: () => void
 }
 
+
+// TODO create item type here
+
+class ItemNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A ListBoxItem represents an individual option in a ListBox.
  */
-export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -466,6 +484,13 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   );
 }
 
+// TODO: can reuse this most likely
+class LoaderNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('loader', key);
+  }
+}
+
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
 export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
@@ -479,7 +504,7 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
   isLoading?: boolean
 }
 
-export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent(LoaderNode, function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

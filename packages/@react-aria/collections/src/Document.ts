@@ -256,7 +256,9 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
-  node: CollectionNode<T>;
+  // TODO: running with assumption that setProps will be called before any other calls to node are made so theoretically
+  // node will be defined
+  node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
   hasSetProps = false;
@@ -264,7 +266,11 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
+    this.node = null;
+    // TODO: move this line to setProps
+    // if ()
+    // TODO: this is called by Document, seems like we need it?
+    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
   }
 
   get index(): number {
@@ -278,7 +284,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   get level(): number {
     if (this.parentNode instanceof ElementNode) {
-      return this.parentNode.level + (this.node.type === 'item' ? 1 : 0);
+      return this.parentNode.level + (this.node?.type === 'item' ? 1 : 0);
     }
 
     return 0;
@@ -290,12 +296,12 @@ export class ElementNode<T> extends BaseNode<T> {
    */
   private getMutableNode(): Mutable<CollectionNode<T>> {
     if (!this.isMutated) {
-      this.node = this.node.clone();
+      this.node = this.node!.clone();
       this.isMutated = true;
     }
 
     this.ownerDocument.markDirty(this);
-    return this.node;
+    return this.node!;
   }
 
   updateNode(): void {
@@ -303,27 +309,40 @@ export class ElementNode<T> extends BaseNode<T> {
     let node = this.getMutableNode();
     node.index = this.index;
     node.level = this.level;
-    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
-    node.prevKey = this.previousVisibleSibling?.node.key ?? null;
-    node.nextKey = nextSibling?.node.key ?? null;
+    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node!.key : null;
+    node.prevKey = this.previousVisibleSibling?.node!.key ?? null;
+    node.nextKey = nextSibling?.node!.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstVisibleChild?.node.key ?? null;
-    node.lastChildKey = this.lastVisibleChild?.node.key ?? null;
+    node.firstChildKey = this.firstVisibleChild?.node!.key ?? null;
+    node.lastChildKey = this.lastVisibleChild?.node!.key ?? null;
 
     // Update the colIndex of sibling nodes if this node has a colSpan.
     if ((node.colSpan != null || node.colIndex != null) && nextSibling) {
       // This queues the next sibling for update, which means this happens recursively.
       let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
-      if (nextColIndex !== nextSibling.node.colIndex) {
+      if (nextColIndex !== nextSibling.node!.colIndex) {
         let siblingNode = nextSibling.getMutableNode();
         siblingNode.colIndex = nextColIndex;
       }
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement, type?: any): void {
     let node = this.getMutableNode();
     let {value, textValue, id, ...props} = obj;
+
+
+    // if called for first time, aka this.node is undef, call
+    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`); but make new TreeNode instead of COllectionNode
+    // Caveat is this assumes we don't need a node before setProps is called on it
+    // TODO: will get rid of type function check here when we migrate everything to use the class
+    if (node == null && typeof type === 'function') {
+      node = new type(`react-aria-${++this.ownerDocument.nodeId}`);
+      this.node = node;
+      // node.key = id;
+      // console.log('making node', node.type, node)
+    }
+    // console.log('setting props', props, node, node.props)
     props.ref = ref;
     node.props = props;
     node.rendered = rendered;
@@ -331,7 +350,10 @@ export class ElementNode<T> extends BaseNode<T> {
     node.value = value;
     node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
+      // TODO: still need to use this.hasSetProps so this can run twice (?) instead of setting node.key above
+      // If we set node.key = id and change this to if (this.node), setting refs fails. If we just check (this.node here), it will fail if the user provides an id
       if (this.hasSetProps) {
+      // if (this.node) {
         throw new Error('Cannot change the id of an item');
       }
       node.key = id;
@@ -341,6 +363,7 @@ export class ElementNode<T> extends BaseNode<T> {
       node.colSpan = props.colSpan;
     }
 
+    // TODO: still need this, see above comment
     this.hasSetProps = true;
     if (this.isConnected) {
       this.ownerDocument.queueUpdate();

@@ -127,15 +127,18 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
 
 const SSRContext = createContext<BaseNode<any> | null>(null);
 
-function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
+// TODO: make this any for now, but should be a node class
+function useSSRCollectionNode<T extends Element>(Type: any, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
+// function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
   // Therefore we can create elements in our collection document during render so that they are in the
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback((element: ElementNode<any> | null) => {
-    element?.setProps(props, ref, rendered, render);
-  }, [props, ref, rendered, render]);
+    // TODO: now we get the proper node class aka TreeNode
+    element?.setProps(props, ref, rendered, render, Type);
+  }, [props, ref, rendered, render, Type]);
   let parentNode = useContext(SSRContext);
   if (parentNode) {
     // Guard against double rendering in strict mode.
@@ -154,12 +157,14 @@ function useSSRCollectionNode<T extends Element>(Type: string, props: object, re
   }
 
   // @ts-ignore
-  return <Type ref={itemRef}>{children}</Type>;
+  // TODO: make div for now, may not actually matter
+  return <div ref={itemRef}>{children}</div>;
 }
 
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
+// TODO: changed all of these to be any, but should be node class type
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
@@ -190,7 +195,8 @@ export function createLeafComponent<P extends object, E extends Element>(type: s
   return Result;
 }
 
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
+// TODO: changed all of these to be any, but should be node class type
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);

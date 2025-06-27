@@ -11,16 +11,23 @@
  */
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
+import {Key} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
+class SeparatorNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('separator', key);
+  }
+}
+
+export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
   let {elementType, orientation, style, className, slot, ...otherProps} = props;
