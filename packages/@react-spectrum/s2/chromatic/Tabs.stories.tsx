@@ -17,6 +17,7 @@ import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {Text} from '@react-spectrum/s2';
+import {userEvent} from '@storybook/test';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -96,4 +97,29 @@ export const Icons = {
       </TabPanel>
     </Tabs>
   )
+};
+
+export const Collasped = {
+  render: (args: any) => (
+    <Tabs {...args} aria-label="Settings" styles={style({width: 200, height: 144})}>
+      <TabList>
+        <Tab id="Mouse">Mouse settings</Tab>
+        <Tab id="Keyboard">Keyboard settings</Tab>
+        <Tab id="Gamepad">Gamepad settings</Tab>
+      </TabList>
+      <TabPanel id="Mouse">
+        Adjust the sensitivity and speed of your mouse
+      </TabPanel>
+      <TabPanel id="Keyboard">
+        Customize the layout and function of your keyboard.
+      </TabPanel>
+      <TabPanel id="Gamepad">
+        Configure the buttons and triggers on your gamepad.
+      </TabPanel>
+    </Tabs>
+  ),
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+  }
 };
