@@ -208,7 +208,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validate: undefined,
     [privateValidationStateProp]: state,
     value: inputValue,
-    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
+    defaultValue: '!', // an invalid value so that form reset is ignored in onChange above
     autoComplete: 'off',
     'aria-label': props['aria-label'] || undefined,
     'aria-labelledby': props['aria-labelledby'] || undefined,
@@ -225,7 +225,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     errorMessage
   }, state, inputRef);
 
-  useFormReset(inputRef, state.numberValue, state.setNumberValue);
+  useFormReset(inputRef, state.defaultNumberValue, state.setNumberValue);
 
   let inputProps: InputHTMLAttributes<HTMLInputElement> = mergeProps(
     spinButtonProps,

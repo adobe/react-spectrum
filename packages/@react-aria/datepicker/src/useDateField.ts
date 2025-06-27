@@ -138,7 +138,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     autoFocusRef.current = false;
   }, [focusManager]);
 
-  useFormReset(props.inputRef, state.value, state.setValue);
+  useFormReset(props.inputRef, state.defaultValue, state.setValue);
   useFormValidation({
     ...props,
     focus() {

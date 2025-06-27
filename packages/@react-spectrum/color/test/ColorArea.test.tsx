@@ -675,5 +675,31 @@ describe('ColorArea', () => {
       expect(inputs[0]).toHaveValue('100');
       expect(inputs[1]).toHaveValue('200');
     });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {        
+          const [value, formAction] = React.useActionState(() => '#f00', '#000');
+          
+          return (
+            <form action={formAction}>
+              <ColorArea defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+
+        let {getByTestId, getAllByRole} = render(<Test />);
+        let inputs = getAllByRole('slider', {hidden: true});
+
+        expect(inputs[0]).toHaveValue('0');
+        expect(inputs[1]).toHaveValue('0');
+
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(inputs[0]).toHaveValue('255');
+        expect(inputs[1]).toHaveValue('0');
+      });
+    }
   });
 });

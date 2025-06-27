@@ -136,6 +136,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
+      defaultValue: state.defaultValue,
       onChange: state.setValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,

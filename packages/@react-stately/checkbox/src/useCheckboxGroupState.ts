@@ -13,12 +13,14 @@
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
 import {useControlledState} from '@react-stately/utils';
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import {ValidationResult, ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupState extends FormValidationState {
   /** Current selected values. */
   readonly value: readonly string[],
+  /** Default selected values. */
+  readonly defaultValue: readonly string[],
 
   /** Whether the checkbox group is disabled. */
   readonly isDisabled: boolean,
@@ -66,6 +68,7 @@ export interface CheckboxGroupState extends FormValidationState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
+  let [initialValues] = useState(selectedValues);
   let isRequired = !!props.isRequired && selectedValues.length === 0;
 
   let invalidValues = useRef(new Map<string, ValidationResult>());
@@ -78,6 +81,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   const state: CheckboxGroupState = {
     ...validation,
     value: selectedValues,
+    defaultValue: props.defaultValue ?? initialValues,
     setValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
@@ -95,7 +99,8 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
       if (!selectedValues.includes(value)) {
-        setValue(selectedValues.concat(value));
+        selectedValues = selectedValues.concat(value);
+        setValue(selectedValues);
       }
     },
     removeValue(value) {

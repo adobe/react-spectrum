@@ -14,7 +14,7 @@ import {Color, ColorSliderProps} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */
@@ -52,6 +52,9 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
   // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we throw an error
   let [colorValue, setColor] = useControlledState<Color>(value as Color, defaultValue as Color, onChange);
   let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
+  let [initialValue] = useState(colorValue);
+  let defaultColorValue = (defaultValue as Color) ?? initialValue;
+  let defaultColor = useMemo(() => colorSpace && defaultColorValue ? defaultColorValue.toFormat(colorSpace) : defaultColorValue, [defaultColorValue, colorSpace]);
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
@@ -59,6 +62,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     // @ts-ignore
     numberFormatter: null,
     value: color.getChannelValue(channel),
+    defaultValue: defaultColor.getChannelValue(channel),
     onChange(v) {
       setColor(color.withChannelValue(channel, v));
     },

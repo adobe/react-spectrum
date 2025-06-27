@@ -69,12 +69,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   }, [inputXRef]);
 
-  useFormReset(inputXRef, [state.xValue, state.yValue], ([x, y]) => {
-    let newColor = state.value
-      .withChannelValue(state.channels.xChannel, x)
-      .withChannelValue(state.channels.yChannel, y);
-    state.setValue(newColor);
-  });
+  useFormReset(inputXRef, state.defaultValue, state.setValue);
 
   let [valueChangedViaKeyboard, setValueChangedViaKeyboard] = useState(false);
   let [valueChangedViaInputChangeEvent, setValueChangedViaInputChangeEvent] = useState(false);

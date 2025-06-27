@@ -18,6 +18,8 @@ import {useMemo, useRef, useState} from 'react';
 export interface ColorWheelState {
   /** The current color value represented by the color wheel. */
   readonly value: Color,
+  /** The default color value. */
+  readonly defaultValue: Color,
   /** Sets the color value represented by the color wheel, and triggers `onChange`. */
   setValue(value: string | Color): void,
 
@@ -110,6 +112,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
   // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we assign a default
   let [stateValue, setValueState] = useControlledState<Color>(propsValue as Color, defaultValue as Color, onChange);
+  let [initialValue] = useState(stateValue);
   let value = useMemo(() => {
     let colorSpace = stateValue.getColorSpace();
     return colorSpace === 'hsl' || colorSpace === 'hsb' ? stateValue : stateValue.toFormat('hsl');
@@ -140,6 +143,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
   return {
     value,
+    defaultValue: propsValue !== undefined ? initialValue : defaultValue as Color,
     step,
     pageStep,
     setValue(v) {

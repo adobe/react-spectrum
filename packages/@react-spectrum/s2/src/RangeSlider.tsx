@@ -58,12 +58,19 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
 
   let {direction} = useLocale();
   let cssDirection = direction === 'rtl' ? 'right' : 'left';
+  let defaultThumbValues: number[] | undefined = undefined;
+  if (props.defaultValue != null) {
+    defaultThumbValues = [props.defaultValue.start, props.defaultValue.end];
+  } else if (props.value == null) {
+    // make sure that useSliderState knows we have two handles
+    defaultThumbValues = [props.minValue ?? 0, props.maxValue ?? 100];
+  }
 
   return (
     <SliderBase
       {...props}
       value={props.value ? [props.value.start, props.value.end] : undefined}
-      defaultValue={props.defaultValue ? [props.defaultValue.start, props.defaultValue.end] : [props.minValue ?? 0, props.maxValue ?? 100]}
+      defaultValue={defaultThumbValues}
       onChange={v => props.onChange?.({start: v[0], end: v[1]})}
       onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
       sliderRef={domRef}>

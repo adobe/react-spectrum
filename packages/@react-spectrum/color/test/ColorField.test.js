@@ -374,6 +374,54 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(parseColor('#7f0000'));
+      return (
+        <form>
+          <ColorField value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('textbox');
+
+    expect(input).toHaveValue('#7F0000');
+    await user.tab();
+    await user.keyboard('#000');
+    await user.tab();
+    expect(input).toHaveValue('#000000');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('#7F0000');
+  });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => '#f00', '#000');
+        
+        return (
+          <form action={formAction}>
+            <ColorField defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+      expect(input).toHaveValue('#000000');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('#FF0000');
+    });
+  }
+
   describe('channel', function () {
     it('should support the channel prop', async function () {
       let onChange = jest.fn();
@@ -413,6 +461,54 @@ describe('ColorField', function () {
       expect(colorField).toHaveValue('');
       expect(onChange).toHaveBeenCalledWith(null);
     });
+
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState(parseColor('#ff0'));
+        return (
+          <form>
+            <ColorField channel="red" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+
+      expect(input).toHaveValue('255');
+      await user.tab();
+      await user.keyboard('0');
+      await user.tab();
+      expect(input).toHaveValue('0');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(input).toHaveValue('255');
+    });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {        
+          const [value, formAction] = React.useActionState(() => '#f00', '#000');
+          
+          return (
+            <form action={formAction}>
+              <ColorField channel="red" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+
+        let {getByTestId, getByRole} = render(<Test />);
+        let input = getByRole('textbox');
+        expect(input).toHaveValue('0');
+
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('255');
+      });
+    }
   });
 
   describe('validation', () => {

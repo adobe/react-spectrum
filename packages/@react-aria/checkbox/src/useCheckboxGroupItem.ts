@@ -30,6 +30,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   const toggleState = useToggleState({
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isSelected: state.isSelected(props.value),
+    defaultSelected: state.defaultValue.includes(props.value),
     onChange(isSelected) {
       if (isSelected) {
         state.addValue(props.value);

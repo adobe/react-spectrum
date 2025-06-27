@@ -28,6 +28,10 @@ export interface ColorFieldState extends FormValidationState {
    * Updated based on the `inputValue` as the user types.
    */
   readonly colorValue: Color | null,
+  /** The default value of the color field. */
+  readonly defaultColorValue: Color | null,
+  /** Sets the color value of the field. */
+  setColorValue(value: Color | null): void,
   /** Sets the current text value of the input. */
   setInputValue(value: string): void,
   /**
@@ -70,9 +74,9 @@ export function useColorFieldState(
   } = props;
   let {step} = MIN_COLOR.getChannelRange('red');
 
-  let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<Color | null>(initialValue!, initialDefaultValue!, onChange);
+  let [colorValue, setColorValue] = useControlledState<Color | null>(useColor(value), initialDefaultValue!, onChange);
+  let [initialValue] = useState(colorValue);
   let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
   let validation = useFormValidationState({
@@ -167,6 +171,8 @@ export function useColorFieldState(
     ...validation,
     validate,
     colorValue,
+    defaultColorValue: initialDefaultValue ?? initialValue,
+    setColorValue,
     inputValue,
     setInputValue,
     commit,

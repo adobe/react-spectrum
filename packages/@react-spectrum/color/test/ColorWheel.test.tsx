@@ -126,6 +126,29 @@ describe('ColorWheel', () => {
     expect(input).toHaveValue('15');
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 'hsl(15, 100%, 50%)', 'hsl(0, 0%, 0%)');
+        
+        return (
+          <form action={formAction}>
+            <ColorWheel defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('slider');
+      expect(input).toHaveValue('0');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('15');
+    });
+  }
+
   describe('labelling', () => {
     it('should support a custom aria-label', () => {
       let {getByRole} = render(<ColorWheel aria-label="Color hue" />);
