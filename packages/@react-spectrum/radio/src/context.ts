@@ -19,7 +19,7 @@ interface RadioGroupContext {
   state: RadioGroupState
 }
 
-export const RadioContext: React.Context<RadioGroupContext | null> = React.createContext<RadioGroupContext | null>(null);
+export const RadioContext = React.createContext<RadioGroupContext | null>(null);
 
 export function useRadioProvider(): RadioGroupContext {
   return useContext(RadioContext) || {} as RadioGroupContext;

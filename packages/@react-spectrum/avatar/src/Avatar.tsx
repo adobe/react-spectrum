@@ -11,7 +11,7 @@
  */
 
 import {classNames, dimensionValue, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumAvatarProps} from '@react-types/avatar';
@@ -24,9 +24,7 @@ const SIZE_RE = /^size-\d+/;
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
  */
-export const Avatar:
-  React.ForwardRefExoticComponent<SpectrumAvatarProps & React.RefAttributes<DOMRefValue<HTMLImageElement>>> =
-forwardRef(function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
+export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
   props = useSlotProps(props, 'avatar');
   const {
     alt = '',

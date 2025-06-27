@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
@@ -24,9 +24,7 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const RangeSlider:
-  React.ForwardRefExoticComponent<SpectrumRangeSliderProps & React.RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
-React.forwardRef(function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = React.forwardRef(function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {

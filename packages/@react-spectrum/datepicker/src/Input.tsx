@@ -14,28 +14,12 @@ import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
-import {FocusableProps, ValidationState} from '@react-types/shared';
 import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 
-interface InputProps extends FocusableProps {
-  isDisabled?: boolean,
-  isQuiet?: boolean,
-  inputClassName?: string,
-  validationState: ValidationState | null,
-  children?: React.ReactNode,
-  fieldProps?: React.HTMLAttributes<HTMLDivElement>,
-  className?: string,
-  style?: React.CSSProperties,
-  disableFocusRing?: boolean,
-  minWidth?: string
-}
-
-export const Input:
-  React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLElement>> =
-React.forwardRef(function Input(props: InputProps, ref: any) {
+export const Input = React.forwardRef(function Input(props: any, ref: any) {
   let inputRef = useRef<HTMLInputElement | null>(null);
   let {
     isDisabled,

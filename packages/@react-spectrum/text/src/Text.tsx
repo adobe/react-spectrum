@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {TextProps} from '@react-types/text';
@@ -19,9 +19,7 @@ import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 /**
  * Text represents text with no specific semantic meaning.
  */
-export const Text:
-  React.ForwardRefExoticComponent<TextProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Text(props: TextProps, ref: DOMRef) {
+export const Text = forwardRef(function Text(props: TextProps, ref: DOMRef) {
   props = useSlotProps(props, 'text');
   let {
     children,

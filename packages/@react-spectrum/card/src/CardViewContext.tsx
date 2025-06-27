@@ -20,7 +20,7 @@ export interface CardViewContextValue {
   cardOrientation: 'horizontal' | 'vertical',
   renderEmptyState: () => React.ReactNode
 }
-export const CardViewContext: React.Context<CardViewContextValue> = React.createContext<CardViewContextValue>(null);
+export const CardViewContext = React.createContext<CardViewContextValue>(null);
 
 export function useCardViewContext(): CardViewContextValue | null {
   return useContext(CardViewContext);

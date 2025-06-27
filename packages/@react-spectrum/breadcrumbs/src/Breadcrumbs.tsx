@@ -12,7 +12,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
+import {DOMRef, Key} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {ReactElement, useCallback, useRef} from 'react';
@@ -28,9 +28,7 @@ const MAX_VISIBLE_ITEMS = 4;
 /**
  * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
  */
-export const Breadcrumbs:
-  React.ForwardRefExoticComponent<SpectrumBreadcrumbsProps<unknown> & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-React.forwardRef(function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
+export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
     size = 'L',

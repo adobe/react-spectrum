@@ -14,7 +14,7 @@
 import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
+import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FocusRing, getFocusableTreeWalker} from '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
@@ -31,9 +31,7 @@ interface CardBaseProps<T> extends SpectrumCardProps {
 /**
  * TODO: Add description of component here.
  */
-export const CardBase:
-  React.ForwardRefExoticComponent<CardBaseProps<object> & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardBase = React.forwardRef(function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;

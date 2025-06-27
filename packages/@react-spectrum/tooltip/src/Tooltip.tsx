@@ -12,7 +12,7 @@
 
 import AlertSmall from '@spectrum-icons/ui/AlertSmall';
 import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import InfoSmall from '@spectrum-icons/ui/InfoSmall';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useImperativeHandle, useRef} from 'react';
@@ -31,9 +31,7 @@ let iconMap = {
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
  */
-export const Tooltip:
-  React.ForwardRefExoticComponent<SpectrumTooltipProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-React.forwardRef(function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
+export const Tooltip = React.forwardRef(function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
   let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
   let defaultRef = useRef(null);
   overlayRef = overlayRef || defaultRef;

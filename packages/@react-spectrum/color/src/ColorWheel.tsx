@@ -13,7 +13,7 @@
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {ColorWheelContext, useContextProps} from 'react-aria-components';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
@@ -28,9 +28,7 @@ const WHEEL_THICKNESS = 24;
 /**
  * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export const ColorWheel:
-  React.ForwardRefExoticComponent<SpectrumColorWheelProps & React.RefAttributes<FocusableRefValue<HTMLDivElement, HTMLDivElement>>> =
-React.forwardRef(function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
+export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);

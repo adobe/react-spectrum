@@ -26,7 +26,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   submenuLevel?: number
 }
 
-export const MenuContext: React.Context<MenuContextValue> = React.createContext<MenuContextValue>({});
+export const MenuContext = React.createContext<MenuContextValue>({});
 
 export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
@@ -41,7 +41,7 @@ export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 
   isOpen?: boolean
 }
 
-export const SubmenuTriggerContext: React.Context<SubmenuTriggerContextValue | undefined> = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
+export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
 
 export function useSubmenuTriggerContext(): SubmenuTriggerContextValue | undefined {
   return useContext(SubmenuTriggerContext);
@@ -56,7 +56,7 @@ export interface MenuStateContextValue<T> {
   rootMenuTriggerState?: RootMenuTriggerState
 }
 
-export const MenuStateContext: React.Context<MenuStateContextValue<any> | undefined> = React.createContext<MenuStateContextValue<any> | undefined>(undefined);
+export const MenuStateContext = React.createContext<MenuStateContextValue<any> | undefined>(undefined);
 
 export function useMenuStateContext(): MenuStateContextValue<any> | undefined {
   return useContext(MenuStateContext);

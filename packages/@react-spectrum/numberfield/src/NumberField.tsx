@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, RefObject} from '@react-types/shared';
+import {FocusableRef, RefObject} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
@@ -31,9 +31,7 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 /**
  * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
  */
-export const NumberField:
-  React.ForwardRefExoticComponent<SpectrumNumberFieldProps & React.RefAttributes<FocusableRefValue<HTMLElement, HTMLElement>>> =
-React.forwardRef(function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
+export const NumberField = React.forwardRef(function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let provider = useProvider();

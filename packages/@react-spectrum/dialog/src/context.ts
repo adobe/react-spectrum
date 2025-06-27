@@ -18,4 +18,4 @@ export interface DialogContextValue extends HTMLAttributes<HTMLElement> {
   onClose: () => void
 }
 
-export const DialogContext: React.Context<DialogContextValue | null> = React.createContext<DialogContextValue | null>(null);
+export const DialogContext = React.createContext<DialogContextValue | null>(null);

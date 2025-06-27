@@ -13,4 +13,4 @@
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import React from 'react';
 
-export const CheckboxGroupContext: React.Context<CheckboxGroupState | null> = React.createContext<CheckboxGroupState | null>(null);
+export const CheckboxGroupContext = React.createContext<CheckboxGroupState | null>(null);

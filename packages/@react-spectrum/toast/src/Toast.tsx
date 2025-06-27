@@ -14,7 +14,7 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
@@ -43,14 +43,12 @@ export interface SpectrumToastProps {
 
 // TODO: express should use filled icons...
 export const ICONS = {
-  info: InfoMedium as React.ComponentType,
-  negative: AlertMedium as React.ComponentType,
-  positive: SuccessMedium as React.ComponentType
-} as const;
+  info: InfoMedium,
+  negative: AlertMedium,
+  positive: SuccessMedium
+};
 
-export const Toast:
-  React.ForwardRefExoticComponent<SpectrumToastProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     toast: {
       key,

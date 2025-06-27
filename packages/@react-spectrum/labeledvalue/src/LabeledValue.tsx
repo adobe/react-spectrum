@@ -12,7 +12,7 @@
 
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import type {DOMProps, DOMRef, DOMRefValue, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import type {DOMProps, DOMRef, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {filterDOMProps} from '@react-aria/utils';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
@@ -79,9 +79,7 @@ export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBa
 /**
  * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
  */
-export const LabeledValue:
-  React.ForwardRefExoticComponent<SpectrumLabeledValueProps<SpectrumLabeledValueTypes> & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-React.forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
+export const LabeledValue = React.forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
   let {
     value,
     formatOptions
@@ -97,7 +95,7 @@ React.forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(prop
       throw new Error('LabeledValue cannot contain an editable value.');
     }
   }, [domRef]);
-
+  
 
   let children;
   if (Array.isArray(value)) {

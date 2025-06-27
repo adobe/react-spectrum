@@ -19,7 +19,7 @@ import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -32,9 +32,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
-export const AlertDialog:
-  React.ForwardRefExoticComponent<SpectrumAlertDialogProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
+export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   let {
     onClose = () => {}
   } = useContext(DialogContext) || {} as DialogContextValue;

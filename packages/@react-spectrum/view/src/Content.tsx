@@ -12,16 +12,14 @@
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ContentProps} from '@react-types/view';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 
 /**
  * Content represents the primary content within a Spectrum container.
  */
-export const Content:
-  React.ForwardRefExoticComponent<ContentProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function Content(props: ContentProps, ref: DOMRef) {
+export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef) {
   props = useSlotProps(props, 'content');
   let {
     children,

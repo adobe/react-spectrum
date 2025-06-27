@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext, useContextProps} from 'react-aria-components';
 import {HeadingProps} from '@react-types/text';
@@ -20,9 +20,7 @@ import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 /**
  * Heading is used to create various levels of typographic hierarchies.
  */
-export const Heading:
-  React.ForwardRefExoticComponent<HeadingProps & React.RefAttributes<DOMRefValue<HTMLHeadingElement>>> =
-forwardRef(function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+export const Heading = forwardRef(function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   let domRef = useDOMRef(ref);
   props = useSlotProps(props, 'heading');
   [props, domRef] = useContextProps(props, domRef, HeadingContext);

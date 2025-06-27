@@ -12,7 +12,7 @@
 
 import {ButtonProps} from '@react-types/button';
 import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, FocusableRef, FocusableRefValue, RefObject, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -29,9 +29,7 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
 }
 
 // @private
-export const FieldButton:
-  React.ForwardRefExoticComponent<FieldButtonProps & React.RefAttributes<FocusableRefValue<HTMLElement, HTMLElement>>> =
-React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+export const FieldButton = React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   props = useSlotProps(props, 'button');
   let {
     isQuiet,

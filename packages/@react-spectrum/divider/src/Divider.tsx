@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import React, {ElementType} from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
@@ -27,9 +27,7 @@ let sizeMap = {
  * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
  * They can also be used to establish rhythm and hierarchy.
  */
-export const Divider:
-  React.ForwardRefExoticComponent<SpectrumDividerProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-React.forwardRef(function Divider(props: SpectrumDividerProps, ref: DOMRef) {
+export const Divider = React.forwardRef(function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   props = useSlotProps(props, 'divider');
   let {
     size = 'L',

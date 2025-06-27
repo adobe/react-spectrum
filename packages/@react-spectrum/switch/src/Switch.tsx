@@ -11,7 +11,7 @@
  */
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumSwitchProps} from '@react-types/switch';
@@ -25,9 +25,7 @@ import {useToggleState} from '@react-stately/toggle';
  * Switches allow users to turn an individual option on or off.
  * They are usually used to activate or deactivate a specific setting.
  */
-export const Switch:
-  React.ForwardRefExoticComponent<SpectrumSwitchProps & React.RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
-forwardRef(function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Switch = forwardRef(function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
   let {
     isEmphasized = false,

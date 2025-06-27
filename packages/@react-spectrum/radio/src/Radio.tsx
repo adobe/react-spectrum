@@ -11,7 +11,7 @@
  */
 
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumRadioProps} from '@react-types/radio';
@@ -24,9 +24,7 @@ import {useRadioProvider} from './context';
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio:
-  React.ForwardRefExoticComponent<SpectrumRadioProps & React.RefAttributes<FocusableRefValue<HTMLLabelElement, HTMLLabelElement>>> =
-forwardRef(function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {
     isDisabled,
     children,

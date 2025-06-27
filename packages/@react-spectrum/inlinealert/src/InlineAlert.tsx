@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, DOMRefValue, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -52,9 +52,7 @@ let ICONS = {
  * Inline alerts display a non-modal message associated with objects in a view.
  * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
  */
-export const InlineAlert:
-  React.ForwardRefExoticComponent<SpectrumInlineAlertProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+export const InlineAlert = React.forwardRef(function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     children,

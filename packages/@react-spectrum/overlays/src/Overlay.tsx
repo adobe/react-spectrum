@@ -10,16 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {OpenTransition} from './OpenTransition';
 import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useState} from 'react';
 import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
 
-export const Overlay:
-  React.ForwardRefExoticComponent<OverlayProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
+export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     isOpen,

@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
+import {DOMRef, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
 import React, {HTMLAttributes, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
 
@@ -28,9 +28,7 @@ interface HelpTextProps extends Omit<SpectrumHelpTextProps, 'errorMessage'>, Omi
 /**
  * Help text provides either an informative description or an error message that gives more context about what a user needs to input. It's commonly used in forms.
  */
-export const HelpText:
-  React.ForwardRefExoticComponent<HelpTextProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
+export const HelpText = React.forwardRef(function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
   let {
     description,
     errorMessage,

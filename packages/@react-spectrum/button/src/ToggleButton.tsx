@@ -11,7 +11,7 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -27,9 +27,7 @@ import {useToggleState} from '@react-stately/toggle';
  * ToggleButtons allow users to toggle a selection on or off, for example
  * switching between two states or modes.
  */
-export const ToggleButton:
-  React.ForwardRefExoticComponent<SpectrumToggleButtonProps & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
-React.forwardRef(function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ToggleButton = React.forwardRef(function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,

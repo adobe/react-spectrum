@@ -12,7 +12,7 @@
 
 import {classNames, ClearSlots, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -27,9 +27,7 @@ import {useProviderProps} from '@react-spectrum/provider';
  * ActionButtons allow users to perform an action.
  * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
  */
-export const ActionButton:
-  React.ForwardRefExoticComponent<SpectrumActionButtonProps & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
-React.forwardRef(function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionButton = React.forwardRef(function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionButton');
   let textProps = useSlotProps({UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')}, 'text');

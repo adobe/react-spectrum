@@ -12,7 +12,7 @@
 
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -22,9 +22,7 @@ import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const Label:
-  React.ForwardRefExoticComponent<SpectrumLabelProps & React.RefAttributes<DOMRefValue<HTMLLabelElement>>> =
-React.forwardRef(function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
+export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
   let {
     children,

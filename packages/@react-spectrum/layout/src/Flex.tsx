@@ -11,7 +11,7 @@
  */
 
 import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useBreakpoint, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
@@ -29,9 +29,7 @@ const flexStyleProps: StyleHandlers = {
  * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
  * property to define consistent spacing between items.
  */
-export const Flex:
-  React.ForwardRefExoticComponent<FlexProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
+export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     ...otherProps

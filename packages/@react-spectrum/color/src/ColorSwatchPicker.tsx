@@ -12,7 +12,7 @@
 
 import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem} from 'react-aria-components';
 import {Color} from '@react-types/color';
-import {DOMRef, DOMRefValue, StyleProps, ValueBase} from '@react-types/shared';
+import {DOMRef, StyleProps, ValueBase} from '@react-types/shared';
 import React, {forwardRef, ReactElement, ReactNode} from 'react';
 import {SpectrumColorSwatchContext, SpectrumColorSwatchProps} from './ColorSwatch';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
@@ -41,9 +41,7 @@ export interface SpectrumColorSwatchPickerProps extends ValueBase<string | Color
 /**
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
-export const ColorSwatchPicker:
-  React.ForwardRefExoticComponent<SpectrumColorSwatchPickerProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     size = 'M',

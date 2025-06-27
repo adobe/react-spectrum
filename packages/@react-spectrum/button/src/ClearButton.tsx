@@ -13,7 +13,7 @@
 import {AriaButtonElementTypeProps, ButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
-import {DOMProps, FocusableRef, FocusableRefValue, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {ElementType} from 'react';
@@ -29,9 +29,7 @@ interface ClearButtonProps<T extends ElementType = 'button'> extends ButtonProps
   inset?: boolean
 }
 
-export const ClearButton:
-  React.ForwardRefExoticComponent<ClearButtonProps<'button'> & React.RefAttributes<FocusableRefValue<HTMLButtonElement, HTMLButtonElement>>> =
-React.forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = React.forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     children = <CrossSmall UNSAFE_className={styles['spectrum-Icon']} />,
     focusClassName,

@@ -75,7 +75,7 @@ interface ListViewContextValue<T> {
   renderEmptyState?: () => JSX.Element
 }
 
-export const ListViewContext: React.Context<ListViewContextValue<unknown> | null> = React.createContext<ListViewContextValue<unknown> | null>(null);
+export const ListViewContext = React.createContext<ListViewContextValue<unknown> | null>(null);
 
 const ROW_HEIGHTS = {
   compact: {

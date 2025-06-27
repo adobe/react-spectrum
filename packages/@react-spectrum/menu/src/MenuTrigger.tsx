@@ -11,7 +11,7 @@
  */
 
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
@@ -26,9 +26,7 @@ import {useMenuTriggerState} from '@react-stately/menu';
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-export const MenuTrigger:
-  React.ForwardRefExoticComponent<SpectrumMenuTriggerProps & React.RefAttributes<DOMRefValue<HTMLElement>>> =
-forwardRef(function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
+export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let triggerRef = useRef<HTMLElement>(null);
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;

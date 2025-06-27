@@ -26,9 +26,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField:
-  React.ForwardRefExoticComponent<SpectrumColorFieldProps & React.RefAttributes<TextFieldRef<HTMLInputElement>>> =
-React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef<HTMLInputElement>>) {
+export const ColorField = React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);

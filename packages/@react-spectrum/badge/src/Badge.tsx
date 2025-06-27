@@ -11,7 +11,7 @@
  */
 
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
@@ -23,9 +23,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 /**
  * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
  */
-export const Badge:
-  React.ForwardRefExoticComponent<SpectrumBadgeProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-forwardRef(function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
+export const Badge = forwardRef(function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     variant,

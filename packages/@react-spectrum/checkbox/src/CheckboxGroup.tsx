@@ -12,7 +12,7 @@
 
 import {CheckboxGroupContext} from './context';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
@@ -25,9 +25,7 @@ import {useFormProps} from '@react-spectrum/form';
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
-export const CheckboxGroup:
-  React.ForwardRefExoticComponent<SpectrumCheckboxGroupProps & React.RefAttributes<DOMRefValue<HTMLDivElement>>> =
-React.forwardRef(function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const CheckboxGroup = React.forwardRef(function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
