@@ -123,7 +123,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     let collection = this.virtualizer!.collection;
     // Make sure to set rows to 0 if we performing a first time load or are rendering the empty state so that Virtualizer
     // won't try to render its body
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     let rows = isEmptyOrLoading ? 0 : Math.ceil(collection.size / numColumns);
     let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
