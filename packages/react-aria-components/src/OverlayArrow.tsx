@@ -14,13 +14,13 @@ import {ContextValue, RenderProps, useContextProps, useRenderProps} from './util
 import {DOMProps, forwardRefType} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {PlacementAxis} from 'react-aria';
-import React, {Context, createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 interface OverlayArrowContextValue extends OverlayArrowProps {
   placement: PlacementAxis | null
 }
 
-export const OverlayArrowContext: Context<ContextValue<OverlayArrowContextValue, HTMLDivElement>> = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
+export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
   placement: 'bottom'
 });
 
@@ -38,9 +38,7 @@ export interface OverlayArrowRenderProps {
  * An OverlayArrow renders a custom arrow element relative to an overlay element
  * such as a popover or tooltip such that it aligns with a trigger element.
  */
-export const OverlayArrow:
-  (props: OverlayArrowProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
+export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, OverlayArrowContext);
   let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {

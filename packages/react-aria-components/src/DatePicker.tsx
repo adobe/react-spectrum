@@ -23,7 +23,7 @@ import {forwardRefType} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import React, {Context, createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface DatePickerRenderProps {
@@ -67,10 +67,10 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
 export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
-export const DatePickerContext: Context<ContextValue<DatePickerProps<any>, HTMLDivElement>> = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
-export const DateRangePickerContext: Context<ContextValue<DateRangePickerProps<any>, HTMLDivElement>> = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
-export const DatePickerStateContext: Context<DatePickerState | null> = createContext<DatePickerState | null>(null);
-export const DateRangePickerStateContext: Context<DateRangePickerState | null> = createContext<DateRangePickerState | null>(null);
+export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
+export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
+export const DatePickerStateContext = createContext<DatePickerState | null>(null);
+export const DateRangePickerStateContext = createContext<DateRangePickerState | null>(null);
 
 // Contexts to clear inside the popover.
 const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
@@ -78,9 +78,7 @@ const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export const DatePicker:
-  <T extends DateValue>(props: DatePickerProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -184,9 +182,7 @@ export const DatePicker:
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export const DateRangePicker:
-  <T extends DateValue>(props: DateRangePickerProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';

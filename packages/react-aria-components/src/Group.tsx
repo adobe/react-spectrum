@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
-import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface GroupRenderProps {
   /**
@@ -58,14 +58,12 @@ export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLE
   role?: 'group' | 'region' | 'presentation'
 }
 
-export const GroupContext: Context<ContextValue<GroupProps, HTMLDivElement>> = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
+export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
 
 /**
  * A group represents a set of related UI controls, and supports interactive states for styling.
  */
-export const Group:
-  (props: GroupProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
   let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 

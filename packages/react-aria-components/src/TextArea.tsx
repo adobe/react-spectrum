@@ -1,11 +1,11 @@
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import {InputRenderProps} from './Input';
-import React, {Context, createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} from 'react';
 
 export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {}
 
-export const TextAreaContext: Context<ContextValue<TextAreaProps, HTMLTextAreaElement>> = createContext<ContextValue<TextAreaProps, HTMLTextAreaElement>>({});
+export const TextAreaContext = createContext<ContextValue<TextAreaProps, HTMLTextAreaElement>>({});
 
 let filterHoverProps = (props: TextAreaProps): TextAreaProps => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,9 +16,7 @@ let filterHoverProps = (props: TextAreaProps): TextAreaProps => {
 /**
  * A textarea allows a user to input mult-line text.
  */
-export const TextArea:
-  React.ForwardRefExoticComponent<TextAreaProps & React.RefAttributes<HTMLTextAreaElement>> =
-forwardRef(function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
+export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
   [props, ref] = useContextProps(props, ref, TextAreaContext);
 
   let {hoverProps, isHovered} = useHover(props);

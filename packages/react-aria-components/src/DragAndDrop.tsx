@@ -12,7 +12,7 @@
 import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
-import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
 import type {RenderProps} from './utils';
 
 export interface DragAndDropContextValue {
@@ -21,8 +21,8 @@ export interface DragAndDropContextValue {
   dropState?: DroppableCollectionState
 }
 
-export const DragAndDropContext: Context<DragAndDropContextValue> = createContext<DragAndDropContextValue>({});
-export const DropIndicatorContext: Context<DropIndicatorContextValue | null> = createContext<DropIndicatorContextValue | null>(null);
+export const DragAndDropContext = createContext<DragAndDropContextValue>({});
+export const DropIndicatorContext = createContext<DropIndicatorContextValue | null>(null);
 
 export interface DropIndicatorRenderProps {
   /**
@@ -40,9 +40,7 @@ interface DropIndicatorContextValue {
 /**
  * A DropIndicator is rendered between items in a collection to indicate where dropped data will be inserted.
  */
-export const DropIndicator:
-  React.ForwardRefExoticComponent<DropIndicatorProps & React.RefAttributes<HTMLElement>> =
-forwardRef(function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
+export const DropIndicator = forwardRef(function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
   let {render} = useContext(DropIndicatorContext)!;
   return <>{render(props, ref)}</>;
 });

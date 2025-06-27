@@ -16,7 +16,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContext
 import {DisclosureGroupState, DisclosureState, DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState} from 'react-stately';
 import {DOMProps, forwardRefType, Key} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
-import React, {Context, createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 
 export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps {}
 
@@ -32,15 +32,13 @@ export interface DisclosureGroupRenderProps {
   state: DisclosureGroupState
 }
 
-export const DisclosureGroupStateContext: Context<DisclosureGroupState | null> = createContext<DisclosureGroupState | null>(null);
+export const DisclosureGroupStateContext = createContext<DisclosureGroupState | null>(null);
 
 /**
  * A DisclosureGroup is a grouping of related disclosures, sometimes called an accordion.
  * It supports both single and multiple expanded items.
  */
-export const DisclosureGroup:
-  React.ForwardRefExoticComponent<DisclosureGroupProps & React.RefAttributes<HTMLDivElement>> =
-forwardRef(function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DisclosureGroup = forwardRef(function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useDisclosureGroupState(props);
 
   let renderProps = useRenderProps({
@@ -94,8 +92,8 @@ export interface DisclosureRenderProps {
   state: DisclosureState
 }
 
-export const DisclosureContext: Context<ContextValue<DisclosureProps, HTMLDivElement>> = createContext<ContextValue<DisclosureProps, HTMLDivElement>>(null);
-export const DisclosureStateContext: Context<DisclosureState | null> = createContext<DisclosureState | null>(null);
+export const DisclosureContext = createContext<ContextValue<DisclosureProps, HTMLDivElement>>(null);
+export const DisclosureStateContext = createContext<DisclosureState | null>(null);
 
 interface InternalDisclosureContextValue {
   panelProps: DOMAttributes<HTMLElement>,
@@ -107,9 +105,7 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 /**
  * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-export const Disclosure:
-  (props: DisclosureProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
   let groupState = useContext(DisclosureGroupStateContext)!;
   let {id, ...otherProps} = props;
@@ -207,9 +203,7 @@ export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderP
 /**
  * A DisclosurePanel provides the content for a disclosure.
  */
-export const DisclosurePanel:
-  (props: DisclosurePanelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
   let {role = 'group'} = props;
   let {panelProps, panelRef} = useContext(InternalDisclosureContext)!;
   let {

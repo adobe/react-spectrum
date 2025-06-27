@@ -16,7 +16,7 @@ import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} fr
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
@@ -73,8 +73,8 @@ export interface TooltipRenderProps {
   state: TooltipTriggerState
 }
 
-export const TooltipTriggerStateContext: Context<TooltipTriggerState | null> = createContext<TooltipTriggerState | null>(null);
-export const TooltipContext: Context<ContextValue<TooltipProps, HTMLDivElement>> = createContext<ContextValue<TooltipProps, HTMLDivElement>>(null);
+export const TooltipTriggerStateContext = createContext<TooltipTriggerState | null>(null);
+export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivElement>>(null);
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -102,9 +102,7 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps): JSX.Element
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-export const Tooltip:
-  (props: TooltipProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);

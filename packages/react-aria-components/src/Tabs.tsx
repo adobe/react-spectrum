@@ -17,7 +17,7 @@ import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, u
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
-import React, {Context, createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
 
@@ -115,15 +115,13 @@ export interface TabPanelRenderProps {
   state: TabListState<unknown>
 }
 
-export const TabsContext: Context<ContextValue<TabsProps, HTMLDivElement>> = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
-export const TabListStateContext: Context<TabListState<object> | null> = createContext<TabListState<object> | null>(null);
+export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
+export const TabListStateContext = createContext<TabListState<object> | null>(null);
 
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-export const Tabs:
-  (props: TabsProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {children, orientation = 'horizontal'} = props;
   children = useMemo(() => (
@@ -190,9 +188,7 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-export const TabList:
-  <T extends object>(props: TabListProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(TabListStateContext);
   return state
     ? <TabListInner props={props} forwardedRef={ref} />
@@ -244,9 +240,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export const Tab:
-  (props: TabProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
+export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
@@ -290,13 +284,10 @@ export const Tab:
   );
 });
 
-
 /**
  * A TabPanel provides the content for a tab.
  */
-export const TabPanel:
-  (props: TabPanelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
+export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -349,4 +340,3 @@ export const TabPanel:
     </div>
   );
 });
-

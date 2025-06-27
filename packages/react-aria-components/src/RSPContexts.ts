@@ -15,8 +15,8 @@ import {ColorAreaProps} from './ColorArea';
 import {ColorFieldProps} from './ColorField';
 import {ColorSliderProps} from './ColorSlider';
 import {ColorWheelProps} from './ColorWheel';
-import {Context, createContext} from 'react';
 import {ContextValue} from './utils';
+import {createContext} from 'react';
 import {HeadingProps} from './Heading';
 
 // This file is a temporary workaround for a tree shaking issue in SWC (the minifier used by Parcel).
@@ -25,9 +25,9 @@ import {HeadingProps} from './Heading';
 // and implementation even if only the context is imported. We moved these contexts to a separate file so
 // that the implementation does not get included in the bundle. This will be removed once the tree shaking
 // issue is fixed.
-export const CheckboxContext: Context<ContextValue<CheckboxProps, HTMLLabelElement>> = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
-export const ColorAreaContext: Context<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>> = createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
-export const ColorFieldContext: Context<ContextValue<ColorFieldProps, HTMLDivElement>> = createContext<ContextValue<ColorFieldProps, HTMLDivElement>>(null);
-export const ColorSliderContext: Context<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>> = createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
-export const ColorWheelContext: Context<ContextValue<Partial<ColorWheelProps>, HTMLDivElement>> = createContext<ContextValue<Partial<ColorWheelProps>, HTMLDivElement>>(null);
-export const HeadingContext: Context<ContextValue<HeadingProps, HTMLHeadingElement>> = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
+export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
+export const ColorFieldContext = createContext<ContextValue<ColorFieldProps, HTMLDivElement>>(null);
+export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
+export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, HTMLDivElement>>(null);
+export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});

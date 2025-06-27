@@ -12,13 +12,11 @@
 
 import {ContextValue, useContextProps} from './utils';
 import {createLeafComponent} from '@react-aria/collections';
-import React, {Context, createContext, ForwardedRef, HTMLAttributes} from 'react';
+import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
-export const HeaderContext: Context<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>> = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
+export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-export const Header:
-  (props: React.HTMLAttributes<HTMLElement> & React.RefAttributes<object>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
+export const Header = /*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);
   return (
     <header className="react-aria-Header" {...props} ref={ref}>

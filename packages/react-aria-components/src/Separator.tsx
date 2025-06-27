@@ -14,15 +14,13 @@ import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {createLeafComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {Context, createContext, ElementType, ForwardedRef} from 'react';
+import React, {createContext, ElementType, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
-export const SeparatorContext: Context<ContextValue<SeparatorProps, HTMLElement>> = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
+export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-export const Separator:
-  (props: SeparatorProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
+export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
   let {elementType, orientation, style, className, slot, ...otherProps} = props;

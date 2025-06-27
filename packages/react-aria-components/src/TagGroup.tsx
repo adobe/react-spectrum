@@ -20,7 +20,7 @@ import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/share
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -52,15 +52,13 @@ export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'
   renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
 
-export const TagGroupContext: Context<ContextValue<TagGroupProps, HTMLDivElement>> = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
-export const TagListContext: Context<ContextValue<TagListProps<any>, HTMLDivElement>> = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
+export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
+export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
 /**
  * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
  */
-export const TagGroup:
-  (props: TagGroupProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
   return (
     <CollectionBuilder content={props.children}>
@@ -128,9 +126,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
 /**
  * A tag list is a container for tags within a TagGroup.
  */
-export const TagList:
-  <T extends object>(props: TagListProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(ListStateContext);
   return state
     ? <TagListInner props={props} forwardedRef={ref} />
@@ -203,9 +199,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
 /**
  * A Tag is an individual item within a TagList.
  */
-export const Tag:
-  (props: TagProps & React.RefAttributes<object>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) => {
+export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});
@@ -267,4 +261,3 @@ export const Tag:
     </div>
   );
 });
-

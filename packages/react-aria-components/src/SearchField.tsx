@@ -20,7 +20,7 @@ import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {Context, createContext, ForwardedRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
@@ -48,14 +48,12 @@ export interface SearchFieldRenderProps {
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
-export const SearchFieldContext: Context<ContextValue<SearchFieldProps, HTMLDivElement>> = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
+export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
 /**
  * A search field allows a user to enter and clear a search query.
  */
-export const SearchField:
-  (props: SearchFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ createHideableComponent(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';

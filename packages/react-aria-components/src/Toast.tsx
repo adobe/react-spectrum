@@ -16,13 +16,13 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, use
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
-import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
 import {useIsSSR} from '@react-aria/ssr';
 import {useObjectRef} from '@react-aria/utils';
 import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
-export const ToastStateContext: Context<ToastState<any> | null> = createContext<ToastState<any> | null>(null);
+export const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
@@ -54,9 +54,7 @@ export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderPr
 /**
  * A ToastRegion displays one or more toast notifications.
  */
-export const ToastRegion:
-  <T>(props: ToastRegionProps<T> & React.RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   let isSSR = useIsSSR();
   let state = useToastQueue(props.queue);
   let objectRef = useObjectRef(ref);
@@ -111,9 +109,7 @@ export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | '
   children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
 }
 
-export const ToastList:
-  <T>(props: ToastListProps<T> & React.RefAttributes<HTMLOListElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
@@ -161,9 +157,7 @@ export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRende
 /**
  * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
  */
-export const Toast:
-  <T>(props: ToastProps<T> & React.RefAttributes<HTMLDivElement>) => ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(ToastStateContext)!;
   let objectRef = useObjectRef(ref);
   let {toastProps, contentProps, titleProps, descriptionProps, closeButtonProps} = useToast(
@@ -213,14 +207,12 @@ export const Toast:
   );
 });
 
-export const ToastContentContext: Context<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>> = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
+export const ToastContentContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
 
 /**
  * ToastContent wraps the main content of a toast notification.
  */
-export const ToastContent:
-  React.ForwardRefExoticComponent<React.HTMLAttributes<HTMLElement> & React.RefAttributes<HTMLDivElement>> =
-/*#__PURE__*/ forwardRef(function ToastContent(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
+export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToastContentContext);
   return (
     <div className="react-aria-ToastContent" {...props} ref={ref}>

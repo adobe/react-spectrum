@@ -12,7 +12,7 @@
 import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
-import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleGroupState, useToggleGroupState} from 'react-stately';
 
 export interface ToggleButtonGroupRenderProps {
@@ -29,15 +29,13 @@ export interface ToggleButtonGroupRenderProps {
 
 export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps {}
 
-export const ToggleButtonGroupContext: Context<ContextValue<ToggleButtonGroupProps, HTMLDivElement>> = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
-export const ToggleGroupStateContext: Context<ToggleGroupState | null> = createContext<ToggleGroupState | null>(null);
+export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
+export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
 
 /**
  * A toggle button group allows a user to toggle multiple options, with single or multiple selection.
  */
-export const ToggleButtonGroup:
-  (props: ToggleButtonGroupProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonGroupContext);
   let state = useToggleGroupState(props);
   let {groupProps} = useToggleButtonGroup(props, state, ref);

@@ -12,7 +12,7 @@
 
 import {ContextValue, DOMProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
-import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
 export interface FormProps extends SharedFormProps, DOMProps {
@@ -25,15 +25,13 @@ export interface FormProps extends SharedFormProps, DOMProps {
   validationBehavior?: 'aria' | 'native'
 }
 
-export const FormContext: Context<ContextValue<FormProps, HTMLFormElement>> = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
+export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
 
 /**
  * A form is a group of inputs that allows users to submit data to a server,
  * with support for providing field validation errors.
  */
-export const Form:
-  React.ForwardRefExoticComponent<FormProps & React.RefAttributes<HTMLFormElement>> =
-forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
+export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (

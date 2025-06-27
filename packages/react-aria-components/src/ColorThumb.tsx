@@ -2,7 +2,7 @@ import {Color} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {HoverEvents, RefObject} from '@react-types/shared';
 import {mergeProps, useFocusRing, useHover} from 'react-aria';
-import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 
 interface ColorState {
@@ -20,7 +20,7 @@ interface InternalColorThumbContextValue {
   isDisabled?: boolean
 }
 
-export const InternalColorThumbContext: Context<InternalColorThumbContextValue | null> = createContext<InternalColorThumbContextValue | null>(null);
+export const InternalColorThumbContext = createContext<InternalColorThumbContextValue | null>(null);
 
 export interface ColorThumbRenderProps {
   /**
@@ -59,9 +59,7 @@ export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRend
 /**
  * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.
  */
-export const ColorThumb:
-  React.ForwardRefExoticComponent<ColorThumbProps & React.RefAttributes<HTMLDivElement>> =
-forwardRef(function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, thumbProps, inputXRef, inputYRef, xInputProps, yInputProps, isDisabled = false} = useContext(InternalColorThumbContext)!;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover(props);

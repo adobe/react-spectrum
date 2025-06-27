@@ -4,7 +4,7 @@ import {ColorAreaState, useColorAreaState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {Context, createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface ColorAreaRenderProps {
   /**
@@ -20,14 +20,12 @@ export interface ColorAreaRenderProps {
 
 export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps {}
 
-export const ColorAreaStateContext: Context<ColorAreaState | null> = createContext<ColorAreaState | null>(null);
+export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
 /**
  * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
-export const ColorArea:
-  React.ForwardRefExoticComponent<ColorAreaProps & React.RefAttributes<HTMLDivElement>> =
-forwardRef(function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorAreaContext);
   let inputXRef = useRef(null);
   let inputYRef = useRef(null);

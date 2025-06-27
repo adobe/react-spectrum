@@ -21,7 +21,7 @@ import {DraggableCollectionState, DroppableCollectionState, Collection as IColle
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -79,15 +79,13 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
 }
 
 
-export const GridListContext: Context<ContextValue<GridListProps<any>, HTMLDivElement>> = createContext<ContextValue<GridListProps<any>, HTMLDivElement>>(null);
+export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLDivElement>>(null);
 
 /**
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-export const GridList:
-  <T extends object>(props: GridListProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
@@ -285,12 +283,10 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem:
- <T extends object>(props: GridListItemProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<Element>, item: Node<object>) {
+export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
-  let ref = useObjectRef<HTMLDivElement>(forwardedRef as ForwardedRef<HTMLDivElement>);
+  let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
@@ -515,9 +511,7 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel:
-  (props: GridListLoadingSentinelProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
+export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -552,7 +546,7 @@ export const UNSTABLE_GridListLoadingSentinel:
           {...mergeProps(filterDOMProps(props as any))}
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}
-          ref={ref as ForwardedRef<HTMLDivElement>}>
+          ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}
             role="gridcell">

@@ -14,7 +14,7 @@ import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwi
 import {ContextValue, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
-import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
@@ -66,14 +66,12 @@ export interface SwitchRenderProps {
   state: ToggleState
 }
 
-export const SwitchContext: Context<ContextValue<SwitchProps, HTMLLabelElement>> = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
+export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
 /**
  * A switch allows a user to turn a setting on or off.
  */
-export const Switch:
-  (props: SwitchProps & React.RefAttributes<HTMLLabelElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
+export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps

@@ -18,7 +18,7 @@ import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Context, createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
@@ -34,8 +34,8 @@ export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps {
   children?: ReactNode | ((opts: DialogRenderProps) => ReactNode)
 }
 
-export const DialogContext: Context<ContextValue<DialogProps, HTMLElement>> = createContext<ContextValue<DialogProps, HTMLElement>>(null);
-export const OverlayTriggerStateContext: Context<OverlayTriggerState | null> = createContext<OverlayTriggerState | null>(null);
+export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement>>(null);
+export const OverlayTriggerStateContext = createContext<OverlayTriggerState | null>(null);
 
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
@@ -91,9 +91,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
 /**
  * A dialog is an overlay shown above other content in an application.
  */
-export const Dialog:
-  (props: DialogProps & React.RefAttributes<HTMLElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
+export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog({

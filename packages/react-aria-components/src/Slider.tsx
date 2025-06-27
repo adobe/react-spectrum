@@ -15,7 +15,7 @@ import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRend
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {Context, createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {
@@ -25,10 +25,10 @@ export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export const SliderContext: Context<ContextValue<SliderProps, HTMLDivElement>> = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
-export const SliderStateContext: Context<SliderState | null> = createContext<SliderState | null>(null);
-export const SliderTrackContext: Context<ContextValue<SliderTrackContextValue, HTMLDivElement>> = createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
-export const SliderOutputContext: Context<ContextValue<SliderOutputContextValue, HTMLOutputElement>> = createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
+export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
+export const SliderStateContext = createContext<SliderState | null>(null);
+export const SliderTrackContext = createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+export const SliderOutputContext = createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
 
 export interface SliderRenderProps {
   /**
@@ -50,9 +50,7 @@ export interface SliderRenderProps {
 /**
  * A slider allows a user to select one or more values within a range.
  */
-export const Slider:
-  <T extends number | number[]>(props: SliderProps<T> & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
@@ -106,9 +104,7 @@ interface SliderOutputContextValue extends Omit<OutputHTMLAttributes<HTMLOutputE
 /**
  * A slider output displays the current value of a slider as text.
  */
-export const SliderOutput:
-  (props: SliderOutputProps & React.RefAttributes<HTMLOutputElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   [props, ref] = useContextProps(props, ref, SliderOutputContext);
   let {children, style, className, ...otherProps} = props;
   let state = useContext(SliderStateContext)!;
@@ -149,9 +145,7 @@ interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'chi
 /**
  * A slider track is a container for one or more slider thumbs.
  */
-export const SliderTrack:
-  (props: SliderTrackProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderTrackContext);
   let state = useContext(SliderStateContext)!;
   let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
@@ -220,9 +214,7 @@ export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | '
 /**
  * A slider thumb represents an individual value that the user can adjust within a slider track.
  */
-export const SliderThumb:
-  (props: SliderThumbProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ (forwardRef as forwardRefType)(function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {
     inputRef: userInputRef = null
   } = props;

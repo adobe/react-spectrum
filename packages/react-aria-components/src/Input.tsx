@@ -13,7 +13,7 @@
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
-import React, {Context, createContext, ForwardedRef, InputHTMLAttributes} from 'react';
+import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
 
 export interface InputRenderProps {
   /**
@@ -45,7 +45,7 @@ export interface InputRenderProps {
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {}
 
-export const InputContext: Context<ContextValue<InputProps, HTMLInputElement>> = createContext<ContextValue<InputProps, HTMLInputElement>>({});
+export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
 
 let filterHoverProps = (props: InputProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,9 +56,7 @@ let filterHoverProps = (props: InputProps) => {
 /**
  * An input allows a user to input text.
  */
-export const Input:
-  (props: InputProps & React.RefAttributes<HTMLInputElement>) => React.ReactElement | null =
-/*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+export const Input = /*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -92,4 +90,3 @@ export const Input:
       data-invalid={isInvalid || undefined} />
   );
 });
-

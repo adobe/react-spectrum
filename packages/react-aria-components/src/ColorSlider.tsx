@@ -5,7 +5,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import React, {Context, createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SliderOutputContext, SliderStateContext, SliderTrackContext} from './Slider';
 
 export interface ColorSliderRenderProps {
@@ -27,14 +27,12 @@ export interface ColorSliderRenderProps {
 
 export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps {}
 
-export const ColorSliderStateContext: Context<ColorSliderState | null> = createContext<ColorSliderState | null>(null);
+export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 
 /**
  * A color slider allows users to adjust an individual channel of a color value.
  */
-export const ColorSlider:
-  React.ForwardRefExoticComponent<ColorSliderProps & React.RefAttributes<HTMLDivElement>> =
-forwardRef(function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSliderContext);
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});

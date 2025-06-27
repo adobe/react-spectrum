@@ -19,7 +19,7 @@ import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {Context, createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 
@@ -51,14 +51,12 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'plac
   isInvalid?: boolean
 }
 
-export const TextFieldContext: Context<ContextValue<TextFieldProps, HTMLDivElement>> = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
+export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-export const TextField:
-  (props: TextFieldProps & React.RefAttributes<HTMLDivElement>) => React.ReactElement | null =
-/*#__PURE__*/ createHideableComponent(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const TextField = /*#__PURE__*/ createHideableComponent(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -127,4 +125,3 @@ export const TextField:
     </div>
   );
 });
-
