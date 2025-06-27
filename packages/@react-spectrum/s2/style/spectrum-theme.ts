@@ -434,7 +434,10 @@ let durationValue = (value: number | string) => typeof value === 'number' ? valu
 const fontWeightBase = {
   light: '300',
   normal: '400',
-  medium: '500',
+  medium: {
+    default: '500',
+    ':lang(ar, he)': '600' // Myriad does not have a 500 weight
+  },
   bold: '700',
   'extra-bold': '800',
   black: '900'
@@ -515,6 +518,15 @@ const fontSize = {
   'code-lg': fontSizeToken('code-size-l'),
   'code-xl': fontSizeToken('code-size-xl')
 } as const;
+
+// Line heights linearly interpolate between 1.3 and 1.15 for font sizes between 10 and 32, rounded to the nearest 2px.
+// Text above 32px always has a line height of 1.15.
+const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fx)';
+const minFontScale = 1.15;
+const maxFontScale = 1.3;
+const minFontSize = 10;
+const maxFontSize = 32;
+const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${maxFontScale - minFontScale}), 2px)`;
 
 export const style = createTheme({
   properties: {
@@ -731,19 +743,25 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'adobe-clean-spectrum-vf, adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
-        default: 'adobe-clean-serif, "Source Serif", Georgia, serif',
+        default: 'adobe-clean-spectrum-srf-vf, adobe-clean-serif, "Source Serif", Georgia, serif',
         ...i18nFonts
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize,
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
+      return {
+        '--fx': Math.pow(1.125, value as number),
+        fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
+      };
+    }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
         // Set font-variation-settings in addition to font-weight to work around typekit issue.
+        // (This was fixed, but leaving for backward compatibility for now.)
         fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
         fontWeight: value as any,
         fontSynthesisWeight: 'none'
@@ -752,28 +770,36 @@ export const style = createTheme({
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
-        default: getToken('line-height-100'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('line-height-200')
+        // Calculate line-height based on font size.
+        default: lineHeightCalc,
+        // Arabic and hebrew use the old line-height for now since they are on Myriad instead of Adobe Clean.
+        ':lang(ar, he)': getToken('line-height-100'),
+        // CJK fonts use a larger line-height.
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
       },
       heading: {
-        default: getToken('heading-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('heading-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
       },
       title: {
-        default: getToken('title-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('title-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
       },
       body: {
+        // Body text uses spacious line height, 1.5 for all font sizes.
         default: getToken('body-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('body-cjk-line-height')
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('body-cjk-line-height')
       },
       detail: {
-        default: getToken('detail-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('detail-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
       },
       code: {
         default: getToken('code-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('code-cjk-line-height')
       }
     },
     listStyleType: ['none', 'disc', 'decimal'] as const,

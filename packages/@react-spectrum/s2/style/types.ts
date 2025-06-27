@@ -17,7 +17,7 @@ export type CustomValue = string | number | boolean;
 export type Value = CustomValue | readonly any[];
 export type PropertyValueDefinition<T> = T | {[condition: string]: PropertyValueDefinition<T>};
 export type PropertyValueMap<T extends CSSValue = CSSValue> = {
-  [name in T]: PropertyValueDefinition<string>
+  [name in T]: PropertyValueDefinition<CSSValue>
 };
 
 export type CustomProperty = `--${string}`;
