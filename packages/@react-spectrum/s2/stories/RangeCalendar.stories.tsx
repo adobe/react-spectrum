@@ -33,12 +33,6 @@ const meta: Meta<typeof RangeCalendar<any>> = {
         type: 'select'
       },
       options: [1, 2, 3]
-    },
-    firstDayOfWeek: {
-      control: {
-        type: 'select'
-      },
-      options: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
     }
   },
   title: 'RangeCalendar'

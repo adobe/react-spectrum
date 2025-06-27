@@ -27,10 +27,7 @@ const meta: Meta<typeof Calendar> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange']),
-    label: {control: {type: 'text'}},
-    description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}},
     visibleMonths: {
       control: {
         type: 'select'

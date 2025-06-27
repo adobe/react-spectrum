@@ -266,7 +266,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     isDisabled = props.isDisabled
   } = ctx || {};
 
-
+  console.log('props', props.isQuiet);
   return (
     <RACButton
       {...props}
