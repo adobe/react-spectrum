@@ -2,7 +2,6 @@
 
 import {ActionButton} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {flushSync} from 'react-dom';
 import {GithubLogo} from './icons/GithubLogo';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
@@ -68,6 +67,14 @@ export default function Header(props: PageProps) {
     }
   };
 
+  const ChevronDownIcon = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} {...props}>
+      <path
+        fill="var(--iconPrimary, #222)"
+        d="M3.755 7.243a.748.748 0 0 1 1.06-.02l5.183 4.986 5.197-4.999a.749.749 0 1 1 1.04 1.08l-5.717 5.5a.747.747 0 0 1-1.04 0L3.776 8.303a.746.746 0 0 1-.02-1.06Z" />
+    </svg>
+  );
+
   return (
     <>
       <header className={style({width: 'full', display: {default: 'none', lg: 'flex'}, justifyContent: 'center'})}>
@@ -88,7 +95,7 @@ export default function Header(props: PageProps) {
                   {getButtonText(currentPage)}
                 </span>
               </div>
-              <ChevronDown UNSAFE_className={'react-spectrum-select-chevron' + style({paddingEnd: 8})} UNSAFE_style={{width: 18}} />
+              <ChevronDownIcon className={style({paddingEnd: 8, width: 18})} />
             </ActionButton>
           </div>
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
