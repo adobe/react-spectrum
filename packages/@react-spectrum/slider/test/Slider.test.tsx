@@ -193,9 +193,10 @@ describe('Slider', function () {
   });
 
   it('supports form name', () => {
-    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" form="test" />);
     let input = getByRole('slider');
     expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveAttribute('form', 'test');
     expect(input).toHaveValue('10');
   });
 

@@ -127,7 +127,7 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         data-disabled={props.isDisabled || undefined}
         data-required={props.isRequired || undefined}
         data-invalid={validation.isInvalid || undefined} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
 });

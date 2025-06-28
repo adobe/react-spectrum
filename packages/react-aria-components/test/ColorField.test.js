@@ -145,4 +145,13 @@ describe('ColorField', () => {
     await user.tab();
     expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(
+      <TestColorField form="test" />
+    );
+
+    let input = getByRole('textbox');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });

@@ -114,7 +114,7 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         errorMessageProps,
         validation
       )}
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </>
   );
 }

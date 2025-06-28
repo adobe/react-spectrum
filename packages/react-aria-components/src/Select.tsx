@@ -221,6 +221,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           triggerRef={buttonRef}
           label={label}
           name={props.name}
+          form={props.form}
           isDisabled={props.isDisabled} />
       </div>
     </Provider>
