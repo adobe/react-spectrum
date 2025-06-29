@@ -67,6 +67,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   ...focusRing(),
   ...staticColor(),
   ...controlStyle,
+  display: 'grid',
   justifyContent: 'center',
   flexShrink: {
     default: 1,
@@ -79,9 +80,21 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     isJustified: 0
   },
   fontWeight: 'medium',
+  width: 'fit',
   userSelect: 'none',
   transition: 'default',
   forcedColorAdjust: 'none',
+  position: 'relative',
+  gridTemplateAreas: {
+    default: ['icon text'],
+    [iconOnly]: ['icon'],
+    [textOnly]: ['text']
+  },
+  gridTemplateColumns: {
+    default: ['auto', 'auto'],
+    [iconOnly]: ['auto'],
+    [textOnly]: ['auto']
+  },
   backgroundColor: {
     default: {
       ...baseColor('gray-100'),
@@ -223,8 +236,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgePosition': {
     type: 'width',
     value: {
-      default: 'calc(self(paddingStart) + var(--iconWidth))',
-      [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
+      default: '--iconWidth',
       [textOnly]: 'full'
     }
   },
@@ -289,10 +301,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({order: 1, truncate: true})}],
+          [TextContext, {styles: style({truncate: true, gridArea: 'text'})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin'})
           }],
           [AvatarContext, {
             size: avatarSize[size],
@@ -301,15 +313,14 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 default: '--iconMargin',
                 ':last-child': 0
               },
-              flexShrink: 0,
-              order: 0
+              gridArea: 'icon'
             })
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,
             size: props.size === 'XS' ? undefined : props.size,
             isDisabled: props.isDisabled,
-            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
+            styles: style({position: 'absolute', top: '--badgeTop',  marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc(var(--iconMargin) * 2 + (self(height) * -1)/4)', gridColumnStart: 1, insetStart: '--badgePosition'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
