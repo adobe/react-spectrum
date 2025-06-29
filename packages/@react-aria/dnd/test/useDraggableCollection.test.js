@@ -313,6 +313,35 @@ describe('useDraggableCollection', () => {
       expect(cells).toHaveLength(2);
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
     });
+
+    it('should pass the dragged key as second argument to getItems', async () => {
+      let getItems = jest.fn().mockImplementation((keys) => {
+        return [...keys].map(key => ({'text/plain': key}));
+      });
+
+      let tree = render(
+        <Provider theme={theme}>
+          <DraggableCollectionExample draggableCollectionStateProps={{getItems}} />
+        </Provider>
+      );
+
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells).toHaveLength(3);
+
+      // Select 'foo' and 'bar'
+      await user.click(cells[0]);
+      await user.click(cells[1]);
+
+      let dataTransfer = new DataTransfer();
+      // Start dragging 'bar'
+      fireEvent(cells[1], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+      expect(getItems).toHaveBeenCalledTimes(1);
+      let [keysArg, draggedKeyArg] = getItems.mock.calls[0];
+      expect(keysArg).toEqual(new Set(['foo', 'bar']));
+      expect(draggedKeyArg).toBe('bar');
+    });
   });
 
   describe('keyboard', () => {

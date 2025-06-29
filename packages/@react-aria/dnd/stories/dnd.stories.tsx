@@ -20,6 +20,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import dndStyles from './dnd.css';
+import {DraggableCollectionExample as DraggableGridExampleStandalone} from './DraggableCollection';
 import {DraggableListBox} from './DraggableListBox';
 import {DragPreview} from '../src/DragPreview';
 import {DroppableGridExample} from './DroppableGrid';
@@ -574,4 +575,22 @@ export const DroppableEnabledDisabledControl: DnDStoryObj = {
       defaultValue: true
     }
   }
+};
+
+export const DraggedItemOnly: DnDStoryObj = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableGridExampleStandalone
+        draggableCollectionStateProps={{
+          getItems: (_, draggedKey) => {
+            action('getItems')(draggedKey);
+            return [{
+              'text/plain': `Dragged item: ${draggedKey}`
+            }];
+          }
+        }} />
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Drag only dragged item'
 };
