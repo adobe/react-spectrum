@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Text} from '../src';
+import {Button, ButtonProps, Text} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
@@ -39,7 +40,7 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args) => {
+const Template = (args: ButtonProps): ReactNode => {
   let {children, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
@@ -65,19 +66,19 @@ const Template = (args) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithIcon = {
-  render: Template,
+export const WithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><NewIcon /><Text>Press me</Text></>
   }
 };
 
-export const IconOnly = {
-  render: Template,
+export const IconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
   }

@@ -11,7 +11,7 @@
  */
 
 
-import {ReactNode, useState} from 'react';
+import {ReactElement, ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 
 type StaticColor = 'black' | 'white' | 'auto' | undefined;
@@ -25,7 +25,7 @@ function getBackgroundColor(staticColor: StaticColor) {
   return undefined;
 }
 
-export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}) {
+export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}): ReactElement {
   let [autoBg, setAutoBg] = useState('#5131c4');
   return (
     <>
@@ -39,7 +39,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
         {props.children}
       </div>
       {props.staticColor === 'auto' && (
-        <label 
+        <label
           className={style({
             display: 'flex',
             alignItems: 'center',
@@ -58,7 +58,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
   );
 }
 
-export const StaticColorDecorator = (Story: any, {args}: any) => (
+export const StaticColorDecorator = (Story: any, {args}: any): ReactElement => (
   <StaticColorProvider staticColor={args.staticColor}>
     <Story />
   </StaticColorProvider>
