@@ -511,7 +511,7 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<Element>, item: Node<object>) {
+export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -546,7 +546,7 @@ export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponen
           {...mergeProps(filterDOMProps(props as any))}
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}
-          ref={ref as ForwardedRef<HTMLDivElement>}>
+          ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}
             role="gridcell">
