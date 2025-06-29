@@ -11,6 +11,7 @@
  */
 
 import {Label, Meter} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -24,9 +25,11 @@ export default {
     minValue: {control: 'number'},
     maxValue: {control: 'number'}
   }
-};
+} as Meta<typeof Meter>;
 
-export const MeterExample = (args) => {
+export type MeterStory = StoryFn<typeof Meter>;
+
+export const MeterExample: MeterStory = (args) => {
   return (
     <Meter {...args}>
       {({percentage, valueText}) => (

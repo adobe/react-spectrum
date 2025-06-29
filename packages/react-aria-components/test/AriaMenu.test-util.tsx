@@ -63,7 +63,7 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     submenus?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
-export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => {
+export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): void => {
   describe(prefix ? prefix + 'AriaMenuTrigger' : 'AriaMenuTrigger', function () {
     let onOpenChange = jest.fn();
     let onOpen = jest.fn();

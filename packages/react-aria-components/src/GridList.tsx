@@ -511,7 +511,7 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
