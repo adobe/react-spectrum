@@ -10,14 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import React from 'react';
+import {StoryObj} from '@storybook/react';
 import {Template} from '../chromatic/SearchAutocomplete.stories';
 
 export default {
   title: 'SearchAutocomplete'
 };
 
-export const PropInputValue = {
-  render: Template,
+export type SearchAutocompleteStory = StoryObj<typeof Template>;
+
+export const PropInputValue: SearchAutocompleteStory = {
+  render: (args) => <Template {...args} />,
   name: 'inputValue: Blah',
   args: {inputValue: 'Blah'}
 };

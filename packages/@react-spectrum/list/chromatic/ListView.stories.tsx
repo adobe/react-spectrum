@@ -22,9 +22,9 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
-import {Item, ListView} from '../';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Item, ListView, SpectrumListViewProps} from '../';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 let states = [
   {isQuiet: true},
@@ -64,7 +64,7 @@ const meta: Meta = {
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
     chromatic: {delay: 10000}
   }
-};
+} as Meta<Omit<typeof ListView, 'children'>>;
 
 export default meta;
 
@@ -89,7 +89,7 @@ const renderActions = (
   </>
 );
 
-const Template = ({combos, ...args}) => (
+const Template = ({combos, ...args}: Omit<SpectrumListViewProps<any>, 'children'> & {combos: any[][]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -140,31 +140,33 @@ function renderEmptyState() {
   );
 }
 
-const TemplateEmptyState = () => (
-  <ListView width="size-3400" height="size-6000" renderEmptyState={renderEmptyState}>
+export type ListViewStory = StoryObj<Omit<typeof ListView, 'children'>>;
+
+const TemplateEmptyState = (props: Omit<SpectrumListViewProps<any>, 'children'>): JSX.Element => (
+  <ListView {...props} width="size-3400" height="size-6000" renderEmptyState={renderEmptyState}>
     {[]}
   </ListView>
 );
 
-export const Default = {
-  render: Template,
+export const Default: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'all visual option combos 1 of 3',
   args: {combos: combinations.slice(0, chunkSize)}
 };
 
-export const ComboPt2 = {
-  render: Template,
+export const ComboPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
   name: 'all visual option combos 2 of 3'
 };
 
-export const ComboPt3 = {
-  render: Template,
+export const ComboPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
   name: 'all visual option combos 3 of 3'
 };
 
-export const Empty = {
-  render: TemplateEmptyState,
+export const Empty: ListViewStory = {
+  render: (args) => <TemplateEmptyState {...args} />,
   name: 'empty state'
 };

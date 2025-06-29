@@ -16,6 +16,7 @@ import {Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {TextArea} from '../';
 
@@ -31,7 +32,7 @@ export default {
     necessityIndicator: 'icon',
     labelPosition: 'top',
     labelAlign: 'start',
-    validationState: null
+    validationState: undefined
   },
   argTypes: {
     labelPosition: {
@@ -59,55 +60,57 @@ export default {
       }
     }
   }
-};
+} as Meta<typeof TextArea>;
 
-export const Default = (args) => render(args);
-export const ValueTestControlled = (args) => render({...args, value: 'Test'});
+export type TextAreaStory = StoryFn<typeof TextArea>;
+
+export const Default: TextAreaStory = (args) => render(args);
+export const ValueTestControlled: TextAreaStory = (args) => render({...args, value: 'Test'});
 
 ValueTestControlled.story = {
   name: 'value: Test (controlled)'
 };
 
-export const DefaultValueTestUncontrolled = (args) => render({...args, defaultValue: 'Test'});
+export const DefaultValueTestUncontrolled: TextAreaStory = (args) => render({...args, defaultValue: 'Test'});
 
 DefaultValueTestUncontrolled.story = {
   name: 'defaultValue: Test (uncontrolled)'
 };
 
-export const AutoFocusTrue = (args) => render({...args, autoFocus: true});
+export const AutoFocusTrue: TextAreaStory = (args) => render({...args, autoFocus: true});
 
 AutoFocusTrue.story = {
   name: 'autoFocus: true'
 };
 
-export const IconInfo = (args) => render({...args, icon: <Info />});
+export const IconInfo: TextAreaStory = (args) => render({...args, icon: <Info />});
 
 IconInfo.story = {
   name: 'icon: Info'
 };
 
-export const NoVisibleLabel = (args) =>
+export const NoVisibleLabel: TextAreaStory = (args) =>
   render({...args, label: null, 'aria-label': 'Street address'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const WithDescription = (args) =>
+export const WithDescription: TextAreaStory = (args) =>
   render({...args, description: 'Enter product feedback.'});
 
 WithDescription.story = {
   name: 'with description'
 };
 
-export const WithErrorMessage = (args) =>
+export const WithErrorMessage: TextAreaStory = (args) =>
   render({...args, errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'});
 
 WithErrorMessage.story = {
   name: 'with error message'
 };
 
-export const WithContextualHelp = (args) =>
+export const WithContextualHelp: TextAreaStory = (args) =>
   render({
     ...args,
     contextualHelp: (
@@ -125,21 +128,21 @@ WithContextualHelp.story = {
   name: 'with contextual help'
 };
 
-export const CustomWidth = (args) =>
+export const CustomWidth: TextAreaStory = (args) =>
   render({...args, icon: <Info />, validationState: 'invalid', width: '300px'});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const CustomWidthSmall = (args) =>
+export const CustomWidthSmall: TextAreaStory = (args) =>
   render({...args, icon: <Info />, validationState: 'invalid', width: '30px'});
 
 CustomWidthSmall.story = {
   name: 'custom width small'
 };
 
-export const CustomHeightWithLabel = (args) => (
+export const CustomHeightWithLabel: TextAreaStory = (args) => (
   <Form>
     <TextArea {...args} label="Custom height" description="height: size-2000" height="size-2000" />
     <TextArea
@@ -168,7 +171,7 @@ CustomHeightWithLabel.story = {
   name: 'custom height with label'
 };
 
-export const ChangeableHelptext = (args) => <ValidationExample {...args} />;
+export const ChangeableHelptext: TextAreaStory = (args) => <ValidationExample {...args} />;
 
 ChangeableHelptext.story = {
   name: 'changeable helptext',
@@ -179,7 +182,7 @@ ChangeableHelptext.story = {
   }
 };
 
-export const ChangeableHelptextCustomHeight = (args) => (
+export const ChangeableHelptextCustomHeight: TextAreaStory = (args) => (
   <ValidationExample {...args} height="175px" minHeight="100px" maxHeight="50vh" />
 );
 
@@ -192,19 +195,19 @@ ChangeableHelptextCustomHeight.story = {
   }
 };
 
-export const ControlledInteractive = (args) => <ControlledTextArea {...args} />;
+export const ControlledInteractive: TextAreaStory = (args) => <ControlledTextArea {...args} />;
 
 ControlledInteractive.story = {
   name: 'controlled interactive'
 };
 
-export const InFlex = (args) => renderInFlexRowAndBlock(args);
+export const InFlex: TextAreaStory = (args) => renderInFlexRowAndBlock(args);
 
 InFlex.story = {
   name: 'in flex'
 };
 
-export const InFlexValidationState = (args) =>
+export const InFlexValidationState: TextAreaStory = (args) =>
   renderInFlexRowAndBlock({...args, validationState: 'invalid'});
 
 InFlexValidationState.story = {
@@ -352,6 +355,6 @@ function DefaultLocaleStrings(props) {
   );
 }
 
-export const WithDifferentLocaleText = {
+export const WithDifferentLocaleText: StoryObj<typeof TextArea> = {
   render: (args) => <DefaultLocaleStrings {...args} />
 };

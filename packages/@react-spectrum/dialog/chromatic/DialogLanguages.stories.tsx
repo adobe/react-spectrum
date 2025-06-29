@@ -14,14 +14,15 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Content, Header} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '../';
+import {Dialog, DialogTrigger, SpectrumDialogTriggerProps} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from './intlMessages.json';
 import {Item, TagGroup} from '@react-spectrum/tag';
+import {Meta, StoryFn} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export default {
@@ -34,10 +35,12 @@ export default {
       scales: ['medium']
     }
   },
-  excludeStories: ['TranslateDialog']
-};
+  excludeStories: ['TranslateDialogRender']
+} as Meta<typeof Dialog>;
 
-export let TranslateDialog = (dialogProps) => {
+export type DialogLanguagesStory = StoryFn<typeof Dialog>;
+
+export let TranslateDialogRender = (dialogProps: Omit<SpectrumDialogTriggerProps, 'children'>): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
 
   return (
@@ -97,38 +100,40 @@ export let TranslateDialog = (dialogProps) => {
   );
 };
 
-export const ArabicComplex = () => (
+export let TranslateDialog: DialogLanguagesStory = (args) => <TranslateDialogRender {...args} />;
+
+export const ArabicComplex: DialogLanguagesStory = () => (
   <Provider locale="ar-AE">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );
 
-export const HebrewComplex = () => (
+export const HebrewComplex: DialogLanguagesStory = () => (
   <Provider locale="he-IL">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );
 
-export const JapaneseComplex = () => (
+export const JapaneseComplex: DialogLanguagesStory = () => (
   <Provider locale="ja-JP">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );
 
-export const KoreanComplex = () => (
+export const KoreanComplex: DialogLanguagesStory = () => (
   <Provider locale="ko-KR">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );
 
-export const ChineseSimplfiedComplex = () => (
+export const ChineseSimplfiedComplex: DialogLanguagesStory = () => (
   <Provider locale="zh-CN">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );
 
-export const ChineseTraditionalComplex = () => (
+export const ChineseTraditionalComplex: DialogLanguagesStory = () => (
   <Provider locale="zh-TW">
-    <TranslateDialog defaultOpen />
+    <TranslateDialogRender defaultOpen />
   </Provider>
 );

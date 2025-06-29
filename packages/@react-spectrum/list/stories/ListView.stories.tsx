@@ -16,11 +16,11 @@ import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import {Item, ListView} from '../';
+import {Item, ListView, SpectrumListViewProps} from '../';
 import {Link} from '@react-spectrum/link';
 import {Meta, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
-import React, {useEffect, useState} from 'react';
+import React, {JSX, useEffect, useState} from 'react';
 import {useAsyncList, useListData} from '@react-stately/data';
 
 export const items: any = [
@@ -64,7 +64,7 @@ const itemsWithThumbs = [
   {key: '9', title: 'file of great boi', illustration: <File />}
 ];
 
-export function renderEmptyState() {
+export function renderEmptyState(): JSX.Element {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">
@@ -461,13 +461,13 @@ function EmptyTest() {
   );
 }
 
-export const RemoveListItems = {
+export const RemoveListItems: StoryObj<typeof Demo> = {
   render: (args) => (
     <Demo {...args} />
   )
 };
 
-function Demo(props) {
+function Demo(props: Omit<SpectrumListViewProps<any>, 'children'>): JSX.Element {
   let [items, setItems] = useState<{key: number, label: string}[]>([
     {key: 1, label: 'utilities'}
   ]);

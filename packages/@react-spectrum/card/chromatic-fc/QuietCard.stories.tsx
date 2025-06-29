@@ -31,7 +31,7 @@ export const Quiet: CardStory = {
   ...Default
 };
 
-export const QuietSelected = {
+export const QuietSelected: CardStory = {
   ...Selected,
   name: 'Selected'
 };

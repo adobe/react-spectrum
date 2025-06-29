@@ -15,8 +15,8 @@ import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import {Meta} from '@storybook/react';
-import React, {useMemo} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
 
@@ -25,6 +25,8 @@ const meta: Meta<SpectrumCardViewProps<object>> = {
 };
 
 export default meta;
+
+export type CardViewStory = StoryObj<typeof CardView>;
 
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
@@ -51,7 +53,7 @@ let itemsLowVariance = [
   {width: 314, height: 1009, src: 'https://i.imgur.com/3lzeoK7.jpg', id: 22, title: 'Bob 8'}
 ];
 
-function DynamicCardView(props: SpectrumCardViewProps<object>) {
+function DynamicCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
@@ -73,20 +75,17 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
-const Template = (props) =>
-  <DynamicCardView {...props} />;
-
-export const DefaultGrid = {
-  render: Template,
+export const DefaultGrid: CardViewStory = {
+  render: (args) => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance}
 };
 
-export const DefaultGallery = {
-  render: Template,
+export const DefaultGallery: CardViewStory = {
+  render: (args) => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance, layout: GalleryLayout}
 };
 
-export const DefaultWaterfall = {
-  render: Template,
+export const DefaultWaterfall: CardViewStory = {
+  render: (args) => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance, layout: WaterfallLayout}
 };

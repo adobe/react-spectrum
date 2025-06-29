@@ -10,29 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disabled, DisabledInvalid, ErrorMessage, MinMax, Selected, Unavailable} from '../chromatic/Calendar.stories';
+import {Calendar} from '../';
+import {CalendarDate} from '@internationalized/date';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 export default {
   title: 'Calendar'
-};
+} as Meta<typeof Calendar>;
 
-export const All = () => (
+export type CalendarStory = StoryFn<typeof Calendar>;
+
+const date = new CalendarDate(2022, 2, 3);
+
+export const All: CalendarStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>Selected</h2>
-    <Selected />
+    <Calendar value={date} />
     <h2>Min Max</h2>
-    <MinMax />
+    <Calendar
+      minValue={new CalendarDate(2022, 2, 10)}
+      maxValue={new CalendarDate(2022, 2, 20)} />
     <h2>Disabled</h2>
-    <Disabled />
+    <Calendar isDisabled value={date} />
     <h2>Unavailable</h2>
-    <Unavailable />
+    <Calendar
+      focusedValue={date}
+      isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
     <h2>Error Message</h2>
-    <ErrorMessage />
+    <Calendar value={date} isInvalid errorMessage="Selection invalid." />
     <h2>Disabled Invalid</h2>
-    <DisabledInvalid />
+    <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />
   </Flex>
 );
+
 All.story = {
   name: 'all'
 };

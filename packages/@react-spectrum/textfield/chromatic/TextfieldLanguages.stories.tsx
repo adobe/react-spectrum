@@ -12,6 +12,7 @@
 
 import {Flex} from '@react-spectrum/layout';
 import Info from '@spectrum-icons/workflow/Info';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {render} from './Textfield.stories';
 import {TextField} from '../';
@@ -27,9 +28,11 @@ export default {
       scales: ['large', 'medium']
     }
   }
-};
+} as Meta<typeof TextField>;
 
-export const Diacritics = () => (
+export type TextFieldStory = StoryFn<typeof TextField>;
+
+export const Diacritics: TextFieldStory = () => (
   <Flex gap="size-200" direction="row" wrap>
     <TextField label="Label" value="value" />
     <TextField label="رِفِتـــانٍ خانٍِ" value="رِفِتـــانٍ خانٍِ" />
@@ -42,13 +45,13 @@ Diacritics.story = {
   name: 'diacritics'
 };
 
-export const Value測試IconInfoLabelPositionSideValidationStateValid = () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
+export const Value測試IconInfoLabelPositionSideValidationStateValid: TextFieldStory = () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
 
 Value測試IconInfoLabelPositionSideValidationStateValid.story = {
   name: 'value: 測試, icon: Info, labelPosition: side, validationState: valid'
 };
 
-export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel = () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
+export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
 
 ValueاختبارIsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'value: اختبار, isRequired: false, necessityIndicator: label'

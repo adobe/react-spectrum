@@ -12,7 +12,8 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {AlertDialog, DialogTrigger} from '../';
-import React from 'react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 import {singleParagraph} from './Dialog.stories';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 
@@ -22,9 +23,11 @@ export default {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}
   },
   excludeStories: ['renderAlert']
-};
+} as Meta<typeof AlertDialog>;
 
-export const Destructive = () => renderAlert({
+export type AlertDialogStory = StoryFn<typeof AlertDialog>;
+
+export const Destructive: AlertDialogStory = () => renderAlert({
   variant: 'destructive',
   title: 'Warning Destructive',
   children: singleParagraph(),
@@ -36,7 +39,7 @@ Destructive.story = {
   name: 'destructive'
 };
 
-export const Confirmation = () => renderAlert({
+export const Confirmation: AlertDialogStory = () => renderAlert({
   variant: 'confirmation',
   title: 'Confirmation Required',
   children: singleParagraph(),
@@ -48,7 +51,7 @@ Confirmation.story = {
   name: 'confirmation'
 };
 
-export const Information = () => renderAlert({
+export const Information: AlertDialogStory = () => renderAlert({
   variant: 'information',
   title: 'Informative Alert',
   children: singleParagraph(),
@@ -60,7 +63,7 @@ Information.story = {
   name: 'information'
 };
 
-export const Error = () => renderAlert({
+export const Error: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -72,7 +75,7 @@ Error.story = {
   name: 'error'
 };
 
-export const Warning = () => renderAlert({
+export const Warning: AlertDialogStory = () => renderAlert({
   variant: 'warning',
   title: 'This is a warning',
   children: singleParagraph(),
@@ -84,7 +87,7 @@ Warning.story = {
   name: 'warning'
 };
 
-export const PrimaryDisabled = () => renderAlert({
+export const PrimaryDisabled: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -97,7 +100,7 @@ PrimaryDisabled.story = {
   name: 'primary disabled'
 };
 
-export const AutoFocusPrimary = () => renderAlert({
+export const AutoFocusPrimary: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -111,7 +114,7 @@ AutoFocusPrimary.story = {
   name: 'autoFocus primary'
 };
 
-export const SecondaryDisabled = () => renderAlert({
+export const SecondaryDisabled: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -125,7 +128,7 @@ SecondaryDisabled.story = {
   name: 'secondary disabled'
 };
 
-export const AutoFocusSecondary = () => renderAlert({
+export const AutoFocusSecondary: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -139,7 +142,7 @@ AutoFocusSecondary.story = {
   name: 'autoFocus secondary'
 };
 
-export const AutoFocusCancel = () => renderAlert({
+export const AutoFocusCancel: AlertDialogStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -153,7 +156,7 @@ AutoFocusCancel.story = {
   name: 'autoFocus cancel'
 };
 
-export function renderAlert({...props}: SpectrumAlertDialogProps) {
+export function renderAlert({...props}: SpectrumAlertDialogProps): JSX.Element {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <DialogTrigger defaultOpen>

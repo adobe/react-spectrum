@@ -15,18 +15,20 @@ import {DropZone, SpectrumDropZoneProps} from '../';
 import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
 const meta: Meta<SpectrumDropZoneProps> = {
   title: 'DropZone',
   component: DropZone
-};
+} as Meta<typeof DropZone>;
 
 export default meta;
 
-export const Default = {
+export type DropZoneStory = StoryObj<typeof DropZone>;
+
+export const Default: DropZoneStory = {
   args: {
     children: (
       <>
@@ -43,7 +45,7 @@ export const Default = {
   }
 };
 
-export const WithFileTrigger = {
+export const WithFileTrigger: DropZoneStory = {
   args: {
     children: (
       <>

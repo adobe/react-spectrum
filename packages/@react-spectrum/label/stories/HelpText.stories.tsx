@@ -16,8 +16,6 @@ import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
 
-type HelpTextStory = StoryObj<typeof TextField>;
-
 const argTypes = {
   label: {
     control: 'text'
@@ -59,9 +57,11 @@ export default {
   argTypes: argTypes
 } as Meta<typeof TextField>;
 
-export let Default: HelpTextStory = {};
+export type HelpTextStory = StoryObj<typeof TextField>;
 
-export let WithState: HelpTextStory = {
+export const Default: HelpTextStory = {};
+
+export const WithState: HelpTextStory = {
   args: {
     label: 'Empty field',
     description: 'This input is only valid when it\'s empty.',
@@ -86,7 +86,7 @@ export let AriaLabel: HelpTextStory = {
   }
 };
 
-export const DescriptionAndCustomDescription = {
+export const DescriptionAndCustomDescription: StoryObj<SpectrumTextFieldProps & {customDescription: string}> = {
   args: {
     customDescription: 'Custom description.',
     'aria-describedby': 'custom-description'

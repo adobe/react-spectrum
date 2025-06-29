@@ -13,6 +13,7 @@
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
@@ -27,27 +28,28 @@ export default {
       scales: ['large', 'medium']
     }
   }
-};
+} as Meta<typeof ActionButton>;
 
-export const JapaneseIconTextStaticColorWhite = () => (
-  <View backgroundColor="static-blue-700" padding="size-1000">
-    <Flex direction="column" rowGap="size-150">
-      <ActionButton staticColor="white">
-        <Add />
-        <Text>ディフォルト</Text>
-      </ActionButton>
-      <ActionButton staticColor="white" isQuiet>
-        <Add />
-        <Text>静かな</Text>
-      </ActionButton>
-      <ActionButton staticColor="white" isDisabled>
-        <Text>無効</Text>
-        <Add />
-      </ActionButton>
-    </Flex>
-  </View>
-);
+export type ActionButtonStory = StoryObj<typeof ActionButton>;
 
-JapaneseIconTextStaticColorWhite.story = {
+export const JapaneseIconTextStaticColorWhite: ActionButtonStory = {
+  render: () => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Flex direction="column" rowGap="size-150">
+        <ActionButton staticColor="white">
+          <Add />
+          <Text>ディフォルト</Text>
+        </ActionButton>
+        <ActionButton staticColor="white" isQuiet>
+          <Add />
+          <Text>静かな</Text>
+        </ActionButton>
+        <ActionButton staticColor="white" isDisabled>
+          <Text>無効</Text>
+          <Add />
+        </ActionButton>
+      </Flex>
+    </View>
+  ),
   name: 'Japanese, icon + text, staticColor: white'
 };

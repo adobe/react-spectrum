@@ -10,26 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {ElementA, VariantAccent, VariantNegative, VariantPrimary, WithIcon} from '../chromatic/Button.stories';
+import Bell from '@spectrum-icons/workflow/Bell';
+import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {Render} from '../chromatic/Button.stories';
+import {StoryFn} from '@storybook/react';
+import {Text} from '@react-spectrum/text';
 
 export default {
   title: 'Button'
 };
 
-export const All = () => (
+export type ButtonStory = StoryFn<typeof Render>;
+
+export const All: ButtonStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>Accent</h2>
-    <VariantAccent />
+    <Render variant="accent" />
     <h2>Primary</h2>
-    <VariantPrimary />
+    <Render variant="primary" />
     <h2>Negative</h2>
-    <VariantNegative />
+    <Render variant="negative" />
     <h2>element a</h2>
-    <ElementA />
+    <Render elementType="a" variant="primary" />
     <h2>with icon</h2>
-    <WithIcon />
+    <Flex gap="size-200">
+      <Button variant="primary">
+        <Bell />
+        <Text>Default</Text>
+      </Button>
+      <Button
+        isDisabled
+        variant="primary">
+        <Text>Disabled</Text>
+        <Bell />
+      </Button>
+    </Flex>
   </Flex>
 );
 All.story = {

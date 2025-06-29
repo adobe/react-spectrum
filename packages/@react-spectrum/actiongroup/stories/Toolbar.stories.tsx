@@ -41,7 +41,9 @@ export interface SpectrumToolbarProps extends AriaLabelingProps {
   orientation?: Orientation
 }
 
-export const Toolbar = forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const Toolbar:
+  React.ForwardRefExoticComponent<SpectrumToolbarProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
   props = useProviderProps(props);
   props = useSlotProps(props, 'toolbar');
   let {

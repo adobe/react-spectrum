@@ -14,7 +14,7 @@ import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert, SpectrumInlineAlertProps} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
 type StoryArgs = SpectrumInlineAlertProps & {title: string, content: string};
@@ -42,7 +42,9 @@ const meta: Meta<StoryArgs> = {
 
 export default meta;
 
-export const Default = {
+export type InlineAlertStory = StoryObj<StoryArgs>;
+
+export const Default: InlineAlertStory = {
   render: (args) => (
     <InlineAlert {...args}>
       <Heading>{args.title}</Heading>
@@ -51,7 +53,7 @@ export const Default = {
   )
 };
 
-export const Dynamic = {
+export const Dynamic: InlineAlertStory = {
   render: (args) => <DynamicExample {...args} />
 };
 
