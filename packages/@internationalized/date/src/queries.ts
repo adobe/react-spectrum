@@ -133,12 +133,21 @@ let localTimeZone: string | null = null;
 
 /** Returns the time zone identifier for the current user. */
 export function getLocalTimeZone(): string {
-  // TODO: invalidate this somehow?
   if (localTimeZone == null) {
     localTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
   return localTimeZone!;
+}
+
+/** Sets the time zone identifier for the current user. */
+export function setLocalTimeZone(timeZone: string): void {
+  localTimeZone = timeZone;
+}
+
+/** Resets the time zone identifier for the current user. */
+export function resetLocalTimeZone(): void {
+  localTimeZone = null;
 }
 
 /** Returns the first date of the month for the given date. */
