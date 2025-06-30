@@ -13,27 +13,21 @@
 import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
-  Button,
-  ButtonRenderProps,
   ContextValue,
   DateInput,
-  DateSegment,
   DateValue,
-  DialogContext,
-  FormContext,
-  Provider
+  FormContext
 } from 'react-aria-components';
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {CalendarButton, CalendarPopover} from './DatePicker';
+import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
+import {DateSegment} from './DateField';
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {IconContext, RangeCalendar, TimeField} from '../';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PopoverBase} from './Popover';
-import {pressScale} from './pressScale';
+import {RangeCalendar, TimeField} from '../';
+import {style} from '../style' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -48,7 +42,8 @@ export interface DateRangePickerProps<T extends DateValue> extends
      *
      * @default 'M'
      */
-    size?: 'S' | 'M' | 'L' | 'XL'
+    size?: 'S' | 'M' | 'L' | 'XL',
+    visibleMonths?: number
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -61,23 +56,9 @@ const segmentContainer = style({
   display: 'flex',
   flexWrap: 'nowrap'
 });
-const segment = style({
+const input = style({
   flexGrow: 0,
   flexShrink: 0
-});
-
-const dateInput = style({
-  outlineStyle: 'none',
-  caretColor: 'transparent',
-  backgroundColor: {
-    default: 'transparent',
-    isFocused: 'blue-900'
-  },
-  color: {
-    isFocused: 'white'
-  },
-  borderRadius: '[2px]',
-  paddingX: 2
 });
 
 const iconStyles = style({
@@ -85,47 +66,6 @@ const iconStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'end'
-});
-
-const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
-  ...focusRing(),
-  ...controlBorderRadius('sm'),
-  cursor: 'default',
-  display: 'flex',
-  textAlign: 'center',
-  borderStyle: 'none',
-  alignItems: 'center',
-  justifyContent: 'center',
-  size: {
-    size: {
-      S: 16,
-      M: 20,
-      L: 24,
-      XL: 32
-    }
-  },
-  marginStart: 'text-to-control',
-  aspectRatio: 'square',
-  transition: {
-    default: 'default',
-    forcedColors: 'none'
-  },
-  backgroundColor: {
-    default: baseColor('gray-100'),
-    isOpen: 'gray-200',
-    isDisabled: 'disabled',
-    forcedColors: {
-      default: 'ButtonText',
-      isHovered: 'Highlight',
-      isOpen: 'Highlight',
-      isDisabled: 'GrayText'
-    }
-  },
-  color: {
-    default: baseColor('neutral'),
-    isDisabled: 'disabled',
-    forcedColors: 'ButtonFace'
-  }
 });
 
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
@@ -150,7 +90,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
-  let buttonRef = useRef<HTMLButtonElement>(null);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
 
   // TODO: fix width? default min width?
@@ -200,12 +139,12 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 paddingEnd: 4
               })({size})}>
               <div className={segmentContainer}>
-                <DateInput slot="start" className={segment}>
-                  {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                <DateInput slot="start" className={input}>
+                  {(segment) => <DateSegment segment={segment} />}
                 </DateInput>
                 <span aria-hidden="true" className={style({flexShrink: 0, flexGrow: 0, paddingX: 2})}>–</span>
-                <DateInput slot="end" className={segment}>
-                  {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                <DateInput slot="end" className={input}>
+                  {(segment) => <DateSegment segment={segment} />}
                 </DateInput>
               </div>
               {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
@@ -216,60 +155,38 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                   display: 'flex',
                   justifyContent: 'end'
                 })}>
-                <Button
-                  ref={buttonRef}
-                  // Prevent press scale from sticking while DateRangePicker is open.
-                  // @ts-ignore
-                  isPressed={false}
-                  onFocusChange={setButtonHasFocus}
-                  style={renderProps => pressScale(buttonRef)(renderProps)}
-                  className={renderProps => inputButton({
-                    ...renderProps,
-                    size,
-                    isOpen
-                  })}>
-                  <Provider
-                    values={[
-                      [IconContext, {
-                        styles: style({size: fontRelative(14)})
-                      }]
-                    ]}>
-                    <CalendarIcon />
-                  </Provider>
-                </Button>
+                <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
               </div>
             </FieldGroup>
-            <Popover>
-              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-                <RangeCalendar />
-                {showTimeField && (
-                  <div className={style({display: 'flex', gap: 16})}>
-                    <TimeField
-                      styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
-                      label={stringFormatter.format('rangeCalendar.startTime')}
-                      value={state.timeRange?.start || null}
-                      onChange={v => state.setTime('start', v)}
-                      placeholderValue={timePlaceholder}
-                      granularity={timeGranularity}
-                      minValue={timeMinValue}
-                      maxValue={timeMaxValue}
-                      hourCycle={props.hourCycle}
-                      hideTimeZone={props.hideTimeZone} />
-                    <TimeField
-                      styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
-                      label={stringFormatter.format('rangeCalendar.endTime')}
-                      value={state.timeRange?.end || null}
-                      onChange={v => state.setTime('end', v)}
-                      placeholderValue={timePlaceholder}
-                      granularity={timeGranularity}
-                      minValue={timeMinValue}
-                      maxValue={timeMaxValue}
-                      hourCycle={props.hourCycle}
-                      hideTimeZone={props.hideTimeZone} />
-                  </div>
-                )}
-              </div>
-            </Popover>
+            <CalendarPopover>
+              <RangeCalendar />
+              {showTimeField && (
+                <div className={style({display: 'flex', gap: 16})}>
+                  <TimeField
+                    styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                    label={stringFormatter.format('rangeCalendar.startTime')}
+                    value={state.timeRange?.start || null}
+                    onChange={v => state.setTime('start', v)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                  <TimeField
+                    styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                    label={stringFormatter.format('rangeCalendar.endTime')}
+                    value={state.timeRange?.end || null}
+                    onChange={v => state.setTime('end', v)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                </div>
+              )}
+            </CalendarPopover>
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -283,17 +200,3 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     </AriaDateRangePicker>
   );
 });
-
-function Popover(props) {
-  // We don't have a dialog anymore, so we don't consume DialogContext. Have to place the
-  // id and aria label on something otherwise we get a violation.
-  let dialogProps = useContext(DialogContext) as any;
-  return (
-    <PopoverBase
-      {...dialogProps}
-      hideArrow
-      styles={style({paddingX: 16, paddingY: 32, overflow: 'auto'})}>
-      {props.children}
-    </PopoverBase>
-  );
-}

@@ -13,9 +13,9 @@
 import {
   DateField as AriaDateField,
   DateFieldProps as AriaDateFieldProps,
+  DateSegment as AriaDateSegment,
   ContextValue,
   DateInput,
-  DateSegment,
   DateValue,
   FormContext
 } from 'react-aria-components';
@@ -23,6 +23,7 @@ import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {DateSegment as IDateSegment} from 'react-stately';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -46,7 +47,7 @@ const segmentContainer = style({
   flexGrow: 1
 });
 
-const dateInput = style({
+const dateSegment = style({
   outlineStyle: 'none',
   caretColor: 'transparent',
   backgroundColor: {
@@ -57,7 +58,11 @@ const dateInput = style({
     isFocused: 'white'
   },
   borderRadius: '[2px]',
-  paddingX: 2
+  paddingX: {
+    default: 2,
+    isPunctuation: 0
+  },
+  paddingY: 2
 });
 
 const iconStyles = style({
@@ -122,7 +127,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
                 paddingX: 'edge-to-text'
               })({size})}>
               <DateInput className={segmentContainer}>
-                {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                {(segment) => <DateSegment segment={segment} />}
               </DateInput>
               {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
             </FieldGroup>
@@ -139,3 +144,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     </AriaDateField>
   );
 });
+
+export function DateSegment(props: {segment: IDateSegment}): ReactElement {
+  return <AriaDateSegment className={(renderProps) => dateSegment({...renderProps, isPunctuation: props.segment.type === 'literal'})} {...props} />;
+}

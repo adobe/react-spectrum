@@ -17,18 +17,18 @@ import {
   ButtonRenderProps,
   ContextValue,
   DateInput,
-  DateSegment,
   DateValue,
+  DialogContext,
   FormContext,
   Provider,
-  TimeValue,
-  DialogContext
+  TimeValue
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import {Calendar, IconContext, TimeField} from '../';
+import {Calendar, CalendarProps, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {DateSegment} from './DateField';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
@@ -41,6 +41,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DatePickerProps<T extends DateValue> extends
   Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style'>,
+  Pick<CalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -60,20 +61,6 @@ const segmentContainer = style({
   overflow: 'hidden'
 });
 
-const dateInput = style({
-  outlineStyle: 'none',
-  caretColor: 'transparent',
-  backgroundColor: {
-    default: 'transparent',
-    isFocused: 'blue-900'
-  },
-  color: {
-    isFocused: 'white'
-  },
-  borderRadius: '[2px]',
-  paddingX: 2
-});
-
 const iconStyles = style({
   flexGrow: 1,
   display: 'flex',
@@ -84,6 +71,7 @@ const iconStyles = style({
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   ...focusRing(),
   ...controlBorderRadius('sm'),
+  font: 'ui',
   cursor: 'default',
   display: 'flex',
   textAlign: 'center',
@@ -101,10 +89,7 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
   marginStart: 'text-to-control',
   aspectRatio: 'square',
   flexShrink: 0,
-  transition: {
-    default: 'default',
-    forcedColors: 'none'
-  },
+  transition: 'default',
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
@@ -142,10 +127,11 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     UNSAFE_className,
     styles,
     placeholderValue,
+    visibleMonths,
+    createCalendar,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
-  let buttonRef = useRef<HTMLButtonElement>(null);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
 
   return (
@@ -191,50 +177,28 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                 paddingEnd: 4
               })({size})}>
               <DateInput className={segmentContainer}>
-                {(segment) => <DateSegment className={dateInput} segment={segment} />}
+                {(segment) => <DateSegment segment={segment} />}
               </DateInput>
               {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
-              <Button
-                ref={buttonRef}
-                // Prevent press scale from sticking while DatePicker is open.
-                // @ts-ignore
-                isPressed={false}
-                onFocusChange={setButtonHasFocus}
-                style={renderProps => pressScale(buttonRef)(renderProps)}
-                className={renderProps => inputButton({
-                  ...renderProps,
-                  size,
-                  isOpen
-                })}>
-                <Provider
-                  values={[
-                    [IconContext, {
-                      styles: style({size: fontRelative(14)})
-                    }]
-                  ]}>
-                  <CalendarIcon />
-                </Provider>
-              </Button>
+              <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
-            <Popover>
-              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-                <Calendar />
-                {showTimeField && (
-                  <TimeField
-                    styles={style({alignSelf: 'start'})}
-                    label={stringFormatter.format('calendar.time')}
-                    value={state.timeValue}
-                    // TODO: why do i need the cast?
-                    onChange={v => state.setTimeValue(v as TimeValue)}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone} />
-                )}
-              </div>
-            </Popover>
+            <CalendarPopover>
+              <Calendar visibleMonths={visibleMonths} createCalendar={createCalendar} />
+              {showTimeField && (
+                <TimeField
+                  styles={style({alignSelf: 'start'})}
+                  label={stringFormatter.format('calendar.time')}
+                  value={state.timeValue}
+                  // TODO: why do i need the cast?
+                  onChange={v => state.setTimeValue(v as TimeValue)}
+                  placeholderValue={timePlaceholder}
+                  granularity={timeGranularity}
+                  minValue={timeMinValue}
+                  maxValue={timeMaxValue}
+                  hourCycle={props.hourCycle}
+                  hideTimeZone={props.hideTimeZone} />
+              )}
+            </CalendarPopover>
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -249,7 +213,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   );
 });
 
-function Popover(props) {
+export function CalendarPopover(props: PropsWithChildren): ReactElement {
   // We don't have a dialog anymore, so we don't consume DialogContext. Have to place the
   // id and aria label on something otherwise we get a violation.
   let dialogProps = useContext(DialogContext) as any;
@@ -257,9 +221,44 @@ function Popover(props) {
     <PopoverBase
       {...dialogProps}
       hideArrow
-      styles={style({paddingX: 16, paddingY: 32, overflow: 'auto'})}>
+      styles={style({
+        paddingX: 16,
+        paddingY: 32,
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16
+      })}>
       {props.children}
     </PopoverBase>
   );
 }
 
+
+export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL', setButtonHasFocus: (hasFocus: boolean) => void}): ReactElement {
+  let buttonRef = useRef<HTMLButtonElement>(null);
+  let {isOpen, size, setButtonHasFocus} = props;
+  return (
+    <Button
+      ref={buttonRef}
+      // Prevent press scale from sticking while DatePicker is open.
+      // @ts-ignore
+      isPressed={false}
+      onFocusChange={setButtonHasFocus}
+      style={renderProps => pressScale(buttonRef)(renderProps)}
+      className={renderProps => inputButton({
+        ...renderProps,
+        size,
+        isOpen
+      })}>
+      <Provider
+        values={[
+          [IconContext, {
+            styles: style({size: fontRelative(14)})
+          }]
+        ]}>
+        <CalendarIcon />
+      </Provider>
+    </Button>
+  );
+}

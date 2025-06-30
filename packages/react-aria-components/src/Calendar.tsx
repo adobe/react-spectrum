@@ -30,7 +30,7 @@ import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, us
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {AllHTMLAttributes, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -323,7 +323,7 @@ export interface CalendarCellRenderProps {
   isToday: boolean
 }
 
-export interface CalendarGridProps extends StyleProps {
+export interface CalendarGridProps extends StyleProps, Omit<AllHTMLAttributes<HTMLTableElement>, 'children'> {
   /**
    * Either a function to render calendar cells for each date in the month,
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
@@ -382,6 +382,8 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       <table
         {...filterDOMProps(props as any)}
         {...gridProps}
+        cellPadding={props.cellPadding}
+        cellSpacing={props.cellSpacing}
         ref={ref}
         style={props.style}
         className={props.className ?? 'react-aria-CalendarGrid'}>
@@ -490,11 +492,7 @@ export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
   /** The date to render in the cell. */
-  date: CalendarDate,
-  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
-  cellClassName?: string | ((values: CalendarCellRenderProps & {defaultClassName: string | undefined}) => string),
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  cellStyle?: CSSProperties | ((values: CalendarCellRenderProps & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
+  date: CalendarDate
 }
 
 /**
@@ -542,22 +540,6 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     }
   });
 
-  let cellRenderProps = useRenderProps({
-    className: otherProps.cellClassName,
-    style: otherProps.cellStyle,
-    defaultClassName: 'react-aria-CalendarCellWrapper',
-    values: {
-      date,
-      isHovered,
-      isOutsideMonth,
-      isFocusVisible,
-      isSelectionStart,
-      isSelectionEnd,
-      isToday: istoday,
-      ...states
-    }
-  });
-
   let dataAttrs = {
     'data-focused': states.isFocused || undefined,
     'data-hovered': isHovered || undefined,
@@ -575,7 +557,7 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   };
 
   return (
-    <td {...mergeProps(cellProps, cellRenderProps)} ref={ref}>
+    <td {...cellProps} ref={ref}>
       <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );

@@ -10,31 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, Heading, pressScale} from './';
 import {
-  CalendarCell as AriaCalendarCell,
+  CalendarGrid as AriaCalendarGrid,
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
-  ButtonProps,
-  CalendarCellProps,
-  CalendarCellRenderProps,
-  CalendarGrid,
   CalendarGridBody,
   CalendarGridHeader,
-  CalendarHeaderCell,
   ContextValue,
   DateValue,
-  RangeCalendarStateContext,
   Text
 } from 'react-aria-components';
-import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
+import {CalendarButton, CalendarCell, CalendarHeaderCell, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, ReactNode, useContext, useMemo, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, ValidationResult} from '@react-types/shared';
-import {getEraFormat} from '@react-aria/calendar';
-import {useDateFormatter} from '@react-aria/i18n';
+import {Header} from './';
+import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -60,127 +53,6 @@ const headerStyles = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   width: 'full'
-});
-
-const headingStyles = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  margin: 0,
-  width: 'full'
-});
-
-const titleStyles = style({
-  font: 'title-lg',
-  textAlign: 'center',
-  flexGrow: 1,
-  flexShrink: 0,
-  flexBasis: '0%',
-  minWidth: 0
-});
-
-const headerCellStyles = style({
-  font: 'title-sm',
-  cursor: 'default',
-  textAlign: 'center',
-  flexGrow: 1
-});
-
-const cellStyles = style<CalendarCellRenderProps>({
-  paddingX: 4,
-  '--cell-gap': {
-    type: 'paddingStart',
-    value: 4
-  },
-  paddingY: 2
-});
-
-const cellInnerWrapperStyles = style<CalendarCellRenderProps>({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 'full',
-  boxSizing: 'border-box',
-  borderStartRadius: {
-    isSelectionStart: 'full'
-  },
-  borderEndRadius: {
-    isSelectionEnd: 'full'
-  },
-  outlineStyle: 'none'
-});
-
-const innerCellStyles = style<CalendarCellRenderProps>({
-  ...focusRing(),
-  outlineOffset: {
-    default: -2,
-    isToday: 2,
-    isSelected: 2
-  },
-  position: 'relative',
-  font: 'body-sm',
-  cursor: 'default',
-  height: 32,
-  borderRadius: 'full',
-  display: {
-    default: 'flex',
-    isOutsideMonth: 'none'
-  },
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: {
-    default: 'transparent',
-    isHovered: 'gray-100',
-    isToday: {
-      default: baseColor('gray-300'),
-      isDisabled: 'disabled'
-    },
-    isSelectionStart: {
-      default: lightDark('accent-900', 'accent-700'),
-      isHovered: lightDark('accent-1000', 'accent-600'),
-      isPressed: lightDark('accent-1000', 'accent-600'),
-      isFocusVisible: lightDark('accent-1000', 'accent-600')
-    },
-    isSelectionEnd: {
-      default: lightDark('accent-900', 'accent-700'),
-      isHovered: lightDark('accent-1000', 'accent-600'),
-      isPressed: lightDark('accent-1000', 'accent-600'),
-      isFocusVisible: lightDark('accent-1000', 'accent-600')
-    }
-  },
-  color: {
-    isSelected: {
-      isSelectionStart: 'white',
-      isSelectionEnd: 'white'
-    },
-    isDisabled: 'disabled'
-  }
-});
-
-const unavailableStyles = style({
-  position: 'absolute',
-  top: 'calc(50% - 1px)',
-  left: 'calc(25% - 1px)',
-  right: 'calc(25% - 1px)',
-  height: 2,
-  transform: 'rotate(-16deg)',
-  borderRadius: 'full',
-  backgroundColor: '[currentColor]'
-});
-
-const selectionSpanStyles = style({
-  position: 'absolute',
-  zIndex: -1,
-  top: 0,
-  insetStart: 'calc(-1 * var(--selection-span) * (var(--cell-width) + var(--cell-gap) + var(--cell-gap)))',
-  insetEnd: 0,
-  bottom: 0,
-  borderWidth: 2,
-  borderStyle: 'dashed',
-  borderColor: 'blue-800', // focus-indicator-color
-  borderStartRadius: 'full',
-  borderEndRadius: 'full',
-  backgroundColor: 'blue-subtle'
 });
 
 export const helpTextStyles = style({
@@ -241,22 +113,20 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => {
                 return (
-                  <CalendarGrid offset={{months: i}} key={i} className={style({borderSpacing: 0, borderCollapse: 'collapse'})}>
+                  <AriaCalendarGrid cellPadding={0} className={style({borderCollapse: 'collapse', borderSpacing: 0})} offset={{months: i}} key={i}>
                     <CalendarGridHeader>
                       {(day) => (
-                        <CalendarHeaderCell className={headerCellStyles}>
+                        <CalendarHeaderCell>
                           {day}
                         </CalendarHeaderCell>
                       )}
                     </CalendarGridHeader>
                     <CalendarGridBody>
-                      {(date, weekIndex, dayIndex) => {
-                        return (
-                          <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
-                        );
-                      }}
+                      {(date, weekIndex, dayIndex) => (
+                        <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
+                      )}
                     </CalendarGridBody>
-                  </CalendarGrid>
+                  </AriaCalendarGrid>
                 );
               })}
             </div>
@@ -272,128 +142,3 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
     </AriaRangeCalendar>
   );
 });
-
-// Ordinarily the heading is a formatted date range, ie January 2025 - February 2025.
-// However, we want to show each month individually.
-const CalendarHeading = () => {
-  let {visibleRange, timeZone} = useContext(RangeCalendarStateContext) ?? {};
-  let era: any = getEraFormat(visibleRange?.start) || getEraFormat(visibleRange?.end);
-  let monthFormatter = useDateFormatter({
-    month: 'long',
-    year: 'numeric',
-    era,
-    calendar: visibleRange?.start.calendar.identifier,
-    timeZone
-  });
-  let months = useMemo(() => {
-    if (!visibleRange) {
-      return [];
-    }
-    let months: string[] = [];
-    for (let i = visibleRange.start; i.compare(visibleRange.end) <= 0; i = i.add({months: 1})) {
-      // TODO: account for the first week possibly overlapping, like with a custom 454 calendar.
-      // there has to be a better way to do this...
-      if (i.month === visibleRange.start.month) {
-        i = i.add({weeks: 1});
-      }
-      months.push(monthFormatter.format(i.toDate(timeZone!)));
-    }
-    return months;
-  }, [visibleRange, monthFormatter, timeZone]);
-
-  return (
-    <Heading styles={headingStyles}>
-      {months.map((month, i) => {
-        if (i === 0) {
-          return (
-            <Fragment key={month}>
-              <div className={titleStyles}>{month}</div>
-            </Fragment>
-          );
-        } else {
-          return (
-            <Fragment key={month}>
-              {/* Spacers to account for Next/Previous buttons and gap, spelled out to show the math */}
-              <div className={style({visibility: 'hidden', width: 32})} role="presentation" />
-              <div className={style({visibility: 'hidden', width: 24})} role="presentation" />
-              <div className={style({visibility: 'hidden', width: 32})} role="presentation" />
-              <div className={titleStyles}>{month}</div>
-            </Fragment>
-          );
-        }
-      })}
-    </Heading>
-  );
-};
-
-const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactNode}) => {
-  return (
-    <ActionButton
-      {...props}
-      isQuiet>
-      {props.children}
-    </ActionButton>
-  );
-};
-
-const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, dayIndex: number}) => {
-
-  return (
-    <AriaCalendarCell
-      {...props}
-      className={cellInnerWrapperStyles}
-      cellClassName={cellStyles}>
-      {(renderProps) => {
-        return <CalendarCellInner {...props} renderProps={renderProps} />;
-      }}
-    </AriaCalendarCell>
-  );
-};
-
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, dayIndex: number, renderProps: CalendarCellRenderProps, date: DateValue}) => {
-  let state = useContext(RangeCalendarStateContext)!;
-  let {getDatesInWeek} = state;
-  let {weekIndex, dayIndex, renderProps} = props;
-  let ref = useRef<HTMLDivElement>(null);
-  let {isUnavailable, formattedDate} = renderProps;
-  let datesInWeek = getDatesInWeek(weekIndex);
-
-  // Starting from the current day, find the first day before it in the current week that is not selected.
-  // Then, the span of selected days is the current day minus the first unselected day.
-  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => date && i > 0 && !state.isSelected(date));
-  let selectionSpan = -1;
-  if (firstUnselectedInRangeInWeek > -1 && renderProps.isSelected) {
-    selectionSpan = firstUnselectedInRangeInWeek - 1;
-  } else if (renderProps.isSelected) {
-    selectionSpan = dayIndex;
-  }
-
-  let isBackgroundStyleApplied = (
-    renderProps.isSelected
-    && (state.isSelected(props.date.subtract({days: 1}))
-      || state.isSelected(props.date.add({days: 1}))
-    ));
-
-  return (
-    <div
-      className={style({
-        position: 'relative',
-        width: 32,
-        '--cell-width': {
-          type: 'width',
-          value: '[self(width)]'
-        }
-      })}>
-      <div
-        ref={ref}
-        style={pressScale(ref, {})(renderProps)}
-        className={innerCellStyles(renderProps)}>
-        <div>
-          {formattedDate}
-        </div>
-        {isUnavailable && <div className={unavailableStyles} role="presentation" />}
-      </div>
-      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
-    </div>
-  );
-};
