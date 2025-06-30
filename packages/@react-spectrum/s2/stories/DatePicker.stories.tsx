@@ -41,10 +41,15 @@ type Story = StoryObj<typeof DatePicker>;
 
 export const Example: Story = {
   args: {
-    'aria-label': 'Birthday'
+    label: 'Birthday'
   }
 };
 
+export const AriaLabel: Story = {
+  args: {
+    'aria-label': 'Birthday'
+  }
+};
 export const Validation: Story = {
   render: (args) => (
     <Form>

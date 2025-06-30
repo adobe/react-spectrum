@@ -36,6 +36,12 @@ type Story = StoryObj<typeof TimeField>;
 
 export const Example: Story = {
   args: {
+    label: 'Launch time'
+  }
+};
+
+export const AriaLabel: Story = {
+  args: {
     'aria-label': 'Launch time'
   }
 };

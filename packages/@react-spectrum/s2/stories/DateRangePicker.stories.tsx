@@ -39,7 +39,17 @@ const meta: Meta<typeof DateRangePicker> = {
 export default meta;
 type Story = StoryObj<typeof DateRangePicker>;
 
-export const Example: Story = {};
+export const Example: Story = {
+  args: {
+    label: 'Reservation dates'
+  }
+};
+
+export const AriaLabel: Story = {
+  args: {
+    'aria-label': 'Reservation dates'
+  }
+};
 
 export const Validation: Story = {
   render: (args) => (
@@ -49,7 +59,7 @@ export const Validation: Story = {
     </Form>
   ),
   args: {
-    label: 'Birthday',
+    label: 'Reservation dates',
     isRequired: true
   }
 };
@@ -59,7 +69,7 @@ export const CustomWidth: Story = {
     <DateRangePicker {...args} styles={style({width: 384})} />
   ),
   args: {
-    label: 'Birthday'
+    label: 'Reservation dates'
   }
 };
 
