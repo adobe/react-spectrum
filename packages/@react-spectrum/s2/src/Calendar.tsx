@@ -135,7 +135,14 @@ const cellInnerStyles = style({
   outlineOffset: {
     default: -2,
     isToday: 2,
-    isSelected: 2
+    isSelected: {
+      selectionMode: {
+        single: 2,
+        range: -2
+      }
+    },
+    isSelectionStart: 2,
+    isSelectionEnd: 2
   },
   position: 'relative',
   font: 'body-sm',
