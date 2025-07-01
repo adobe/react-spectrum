@@ -13,9 +13,10 @@
 import {
   DateField as AriaDateField,
   DateFieldProps as AriaDateFieldProps,
+  DateInput as AriaDateInput,
   DateSegment as AriaDateSegment,
   ContextValue,
-  DateInput,
+  DateInputProps,
   DateValue,
   FormContext
 } from 'react-aria-components';
@@ -23,7 +24,6 @@ import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {DateSegment as IDateSegment} from 'react-stately';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -52,7 +52,7 @@ const dateSegment = style({
   caretColor: 'transparent',
   backgroundColor: {
     default: 'transparent',
-    isFocused: 'blue-900'
+    isFocused: 'blue-800'
   },
   color: {
     isFocused: 'white'
@@ -126,10 +126,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
                 ...fieldInput(),
                 paddingX: 'edge-to-text'
               })({size})}>
-              <DateInput className={segmentContainer}>
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
-              {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
+              <DateInput />
+              <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
             </FieldGroup>
             <HelpText
               size={size}
@@ -145,6 +143,18 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
   );
 });
 
-export function DateSegment(props: {segment: IDateSegment}): ReactElement {
-  return <AriaDateSegment className={(renderProps) => dateSegment({...renderProps, isPunctuation: props.segment.type === 'literal'})} {...props} />;
+export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
+  return (
+    <AriaDateInput className={segmentContainer} {...props}>
+      {(segment) => (
+        <AriaDateSegment
+          segment={segment}
+          className={(renderProps) => dateSegment({...renderProps, isPunctuation: segment.type === 'literal'})} />
+      )}
+    </AriaDateInput>
+  );
+}
+
+export function InvalidIndicator(props: {isInvalid: boolean, isDisabled: boolean}): ReactElement | null {
+  return props.isInvalid ? <div className={iconStyles}><FieldErrorIcon isDisabled={props.isDisabled} /></div> : null;
 }

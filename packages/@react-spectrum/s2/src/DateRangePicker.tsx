@@ -14,15 +14,14 @@ import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
   ContextValue,
-  DateInput,
   DateValue,
   FormContext
 } from 'react-aria-components';
 import {CalendarButton, CalendarPopover} from './DatePicker';
 import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
-import {DateSegment} from './DateField';
+import {DateInput, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
+import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -48,24 +47,13 @@ export interface DateRangePickerProps<T extends DateValue> extends
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
-const segmentContainer = style({
+const segmentsContainer = style({
   flexGrow: 0,
   flexShrink: 1,
   overflow: 'hidden',
   textWrap: 'nowrap',
   display: 'flex',
   flexWrap: 'nowrap'
-});
-const input = style({
-  flexGrow: 0,
-  flexShrink: 0
-});
-
-const iconStyles = style({
-  flexGrow: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'end'
 });
 
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
@@ -138,16 +126,12 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 paddingStart: 'edge-to-text',
                 paddingEnd: 4
               })({size})}>
-              <div className={segmentContainer}>
-                <DateInput slot="start" className={input}>
-                  {(segment) => <DateSegment segment={segment} />}
-                </DateInput>
+              <div className={segmentsContainer}>
+                <DateInput slot="start" />
                 <span aria-hidden="true" className={style({flexShrink: 0, flexGrow: 0, paddingX: 2})}>–</span>
-                <DateInput slot="end" className={input}>
-                  {(segment) => <DateSegment segment={segment} />}
-                </DateInput>
+                <DateInput slot="end" />
               </div>
-              {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
+              <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <div
                 className={style({
                   flexShrink: 0,

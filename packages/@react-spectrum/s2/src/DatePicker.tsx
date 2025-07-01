@@ -16,20 +16,19 @@ import {
   Button,
   ButtonRenderProps,
   ContextValue,
-  DateInput,
   DateValue,
   DialogContext,
   FormContext,
   Provider,
   TimeValue
 } from 'react-aria-components';
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Calendar, CalendarProps, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
-import {DateSegment} from './DateField';
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
+import {DateInput, InvalidIndicator} from './DateField';
+import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -55,30 +54,24 @@ export interface DatePickerProps<T extends DateValue> extends
 
 export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
 
-const segmentContainer = style({
-  flexGrow: 1,
-  flexShrink: 1,
-  overflow: 'hidden'
-});
-
-const iconStyles = style({
-  flexGrow: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'end'
-});
-
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   ...focusRing(),
   ...controlBorderRadius('sm'),
-  font: 'ui',
+  font: {
+    size: {
+      S: 'ui-sm',
+      M: 'ui',
+      L: 'ui-lg',
+      XL: 'ui-xl'
+    }
+  },
   cursor: 'default',
   display: 'flex',
   textAlign: 'center',
   borderStyle: 'none',
   alignItems: 'center',
   justifyContent: 'center',
-  size: {
+  width: {
     size: {
       S: 16,
       M: 20,
@@ -86,6 +79,7 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
       XL: 32
     }
   },
+  height: 'auto',
   marginStart: 'text-to-control',
   aspectRatio: 'square',
   flexShrink: 0,
@@ -174,12 +168,17 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                 ...fieldInput(),
                 textWrap: 'nowrap',
                 paddingStart: 'edge-to-text',
-                paddingEnd: 4
+                paddingEnd: {
+                  size: {
+                    S: 2,
+                    M: 4,
+                    L: space(6),
+                    XL: space(6)
+                  }
+                }
               })({size})}>
-              <DateInput className={segmentContainer}>
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
-              {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
+              <DateInput />
+              <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
             <CalendarPopover>
@@ -245,7 +244,7 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
       // @ts-ignore
       isPressed={false}
       onFocusChange={setButtonHasFocus}
-      style={renderProps => pressScale(buttonRef)(renderProps)}
+      style={pressScale(buttonRef)}
       className={renderProps => inputButton({
         ...renderProps,
         size,
@@ -254,7 +253,13 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
       <Provider
         values={[
           [IconContext, {
-            styles: style({size: fontRelative(14)})
+            styles: style({
+              '--iconPrimary': {
+                type: 'fill',
+                value: 'currentColor'
+              },
+              size: fontRelative(14)
+            })
           }]
         ]}>
         <CalendarIcon />

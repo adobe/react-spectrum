@@ -14,14 +14,13 @@ import {
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
   ContextValue,
-  DateInput,
-  DateSegment,
   FormContext,
   TimeValue
 } from 'react-aria-components';
 import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
+import {DateInput, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
+import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -41,31 +40,6 @@ export interface TimeFieldProps<T extends TimeValue> extends
 }
 
 export const TimeFieldContext = createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
-
-const segmentContainer = style({
-  flexGrow: 1
-});
-
-// TODO: Figure out field width
-const timeInput = style({
-  outlineStyle: 'none',
-  caretColor: 'transparent',
-  backgroundColor: {
-    default: 'transparent',
-    isFocused: 'blue-900'
-  },
-  color: {
-    isFocused: 'white'
-  },
-  borderRadius: '[2px]',
-  paddingX: 2
-});
-
-const iconStyles = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'end'
-});
 
 export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(
   props: TimeFieldProps<T>, ref: Ref<HTMLDivElement>
@@ -122,10 +96,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
                 ...fieldInput(),
                 paddingX: 'edge-to-text'
               })({size})}>
-              <DateInput className={segmentContainer}>
-                {(segment) => <DateSegment className={timeInput} segment={segment} />}
-              </DateInput>
-              {isInvalid && <div className={iconStyles}><FieldErrorIcon isDisabled={isDisabled} /></div>}
+              <DateInput />
+              <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
             </FieldGroup>
             <HelpText
               size={size}
