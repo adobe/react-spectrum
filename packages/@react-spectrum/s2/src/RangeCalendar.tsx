@@ -11,16 +11,13 @@
  */
 
 import {
-  CalendarGrid as AriaCalendarGrid,
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
-  CalendarGridBody,
-  CalendarGridHeader,
   ContextValue,
   DateValue,
   Text
 } from 'react-aria-components';
-import {CalendarButton, CalendarCell, CalendarHeaderCell, CalendarHeading} from './Calendar';
+import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -111,24 +108,9 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 gap: 24,
                 width: 'full'
               })}>
-              {Array.from({length: visibleMonths}).map((_, i) => {
-                return (
-                  <AriaCalendarGrid cellPadding={0} className={style({borderCollapse: 'collapse', borderSpacing: 0})} offset={{months: i}} key={i}>
-                    <CalendarGridHeader>
-                      {(day) => (
-                        <CalendarHeaderCell>
-                          {day}
-                        </CalendarHeaderCell>
-                      )}
-                    </CalendarGridHeader>
-                    <CalendarGridBody>
-                      {(date) => (
-                        <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
-                      )}
-                    </CalendarGridBody>
-                  </AriaCalendarGrid>
-                );
-              })}
+              {Array.from({length: visibleMonths}).map((_, i) => (
+                <CalendarGrid months={i} key={i} />
+              ))}
             </div>
             {errorMessage && (
               <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled})}>

@@ -15,12 +15,11 @@ import {
   DateFieldProps as AriaDateFieldProps,
   DateInput as AriaDateInput,
   DateSegment as AriaDateSegment,
-  DateSegmentProps,
   ContextValue,
   DateInputProps,
+  DateSegmentRenderProps,
   DateValue,
-  FormContext,
-  DateSegmentRenderProps
+  FormContext
 } from 'react-aria-components';
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

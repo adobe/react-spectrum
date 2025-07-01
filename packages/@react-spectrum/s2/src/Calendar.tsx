@@ -31,6 +31,7 @@ import {
   RangeCalendarStateContext,
   Text
 } from 'react-aria-components';
+import {AriaCalendarGridProps, getEraFormat} from '@react-aria/calendar';
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   CalendarDate,
@@ -41,7 +42,6 @@ import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {forwardRefType, ValidationResult} from '@react-types/shared';
-import {getEraFormat} from '@react-aria/calendar';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -218,7 +218,12 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   },
   color: {
     default: 'neutral',
-    isSelected: 'white',
+    isSelected: {
+      default: 'white',
+      selectionMode: {
+        range: 'neutral'
+      }
+    },
     isSelectionStart: 'white',
     isSelectionEnd: 'white',
     isDisabled: 'disabled',
@@ -327,20 +332,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 width: 'full'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <AriaCalendarGrid cellPadding={0} className={style({borderCollapse: 'collapse', borderSpacing: 0})} offset={{months: i}} key={i}>
-                  <CalendarGridHeader>
-                    {(day) => (
-                      <CalendarHeaderCell>
-                        {day}
-                      </CalendarHeaderCell>
-                    )}
-                  </CalendarGridHeader>
-                  <CalendarGridBody>
-                    {(date) => (
-                      <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
-                    )}
-                  </CalendarGridBody>
-                </AriaCalendarGrid>
+                <CalendarGrid months={i} key={i} />
               ))}
             </div>
             {errorMessage && (
@@ -355,6 +347,33 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     </AriaCalendar>
   );
 });
+
+export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & PropsWithChildren & {months: number}): ReactElement => {
+  // use isolation to start a new stacking context so that we can use zIndex -1 for the selection span.
+  return (
+    <AriaCalendarGrid
+      cellPadding={0}
+      className={style({
+        borderCollapse: 'collapse',
+        borderSpacing: 0,
+        isolation: 'isolate'
+      })}
+      offset={{months: props.months}}>
+      <CalendarGridHeader>
+        {(day) => (
+          <CalendarHeaderCell>
+            {day}
+          </CalendarHeaderCell>
+        )}
+      </CalendarGridHeader>
+      <CalendarGridBody>
+        {(date) => (
+          <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
+        )}
+      </CalendarGridBody>
+    </AriaCalendarGrid>
+  );
+};
 
 // Ordinarily the heading is a formatted date range, ie January 2025 - February 2025.
 // However, we want to show each month individually.
@@ -412,16 +431,28 @@ export const CalendarHeading = (): ReactElement => {
 };
 
 export const CalendarButton = (props: Omit<ButtonProps, 'children'> & {children: ReactNode}): ReactElement => {
+  let {direction} = useLocale();
   return (
-    <ActionButton
-      {...props}
-      isQuiet>
-      {props.children}
-    </ActionButton>
+    <div
+      className={
+        style({
+          scale: {
+            direction: {
+              rtl: -1
+            }
+          }
+        })({direction})
+      }>
+      <ActionButton
+        {...props}
+        isQuiet>
+        {props.children}
+      </ActionButton>
+    </div>
   );
 };
 
-export const CalendarHeaderCell = (props: Omit<CalendarHeaderCellProps, 'children'> & PropsWithChildren): ReactElement => {
+const CalendarHeaderCell = (props: Omit<CalendarHeaderCellProps, 'children'> & PropsWithChildren): ReactElement => {
   return (
     <AriaCalendarHeaderCell className={headerCellStyles}>
       {props.children}
@@ -429,7 +460,7 @@ export const CalendarHeaderCell = (props: Omit<CalendarHeaderCellProps, 'childre
   );
 };
 
-export const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined}): ReactElement => {
+const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined}): ReactElement => {
   let {locale} = useLocale();
   let defaultFirstDayOfWeek = useDefaultFirstDayOfWeek(locale);
   let firstDayOfWeek = props.firstDayOfWeek ?? defaultFirstDayOfWeek;
