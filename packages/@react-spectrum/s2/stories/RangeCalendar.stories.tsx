@@ -12,7 +12,7 @@
 
 import {ActionButton, RangeCalendar, RangeCalendarProps} from '../src';
 import {CalendarDate, getLocalTimeZone, isWeekend, today} from '@internationalized/date';
-import {categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -35,7 +35,14 @@ const meta: Meta<typeof RangeCalendar<any>> = {
       options: [1, 2, 3]
     }
   },
-  title: 'RangeCalendar'
+  title: 'RangeCalendar',
+  decorators: [
+    (Story) => (
+      <CalendarSwitcher>
+        <Story />
+      </CalendarSwitcher>
+    )
+  ]
 };
 
 export default meta;

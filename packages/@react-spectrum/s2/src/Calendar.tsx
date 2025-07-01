@@ -23,9 +23,11 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCellProps,
+  CalendarState,
   CalendarStateContext,
   ContextValue,
   DateValue,
+  RangeCalendarState,
   RangeCalendarStateContext,
   Text
 } from 'react-aria-components';
@@ -36,8 +38,13 @@ import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with 
 import {forwardRefType, ValidationResult} from '@react-types/shared';
 import {getEraFormat} from '@react-aria/calendar';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {
+  CalendarDate,
+  getDayOfWeek,
+  startOfMonth
+} from '@internationalized/date';
 
 
 export interface CalendarProps<T extends DateValue>
@@ -290,8 +297,8 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                     )}
                   </CalendarGridHeader>
                   <CalendarGridBody>
-                    {(date, weekIndex, dayIndex) => (
-                      <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
+                    {(date) => (
+                      <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
                     )}
                   </CalendarGridBody>
                 </AriaCalendarGrid>
@@ -383,26 +390,32 @@ export const CalendarHeaderCell = (props: Omit<CalendarHeaderCellProps, 'childre
   );
 };
 
-export const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {dayIndex: number, weekIndex: number}): ReactElement => {
-  let isFirstWeek = props.weekIndex === 0;
-  let isFirstChild = props.dayIndex === 0;
-  let isLastChild = props.dayIndex === 6;
+export const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined}): ReactElement => {
+  let {locale} = useLocale();
+  let defaultFirstDayOfWeek = useDefaultFirstDayOfWeek(locale);
+  let firstDayOfWeek = props.firstDayOfWeek ?? defaultFirstDayOfWeek;
+  // Calculate the day and week index based on the date.
+  let {dayIndex, weekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
+
+  let isFirstWeek = weekIndex === 0;
+  let isFirstChild = dayIndex === 0;
+  let isLastChild = dayIndex === 6;
+
+  let calendarStateContext = useContext(CalendarStateContext);
+  let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
+  let state = (calendarStateContext ?? rangeCalendarStateContext)!;
   return (
     <AriaCalendarCell
       date={props.date}
       className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek})}>
-      {(renderProps) => <CalendarCellInner {...props} renderProps={renderProps} />}
+      {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} renderProps={renderProps} />}
     </AriaCalendarCell>
   );
 };
 
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
-  let calendarStateContext = useContext(CalendarStateContext);
-  let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
-  let state = (calendarStateContext ?? rangeCalendarStateContext)!;
-
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
+  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
   let {getDatesInWeek} = state;
-  let {weekIndex, dayIndex, date, renderProps} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected} = renderProps!;
   let datesInWeek = getDatesInWeek(weekIndex);
@@ -417,8 +430,6 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekInd
     selectionSpan = dayIndex;
   }
 
-
-  let isRangeSelection = !!rangeCalendarStateContext;
   let isBackgroundStyleApplied = (
     isSelected
     && isRangeSelection
@@ -449,3 +460,59 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {weekInd
     </div>
   );
 };
+
+type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+
+/**
+ * Calculate the week index (0-based) and day index (0-based) for a given date within a month in a calendar.
+ * @param date - The date to calculate indices for.
+ * @param locale - The locale string (e.g., 'en-US', 'fr-FR', 'hi-IN-u-ca-indian').
+ * @param firstDayOfWeek - Optional override for the first day of the week ('sun', 'mon', 'tue', etc.).
+ * @returns Object with weekIndex and dayIndex.
+ */
+function useWeekAndDayIndices(
+  date: CalendarDate,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+) {
+  let {dayIndex, weekIndex} = useMemo(() => {
+    // Get the day index within the week (0-6)
+    const dayIndex = getDayOfWeek(date, locale, firstDayOfWeek);
+
+    const monthStart = startOfMonth(date);
+
+    // Calculate the week index by finding which week this date falls into
+    // within the month's calendar grid
+    const monthStartDayOfWeek = getDayOfWeek(monthStart, locale, firstDayOfWeek);
+    const dayOfMonth = date.day;
+
+    const weekIndex = Math.floor((dayOfMonth + monthStartDayOfWeek - 1) / 7);
+
+    return {
+      weekIndex,
+      dayIndex
+    };
+  }, [date, locale, firstDayOfWeek]);
+
+  return {dayIndex, weekIndex};
+}
+
+function useDefaultFirstDayOfWeek(locale: string): DayOfWeek {
+  let day = useMemo(() => {
+    // Create a known date (e.g., January 1, 2024, which was a Monday)
+    const knownDate = new CalendarDate(2024, 1, 1);
+
+    // Get the day of week for this date without specifying firstDayOfWeek
+    // This will use the locale's default
+    const dayOfWeek = getDayOfWeek(knownDate, locale);
+
+    // Since we know this date was a Monday (day 1 in our system),
+    // we can calculate the first day of the week
+    const firstDayNumber = (1 - dayOfWeek + 7) % 7;
+
+    const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+    return dayMap[firstDayNumber];
+  }, [locale]);
+
+  return day;
+}

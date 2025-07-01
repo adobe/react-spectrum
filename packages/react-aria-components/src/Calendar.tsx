@@ -455,7 +455,7 @@ export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
 export interface CalendarGridBodyProps extends StyleProps {
   /** A function to render a `<CalendarCell>` for a given date. */
-  children: (date: CalendarDate, weekIndex: number, dayIndex: number) => ReactElement
+  children: (date: CalendarDate) => ReactElement
 }
 
 function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTableSectionElement>) {
@@ -475,7 +475,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
         <tr key={weekIndex}>
           {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
             date
-              ? React.cloneElement(children(date, weekIndex, i), {key: i})
+              ? React.cloneElement(children(date), {key: i})
               : <td key={i} />
           ))}
         </tr>

@@ -11,8 +11,10 @@
  */
 
 
-import {ReactNode, useState} from 'react';
+import {PropsWithChildren, ReactElement, ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
+import { Key, useLocale } from 'react-aria';
+import { Picker, PickerItem, Provider } from '../src';
 
 type StaticColor = 'black' | 'white' | 'auto' | undefined;
 
@@ -39,7 +41,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
         {props.children}
       </div>
       {props.staticColor === 'auto' && (
-        <label 
+        <label
           className={style({
             display: 'flex',
             alignItems: 'center',
@@ -69,4 +71,36 @@ export function categorizeArgTypes(category: string, args: string[]): any {
     acc[key] = {table: {category}};
     return acc;
   }, {});
+}
+
+const calendars = [
+  {id: 'gregory', name: 'Gregorian'},
+  {id: 'japanese', name: 'Japanese'},
+  {id: 'buddhist', name: 'Buddhist'},
+  {id: 'roc', name: 'Taiwan'},
+  {id: 'persian', name: 'Persian'},
+  {id: 'indian', name: 'Indian'},
+  {id: 'islamic-umalqura', name: 'Islamic (Umm al-Qura)'},
+  {id: 'islamic-civil', name: 'Islamic Civil'},
+  {id: 'islamic-tbla', name: 'Islamic Tabular'},
+  {id: 'hebrew', name: 'Hebrew'},
+  {id: 'coptic', name: 'Coptic'},
+  {id: 'ethiopic', name: 'Ethiopic'},
+  {id: 'ethioaa', name: 'Ethiopic (Amete Alem)'}
+];
+
+export function CalendarSwitcher(props: PropsWithChildren): ReactElement {
+  let {locale} = useLocale();
+  let [calendarLocale, setCalendarLocale] = useState<Key | null>(null);
+  calendarLocale ??= calendars[0].id;
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+      <Picker items={calendars} selectedKey={calendarLocale} onSelectionChange={setCalendarLocale}>
+        {item => <PickerItem>{item.name}</PickerItem>}
+      </Picker>
+      <Provider locale={`${locale}-u-ca-${calendarLocale}`}>
+        {props.children}
+      </Provider>
+    </div>
+  );
 }

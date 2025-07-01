@@ -122,8 +122,8 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                       )}
                     </CalendarGridHeader>
                     <CalendarGridBody>
-                      {(date, weekIndex, dayIndex) => (
-                        <CalendarCell date={date} weekIndex={weekIndex} dayIndex={dayIndex} />
+                      {(date) => (
+                        <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
                       )}
                     </CalendarGridBody>
                   </AriaCalendarGrid>
