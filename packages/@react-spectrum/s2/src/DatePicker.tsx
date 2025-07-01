@@ -27,7 +27,7 @@ import {Calendar, CalendarProps, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
-import {DateInput, InvalidIndicator} from './DateField';
+import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
@@ -100,6 +100,13 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
     isDisabled: 'disabled',
     forcedColors: 'ButtonFace'
   }
+});
+
+export const timeField = style({
+  flexShrink: 1,
+  flexGrow: 0,
+  minWidth: 0,
+  width: 'unset'
 });
 
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(
@@ -177,25 +184,29 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                   }
                 }
               })({size})}>
-              <DateInput />
+              <DateInputContainer>
+                <DateInput />
+              </DateInputContainer>
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
             <CalendarPopover>
               <Calendar visibleMonths={visibleMonths} createCalendar={createCalendar} />
               {showTimeField && (
-                <TimeField
-                  styles={style({alignSelf: 'start'})}
-                  label={stringFormatter.format('calendar.time')}
-                  value={state.timeValue}
-                  // TODO: why do i need the cast?
-                  onChange={v => state.setTimeValue(v as TimeValue)}
-                  placeholderValue={timePlaceholder}
-                  granularity={timeGranularity}
-                  minValue={timeMinValue}
-                  maxValue={timeMaxValue}
-                  hourCycle={props.hourCycle}
-                  hideTimeZone={props.hideTimeZone} />
+                <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
+                  <TimeField
+                    styles={timeField}
+                    label={stringFormatter.format('calendar.time')}
+                    value={state.timeValue}
+                    // TODO: why do i need the cast?
+                    onChange={v => state.setTimeValue(v as TimeValue)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                </div>
               )}
             </CalendarPopover>
             <HelpText

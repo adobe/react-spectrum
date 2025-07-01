@@ -11,10 +11,10 @@
  */
 
 
-import {PropsWithChildren, ReactElement, ReactNode, useState} from 'react';
+import {Collection, Header, Heading, Picker, PickerItem, PickerSection, Provider} from '../src';
+import {Key, useLocale} from 'react-aria';
+import {PropsWithChildren, ReactElement, ReactNode, useMemo, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import { Key, useLocale } from 'react-aria';
-import { Picker, PickerItem, Provider } from '../src';
 
 type StaticColor = 'black' | 'white' | 'auto' | undefined;
 
@@ -73,7 +73,28 @@ export function categorizeArgTypes(category: string, args: string[]): any {
   }, {});
 }
 
-const calendars = [
+// https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
+const preferences = [
+  {locale: '', label: 'Default', ordering: 'gregory'},
+  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
+  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
+  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
+  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
+  {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
+  // {territories: 'KR', ordering: 'gregory dangi'},
+  {label: 'Thai (Thailand)', locale: 'th-TH', territories: 'TH', ordering: 'buddhist gregory'},
+  {label: 'Chinese (Taiwan)', locale: 'zh-TW', territories: 'TW', ordering: 'gregory roc chinese'}
+];
+type Calendar = {
+  id: string,
+  name: string
+};
+const calendars: Calendar[] = [
   {id: 'gregory', name: 'Gregorian'},
   {id: 'japanese', name: 'Japanese'},
   {id: 'buddhist', name: 'Buddhist'},
@@ -90,15 +111,47 @@ const calendars = [
 ];
 
 export function CalendarSwitcher(props: PropsWithChildren): ReactElement {
-  let {locale} = useLocale();
-  let [calendarLocale, setCalendarLocale] = useState<Key | null>(null);
-  calendarLocale ??= calendars[0].id;
+  let [locale, setLocale] = useState('');
+  let [calendar, setCalendar] = useState<Key | null>(calendars[0].id);
+  let {locale: defaultLocale} = useLocale();
+
+  let pref = preferences.find(p => p.locale === locale)!;
+  let preferredCalendars: Calendar[] = useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.id === p)).filter(c => c !== undefined) : [calendars[0]], [pref]);
+  let otherCalendars: Calendar[] = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p!.id === c.id)), [preferredCalendars]);
+
+  let updateLocale = locale => {
+    setLocale(locale);
+    let pref = preferences.find(p => p.locale === locale);
+    if (pref) {
+      setCalendar(pref.ordering.split(' ')[0]);
+    }
+  };
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      <Picker items={calendars} selectedKey={calendarLocale} onSelectionChange={setCalendarLocale}>
-        {item => <PickerItem>{item.name}</PickerItem>}
-      </Picker>
-      <Provider locale={`${locale}-u-ca-${calendarLocale}`}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'})}>
+      <div className={style({display: 'flex', flexDirection: 'row', gap: 16})}>
+        <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+          {item => <PickerItem id={item.locale}>{item.label}</PickerItem>}
+        </Picker>
+        <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
+          <PickerSection>
+            <Header>
+              <Heading>Preferred</Heading>
+            </Header>
+            <Collection items={preferredCalendars}>
+              {item => <PickerItem>{item!.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+          <PickerSection>
+            <Header>
+              <Heading>Other</Heading>
+            </Header>
+            <Collection items={otherCalendars}>
+              {item => <PickerItem>{item.name}</PickerItem>}
+            </Collection>
+          </PickerSection>
+        </Picker>
+      </div>
+      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].id ? '-u-ca-' + calendar : '')}>
         {props.children}
       </Provider>
     </div>

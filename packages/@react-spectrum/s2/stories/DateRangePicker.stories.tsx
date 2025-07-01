@@ -11,7 +11,7 @@
  */
 
 import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading, Link, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
@@ -27,13 +27,26 @@ const meta: Meta<typeof DateRangePicker> = {
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    visibleMonths: {
+      control: {
+        type: 'select'
+      },
+      options: [1, 2, 3]
+    }
   },
   args: {
     onOpenChange: fn(),
     onChange: fn()
   },
-  title: 'DateRangePicker'
+  title: 'DateRangePicker',
+  decorators: [
+    (Story) => (
+      <CalendarSwitcher>
+        <Story />
+      </CalendarSwitcher>
+    )
+  ]
 };
 
 export default meta;

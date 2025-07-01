@@ -18,7 +18,7 @@ import {
   TimeValue
 } from 'react-aria-components';
 import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
-import {DateInput, InvalidIndicator} from './DateField';
+import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -96,7 +96,9 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
                 ...fieldInput(),
                 paddingX: 'edge-to-text'
               })({size})}>
-              <DateInput />
+              <DateInputContainer>
+                <DateInput />
+              </DateInputContainer>
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
             </FieldGroup>
             <HelpText

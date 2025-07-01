@@ -11,7 +11,7 @@
  */
 
 import {Button, Content, ContextualHelp, Footer, Form, Heading, Link, Text, TimeField} from '../src';
-import {categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
@@ -28,7 +28,14 @@ const meta: Meta<typeof TimeField> = {
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
   },
-  title: 'TimeField'
+  title: 'TimeField',
+  decorators: [
+    (Story) => (
+      <CalendarSwitcher>
+        <Story />
+      </CalendarSwitcher>
+    )
+  ]
 };
 
 export default meta;

@@ -20,7 +20,7 @@ import {
   DateValue,
   FormContext
 } from 'react-aria-components';
-import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
+import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -44,7 +44,13 @@ export interface DateFieldProps<T extends DateValue> extends
 export const DateFieldContext = createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
-  flexGrow: 1
+  flexGrow: 1,
+  flexShrink: 1,
+  minWidth: 0,
+  height: 'full',
+  overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'center'
 });
 
 const dateSegment = style({
@@ -126,7 +132,9 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
                 ...fieldInput(),
                 paddingX: 'edge-to-text'
               })({size})}>
-              <DateInput />
+              <DateInputContainer>
+                <DateInput />
+              </DateInputContainer>
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
             </FieldGroup>
             <HelpText
@@ -143,9 +151,13 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
   );
 });
 
+export function DateInputContainer(props: PropsWithChildren): ReactElement {
+  return <div className={segmentContainer}>{props.children}</div>;
+}
+
 export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
   return (
-    <AriaDateInput className={segmentContainer} {...props}>
+    <AriaDateInput {...props}>
       {(segment) => (
         <AriaDateSegment
           segment={segment}

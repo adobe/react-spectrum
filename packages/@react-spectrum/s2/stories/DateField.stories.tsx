@@ -11,7 +11,7 @@
  */
 
 import {Button, Content, ContextualHelp, DateField, Footer, Form, Heading, Link, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
@@ -28,13 +28,26 @@ const meta: Meta<typeof DateField> = {
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
   },
-  title: 'DateField'
+  title: 'DateField',
+  decorators: [
+    (Story) => (
+      <CalendarSwitcher>
+        <Story />
+      </CalendarSwitcher>
+    )
+  ]
 };
 
 export default meta;
 type Story = StoryObj<typeof DateField>;
 
 export const Example: Story = {
+  args: {
+    label: 'Birthday'
+  }
+};
+
+export const AriaLabel: Story = {
   args: {
     'aria-label': 'Birthday'
   }

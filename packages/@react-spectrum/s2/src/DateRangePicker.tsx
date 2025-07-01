@@ -17,9 +17,9 @@ import {
   DateValue,
   FormContext
 } from 'react-aria-components';
-import {CalendarButton, CalendarPopover} from './DatePicker';
+import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
-import {DateInput, InvalidIndicator} from './DateField';
+import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -47,15 +47,6 @@ export interface DateRangePickerProps<T extends DateValue> extends
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
-const segmentsContainer = style({
-  flexGrow: 0,
-  flexShrink: 1,
-  overflow: 'hidden',
-  textWrap: 'nowrap',
-  display: 'flex',
-  flexWrap: 'nowrap'
-});
-
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
   props: DateRangePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
@@ -75,12 +66,12 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     UNSAFE_className,
     styles,
     placeholderValue,
+    visibleMonths = 1,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
 
-  // TODO: fix width? default min width?
   return (
     <AriaDateRangePicker
       ref={ref}
@@ -126,11 +117,11 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 paddingStart: 'edge-to-text',
                 paddingEnd: 4
               })({size})}>
-              <div className={segmentsContainer}>
+              <DateInputContainer>
                 <DateInput slot="start" />
                 <span aria-hidden="true" className={style({flexShrink: 0, flexGrow: 0, paddingX: 2})}>–</span>
                 <DateInput slot="end" />
-              </div>
+              </DateInputContainer>
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <div
                 className={style({
@@ -143,11 +134,11 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               </div>
             </FieldGroup>
             <CalendarPopover>
-              <RangeCalendar />
+              <RangeCalendar visibleMonths={visibleMonths} />
               {showTimeField && (
-                <div className={style({display: 'flex', gap: 16})}>
+                <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
-                    styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                    styles={timeField}
                     label={stringFormatter.format('rangeCalendar.startTime')}
                     value={state.timeRange?.start || null}
                     onChange={v => state.setTime('start', v)}
@@ -158,7 +149,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                     hourCycle={props.hourCycle}
                     hideTimeZone={props.hideTimeZone} />
                   <TimeField
-                    styles={style({flexShrink: 1, flexGrow: 1, minWidth: 'fit', flexBasis: '0%'})}
+                    styles={timeField}
                     label={stringFormatter.format('rangeCalendar.endTime')}
                     value={state.timeRange?.end || null}
                     onChange={v => state.setTime('end', v)}
