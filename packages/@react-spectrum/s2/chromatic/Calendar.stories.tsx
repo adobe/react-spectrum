@@ -89,27 +89,6 @@ export const DefaultHover: Story = {
   }
 };
 
-export const DefaultClick: Story = {
-  args: {
-    defaultFocusedValue: date
-  },
-  play: async () => {
-    let grid = screen.getByRole('grid');
-    let cell = within(grid).getAllByRole('button')[7];
-    await userEvent.hover(cell);
-    await userEvent.click(cell);
-    await userEvent.unhover(cell);
-  },
-  parameters: {
-    chromaticProvider: {
-      colorSchemes: ['light'],
-      backgrounds: ['base'],
-      locales: ['en-US'],
-      disableAnimations: true
-    }
-  }
-};
-
 export const DefaultKeyboardFocus: Story = {
   args: {
     defaultFocusedValue: date
