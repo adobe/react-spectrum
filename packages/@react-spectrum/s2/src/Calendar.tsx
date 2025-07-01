@@ -136,9 +136,12 @@ const cellStyles = style({
   justifyContent: 'center'
 });
 
-const cellInnerStyles = style({
+const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
   ...focusRing(),
-  transition: 'default',
+  transition: {
+    default: 'default',
+    forcedColors: 'none'
+  },
   outlineOffset: {
     default: -2,
     isToday: 2,
@@ -160,6 +163,7 @@ const cellInnerStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  forcedColorAdjust: 'none',
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-100',
@@ -194,14 +198,38 @@ const cellInnerStyles = style({
       isPressed: lightDark('accent-1000', 'accent-600'),
       isFocusVisible: lightDark('accent-1000', 'accent-600')
     },
-    isUnavailable: 'transparent'
+    isUnavailable: 'transparent',
+    forcedColors: {
+      default: 'transparent',
+      isToday: 'ButtonFace',
+      isHovered: 'Highlight',
+      isSelected: {
+        selectionMode: {
+          single: 'Highlight',
+          range: {
+            isHovered: 'Highlight'
+          }
+        }
+      },
+      isSelectionStart: 'Highlight',
+      isSelectionEnd: 'Highlight',
+      isUnavailable: 'transparent'
+    }
   },
   color: {
     default: 'neutral',
     isSelected: 'white',
     isSelectionStart: 'white',
     isSelectionEnd: 'white',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isToday: 'ButtonFace',
+      isSelected: 'HighlightText',
+      isSelectionStart: 'HighlightText',
+      isSelectionEnd: 'HighlightText',
+      isDisabled: 'GrayText'
+    }
   }
 });
 
@@ -225,10 +253,21 @@ const selectionSpanStyles = style({
   bottom: 0,
   borderWidth: 2,
   borderStyle: 'dashed',
-  borderColor: 'blue-800', // focus-indicator-color
+  borderColor: {
+    default: 'blue-800', // focus-indicator-color
+    forcedColors: {
+      default: 'ButtonText'
+    }
+  },
   borderStartRadius: 'full',
   borderEndRadius: 'full',
-  backgroundColor: 'blue-subtle'
+  backgroundColor: {
+    default: 'blue-subtle',
+    forcedColors: {
+      default: 'Highlight'
+    }
+  },
+  forcedColorAdjust: 'none'
 });
 
 export const helpTextStyles = style({
@@ -397,24 +436,25 @@ export const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {first
   // Calculate the day and week index based on the date.
   let {dayIndex, weekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
 
-  let isFirstWeek = weekIndex === 0;
-  let isFirstChild = dayIndex === 0;
-  let isLastChild = dayIndex === 6;
-
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let state = (calendarStateContext ?? rangeCalendarStateContext)!;
+
+  let isFirstWeek = weekIndex === 0;
+  let isFirstChild = dayIndex === 0;
+  let isLastChild = dayIndex === 6;
+  let isNextDaySelected = state.isSelected(props.date.add({days: 1}));
   return (
     <AriaCalendarCell
       date={props.date}
       className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek})}>
-      {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} renderProps={renderProps} />}
+      {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} isNextDaySelected={isNextDaySelected} isLastChild={isLastChild} renderProps={renderProps} />}
     </AriaCalendarCell>
   );
 };
 
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
-  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isNextDaySelected: boolean, isLastChild: boolean, isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
+  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection, isNextDaySelected, isLastChild} = props;
   let {getDatesInWeek} = state;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected} = renderProps!;
@@ -432,6 +472,7 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
 
   let isBackgroundStyleApplied = (
     isSelected
+    && (isLastChild || !isNextDaySelected)
     && isRangeSelection
     && (state.isSelected(date.subtract({days: 1}))
       || state.isSelected(date.add({days: 1}))

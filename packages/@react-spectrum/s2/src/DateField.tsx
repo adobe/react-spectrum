@@ -15,10 +15,12 @@ import {
   DateFieldProps as AriaDateFieldProps,
   DateInput as AriaDateInput,
   DateSegment as AriaDateSegment,
+  DateSegmentProps,
   ContextValue,
   DateInputProps,
   DateValue,
-  FormContext
+  FormContext,
+  DateSegmentRenderProps
 } from 'react-aria-components';
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -53,22 +55,30 @@ const segmentContainer = style({
   alignItems: 'center'
 });
 
-const dateSegment = style({
+const dateSegment = style<DateSegmentRenderProps & {isPunctuation: boolean}>({
   outlineStyle: 'none',
   caretColor: 'transparent',
   backgroundColor: {
     default: 'transparent',
-    isFocused: 'blue-800'
+    isFocused: 'blue-800',
+    forcedColors: {
+      default: 'transparent',
+      isFocused: 'Highlight'
+    }
   },
   color: {
-    isFocused: 'white'
+    isFocused: 'white',
+    forcedColors: {
+      isFocused: 'HighlightText'
+    }
   },
   borderRadius: '[2px]',
   paddingX: {
     default: 2,
     isPunctuation: 0
   },
-  paddingY: 2
+  paddingY: 2,
+  forcedColorAdjust: 'none'
 });
 
 const iconStyles = style({

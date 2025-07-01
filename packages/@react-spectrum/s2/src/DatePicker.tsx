@@ -83,7 +83,10 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
   marginStart: 'text-to-control',
   aspectRatio: 'square',
   flexShrink: 0,
-  transition: 'default',
+  transition: {
+    default: 'default',
+    forcedColors: 'none'
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
