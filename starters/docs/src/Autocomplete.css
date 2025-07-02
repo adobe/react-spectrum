@@ -1,0 +1,37 @@
+@import './Menu.css';
+@import './Button.css';
+@import './SearchField.css';
+@import "./theme.css";
+
+.my-autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 180px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
+}
+
+.react-aria-SearchField {
+  width: 100%;
+}
+
+.react-aria-Label {
+  margin-bottom: .5em;
+}
+
+.react-aria-Menu {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+
+.react-aria-MenuItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+}

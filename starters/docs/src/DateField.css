@@ -1,0 +1,70 @@
+@import './Form.css';
+@import './Button.css';
+@import "./theme.css";
+
+.react-aria-DateField {
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.react-aria-DateInput {
+  display: inline;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--field-background);
+  width: fit-content;
+  min-width: 150px;
+  white-space: nowrap;
+  forced-color-adjust: none;
+
+  &[data-focus-within] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+}
+
+.react-aria-DateSegment {
+  padding: 0 2px;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  color: var(--text-color);
+
+  &[data-type=literal] {
+    padding: 0;
+  }
+
+  &[data-placeholder] {
+    color: var(--text-color-placeholder);
+    font-style: italic;
+  }
+
+  &:focus {
+    color: var(--highlight-foreground);
+    background: var(--highlight-background);
+    outline: none;
+    border-radius: 4px;
+    caret-color: transparent;
+  }
+
+  &[data-invalid] {
+    color: var(--invalid-color);
+
+    &:focus {
+      background: var(--highlight-background-invalid);
+      color: var(--highlight-foreground);
+    }
+  }
+}
+
+.react-aria-DateField {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}

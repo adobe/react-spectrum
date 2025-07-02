@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
     "@storybook/addon-interactions": "^8.6.14",
@@ -23,9 +27,5 @@
   "resolutions": {
     "@types/mime": "3.0.4",
     "jackspeak": "2.1.1"
-  },
-  "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
   }
 }

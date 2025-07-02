@@ -1,0 +1,120 @@
+@import './Button.css';
+@import './Popover.css';
+@import './SearchField.css';
+@import "./theme.css";
+
+.react-aria-Menu {
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 2px;
+  min-width: 150px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.react-aria-MenuItem {
+  margin: 2px;
+  padding: 0.25025rem 0.499625rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 0.9380000000000001rem;
+  position: relative;
+  display: grid;
+  grid-template-areas: "label kbd"
+                      "desc  kbd";
+  align-items: center;
+  column-gap: 20px;
+  forced-color-adjust: none;
+
+  &[data-focused] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+  }
+}
+
+.react-aria-MenuItem {
+  &[data-selection-mode] {
+    padding-left: 24px;
+
+    &::before {
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
+
+    &[data-selection-mode=multiple][data-selected]::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
+
+    &[data-selection-mode=single][data-selected]::before {
+      content: '●';
+      content: '●' / '';
+      transform: scale(0.7)
+    }
+  }
+}
+
+.react-aria-MenuItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.react-aria-Menu {
+  .react-aria-MenuSection:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.000125rem;
+    font-weight: bold;
+    padding: 0 0.6247499999999999rem;
+  }
+
+  .react-aria-Separator {
+    height: 1px;
+    background: var(--border-color);
+    margin: 2px 4px;
+  }
+}
+
+.react-aria-MenuItem {
+  [slot=label] {
+    font-weight: bold;
+    grid-area: label;
+  }
+
+  [slot=description] {
+    font-size: small;
+    grid-area: desc;
+  }
+
+  kbd {
+    grid-area: kbd;
+    font-family: monospace;
+    text-align: end;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="right"] {
+  margin-left: -5px;
+}
+
+.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="left"] {
+  margin-right: -5px;
+}
+
+.react-aria-Popover[data-trigger=SubmenuTrigger] .react-aria-SearchField {
+  margin: 4px 8px;
+}

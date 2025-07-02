@@ -1,0 +1,32 @@
+@import "./ColorSlider.css";
+
+.react-aria-ColorArea {
+  width: 192px;
+  height: 192px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.react-aria-ColorThumb {
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px black, inset 0 0 0 1px black;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.react-aria-ColorArea {
+  &[data-disabled] {
+    background: gray !important;
+
+    .react-aria-ColorThumb {
+      background: gray !important;
+    }
+  }
+}

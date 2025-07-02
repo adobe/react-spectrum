@@ -1,0 +1,56 @@
+@import "./theme.css";
+@import './Button.css';
+@import './ToggleButton.css';
+
+.react-aria-ToggleButtonGroup {
+  display: flex;
+
+  > button {
+    border-radius: 0;
+    z-index: 1;
+
+    &[data-disabled] {
+      z-index: 0;
+    }
+
+    &[data-selected],
+    &[data-focus-visible] {
+      z-index: 2;
+    }
+  }
+}
+
+.react-aria-ToggleButtonGroup[data-orientation=horizontal] {
+  flex-direction: row;
+
+  > button {
+    margin-inline-start: -1px;
+    
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+      margin-inline-start: 0;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+}
+
+.react-aria-ToggleButtonGroup[data-orientation=vertical] {
+  flex-direction: column;
+  width: fit-content;
+
+  > button {
+    margin-block-start: -1px;
+    
+    &:first-child {
+      border-radius: 4px 4px 0 0;
+      margin-block-start: 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+}

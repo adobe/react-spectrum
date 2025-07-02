@@ -1,0 +1,142 @@
+@import './ListBox.css';
+@import './Popover.css';
+@import './Button.css';
+@import './Form.css';
+@import "./theme.css";
+
+.react-aria-Select {
+  color: var(--text-color);
+  position: relative;
+  max-width: 250px;
+  width: fit-content;
+
+  .react-aria-Button {
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    font-size: 0.9380000000000001rem;
+    padding: 0.25025rem 0.25025rem 0.25025rem 0.499625rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  .react-aria-SelectValue {
+    &[data-placeholder] {
+      font-style: italic;
+      color: var(--text-color-placeholder);
+    }
+  }
+
+  span[aria-hidden] {
+    width: 1.3125rem;
+    line-height: 1.203125rem;
+    margin-left: 0.875rem;
+    padding: 1px;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
+    border-radius: 4px;
+    font-size: 0.749875rem;
+  }
+}
+
+.react-aria-Popover[data-trigger=Select] {
+  min-width: var(--trigger-width);
+
+  .react-aria-ListBox {
+    display: block;
+    width: unset;
+    max-height: inherit;
+    min-height: unset;
+    border: none;
+
+    .react-aria-Header {
+      padding-left: 1.374625rem;
+    }
+  }
+
+  .react-aria-ListBoxItem {
+    padding: 0 0.499625rem 0 1.374625rem;
+
+    &[data-focus-visible] {
+      outline: none;
+    }
+
+    &[data-selected] {
+      font-weight: 600;
+      background: unset;
+      color: var(--text-color);
+
+      &::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
+    }
+
+    &[data-focused],
+    &[data-pressed] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+  }
+}
+
+.react-aria-ListBoxItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.react-aria-Select {
+  .react-aria-SelectValue {
+    [slot=description] {
+      display: none;
+    }
+  }
+
+  .react-aria-Button {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+      span[aria-hidden] {
+        background: var(--border-color-disabled);
+        color: var(--text-color-disabled);
+      }
+
+      .react-aria-SelectValue {
+        &[data-placeholder] {
+          color: var(--text-color-disabled);
+        }
+      }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Select {
+    .react-aria-Button {
+      &[data-disabled] span[aria-hidden] {
+        background: 0 0;
+      }
+    }
+  }
+}
+
+.react-aria-Select {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}
