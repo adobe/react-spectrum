@@ -3,8 +3,6 @@ import {
   Button,
   FieldError,
   Label,
-  ListBox,
-  ListBoxItem,
   ListBoxItemProps,
   Popover,
   Select as AriaSelect,
@@ -13,6 +11,7 @@ import {
   Text,
   ValidationResult
 } from 'react-aria-components';
+import {ListBox, ListBoxItem} from './ListBox';
 
 import './Select.css';
 

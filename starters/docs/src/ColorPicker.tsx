@@ -1,12 +1,12 @@
 'use client';
 import {
-  Button,
   ColorPicker as AriaColorPicker,
   ColorPickerProps as AriaColorPickerProps,
   Dialog,
   DialogTrigger,
   Popover
 } from 'react-aria-components';
+import {Button} from './Button';
 import {ColorSwatch} from './ColorSwatch';
 import {ColorSlider} from './ColorSlider';
 import {ColorArea} from './ColorArea';

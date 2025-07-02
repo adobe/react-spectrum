@@ -1,6 +1,5 @@
 'use client';
 import {
-  Button,
   Calendar as AriaCalendar,
   CalendarCell,
   CalendarGrid,
@@ -9,6 +8,8 @@ import {
   Heading,
   Text
 } from 'react-aria-components';
+
+import {Button} from './Button';
 
 import './Calendar.css';
 

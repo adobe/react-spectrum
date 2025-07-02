@@ -1,6 +1,5 @@
 'use client';
 import {
-  Button,
   CalendarCell,
   CalendarGrid,
   DateValue,
@@ -9,6 +8,7 @@ import {
   RangeCalendarProps as AriaRangeCalendarProps,
   Text
 } from 'react-aria-components';
+import {Button} from './Button';
 
 import './RangeCalendar.css';
 

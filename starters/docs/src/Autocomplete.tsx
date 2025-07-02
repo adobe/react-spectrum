@@ -7,7 +7,7 @@ import {
   useFilter
 } from 'react-aria-components';
 
-import {MySearchField} from './SearchField';
+import {SearchField} from './SearchField';
 
 import './Autocomplete.css';
 
@@ -29,7 +29,7 @@ export function Autocomplete<T extends object>(
     (
       <div className="my-autocomplete">
         <AriaAutocomplete filter={contains} {...props}>
-          <MySearchField label={label} placeholder={placeholder} />
+          <SearchField label={label} placeholder={placeholder} />
           <Menu items={items} onAction={onAction}>
             {children}
           </Menu>

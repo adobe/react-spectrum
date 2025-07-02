@@ -1,8 +1,5 @@
 'use client';
 import {
-  Button,
-  CalendarCell,
-  CalendarGrid,
   DateInput,
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
@@ -11,13 +8,13 @@ import {
   Dialog,
   FieldError,
   Group,
-  Heading,
   Label,
   Popover,
-  RangeCalendar,
   Text,
   ValidationResult
 } from 'react-aria-components';
+import {Button} from './Button';
+import {RangeCalendar} from './RangeCalendar';
 
 import './DateRangePicker.css';
 
@@ -50,16 +47,7 @@ export function DateRangePicker<T extends DateValue>(
         <FieldError>{errorMessage}</FieldError>
         <Popover>
           <Dialog>
-            <RangeCalendar firstDayOfWeek={firstDayOfWeek}>
-              <header>
-                <Button slot="previous">◀</Button>
-                <Heading />
-                <Button slot="next">▶</Button>
-              </header>
-              <CalendarGrid>
-                {(date) => <CalendarCell date={date} />}
-              </CalendarGrid>
-            </RangeCalendar>
+            <RangeCalendar firstDayOfWeek={firstDayOfWeek} />
           </Dialog>
         </Popover>
       </AriaDateRangePicker>

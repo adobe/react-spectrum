@@ -30,4 +30,5 @@
 
 .react-aria-DisclosurePanel {
   margin-left: 32px;
+  color: var(--text-color);
 }
