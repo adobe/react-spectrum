@@ -26,6 +26,7 @@ const excludedProps = new Set([
 const config = {
   stories: ["../stories/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
+    getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-interactions"),

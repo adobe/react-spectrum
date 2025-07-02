@@ -1,7 +1,7 @@
 import {Autocomplete} from '../src/Autocomplete';
 import {MenuItem} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Autocomplete> = {
   component: Autocomplete,
@@ -12,8 +12,9 @@ const meta: Meta<typeof Autocomplete> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Autocomplete>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <Autocomplete {...args}>
     <MenuItem>Create new file...</MenuItem>
     <MenuItem>Create new folder...</MenuItem>
