@@ -6,13 +6,12 @@ import {
   FieldError,
   Input,
   Label,
-  ListBox,
-  ListBoxItem,
   ListBoxItemProps,
   Popover,
   Text,
   ValidationResult
 } from 'react-aria-components';
+import {ListBox, ListBoxItem} from './ListBox';
 
 import './ComboBox.css';
 
