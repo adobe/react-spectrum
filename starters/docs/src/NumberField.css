@@ -24,6 +24,9 @@
     font-size: 1.2249999999999999rem;
     width: 2.0124999999999997rem;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     &[slot=decrement] {
       border-start-end-radius: 0;

@@ -9,10 +9,14 @@
 
   .react-aria-Label {
     grid-area: label;
+    color: var(--text-color);
   }
 
   .react-aria-SliderOutput {
     grid-area: output;
+    width: 4ch;
+    text-align: end;
+    color: var(--text-color);
   }
 
   .react-aria-SliderTrack {

@@ -1,10 +1,9 @@
 import {MenuButton, MenuItem} from '../src/Menu';
-import {Menu} from 'react-aria-components';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
-const meta: Meta<typeof Menu> = {
-  component: Menu,
+const meta: Meta<typeof MenuButton> = {
+  component: MenuButton,
   parameters: {
     layout: 'centered'
   },
@@ -12,7 +11,7 @@ const meta: Meta<typeof Menu> = {
 };
 
 export default meta;
-type Story = StoryFn<typeof Menu>;
+type Story = StoryFn<typeof MenuButton>;
 
 export const Example: Story = (args) => (
   <MenuButton label="Edit" {...args}>
@@ -21,3 +20,5 @@ export const Example: Story = (args) => (
     <MenuItem>Paste</MenuItem>
   </MenuButton>
 );
+
+Example.args = {};

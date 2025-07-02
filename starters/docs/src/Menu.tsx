@@ -12,7 +12,7 @@ import {
 
 import './Menu.css';
 
-export interface MenuButtonProps<T>
+export interface MenuButtonProps<T extends object>
   extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
   label?: string;
 }

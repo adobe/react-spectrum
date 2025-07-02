@@ -1,5 +1,6 @@
 import {Tabs} from '../src/Tabs';
 import {Tab, TabList, TabPanel} from 'react-aria-components';
+import {fn} from '@storybook/test';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -7,6 +8,9 @@ const meta: Meta<typeof Tabs> = {
   component: Tabs,
   parameters: {
     layout: 'centered'
+  },
+  args: {
+    onSelectionChange: fn()
   },
   tags: ['autodocs']
 };

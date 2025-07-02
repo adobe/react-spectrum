@@ -207,6 +207,7 @@ This example wraps `Popover` and all of its children together into a single comp
 
 ```tsx example export=true
 import type {PopoverProps} from 'react-aria-components';
+import {HelpCircle} from 'lucide-react';
 
 interface MyPopoverProps extends Omit<PopoverProps, 'children'> {
   children: React.ReactNode
@@ -226,7 +227,7 @@ function MyPopover({children, ...props}: MyPopoverProps) {
 }
 
 <DialogTrigger>
-  <Button aria-label="Help">ⓘ</Button>
+  <Button aria-label="Help"><HelpCircle /></Button>
   <MyPopover>
     <Heading slot="title">Help</Heading>
     <p>For help accessing your account, please contact support.</p>
@@ -243,21 +244,22 @@ prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.expo
 Popovers will also automatically [flip](#flipping) to the opposite direction if there isn't enough space.
 
 ```tsx example
+import {ArrowUp, ArrowDown, ArrowRight, ArrowLeft} from 'lucide-react';
 <div style={{display: 'flex', gap: 8}}>
   <DialogTrigger>
-    <Button>⬅️</Button>
+    <Button><ArrowLeft /></Button>
     <MyPopover placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>⬆️</Button>
+    <Button><ArrowUp /></Button>
     <MyPopover placement="top">This popover is above the button.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>⬇️</Button>
+    <Button><ArrowDown /></Button>
     <MyPopover placement="bottom">This popover is below the button.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>➡️</Button>
+    <Button><ArrowRight /></Button>
     <MyPopover placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyPopover>
   </DialogTrigger>
 </div>

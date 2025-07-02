@@ -1,5 +1,7 @@
 import {Popover} from '../src/Popover';
-import {Button, DialogTrigger, Heading} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {DialogTrigger, Heading} from 'react-aria-components';
+import {HelpCircle} from 'lucide-react';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -16,7 +18,7 @@ type Story = StoryFn<typeof Popover>;
 
 export const Example: Story = (args) => (
   <DialogTrigger>
-    <Button aria-label="Help">ⓘ</Button>
+    <Button aria-label="Help"><HelpCircle /></Button>
     <Popover {...args}>
       <Heading slot="title">Help</Heading>
       <p>For help accessing your account, please contact support.</p>
