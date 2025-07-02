@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render as render_, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, fireEvent, render as render_, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DateField} from '../';
@@ -19,6 +19,12 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
+function beforeInput(target, key) {
+  // JSDOM doesn't support the beforeinput event
+  let e = new InputEvent('beforeinput', {cancelable: true, data: key, inputType: 'insertText'});
+  fireEvent(target, e);
+}
 
 function render(el) {
   if (el.type === Provider) {
@@ -674,4 +680,55 @@ describe('DateField', function () {
       });
     });
   });
+  
+describe("validation", () => {
+  it("Should limit day to 31", async () => {
+    let onChange = jest.fn();
+    let { getByTestId } = render(
+      <DateField
+        label="Date"
+        value={new CalendarDate(2019, 2, 3)}
+        onChange={onChange}
+      />,
+    );
+
+    let segment = getByTestId("day");
+    act(() => {
+      segment.focus();
+    });
+    beforeInput(segment, "32");
+    expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 31));
+  });
+  it.only("Constrain day on blur", async () => {
+    let onChange = jest.fn();
+    let { getByTestId } = render(
+      <DateField label="Date" onChange={onChange} />,
+    );
+
+    let segment;
+
+    segment = getByTestId("year");
+    act(() => {
+      segment.focus();
+    });
+    beforeInput(segment, "2025");
+
+    segment = getByTestId("month");
+    act(() => {
+      segment.focus();
+    });
+    beforeInput(segment, "2");
+
+    segment = getByTestId("day");
+    act(() => {
+      segment.focus();
+    });
+    beforeInput(segment, "29");
+
+    act(() => document.activeElement.blur());
+
+    expect(onChange).toHaveBeenCalledWith(new CalendarDate(2025, 2, 28));
+  });
+});
+
 });
