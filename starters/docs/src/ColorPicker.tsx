@@ -2,7 +2,6 @@
 import {
   ColorPicker as AriaColorPicker,
   ColorPickerProps as AriaColorPickerProps,
-  Dialog,
   DialogTrigger,
   Popover
 } from 'react-aria-components';
@@ -28,20 +27,18 @@ export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
             <ColorSwatch />
             <span>{label}</span>
           </Button>
-          <Popover placement="bottom start">
-            <Dialog className="color-picker-dialog">
-              {children || (
-                <>
-                  <ColorArea
-                    colorSpace="hsb"
-                    xChannel="saturation"
-                    yChannel="brightness"
-                  />
-                  <ColorSlider colorSpace="hsb" channel="hue" />
-                  <ColorField label="Hex" />
-                </>
-              )}
-            </Dialog>
+          <Popover placement="bottom start" className="react-aria-Popover color-picker-dialog">
+            {children || (
+              <>
+                <ColorArea
+                  colorSpace="hsb"
+                  xChannel="saturation"
+                  yChannel="brightness"
+                />
+                <ColorSlider colorSpace="hsb" channel="hue" />
+                <ColorField label="Hex" />
+              </>
+            )}
           </Popover>
         </DialogTrigger>
       </AriaColorPicker>

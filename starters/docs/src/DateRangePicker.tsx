@@ -5,15 +5,14 @@ import {
   DateRangePickerProps as AriaDateRangePickerProps,
   DateSegment,
   DateValue,
-  Dialog,
   FieldError,
   Group,
   Label,
-  Popover,
   Text,
   ValidationResult
 } from 'react-aria-components';
 import {Button} from './Button';
+import {Popover} from './Popover';
 import {RangeCalendar} from './RangeCalendar';
 
 import './DateRangePicker.css';
@@ -45,10 +44,8 @@ export function DateRangePicker<T extends DateValue>(
         </Group>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover>
-          <Dialog>
-            <RangeCalendar firstDayOfWeek={firstDayOfWeek} />
-          </Dialog>
+        <Popover hideArrow>
+          <RangeCalendar firstDayOfWeek={firstDayOfWeek} />
         </Popover>
       </AriaDateRangePicker>
     )
