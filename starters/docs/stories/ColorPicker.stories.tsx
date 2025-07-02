@@ -1,6 +1,6 @@
 import {ColorPicker} from '../src/ColorPicker';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorPicker> = {
   component: ColorPicker,
@@ -11,8 +11,9 @@ const meta: Meta<typeof ColorPicker> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof ColorPicker>;
 
-export const Example = (args: any) => <ColorPicker {...args} />;
+export const Example: Story = (args) => <ColorPicker {...args} />;
 
 Example.args = {
   label: 'Fill color',

@@ -1,7 +1,7 @@
 import {Column, Row, Table, TableHeader} from '../src/Table';
 import {Cell, TableBody} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -13,7 +13,9 @@ const meta: Meta<typeof Table> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof Table>;
+
+export const Example: Story = (args) => (
   <Table aria-label="Files" {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
@@ -41,6 +43,6 @@ export const Example = (args: any) => (
 );
 
 Example.args = {
-  onRowAction: null,
+  onRowAction: undefined,
   selectionMode: 'multiple'
 };

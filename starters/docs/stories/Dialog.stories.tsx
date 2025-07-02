@@ -9,7 +9,7 @@ import {
   TextField
 } from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
@@ -20,8 +20,9 @@ const meta: Meta<typeof Dialog> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Dialog>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <DialogTrigger>
     <Button>Sign up…</Button>
     <Modal>

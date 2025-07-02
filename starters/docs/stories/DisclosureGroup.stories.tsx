@@ -6,7 +6,7 @@ import {
   Heading
 } from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof DisclosureGroup> = {
   component: DisclosureGroup,
@@ -17,8 +17,9 @@ const meta: Meta<typeof DisclosureGroup> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof DisclosureGroup>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <DisclosureGroup {...args}>
     <Disclosure id="personal">
       <Heading>

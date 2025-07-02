@@ -1,6 +1,6 @@
 import {Calendar} from '../src/Calendar';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Calendar> = {
   component: Calendar,
@@ -11,7 +11,8 @@ const meta: Meta<typeof Calendar> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Calendar>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <Calendar aria-label="Event date" {...args} />
 );

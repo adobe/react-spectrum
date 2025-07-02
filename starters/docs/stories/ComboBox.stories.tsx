@@ -1,6 +1,6 @@
 import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ComboBox> = {
   component: ComboBox,
@@ -11,8 +11,9 @@ const meta: Meta<typeof ComboBox> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof ComboBox>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <ComboBox {...args}>
     <ComboBoxItem>Chocolate</ComboBoxItem>
     <ComboBoxItem>Mint</ComboBoxItem>

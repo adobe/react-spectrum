@@ -1,7 +1,7 @@
 import {Popover} from '../src/Popover';
 import {Button, DialogTrigger, Heading} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Popover> = {
   component: Popover,
@@ -12,8 +12,9 @@ const meta: Meta<typeof Popover> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Popover>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <DialogTrigger>
     <Button aria-label="Help">ⓘ</Button>
     <Popover {...args}>

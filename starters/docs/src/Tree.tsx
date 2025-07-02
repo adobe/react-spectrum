@@ -10,7 +10,7 @@ import {
   TreeProps
 } from 'react-aria-components';
 
-import {MyCheckbox} from './Checkbox';
+import {Checkbox} from './Checkbox';
 
 import './Tree.css';
 
@@ -25,13 +25,13 @@ export function TreeItemContent(
     (
       <AriaTreeItemContent>
         {(
-          { hasChildItems, selectionBehavior, selectionMode, allowsDragging }:
+          { selectionBehavior, selectionMode, allowsDragging }:
             TreeItemContentRenderProps
         ) => (
           <>
             {allowsDragging && <Button slot="drag">≡</Button>}
             {selectionBehavior === 'toggle' && selectionMode !== 'none' && (
-              <MyCheckbox slot="selection" />
+              <Checkbox slot="selection" />
             )}
             <Button slot="chevron">
               <svg viewBox="0 0 24 24">

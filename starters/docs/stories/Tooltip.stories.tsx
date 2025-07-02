@@ -1,7 +1,7 @@
 import {Tooltip} from '../src/Tooltip';
 import {Button, TooltipTrigger} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
@@ -13,7 +13,9 @@ const meta: Meta<typeof Tooltip> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof Tooltip>;
+
+export const Example: Story = (args) => (
   <TooltipTrigger>
     <Button>💾</Button>
     <Tooltip {...args}>Save</Tooltip>

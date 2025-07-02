@@ -1,6 +1,6 @@
 import {Select, SelectItem} from '../src/Select';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Select> = {
   component: Select,
@@ -12,7 +12,9 @@ const meta: Meta<typeof Select> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof Select>;
+
+export const Example: Story = (args) => (
   <Select {...args}>
     <SelectItem>Chocolate</SelectItem>
     <SelectItem>Mint</SelectItem>

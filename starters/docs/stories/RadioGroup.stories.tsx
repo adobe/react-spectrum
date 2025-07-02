@@ -1,7 +1,7 @@
 import {RadioGroup} from '../src/RadioGroup';
 import {Radio} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
@@ -13,7 +13,9 @@ const meta: Meta<typeof RadioGroup> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof RadioGroup>;
+
+export const Example: Story = (args) => (
   <RadioGroup {...args}>
     <Radio value="soccer">Soccer</Radio>
     <Radio value="baseball">Baseball</Radio>

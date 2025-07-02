@@ -1,6 +1,6 @@
 import {NumberField} from '../src/NumberField';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof NumberField> = {
   component: NumberField,
@@ -11,8 +11,9 @@ const meta: Meta<typeof NumberField> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof NumberField>;
 
-export const Example = (args: any) => <NumberField {...args} />;
+export const Example: Story = (args) => <NumberField {...args} />;
 
 Example.args = {
   label: 'Cookies'

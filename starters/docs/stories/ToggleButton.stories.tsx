@@ -1,6 +1,6 @@
 import {ToggleButton} from '../src/ToggleButton';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
@@ -12,5 +12,7 @@ const meta: Meta<typeof ToggleButton> = {
 
 export default meta;
 
-export const Example = (args: any) => <ToggleButton {...args}>Pin
+type Story = StoryFn<typeof ToggleButton>;
+
+export const Example: Story = (args) => <ToggleButton {...args}>Pin
 </ToggleButton>;

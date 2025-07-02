@@ -1,6 +1,6 @@
 import {GridList, GridListItem} from '../src/GridList';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof GridList> = {
   component: GridList,
@@ -11,8 +11,9 @@ const meta: Meta<typeof GridList> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof GridList>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <GridList aria-label="Ice cream flavors" {...args}>
     <GridListItem>Chocolate</GridListItem>
     <GridListItem>Mint</GridListItem>
@@ -22,6 +23,6 @@ export const Example = (args: any) => (
 );
 
 Example.args = {
-  onAction: null,
+  onAction: undefined,
   selectionMode: 'multiple'
 };

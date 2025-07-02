@@ -1,6 +1,6 @@
 import {ColorArea} from '../src/ColorArea';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
@@ -11,8 +11,9 @@ const meta: Meta<typeof ColorArea> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof ColorArea>;
 
-export const Example = (args: any) => <ColorArea {...args} />;
+export const Example: Story = (args) => <ColorArea {...args} />;
 
 Example.args = {
   defaultValue: 'hsl(30, 100%, 50%)'

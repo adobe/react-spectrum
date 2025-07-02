@@ -19,5 +19,3 @@ export function ColorSwatch(props: ColorSwatchProps) {
     )
   );
 }
-
-export { ColorSwatch as MyColorSwatch };

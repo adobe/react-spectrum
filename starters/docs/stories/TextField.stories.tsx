@@ -1,6 +1,6 @@
 import {TextField} from '../src/TextField';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TextField> = {
   component: TextField,
@@ -12,7 +12,9 @@ const meta: Meta<typeof TextField> = {
 
 export default meta;
 
-export const Example = (args: any) => <TextField {...args} />;
+type Story = StoryFn<typeof TextField>;
+
+export const Example: Story = (args) => <TextField {...args} />;
 
 Example.args = {
   label: 'Name'

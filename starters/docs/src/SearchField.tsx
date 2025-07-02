@@ -34,5 +34,3 @@ export function SearchField(
     )
   );
 }
-
-export { SearchField as MySearchField };

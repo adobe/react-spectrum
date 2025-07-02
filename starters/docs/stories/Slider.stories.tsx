@@ -1,6 +1,6 @@
 import {Slider} from '../src/Slider';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Slider> = {
   component: Slider,
@@ -12,7 +12,9 @@ const meta: Meta<typeof Slider> = {
 
 export default meta;
 
-export const Example = (args: any) => <Slider {...args} />;
+type Story = StoryFn<typeof Slider>;
+
+export const Example: Story = (args) => <Slider {...args} />;
 
 Example.args = {
   label: 'Range',

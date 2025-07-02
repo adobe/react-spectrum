@@ -16,5 +16,3 @@ export function ColorArea(props: ColorAreaProps) {
     )
   );
 }
-
-export { ColorArea as MyColorArea };

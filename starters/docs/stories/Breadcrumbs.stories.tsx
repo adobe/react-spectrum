@@ -1,7 +1,7 @@
 import {Breadcrumbs} from '../src/Breadcrumbs';
 import {Breadcrumb, Link} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
@@ -12,8 +12,9 @@ const meta: Meta<typeof Breadcrumbs> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Breadcrumbs>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <Breadcrumbs {...args}>
     <Breadcrumb>
       <Link href="/">Home</Link>

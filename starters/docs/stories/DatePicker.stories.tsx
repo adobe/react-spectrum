@@ -1,6 +1,6 @@
 import {DatePicker} from '../src/DatePicker';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof DatePicker> = {
   component: DatePicker,
@@ -11,8 +11,9 @@ const meta: Meta<typeof DatePicker> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof DatePicker>;
 
-export const Example = (args: any) => <DatePicker {...args} />;
+export const Example: Story = (args) => <DatePicker {...args} />;
 
 Example.args = {
   label: 'Event date'

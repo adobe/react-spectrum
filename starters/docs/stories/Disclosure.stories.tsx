@@ -1,6 +1,6 @@
 import {Disclosure} from '../src/Disclosure';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Disclosure> = {
   component: Disclosure,
@@ -11,8 +11,9 @@ const meta: Meta<typeof Disclosure> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Disclosure>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <Disclosure {...args}>Details on managing your account</Disclosure>
 );
 

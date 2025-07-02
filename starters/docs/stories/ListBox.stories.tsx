@@ -1,6 +1,6 @@
 import {ListBox, ListBoxItem} from '../src/ListBox';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ListBox> = {
   component: ListBox,
@@ -11,8 +11,9 @@ const meta: Meta<typeof ListBox> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof ListBox>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <ListBox aria-label="Ice cream flavor" {...args}>
     <ListBoxItem>Chocolate</ListBoxItem>
     <ListBoxItem>Mint</ListBoxItem>
@@ -22,6 +23,6 @@ export const Example = (args: any) => (
 );
 
 Example.args = {
-  onAction: null,
+  onAction: undefined,
   selectionMode: 'single'
 };

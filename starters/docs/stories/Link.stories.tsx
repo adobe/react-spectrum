@@ -1,6 +1,6 @@
 import {Link} from '../src/Link';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Link> = {
   component: Link,
@@ -11,8 +11,9 @@ const meta: Meta<typeof Link> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Link>;
 
-export const Example = (args: any) => <Link {...args}>The missing link</Link>;
+export const Example: Story = (args) => <Link {...args}>The missing link</Link>;
 
 Example.args = {
   href: 'https://www.imdb.com/title/tt6348138/',

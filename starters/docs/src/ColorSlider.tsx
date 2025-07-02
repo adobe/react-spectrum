@@ -32,5 +32,3 @@ export function ColorSlider({ label, ...props }: ColorSliderProps) {
     )
   );
 }
-
-export { ColorSlider as MyColorSlider };

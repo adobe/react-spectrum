@@ -1,6 +1,6 @@
 import {ColorField} from '../src/ColorField';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
@@ -11,8 +11,9 @@ const meta: Meta<typeof ColorField> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof ColorField>;
 
-export const Example = (args: any) => <ColorField {...args} />;
+export const Example: Story = (args) => <ColorField {...args} />;
 
 Example.args = {
   label: 'Color'

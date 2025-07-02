@@ -7,7 +7,7 @@ import {
   ToggleButton
 } from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Toolbar> = {
   component: Toolbar,
@@ -19,7 +19,9 @@ const meta: Meta<typeof Toolbar> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof Toolbar>;
+
+export const Example: Story = (args) => (
   <Toolbar aria-label="Text formatting" {...args}>
     <Group aria-label="Style">
       <ToggleButton aria-label="Bold">

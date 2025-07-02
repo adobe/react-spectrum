@@ -7,7 +7,7 @@ import {
   TextField
 } from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -18,8 +18,9 @@ const meta: Meta<typeof Form> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Form>;
 
-export const Example = (args: any) => (
+export const Example: Story = (args) => (
   <Form {...args}>
     <TextField name="email" type="email" isRequired>
       <Label>Email</Label>

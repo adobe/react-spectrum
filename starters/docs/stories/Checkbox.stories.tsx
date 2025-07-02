@@ -1,6 +1,6 @@
 import {Checkbox} from '../src/Checkbox';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
@@ -11,6 +11,7 @@ const meta: Meta<typeof Checkbox> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Checkbox>;
 
-export const Example = (args: any) => <Checkbox {...args}>Unsubscribe
+export const Example: Story = (args) => <Checkbox {...args}>Unsubscribe
 </Checkbox>;

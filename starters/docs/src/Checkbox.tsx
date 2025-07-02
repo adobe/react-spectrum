@@ -27,5 +27,3 @@ export function Checkbox(
     )
   );
 }
-
-export { Checkbox as MyCheckbox };

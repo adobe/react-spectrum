@@ -31,5 +31,3 @@ export function ColorField(
     )
   );
 }
-
-export { ColorField as MyColorField };

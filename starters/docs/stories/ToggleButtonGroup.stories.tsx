@@ -1,7 +1,7 @@
 import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
 import {ToggleButton} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ToggleButtonGroup> = {
   component: ToggleButtonGroup,
@@ -13,7 +13,9 @@ const meta: Meta<typeof ToggleButtonGroup> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof ToggleButtonGroup>;
+
+export const Example: Story = (args) => (
   <ToggleButtonGroup {...args}>
     <ToggleButton id="left">Left</ToggleButton>
     <ToggleButton id="center">Center</ToggleButton>

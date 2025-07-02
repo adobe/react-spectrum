@@ -1,6 +1,6 @@
 import {Tree, TreeItem} from '../src/Tree';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Tree> = {
   component: Tree,
@@ -12,7 +12,9 @@ const meta: Meta<typeof Tree> = {
 
 export default meta;
 
-export const Example = (args: any) => (
+type Story = StoryFn<typeof Tree>;
+
+export const Example: Story = (args) => (
   <Tree aria-label="Files" {...args}>
     <TreeItem title="Documents">
       <TreeItem title="Project">

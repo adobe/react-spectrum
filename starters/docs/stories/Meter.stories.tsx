@@ -1,6 +1,6 @@
 import {Meter} from '../src/Meter';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Meter> = {
   component: Meter,
@@ -11,8 +11,9 @@ const meta: Meta<typeof Meter> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Meter>;
 
-export const Example = (args: any) => <Meter {...args} />;
+export const Example: Story = (args) => <Meter {...args} />;
 
 Example.args = {
   label: 'Storage space',

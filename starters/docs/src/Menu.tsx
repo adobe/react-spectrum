@@ -54,5 +54,3 @@ export function MenuItem(
     )
   );
 }
-
-export { MenuItem as MyItem };

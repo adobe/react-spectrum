@@ -6,7 +6,7 @@ import {
   GridListItemProps,
   GridListProps
 } from 'react-aria-components';
-import {MyCheckbox} from './Checkbox';
+import {Checkbox} from './Checkbox';
 
 import './GridList.css';
 
@@ -22,8 +22,6 @@ export function GridList<T extends object>(
   );
 }
 
-export { GridList as MyGridList };
-
 export function GridListItem(
   { children, ...props }: Omit<GridListItemProps, 'children'> & {
     children?: React.ReactNode;
@@ -38,7 +36,7 @@ export function GridListItem(
             {/* Add elements for drag and drop and selection. */}
             {allowsDragging && <Button slot="drag">≡</Button>}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-              <MyCheckbox slot="selection" />
+              <Checkbox slot="selection" />
             )}
             {children}
           </>
@@ -47,5 +45,3 @@ export function GridListItem(
     )
   );
 }
-
-export { GridListItem as MyItem };

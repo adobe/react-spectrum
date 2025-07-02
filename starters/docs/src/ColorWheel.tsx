@@ -20,5 +20,3 @@ export function ColorWheel(props: ColorWheelProps) {
     )
   );
 }
-
-export { ColorWheel as MyColorWheel };

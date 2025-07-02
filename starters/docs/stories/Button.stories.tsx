@@ -1,6 +1,6 @@
 import {Button} from '../src/Button';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -11,8 +11,9 @@ const meta: Meta<typeof Button> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof Button>;
 
-export const Example = (args: any) => <Button {...args}>Press me</Button>;
+export const Example: Story = (args) => <Button {...args}>Press me</Button>;
 
 Example.args = {
   onPress: () => alert('Hello world!')

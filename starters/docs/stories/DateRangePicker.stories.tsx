@@ -1,6 +1,6 @@
 import {DateRangePicker} from '../src/DateRangePicker';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof DateRangePicker> = {
   component: DateRangePicker,
@@ -11,8 +11,9 @@ const meta: Meta<typeof DateRangePicker> = {
 };
 
 export default meta;
+type Story = StoryFn<typeof DateRangePicker>;
 
-export const Example = (args: any) => <DateRangePicker {...args} />;
+export const Example: Story = (args) => <DateRangePicker {...args} />;
 
 Example.args = {
   label: 'Event date'
