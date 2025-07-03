@@ -126,6 +126,7 @@ A default selection state for a toggle button can be set using the `defaultSelec
 [uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
 
 ```tsx example
+import {Star} from 'lucide-react';
 function Example() {
   let [isSelected, setSelected] = React.useState(false);
 
@@ -134,7 +135,7 @@ function Example() {
       isSelected={isSelected}
       onChange={setSelected}
       aria-label="Star">
-      ★
+      <Star />
     </ToggleButton>
   );
 }

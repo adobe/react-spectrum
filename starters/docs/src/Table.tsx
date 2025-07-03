@@ -14,7 +14,7 @@ import {
   useTableOptions
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-
+import {ChevronUp, ChevronDown, GripVertical} from 'lucide-react';
 import './Table.css';
 
 export function Table(props: TableProps) {
@@ -28,14 +28,14 @@ export function Column(
     (
       <AriaColumn {...props}>
         {({ allowsSorting, sortDirection }) => (
-          <>
+          <div className="column-header">
             {props.children}
             {allowsSorting && (
               <span aria-hidden="true" className="sort-indicator">
-                {sortDirection === 'ascending' ? '▲' : '▼'}
+                {sortDirection === 'ascending' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </span>
             )}
-          </>
+          </div>
         )}
       </AriaColumn>
     )
@@ -75,7 +75,7 @@ export function Row<T extends object>(
       <AriaRow id={id} {...otherProps}>
         {allowsDragging && (
           <Cell>
-            <Button slot="drag">≡</Button>
+            <Button slot="drag"><GripVertical size={16} /></Button>
           </Cell>
         )}
         {selectionBehavior === 'toggle' && (

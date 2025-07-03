@@ -14,7 +14,7 @@ import {
 import {Button} from './Button';
 import {Popover} from './Popover';
 import {RangeCalendar} from './RangeCalendar';
-
+import {ChevronDown} from 'lucide-react';
 import './DateRangePicker.css';
 
 export interface DateRangePickerProps<T extends DateValue>
@@ -40,7 +40,7 @@ export function DateRangePicker<T extends DateValue>(
           <DateInput slot="end">
             {(segment) => <DateSegment segment={segment} />}
           </DateInput>
-          <Button>▼</Button>
+          <Button><ChevronDown size={16} /></Button>
         </Group>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>

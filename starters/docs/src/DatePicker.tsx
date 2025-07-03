@@ -14,6 +14,7 @@ import {
 import {Button} from './Button';
 import {Calendar} from './Calendar';
 import {Popover} from './Popover';
+import {ChevronDown} from 'lucide-react';
 
 import './DatePicker.css';
 
@@ -36,7 +37,7 @@ export function DatePicker<T extends DateValue>(
           <DateInput>
             {(segment) => <DateSegment segment={segment} />}
           </DateInput>
-          <Button>▼</Button>
+          <Button><ChevronDown size={16} /></Button>
         </Group>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>

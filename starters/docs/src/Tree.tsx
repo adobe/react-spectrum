@@ -9,6 +9,7 @@ import {
   TreeItemProps as AriaTreeItemProps,
   TreeProps
 } from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 import {Checkbox} from './Checkbox';
 
@@ -34,9 +35,7 @@ export function TreeItemContent(
               <Checkbox slot="selection" />
             )}
             <Button slot="chevron">
-              <svg viewBox="0 0 24 24">
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
+              <ChevronRight />
             </Button>
             {props.children}
           </>

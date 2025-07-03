@@ -14,7 +14,7 @@ export default meta;
 type Story = StoryFn<typeof Disclosure>;
 
 export const Example: Story = (args) => (
-  <Disclosure {...args}>Details on managing your account</Disclosure>
+  <Disclosure {...args} style={{width: '400px'}}>Details on managing your account</Disclosure>
 );
 
 Example.args = {

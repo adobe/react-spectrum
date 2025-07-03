@@ -61,6 +61,11 @@
     position: sticky;
     right: 0;
 
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
     &[data-focus-visible] {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: 2px;

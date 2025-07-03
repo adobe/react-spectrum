@@ -1,10 +1,5 @@
 import {DisclosureGroup} from '../src/DisclosureGroup';
-import {
-  Button,
-  Disclosure,
-  DisclosurePanel,
-  Heading
-} from 'react-aria-components';
+import {Disclosure} from '../src/Disclosure';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -20,32 +15,12 @@ export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
 export const Example: Story = (args) => (
-  <DisclosureGroup {...args}>
-    <Disclosure id="personal">
-      <Heading>
-        <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-          Personal Information
-        </Button>
-      </Heading>
-      <DisclosurePanel>
-        <p>Personal information form here.</p>
-      </DisclosurePanel>
+  <DisclosureGroup {...args} style={{width: '400px'}}>
+    <Disclosure id="personal" title="Personal Information">
+      <p>Personal information form here.</p>
     </Disclosure>
-    <Disclosure id="billing">
-      <Heading>
-        <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-          Billing Address
-        </Button>
-      </Heading>
-      <DisclosurePanel>
-        <p>Billing address form here.</p>
-      </DisclosurePanel>
+    <Disclosure id="billing" title="Billing Address">
+      <p>Billing address form here.</p>
     </Disclosure>
   </DisclosureGroup>
 );

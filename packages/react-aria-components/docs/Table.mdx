@@ -346,18 +346,19 @@ The following example includes a custom Column component with a sort indicator. 
 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
+import {ArrowUp, ArrowDown} from 'lucide-react';
 
 export function MyColumn(props: Omit<ColumnProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Column {...props}>
-      {({allowsSorting, sortDirection}) => <>
+      {({allowsSorting, sortDirection}) => <div className="column-header">
         {props.children}
         {allowsSorting && (
           <span aria-hidden="true" className="sort-indicator">
-            {sortDirection === 'ascending' ? '▲' : '▼'}
+            {sortDirection === 'ascending' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
           </span>
         )}
-      </>}
+      </div>}
     </Column>
   );
 }
@@ -389,7 +390,7 @@ export function MyRow<T extends object>({id, columns, children, ...otherProps}: 
 
   return (
     <Row id={id} {...otherProps}>
-      {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
+      {allowsDragging && <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>}
       {selectionBehavior === 'toggle' && <Cell><MyCheckbox slot="selection" /></Cell>}
       <Collection items={columns}>
         {children}
@@ -875,8 +876,16 @@ function AsyncSortTable() {
 
 ```css
 .react-aria-Column {
+  .column-header {
+    display: flex;
+    align-items: center;
+  }
+
   .sort-indicator {
     padding: 0 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &:not([data-sort-direction]) .sort-indicator {
@@ -1173,7 +1182,7 @@ function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps
           </MenuTrigger>
           {allowsSorting && (
             <span aria-hidden="true" className="sort-indicator">
-              {sortDirection === 'ascending' ? '▲' : '▼'}
+              {sortDirection === 'ascending' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
             </span>
           )}
           <ColumnResizer />
@@ -1258,6 +1267,7 @@ This uses [useListData](../react-stately/useListData.html) from React Stately to
 ```tsx example
 import {useListData} from 'react-stately';
 import {useDragAndDrop, Button} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 function Example() {
   let list = useListData({
@@ -1303,7 +1313,7 @@ function Example() {
         {item => (
           <Row>
             {/*- begin highlight -*/}
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             {/*- end highlight -*/}
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
@@ -1330,7 +1340,11 @@ function Example() {
   [slot=drag] {
     all: unset;
     width: 15px;
+    height: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &[data-focus-visible] {
       border-radius: 4px;
@@ -1409,7 +1423,7 @@ function Example() {
       <TableBody items={list.items}>
         {item => (
           <Row>
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
@@ -2242,7 +2256,7 @@ function DndTable(props: DndTableProps) {
       <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
         {item => (
           <Row>
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.id}</Cell>
             <Cell>{item.name}</Cell>

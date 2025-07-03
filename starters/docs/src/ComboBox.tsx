@@ -12,6 +12,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import {ListBox, ListBoxItem} from './ListBox';
+import {ChevronDown} from 'lucide-react';
 
 import './ComboBox.css';
 
@@ -32,7 +33,7 @@ export function ComboBox<T extends object>(
         <Label>{label}</Label>
         <div className="my-combobox-container">
           <Input />
-          <Button>▼</Button>
+          <Button><ChevronDown size={16} /></Button>
         </div>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>

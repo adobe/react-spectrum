@@ -9,6 +9,7 @@ import {
   MenuTriggerProps,
   Popover
 } from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 import './Menu.css';
 
@@ -44,9 +45,7 @@ export function MenuItem(
           <>
             {props.children}
             {hasSubmenu && (
-              <svg className="chevron" viewBox="0 0 24 24">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
+              <ChevronRight />
             )}
           </>
         )}

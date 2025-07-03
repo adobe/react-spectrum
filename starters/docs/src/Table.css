@@ -127,8 +127,16 @@
 }
 
 .react-aria-Column {
+  .column-header {
+    display: flex;
+    align-items: center;
+  }
+
   .sort-indicator {
     padding: 0 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &:not([data-sort-direction]) .sort-indicator {

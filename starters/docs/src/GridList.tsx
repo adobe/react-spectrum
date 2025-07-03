@@ -7,7 +7,7 @@ import {
   GridListProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-
+import {VerticalGrip} from 'lucide-react';
 import './GridList.css';
 
 export function GridList<T extends object>(
@@ -34,7 +34,7 @@ export function GridListItem(
         {({ selectionMode, selectionBehavior, allowsDragging }) => (
           <>
             {/* Add elements for drag and drop and selection. */}
-            {allowsDragging && <Button slot="drag">≡</Button>}
+            {allowsDragging && <Button slot="drag"><VerticalGrip size={16} /></Button>}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}

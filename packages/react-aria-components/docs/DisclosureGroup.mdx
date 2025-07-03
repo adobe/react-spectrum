@@ -42,14 +42,13 @@ type: component
 
 ```tsx example
 import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 <DisclosureGroup defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
     <Heading>
       <Button slot="trigger">
-        <svg viewBox="0 0 24 24">
-          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-        </svg>
+        <ChevronRight />
         Personal Information
       </Button>
     </Heading>
@@ -60,9 +59,7 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
   <Disclosure id="billing">
     <Heading>
       <Button slot="trigger">
-        <svg viewBox="0 0 24 24">
-          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-        </svg>
+        <ChevronRight />
         Billing Address
       </Button>
     </Heading>
@@ -81,7 +78,7 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
 
 ## Features
 
-Disclosure groups can be built by combining multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `DisclosureGroup` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
+Disclosure groups can be built by combining multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `DisclosureGroup` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy.
 
 * **Accessible** - Disclosure group is exposed to assistive technology via ARIA. Uses hidden="until-found" in supported browsers, enabling find-in-page search support and improved search engine visibility for collapsed content.
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
@@ -137,9 +134,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
     <Disclosure {...props}>
       <Heading>
         <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
+          <ChevronRight />
           {title}
         </Button>
       </Heading>
@@ -188,7 +183,7 @@ function ControlledExpanded(){
 ```
 ### Multiple expanded
 
-By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop. 
+By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop.
 
 ```tsx example
 <DisclosureGroup defaultExpandedKeys={["system", "personal"]} allowsMultipleExpanded>
@@ -203,7 +198,7 @@ By default, only one disclosure will be open at a time. To allow multiple disclo
 
 ## Disabled
 
-A DisclosureGroup can be disabled using the `isDisabled` prop. 
+A DisclosureGroup can be disabled using the `isDisabled` prop.
 
 ```tsx example
 <DisclosureGroup isDisabled>
@@ -226,9 +221,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
     <div style={{display: 'flex', alignItems: 'center'}}>
       <Heading>
         <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
+          <ChevronRight />
           System Requirements
         </Button>
       </Heading>
@@ -242,9 +235,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
     <div style={{display: 'flex', alignItems: 'center'}}>
       <Heading>
         <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
+          <ChevronRight />
           Personal Information
         </Button>
       </Heading>

@@ -45,16 +45,19 @@
 
   [slot=remove] {
     background: none;
-    border: none;
+    border: 1px solid var(--border-color);
     padding: 0;
-    margin-left: 2px;
+    margin-left: 4px;
     color: var(--text-color-base);
     transition: color 200ms;
     outline: none;
     font-size: 0.95em;
     border-radius: 100%;
     aspect-ratio: 1/1;
-    height: 100%;
+    height: calc(100% - 4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &[data-hovered] {
       color: var(--text-color-hover);

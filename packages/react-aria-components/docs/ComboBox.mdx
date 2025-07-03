@@ -51,12 +51,13 @@ type: component
 
 ```tsx example
 import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import {ChevronDown} from 'lucide-react';
 
 <ComboBox>
   <Label>Favorite Animal</Label>
   <div>
     <Input />
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   <Popover>
     <ListBox>
@@ -338,7 +339,7 @@ function MyComboBox<T extends object>({label, description, errorMessage, childre
       <Label>{label}</Label>
       <div className="my-combobox-container">
         <Input />
-        <Button>▼</Button>
+        <Button><ChevronDown size={16} /></Button>
       </div>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -1062,7 +1063,7 @@ The `description` slot can be used to associate additional help text with a Comb
   <Label>Favorite Animal</Label>
   <div>
     <Input />
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   {/*- begin highlight -*/}
   <Text slot="description">Please select an animal.</Text>
@@ -1409,6 +1410,7 @@ This example shows a `ComboBoxClearButton` component that can be placed within a
 
 ```tsx example
 import {ComboBoxStateContext} from 'react-aria-components';
+import {X} from 'lucide-react';
 
 function ComboBoxClearButton() {
   /*- begin highlight -*/
@@ -1421,7 +1423,7 @@ function ComboBoxClearButton() {
       className="clear-button"
       aria-label="Clear"
       onPress={() => state?.setSelectedKey(null)}>
-      ✕
+      <X size={14} />
     </Button>
   );
 }
@@ -1433,7 +1435,7 @@ function ComboBoxClearButton() {
     {/*- begin highlight -*/}
     <ComboBoxClearButton />
     {/*- end highlight -*/}
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   <Popover>
     <ListBox>
@@ -1463,6 +1465,9 @@ function ComboBoxClearButton() {
   border: none;
   padding: 0;
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &[data-pressed] {
     background: dimgray;

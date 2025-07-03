@@ -10,7 +10,7 @@ import {
   TagProps,
   Text
 } from 'react-aria-components';
-
+import {X} from 'lucide-react';
 import './TagGroup.css';
 
 export interface TagGroupProps<T>
@@ -59,7 +59,7 @@ export function Tag(
         {({ allowsRemoving }) => (
           <>
             {children}
-            {allowsRemoving && <Button slot="remove">ⓧ</Button>}
+            {allowsRemoving && <Button slot="remove"><X size={12} /></Button>}
           </>
         )}
       </AriaTag>

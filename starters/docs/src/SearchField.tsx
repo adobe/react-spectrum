@@ -9,7 +9,7 @@ import {
   Text,
   ValidationResult
 } from 'react-aria-components';
-
+import {X} from 'lucide-react';
 import './SearchField.css';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
@@ -27,7 +27,7 @@ export function SearchField(
       <AriaSearchField {...props}>
         {label && <Label>{label}</Label>}
         <Input placeholder={placeholder} />
-        <Button>✕</Button>
+        <Button><X size={14} /></Button>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
       </AriaSearchField>

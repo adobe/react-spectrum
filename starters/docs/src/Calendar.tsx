@@ -8,6 +8,7 @@ import {
   Heading,
   Text
 } from 'react-aria-components';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 import {Button} from './Button';
 
@@ -25,9 +26,9 @@ export function Calendar<T extends DateValue>(
     (
       <AriaCalendar {...props}>
         <header>
-          <Button slot="previous">◀</Button>
+          <Button slot="previous"><ChevronLeft size={16} /></Button>
           <Heading />
-          <Button slot="next">▶</Button>
+          <Button slot="next"><ChevronRight size={16} /></Button>
         </header>
         <CalendarGrid>
           {(date) => <CalendarCell date={date} />}

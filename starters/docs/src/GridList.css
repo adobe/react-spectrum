@@ -90,6 +90,12 @@
         box-shadow: none;
       }
     }
+
+    .react-aria-Button[slot='drag'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   /* join selected items if :has selector is supported */

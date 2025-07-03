@@ -51,27 +51,28 @@ type: component
 ```tsx example
 import {GridList, GridListItem, Button} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
+import {Info} from 'lucide-react';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
   <GridListItem textValue="Charizard">
     <MyCheckbox slot="selection" />
     Charizard
-    <Button aria-label="Info">ⓘ</Button>
+    <Button aria-label="Info"><Info size={20} /></Button>
   </GridListItem>
   <GridListItem textValue="Blastoise">
     <MyCheckbox slot="selection" />
     Blastoise
-    <Button aria-label="Info">ⓘ</Button>
+    <Button aria-label="Info"><Info size={20} /></Button>
   </GridListItem>
   <GridListItem textValue="Venusaur">
     <MyCheckbox slot="selection" />
     Venusaur
-    <Button aria-label="Info">ⓘ</Button>
+    <Button aria-label="Info"><Info size={20} /></Button>
   </GridListItem>
   <GridListItem textValue="Pikachu">
     <MyCheckbox slot="selection" />
     Pikachu
-    <Button aria-label="Info">ⓘ</Button>
+    <Button aria-label="Info"><Info size={20} /></Button>
   </GridListItem>
 </GridList>
 ```
@@ -309,6 +310,7 @@ This example wraps `GridList` and all of its children together into a single com
 
 ```tsx example export=true
 import type {GridListProps, GridListItemProps} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 export function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
@@ -324,7 +326,7 @@ export function MyItem({children, ...props}: Omit<GridListItemProps, 'children'>
     <GridListItem textValue={textValue} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
-        {allowsDragging && <Button slot="drag">≡</Button>}
+        {allowsDragging && <Button slot="drag"><GripVertical size={18} /></Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox slot="selection" />}
         {children}
       </>}
@@ -339,6 +341,17 @@ export function MyItem({children, ...props}: Omit<GridListItemProps, 'children'>
   <MyItem>Vanilla</MyItem>
 </MyGridList>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+.react-aria-GridListItem .react-aria-Button[slot='drag'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+</details>
 
 ## Content
 
@@ -371,7 +384,7 @@ function ExampleList(props: GridListProps<ItemValue>) {
       {item => (
         <MyItem textValue={item.name}>
           {item.name}
-          <Button aria-label="Info" onPress={() => alert(`Info for ${item.name}...`)}>ⓘ</Button>
+          <Button aria-label="Info" onPress={() => alert(`Info for ${item.name}...`)}><Info size={20} /></Button>
         </MyItem>
       )}
     </MyGridList>
