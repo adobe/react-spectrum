@@ -1,0 +1,286 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  DEFAULT_SLOT,
+  GridList,
+  GridListItem,
+  GridListItemProps,
+  GridListItemRenderProps,
+  GridListProps,
+  GridListRenderProps,
+  ListLayout,
+  ListStateContext,
+  Provider,
+  useContextProps,
+  useLocale,
+  Virtualizer
+} from 'react-aria-components';
+import {JSXElementConstructor, ReactElement, ReactNode, createContext, forwardRef, useContext, useRef} from 'react';
+import {ContextValue, SlotProps} from 'react-aria-components';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {baseColor, edgeToText, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import { useScale } from './utils';
+import { useDOMRef } from '@react-spectrum/utils';
+import { pressScale } from './pressScale';
+import { IconContext } from './Icon';
+import { centerBaseline } from './CenterBaseline';
+import { Text, TextContext } from './Content';
+import { ImageContext } from './Image';
+import { ActionButtonGroupContext } from './ActionButtonGroup';
+
+export interface ListViewProps<T> extends GridListProps<T>, DOMProps, StyleProps, ListViewStylesProps, SlotProps {
+  /**
+   * Whether to automatically focus the Inline Alert when it first renders.
+   */
+  autoFocus?: boolean
+}
+
+interface ListViewStylesProps {
+  isQuiet?: boolean
+}
+
+export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'style' | 'className'>, StyleProps {
+  /**
+   * The contents of the item.
+   */
+  children: ReactNode
+}
+
+interface ListViewRendererContextValue {
+  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
+}
+const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
+
+export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+
+let InternalListViewContext = createContext<{isQuiet?: boolean}>({});
+
+const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
+  ...focusRing(),
+  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
+  userSelect: 'none',
+  minHeight: 0,
+  minWidth: 0,
+  width: 'full',
+  height: 'full',
+  boxSizing: 'border-box',
+  overflow: 'auto',
+  fontSize: controlFont(),
+  borderRadius: 'default',
+  borderColor: 'gray-300',
+  borderWidth: 1,
+  borderStyle: 'solid'
+}, getAllowedOverrides());
+
+export const ListView = /*#__PURE__*/ forwardRef(function ListView<T extends object>(
+  props: ListViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+): ReactNode {
+  [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
+  let {children, isQuiet} = props;
+  let scale = useScale();
+
+  let renderer;
+  if (typeof children === 'function') {
+    renderer = children;
+  }
+
+  let domRef = useDOMRef(ref);
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: scale === 'large' ? 50 : 40
+      }}>
+      <ListViewRendererContext.Provider value={{renderer}}>
+        <InternalListViewContext.Provider value={{isQuiet}}>
+          <GridList
+            ref={domRef}
+            {...props}
+            style={props.UNSAFE_style}
+            className={(renderProps) => (props.UNSAFE_className || '') + listView({
+              ...renderProps,
+              isQuiet
+            }, props.styles)}>
+            {children}
+          </GridList>
+        </InternalListViewContext.Provider>
+      </ListViewRendererContext.Provider>
+    </Virtualizer>
+  );
+});
+
+const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean}>({
+  ...focusRing(),
+  outlineOffset: 0,
+  columnGap: 0,
+  paddingX: 0,
+  paddingBottom: '--labelPadding',
+  backgroundColor: {
+    default: 'transparent',
+    isFocused: baseColor('gray-100').isFocusVisible
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  position: 'relative',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
+  display: 'grid',
+  gridTemplateAreas: [
+    '. checkmark icon label       actions chevron .',
+    '. .         .    description actions chevron .'
+  ],
+  gridTemplateColumns: [edgeToText(12), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', edgeToText(12)],
+  gridTemplateRows: '1fr auto',
+  rowGap: {
+    ':has([slot=description])': space(1)
+  },
+  alignItems: 'baseline',
+  height: 'full',
+  textDecoration: 'none',
+  cursor: {
+    default: 'default',
+    isLink: 'pointer'
+  },
+  transition: 'default',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
+  borderBottomWidth: 1,
+  borderTopWidth: 0,
+  borderXWidth: 0,
+  borderStyle: 'solid',
+  borderTopRadius: {
+    default: 'none',
+    isFirstItem: 'default'
+  },
+  borderBottomRadius: {
+    default: 'none',
+    isLastItem: 'default'
+  }
+}, getAllowedOverrides());
+
+export let label = style({
+  gridArea: 'label',
+  alignSelf: 'center',
+  font: controlFont(),
+  color: 'inherit',
+  fontWeight: 'medium',
+  // TODO: token values for padding not defined yet, revisit
+  marginTop: '--labelPadding'
+});
+
+export let description = style({
+  gridArea: 'description',
+  alignSelf: 'center',
+  font: 'ui-sm',
+  color: {
+    default: baseColor('neutral-subdued'),
+    // Ideally this would use the same token as hover, but we don't have access to that here.
+    // TODO: should we always consider isHovered and isFocused to be the same thing?
+    isFocused: 'gray-800',
+    isDisabled: 'disabled'
+  },
+  transition: 'default'
+});
+
+export let iconCenterWrapper = style({
+  display: 'flex',
+  gridArea: 'icon',
+  alignSelf: 'center'
+});
+
+export let icon = style({
+  display: 'block',
+  size: fontRelative(20),
+  // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
+  // reminder, size of WF is applied via font size
+  marginEnd: 'text-to-visual',
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
+let image = style({
+  gridArea: 'icon',
+  gridRowEnd: 'span 2',
+  marginEnd: 'text-to-visual',
+  alignSelf: 'center',
+  borderRadius: 'sm',
+  height: 'calc(100% - 12px)',
+  aspectRatio: 'square',
+  objectFit: 'contain'
+});
+
+let actionButtonGroup = style({
+  gridArea: 'actions',
+  gridRowEnd: 'span 2',
+  alignSelf: 'center',
+  justifySelf: 'end'
+});
+
+export function ListViewItem(props: ListViewItemProps): ReactNode {
+  let ref = useRef(null);
+  let isLink = props.href != null;
+  let isLinkOut = isLink && props.target === '_blank';
+  let {isQuiet} = useContext(InternalListViewContext);
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {direction} = useLocale();
+  return (
+    <GridListItem
+      {...props}
+      textValue={textValue}
+      ref={ref}
+      style={pressScale(ref, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + listitem({
+        ...renderProps,
+        isLink,
+        isQuiet
+      }, props.styles)}>
+      {(renderProps) => {
+        let {children} = props;
+        return (
+          <Provider
+            values={[
+              [TextContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {styles: label(renderProps)},
+                  label: {styles: label(renderProps)},
+                  description: {styles: description(renderProps)}
+                }
+              }],
+              [IconContext, {
+                slots: {
+                  icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+                }
+              }],
+              [ImageContext, {styles: image}],
+              [ActionButtonGroupContext, {styles: actionButtonGroup}]
+            ]}>
+            {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+          </Provider>
+        );
+      }}
+    </GridListItem>
+  );
+}

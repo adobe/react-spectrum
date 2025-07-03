@@ -335,6 +335,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     defaultClassName: 'react-aria-GridListItem',
     values: {
       ...states,
+      isFirstItem: item.key === state.collection.getFirstKey(),
+      isLastItem: item.key === state.collection.getLastKey(),
       isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,

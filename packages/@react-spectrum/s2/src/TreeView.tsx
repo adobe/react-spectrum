@@ -15,6 +15,7 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
+  ContextValue,
   ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
@@ -30,7 +31,7 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
@@ -39,6 +40,7 @@ import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
 import {useScale} from './utils';
+import { useSpectrumContextProps } from './useSpectrumContextProps';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -62,6 +64,8 @@ interface TreeRendererContextValue {
   renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
+
+export const TreeViewContext = createContext<ContextValue<Partial<TreeViewProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 
 let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean}>({});
@@ -92,6 +96,7 @@ const tree = style({
 }, getAllowedOverrides({height: true}));
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TreeViewContext);
   let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
