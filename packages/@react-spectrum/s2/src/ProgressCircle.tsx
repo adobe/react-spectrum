@@ -54,6 +54,20 @@ const track = style({
     default: 'gray-300',
     isStaticColor: 'transparent-overlay-300',
     forcedColors: 'Background'
+  },
+  strokeWidth: {
+    default: 3,
+    size: {
+      S: 2,
+      L: 4
+    },
+    forcedColors: {
+      default: 2,
+      size: {
+        S: 1,
+        L: 3
+      }
+    }
   }
 });
 
@@ -61,10 +75,31 @@ const fill = style({
   stroke: {
     default: 'blue-900',
     isStaticColor: 'transparent-overlay-900',
-    forcedColors: 'Highlight'
+    forcedColors: 'ButtonText'
   },
   rotate: -90,
-  transformOrigin: 'center'
+  transformOrigin: 'center',
+  strokeWidth: {
+    default: 3,
+    size: {
+      S: 2,
+      L: 4
+    }
+  }
+});
+
+const hcmStroke = style({
+  stroke: {
+    default: 'transparent',
+    forcedColors: 'ButtonText'
+  },
+  strokeWidth: {
+    default: 3,
+    size: {
+      S: 2,
+      L: 4
+    }
+  }
 });
 
 export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, UnsafeStyles {
@@ -139,14 +174,17 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={pxToRem(strokeWidth)}
-            className={track({isStaticColor})} />
+            className={hcmStroke({size})} />
           <circle
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={pxToRem(strokeWidth)}
-            className={fill({isStaticColor})}
+            className={track({isStaticColor, size})} />
+          <circle
+            cx="50%"
+            cy="50%"
+            r={radius}
+            className={fill({isStaticColor, size})}
             style={{
               // These cubic-bezier timing functions were derived from the previous animation keyframes
               // using a best fit algorithm, and then manually adjusted to approximate the original animation.
