@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField} from 'react-aria-components';
+import {Button, FieldError, Group, Input, Label, NumberField} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -27,13 +27,14 @@ export const NumberFieldExample = {
     isWheelDisabled: false
   },
   render: (args) => (
-    <NumberField {...args}>
+    <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
         <Button slot="decrement">-</Button>
         <Input />
         <Button slot="increment">+</Button>
       </Group>
+      <FieldError />
     </NumberField>
   )
 };
