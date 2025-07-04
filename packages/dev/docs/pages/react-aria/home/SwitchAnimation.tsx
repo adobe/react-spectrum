@@ -12,10 +12,10 @@
 import {animationQueue, useIntersectionObserver} from './utils';
 import {Finger} from './components';
 import {flushSync} from 'react-dom';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useRef, useState} from 'react';
 import {Switch} from 'react-aria-components';
 
-export function SwitchAnimation() {
+export function SwitchAnimation(): ReactNode {
   let ref = useRef(null);
   let [isAnimating, setAnimating] = useState(false);
   let [isSelected, setSelected] = useState(true);

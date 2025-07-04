@@ -10,36 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaComboBoxProps} from '@react-aria/combobox';
 import {ComboBox} from './example';
 import {Item} from '@react-stately/collections';
-import React from 'react';
+import React, {JSX} from 'react';
+import {StoryObj} from '@storybook/react';
 
 export default {
   title: 'useComboBox'
 };
+
+export type TemplateStory = StoryObj<typeof Template>;
 
 let lotsOfItems: any[] = [];
 for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = (args) => (
+const Template = (args: AriaComboBoxProps<any>): JSX.Element => (
   <ComboBox {...args} label="Example" defaultItems={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </ComboBox>
 );
 
-export const ScrollTesting = {
+export const ScrollTesting: TemplateStory = {
   render: Template,
   args: {}
 };
 
-export const Disabled = {
+export const Disabled: TemplateStory = {
   render: Template,
   args: {isDisabled: true}
 };
 
-export const FocusWrapping = {
+export const FocusWrapping: TemplateStory = {
   render: Template,
   args: {shouldFocusWrap: true}
 };

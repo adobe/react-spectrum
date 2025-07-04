@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/text",
-  "version": "3.5.16",
+  "version": "3.5.17",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -45,7 +45,7 @@
     "@react-types/shared": "^3.30.0",
     "@react-types/text": "^3.3.18",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.10.0"
+    "react-aria-components": "^1.10.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

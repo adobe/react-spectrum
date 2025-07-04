@@ -10,9 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Heading, IllustratedMessage, Image, MenuItem, SkeletonCollection, Text} from '../src';
+import {
+  ActionMenu,
+  Avatar,
+  Card,
+  CardPreview,
+  CardView,
+  CardViewProps,
+  Collection,
+  CollectionCardPreview,
+  Content,
+  Heading,
+  IllustratedMessage,
+  Image,
+  MenuItem,
+  SkeletonCollection,
+  Text
+} from '../src';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
+import {fn} from '@storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -23,24 +40,18 @@ const meta: Meta<typeof CardView> = {
   parameters: {
     layout: 'fullscreen'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  args: {
+    onLoadMore: fn()
+  }
 };
 
 export default meta;
 
 const cardViewStyles = style({
-  width: {
-    default: 'screen',
-    viewMode: {
-      docs: 'full'
-    }
-  },
-  height: {
-    default: 'screen',
-    viewMode: {
-      docs: 600
-    }
-  }
+  width: 'screen',
+  maxWidth: 'full',
+  height: 600
 });
 
 type Item = {
@@ -101,7 +112,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
   );
 }
 
-export const Example = (args: CardViewProps<any>, {viewMode}) => {
+export const Example = (args: CardViewProps<any>) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -126,7 +137,7 @@ export const Example = (args: CardViewProps<any>, {viewMode}) => {
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      styles={cardViewStyles({viewMode})}>
+      styles={cardViewStyles}>
       <Collection items={items} dependencies={[args.layout]}>
         {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
       </Collection>
@@ -157,12 +168,12 @@ Example.args = {
   selectionMode: 'multiple'
 };
 
-export const Empty = (args: CardViewProps<any>, {viewMode}) => {
+export const Empty = (args: CardViewProps<any>) => {
   return (
     <CardView
       aria-label="Assets"
       {...args}
-      styles={cardViewStyles({viewMode})}
+      styles={cardViewStyles}
       renderEmptyState={() => (
         <IllustratedMessage size="L">
           <EmptyIcon />
@@ -202,7 +213,7 @@ function TopicCard({topic}: {topic: Topic}) {
   );
 }
 
-export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
+export const CollectionCards = (args: CardViewProps<any>) => {
   let list = useAsyncList<Topic, number | null>({
     async load({signal, cursor}) {
       let page = cursor || 1;
@@ -224,7 +235,7 @@ export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      styles={cardViewStyles({viewMode})}>
+      styles={cardViewStyles}>
       <Collection items={items}>
         {topic => <TopicCard topic={topic} />}
       </Collection>

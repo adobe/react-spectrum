@@ -24,7 +24,11 @@ const meta: Meta<typeof TextField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onChange: {table: {category: 'Events'}}
+    onChange: {table: {category: 'Events'}},
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    contextualHelp: {table: {disable: true}}
   },
   title: 'TextField'
 };

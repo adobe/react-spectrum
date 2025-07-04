@@ -6,7 +6,7 @@ output="output.out"
 
 set -e
 
-echo "Building docs with verdaccio"
+echo "Building icons with verdaccio"
 
 # Wait for verdaccio to start
 grep -q 'http address' <(tail -f $output)
@@ -37,9 +37,14 @@ mkdir -p $verdaccio_path
 echo 'test icon builder'
 cd examples/s2-webpack-5-example
 mkdir icon-test
+
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
+npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
+echo 'concluded icon builder'
 
+echo 'testing icon builder library'
 mkdir icon-library-test
 touch icon-library-test/package.json
 cat > icon-library-test/package.json << EOF
@@ -65,7 +70,7 @@ cat > icon-library-test/package.json << EOF
     "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
   "devDependencies": {
-    "@react-spectrum/s2-icon-builder": ">=0.2.3",
+    "@react-spectrum/s2-icon-builder": "latest",
     "@react-spectrum/s2": "latest",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -77,13 +82,16 @@ cat > icon-library-test/package.json << EOF
 EOF
 
 mkdir icon-library-test/src
+mkdir icon-library-test/src/illustrations
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_AlignRight_20_N.svg icon-library-test/src/S2_Icon_AlignRight_20_N.svg
+cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-library-test/src/illustrations/S2_lin_3D_48.svg
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
+yarn transform-icons --type illustration -i './src/illustrations/*.svg' -o ./ --isLibrary
 
 ls .
 
@@ -104,6 +112,7 @@ yarn npm publish --tag latest
 echo "Building icon builder fixture"
 cd ../../../scripts/icon-builder-fixture
 yarn install --no-immutable
+yarn tsc
 yarn build --public-url ./
 
 echo "Moving icon builder fixture to verdaccio"

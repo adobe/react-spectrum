@@ -322,11 +322,7 @@ let rows = [
 
 const MyTreeLoader = () => {
   return (
-    <UNSTABLE_TreeLoadingIndicator
-      className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible
-      })}>      
+    <UNSTABLE_TreeLoadingIndicator>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -879,4 +875,23 @@ export const TreeWithDragAndDrop = {
     },
     ...TreeExampleDynamic.argTypes
   }
+};
+
+function TreeDragAndDropVirtualizedRender(args) {
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <TreeDragAndDropExample defaultExpandedKeys={['projects', 'reports', 'project-2', 'project-5', 'report-1', 'reports-1', 'reports-1A', 'reports-1AB']} {...args} />
+      </Virtualizer>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <SecondTree {...args} />
+      </Virtualizer>
+    </div>
+  );
+}
+
+export const TreeWithDragAndDropVirtualized = {
+  ...TreeWithDragAndDrop,
+  render: TreeDragAndDropVirtualizedRender,
+  name: 'Tree with drag and drop (virtualized)'
 };

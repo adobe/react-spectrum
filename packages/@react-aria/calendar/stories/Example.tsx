@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {AriaCalendarProps, DateValue, useCalendar, useCalendarCell, useCalendarGrid} from '../src';
 import {Button} from '@react-spectrum/button';
+import {CalendarDate, createCalendar, DateDuration, startOfWeek} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState} from '@react-stately/calendar';
-import {createCalendar, DateDuration, startOfWeek} from '@internationalized/date';
-import React, {ReactElement, useMemo, useRef} from 'react';
-import {useCalendar, useCalendarCell, useCalendarGrid} from '../src';
+import React, {JSX, ReactElement, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
 
-export function Example(props) {
+export function Example<T extends DateValue | CalendarDate>(props: AriaCalendarProps<T> & {visibleDuration: DateDuration}): JSX.Element {
   let {locale} = useLocale();
   const {visibleDuration} = props;
 
@@ -98,7 +98,7 @@ function Cell(props) {
   );
 }
 
-export function ExampleCustomFirstDay(props) {
+export function ExampleCustomFirstDay(props: AriaCalendarProps<DateValue>): JSX.Element {
   let {locale} = useLocale();
   const {firstDayOfWeek} = props;
 

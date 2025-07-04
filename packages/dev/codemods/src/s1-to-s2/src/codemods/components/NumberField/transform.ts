@@ -8,7 +8,7 @@ import * as t from '@babel/types';
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
-export default function transformNumberField(path: NodePath<t.JSXElement>) {
+export default function transformNumberField(path: NodePath<t.JSXElement>): void {
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
 
@@ -22,4 +22,4 @@ export default function transformNumberField(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-} 
+}

@@ -1,0 +1,7 @@
+/* Special Tailwind imports for tailwind starter usage in docs. Avoids CSS reset conflicts. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../../../../starters/tailwind/src/*.{ts,tsx}";
+@source "../pages/**/*.mdx";
+@plugin 'tailwindcss-react-aria-components';
+@plugin 'tailwindcss-animate';
