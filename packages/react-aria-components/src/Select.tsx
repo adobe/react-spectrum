@@ -133,6 +133,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     menuProps,
     descriptionProps,
     errorMessageProps,
+    hiddenSelectProps,
     ...validation
   } = useSelect({
     ...removeDataAttributes(props),
@@ -216,12 +217,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-required={props.isRequired || undefined}>
         {renderProps.children}
         <HiddenSelect
-          autoComplete={props.autoComplete}
-          state={state}
-          triggerRef={buttonRef}
-          label={label}
-          name={props.name}
-          isDisabled={props.isDisabled} />
+          {...hiddenSelectProps}
+          autoComplete={props.autoComplete} />
       </div>
     </Provider>
   );
