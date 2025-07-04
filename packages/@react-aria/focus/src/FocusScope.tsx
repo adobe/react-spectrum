@@ -295,6 +295,20 @@ function shouldContainFocus(scopeRef: ScopeRef) {
   return true;
 }
 
+function isTabbableRadio(element: HTMLInputElement, shiftKey: boolean) {
+  let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
+  let radios = [...(radioList ?? [])] as HTMLInputElement[];
+  if (!radios) {
+    return false;
+  }
+  if (element.checked) {
+    return true;
+  }
+  let anyChecked = radios.some(radio => radio.checked);
+
+  return !anyChecked && (shiftKey ? element === radios[radios.length - 1] : element === radios[0]);
+}
+
 function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: boolean) {
   let focusedNode = useRef<FocusableElement>(undefined);
 
@@ -338,7 +352,15 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
 
       e.preventDefault();
       if (nextElement) {
-        focusElement(nextElement, true);
+        while (nextElement.tagName === 'INPUT' && nextElement.getAttribute('type') === 'radio' && (nextElement as HTMLInputElement).form) {
+          if (isTabbableRadio(nextElement as HTMLInputElement, e.shiftKey)) {
+            break;
+          }
+          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+        }
+        if (nextElement) {
+          focusElement(nextElement, true);
+        }
       }
     };
 
