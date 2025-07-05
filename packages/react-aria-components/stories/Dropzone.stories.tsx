@@ -18,7 +18,7 @@ import React, {useRef} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Dropzone'
 };
 
 export const DropzoneExampleWithFileTriggerLink = (props) => (

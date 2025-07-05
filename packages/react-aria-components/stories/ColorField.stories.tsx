@@ -14,7 +14,7 @@ import {ColorField, Input, Label} from 'react-aria-components';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorField',
   argTypes: {
     colorSpace: {
       control: 'select',

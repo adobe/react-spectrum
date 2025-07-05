@@ -20,7 +20,7 @@ import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ListBox'
 };
 
 export const ListBoxExample = (args) => (
