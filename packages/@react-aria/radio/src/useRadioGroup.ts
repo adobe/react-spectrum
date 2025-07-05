@@ -12,7 +12,7 @@
 
 import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerDocument, getOwnerWindow, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, getOwnerWindow, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
