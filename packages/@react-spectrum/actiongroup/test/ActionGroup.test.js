@@ -989,7 +989,7 @@ describe('ActionGroup', function () {
       expect(within(actionGroup).getAllByRole('button')).toHaveLength(2);
       expect(within(actionGroup).getByRole('button', {name: 'One'})).toBeVisible();
 
-      const moreButton = within(actionGroup).getByRole('button', {name: '…'});
+      const moreButton = within(actionGroup).getByRole('button', {name: 'More items'});
       expect(moreButton).not.toHaveAttribute('aria-checked');
       expect(moreButton).toBeVisible();
 
