@@ -12,7 +12,7 @@
 
 import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, getOwnerDocument, getOwnerWindow, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
@@ -101,7 +101,10 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
         return;
     }
     e.preventDefault();
-    let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
+    let walker = getFocusableTreeWalker(e.currentTarget, {
+      from: e.target,
+      accept: (node) => node instanceof getOwnerWindow(node).HTMLInputElement && node.type === 'radio'
+    });
     let nextElem;
     if (nextDir === 'next') {
       nextElem = walker.nextNode();

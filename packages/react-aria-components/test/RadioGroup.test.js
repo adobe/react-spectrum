@@ -557,4 +557,27 @@ describe('RadioGroup', () => {
     expect(inputRef.current).toBe(radio);
     expect(contextInputRef.current).toBe(radio);
   });
+
+  it('should navigate within the group using ArrowRight/Left but skip non-radios', async () => {
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a">
+          <object tabIndex={-1}>
+            <img alt="" />
+          </object>
+          <span>A</span>
+        </Radio>
+        <Radio value="b">B</Radio>
+        <Radio value="c">C</Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(radios[1]);
+    await user.keyboard('[ArrowLeft]');
+    expect(document.activeElement).toBe(radios[0]);
+  });
 });
