@@ -116,6 +116,9 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  if (props.onOpenChange && state === contextState) {
+    console.log('This modals state is controlled by a trigger, place onOpenChange on the trigger instead.');
+  }
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
