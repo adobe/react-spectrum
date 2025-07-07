@@ -20,7 +20,7 @@ import {
   useCallback,
   useState
 } from 'react';
-import {mergeProps, useEvent, useId} from '@react-aria/utils';
+import {mergeProps, useEvent, useFormReset, useId} from '@react-aria/utils';
 import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
@@ -110,13 +110,17 @@ export function useColorField(
     ...props,
     id: inputId,
     value: inputValue,
-    defaultValue: undefined,
+    // Intentionally invalid value that will be ignored by onChange during form reset
+    // This is handled separately below.
+    defaultValue: '!',
     validate: undefined,
     [privateValidationStateProp]: state,
     type: 'text',
     autoComplete: 'off',
     onChange
   }, state, ref);
+
+  useFormReset(ref, state.defaultColorValue, state.setColorValue);
 
   inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
     role: 'textbox',
