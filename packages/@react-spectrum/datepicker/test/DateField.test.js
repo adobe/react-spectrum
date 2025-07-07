@@ -235,7 +235,11 @@ describe('DateField', function () {
           errorMessage="Date unavailable." />
       );
       await user.tab();
-      await user.keyboard('01011980');
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1980');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
@@ -245,7 +249,7 @@ describe('DateField', function () {
           <DateField label="Date" showFormatHelpText />
         </Provider>
       );
-  
+
       let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
       let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
       expect(segmentTypes).toEqual(['year', 'month', 'day']);
