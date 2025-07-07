@@ -55,6 +55,10 @@ export const Dynamic = {
   render: (args) => <DynamicExample {...args} />
 };
 
+export const DynamicWithAriaLivePolite = {
+  render: (args) => <DynamicExample aria-live="polite" autoFocus={false} {...args} />
+};
+
 function DynamicExample(args) {
   let [shown, setShown] = useState(false);
 
@@ -62,7 +66,7 @@ function DynamicExample(args) {
     <>
       <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
       {shown &&
-        <InlineAlert {...args} autoFocus>
+        <InlineAlert autoFocus {...args}>
           <Heading>{args.title}</Heading>
           <Content>{args.content}</Content>
         </InlineAlert>

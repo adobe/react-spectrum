@@ -5679,11 +5679,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/form@workspace:packages/@react-aria/form"
   dependencies:
+    "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.3"
+    "@react-aria/live-announcer": "npm:^3.4.3"
     "@react-aria/utils": "npm:^3.29.1"
     "@react-stately/form": "npm:^3.1.5"
     "@react-types/shared": "npm:^3.30.0"
     "@swc/helpers": "npm:^0.5.0"
+    dom-accessibility-api: "npm:^0.7.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5734,7 +5737,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@npm:^3.12.9, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
@@ -6931,7 +6934,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/form@npm:^3.7.16, @react-spectrum/form@workspace:packages/@react-spectrum/form":
+"@react-spectrum/form@npm:^3.7.15, @react-spectrum/form@npm:^3.7.16, @react-spectrum/form@workspace:packages/@react-spectrum/form":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/form@workspace:packages/@react-spectrum/form"
   dependencies:
@@ -7025,14 +7028,15 @@ __metadata:
   resolution: "@react-spectrum/label@workspace:packages/@react-spectrum/label"
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/i18n": "npm:^3.12.10"
-    "@react-aria/utils": "npm:^3.29.1"
-    "@react-spectrum/form": "npm:^3.7.16"
-    "@react-spectrum/layout": "npm:^3.6.16"
-    "@react-spectrum/utils": "npm:^3.12.6"
-    "@react-types/label": "npm:^3.9.12"
-    "@react-types/shared": "npm:^3.30.0"
-    "@spectrum-icons/ui": "npm:^3.6.17"
+    "@react-aria/i18n": "npm:^3.12.9"
+    "@react-aria/live-announcer": "npm:^3.4.3"
+    "@react-aria/utils": "npm:^3.29.0"
+    "@react-spectrum/form": "npm:^3.7.15"
+    "@react-spectrum/layout": "npm:^3.6.15"
+    "@react-spectrum/utils": "npm:^3.12.5"
+    "@react-types/label": "npm:^3.9.11"
+    "@react-types/shared": "npm:^3.29.1"
+    "@spectrum-icons/ui": "npm:^3.6.16"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
@@ -7060,7 +7064,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/layout@npm:^3.1.0, @react-spectrum/layout@npm:^3.6.16, @react-spectrum/layout@workspace:packages/@react-spectrum/layout":
+"@react-spectrum/layout@npm:^3.1.0, @react-spectrum/layout@npm:^3.6.15, @react-spectrum/layout@npm:^3.6.16, @react-spectrum/layout@workspace:packages/@react-spectrum/layout":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/layout@workspace:packages/@react-spectrum/layout"
   dependencies:
@@ -7913,7 +7917,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/utils@npm:^3.12.6, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
+"@react-spectrum/utils@npm:^3.12.5, @react-spectrum/utils@npm:^3.12.6, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
   dependencies:
@@ -8611,7 +8615,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/label@npm:^3.9.12, @react-types/label@workspace:packages/@react-types/label":
+"@react-types/label@npm:^3.9.11, @react-types/label@workspace:packages/@react-types/label":
   version: 0.0.0-use.local
   resolution: "@react-types/label@workspace:packages/@react-types/label"
   dependencies:
@@ -8756,7 +8760,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.30.0, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.29.1, @react-types/shared@npm:^3.30.0, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
@@ -9069,7 +9073,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@spectrum-icons/ui@npm:^3.1.0, @spectrum-icons/ui@npm:^3.6.17, @spectrum-icons/ui@workspace:packages/@spectrum-icons/ui":
+"@spectrum-icons/ui@npm:^3.1.0, @spectrum-icons/ui@npm:^3.6.16, @spectrum-icons/ui@npm:^3.6.17, @spectrum-icons/ui@workspace:packages/@spectrum-icons/ui":
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/ui@workspace:packages/@spectrum-icons/ui"
   dependencies:
@@ -14941,6 +14945,13 @@ __metadata:
   version: 0.6.3
   resolution: "dom-accessibility-api@npm:0.6.3"
   checksum: 10c0/10bee5aa514b2a9a37c87cd81268db607a2e933a050074abc2f6fa3da9080ebed206a320cbc123567f2c3087d22292853bdfdceaffdd4334ffe2af9510b29360
+  languageName: node
+  linkType: hard
+
+"dom-accessibility-api@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "dom-accessibility-api@npm:0.7.0"
+  checksum: 10c0/51d3fe283b0b4882442ba7cd7c76d27aa96b57e1854f0373be62c0abfaa95e89f4c1a1b883712814dc52b0a0853147f6de681fae20467a29d3a485df9b7329d8
   languageName: node
   linkType: hard
 

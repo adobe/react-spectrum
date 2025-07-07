@@ -24,7 +24,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -120,6 +120,8 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   // Multiplying by two for the two dates, adding one character for the dash, and then the padding around the dash
   let approximateWidth = `calc(${useFormattedDateWidth(state) * 2 + 1}ch + 2 * var(--spectrum-global-dimension-size-100))`;
 
+  let dateRangePickerInputId = useId();
+
   return (
     <Field
       {...props}
@@ -140,6 +142,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
         ref={targetRef}>
         <div style={{overflow: 'hidden', width: '100%'}}>
           <Input
+            id={dateRangePickerInputId}
             isDisabled={isDisabled}
             isQuiet={isQuiet}
             validationState={validationState}
@@ -149,12 +152,14 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
             minWidth={approximateWidth}>
             <DatePickerField
               {...startFieldProps}
+              id={validationState === 'valid' ? dateRangePickerInputId : undefined}
               data-testid="start-date"
               isQuiet={props.isQuiet}
               inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
             <DateRangeDash />
             <DatePickerField
               {...endFieldProps}
+              id={validationState === 'valid' ? dateRangePickerInputId : undefined}
               data-testid="end-date"
               isQuiet={props.isQuiet}
               inputClassName={classNames(

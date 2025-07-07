@@ -312,9 +312,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports description or error message', ({Component}) => {
+  `('$Name supports description or error message', async ({Component}) => {
     function Example(props) {
-      let [value, setValue] = React.useState('0');
+      let [value, setValue] = React.useState(0);
       let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
 
       return (
@@ -355,7 +355,7 @@ describe('Shared TextField behavior', () => {
     expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
     newValue = '4';
     fireEvent.change(input, {target: {value: newValue}});
-    expect(input.value).toBe(newValue);
+    expect(input.value).toEqual('4');
     helpText = tree.getByText('Enter a single digit number.');
     expect(helpText).toHaveAttribute('id');
     validIcon = tree.getByLabelText('Valid');
