@@ -187,6 +187,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
       name: props.startName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -205,6 +206,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       defaultValue: state.defaultValue?.end,
       onChange: end => state.setDateTime('end', end),
       name: props.endName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
