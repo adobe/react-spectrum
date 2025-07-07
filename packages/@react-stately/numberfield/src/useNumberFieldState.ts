@@ -173,6 +173,7 @@ export function useNumberFieldState(
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));
+    validation.commitValidation();
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {

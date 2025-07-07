@@ -136,6 +136,7 @@ export function useColorFieldState(
       newColorValue = colorValue.toString('hex');
     }
     setInputValue(newColorValue);
+    validation.commitValidation();
   };
 
   let increment = () => {
