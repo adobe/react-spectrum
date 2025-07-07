@@ -744,12 +744,8 @@ This accepts a list of item ids that are disabled. An item is considered disable
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the `<TreeLoadMoreItem>` after the `Tree`'s items render function as shown in the example below.
-This can be done at any arbitrary Tree row level, allowing you to handle independent asynchronous loading for any number of rows.
-
-Note that `<TreeLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
-the initial loading state and empty state should instead be handled via [renderEmptyState](#empty-state).
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<TreeLoadMoreItem>` element at the end of the tree or an arbitrary Tree row's last item.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
@@ -772,8 +768,6 @@ function AsyncSortTable() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      // Brief delay so spinner can be seen more easily
-      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
 
@@ -786,8 +780,6 @@ function AsyncSortTable() {
 
   let pokemonList = useAsyncList<Pokemon>({
     async load({signal, cursor, filterText}) {
-      // Brief delay so spinner can be seen more easily
-      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(
         cursor || `https://pokeapi.co/api/v2/pokemon`,
         {signal}
@@ -876,11 +868,6 @@ export function MyProgressCircle(props: ProgressBarProps) {
 ```
 
 </details>
-
-### TreeLoadMoreItem
-
-<PropTable component={docs.exports.TreeLoadMoreItem} links={docs.links} />
-
 
 ## Empty state
 
@@ -1977,6 +1964,17 @@ function DndTree(props: DndTreeProps) {
 ### TreeItemContent
 
 <PropTable component={docs.exports.TreeItemContent} links={docs.links} />
+
+### TreeLoadMoreItem
+
+A `<TreeLoadMoreItem>` defines the load more spinner within a `<Tree>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the tree or tree row that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.TreeLoadMoreItem} links={docs.links} />
+
+</details>
 
 ## Styling
 

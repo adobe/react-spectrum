@@ -906,11 +906,8 @@ The example below has `menuTrigger` set to `focus`.
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-and filtering of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the [`<ListBoxLoadMoreItem>`](../react-aria/ListBox.html#listboxloadmoreitem) after the `Listbox`'s items render function as shown in the example below.
-
-Note that `<ListBoxLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
-the initial loading state and empty state should instead be handled via [renderEmptyState](../react-aria/ListBox.html#empty-state).
+and filtering of data from a server. Use the [renderEmptyState](../react-aria/ListBox.html#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a [`<ListBoxLoadMoreItem>`](../react-aria/ListBox.html#listboxloadmoreitem) element at the end of the list.
 
 ```tsx example
 import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
@@ -927,8 +924,6 @@ function AsyncLoadingExample() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      // Brief delay so spinner can be seen more easily
-      await new Promise(resolve => setTimeout(resolve, 500));
       let res = await fetch(
         cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`,
         {signal}

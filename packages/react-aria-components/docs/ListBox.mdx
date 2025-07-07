@@ -778,11 +778,8 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the `<ListBoxLoadMoreItem>` after the `Listbox`'s items render function as shown in the example below.
-
-Note that `<ListBoxLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
-the initial loading state and empty state should instead be handled via [renderEmptyState](#empty-state).
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<ListBoxLoadMoreItem>` element at the end of the list.
 
 ```tsx example
 import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
@@ -795,8 +792,6 @@ interface Character {
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
-      // Brief delay so spinner can be seen more easily
-      await new Promise(resolve => setTimeout(resolve, 500));
       let res = await fetch(
         cursor || `https://pokeapi.co/api/v2/pokemon`,
         {signal}
@@ -866,10 +861,6 @@ export function MyProgressCircle(props: ProgressBarProps) {
 ```
 
 </details>
-
-### ListBoxLoadMoreItem
-
-<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} />
 
 ## Disabled items
 
@@ -1965,6 +1956,17 @@ A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.ListBoxItem} links={docs.links} />
+
+</details>
+
+### ListBoxLoadMoreItem
+
+A `<ListBoxLoadMoreItem>` defines the load more spinner within a `<ListBox>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the list that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} />
 
 </details>
 

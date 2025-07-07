@@ -611,11 +611,9 @@ This accepts a list of item ids that are disabled. An item is considered disable
 
 ## Asynchronous loading
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. If you want to display a spinner to indicate the loading state to the user, or support features like
-infinite scroll to load more data, be sure to include the `<GridListLoadMoreItem>` after the `GridList`'s items render function as shown in the example below.
-
-Note that `<GridListLoadMoreItem>` is meant to render the spinner specifically when loading additional items,
-the initial loading state and empty state should instead be handled via [renderEmptyState](./empty-state).
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server.
+Use the [renderEmptyState](./empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<GridListLoadMoreItem>` element at the end of the list.
 
 ```tsx example
 import {Collection, GridListLoadMoreItem} from 'react-aria-components';
@@ -632,8 +630,6 @@ function AsyncList() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      // Brief delay so spinner can be seen more easily
-      await new Promise(resolve => setTimeout(resolve, 500));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
       let json = await res.json();
 
@@ -703,10 +699,6 @@ export function MyProgressCircle(props: ProgressBarProps) {
 ```
 
 </details>
-
-### GridListLoadMoreItem
-
-<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} />
 
 ## Empty state
 
@@ -1760,6 +1752,17 @@ A `<GridListItem>` defines a single option within a `<GridList>`. If the `childr
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.GridListItem} links={docs.links} />
+
+</details>
+
+### GridListLoadMoreItem
+
+A `<GridListLoadMoreItem>` defines the load more spinner within a `<GridList>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the list that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} />
 
 </details>
 
