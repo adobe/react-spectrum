@@ -414,6 +414,15 @@ describe('Select', () => {
     expect(text).not.toHaveAttribute('id');
   });
 
+  it('should support form prop', () => {
+    render(
+      <TestSelect name="select" form="test" />
+    );
+
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('form', 'test');
+  });
+  
   it('should not submit if required and selectedKey is null', async () => {
     const onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
   
