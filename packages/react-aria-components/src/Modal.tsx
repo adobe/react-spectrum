@@ -69,6 +69,12 @@ export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal
   let ctx = useContext(InternalModalContext);
 
   if (ctx) {
+    if (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined) {
+      // create a list of props that are passed in but not allowed when using an external ModalOverlay
+      const invalidSet = new Set(['isDismissable', 'isKeyboardDismissDisabled', 'isOpen', 'defaultOpen', 'onOpenChange', 'isEntering', 'isExiting', 'UNSTABLE_portalContainer', 'shouldCloseOnInteractOutside']);
+      const invalidProps = Object.keys(props).filter(key => invalidSet.has(key));
+      console.warn(`This modal is already wrapped in a ModalOverlay, props [${invalidProps.join(', ')}] should be placed on the ModalOverlay instead.`);
+    }
     return <ModalContent {...props} modalRef={ref}>{props.children}</ModalContent>;
   }
 
@@ -116,8 +122,10 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  if (props.onOpenChange && state === contextState) {
-    console.log('This modals state is controlled by a trigger, place onOpenChange on the trigger instead.');
+  if (state === contextState) {
+    if (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined) {
+      console.warn('This modals state is controlled by a trigger, place onOpenChange on the trigger instead.');
+    }
   }
 
   let objectRef = useObjectRef(ref);
