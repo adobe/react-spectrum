@@ -20,7 +20,7 @@ import {
   useCallback,
   useState
 } from 'react';
-import {mergeProps, useEvent, useFormReset, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
@@ -104,8 +104,6 @@ export function useColorField(
     }
   };
 
-  useEvent(ref, 'change', commit);
-
   let {inputProps, ...otherProps} = useFormattedTextField({
     ...props,
     id: inputId,
@@ -129,7 +127,8 @@ export function useColorField(
     'aria-valuenow': null,
     'aria-valuetext': null,
     autoCorrect: 'off',
-    spellCheck: 'false'
+    spellCheck: 'false',
+    onBlur: commit
   });
 
   if (validationBehavior === 'native') {

@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useEvent, useFormReset, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   InputHTMLAttributes,
@@ -26,7 +26,7 @@ import {
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
   useLocalizedStringFormatter,
@@ -93,8 +93,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
 
   let inputId = useId(id);
-  // Set input value to normalized valid value
-  useEvent(inputRef, 'change', commit);
+  let {focusProps} = useFocus({
+    onBlur() {
+      // Set input value to normalized valid value
+      commit();
+    }
+  });
 
   let numberFormatter = useNumberFormatter(formatOptions);
   let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
@@ -225,6 +229,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let inputProps: InputHTMLAttributes<HTMLInputElement> = mergeProps(
     spinButtonProps,
+    focusProps,
     textFieldProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO

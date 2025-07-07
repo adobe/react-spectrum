@@ -11,7 +11,7 @@
  */
 
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 export default {
   title: 'React Aria Components'
