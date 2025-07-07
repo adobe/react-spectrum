@@ -40,6 +40,7 @@ export interface RadioGroupAria extends ValidationResult {
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
     name,
+    form,
     isReadOnly,
     isRequired,
     isDisabled,
@@ -129,6 +130,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   let groupName = useId(name);
   radioGroupData.set(state, {
     name: groupName,
+    form,
     descriptionId: descriptionProps.id,
     errorMessageId: errorMessageProps.id,
     validationBehavior

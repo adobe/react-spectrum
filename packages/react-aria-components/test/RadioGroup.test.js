@@ -580,4 +580,11 @@ describe('RadioGroup', () => {
     await user.keyboard('[ArrowLeft]');
     expect(document.activeElement).toBe(radios[0]);
   });
+  
+  it('should support form prop', () => {
+    let {getAllByRole} = renderGroup({form: 'test'});
+    for (let radio of getAllByRole('radio')) {
+      expect(radio).toHaveAttribute('form', 'test');
+    }
+  });
 });

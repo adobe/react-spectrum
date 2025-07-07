@@ -188,6 +188,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         maxLength: props.maxLength,
         minLength: props.minLength,
         name: props.name,
+        form: props.form,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
         autoCorrect: props.autoCorrect,

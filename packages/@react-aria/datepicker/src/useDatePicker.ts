@@ -150,7 +150,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       // DatePicker owns the validation state for the date field.
       [privateValidationStateProp]: state,
       autoFocus: props.autoFocus,
-      name: props.name
+      name: props.name,
+      form: props.form
     },
     descriptionProps,
     errorMessageProps,
