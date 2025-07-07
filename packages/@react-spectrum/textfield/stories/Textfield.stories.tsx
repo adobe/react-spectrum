@@ -12,9 +12,9 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
-import {ComponentStoryObj} from '@storybook/react';
 import Info from '@spectrum-icons/workflow/Info';
 import React from 'react';
+import {StoryObj} from '@storybook/react';
 import {TextField} from '../';
 
 export default {
@@ -60,7 +60,7 @@ export default {
   }
 };
 
-export type TextFieldStory = ComponentStoryObj<typeof TextField>;
+export type TextFieldStory = StoryObj<typeof TextField>;
 
 export const Default: TextFieldStory = {
   render: (args) => render(args)
@@ -113,6 +113,25 @@ export const WithErrorMessage: TextFieldStory = {
     validationState: 'invalid'
   }),
   name: 'with error message'
+};
+
+export const WithValidState: TextFieldStory = {
+  render: (args) => render({
+    ...args,
+    value: 'user@example.com',
+    validationState: 'valid'
+  }),
+  name: 'with valid state (shows validation icon)'
+};
+
+export const WithValidStateAndDescription: TextFieldStory = {
+  render: (args) => render({
+    ...args,
+    value: 'user@example.com',
+    validationState: 'valid',
+    description: 'This email address is valid and will be used for notifications.'
+  }),
+  name: 'with valid state and description'
 };
 
 export const WithDescriptionErrorMessageAndValidation: TextFieldStory = {
