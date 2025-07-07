@@ -6194,7 +6194,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/textfield@npm:^3.17.4, @react-aria/textfield@npm:^3.17.5, @react-aria/textfield@workspace:packages/@react-aria/textfield":
+"@react-aria/textfield@npm:^3.17.5, @react-aria/textfield@workspace:packages/@react-aria/textfield":
   version: 0.0.0-use.local
   resolution: "@react-aria/textfield@workspace:packages/@react-aria/textfield"
   dependencies:
