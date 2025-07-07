@@ -91,6 +91,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     // Ensure input is focused if the user clicks on the collection directly.
     if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
       inputRef.current.focus();
+      inputRef.current.select?.();
     }
 
     let target = e.target as Element | null;

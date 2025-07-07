@@ -43,9 +43,12 @@ export const Example = {
             <Heading slot="title">Dialog title</Heading>
             <Header>Header</Header>
             <Content>
-              {[...Array(args.paragraphs)].map((_, i) =>
-                <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-              )}
+              <>
+                {[...Array(args.paragraphs)].map((_, i) =>
+                  <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
+                )}
+                <input type="text" defaultValue="Hello" />
+              </>
             </Content>
             <Footer><Checkbox>Don't show this again</Checkbox></Footer>
             <ButtonGroup>
