@@ -12,7 +12,7 @@
 
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
+import React, {useState} from 'react';
 
 export default {
   title: 'React Aria Components',
