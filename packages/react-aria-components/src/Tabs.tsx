@@ -291,6 +291,8 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
 export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {id, ...otherProps} = props;
   let {tabPanelProps} = useTabPanel(props, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 

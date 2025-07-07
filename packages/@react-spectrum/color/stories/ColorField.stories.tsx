@@ -13,17 +13,17 @@
 import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {useId} from '@react-aria/utils';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-export type ColorFieldStory = ComponentStoryObj<typeof ColorField>;
+export type ColorFieldStory = StoryObj<typeof ColorField>;
 
 export default {
   title: 'ColorField',
@@ -100,7 +100,7 @@ export default {
       options: [null, 'red', 'green', 'blue', 'hue', 'saturation', 'lightness', 'brightness']
     }
   }
-} as ComponentMeta<typeof ColorField>;
+} as Meta<typeof ColorField>;
 
 export const Default: ColorFieldStory = {
   render: (args) => render(args)

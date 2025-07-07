@@ -127,6 +127,7 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
   boxSizing: 'border-box',
+  width: 'full',
   maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,

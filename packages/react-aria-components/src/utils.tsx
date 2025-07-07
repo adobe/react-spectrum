@@ -63,16 +63,21 @@ export interface DOMProps extends StyleProps, SharedDOMProps {
   children?: ReactNode
 }
 
+type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
+type StyleOrFunction<T> = CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined);
+
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
-  className?: string | ((values: T & {defaultClassName: string | undefined}) => string),
+  className?: ClassNameOrFunction<T>,
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
+  style?: StyleOrFunction<T>
 }
+
+type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */
-  children?: ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode)
+  children?: ChildrenOrFunction<T>
 }
 
 interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
@@ -175,7 +180,7 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E> | undefined, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, ...contextProps} = ctx as any;

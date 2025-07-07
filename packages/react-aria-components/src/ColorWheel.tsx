@@ -14,7 +14,7 @@ export interface ColorWheelRenderProps {
    */
   isDisabled: boolean,
   /**
-   * State of the color color wheel.
+   * State of the color wheel.
    */
   state: ColorWheelState
 }

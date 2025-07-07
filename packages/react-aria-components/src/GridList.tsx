@@ -62,7 +62,10 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * @default false
    */
   disallowTypeAhead?: boolean,
-  /** How multiple selection should behave in the collection. */
+  /**
+   * How multiple selection should behave in the collection.
+   * @default "toggle"
+   */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,

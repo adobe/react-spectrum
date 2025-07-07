@@ -58,7 +58,10 @@ export interface ListBoxRenderProps {
 }
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
-  /** How multiple selection should behave in the collection. */
+  /**
+   * How multiple selection should behave in the collection.
+   * @default "toggle"
+   */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
   dragAndDropHooks?: DragAndDropHooks,

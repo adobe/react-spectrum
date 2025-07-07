@@ -20,7 +20,7 @@ export interface FileTriggerProps extends GlobalDOMAttributes<HTMLInputElement> 
   /**
    * Specifies what mime type of files are allowed.
    */
-  acceptedFileTypes?: Array<string>,
+  acceptedFileTypes?: ReadonlyArray<string>,
   /**
    * Whether multiple files can be selected.
    */
