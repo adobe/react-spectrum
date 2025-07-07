@@ -39,7 +39,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
   let {
     isQuiet,
     orientation = 'vertical',
-    articleProps = {},
+    articleProps = {role: 'article'},
     item,
     layout,
     children
