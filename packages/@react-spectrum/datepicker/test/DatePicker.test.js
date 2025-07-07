@@ -1426,7 +1426,8 @@ describe('DatePicker', function () {
 
       it('should support typing into the month segment', function () {
         testInput('month,', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 1, 3), false);
-        testInput('month,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), true);
+        testInput('month,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), false);
+        testInput('month,', new CalendarDate(2019, 2, 3), '012', new CalendarDate(2019, 12, 3), true);
         testInput('month,', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
         testInput('month,', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
         testIgnored('month,', new CalendarDate(2019, 2, 3), '0');
@@ -1435,7 +1436,8 @@ describe('DatePicker', function () {
 
       it('should support typing into the day segment', function () {
         testInput('day,', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 2, 1), false);
-        testInput('day,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 2, 1), true);
+        testInput('day,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 2, 1), false);
+        testInput('day,', new CalendarDate(2019, 2, 3), '012', new CalendarDate(2019, 2, 12), true);
         testInput('day,', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 2, 12), true);
         testInput('day,', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 2, 4), true);
         testIgnored('day,', new CalendarDate(2019, 2, 3), '0');
@@ -1444,14 +1446,19 @@ describe('DatePicker', function () {
 
       it('should support typing into the year segment', function () {
         testInput('year,', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
+        testInput('year,', new CalendarDate(2019, 2, 3), '0199', new CalendarDate(199, 2, 3), false);
+        testInput('year,', new CalendarDate(2019, 2, 3), '01993', new CalendarDate(1993, 2, 3), false);
+        testInput('year,', new CalendarDateTime(2019, 2, 3, 8), '0199', new CalendarDateTime(199, 2, 3, 8), false);
         testInput('year,', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
+        testInput('year,', new CalendarDateTime(2019, 2, 3, 8), '01993', new CalendarDateTime(1993, 2, 3, 8), true);
         testIgnored('year,', new CalendarDate(2019, 2, 3), '0');
       });
 
       it('should support typing into the hour segment in 12 hour time', function () {
         // AM
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true);
+        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), false);
+        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '011', new CalendarDateTime(2019, 2, 3, 11), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
@@ -1459,7 +1466,8 @@ describe('DatePicker', function () {
 
         // PM
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '01', new CalendarDateTime(2019, 2, 3, 13), true);
+        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '01', new CalendarDateTime(2019, 2, 3, 13), false);
+        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '011', new CalendarDateTime(2019, 2, 3, 23), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);

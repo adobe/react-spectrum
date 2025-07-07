@@ -235,8 +235,12 @@ describe('DateField', function () {
           errorMessage="Date unavailable." />
       );
       await user.tab();
-      await user.keyboard('01011980');
-      expect(tree.getAllByText('Date unavailable.')[0]).toBeInTheDocument();
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1980');
+      expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
     it('does not crash on unknown segment types', async () => {

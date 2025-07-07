@@ -337,7 +337,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     let helpText = tree.getByText('Enter a single digit number.');
     expect(helpText).toHaveAttribute('id');
-    let validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
+    let validIcon = tree.getByLabelText('Valid');
     expect(validIcon).toHaveAttribute('id');
     expect(input).toHaveAttribute('aria-describedby', `${helpText.id} ${validIcon.id}`);
     expect(input.value).toBe('0');
@@ -358,7 +358,7 @@ describe('Shared TextField behavior', () => {
     expect(input.value).toEqual('4');
     helpText = tree.getByText('Enter a single digit number.');
     expect(helpText).toHaveAttribute('id');
-    validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
+    validIcon = tree.getByLabelText('Valid');
     expect(validIcon).toHaveAttribute('id');
     expect(input).toHaveAttribute('aria-describedby', `${helpText.id} ${validIcon.id}`);
   });
@@ -391,9 +391,9 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Example);
     let input = tree.getByTestId(testId);
     let helpText;
-    let validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
+    let validIcon = tree.getByLabelText('Valid');
     expect(validIcon).toHaveAttribute('id');
-    expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', `${validIcon.id}`);
+    expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', validIcon.id);
 
     fireEvent.change(input, {target: {value: 's'}});
 
@@ -424,9 +424,9 @@ describe('Shared TextField behavior', () => {
       expect(input.value).toEqual('4');
     });
 
-    validIcon = tree.getByRole('img', {'aria-label': '(valid)'});
+    validIcon = tree.getByLabelText('Valid');
     expect(validIcon).toHaveAttribute('id');
-    expect(input).toHaveAttribute('aria-describedby', `${validIcon.id}`);
+    expect(input).toHaveAttribute('aria-describedby', validIcon.id);
   });
 
   it.each`

@@ -64,7 +64,6 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldB
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   let inputRef = userInputRef || defaultInputRef;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/textfield');
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -95,8 +94,11 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldB
     } as any);
   }
 
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/textfield');
   let validId = useId();
-  let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
+  let validationIcon = isInvalid
+    ? <AlertMedium />
+    : <CheckmarkMedium id={validId} aria-hidden aria-label={stringFormatter.format('valid')} />;
   let validation = cloneElement(validationIcon, {
     UNSAFE_className: classNames(
       styles,
