@@ -199,7 +199,7 @@ export const ListBoxDndCustomDropIndicator = (props: ListBoxProps<typeof albums[
       return (
         <DropIndicator target={target} style={({isDropTarget}) => ({width: '150px', height: '150px', background: isDropTarget ? 'blue' : 'transparent', color: 'white', display: isDropTarget ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'})}>
           <div>
-            keys: [{Array.from(keys).join(', ')}]
+            keys: {keys ? Array.from(keys).join(', ') : 'undefined'}
           </div>
           <div>
             draggedKey: {draggedKey}

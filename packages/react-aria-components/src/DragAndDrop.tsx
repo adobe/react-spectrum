@@ -54,7 +54,7 @@ export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, drop
     // Only show drop indicators when virtual dragging or this is the current drop target.
     if (isVirtualDragging || dropState?.isDropTarget(target)) {
       if (renderDropIndicator) {
-        let keys = dragState?.draggingKeys || new Set<Key>();
+        let keys = dragState?.draggingKeys ?? undefined;
         let draggedKey = dragState?.draggedKey ?? undefined;
         return renderDropIndicator(target, keys, draggedKey);
       } else {

@@ -117,14 +117,14 @@ function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) 
   return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
 }
 
-function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget, keys: Set<Key>, draggedKey?: Key) => ReactNode) {
+function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode) {
   return children.map(view => renderWrapper(parent, view, renderDropIndicator));
 }
 
 function renderWrapper(
   parent: View | null,
   reusableView: View,
-  renderDropIndicator?: (target: ItemDropTarget, keys: Set<Key>, draggedKey?: Key) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
 ): ReactNode {
   let rendered = (
     <VirtualizerItem
@@ -155,7 +155,7 @@ function renderDropIndicatorWrapper(
   parent: View | null,
   reusableView: View,
   target: ItemDropTarget,
-  renderDropIndicator: (target: ItemDropTarget, keys: Set<Key>, draggedKey?: Key) => ReactNode,
+  renderDropIndicator: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode,
   keys: Set<Key> = new Set(),
   draggedKey?: Key
 ) {
