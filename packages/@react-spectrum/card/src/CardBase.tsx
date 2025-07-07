@@ -115,7 +115,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <article
+      <div
         {...styleProps}
         {...mergeProps(cardProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
         ref={domRef}
@@ -151,7 +151,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
           </SlotProvider>
           <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
-      </article>
+      </div>
     </FocusRing>
   );
 });
