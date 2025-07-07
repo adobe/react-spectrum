@@ -72,6 +72,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     },
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
+    getPreviewOffset: state.getPreviewOffset,
     hasDragButton: props.hasDragButton,
     onDragStart(e) {
       state.startDrag(props.key, e);

@@ -35,7 +35,7 @@ export interface DragOptions {
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /**
-   * A function that computes the offset of the drag preview relative to the pointer.
+   * A function that returns the offset of the drag preview relative to the pointer.
    *
    * If not provided, a default offset is automatically calculated based on the click/touch
    * position, falling back to the center of the preview in cases where the preview is smaller
