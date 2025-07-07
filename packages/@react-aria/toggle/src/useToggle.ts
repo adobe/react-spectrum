@@ -81,7 +81,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
-  useFormReset(ref, state.isSelected, state.setSelected);
+  useFormReset(ref, state.defaultSelected, state.setSelected);
 
   return {
     labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
