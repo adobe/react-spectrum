@@ -295,7 +295,7 @@ function shouldContainFocus(scopeRef: ScopeRef) {
   return true;
 }
 
-function isTabbableRadio(element: HTMLInputElement, shiftKey: boolean) {
+function isTabbableRadio(element: HTMLInputElement) {
   let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
   let radios = [...(radioList ?? [])] as HTMLInputElement[];
   if (!radios) {
@@ -306,7 +306,7 @@ function isTabbableRadio(element: HTMLInputElement, shiftKey: boolean) {
   }
   let anyChecked = radios.some(radio => radio.checked);
 
-  return !anyChecked && (shiftKey ? element === radios[radios.length - 1] : element === radios[0]);
+  return !anyChecked;
 }
 
 function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: boolean) {
@@ -352,15 +352,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
 
       e.preventDefault();
       if (nextElement) {
-        while (nextElement.tagName === 'INPUT' && nextElement.getAttribute('type') === 'radio' && (nextElement as HTMLInputElement).form) {
-          if (isTabbableRadio(nextElement as HTMLInputElement, e.shiftKey)) {
-            break;
-          }
-          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        }
-        if (nextElement) {
-          focusElement(nextElement, true);
-        }
+        focusElement(nextElement, true);
       }
     };
 
@@ -777,6 +769,21 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
         // Skip nodes inside the starting node.
         if (opts?.from?.contains(node)) {
           return NodeFilter.FILTER_REJECT;
+        }
+
+        if (opts?.tabbable
+          && (node as Element).tagName === 'INPUT'
+          && (node as HTMLInputElement).getAttribute('type') === 'radio') {
+          // If the radio is in a form, we can get all the other radios by name
+          if ((node as HTMLInputElement).form && !isTabbableRadio(node as HTMLInputElement)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          // If the radio is in the same group as the current node and none are selected, we can skip it
+          if ((walker.currentNode as Element).tagName === 'INPUT'
+            && (walker.currentNode as HTMLInputElement).type === 'radio'
+            && (walker.currentNode as HTMLInputElement).name === (node as HTMLInputElement).name) {
+            return NodeFilter.FILTER_REJECT;
+          }
         }
 
         if (filter(node as Element)

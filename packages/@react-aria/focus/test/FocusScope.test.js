@@ -1341,6 +1341,8 @@ describe('FocusScope', function () {
     await user.tab();
     expect(document.activeElement).toBe(getByTestId('button3'));
     await user.tab();
+    expect(document.activeElement).toBe(radios[5]);
+    await user.tab();
     expect(document.activeElement).toBe(getByTestId('button4'));
   });
 
@@ -1399,6 +1401,8 @@ describe('FocusScope', function () {
     expect(document.activeElement).toBe(radios[5]);
     await user.tab({shift: true});
     expect(document.activeElement).toBe(getByTestId('button3'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[4]);
     await user.tab({shift: true});
     expect(document.activeElement).toBe(getByTestId('button2'));
     await user.tab({shift: true});
