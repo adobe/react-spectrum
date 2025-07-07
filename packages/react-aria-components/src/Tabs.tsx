@@ -313,7 +313,7 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
     return null;
   }
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(otherProps, {global: true});
   delete DOMProps.id;
 
   let domProps = isSelected
