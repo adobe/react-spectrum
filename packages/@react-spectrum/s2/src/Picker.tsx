@@ -86,7 +86,6 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
-   * @private
    */
   isQuiet?: boolean
 }
@@ -341,7 +340,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+      className={UNSAFE_className + style({...field(), position: 'relative'}, getAllowedOverrides())({
         isInForm: !!formContext,
         labelPosition,
         size
