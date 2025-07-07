@@ -228,6 +228,31 @@ describe('RangeSlider', function () {
     expect(inputs[1]).toHaveValue('40');
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => ({start: 0, end: 100}), {start: 10, end: 40});
+        
+        return (
+          <form action={formAction}>
+            <RangeSlider label="Value" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let inputs = getAllByRole('slider');
+      expect(inputs[0]).toHaveValue('10');
+      expect(inputs[1]).toHaveValue('40');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(inputs[0]).toHaveValue('0');
+      expect(inputs[1]).toHaveValue('100');
+    });
+  }
+
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
       let {getAllByRole, getByRole} = render(

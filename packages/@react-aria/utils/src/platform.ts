@@ -14,10 +14,9 @@ function testUserAgent(re: RegExp) {
   if (typeof window === 'undefined' || window.navigator == null) {
     return false;
   }
-  return (
-    window.navigator['userAgentData']?.brands.some((brand: {brand: string, version: string}) => re.test(brand.brand))
-  ) ||
-  re.test(window.navigator.userAgent);
+  let brands = window.navigator['userAgentData']?.brands;
+  return Array.isArray(brands) && brands.some((brand: {brand: string, version: string}) => re.test(brand.brand)) ||
+    re.test(window.navigator.userAgent);
 }
 
 function testPlatform(re: RegExp) {

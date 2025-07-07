@@ -76,7 +76,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let {validationBehavior, isRequired} = data;
   let {visuallyHiddenProps} = useVisuallyHidden();
 
-  useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
+  useFormReset(props.selectRef, state.defaultSelectedKey, state.setSelectedKey);
   useFormValidation({
     validationBehavior,
     focus: () => triggerRef.current?.focus()

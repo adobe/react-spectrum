@@ -26,14 +26,18 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
  */
 export const RangeSlider = React.forwardRef(function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
+  let defaultThumbValues: number[] | undefined = undefined;
+  if (defaultValue != null) {
+    defaultThumbValues = [defaultValue.start, defaultValue.end];
+  } else if (value == null) {
+    // make sure that useSliderState knows we have two handles
+    defaultThumbValues = [props.minValue ?? 0, props.maxValue ?? 100];
+  }
 
   let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {
     ...otherProps,
     value: value != null ? [value.start, value.end] : undefined,
-    defaultValue: defaultValue != null
-      ? [defaultValue.start, defaultValue.end]
-      // make sure that useSliderState knows we have two handles
-      : [props.minValue ?? 0, props.maxValue ?? 100],
+    defaultValue: defaultThumbValues,
     onChange(v) {
       onChange?.({start: v[0], end: v[1]});
     },

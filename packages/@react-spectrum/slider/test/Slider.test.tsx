@@ -225,6 +225,29 @@ describe('Slider', function () {
     expect(input).toHaveValue('10');
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 50, 10);
+        
+        return (
+          <form action={formAction}>
+            <Slider label="Value" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('slider');
+      expect(input).toHaveValue('10');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('50');
+    });
+  }
+
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
       let {getByRole} = render(

@@ -228,7 +228,7 @@ export function useSliderThumb(
     }
   ) : {};
 
-  useFormReset(inputRef, value, (v) => {
+  useFormReset(inputRef, state.defaultValues[index], (v) => {
     state.setThumbValue(index, v);
   });
 

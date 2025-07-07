@@ -59,7 +59,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   }, [inputRef]);
 
-  useFormReset(inputRef, state.hue, state.setHue);
+  useFormReset(inputRef, state.defaultValue, state.setValue);
 
   let currentPosition = useRef<{x: number, y: number} | null>(null);
 

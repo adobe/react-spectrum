@@ -204,12 +204,12 @@ describe('DateField', () => {
         {({isDisabled}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput 
+            <DateInput
               data-disabled-state={isDisabled ? 'disabled' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
-        )} 
+        )}
       </DateField>
     );
     let group = getByRole('group');
@@ -318,7 +318,7 @@ describe('DateField', () => {
         </DateInput>
       </DateField>
     );
-  
+
     let segments = getAllByRole('spinbutton');
     await user.click(segments[2]);
     expect(document.activeElement).toBe(segments[2]);
@@ -349,7 +349,7 @@ describe('DateField', () => {
         </DateInput>
       </DateField>
     );
-  
+
     let segments = getAllByRole('spinbutton');
     await user.click(segments[2]);
     expect(segments[2]).toHaveFocus();
@@ -372,5 +372,43 @@ describe('DateField', () => {
     let segments = Array.from(getByRole('group').querySelectorAll('.react-aria-DateSegment'));
     let segmentTypes = segments.map(s => s.getAttribute('data-type'));
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
+  });
+
+  it('should not store leading zeros when typing into the segments', async () => {
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segements = getAllByRole('spinbutton');
+    let monthSegment = segements[0];
+    await user.click(monthSegment);
+    expect(monthSegment).toHaveFocus();
+    await user.keyboard('11');
+    expect(monthSegment).toHaveTextContent('11');
+    await user.click(monthSegment);
+    await user.keyboard('012');
+    expect(monthSegment).toHaveTextContent('12');
+
+    let daysSegment = segements[1];
+    await user.click(daysSegment);
+    expect(daysSegment).toHaveFocus();
+    await user.keyboard('11');
+    expect(daysSegment).toHaveTextContent('11');
+    await user.click(daysSegment);
+    await user.keyboard('012');
+    expect(daysSegment).toHaveTextContent('12');
+
+    let yearsSegment = segements[2];
+    await user.click(yearsSegment);
+    expect(yearsSegment).toHaveFocus();
+    await user.keyboard('1111');
+    expect(yearsSegment).toHaveTextContent('1111');
+    await user.keyboard('002222');
+    expect(yearsSegment).toHaveTextContent('2222');
   });
 });
