@@ -689,8 +689,8 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps> {
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<unknown>) => {
-  let ref = useObjectRef<HTMLTableHeaderCellElement>(forwardedRef);
+export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
+  let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {columnHeaderProps} = useTableColumnHeader(
@@ -753,7 +753,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      ref={ref}
+      ref={ref as any}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -1205,8 +1205,8 @@ export interface CellProps extends RenderProps<CellRenderProps> {
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<unknown>) => {
-  let ref = useObjectRef<HTMLTableCellElement>(forwardedRef);
+export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
+  let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -1240,7 +1240,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
     <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
-      ref={ref}
+      ref={ref as any}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
