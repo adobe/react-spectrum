@@ -698,7 +698,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface TreeLoadingSentinelRenderProps {
+export interface TreeLoadMoreItemRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -706,18 +706,18 @@ export interface TreeLoadingSentinelRenderProps {
   level: number
 }
 
-export interface TreeLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadingSentinelRenderProps> {
+export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
   /**
    * The load more spinner to render when loading additional items.
    */
-  children?: ReactNode | ((values: TreeLoadingSentinelRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
+  children?: ReactNode | ((values: TreeLoadMoreItemRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
   /**
    * Whether or not the loading spinner should be rendered or not.
    */
   isLoading?: boolean
 }
 
-export const UNSTABLE_TreeLoadingSentinel = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadingSentinelProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
   let sentinelRef = useRef(null);

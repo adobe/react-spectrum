@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text, UNSTABLE_ListBoxLoadingSentinel} from '../';
+import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -493,9 +493,9 @@ describe('Select', () => {
           <Button>Yo</Button>
           <Text>hi</Text>
           <ListBox>
-            <UNSTABLE_ListBoxLoadingSentinel isLoading>
+            <ListBoxLoadMoreItem isLoading>
               Loading more
-            </UNSTABLE_ListBoxLoadingSentinel>
+            </ListBoxLoadMoreItem>
           </ListBox>
         </Popover>
       </Select>
