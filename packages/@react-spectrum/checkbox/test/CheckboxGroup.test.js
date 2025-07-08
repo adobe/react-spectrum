@@ -415,6 +415,39 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).not.toBeChecked();
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => ['dogs', 'cats'], []);
+        
+        return (
+          <Provider theme={theme}>
+            <form action={formAction}>
+              <CheckboxGroup name="pets" label="Pets" defaultValue={value}>
+                <Checkbox value="dogs">Dogs</Checkbox>
+                <Checkbox value="cats">Cats</Checkbox>
+                <Checkbox value="dragons">Dragons</Checkbox>
+              </CheckboxGroup>
+              <input type="submit" data-testid="submit" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let checkboxes = getAllByRole('checkbox');
+      for (let checkbox of checkboxes) {
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(checkboxes[0]).toBeChecked();
+      expect(checkboxes[1]).toBeChecked();
+      expect(checkboxes[2]).not.toBeChecked();
+    });
+  }
+
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports group level isRequired', async () => {

@@ -63,6 +63,7 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
     labelPosition = 'top' as LabelPosition,
     menuWidth,
     name,
+    form,
     autoFocus
   } = props;
 
@@ -184,7 +185,8 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
         state={state}
         triggerRef={unwrappedTriggerRef}
         label={label}
-        name={name} />
+        name={name}
+        form={form} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
         <FieldButton
           ref={triggerRef}
