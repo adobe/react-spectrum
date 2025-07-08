@@ -126,4 +126,13 @@ describe('SearchField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(
+      <TestSearchField form="test" />
+    );
+
+    let input = getByRole('searchbox');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });
