@@ -17,7 +17,7 @@ import {
   ButtonRenderProps,
   ContextValue,
   DateValue,
-  DialogContext,
+  Dialog,
   FormContext,
   Provider,
   TimeValue
@@ -229,12 +229,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 });
 
 export function CalendarPopover(props: PropsWithChildren): ReactElement {
-  // We don't have a dialog anymore, so we don't consume DialogContext. Have to place the
-  // id and aria label on something otherwise we get a violation.
-  let dialogProps = useContext(DialogContext) as any;
   return (
     <PopoverBase
-      {...dialogProps}
       hideArrow
       styles={style({
         paddingX: 16,
@@ -244,7 +240,9 @@ export function CalendarPopover(props: PropsWithChildren): ReactElement {
         flexDirection: 'column',
         gap: 16
       })}>
-      {props.children}
+      <Dialog>
+        {props.children}
+      </Dialog>
     </PopoverBase>
   );
 }
@@ -280,15 +278,6 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
         ]}>
         <CalendarIcon />
       </Provider>
-      {/* expands hit area for calendar button */}
-      <div
-        className={style({
-          position: 'absolute',
-          top: -4,
-          left: 0,
-          right: -4,
-          bottom: -4
-        })} />
     </Button>
   );
 }

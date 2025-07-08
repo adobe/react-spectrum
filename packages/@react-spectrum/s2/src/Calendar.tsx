@@ -462,8 +462,7 @@ const CalendarHeaderCell = (props: Omit<CalendarHeaderCellProps, 'children'> & P
 
 const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined}): ReactElement => {
   let {locale} = useLocale();
-  let defaultFirstDayOfWeek = useDefaultFirstDayOfWeek(locale);
-  let firstDayOfWeek = props.firstDayOfWeek ?? defaultFirstDayOfWeek;
+  let firstDayOfWeek = props.firstDayOfWeek;
   // Calculate the day and week index based on the date.
   let {dayIndex, weekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
 
@@ -495,7 +494,6 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isNextD
   // Starting from the current day, find the first day before it in the current week that is not selected.
   // Then, the span of selected days is the current day minus the first unselected day.
   let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
-    console.log('date', date?.month === props.date.month, date?.month, props.date.month);
     return date && i > 0 && (!state.isSelected(date) || date.month !== props.date.month);
   });
   let selectionSpan = -1;
@@ -571,24 +569,4 @@ function useWeekAndDayIndices(
   }, [date, locale, firstDayOfWeek]);
 
   return {dayIndex, weekIndex};
-}
-
-function useDefaultFirstDayOfWeek(locale: string): DayOfWeek {
-  let day = useMemo(() => {
-    // Create a known date (e.g., January 1, 2024, which was a Monday)
-    const knownDate = new CalendarDate(2024, 1, 1);
-
-    // Get the day of week for this date without specifying firstDayOfWeek
-    // This will use the locale's default
-    const dayOfWeek = getDayOfWeek(knownDate, locale);
-
-    // Since we know this date was a Monday (day 1 in our system),
-    // we can calculate the first day of the week
-    const firstDayNumber = (1 - dayOfWeek + 7) % 7;
-
-    const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
-    return dayMap[firstDayNumber];
-  }, [locale]);
-
-  return day;
 }
