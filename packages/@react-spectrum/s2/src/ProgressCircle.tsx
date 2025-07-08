@@ -15,10 +15,12 @@ import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {pxToRem} from './progress-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
+const pxToRemDynamic = (px: number): string => (px / 16) + 'rem';
 export interface ProgressCircleStyleProps {
   /**
    * The size of the ProgressCircle.
@@ -56,7 +58,7 @@ const track = style({
     forcedColors: 'Background'
   },
   strokeWidth: {
-    default: 3,
+    default: `[${pxToRem(3)}]`,
     size: {
       S: 2,
       L: 4
@@ -65,7 +67,7 @@ const track = style({
       default: 2,
       size: {
         S: 1,
-        L: 3
+        L: `[${pxToRem(3)}]`
       }
     }
   }
@@ -80,7 +82,7 @@ const fill = style({
   rotate: -90,
   transformOrigin: 'center',
   strokeWidth: {
-    default: 3,
+    default: `[${pxToRem(3)}]`,
     size: {
       S: 2,
       L: 4
@@ -94,7 +96,7 @@ const hcmStroke = style({
     forcedColors: 'ButtonText'
   },
   strokeWidth: {
-    default: 3,
+    default: `[${pxToRem(3)}]`,
     size: {
       S: 2,
       L: 4
@@ -128,8 +130,6 @@ const dashoffsetAnimation = keyframes(`
   }
 `);
 
-let pxToRem = px => (px / 16) + 'rem';
-
 /**
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
@@ -152,7 +152,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
   }
 
   // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
-  let radius = `calc(50% - ${pxToRem(strokeWidth / 2)})`;
+  let radius = `calc(50% - ${pxToRemDynamic(strokeWidth / 2)})`;
   let isStaticColor = !!staticColor;
 
   return (
