@@ -114,7 +114,7 @@ export interface CollectionBranchProps {
   /** The parent node of the items to render. */
   parent: Node<unknown>,
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
@@ -125,7 +125,7 @@ export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   /** A ref to the scroll container for the collection. */
   scrollRef?: RefObject<HTMLElement | null>,
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
 }
 
 export interface CollectionRenderer {
@@ -153,7 +153,7 @@ export const DefaultCollectionRenderer: CollectionRenderer = {
 function useCollectionRender(
   collection: ICollection<Node<unknown>>,
   parent: Node<unknown> | null,
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
 ) {
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
@@ -175,7 +175,7 @@ function useCollectionRender(
   });
 }
 
-export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget) => ReactNode): ReactNode {
+export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode): ReactNode {
   let key = node.key;
   let keyAfter = collection.getKeyAfter(key);
   let nextItemInFlattenedCollection = keyAfter != null ? collection.getItem(keyAfter) : null;

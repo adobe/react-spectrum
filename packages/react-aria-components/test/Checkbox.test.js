@@ -271,4 +271,10 @@ describe('Checkbox', () => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
     expect(contextInputRef.current).toBe(getByRole('checkbox'));
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<Checkbox form="test">Test</Checkbox>);
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('form', 'test');
+  });
 });

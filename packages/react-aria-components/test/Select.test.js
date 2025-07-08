@@ -368,7 +368,50 @@ describe('Select', () => {
     await selectTester.selectOption({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
   });
-  
+
+  describe('typeahead', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('can select an option via typeahead', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Australian Capital Territory</ListBoxItem>
+              <ListBoxItem>New South Wales</ListBoxItem>
+              <ListBoxItem>Northern Territory</ListBoxItem>
+              <ListBoxItem>Queensland</ListBoxItem>
+              <ListBoxItem>South Australia</ListBoxItem>
+              <ListBoxItem>Tasmania</ListBoxItem>
+              <ListBoxItem>Victoria</ListBoxItem>
+              <ListBoxItem>Western Australia</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      await user.tab();
+      await user.keyboard('Northern Terr');
+      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+      let trigger = selectTester.trigger;
+      expect(trigger).toHaveTextContent('Northern Territory');
+      expect(trigger).not.toHaveAttribute('data-pressed');
+    });
+  });
+
   it('should support autoFocus', () => {
     let {getByTestId} = render(<TestSelect autoFocus />);
     let selectTester = testUtilUser.createTester('Select', {
@@ -414,9 +457,18 @@ describe('Select', () => {
     expect(text).not.toHaveAttribute('id');
   });
 
+  it('should support form prop', () => {
+    render(
+      <TestSelect name="select" form="test" />
+    );
+
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('form', 'test');
+  });
+  
   it('should not submit if required and selectedKey is null', async () => {
     const onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
-  
+
     function Test() {
       const [selectedKey, setSelectedKey] = React.useState(null);
       return (
@@ -435,13 +487,13 @@ describe('Select', () => {
         </Form>
       );
     }
-  
+
     const {getByTestId} = render(<Test />);
     const wrapper = getByTestId('select');
     const selectTester = testUtilUser.createTester('Select', {root: wrapper});
     const trigger = selectTester.trigger;
     const submit = getByTestId('submit');
-  
+
     expect(trigger).toHaveTextContent('Select an item');
     await selectTester.selectOption({option: 'Cat'});
     expect(trigger).toHaveTextContent('Cat');

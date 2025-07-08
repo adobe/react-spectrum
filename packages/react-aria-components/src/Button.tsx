@@ -68,28 +68,6 @@ export interface ButtonRenderProps {
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
-   * The `<form>` element to associate the button with.
-   * The value of this attribute must be the id of a `<form>` in the same document.
-   */
-  form?: string,
-  /**
-   * The URL that processes the information submitted by the button.
-   * Overrides the action attribute of the button's form owner.
-   */
-  formAction?: string,
-  /** Indicates how to encode the form data that is submitted. */
-  formEncType?: string,
-  /** Indicates the HTTP method used to submit the form. */
-  formMethod?: string,
-  /** Indicates that the form is not to be validated when it is submitted. */
-  formNoValidate?: boolean,
-  /** Overrides the target attribute of the button's form owner. */
-  formTarget?: string,
-  /** Submitted as a pair with the button's value as part of the form data. */
-  name?: string,
-  /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string,
-  /**
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
    */
@@ -99,8 +77,6 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean
 }
-
-const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 

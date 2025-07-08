@@ -584,4 +584,11 @@ describe('RadioGroup', () => {
     expect(inputRef.current).toBe(radio);
     expect(contextInputRef.current).toBe(radio);
   });
+
+  it('should support form prop', () => {
+    let {getAllByRole} = renderGroup({form: 'test'});
+    for (let radio of getAllByRole('radio')) {
+      expect(radio).toHaveAttribute('form', 'test');
+    }
+  });
 });

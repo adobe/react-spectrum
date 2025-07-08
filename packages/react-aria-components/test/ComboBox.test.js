@@ -378,4 +378,10 @@ describe('ComboBox', () => {
     let text = popover.querySelector('.react-aria-Text');
     expect(text).not.toHaveAttribute('id');
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<TestComboBox form="test" />);
+    let input = getByRole('combobox');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });

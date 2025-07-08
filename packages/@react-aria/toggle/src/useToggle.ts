@@ -43,6 +43,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isReadOnly = false,
     value,
     name,
+    form,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -99,7 +100,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
-  useFormReset(ref, state.isSelected, state.setSelected);
+  useFormReset(ref, state.defaultSelected, state.setSelected);
 
   return {
     labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
@@ -112,6 +113,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
       name,
+      form,
       type: 'checkbox',
       ...interactions
     }),

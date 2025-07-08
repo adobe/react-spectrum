@@ -1485,14 +1485,13 @@ export const AsyncLoadingClientFiltering: TableStory = {
   name: 'async client side filter loading'
 };
 
+interface StarWarsItem {
+  name: string,
+  height: string,
+  mass: string
+}
 
 function AsyncServerFilterTable(props) {
-  interface Item {
-    name: string,
-    height: string,
-    mass: string
-  }
-
   let columns = [
     {
       name: 'Name',
@@ -1509,7 +1508,7 @@ function AsyncServerFilterTable(props) {
     }
   ];
 
-  let list = useAsyncList<Item>({
+  let list = useAsyncList<StarWarsItem>({
     getKey: (item) => item.name,
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -2196,5 +2195,68 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+function AsyncLoadOverflowWrapRepro() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
+  ];
+
+  let list = useAsyncList<StarWarsItem>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <TableView
+      aria-label="example async loading table"
+      height="size-3000"
+      overflowMode="wrap">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column align={column.key !== 'name' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Row key={item.name}>
+            {(key) => (
+              <Cell>{`${item[key]}++++${item[key]}++++${item[key]}++++`}</Cell>
+            )}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const AsyncLoadOverflowWrapReproStory: TableStory = {
+  render: (args) => <AsyncLoadOverflowWrapRepro {...args} />,
+  name: 'async, overflow wrap scroll jumping reproduction',
+  parameters: {description: {data: `
+    Rapidly scrolling down through this table should not cause the scroll position to jump to the top.
+  `}}
+};
 
 export {Performance} from './Performance';

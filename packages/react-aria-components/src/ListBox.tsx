@@ -261,7 +261,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             collection={collection}
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -274,7 +274,7 @@ export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
-  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -299,7 +299,7 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
         <CollectionBranch
           collection={state.collection}
           parent={section}
-          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
       </HeaderContext.Provider>
     </section>
   );
