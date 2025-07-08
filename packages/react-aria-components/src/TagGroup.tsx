@@ -12,7 +12,7 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
@@ -196,10 +196,17 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
   isDisabled?: boolean
 }
 
+// TODO probably can reuse item node
+class TagItemNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A Tag is an individual item within a TagList.
  */
-export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});

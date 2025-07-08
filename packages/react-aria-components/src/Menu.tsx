@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
@@ -107,12 +107,19 @@ export interface SubmenuTriggerProps {
 
 const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
+// todo: what logic should this have?
+class SubMenuTriggerNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('submenutrigger', key);
+  }
+}
+
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
  *
  * @version alpha
  */
-export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigger', (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubMenuTriggerNode, (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -318,10 +325,17 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   );
 }
 
+// todo can probably reuse the SectionNode from ListBox?
+class SectionNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('section', key);
+  }
+}
+
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent(SectionNode, MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -355,10 +369,17 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
+// TODO maybe this needs to a separate node type?
+class MenuItemNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const MenuItem = /*#__PURE__*/ createLeafComponent(MenuItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;

@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
@@ -237,10 +237,17 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
   );
 }
 
+// TODO probably can reuse ItemNode
+class TabItemNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);

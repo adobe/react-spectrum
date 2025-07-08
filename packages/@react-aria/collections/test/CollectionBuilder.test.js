@@ -1,8 +1,14 @@
-import {Collection, CollectionBuilder, createLeafComponent} from '../src';
+import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '../src';
 import React from 'react';
 import {render} from '@testing-library/react';
 
-const Item = createLeafComponent('item', () => {
+class ItemNode extends CollectionNode {
+  constructor(key) {
+    super('item', key);
+  }
+}
+
+const Item = createLeafComponent(ItemNode, () => {
   return <div />;
 });
 

@@ -549,11 +549,19 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
   dependencies?: ReadonlyArray<any>
 }
 
+// TODO: will this have any logic? Maybe for ones like this where we aren't adding the filter function just yet we could
+// keep it as returning the string instead of the class in createBranchComponent
+class TableHeaderNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('tableheader', key);
+  }
+}
+
 /**
  * A header within a `<Table>`, containing the table columns.
  */
 export const TableHeader =  /*#__PURE__*/ createBranchComponent(
-  'tableheader',
+  TableHeaderNode,
   <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
     let collection = useContext(TableStateContext)!.collection as TableCollection<unknown>;
     let headerRows = useCachedChildren({
@@ -686,10 +694,18 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   maxWidth?: ColumnStaticSize | null
 }
 
+
+// TODO does this need to be separate or should ItemNode be generic enough that it can take an arbitrary "type"?
+class ColumnNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('column', key);
+  }
+}
+
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<unknown>) => {
+export const Column = /*#__PURE__*/ createLeafComponent(ColumnNode, (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableHeaderCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -919,10 +935,18 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
+
+// TODO: do we need this
+class TableBodyNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('tablebody', key);
+  }
+}
+
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
+export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
@@ -1020,11 +1044,18 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   id?: Key
 }
 
+// TODO: maybe can reuse the item node, but probably will have different filter logic here so splitting out for now
+class TableRowNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A row within a `<Table>`.
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
-  'item',
+  TableRowNode,
   <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement>, item: GridNode<T>) => {
     let ref = useObjectRef<HTMLTableRowElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
@@ -1202,10 +1233,17 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   colSpan?: number
 }
 
+// TODO: Also perhaps can just be ItemNode?
+class CellNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('cell', key);
+  }
+}
+
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<unknown>) => {
+export const Cell = /*#__PURE__*/ createLeafComponent(CellNode, (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
@@ -1359,7 +1397,14 @@ export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+// TODO: can reuse this most likely
+class LoaderNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('loader', key);
+  }
+}
+
+export const UNSTABLE_TableLoadingSentinel = createLeafComponent(LoaderNode, function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

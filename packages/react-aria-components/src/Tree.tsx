@@ -449,7 +449,13 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+class ContentNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('content', key);
+  }
+}
+
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent(ContentNode, function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -484,10 +490,17 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   onAction?: () => void
 }
 
+// TODO: also might be able to reuse the ItemNode
+class TreeItemNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -708,7 +721,14 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
 
 export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+// TODO: can reuse this most likely
+class LoaderNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('loader', key);
+  }
+}
+
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent(LoaderNode, function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore

@@ -12,7 +12,7 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -280,10 +280,16 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   onAction?: () => void
 }
 
+class GridListNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('item', key);
+  }
+}
+
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
@@ -511,7 +517,14 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+// TODO: can probably reuse ListBox's loaderNode
+class GridLoaderNode extends CollectionNode<any> {
+  constructor(key: Key) {
+    super('loader', key);
+  }
+}
+
+export const UNSTABLE_GridListLoadingSentinel = createLeafComponent(GridLoaderNode, function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
