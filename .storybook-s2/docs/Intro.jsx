@@ -140,41 +140,53 @@ export function Docs() {
         <P>You may also need to configure other tools such as TypeScript, Babel, ESLint, and Jest to support parsing import attributes. See <Link href="https://parceljs.org/features/macros/#usage-with-other-tools" target="_blank">these docs</Link> for details.</P>
         <P>See the <Link href="https://github.com/adobe/react-spectrum/tree/main/examples" target="_blank">examples folder</Link> in our repo for working setups with various build tools. For details on optimizing the output CSS, see the <Link href="?path=/docs/style-macro--docs#css-optimization" target="_top">style macro docs</Link>.</P>
         <H2>Setting up your app</H2>
-        <P>Unlike React Spectrum v3, a <Code>Provider</Code> is not required. Instead, import <Code>@react-spectrum/s2/page.css</Code> in the entry component of your app to apply the background color and color scheme to the <Code>{'<html>'}</Code> element. This ensures that the entire page has the proper styles even before your JavaScript runs.</P>
-        <Pre>{highlight(`import '@react-spectrum/s2/page.css';
-import {Button} from '@react-spectrum/s2';
+        <P>Wrap your app in an S2 <Code>{'<Provider>'}</Code> component to load the necessary fonts, set the locale, etc. When using S2 together with other versions of Spectrum, ensure that the S2 provider is the inner-most provider.</P>
+        <P>When building a full page S2 app, import <Code>@react-spectrum/s2/page.css</Code> to apply the background color and color scheme to the <Code>{'<html>'}</Code> element. This ensures that the page has styles even before your JavaScript loads.</P>
+        <P>When embedding Spectrum 2 as a section of a larger page, do not include <Code>page.css</Code>.</P>
+        <Pre>{highlight(`// Import page.css to apply S2 background to the <html> element
+import '@react-spectrum/s2/page.css';
+import {Provider, Button} from '@react-spectrum/s2';
 
 function App() {
   return (
-    <Button
-      variant="accent"
-      onPress={() => alert('Hey there!')}>
-      Hello Spectrum 2!
-    </Button>
+    // Wrap app in a <Provider> to load fonts, set locale, etc.
+    <Provider>
+      <Button
+        variant="accent"
+        onPress={() => alert('Hey there!')}>
+        Hello Spectrum 2!
+      </Button>
+    </Provider>
   );
 }`)}</Pre>
         <Example>
           <Button variant="accent" onPress={() => alert('Hey there!')}>Hello Spectrum 2!</Button>
-        </Example>
-        <P><Strong>Note</Strong>: If you’re embedding Spectrum 2 as a section of a larger page rather than taking over the whole window, follow the <Link href="#embedded-sections" target="_self">directions below</Link> instead of using <Code>page.css</Code>.</P>
-        <H3>Overriding the color scheme</H3>
-        <P>By default, the page follows the user’s operating system color scheme setting, supporting both light and dark mode. The page background is set to the <Code>base</Code> Spectrum background layer by default. This can be configured by setting the <Code>data-color-scheme</Code> and <Code>data-background</Code> attributes on the <Code>{'<html>'}</Code> element. For example, to force the application to only render in light mode, set <Code>data-color-scheme="light"</Code>.</P>
+        </Example>        
+        <H3>Setting the background and color scheme</H3>
+        <P>By default, the page follows the user’s operating system color scheme setting, supporting both light and dark mode.</P>
+        <P>When using <Code>page.css</Code>, the <Code>{'<html>'}</Code> background is set to the <Code>base</Code> Spectrum background layer by default. This can be configured by setting the <Code>data-color-scheme</Code> and <Code>data-background</Code> attributes on the <Code>{'<html>'}</Code> element. For example, to force the application to only render in light mode, set <Code>data-color-scheme="light"</Code>.</P>
         <Pre>{highlight(`<html data-color-scheme="light">
   <!-- ... -->
 </html>`)}</Pre>
+        <P>When not using <Code>page.css</Code>, there is no default background. Set the <Code>background</Code> prop on the <Code>{'<Provider>'}</Code> to the appropriate background layer for your app. Set the <Code>colorScheme</Code> prop to force a certain color scheme.</P>
+        <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
+
+<Provider background="base">
+  {/* your app */}
+</Provider>`)}</Pre>
         <H3>Overriding the locale</H3>
-        <P>By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by rendering a <Code>{'<Provider>'}</Code> component at the root of your app, and setting the <Code>locale</Code> prop.</P>
+        <P>By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by rendering setting the <Code>locale</Code> prop on the <Code>{'<Provider>'}</Code>.</P>
         <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
 
 <Provider locale="en-US">
   {/* your app */}
 </Provider>`)}</Pre>
-        <H3>Embedded sections</H3>
-        <P>If you’re building an embedded section of a larger page using Spectrum 2, use the <Code>{'<Provider>'}</Code> component to set the background instead of importing <Code>page.css</Code>. The <Code>background</Code> prop should be set to the Spectrum background layer appropriate for your app, and the <Code>colorScheme</Code> can be overridden as well.</P>
-        <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
-
-<Provider background="base">
-  {/* your app */}
+        <H3>Server-side rendering</H3>
+        <P>When using SSR, the <Code>{'<Provider>'}</Code> component can be rendered as the root <Code>{'<html>'}</Code> element. The <Code>locale</Code> prop should always be specified to avoid hydration errors. <Code>page.css</Code> is not needed in this case.</P>
+        <Pre>{highlight(`<Provider elementType="html" locale="en-US">
+  <body>
+    {/* ... */}
+  </body>
 </Provider>`)}</Pre>
         <H3>Usage with older React Spectrum versions</H3>
         <P>See Adobe internal documentation.</P>
