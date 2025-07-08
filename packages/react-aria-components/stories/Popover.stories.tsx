@@ -14,7 +14,7 @@ import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'rea
 import React, {useEffect, useRef, useState} from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Popover'
 };
 
 export const PopoverExample = () => (

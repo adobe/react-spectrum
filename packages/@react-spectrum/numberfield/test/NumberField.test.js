@@ -2272,10 +2272,11 @@ describe('NumberField', function () {
   });
 
   it('supports form value', () => {
-    let {textField, rerender} = renderNumberField({name: 'age', value: 30});
+    let {textField, rerender} = renderNumberField({name: 'age', form: 'test', value: 30});
     expect(textField).not.toHaveAttribute('name');
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'age');
+    expect(hiddenInput).toHaveAttribute('form', 'test');
     expect(hiddenInput).toHaveValue('30');
 
     rerender({name: 'age', value: null});

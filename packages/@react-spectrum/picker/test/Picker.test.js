@@ -2109,6 +2109,22 @@ describe('Picker', function () {
       expect(input).toHaveValue('one');
     });
 
+
+    it('should support form prop', () => {
+      render(
+        <Provider theme={theme}>
+          <Picker label="Test" name="picker" form="test">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let input = document.querySelector('[name=picker]');
+      expect(input).toHaveAttribute('form', 'test');
+    });
+
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultSelectedKey when submitting form action', async () => {
         function Test() {        

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, Input, Label} from 'react-aria-components';
+import {ColorField, FieldError, Input, Label} from 'react-aria-components';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorField',
   argTypes: {
     colorSpace: {
       control: 'select',
@@ -28,9 +28,10 @@ export default {
 };
 
 export const ColorFieldExample = (args) => (
-  <ColorField {...args}>
+  <ColorField {...args} validate={(v) => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
     <Label>{args.label}</Label>
     <Input style={{display: 'block'}} />
+    <FieldError />
   </ColorField>
 );
 

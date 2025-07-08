@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch} from '../src/ColorSwatch';
+import {ColorSwatch, SpectrumColorSwatchProps} from '../src/ColorSwatch';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -29,9 +30,11 @@ export default {
       options: ['XS', 'S', 'M', 'L']
     }
   }
-};
+} as Meta<SpectrumColorSwatchProps>;
 
-export const Default = (args) => (
+export type ColorSwatchStory = StoryFn<typeof ColorSwatch>;
+
+export const Default: ColorSwatchStory = (args) => (
   <ColorSwatch {...args} />
 );
 
@@ -39,7 +42,7 @@ Default.args = {
   color: 'rgb(255, 0, 0)'
 };
 
-export const NoValue = (args) => <ColorSwatch {...args} />;
+export const NoValue: ColorSwatchStory = (args) => <ColorSwatch {...args} />;
 
-export const CustomWidth = (args) => <ColorSwatch {...args} width="size-1000" />;
+export const CustomWidth: ColorSwatchStory = (args) => <ColorSwatch {...args} width="size-1000" />;
 CustomWidth.args = Default.args;

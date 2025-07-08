@@ -51,7 +51,8 @@ export function useSliderThumb(
     trackRef,
     inputRef,
     orientation = state.orientation,
-    name
+    name,
+    form
   } = opts;
 
   let isDisabled = opts.isDisabled || state.isDisabled;
@@ -244,6 +245,7 @@ export function useSliderThumb(
       step: state.step,
       value: value,
       name,
+      form,
       disabled: isDisabled,
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),

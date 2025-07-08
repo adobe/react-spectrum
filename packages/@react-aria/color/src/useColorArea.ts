@@ -54,7 +54,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     containerRef,
     'aria-label': ariaLabel,
     xName,
-    yName
+    yName,
+    form
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');
 
@@ -426,6 +427,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
       name: xName,
+      form,
       tabIndex: (isMobile || !focusedInput || focusedInput === 'x' ? undefined : -1),
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,
@@ -451,6 +453,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
       name: yName,
+      form,
       tabIndex: (isMobile || focusedInput === 'y' ? undefined : -1),
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,

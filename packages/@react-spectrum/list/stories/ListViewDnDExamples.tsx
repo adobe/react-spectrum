@@ -2,19 +2,19 @@ import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '@react-spectrum/menu';
 import {chain} from '@react-aria/utils';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {DragAndDropOptions, useDragAndDrop} from '@react-spectrum/dnd';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/illustrations/Folder';
-import {Item, ListView} from '../';
+import {Item, ListView, SpectrumListViewProps} from '../';
 import {ItemDropTarget, Key} from '@react-types/shared';
 import {items} from './ListView.stories';
-import React from 'react';
+import React, {JSX} from 'react';
 import {Text} from '@react-spectrum/text';
-import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
-export function DragExample(props?) {
+export function DragExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {listViewProps, dragHookOptions} = props;
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
@@ -84,10 +84,10 @@ let itemList2 = [
   {id: '12', type: 'item', textValue: 'Item Twelve'}
 ];
 
-export function ReorderExample(props) {
+export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {items, onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
   let list = useListData({
-    initialItems: items || itemList1
+    initialItems: items ? [...items] : itemList1
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
@@ -118,7 +118,7 @@ export function ReorderExample(props) {
     onDragStart: onDragStart,
     onDragEnd: onDragEnd,
     async onDrop(e) {
-      onDrop(e);
+      onDrop?.(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys: Key[] = [];
         for (let item of e.items) {
@@ -167,7 +167,7 @@ export function ReorderExample(props) {
   );
 }
 
-export function DragIntoItemExample(props) {
+export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions?: DragAndDropOptions, dropHookOptions?: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {
     listViewProps = {},
     dragHookOptions = {},
@@ -275,18 +275,18 @@ export function DragIntoItemExample(props) {
   );
 }
 
-export function DragBetweenListsExample(props) {
+export function DragBetweenListsExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void, items1?: any[], items2?: any[]}): JSX.Element {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
   onDragStart = chain(action('dragStart'), onDragStart);
   onDragEnd = chain(action('dragEnd'), onDragEnd);
 
   let list1 = useListData({
-    initialItems: props.items1 || itemList1
+    initialItems: props.items1 ? [...props.items1] : itemList1
   });
 
   let list2 = useListData({
-    initialItems: props.items2 || itemList2
+    initialItems: props.items2 ? [...props.items2] : itemList2
   });
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
@@ -400,7 +400,7 @@ export function DragBetweenListsExample(props) {
   );
 }
 
-export function DragBetweenListsRootOnlyExample(props) {
+export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
   let {
     listViewProps = {},
     dragHookOptions = {},
