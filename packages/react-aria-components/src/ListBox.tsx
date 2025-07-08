@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -307,9 +307,23 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
 
 // todo make a class here
 
-class SectionNode extends CollectionNode<any> {
+class SectionNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
     super('section', key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    let filteredSection = super.filter(collection, newCollection, filterFn);
+    if (filteredSection) {
+      if (filteredSection.lastChildKey !== null) {
+        let lastChild = collection.getItem(filteredSection.lastChildKey);
+        if (lastChild && lastChild.type !== 'header') {
+          return filteredSection;
+        }
+      }
+    }
+
+    return null;
   }
 }
 
@@ -341,9 +355,17 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
 
 // TODO create item type here
 
-class ItemNode extends CollectionNode<any> {
+class ItemNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
     super('item', key);
+  }
+
+  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    if (filterFn(this.textValue)) {
+      return this.clone();
+    }
+
+    return null;
   }
 }
 
@@ -488,6 +510,10 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 class LoaderNode extends CollectionNode<any> {
   constructor(key: Key) {
     super('loader', key);
+  }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
   }
 }
 

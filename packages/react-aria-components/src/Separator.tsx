@@ -11,7 +11,7 @@
  */
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
-import {CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
@@ -24,6 +24,14 @@ export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLE
 class SeparatorNode extends CollectionNode<any> {
   constructor(key: Key) {
     super('separator', key);
+  }
+
+  filter(_, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+    if (newCollection.getItem(this.prevKey!)) {
+      return this.clone();
+    }
+
+    return null;
   }
 }
 

@@ -21,6 +21,10 @@ class HeaderNode extends CollectionNode<any> {
   constructor(key: Key) {
     super('header', key);
   }
+
+  filter(): CollectionNode<any> {
+    return this.clone();
+  }
 }
 
 export const Header = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {

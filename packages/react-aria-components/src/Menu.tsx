@@ -107,10 +107,21 @@ export interface SubmenuTriggerProps {
 
 const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
-// todo: what logic should this have?
-class SubMenuTriggerNode extends CollectionNode<any> {
+class SubMenuTriggerNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
     super('submenutrigger', key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    let triggerNode = collection.getItem(this.firstChildKey!);
+    if (triggerNode && filterFn(triggerNode.textValue)) {
+      // TODO: perhaps should call super.filter for correctness, but basically add the menu item child of the submenutrigger
+      // to the keymap so it renders
+      newCollection.addNode(triggerNode as CollectionNode<T>);
+      return this.clone();
+    }
+
+    return null;
   }
 }
 
@@ -326,9 +337,23 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
 }
 
 // todo can probably reuse the SectionNode from ListBox?
-class SectionNode extends CollectionNode<any> {
+class SectionNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
     super('section', key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    let filteredSection = super.filter(collection, newCollection, filterFn);
+    if (filteredSection) {
+      if (filteredSection.lastChildKey !== null) {
+        let lastChild = collection.getItem(filteredSection.lastChildKey);
+        if (lastChild && lastChild.type !== 'header') {
+          return filteredSection;
+        }
+      }
+    }
+
+    return null;
   }
 }
 
@@ -370,9 +395,17 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
 // TODO maybe this needs to a separate node type?
-class MenuItemNode extends CollectionNode<any> {
+class MenuItemNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
     super('item', key);
+  }
+
+  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    if (filterFn(this.textValue)) {
+      return this.clone();
+    }
+
+    return null;
   }
 }
 
