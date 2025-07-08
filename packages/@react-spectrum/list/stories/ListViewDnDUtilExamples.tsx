@@ -1,11 +1,11 @@
 import {action} from '@storybook/addon-actions';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {DragAndDropOptions, useDragAndDrop} from '@react-spectrum/dnd';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/illustrations/Folder';
-import {Item, ListView} from '../';
-import React from 'react';
+import {Item, ListView, SpectrumListViewProps} from '../';
+import React, {JSX} from 'react';
 import {Text} from '@react-spectrum/text';
-import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 let itemProcessor = async (items, acceptedDragTypes) => {
@@ -48,7 +48,7 @@ let folderList2 = [
   {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
 ];
 
-export function DragExampleUtilHandlers(props) {
+export function DragExampleUtilHandlers(props: {listViewProps: SpectrumListViewProps<any>, dndOptions: DragAndDropOptions}): JSX.Element {
   let {listViewProps, dndOptions} = props;
   let list = useListData({
     initialItems: folderList1,
@@ -92,7 +92,7 @@ export function DragExampleUtilHandlers(props) {
   );
 }
 
-export function ReorderExampleUtilHandlers(props) {
+export function ReorderExampleUtilHandlers(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, dndOptions?: DragAndDropOptions, items?: any[]}): JSX.Element {
   let {listViewProps, dndOptions, items} = props;
   let list = useListData({
     initialItems: (items as typeof folderList1) || folderList1,
@@ -167,7 +167,7 @@ export function ReorderExampleUtilHandlers(props) {
   );
 }
 
-export function ItemDropExampleUtilHandlers(props) {
+export function ItemDropExampleUtilHandlers(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, dndOptions?: DragAndDropOptions}): JSX.Element {
   let {listViewProps, dndOptions} = props;
   let list = useListData({
     initialItems: folderList1,
@@ -231,7 +231,7 @@ export function ItemDropExampleUtilHandlers(props) {
   );
 }
 
-export function RootDropExampleUtilHandlers(props) {
+export function RootDropExampleUtilHandlers(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, firstListDnDOptions?: DragAndDropOptions, secondListDnDOptions?: DragAndDropOptions}): JSX.Element {
   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
@@ -322,7 +322,7 @@ export function RootDropExampleUtilHandlers(props) {
   );
 }
 
-export function InsertExampleUtilHandlers(props) {
+export function InsertExampleUtilHandlers(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, firstListDnDOptions?: DragAndDropOptions, secondListDnDOptions?: DragAndDropOptions}): JSX.Element {
   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
@@ -422,7 +422,7 @@ export function InsertExampleUtilHandlers(props) {
   );
 }
 
-export function FinderDropUtilHandlers(props) {
+export function FinderDropUtilHandlers(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, firstListDnDOptions?: DragAndDropOptions, secondListDnDOptions?: DragAndDropOptions}): JSX.Element {
   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
@@ -501,7 +501,7 @@ export function FinderDropUtilHandlers(props) {
   );
 }
 
-export function DragBetweenListsComplex(props) {
+export function DragBetweenListsComplex(props: {listViewProps: Omit<SpectrumListViewProps<any>, 'children'>, firstListDnDOptions?: DragAndDropOptions, secondListDnDOptions?: DragAndDropOptions}): JSX.Element {
   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
@@ -725,7 +725,7 @@ export function DragBetweenListsComplex(props) {
   );
 }
 
-export function DragBetweenListsOverride(props) {
+export function DragBetweenListsOverride(props: {listViewProps?: Omit<SpectrumListViewProps<any>, 'children'>, firstListDnDOptions?: DragAndDropOptions, secondListDnDOptions?: DragAndDropOptions}): JSX.Element {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},

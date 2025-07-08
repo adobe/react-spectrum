@@ -14,7 +14,7 @@ import {Label, Meter} from 'react-aria-components';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Meter',
   component: Meter,
   args: {
     value: 50
