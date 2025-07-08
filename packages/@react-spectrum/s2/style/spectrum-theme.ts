@@ -671,8 +671,7 @@ export const style = createTheme({
     strokeWidth: {
       0: '0',
       1: '1',
-      2: '2',
-      4: '4'
+      2: '2'
     },
     marginStart: new PercentageProperty('marginInlineStart', margin),
     marginEnd: new PercentageProperty('marginInlineEnd', margin),

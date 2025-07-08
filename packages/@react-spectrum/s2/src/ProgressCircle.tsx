@@ -60,13 +60,13 @@ const track = style({
   strokeWidth: {
     default: `[${pxToRem(3)}]`,
     size: {
-      S: 2,
-      L: 4
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
     },
     forcedColors: {
-      default: 2,
+      default: `[${pxToRem(2)}]`,
       size: {
-        S: 1,
+        S: `[${pxToRem(1)}]`,
         L: `[${pxToRem(3)}]`
       }
     }
@@ -84,8 +84,8 @@ const fill = style({
   strokeWidth: {
     default: `[${pxToRem(3)}]`,
     size: {
-      S: 2,
-      L: 4
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
     }
   }
 });
@@ -98,8 +98,8 @@ const hcmStroke = style({
   strokeWidth: {
     default: `[${pxToRem(3)}]`,
     size: {
-      S: 2,
-      L: 4
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
     }
   }
 });
