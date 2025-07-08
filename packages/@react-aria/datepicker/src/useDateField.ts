@@ -138,7 +138,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     autoFocusRef.current = false;
   }, [focusManager]);
 
-  useFormReset(props.inputRef, state.value, state.setValue);
+  useFormReset(props.inputRef, state.defaultValue, state.setValue);
   useFormValidation({
     ...props,
     focus() {
@@ -149,6 +149,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name: props.name,
+    form: props.form,
     value: state.value?.toString() || '',
     disabled: props.isDisabled
   };

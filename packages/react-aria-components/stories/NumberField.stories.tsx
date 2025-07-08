@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField} from 'react-aria-components';
-import React from 'react';
+import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
+import React, {useState} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -27,13 +27,43 @@ export const NumberFieldExample = {
     isWheelDisabled: false
   },
   render: (args) => (
-    <NumberField {...args}>
+    <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
         <Button slot="decrement">-</Button>
         <Input />
         <Button slot="increment">+</Button>
       </Group>
+      <FieldError />
     </NumberField>
+  )
+};
+
+function NumberFieldControlled(props: NumberFieldProps) {
+  const [value, setValue] = useState(props.defaultValue);
+  return (
+    <NumberField {...props} validate={(v) => (v & 1 ? 'Invalid value' : null)} value={value} onChange={setValue}>
+      <Label>Test</Label>
+      <Group style={{display: 'flex'}}>
+        <Button slot="decrement">-</Button>
+        <Input />
+        <Button slot="increment">+</Button>
+      </Group>
+      <FieldError />
+    </NumberField>
+  );
+}
+
+export const NumberFieldControlledExample = {
+  args: {
+    defaultValue: 0,
+    minValue: 0,
+    maxValue: 100,
+    step: 1,
+    formatOptions: {style: 'currency', currency: 'USD'},
+    isWheelDisabled: false
+  },
+  render: (args) => (
+    <NumberFieldControlled {...args} />
   )
 };
