@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, parseDate, parseDateTime, parseTime} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
@@ -439,33 +439,34 @@ export const WithTranslations: FormStory = {
 };
 
 function Render(props: any = {}) {
+  let formData = props.formData || new FormData();
   return (
     <Form {...props}>
-      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
+      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null} defaultValue={formData.getAll('pets')}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <ComboBox label="More Animals" name="combobox">
+      <ComboBox label="More Animals" name="combobox" defaultInputValue={formData.get('combobox')}>
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <SearchAutocomplete label="Search Animals" name="searchAutocomplete">
+      <SearchAutocomplete label="Search Animals" name="searchAutocomplete" defaultInputValue={formData.get('searchAutocomplete')}>
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
-      <NumberField label="Years lived there" name="years" />
-      <Picker label="State" items={states} name="state">
+      <NumberField label="Years lived there" name="years" defaultValue={formData.get('years') ? Number(formData.get('years')) : undefined} />
+      <Picker label="State" items={states} name="state" defaultSelectedKey={formData.get('state')}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries} name="country">
+      <Picker label="Country" items={countries} name="country" defaultSelectedKey={formData.get('country')}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
+      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color." defaultSelectedKey={formData.get('color')}>
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -473,24 +474,25 @@ function Render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+      <RadioGroup label="Favorite pet" name="favorite-pet-group" defaultValue={formData.get('favorite-pet-group')}>
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <SearchField label="Search" name="search" />
-      <Switch name="switch">Low power mode</Switch>
-      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <SearchField label="Search" name="search" defaultValue={formData.get('search')} />
+      <Switch name="switch" defaultSelected={formData.get('switch') === 'on'}>Low power mode</Switch>
+      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." defaultValue={formData.get('comments')} />
       <TextField
         label="City"
         name="city"
+        defaultValue={formData.get('city')}
         contextualHelp={(
           <ContextualHelp>
             <Heading>What is a segment?</Heading>
             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
           </ContextualHelp>
         )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" defaultValue={formData.get('zip')} />
       <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
@@ -499,12 +501,12 @@ function Render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
-      <ColorField label="Color" name="color" />
-      <DateField label="Date" granularity="minute" name="date" />
-      <TimeField label="Time" name="time" />
-      <DatePicker label="Date picker" name="datePicker" />
-      <DateRangePicker label="Date range" startName="startDate" endName="endDate" />
-      <TextField type="email" label="Email" name="email" />
+      <ColorField label="Color" name="color" defaultValue={formData.get('color')} />
+      <DateField label="Date" granularity="minute" name="date" defaultValue={formData.get('date') ? parseDateTime(formData.get('date')) : null} />
+      <TimeField label="Time" name="time" defaultValue={formData.get('time') ? parseTime(formData.get('time')) : null} />
+      <DatePicker label="Date picker" name="datePicker" defaultValue={formData.get('datePicker') ? parseDate(formData.get('datePicker')) : null} />
+      <DateRangePicker label="Date range" startName="startDate" endName="endDate" defaultValue={formData.get('startDate') && formData.get('endDate') ? {start: parseDate(formData.get('startDate')), end: parseDate(formData.get('endDate'))} : null} />
+      <TextField type="email" label="Email" name="email" defaultValue={formData.get('email')} />
       {props.showSubmit && (
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
@@ -800,4 +802,39 @@ export const NumberFieldFormSubmit: FormStory = {
     );
   },
   parameters: {description: {data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'}}
+};
+
+interface State {
+  formData: FormData,
+  errors: Record<string, string>
+}
+
+function FormActionExample() {
+  const action = (previousState: State, formData: FormData): State => {
+    let errors = {};
+    for (let key of formData.keys()) {
+      errors[key] = 'Some error for ' + key;
+    }
+    return {
+      formData,
+      errors
+    };
+  };
+
+  const [{errors, formData}, formAction] = React.useActionState(action, {
+    errors: {},
+    formData: new FormData()
+  });
+  
+  return (
+    <Render
+      action={formAction}
+      validationErrors={errors}
+      showSubmit
+      formData={formData} />
+  );
+}
+
+export const FormAction: FormStory = {
+  render: () => <FormActionExample />
 };

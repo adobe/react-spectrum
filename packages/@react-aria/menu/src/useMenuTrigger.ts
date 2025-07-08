@@ -68,7 +68,11 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
       switch (e.key) {
         case 'Enter':
         case ' ':
-          if (trigger === 'longPress') {
+          // React puts listeners on the same root, so even if propagation was stopped, immediate propagation is still possible.
+          // useTypeSelect will handle the spacebar first if it's running, so we don't want to open if it's handled it already.
+          // We use isDefaultPrevented() instead of isPropagationStopped() because createEventHandler stops propagation by default.
+          // And default prevented means that the event was handled by something else (typeahead), so we don't want to open the menu.
+          if (trigger === 'longPress' || e.isDefaultPrevented()) {
             return;
           }
           // fallthrough

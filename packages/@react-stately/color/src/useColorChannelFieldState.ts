@@ -2,7 +2,7 @@ import {Color, ColorChannel, ColorFieldProps, ColorSpace} from '@react-types/col
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface ColorChannelFieldProps extends ColorFieldProps {
   colorSpace?: ColorSpace,
@@ -14,7 +14,12 @@ export interface ColorChannelFieldStateOptions extends ColorChannelFieldProps {
 }
 
 export interface ColorChannelFieldState extends NumberFieldState {
-  colorValue: Color
+  /** The current value of the field. */
+  colorValue: Color,
+  /** The default value of the field. */
+  defaultColorValue: Color | null,
+  /** Sets the color value of the field. */
+  setColorValue(value: Color | null): void
 }
 
 /**
@@ -23,14 +28,13 @@ export interface ColorChannelFieldState extends NumberFieldState {
  */
 export function useColorChannelFieldState(props: ColorChannelFieldStateOptions): ColorChannelFieldState {
   let {channel, colorSpace, locale} = props;
-  let black = useColor('#000')!;
   let initialValue = useColor(props.value);
   let initialDefaultValue = useColor(props.defaultValue);
   let [colorValue, setColor] = useControlledState(initialValue, initialDefaultValue ?? null, props.onChange);
-  let color = useMemo(() => {
-    let nonNullColorValue = colorValue || black;
-    return colorSpace && nonNullColorValue ? nonNullColorValue.toFormat(colorSpace) : nonNullColorValue;
-  }, [black, colorValue, colorSpace]);
+  let color = useConvertColor(colorValue, colorSpace);
+  let [initialColorValue] = useState(colorValue);
+  let defaultColorValue = initialDefaultValue ?? initialColorValue;
+  let defaultColor = useConvertColor(defaultColorValue, colorSpace);
   let value = color.getChannelValue(channel);
   let range = color.getChannelRange(channel);
   let formatOptions = useMemo(() => color.getChannelFormatOptions(channel), [color, channel]);
@@ -39,6 +43,7 @@ export function useColorChannelFieldState(props: ColorChannelFieldStateOptions):
   let numberFieldState = useNumberFieldState({
     locale,
     value: colorValue === null ? NaN : value / multiplier,
+    defaultValue: defaultColorValue === null ? NaN : defaultColor.getChannelValue(channel) / multiplier,
     onChange: (v) => {
       if (!Number.isNaN(v)) {
         setColor(color.withChannelValue(channel, v * multiplier));
@@ -54,6 +59,16 @@ export function useColorChannelFieldState(props: ColorChannelFieldStateOptions):
 
   return {
     ...numberFieldState,
-    colorValue: color
+    colorValue: color,
+    defaultColorValue,
+    setColorValue: setColor
   };
+}
+
+function useConvertColor(colorValue: Color | null, colorSpace: ColorSpace | null | undefined) {
+  let black = useColor('#000')!;
+  return useMemo(() => {
+    let nonNullColorValue = colorValue || black;
+    return colorSpace && nonNullColorValue ? nonNullColorValue.toFormat(colorSpace) : nonNullColorValue;
+  }, [black, colorValue, colorSpace]);
 }

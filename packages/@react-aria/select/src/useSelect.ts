@@ -59,6 +59,7 @@ interface SelectData {
   isDisabled?: boolean,
   isRequired?: boolean,
   name?: string,
+  form?: string,
   validationBehavior?: 'aria' | 'native'
 }
 
@@ -76,6 +77,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     isDisabled,
     isRequired,
     name,
+    form,
     validationBehavior = 'aria'
   } = props;
 
@@ -146,6 +148,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     isDisabled,
     isRequired,
     name,
+    form,
     validationBehavior
   });
 
@@ -242,7 +245,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       name,
       label: props.label,
       state,
-      triggerRef: ref
+      triggerRef: ref,
+      form
     }
   };
 }
