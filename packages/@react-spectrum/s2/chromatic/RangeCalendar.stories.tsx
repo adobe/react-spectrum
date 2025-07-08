@@ -40,7 +40,8 @@ export const Default: Story = {
 export const MultiMonth: Story = {
   args: {
     defaultFocusedValue: date,
-    visibleMonths: 3
+    visibleMonths: 3,
+    defaultValue: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 3, 10)}
   }
 };
 
