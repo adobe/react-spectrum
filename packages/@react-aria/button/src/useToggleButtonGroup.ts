@@ -68,6 +68,7 @@ export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions
 export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<ElementType>, state: ToggleGroupState, ref: RefObject<any>): ToggleButtonAria<HTMLAttributes<any>> {
   let toggleState: ToggleState = {
     isSelected: state.selectedKeys.has(props.id),
+    defaultSelected: false,
     setSelected(isSelected) {
       state.setSelected(props.id, isSelected);
     },
