@@ -301,7 +301,7 @@ function isTabbableRadio(element: HTMLInputElement) {
   }
   let radios: HTMLInputElement[] = [];
   if (!element.form) {
-    radios = ([...getOwnerDocument(element).querySelectorAll(`input[type="radio"][name="${element.name}"]`)] as HTMLInputElement[]).filter(radio => !radio.form);
+    radios = ([...getOwnerDocument(element).querySelectorAll(`input[type="radio"][name="${CSS.escape(element.name)}"]`)] as HTMLInputElement[]).filter(radio => !radio.form);
   } else {
     let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
     radios = [...(radioList ?? [])] as HTMLInputElement[];
