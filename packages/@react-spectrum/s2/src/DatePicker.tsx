@@ -57,6 +57,7 @@ export const DatePickerContext = createContext<ContextValue<Partial<DatePickerPr
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   ...focusRing(),
   ...controlBorderRadius('sm'),
+  position: 'relative',
   font: {
     size: {
       S: 'ui-sm',
@@ -132,6 +133,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     styles,
     placeholderValue,
     visibleMonths,
+    firstDayOfWeek,
     createCalendar,
     ...dateFieldProps
   } = props;
@@ -194,7 +196,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
             <CalendarPopover>
-              <Calendar visibleMonths={visibleMonths} createCalendar={createCalendar} />
+              <Calendar visibleMonths={visibleMonths} createCalendar={createCalendar} firstDayOfWeek={firstDayOfWeek} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
@@ -278,6 +280,15 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
         ]}>
         <CalendarIcon />
       </Provider>
+      {/* expands hit area for calendar button */}
+      <div
+        className={style({
+          position: 'absolute',
+          top: -4,
+          left: 0,
+          right: -4,
+          bottom: -4
+        })} />
     </Button>
   );
 }

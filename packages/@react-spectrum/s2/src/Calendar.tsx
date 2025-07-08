@@ -489,11 +489,15 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isNextD
   let {getDatesInWeek} = state;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected} = renderProps!;
-  let datesInWeek = getDatesInWeek(weekIndex);
+  let startDate = startOfMonth(date);
+  let datesInWeek = getDatesInWeek(weekIndex, startDate);
 
   // Starting from the current day, find the first day before it in the current week that is not selected.
   // Then, the span of selected days is the current day minus the first unselected day.
-  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => date && i > 0 && !state.isSelected(date));
+  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
+    console.log('date', date?.month === props.date.month, date?.month, props.date.month);
+    return date && i > 0 && (!state.isSelected(date) || date.month !== props.date.month);
+  });
   let selectionSpan = -1;
   if (firstUnselectedInRangeInWeek > -1 && isSelected) {
     selectionSpan = firstUnselectedInRangeInWeek - 1;

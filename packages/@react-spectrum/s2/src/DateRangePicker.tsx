@@ -25,7 +25,7 @@ import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RangeCalendar, TimeField} from '../';
+import {RangeCalendar, RangeCalendarProps, TimeField} from '../';
 import {style} from '../style' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -33,6 +33,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style'>,
+  Pick<RangeCalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -41,8 +42,7 @@ export interface DateRangePickerProps<T extends DateValue> extends
      *
      * @default 'M'
      */
-    size?: 'S' | 'M' | 'L' | 'XL',
-    visibleMonths?: number
+    size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -67,6 +67,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     styles,
     placeholderValue,
     visibleMonths = 1,
+    firstDayOfWeek,
+    createCalendar,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -134,7 +136,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               </div>
             </FieldGroup>
             <CalendarPopover>
-              <RangeCalendar visibleMonths={visibleMonths} />
+              <RangeCalendar visibleMonths={visibleMonths} createCalendar={createCalendar} firstDayOfWeek={firstDayOfWeek} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField

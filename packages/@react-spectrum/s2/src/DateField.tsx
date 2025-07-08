@@ -51,7 +51,8 @@ const segmentContainer = style({
   height: 'full',
   overflow: 'hidden',
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  textWrap: 'nowrap'
 });
 
 const dateSegment = style<DateSegmentRenderProps & {isPunctuation: boolean}>({
