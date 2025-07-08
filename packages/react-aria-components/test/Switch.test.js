@@ -229,4 +229,10 @@ describe('Switch', () => {
     expect(inputRef.current).toBe(getByRole('switch'));
     expect(contextInputRef.current).toBe(getByRole('switch'));
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<Switch form="test">Test</Switch>);
+    let input = getByRole('switch');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });
