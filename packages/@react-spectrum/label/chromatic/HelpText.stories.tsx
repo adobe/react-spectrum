@@ -14,8 +14,6 @@ import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 
-type HelpTextStory = StoryObj<typeof TextField>;
-
 export default {
   title: 'HelpText',
   component: TextField,
@@ -25,11 +23,13 @@ export default {
   }
 } as Meta<typeof TextField>;
 
-export let Default: HelpTextStory = {
+export type HelpTextStory = StoryObj<typeof TextField>;
+
+export const Default: HelpTextStory = {
   name: 'description'
 };
 
-export const ErrorMessage = {
+export const ErrorMessage: HelpTextStory = {
   ...Default,
   args: {
     errorMessage: 'Create a password with at least 8 characters.',
@@ -38,7 +38,7 @@ export const ErrorMessage = {
   name: 'error message'
 };
 
-export const Disabled = {
+export const Disabled: HelpTextStory = {
   ...Default,
   args: {
     isDisabled: true
@@ -46,7 +46,7 @@ export const Disabled = {
   name: 'disabled'
 };
 
-export const LabelAlignEnd = {
+export const LabelAlignEnd: HelpTextStory = {
   ...Default,
   args: {
     labelAlign: 'end'
@@ -54,7 +54,7 @@ export const LabelAlignEnd = {
   name: 'labelAlign: end'
 };
 
-export const LabelPositionSide = {
+export const LabelPositionSide: HelpTextStory = {
   ...Default,
   args: {
     labelPosition: 'side'
@@ -62,7 +62,7 @@ export const LabelPositionSide = {
   name: 'labelPosition: side'
 };
 
-export const NoVisibleLabel = {
+export const NoVisibleLabel: HelpTextStory = {
   ...Default,
   args: {
     label: null,
@@ -71,7 +71,7 @@ export const NoVisibleLabel = {
   name: 'no visible label'
 };
 
-export const CustomWidth = {
+export const CustomWidth: HelpTextStory = {
   ...Default,
   args: {
     width: '100px'
@@ -79,7 +79,7 @@ export const CustomWidth = {
   name: 'custom width'
 };
 
-export const CustomWidthLabelPositionSide = {
+export const CustomWidthLabelPositionSide: HelpTextStory = {
   ...Default,
   args: {
     width: '440px',
@@ -88,7 +88,7 @@ export const CustomWidthLabelPositionSide = {
   name: 'custom width, labelPosition: side'
 };
 
-export const ContainerWithTextAlignmentSetDescription = {
+export const ContainerWithTextAlignmentSetDescription: HelpTextStory = {
   args: {
     label: 'Password',
     description: 'Enter a single digit number'
@@ -97,7 +97,7 @@ export const ContainerWithTextAlignmentSetDescription = {
   decorators: [TextAlignDecorator]
 };
 
-export const ContainerWithTextAlignmentSetError = {
+export const ContainerWithTextAlignmentSetError: HelpTextStory = {
   args: {
     label: 'Password',
     errorMessage: 'Create a password with at least 8 characters.',
@@ -107,7 +107,7 @@ export const ContainerWithTextAlignmentSetError = {
   decorators: [TextAlignDecorator]
 };
 
-export const ContainerWithTextAlignmentSetDescriptionAndSetError = {
+export const ContainerWithTextAlignmentSetDescriptionAndSetError: HelpTextStory = {
   args: {
     label: 'Password',
     errorMessage: 'Create a password with at least 8 characters.',

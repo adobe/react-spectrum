@@ -15,7 +15,7 @@ import React, {useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/RadioGroup'
 };
 
 export const RadioGroupExample = () => {
@@ -33,7 +33,7 @@ export const RadioGroupExample = () => {
 
 export const RadioGroupControlledExample = () => {
   let [selected, setSelected] = useState<string|null>(null);
-  
+
   return (
     <RadioGroup
       data-testid="radio-group-example"

@@ -22,8 +22,8 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../src';
 
 let states = [
@@ -66,7 +66,7 @@ const meta: Meta<SpectrumTreeViewProps<object>> = {
 
 export default meta;
 
-const Template = ({combos}) => (
+const Template = ({combos}: {combos: any}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -182,9 +182,10 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = () =>
+const EmptyTemplate = (props: SpectrumTreeViewProps<object>): JSX.Element =>
   (
     <TreeView
+      {...props}
       aria-label="test empty tree"
       items={[]}
       renderEmptyState={renderEmptyState}>
@@ -198,26 +199,26 @@ const EmptyTemplate = () =>
     </TreeView>
   );
 
-export const Default = {
-  render: Template,
+export const Default: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: '1 of 3',
   args: {combos: combo1}
 };
 
-export const DefaultPt2 = {
-  render: Template,
+export const DefaultPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: '2 of 3',
   args: {combos: combo2}
 };
 
-export const DefaultPt3 = {
-  render: Template,
+export const DefaultPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: '3 of 3',
   args: {combos: combo3}
 };
 
-export const Empty = {
-  render: EmptyTemplate,
+export const Empty: StoryObj<typeof EmptyTemplate> = {
+  render: (args) => <EmptyTemplate {...args} />,
   name: 'empty tree',
   args: {}
 };

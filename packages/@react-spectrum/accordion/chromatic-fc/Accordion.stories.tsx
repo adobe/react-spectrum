@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
+import React from 'react';
 import {SpectrumAccordionProps} from '../src/Accordion';
 import {Template} from '../chromatic/Accordion.stories';
 
@@ -20,7 +21,9 @@ const meta: Meta<SpectrumAccordionProps> = {
 
 export default meta;
 
-export const Default = {
-  render: Template,
+export type AccordionStory = StoryObj<SpectrumAccordionProps>;
+
+export const Default: AccordionStory = {
+  render: (args) => <Template {...args} />,
   args: {defaultExpandedKeys: ['shared']}
 };
