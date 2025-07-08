@@ -296,13 +296,18 @@ function shouldContainFocus(scopeRef: ScopeRef) {
 }
 
 function isTabbableRadio(element: HTMLInputElement) {
-  let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
-  let radios = [...(radioList ?? [])] as HTMLInputElement[];
-  if (!radios) {
-    return false;
-  }
   if (element.checked) {
     return true;
+  }
+  let radios: HTMLInputElement[] = [];
+  if (!element.form) {
+    radios = ([...getOwnerDocument(element).querySelectorAll(`input[type="radio"][name="${element.name}"]`)] as HTMLInputElement[]).filter(radio => !radio.form);
+  } else {
+    let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
+    radios = [...(radioList ?? [])] as HTMLInputElement[];
+  }
+  if (!radios) {
+    return false;
   }
   let anyChecked = radios.some(radio => radio.checked);
 
@@ -775,7 +780,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
           && (node as Element).tagName === 'INPUT'
           && (node as HTMLInputElement).getAttribute('type') === 'radio') {
           // If the radio is in a form, we can get all the other radios by name
-          if ((node as HTMLInputElement).form && !isTabbableRadio(node as HTMLInputElement)) {
+          if (!isTabbableRadio(node as HTMLInputElement)) {
             return NodeFilter.FILTER_REJECT;
           }
           // If the radio is in the same group as the current node and none are selected, we can skip it
