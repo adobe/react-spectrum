@@ -36,7 +36,7 @@ let preloads = {
   // ],
   en: [
     // Preload Adobe Clean Spectrum VF.
-    'https://use.typekit.net/af/b1226a/0000000000000000775c0485/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3'
+    'https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3'
   ]
 };
 
