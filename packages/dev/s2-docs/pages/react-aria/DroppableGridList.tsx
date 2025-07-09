@@ -1,5 +1,5 @@
 'use client';
-import {createElement, useState} from 'react';
+import {createElement, ReactElement, useState} from 'react';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 import {isTextDropItem, useDragAndDrop} from 'react-aria-components';
 
@@ -9,7 +9,7 @@ interface TextItem {
   style: string
 }
 
-export function DroppableGridList() {
+export function DroppableGridList(): ReactElement {
   let [items, setItems] = useState<TextItem[]>([]);
 
   let {dragAndDropHooks} = useDragAndDrop({

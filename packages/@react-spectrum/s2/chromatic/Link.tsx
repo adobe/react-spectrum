@@ -11,7 +11,7 @@
  */
 
 import {Link} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -30,9 +30,10 @@ const meta: Meta<typeof Link> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Link>;
 
-export const Inline = {
-  render: (args: any) => (
+export const Inline: Story = {
+  render: (args) => (
     <p
       className={style({
         font: 'body',
@@ -46,8 +47,8 @@ export const Inline = {
   )
 };
 
-export const Standalone = {
-  render: (args: any) => (
+export const Standalone: Story = {
+  render: (args) => (
     <Link {...args} isStandalone>
       The missing link
     </Link>
