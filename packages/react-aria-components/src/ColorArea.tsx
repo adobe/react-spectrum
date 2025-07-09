@@ -1,7 +1,8 @@
 import {AriaColorAreaProps, useColorArea} from 'react-aria';
 import {ColorAreaContext} from './RSPContexts';
 import {ColorAreaState, useColorAreaState} from 'react-stately';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -18,7 +19,7 @@ export interface ColorAreaRenderProps {
   state: ColorAreaState
 }
 
-export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps {}
+export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
@@ -53,15 +54,13 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
     <div
       ref={ref}
-      {...colorAreaProps}
-      {...DOMProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, colorAreaProps)}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}>
       <Provider

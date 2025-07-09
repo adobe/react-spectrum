@@ -11,20 +11,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {Default, LargeWidth} from '../chromatic/ActionBar.stories';
+import {Example} from '../stories/Example';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {StoryFn} from '@storybook/react';
 
 export default {
   title: 'ActionBar'
 };
 
-export const All = () => (
+export type ActionBarStory = StoryFn<typeof Example>;
+
+export const All: ActionBarStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>Default</h2>
-    <Default />
+    <Flex gap="size-250">
+      <Example />
+      <Example defaultSelectedKeys={new Set(['Foo 1'])} />
+    </Flex>
     <h2>Large width</h2>
-    <LargeWidth />
+    <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
   </Flex>
 );
 All.story = {

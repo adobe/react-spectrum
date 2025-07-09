@@ -18,6 +18,8 @@ import {useMemo, useRef, useState} from 'react';
 export interface ColorAreaState {
   /** The current color value displayed by the color area. */
   readonly value: Color,
+  /** The default value of the color area. */
+  readonly defaultValue: Color,
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void,
 
@@ -94,6 +96,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
 
   // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we assign a default
   let [colorValue, setColorState] = useControlledState<Color>(value as Color, defaultValue as Color, onChange);
+  let [initialValue] = useState(colorValue);
   let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let valueRef = useRef(color);
   let setColor = (color: Color) => {
@@ -138,6 +141,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     xChannelPageStep: pageSizeX,
     yChannelPageStep: pageSizeY,
     value: color,
+    defaultValue: value !== undefined ? initialValue : defaultValue as Color,
     setValue(value) {
       setColor(normalizeColor(value));
     },
