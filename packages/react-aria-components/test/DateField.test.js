@@ -218,7 +218,7 @@ describe('DateField', () => {
 
   it('should support form value', () => {
     render(
-      <DateField name="birthday" value={new CalendarDate(2020, 2, 3)}>
+      <DateField name="birthday" form="test" value={new CalendarDate(2020, 2, 3)}>
         <Label>Birth date</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -227,6 +227,7 @@ describe('DateField', () => {
     );
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {

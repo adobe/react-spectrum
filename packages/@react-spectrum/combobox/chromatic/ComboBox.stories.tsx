@@ -16,8 +16,8 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 
 // Skipping focus styles because don't have a way of applying it via classnames
@@ -67,13 +67,15 @@ const meta: Meta<SpectrumComboBoxProps<object>> = {
 
 export default meta;
 
+export type ComboBoxStory = StoryObj<typeof ComboBox>;
+
 let items = [
   {name: 'Aardvark', id: '1'},
   {name: 'Kangaroo', id: '2'},
   {name: 'Snake', id: '3'}
 ];
 
-const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
+const Template = (args: SpectrumComboBoxProps<unknown>): JSX.Element => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -91,7 +93,7 @@ const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
 );
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
-const TemplateSideLabel: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
+const TemplateSideLabel = (args: SpectrumComboBoxProps<unknown>): JSX.Element => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
     {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -108,44 +110,44 @@ const TemplateSideLabel: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = {
-  render: Template,
+export const PropDefaults: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
-export const PropSelectedKey = {
-  render: Template,
+export const PropSelectedKey: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'selectedKey: 2',
   args: {selectedKey: '2'}
 };
 
-export const PropInputValue = {
-  render: Template,
+export const PropInputValue: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'inputValue: Blah',
   args: {inputValue: 'Blah'}
 };
 
-export const PropAriaLabelled = {
-  render: Template,
+export const PropAriaLabelled: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
-export const PropLabelEnd = {
-  render: Template,
+export const PropLabelEnd: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end'}
 };
 
-export const PropLabelSide = {
-  render: TemplateSideLabel,
+export const PropLabelSide: ComboBoxStory = {
+  render: (args) => <TemplateSideLabel {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side'}
 };
 
-export const PropCustomWidth = {
-  render: Template,
+export const PropCustomWidth: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-1600'},
 
@@ -156,8 +158,8 @@ export const PropCustomWidth = {
   }
 };
 
-export const PropContextualHelp = {
-  render: Template,
+export const PropContextualHelp: ComboBoxStory = {
+  render: (args) => <Template {...args} />,
   name: 'contextual help',
   args: {
     ...PropDefaults.args,

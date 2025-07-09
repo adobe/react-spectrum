@@ -117,7 +117,11 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, String(inputProps.value ?? ''), formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+  useFormReset<any>(
+    inputRef,
+    formValue === 'text' ? state.defaultInputValue : state.defaultSelectedKey,
+    formValue === 'text' ? state.setInputValue : state.setSelectedKey
+  );
 
   return (
     <>

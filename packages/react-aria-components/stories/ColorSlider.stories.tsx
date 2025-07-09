@@ -14,14 +14,14 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from '../src'
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ColorSlider'
 };
 
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 export const ColorSliderExample = (args) => (
-  <ColorSlider 
+  <ColorSlider
     {...args}
     style={{
       display: 'flex',

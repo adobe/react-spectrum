@@ -14,7 +14,7 @@ import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from 'react
 import React, {useEffect} from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Modal'
 };
 
 export const ModalExample = () => (
