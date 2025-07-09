@@ -20,10 +20,11 @@ import {
 import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
-import {forwardRefType, ValidationResult} from '@react-types/shared';
+import {forwardRefType} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Header} from './';
+import {helpTextStyles} from './Field';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -31,7 +32,14 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface RangeCalendarProps<T extends DateValue>
   extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles'>,
   StyleProps {
-  errorMessage?: ReactNode | ((v: ValidationResult) => ReactNode),
+  /**
+   * The error message to display when the calendar is invalid.
+   */
+  errorMessage?: ReactNode,
+  /**
+   * The number of months to display at once.
+   * @default 1
+   */
   visibleMonths?: number
 }
 
@@ -50,29 +58,6 @@ const headerStyles = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   width: 'full'
-});
-
-export const helpTextStyles = style({
-  gridArea: 'helptext',
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 'text-to-visual',
-  font: controlFont(),
-  color: {
-    default: 'neutral-subdued',
-    isInvalid: 'negative',
-    isDisabled: 'disabled'
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  contain: 'inline-size',
-  paddingTop: '--field-gap',
-  cursor: {
-    default: 'text',
-    isDisabled: 'default'
-  }
 });
 
 export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -112,9 +97,8 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 <CalendarGrid months={i} key={i} />
               ))}
             </div>
-            {errorMessage && (
-              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled})}>
-                {/* @ts-ignore */}
+            {errorMessage && isInvalid && (
+              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
                 {errorMessage}
               </Text>
             )}

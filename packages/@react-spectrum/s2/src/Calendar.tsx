@@ -40,8 +40,9 @@ import {
 } from '@internationalized/date';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRefType, ValidationResult} from '@react-types/shared';
+import {forwardRefType} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {helpTextStyles} from './Field';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -50,7 +51,10 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface CalendarProps<T extends DateValue>
   extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles'>,
   StyleProps {
-  errorMessage?: ReactNode | ((v: ValidationResult) => ReactNode),
+  /**
+   * The error message to display when the calendar is invalid.
+   */
+  errorMessage?: ReactNode,
   /**
    * The number of months to display at once.
    * @default 1
@@ -275,30 +279,6 @@ const selectionSpanStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export const helpTextStyles = style({
-  gridArea: 'helptext',
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 'text-to-visual',
-  font: controlFont(),
-  color: {
-    default: 'neutral-subdued',
-    isInvalid: 'negative',
-    isDisabled: 'disabled'
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  contain: 'inline-size',
-  paddingTop: '--field-gap',
-  cursor: {
-    default: 'text',
-    isDisabled: 'default'
-  }
-});
-
-
 export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {
@@ -335,9 +315,8 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 <CalendarGrid months={i} key={i} />
               ))}
             </div>
-            {errorMessage && (
-              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled})}>
-                {/* @ts-ignore */}
+            {errorMessage && isInvalid && (
+              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
                 {errorMessage}
               </Text>
             )}

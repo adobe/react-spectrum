@@ -28,6 +28,7 @@ const meta: Meta<typeof RangeCalendar<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange']),
+    errorMessage: {control: {type: 'text'}},
     visibleMonths: {
       control: {
         type: 'select'
