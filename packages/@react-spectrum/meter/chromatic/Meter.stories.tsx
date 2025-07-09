@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../';
 import {SpectrumMeterProps} from '@react-types/meter';
 
@@ -21,38 +21,40 @@ const meta: Meta<SpectrumMeterProps> = {
 
 export default meta;
 
-export const Default = {
+export type MeterStory = StoryObj<SpectrumMeterProps>;
+
+export const Default: MeterStory = {
   args: {label: 'Meter label', value: 50}
 };
 
-export const SizeS = {
+export const SizeS: MeterStory = {
   args: {...Default.args, size: 'S'}
 };
 
-export const ShowValueLabelFalse = {
+export const ShowValueLabelFalse: MeterStory = {
   args: {...Default.args, showValueLabel: false}
 };
 
-export const LabelPositionSide = {
+export const LabelPositionSide: MeterStory = {
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const Positive = {
+export const Positive: MeterStory = {
   args: {...Default.args, variant: 'positive'}
 };
 
-export const Critical = {
+export const Critical: MeterStory = {
   args: {...Default.args, variant: 'critical'}
 };
 
-export const Warning = {
+export const Warning: MeterStory = {
   args: {...Default.args, variant: 'warning'}
 };
 
-export const Value0 = {
+export const Value0: MeterStory = {
   args: {...Default.args, value: 0}
 };
 
-export const Value100 = {
+export const Value100: MeterStory = {
   args: {...Default.args, value: 100}
 };

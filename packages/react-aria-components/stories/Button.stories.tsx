@@ -18,7 +18,7 @@ import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Button'
 };
 
 export const ButtonExample = () => {
