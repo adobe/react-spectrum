@@ -247,6 +247,7 @@ function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCol
   while (currentNode != null) {
     let newNode: Mutable<CollectionNode<T>> | null = (currentNode as CollectionNode<T>).filter(collection, newCollection, filterFn);
     if (newNode != null) {
+      newNode.nextKey = null;
       if (lastNode) {
         newNode.prevKey = lastNode.key;
         lastNode.nextKey = newNode.key;
