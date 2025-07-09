@@ -145,3 +145,20 @@ export const WithContextualHelp: LabeledValueStory = {
   },
   name: 'contextual help'
 };
+
+export const NullValue: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: null
+  },
+  name: 'null value'
+};
+
+
+export const UndefinedValue: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: undefined
+  },
+  name: 'undefined value'
+};
