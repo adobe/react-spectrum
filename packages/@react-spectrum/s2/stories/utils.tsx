@@ -27,7 +27,7 @@ function getBackgroundColor(staticColor: StaticColor) {
   return undefined;
 }
 
-export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}) {
+export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}): ReactElement {
   let [autoBg, setAutoBg] = useState('#5131c4');
   return (
     <>
@@ -60,7 +60,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
   );
 }
 
-export const StaticColorDecorator = (Story: any, {args}: any) => (
+export const StaticColorDecorator = (Story: any, {args}: any): ReactElement => (
   <StaticColorProvider staticColor={args.staticColor}>
     <Story />
   </StaticColorProvider>

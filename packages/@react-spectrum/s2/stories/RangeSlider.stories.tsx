@@ -13,7 +13,7 @@
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider} from '../src';
 
 const meta: Meta<typeof RangeSlider> = {
@@ -32,44 +32,47 @@ const meta: Meta<typeof RangeSlider> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof RangeSlider>;
 
-export const Example = (args: any) => <RangeSlider {...args} />;
-
-Example.args = {
-  label: 'Range',
-  defaultValue: {
-    start: 30,
-    end: 60
+export const Example: Story = {
+  render: (args) => <RangeSlider {...args} />,
+  args: {
+    label: 'Range',
+    defaultValue: {
+      start: 30,
+      end: 60
+    }
   }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <RangeSlider
-    {...args}
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>What is a ice cream?</Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make
-            a custard base. Then, flavorings are added, and this flavored
-            mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            target="_blank">Learn more about ice cream</Link>
-        </Footer>
-      </ContextualHelp>
-    } />
-);
-
-ContextualHelpExample.args = {
-  label: 'Range',
-  defaultValue: {
-    start: 30,
-    end: 60
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <RangeSlider
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
+  ),
+  args: {
+    label: 'Range',
+    defaultValue: {
+      start: 30,
+      end: 60
+    }
   }
 };

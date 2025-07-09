@@ -13,7 +13,7 @@
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton, ToggleButtonGroup} from '../src';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
@@ -31,6 +31,7 @@ const meta: Meta<typeof ToggleButtonGroup> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ToggleButtonGroup>;
 
 let justifiedStyle = style({
   width: {
@@ -46,7 +47,7 @@ let justifiedStyle = style({
   }
 });
 
-export const Example = {
+export const Example: Story = {
   render: (args) => (
     <ToggleButtonGroup {...args}>
       <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
@@ -56,7 +57,7 @@ export const Example = {
   )
 };
 
-export const IconOnly = {
+export const IconOnly: Story = {
   render: (args) => (
     <ToggleButtonGroup {...args}>
       <ToggleButton id={1} aria-label="Bold"><Bold /></ToggleButton>
@@ -66,7 +67,7 @@ export const IconOnly = {
 )
 };
 
-export const Justified = {
+export const Justified: Story = {
   render: (args) => (
     <ToggleButtonGroup {...args} isJustified styles={justifiedStyle(args)}>
       <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>

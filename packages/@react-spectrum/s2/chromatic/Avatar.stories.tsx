@@ -11,7 +11,7 @@
  */
 
 import {Avatar} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Avatar> = {
@@ -23,12 +23,13 @@ const meta: Meta<typeof Avatar> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Avatar>;
 
-export const Default = {
+export const Default: Story = {
   render: () => <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
 };
 
-export const OverBackground = {
+export const OverBackground: Story = {
   render: () => (
     <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
       <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
