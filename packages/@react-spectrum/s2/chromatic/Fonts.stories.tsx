@@ -73,6 +73,7 @@ const messages = {
 
 function Example() {
   let {locale} = useLocale();
+  let m = messages[locale] || messages.en;
   return (
     <div
       className={style({
@@ -86,54 +87,54 @@ function Example() {
         justifyContent: 'space-between'
       })}>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'ui-xs'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui-sm'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui-lg'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui-xl'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui-2xl'})}>{messages[locale].button}</li>
-        <li className={style({font: 'ui-3xl'})}>{messages[locale].button}</li>
+        <li className={style({font: 'ui-xs'})}>{m.button}</li>
+        <li className={style({font: 'ui-sm'})}>{m.button}</li>
+        <li className={style({font: 'ui'})}>{m.button}</li>
+        <li className={style({font: 'ui-lg'})}>{m.button}</li>
+        <li className={style({font: 'ui-xl'})}>{m.button}</li>
+        <li className={style({font: 'ui-2xl'})}>{m.button}</li>
+        <li className={style({font: 'ui-3xl'})}>{m.button}</li>
       </ul>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'body-2xs'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-xs'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-sm'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-lg'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-xl'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-2xl'})}>{messages[locale].copy}</li>
-        <li className={style({font: 'body-3xl'})}>{messages[locale].copy}</li>
+        <li className={style({font: 'body-2xs'})}>{m.copy}</li>
+        <li className={style({font: 'body-xs'})}>{m.copy}</li>
+        <li className={style({font: 'body-sm'})}>{m.copy}</li>
+        <li className={style({font: 'body'})}>{m.copy}</li>
+        <li className={style({font: 'body-lg'})}>{m.copy}</li>
+        <li className={style({font: 'body-xl'})}>{m.copy}</li>
+        <li className={style({font: 'body-2xl'})}>{m.copy}</li>
+        <li className={style({font: 'body-3xl'})}>{m.copy}</li>
       </ul>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'heading-2xs'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-xs'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-sm'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-lg'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-xl'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-2xl'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'heading-3xl'})}>{messages[locale].cut}</li>
+        <li className={style({font: 'heading-2xs'})}>{m.cut}</li>
+        <li className={style({font: 'heading-xs'})}>{m.cut}</li>
+        <li className={style({font: 'heading-sm'})}>{m.cut}</li>
+        <li className={style({font: 'heading'})}>{m.cut}</li>
+        <li className={style({font: 'heading-lg'})}>{m.cut}</li>
+        <li className={style({font: 'heading-xl'})}>{m.cut}</li>
+        <li className={style({font: 'heading-2xl'})}>{m.cut}</li>
+        <li className={style({font: 'heading-3xl'})}>{m.cut}</li>
       </ul>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'title-xs'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title-sm'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title-lg'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title-xl'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title-2xl'})}>{messages[locale].paste}</li>
-        <li className={style({font: 'title-3xl'})}>{messages[locale].paste}</li>
+        <li className={style({font: 'title-xs'})}>{m.paste}</li>
+        <li className={style({font: 'title-sm'})}>{m.paste}</li>
+        <li className={style({font: 'title'})}>{m.paste}</li>
+        <li className={style({font: 'title-lg'})}>{m.paste}</li>
+        <li className={style({font: 'title-xl'})}>{m.paste}</li>
+        <li className={style({font: 'title-2xl'})}>{m.paste}</li>
+        <li className={style({font: 'title-3xl'})}>{m.paste}</li>
       </ul>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'detail-sm'})}>{messages[locale].button}</li>
-        <li className={style({font: 'detail'})}>{messages[locale].button}</li>
-        <li className={style({font: 'detail-lg'})}>{messages[locale].button}</li>
-        <li className={style({font: 'detail-xl'})}>{messages[locale].button}</li>
+        <li className={style({font: 'detail-sm'})}>{m.button}</li>
+        <li className={style({font: 'detail'})}>{m.button}</li>
+        <li className={style({font: 'detail-lg'})}>{m.button}</li>
+        <li className={style({font: 'detail-xl'})}>{m.button}</li>
       </ul>
       <ul className={style({padding: 0, listStyleType: 'none'})}>
-        <li className={style({font: 'code-sm'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'code'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'code-lg'})}>{messages[locale].cut}</li>
-        <li className={style({font: 'code-xl'})}>{messages[locale].cut}</li>
+        <li className={style({font: 'code-sm'})}>{m.cut}</li>
+        <li className={style({font: 'code'})}>{m.cut}</li>
+        <li className={style({font: 'code-lg'})}>{m.cut}</li>
+        <li className={style({font: 'code-xl'})}>{m.cut}</li>
       </ul>
     </div>
   );
