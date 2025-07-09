@@ -12,6 +12,7 @@ let scripts = {
   'zh-Hans': 'qwy0qqd',
   'zh-CN': 'qwy0qqd',
   'zh-SG': 'qwy0qqd',
+  'zh-HK': 'wrf0dsa',
   'zh-Hant': 'twr1oiz',
   zh: 'twr1oiz'
 };

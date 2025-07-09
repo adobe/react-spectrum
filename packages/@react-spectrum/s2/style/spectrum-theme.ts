@@ -432,14 +432,21 @@ const timingFunction = {
 let durationValue = (value: number | string) => typeof value === 'number' ? value + 'ms' : value;
 
 const fontWeightBase = {
-  light: '300',
   normal: '400',
   medium: {
     default: '500',
+    ':lang(ja, ko, zh)': '400', // Adobe Clean Han does not have a medium weight
     ':lang(ar, he)': '600' // Myriad does not have a 500 weight
   },
-  bold: '700',
-  'extra-bold': '800',
+  bold: {
+    default: '700',
+    ':lang(ja, ko, zh)': '500' // Adobe Clean Han uses 500 as the bold weight
+  },
+  'extra-bold': {
+    default: '800',
+    ':lang(ja, ko, zh)': '700', // Adobe Clean Han uses 700 as the extra bold weight.
+    ':lang(ar, he)': '700' // Myriad does not have a 800 weight
+  },
   black: '900'
 } as const;
 
@@ -467,6 +474,7 @@ const i18nFonts = {
   ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
   // TODO: are these fallbacks supposed to be different than above?
   ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+  ':lang(zh-HK)': "adobe-clean-han-hong-kong, source-han-hong-kong, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
   ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 

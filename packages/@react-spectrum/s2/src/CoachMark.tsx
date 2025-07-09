@@ -242,7 +242,6 @@ let description = style({
 let keyboard = style({
   gridArea: 'keyboard',
   font: 'ui',
-  fontWeight: 'light',
   color: 'gray-600',
   background: 'gray-25',
   unicodeBidi: 'plaintext'
