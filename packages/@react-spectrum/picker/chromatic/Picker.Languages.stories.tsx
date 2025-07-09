@@ -11,8 +11,8 @@
  */
 
 import {Item, Picker, Section} from '..';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 
 export default {
@@ -23,7 +23,9 @@ export default {
   }
 } as Meta<typeof Picker>;
 
-const Template = (args: SpectrumPickerProps<object>) => (
+export type PickerStory = StoryObj<SpectrumPickerProps<object>>;
+
+const Template = (args: SpectrumPickerProps<object>): JSX.Element => (
   <Picker {...args}>
     <Section title="Animals">
       <Item key="Aardvark">Aardvark</Item>
@@ -37,8 +39,9 @@ const Template = (args: SpectrumPickerProps<object>) => (
     </Section>
   </Picker>
 );
-export const ArabicPlaceholder = {
-  render: Template,
+
+export const ArabicPlaceholder: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: 'دولفين'},
 
   parameters: {
@@ -46,8 +49,8 @@ export const ArabicPlaceholder = {
   }
 };
 
-export const ChineseSimplifiedPlaceholder = {
-  render: Template,
+export const ChineseSimplifiedPlaceholder: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '海豚'},
 
   parameters: {
@@ -55,8 +58,8 @@ export const ChineseSimplifiedPlaceholder = {
   }
 };
 
-export const ChineseTraditionalPlaceholder = {
-  render: Template,
+export const ChineseTraditionalPlaceholder: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '海豚'},
 
   parameters: {
@@ -64,8 +67,8 @@ export const ChineseTraditionalPlaceholder = {
   }
 };
 
-export const JapanesePlaceholder = {
-  render: Template,
+export const JapanesePlaceholder: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: 'イルカ'},
 
   parameters: {
@@ -73,8 +76,8 @@ export const JapanesePlaceholder = {
   }
 };
 
-export const KoreanPlaceholder = {
-  render: Template,
+export const KoreanPlaceholder: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '돌고래'},
 
   parameters: {

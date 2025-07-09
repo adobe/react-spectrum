@@ -18,8 +18,9 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 import React from 'react';
+import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../src';
+import {StoryFn} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
-import {TreeView, TreeViewItem, TreeViewItemContent} from '../src';
 
 export default {
   title: 'TreeView'
@@ -120,18 +121,20 @@ function TestTree(props) {
   );
 }
 
-export const Default = () => (
+type TreeViewStoryProps = StoryFn<SpectrumTreeViewProps<unknown>>;
+
+export const Default: TreeViewStoryProps = () => (
   <TestTree />
 );
 
-export const SelectionMode = () => (
+export const SelectionMode: TreeViewStoryProps = () => (
   <TestTree selectionMode="multiple" />
 );
 
-export const DisabledBehaviorAll = () => (
+export const DisabledBehaviorAll: TreeViewStoryProps = () => (
   <TestTree disabledBehavior="all" selectionMode="multiple" />
 );
 
-export const HiglightSelectionWithDisabledBehaviorAll = () => (
+export const HiglightSelectionWithDisabledBehaviorAll: TreeViewStoryProps = () => (
   <TestTree selectionStyle="highlight" selectionMode="multiple" disabledBehavior="all" />
 );

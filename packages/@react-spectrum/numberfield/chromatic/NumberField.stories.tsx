@@ -17,9 +17,9 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '../src';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import stepperStyles from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 
@@ -106,11 +106,11 @@ function shortName(key, value) {
 
 const meta: Meta = {
   title: 'NumberField'
-};
+} as Meta<SpectrumNumberFieldProps>;
 
 export default meta;
 
-const Template: StoryFn<SpectrumNumberFieldProps> = (args) => (
+const Template = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -122,7 +122,7 @@ const Template: StoryFn<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateVertical: StoryFn<SpectrumNumberFieldProps> = (args) => (
+const TemplateVertical = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -134,7 +134,7 @@ const TemplateVertical: StoryFn<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateSmall: StoryFn<SpectrumNumberFieldProps> = (args) => (
+const TemplateSmall = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -146,7 +146,7 @@ const TemplateSmall: StoryFn<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateWithForcedStyles: StoryFn<SpectrumNumberFieldProps> = (args) => (
+const TemplateWithForcedStyles = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinationsStyles.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -155,26 +155,28 @@ const TemplateWithForcedStyles: StoryFn<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = {
-  render: Template,
+export type NumberFieldStory = StoryObj<SpectrumNumberFieldProps>;
+
+export const PropDefaults: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
-export const PropDefaultValue = {
-  render: Template,
+export const PropDefaultValue: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'default value',
   args: {...PropDefaults.args, defaultValue: 10}
 };
 
-export const PropValue = {
-  render: Template,
+export const PropValue: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'value',
   args: {...PropDefaults.args, value: 10}
 };
 
-export const PropValueMobileViewport = {
-  render: TemplateVertical,
+export const PropValueMobileViewport: NumberFieldStory = {
+  render: (args) => <TemplateVertical {...args} />,
   name: 'value, mobile viewport',
   args: {...PropDefaults.args, value: 10},
 
@@ -189,50 +191,50 @@ export const PropValueMobileViewport = {
   }
 };
 
-export const PropAriaLabelled = {
-  render: Template,
+export const PropAriaLabelled: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
-export const PropLabelEnd = {
-  render: Template,
+export const PropLabelEnd: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end', defaultValue: 10}
 };
 
-export const PropMinValue = {
-  render: Template,
+export const PropMinValue: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'min value',
   args: {...PropDefaults.args, minValue: 10, defaultValue: 10}
 };
 
-export const PropMaxValue = {
-  render: Template,
+export const PropMaxValue: NumberFieldStory = {
+  render: (args) => <Template {...args} />,
   name: 'max value',
   args: {...PropDefaults.args, maxValue: 10, defaultValue: 10}
 };
 
-export const PropLabelSide = {
-  render: TemplateSmall,
+export const PropLabelSide: NumberFieldStory = {
+  render: (args) => <TemplateSmall {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side', defaultValue: 10}
 };
 
-export const PropCustomWidth = {
-  render: TemplateSmall,
+export const PropCustomWidth: NumberFieldStory = {
+  render: (args) => <TemplateSmall {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-3000'}
 };
 
-export const PropInteractionStyles = {
-  render: TemplateWithForcedStyles,
+export const PropInteractionStyles: NumberFieldStory = {
+  render: (args) => <TemplateWithForcedStyles {...args} />,
   name: 'interaction styles',
   args: {...PropAriaLabelled.args}
 };
 
-export const PropInteractionStylesMinValue = {
-  render: TemplateWithForcedStyles,
+export const PropInteractionStylesMinValue: NumberFieldStory = {
+  render: (args) => <TemplateWithForcedStyles {...args} />,
   name: 'interaction styles min value',
   args: {...PropAriaLabelled.args, minValue: 10, defaultValue: 10}
 };

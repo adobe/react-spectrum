@@ -11,32 +11,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {Default as DefaultStory, IsDisabledTrue, IsEmphasizedTrue, ValidationStateInvalid} from '../chromatic/Checkbox.stories';
+import {Checkbox} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {Render} from '../chromatic/Checkbox.stories';
+import {StoryFn} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
 export default {
   title: 'Checkbox'
 };
 
-export const Default = () => (
+export type CheckboxStory = StoryFn<typeof Checkbox>;
+
+export const Default: CheckboxStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <View>
       <h2>Default</h2>
-      <DefaultStory />
+      <Render />
     </View>
     <View>
       <h2>Invalid</h2>
-      <ValidationStateInvalid />
+      <Render isInvalid />
     </View>
     <View>
       <h2>Disabled</h2>
-      <IsDisabledTrue />
+      <Render isDisabled />
     </View>
     <View>
       <h2>Emphasized</h2>
-      <IsEmphasizedTrue />
+      <Render isEmphasized />
     </View>
   </Flex>
 );

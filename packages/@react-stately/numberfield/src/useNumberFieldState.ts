@@ -27,6 +27,8 @@ export interface NumberFieldState extends FormValidationState {
    * Updated based on the `inputValue` as the user types.
    */
   numberValue: number,
+  /** The default value of the input. */
+  defaultNumberValue: number,
   /** The minimum value of the number field. */
   minValue?: number,
   /** The maximum value of the number field. */
@@ -111,6 +113,7 @@ export function useNumberFieldState(
   }
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [initialValue] = useState(numberValue);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
   let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
@@ -170,6 +173,7 @@ export function useNumberFieldState(
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));
+    validation.commitValidation();
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
@@ -273,6 +277,7 @@ export function useNumberFieldState(
     minValue,
     maxValue,
     numberValue: parsedValue,
+    defaultNumberValue: isNaN(defaultValue) ? initialValue : defaultValue,
     setNumberValue,
     setInputValue,
     inputValue,

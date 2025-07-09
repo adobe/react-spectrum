@@ -10,22 +10,63 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllPossibleStates, StaticColorBlack, StaticColorWhite} from '../chromatic/ToggleButton.stories';
-import {Flex} from '@react-spectrum/layout';
+import {classNames} from '@react-spectrum/utils';
+import {Flex, Grid, repeat, View} from '@adobe/react-spectrum';
+import {generatePowerset} from '@react-spectrum/story-utils';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {ToggleButton} from '../';
+
+let states = [
+  {isQuiet: true},
+  {isEmphasized: true},
+  {isSelected: true},
+  {isDisabled: true},
+  {UNSAFE_className: classNames(styles, 'is-active')},
+  {UNSAFE_className: classNames(styles, 'is-hovered')},
+  {UNSAFE_className: classNames(styles, 'focus-ring')}
+];
+
+let combinations = generatePowerset(
+  states,
+  (merged) => merged.isDisabled && merged.UNSAFE_className
+);
 
 export default {
   title: 'Button/ToggleButton'
-};
+} as Meta<typeof ToggleButton>;
 
-export const ToggleButton = () => (
+export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
+
+export const AllPossibleStates: ToggleButtonStory = () => (
   <Flex direction={'column'} gap={'size-300'}>
-    <AllPossibleStates />
-    <StaticColorBlack />
-    <StaticColorWhite />
+    <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+      {combinations.map((c) => (
+        <ToggleButton {...c}>Button</ToggleButton>
+      ))}
+    </Grid>
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map((c) => (
+          <ToggleButton {...c} staticColor="black">
+            Button
+          </ToggleButton>
+        ))}
+      </Grid>
+    </View>
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map((c) => (
+          <ToggleButton {...c} staticColor="white">
+            Button
+          </ToggleButton>
+        ))}
+      </Grid>
+    </View>
   </Flex>
 );
 
-ToggleButton.story = {
+AllPossibleStates.story = {
   name: 'all'
 };

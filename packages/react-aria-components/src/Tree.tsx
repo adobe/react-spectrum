@@ -15,8 +15,8 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -132,7 +132,7 @@ export interface TreeRenderProps {
 
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
-export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
+export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * How multiple selection should behave in the tree.
    * @default "toggle"
@@ -378,16 +378,15 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     );
   }
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <>
       <FocusScope>
         <div
-          {...filterDOMProps(props)}
-          {...renderProps}
-          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
+          {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
-          onScroll={props.onScroll}
           data-empty={state.collection.size === 0 || undefined}
           data-focused={isFocused || undefined}
           data-drop-target={isRootDropTarget || undefined}
@@ -405,7 +404,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               collection={state.collection}
               persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
               scrollRef={ref}
-              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
           </Provider>
           {emptyState}
         </div>
@@ -464,7 +463,7 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', func
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeItemOptions, 'hasChildItems'> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -610,6 +609,9 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   });
 
   let activateButtonId = useId();
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <>
@@ -637,7 +639,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
       )}
       <div
         {...mergeProps(
-          filterDOMProps(props as any),
+          DOMProps,
           rowProps,
           focusProps,
           hoverProps,

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle, SpectrumAccordionProps} from '../';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 const meta: Meta = {
   title: 'Accordion',
@@ -22,7 +22,9 @@ const meta: Meta = {
 
 export default meta;
 
-export const Template = (args) => (
+export type AccordionStory = StoryObj<SpectrumAccordionProps>;
+
+export const Template = (args: SpectrumAccordionProps): JSX.Element => (
   <Accordion {...args}>
     <Disclosure id="files">
       <DisclosureTitle>
@@ -51,16 +53,16 @@ export const Template = (args) => (
   </Accordion>
 );
 
-export const Default = {
-  render: Template
+export const Default: AccordionStory = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithExpandedKeys = {
-  render: Template,
+export const WithExpandedKeys: AccordionStory = {
+  render: (args) => <Template {...args} />,
   args: {defaultExpandedKeys: ['shared']}
 };
 
-export const WithDisabledDisclosure = {
+export const WithDisabledDisclosure: AccordionStory = {
   render: (args) => (
     <Accordion {...args}>
       <Disclosure id="files">
@@ -90,22 +92,22 @@ export const WithDisabledDisclosure = {
     </Accordion>)
 };
 
-export const Disabled = {
-  render: Template,
+export const Disabled: AccordionStory = {
+  render: (args) => <Template {...args} />,
   args: {isDisabled: true}
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: AccordionStory = {
+  render: (args) => <Template {...args} />,
   args: {isQuiet: true}
 };
 
-export const WithWrappingTitle = {
+export const WithWrappingTitle: AccordionStory = {
   render: (args) => (
     <Accordion maxWidth="size-3000" {...args}>
       <Disclosure id="files">
         <DisclosureTitle>
-          Long long long long long long long long long long long long long  long long long wrapping title 
+          Long long long long long long long long long long long long long  long long long wrapping title
         </DisclosureTitle>
         <DisclosurePanel>
           Files content

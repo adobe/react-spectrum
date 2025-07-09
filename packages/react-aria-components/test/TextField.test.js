@@ -257,5 +257,14 @@ describe('TextField', () => {
       expect(input).toHaveAttribute('id', 'name');
       expect(label).toHaveAttribute('for', 'name');
     });
+
+    it('should support form prop', () => {
+      let {getByRole} = render(
+        <TestTextField form="test" input={component} />
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('form', 'test');
+    });
   });
 });
