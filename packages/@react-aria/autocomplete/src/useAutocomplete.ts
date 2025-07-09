@@ -272,6 +272,13 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
           clearVirtualFocus();
           break;
         }
+        case 'Enter':
+          // Trigger click action on item when Enter key was pressed.
+          if (focusedNodeId != null) {
+            let item = document.getElementById(focusedNodeId);
+            item?.click();
+          }
+          break;
       }
     }
   };

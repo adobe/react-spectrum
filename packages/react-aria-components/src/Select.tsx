@@ -16,9 +16,9 @@ import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
@@ -62,7 +62,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
@@ -169,7 +169,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     defaultClassName: 'react-aria-Select'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   let scrollRef = useRef(null);
@@ -203,9 +203,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...DOMProps}
-        {...renderProps}
-        {...focusProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focused={state.isFocused || undefined}
@@ -284,7 +282,7 @@ export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={!selectedItem || undefined}>

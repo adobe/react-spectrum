@@ -14,12 +14,12 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -56,7 +56,7 @@ export interface GridListRenderProps {
   state: ListState<unknown>
 }
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * Whether typeahead navigation is disabled.
    * @default false
@@ -228,12 +228,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     );
   }
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <FocusScope>
       <div
-        {...filterDOMProps(props)}
-        {...renderProps}
-        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+        {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
@@ -264,7 +264,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
-export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents {
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -359,6 +359,10 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     }
   }, [item.textValue]);
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
   return (
     <>
       {dropIndicator && !dropIndicator.isHidden &&
@@ -369,8 +373,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
         </div>
       }
       <div
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         ref={ref}
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
@@ -500,7 +503,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -543,7 +546,7 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
       {isLoading && renderProps.children && (
         <div
           {...renderProps}
-          {...mergeProps(filterDOMProps(props as any))}
+          {...filterDOMProps(props, {global: true})}
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}
           ref={ref}>

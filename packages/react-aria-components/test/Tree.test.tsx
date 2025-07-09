@@ -18,6 +18,7 @@ import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 import {useTreeData} from 'react-stately';
 
@@ -161,6 +162,7 @@ let DraggableTreeWithSelection = (props) => {
 
 describe('Tree', () => {
   let user;
+  let testUtilUser = new User();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -1480,6 +1482,29 @@ describe('Tree', () => {
       fireEvent(projectsRow, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
       expect(getItems).toHaveBeenCalledTimes(1);
       expect(getItems).toHaveBeenCalledWith(new Set(['projects', 'reports']));
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = render(<StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />);
+      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
+      await gridListTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });
