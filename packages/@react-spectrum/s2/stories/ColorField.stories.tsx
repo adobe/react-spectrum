@@ -19,7 +19,7 @@ import {
   Link,
   Text
 } from '../src/';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
@@ -38,34 +38,37 @@ const meta: Meta<typeof ColorField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorField>;
 
-export const Example = (args: any) => <ColorField {...args} />;
-
-Example.args = {
-  label: 'Color'
+export const Example: Story = {
+  render: (args) => <ColorField {...args} />,
+  args: {
+    label: 'Color'
+  }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <ColorField
-    {...args}
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>Color</Heading>
-        <Content>
-          <Text>
-            Pick your favorite color.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Color"
-            target="_blank">Learn more about color</Link>
-        </Footer>
-      </ContextualHelp>
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <ColorField
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>Color</Heading>
+          <Content>
+            <Text>
+              Pick your favorite color.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Color"
+              target="_blank">Learn more about color</Link>
+          </Footer>
+        </ContextualHelp>
     } />
-);
-
-ContextualHelpExample.args = {
-  label: 'Color'
+  ),
+  args: {
+    label: 'Color'
+  }
 };
