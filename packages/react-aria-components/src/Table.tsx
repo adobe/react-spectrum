@@ -282,7 +282,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
   );
 });
 
-export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
+export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement | HTMLDivElement>>(null);
 export const TableStateContext = createContext<TableState<any> | null>(null);
 export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
@@ -331,7 +331,7 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
+export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -353,7 +353,7 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
 
   return (
     <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
-      {collection => <TableInner props={props} forwardedRef={ref} selectionState={selectionState} collection={collection} />}
+      {collection => <TableInner props={props} forwardedRef={ref as any} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );
 });
@@ -554,7 +554,7 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
  */
 export const TableHeader =  /*#__PURE__*/ createBranchComponent(
   'tableheader',
-  <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
+  <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
     let collection = useContext(TableStateContext)!.collection as TableCollection<unknown>;
     let headerRows = useCachedChildren({
       items: collection.headerRows,
@@ -589,7 +589,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
       <THead
         {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
         {...renderProps}
-        ref={ref}
+        ref={ref as any}
         data-hovered={isHovered || undefined}>
         {headerRows}
       </THead>
@@ -922,7 +922,7 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
+export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
@@ -979,7 +979,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     <TBody
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
-      ref={ref}
+      ref={ref as any}
       data-empty={isEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
@@ -1025,8 +1025,8 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   'item',
-  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement>, item: GridNode<T>) => {
-    let ref = useObjectRef<HTMLTableRowElement>(forwardedRef);
+  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>, item: GridNode<T>) => {
+    let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
@@ -1114,7 +1114,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         <TR
           {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           {...renderProps}
-          ref={ref}
+          ref={ref as any}
           data-disabled={states.isDisabled || undefined}
           data-selected={states.isSelected || undefined}
           data-hovered={isHovered || undefined}
