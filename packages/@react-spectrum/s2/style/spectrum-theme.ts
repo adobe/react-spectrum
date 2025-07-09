@@ -435,7 +435,6 @@ const fontWeightBase = {
   normal: '400',
   medium: {
     default: '500',
-    ':lang(ja, ko, zh)': '400', // Adobe Clean Han does not have a medium weight
     ':lang(ar, he)': '600' // Myriad does not have a 500 weight
   },
   bold: {
