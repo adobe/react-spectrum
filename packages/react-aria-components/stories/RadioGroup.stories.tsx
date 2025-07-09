@@ -79,16 +79,49 @@ export const RadioGroupInDialogExample = () => {
               position: 'relative'
             }}>
             {({close}) => (
-              <>
-                <div>
-                  <RadioGroupExample />
+              <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+                <div style={{display: 'flex', flexDirection: 'row', gap: 20}}>
+                  <div>
+                    <RadioGroupExample />
+                  </div>
+                  <Form>
+                    <RadioGroup
+                      className={styles.radiogroup}
+                      data-testid="radio-group-example-2"
+                      isRequired>
+                      <Label>Second Favorite pet</Label>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Button>About dogs</Button>
+                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Button>About cats</Button>
+                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Button>About dragons</Button>
+                      <FieldError className={styles.errorMessage} />
+                    </RadioGroup>
+                  </Form>
+                  <Form>
+                    <RadioGroup
+                      className={styles.radiogroup}
+                      data-testid="radio-group-example-3"
+                      defaultValue="dragon"
+                      isRequired>
+                      <Label>Third Favorite pet</Label>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Button>About dogs</Button>
+                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Button>About cats</Button>
+                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Button>About dragons</Button>
+                      <FieldError className={styles.errorMessage} />
+                    </RadioGroup>
+                  </Form>
                 </div>
                 <div>
                   <Button onPress={close} style={{marginTop: 10}}>
                     Close
                   </Button>
                 </div>
-              </>
+              </div>
             )}
           </Dialog>
         </Modal>
