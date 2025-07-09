@@ -149,7 +149,7 @@ export const WithContextualHelp: LabeledValueStory = {
 export const NullValue: LabeledValueStory = {
   args: {
     label: 'Test',
-    value: null
+    value: null as any
   },
   name: 'null value'
 };
