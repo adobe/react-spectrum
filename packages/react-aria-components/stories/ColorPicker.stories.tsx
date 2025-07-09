@@ -20,7 +20,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorPicker',
   component: ColorPicker
 } as Meta<typeof ColorPicker>;
 

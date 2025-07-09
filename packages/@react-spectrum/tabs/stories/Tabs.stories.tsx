@@ -19,6 +19,7 @@ import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
 import {Key} from '@react-types/shared';
+import {Meta, StoryFn} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useCallback, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
@@ -27,128 +28,130 @@ import {TextField} from '@react-spectrum/textfield';
 
 export default {
   title: 'Tabs'
-};
+} as Meta<typeof Tabs>;
 
-export const Default = () => render();
-export const WithFalsyItemKey = () => renderWithFalsyKey();
+export type TabsStory = StoryFn<typeof Tabs>;
+
+export const Default: TabsStory = () => render();
+export const WithFalsyItemKey: TabsStory = () => renderWithFalsyKey();
 
 WithFalsyItemKey.story = {
   name: 'with falsy item key'
 };
 
-export const DefaultSelectedKeyVal2 = () => render({defaultSelectedKey: 'val2'});
+export const DefaultSelectedKeyVal2: TabsStory = () => render({defaultSelectedKey: 'val2'});
 
 DefaultSelectedKeyVal2.story = {
   name: 'defaultSelectedKey: val2'
 };
 
-export const ControlledSelectedKeyVal3 = () => render({selectedKey: 'val3'});
+export const ControlledSelectedKeyVal3: TabsStory = () => render({selectedKey: 'val3'});
 
 ControlledSelectedKeyVal3.story = {
   name: 'controlled: selectedKey: val3'
 };
 
-export const OrientationVertical = () => render({orientation: 'vertical'});
+export const OrientationVertical: TabsStory = () => render({orientation: 'vertical'});
 
 OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
-export const DensityCompact = () => render({density: 'compact'});
+export const DensityCompact: TabsStory = () => render({density: 'compact'});
 
 DensityCompact.story = {
   name: 'density: compact'
 };
 
-export const IsQuiet = () => render({isQuiet: true});
+export const IsQuiet: TabsStory = () => render({isQuiet: true});
 
 IsQuiet.story = {
   name: 'isQuiet'
 };
 
-export const IsQuietDensityCompact = () => render({isQuiet: true, density: 'compact'});
+export const IsQuietDensityCompact: TabsStory = () => render({isQuiet: true, density: 'compact'});
 
 IsQuietDensityCompact.story = {
   name: 'isQuiet, density: compact'
 };
 
-export const DensityCompactOrientationVertical = () =>
+export const DensityCompactOrientationVertical: TabsStory = () =>
   render({density: 'compact', orientation: 'vertical'});
 
 DensityCompactOrientationVertical.story = {
   name: 'density: compact, orientation: vertical'
 };
 
-export const Icons = () => renderWithIcons();
+export const Icons: TabsStory = () => renderWithIcons();
 
 Icons.story = {
   name: 'icons'
 };
 
-export const IconsDensityCompact = () => renderWithIcons({density: 'compact'});
+export const IconsDensityCompact: TabsStory = () => renderWithIcons({density: 'compact'});
 
 IconsDensityCompact.story = {
   name: 'icons, density: compact'
 };
 
-export const IconsOrientationVertical = () => renderWithIcons({orientation: 'vertical'});
+export const IconsOrientationVertical: TabsStory = () => renderWithIcons({orientation: 'vertical'});
 
 IconsOrientationVertical.story = {
   name: 'icons, orientation: vertical'
 };
 
-export const IconsDensityCompactOrientationVertical = () =>
+export const IconsDensityCompactOrientationVertical: TabsStory = () =>
   renderWithIcons({orientation: 'vertical', density: 'compact'});
 
 IconsDensityCompactOrientationVertical.story = {
   name: 'icons, density: compact, orientation: vertical'
 };
 
-export const IsEmphasizedTrue = () => render({isEmphasized: true});
+export const IsEmphasizedTrue: TabsStory = () => render({isEmphasized: true});
 
 IsEmphasizedTrue.story = {
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueIconsIsQuietTrue = () =>
+export const IsEmphasizedTrueIconsIsQuietTrue: TabsStory = () =>
   renderWithIcons({isEmphasized: true, isQuiet: true});
 
 IsEmphasizedTrueIconsIsQuietTrue.story = {
   name: 'isEmphasized: true, icons, isQuiet: true'
 };
 
-export const IsEmphasizedTrueOrientationVertical = () =>
+export const IsEmphasizedTrueOrientationVertical: TabsStory = () =>
   render({isEmphasized: true, orientation: 'vertical'});
 
 IsEmphasizedTrueOrientationVertical.story = {
   name: 'isEmphasized: true, orientation: vertical'
 };
 
-export const DisableAllTabs = () => render({isDisabled: true});
+export const DisableAllTabs: TabsStory = () => render({isDisabled: true});
 
 DisableAllTabs.story = {
   name: 'disable all tabs'
 };
 
-export const KeyboardActivationManual = () => render({keyboardActivation: 'manual'});
+export const KeyboardActivationManual: TabsStory = () => render({keyboardActivation: 'manual'});
 
 KeyboardActivationManual.story = {
   name: 'keyboardActivation: manual'
 };
 
-export const MiddleDisabled = () => render({disabledKeys: ['val2']});
+export const MiddleDisabled: TabsStory = () => render({disabledKeys: ['val2']});
 
 MiddleDisabled.story = {
   name: 'middle disabled'
 };
 
-export const AllDisabled = () => render({disabledKeys: ['val1', 'val2', 'val3', 'val4', 'val5']});
+export const AllDisabled: TabsStory = () => render({disabledKeys: ['val1', 'val2', 'val3', 'val4', 'val5']});
 
 AllDisabled.story = {
   name: 'all disabled'
 };
 
-export const Resizeable = () => (
+export const Resizeable: TabsStory = () => (
   <div
     style={{
       minWidth: '100px',
@@ -167,25 +170,25 @@ Resizeable.story = {
   name: 'resizeable'
 };
 
-export const CollapseBehavior = () => <DynamicTabs />;
+export const CollapseBehavior: TabsStory = () => <DynamicTabs />;
 
 CollapseBehavior.story = {
   name: 'collapse behavior'
 };
 
-export const CollapseBehaviorIsQuiet = () => <DynamicTabs isQuiet />;
+export const CollapseBehaviorIsQuiet: TabsStory = () => <DynamicTabs isQuiet />;
 
 CollapseBehaviorIsQuiet.story = {
   name: 'collapse behavior, isQuiet'
 };
 
-export const CollapseBehaviorDensityCompact = () => <DynamicTabs density="compact" />;
+export const CollapseBehaviorDensityCompact: TabsStory = () => <DynamicTabs density="compact" />;
 
 CollapseBehaviorDensityCompact.story = {
   name: 'collapse behavior, density: compact'
 };
 
-export const CollapseBehaviorDensityCompactIsQuiet = () => (
+export const CollapseBehaviorDensityCompactIsQuiet: TabsStory = () => (
   <DynamicTabs isQuiet density="compact" />
 );
 
@@ -193,19 +196,19 @@ CollapseBehaviorDensityCompactIsQuiet.story = {
   name: 'collapse behavior, density: compact, isQuiet'
 };
 
-export const CollapseBehaviorIsEmphasizedTrue = () => <DynamicTabs isEmphasized />;
+export const CollapseBehaviorIsEmphasizedTrue: TabsStory = () => <DynamicTabs isEmphasized />;
 
 CollapseBehaviorIsEmphasizedTrue.story = {
   name: 'collapse behavior, isEmphasized: true'
 };
 
-export const _OrientationFlip = () => <OrientationFlip />;
+export const _OrientationFlip: TabsStory = () => <OrientationFlip />;
 
 _OrientationFlip.story = {
   name: 'orientation flip'
 };
 
-export const TestingTabsInFlex = () => (
+export const TestingTabsInFlex: TabsStory = () => (
   <Flex
     minHeight={400}
     minWidth={400}
@@ -232,7 +235,7 @@ TestingTabsInFlex.story = {
   name: 'testing: tabs in flex'
 };
 
-export const TransitionBetweenTabSizes = () => (
+export const TransitionBetweenTabSizes: TabsStory = () => (
   <Tabs maxWidth={500}>
     <TabList>
       <Item>
@@ -253,13 +256,13 @@ TransitionBetweenTabSizes.story = {
   name: 'transition between tab sizes'
 };
 
-export const TabWithFlexContainerInBetween = () => <DynamicTabsWithDecoration />;
+export const TabWithFlexContainerInBetween: TabsStory = () => <DynamicTabsWithDecoration />;
 
 TabWithFlexContainerInBetween.story = {
   name: 'Tab with flex container in between'
 };
 
-export const TabsAtTheBottom = () => (
+export const TabsAtTheBottom: TabsStory = () => (
   <Tabs maxWidth={500}>
     <TabPanels height="size-1000">
       <Item>Text 1</Item>
@@ -276,7 +279,7 @@ TabsAtTheBottom.story = {
   name: 'tabs at the bottom'
 };
 
-export const TabsOnTheRight = () => (
+export const TabsOnTheRight: TabsStory = () => (
   <Tabs maxWidth={500} orientation="vertical">
     <TabPanels>
       <Item>Text 1</Item>
@@ -293,7 +296,7 @@ TabsOnTheRight.story = {
   name: 'tabs on the right'
 };
 
-export const FocusableElementInTabPanel = () => (
+export const FocusableElementInTabPanel: TabsStory = () => (
   <Tabs maxWidth={500}>
     <TabList>
       <Item>Tab 1</Item>
@@ -314,7 +317,7 @@ FocusableElementInTabPanel.story = {
   name: 'focusable element in tab panel'
 };
 
-export const Tab1ControlledChild = () => {
+export const Tab1ControlledChild: TabsStory = () => {
   let [tab1Text, setTab1Text] = useState('');
 
   return (
@@ -339,7 +342,7 @@ Tab1ControlledChild.story = {
   name: 'Tab 1 controlled child'
 };
 
-export const ChangingTabTitles = () => {
+export const ChangingTabTitles: TabsStory = () => {
   let [tab1Text, setTab1Text] = useState('Tab 1');
   let [tab2Text, setTab2Text] = useState('Tab 2');
 
@@ -365,13 +368,13 @@ ChangingTabTitles.story = {
   name: 'changing tab titles'
 };
 
-export const ChangingSelectionProgramatically = () => <ControlledSelection />;
+export const ChangingSelectionProgramatically: TabsStory = () => <ControlledSelection />;
 
 ChangingSelectionProgramatically.story = {
   name: 'changing selection programatically'
 };
 
-export const Links = (args) => {
+export const Links: StoryFn<SpectrumTabsProps<unknown> & {collapsed?: boolean}> = (args) => {
   let [url, setUrl] = useState('/one');
 
   return (
@@ -402,7 +405,7 @@ Links.story = {
   }
 };
 
-export const Nested = (props) => {
+export const Nested: TabsStory = (props) => {
   return (
     <Tabs aria-label="Some tabs" width={'500px'} {...props} >
       <TabList>

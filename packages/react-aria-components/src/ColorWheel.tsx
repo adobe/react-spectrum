@@ -3,6 +3,7 @@ import {ColorWheelContext} from './RSPContexts';
 import {ColorWheelState, useColorWheelState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext, useRef} from 'react';
 
@@ -18,7 +19,7 @@ export interface ColorWheelRenderProps {
   state: ColorWheelState
 }
 
-export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<ColorWheelRenderProps>, SlotProps {}
+export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<ColorWheelRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const ColorWheelStateContext = createContext<ColorWheelState | null>(null);
 
@@ -43,7 +44,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -66,8 +67,8 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
 });
 
 export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
-export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps> {}
-interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, ColorWheelTrackProps {}
+export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {}
+interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, StyleRenderProps<ColorWheelTrackRenderProps> {}
 
 export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrackContextValue, HTMLDivElement>>(null);
 

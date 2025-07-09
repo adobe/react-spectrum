@@ -18,7 +18,7 @@ import React, {JSX} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Menu',
   component: Menu
 } as Meta<typeof Menu>;
 

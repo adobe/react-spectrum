@@ -20,7 +20,7 @@ import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Autocomplete',
   component: Autocomplete,
   args: {
     onAction: action('onAction'),

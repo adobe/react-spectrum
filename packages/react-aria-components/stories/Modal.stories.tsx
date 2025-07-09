@@ -15,7 +15,7 @@ import {Meta, StoryFn} from '@storybook/react';
 import React, {useEffect} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Modal',
   component: Modal
 } as Meta<typeof Modal>;
 

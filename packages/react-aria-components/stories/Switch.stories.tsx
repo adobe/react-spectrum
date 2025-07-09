@@ -17,7 +17,7 @@ import styles from '../example/index.css';
 import {Switch} from 'react-aria-components';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Switch',
   component: Switch
 } as Meta<typeof Switch>;
 

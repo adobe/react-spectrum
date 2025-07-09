@@ -15,7 +15,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Tooltip',
   component: Tooltip
 } as Meta<typeof Tooltip>;
 

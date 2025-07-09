@@ -15,7 +15,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorSwatch',
   component: ColorSwatch
 } as Meta<typeof ColorSwatch>;
 

@@ -5,7 +5,7 @@ import './styles.css';
 
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Checkbox',
   component: Checkbox
 } as Meta<typeof Checkbox>;
 

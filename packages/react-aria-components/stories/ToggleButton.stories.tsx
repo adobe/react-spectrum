@@ -18,7 +18,7 @@ import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ToggleButton',
   component: ToggleButton
 } as Meta<typeof ToggleButton>;
 

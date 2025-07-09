@@ -17,7 +17,7 @@ import './combobox-reproductions.css';
 
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ComboBoxReproductions',
   component: ComboBox
 } as Meta<typeof ComboBox>;
 

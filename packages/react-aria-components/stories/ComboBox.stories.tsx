@@ -19,7 +19,7 @@ import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ComboBox',
   component: ComboBox
 } as Meta<typeof ComboBox>;
 

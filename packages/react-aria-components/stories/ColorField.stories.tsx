@@ -15,7 +15,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorField',
   argTypes: {
     colorSpace: {
       control: 'select',

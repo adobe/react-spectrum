@@ -15,7 +15,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorSlider',
   component: ColorSlider,
   excludeStories: ['ColorSliderExampleRender']
 } as Meta<typeof ColorSlider>;

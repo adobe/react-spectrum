@@ -5,7 +5,7 @@ import './styles.css';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/CheckboxGroup',
   component: CheckboxGroup
 } as Meta<typeof CheckboxGroup>;
 

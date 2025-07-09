@@ -29,6 +29,7 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
@@ -65,7 +66,7 @@ export interface ButtonRenderProps {
   isPending: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
@@ -133,13 +134,14 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
-  // We do this by changing the button's type to button.
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.onClick;
+
   return (
     <button
-      {...filterDOMProps(props)}
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
+      // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+      // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
       id={buttonId}
       ref={ref}

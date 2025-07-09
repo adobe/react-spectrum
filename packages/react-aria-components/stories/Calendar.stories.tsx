@@ -15,7 +15,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Calendar',
   component: Calendar
 } as Meta<typeof Calendar>;
 

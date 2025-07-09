@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProgressCircle} from '../';
+import {Meta, StoryFn} from '@storybook/react';
+import {ProgressCircle, SpectrumProgressCircleProps} from '../';
 import React, {CSSProperties} from 'react';
 
 const grayedBoxStyle: CSSProperties = {
@@ -35,34 +36,36 @@ export default {
       }
     }
   }
-};
+} as Meta<SpectrumProgressCircleProps>;
 
-export const Default = (args) => render(args);
-export const Value50 = () => render({value: 50});
+export type ProgressCircleStory = StoryFn<SpectrumProgressCircleProps>;
+
+export const Default: ProgressCircleStory = (args) => render(args);
+export const Value50: ProgressCircleStory = () => render({value: 50});
 
 Value50.story = {
   name: 'value: 50'
 };
 
-export const Value100 = () => render({value: 100});
+export const Value100: ProgressCircleStory = () => render({value: 100});
 
 Value100.story = {
   name: 'value: 100'
 };
 
-export const SizeS = (args) => render({...args, size: 'S'});
+export const SizeS: ProgressCircleStory = (args) => render({...args, size: 'S'});
 
 SizeS.story = {
   name: 'size: S'
 };
 
-export const SizeL = (args) => render({...args, size: 'L'});
+export const SizeL: ProgressCircleStory = (args) => render({...args, size: 'L'});
 
 SizeL.story = {
   name: 'size: L'
 };
 
-export const VariantOverBackground = (args) => (
+export const VariantOverBackground: ProgressCircleStory = (args) => (
   <div style={grayedBoxStyle}>{render({...args, variant: 'overBackground'})}</div>
 );
 
@@ -70,7 +73,7 @@ VariantOverBackground.story = {
   name: 'variant: overBackground'
 };
 
-export const StaticColorWhite = (args) => (
+export const StaticColorWhite: ProgressCircleStory = (args) => (
   <div style={{...grayedBoxStyle, backgroundColor: 'rgb(0, 119, 114)'}}>{render({...args, staticColor: 'white'})}</div>
 );
 
@@ -78,7 +81,7 @@ StaticColorWhite.story = {
   name: 'staticColor: white'
 };
 
-export const StaticColorBlack = (args) => (
+export const StaticColorBlack: ProgressCircleStory = (args) => (
   <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>{render({...args, staticColor: 'black'})}</div>
 );
 
@@ -86,7 +89,7 @@ StaticColorBlack.story = {
   name: 'staticColor: black'
 };
 
-export const UsingRawValuesForMinValueMaxValueAndValue = () =>
+export const UsingRawValuesForMinValueMaxValueAndValue: ProgressCircleStory = () =>
   render({
     labelPosition: 'top',
     maxValue: 2147483648,
@@ -97,25 +100,25 @@ UsingRawValuesForMinValueMaxValueAndValue.story = {
   name: 'Using raw values for minValue, maxValue, and value'
 };
 
-export const IsIndeterminateTrue = () => render({isIndeterminate: true});
+export const IsIndeterminateTrue: ProgressCircleStory = () => render({isIndeterminate: true});
 
 IsIndeterminateTrue.story = {
   name: 'isIndeterminate: true'
 };
 
-export const IsIndeterminateTrueSizeS = () => render({isIndeterminate: true, size: 'S'});
+export const IsIndeterminateTrueSizeS: ProgressCircleStory = () => render({isIndeterminate: true, size: 'S'});
 
 IsIndeterminateTrueSizeS.story = {
   name: 'isIndeterminate: true, size: S'
 };
 
-export const IsIndeterminateTrueSizeL = () => render({isIndeterminate: true, size: 'L'});
+export const IsIndeterminateTrueSizeL: ProgressCircleStory = () => render({isIndeterminate: true, size: 'L'});
 
 IsIndeterminateTrueSizeL.story = {
   name: 'isIndeterminate: true, size: L'
 };
 
-export const IsIndeterminateTrueVariantOverBackground = () => (
+export const IsIndeterminateTrueVariantOverBackground: ProgressCircleStory = () => (
   <div style={grayedBoxStyle}>{render({isIndeterminate: true, variant: 'overBackground'})}</div>
 );
 

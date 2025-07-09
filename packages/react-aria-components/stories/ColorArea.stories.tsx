@@ -17,7 +17,7 @@ import {parseColor} from 'react-stately';
 import React, {JSX, useState} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorArea',
   decorators: [
     (Story, ctx) => {
       let args = ctx.args;

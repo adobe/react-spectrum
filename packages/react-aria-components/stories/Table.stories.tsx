@@ -21,7 +21,7 @@ import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Table',
   component: Table,
   excludeStories: ['DndTable', 'makePromise']
 } as Meta<typeof Table>;

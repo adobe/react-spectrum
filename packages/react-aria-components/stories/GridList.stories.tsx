@@ -45,7 +45,7 @@ import styles from '../example/index.css';
 import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/GridList',
   component: GridList
 } as Meta<typeof GridList>;
 

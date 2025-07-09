@@ -15,7 +15,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Popover',
   component: Popover
 } as Meta<typeof Popover>;
 

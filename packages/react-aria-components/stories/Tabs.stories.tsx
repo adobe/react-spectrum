@@ -17,7 +17,7 @@ import React, {useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Tabs',
   component: Tabs
 } as Meta<typeof Tabs>;
 

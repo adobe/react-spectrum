@@ -15,7 +15,7 @@ import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ColorWheel',
   component: ColorWheel
 } as Meta<typeof ColorWheel>;
 
