@@ -28,9 +28,9 @@ export function NumberField(
       <AriaNumberField {...props}>
         <Label>{label}</Label>
         <Group>
-          <Button slot="decrement"><Minus /></Button>
+          <Button slot="decrement"><Minus size={18} /></Button>
           <Input />
-          <Button slot="increment"><Plus /></Button>
+          <Button slot="increment"><Plus size={18} /></Button>
         </Group>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>

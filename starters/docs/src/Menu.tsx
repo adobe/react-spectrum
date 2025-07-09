@@ -45,7 +45,7 @@ export function MenuItem(
           <>
             {props.children}
             {hasSubmenu && (
-              <ChevronRight />
+              <ChevronRight size={18} />
             )}
           </>
         )}

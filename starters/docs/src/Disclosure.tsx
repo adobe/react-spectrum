@@ -21,7 +21,7 @@ export function Disclosure({ title, children, ...props }: DisclosureProps) {
       <AriaDisclosure {...props}>
         <Heading>
           <Button slot="trigger">
-            <ChevronRight />
+            <ChevronRight size={18} />
             {title}
           </Button>
         </Heading>

@@ -46,7 +46,7 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 import {Edit} from 'lucide-react';
 
 <TooltipTrigger>
-  <Button><Edit /></Button>
+  <Button><Edit size={18} /></Button>
   <Tooltip>
     <OverlayArrow>
       <svg width={8} height={8} viewBox="0 0 8 8"><path d="M0 0 L4 4 L8 0" /></svg>
@@ -189,7 +189,7 @@ function MyTooltip({children, ...props}: MyTooltipProps) {
 }
 
 <TooltipTrigger>
-  <Button><Save /></Button>
+  <Button><Save size={18} /></Button>
   <MyTooltip>Save</MyTooltip>
 </TooltipTrigger>
 ```
@@ -217,7 +217,7 @@ The delay can be adjusted for hover using the `delay` prop.
 
 ```tsx example
 <TooltipTrigger delay={0}>
-  <Button><Save /></Button>
+  <Button><Save size={18} /></Button>
   <MyTooltip>Save</MyTooltip>
 </TooltipTrigger>
 ```
@@ -229,7 +229,7 @@ By default, tooltips appear both on hover and on focus. The `trigger` prop can b
 ```tsx example
 import {Disc} from 'lucide-react';
 <TooltipTrigger trigger="focus">
-  <Button><Disc /></Button>
+  <Button><Disc size={18} /></Button>
   <MyTooltip>Burn CD</MyTooltip>
 </TooltipTrigger>
 ```
@@ -247,7 +247,7 @@ function Example() {
   return (
     <>
       <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
-        <Button><Bell /></Button>
+        <Button><Bell size={18} /></Button>
         <MyTooltip>Notifications</MyTooltip>
       </TooltipTrigger>
       <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
@@ -316,7 +316,7 @@ The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip
 ```tsx example
 import {Printer} from 'lucide-react';
 <TooltipTrigger isDisabled>
-  <Button><Printer /></Button>
+  <Button><Printer size={18} /></Button>
   <MyTooltip>Print</MyTooltip>
 </TooltipTrigger>
 ```

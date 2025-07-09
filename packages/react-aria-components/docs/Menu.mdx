@@ -51,7 +51,7 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 import {Menu as MenuIcon} from 'lucide-react';
 
 <MenuTrigger>
-  <Button aria-label="Menu"><MenuIcon size={20} /></Button>
+  <Button aria-label="Menu"><MenuIcon size={18} /></Button>
   <Popover>
     <Menu>
       <MenuItem onAction={() => alert('open')}>Open</MenuItem>
@@ -240,7 +240,7 @@ export function MyItem(props: Omit<MenuItemProps, 'children'> & {children?: Reac
         <>
           {props.children}
           {hasSubmenu && (
-            <ChevronRight size={20} className="chevron" />
+            <ChevronRight size={18} className="chevron" />
           )}
         </>
       )}
@@ -278,8 +278,6 @@ export function MyItem(props: Omit<MenuItemProps, 'children'> & {children?: Reac
     color: var(--text-color);
   }
   .chevron {
-    width: 20;
-    height: 20;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
