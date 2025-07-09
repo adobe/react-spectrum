@@ -15,15 +15,16 @@ import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {Form} from '@react-spectrum/form';
+import {Form, SpectrumFormProps} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from './intlMessages.json';
 import {Item, Picker} from '@react-spectrum/picker';
+import {Meta, StoryFn} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import {RangeSlider, Slider} from '@react-spectrum/slider';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
@@ -38,10 +39,13 @@ export default {
       locales: ['ar-AE', 'he-IL', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
       scales: ['large', 'medium']
     }
-  }
-};
+  },
+  excludeStories: ['TranslateForm']
+} as Meta<typeof Form>;
 
-let TranslateForm = (props) => {
+export type FormStory = StoryFn<typeof Form>;
+
+export let TranslateForm = (props: Omit<SpectrumFormProps, 'children'>): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
 
   return (
@@ -145,10 +149,10 @@ let TranslateForm = (props) => {
   );
 };
 
-export const FormTranslatedText = (props) => (
+export const FormTranslatedText: FormStory = (props) => (
   <TranslateForm {...props} />
 );
 
-export const FormTranslatedTextSideLabel = () => {
-  return <FormTranslatedText labelPosition="side" labelAlign="start" width="500px" />;
+export const FormTranslatedTextSideLabel: FormStory = () => {
+  return <TranslateForm labelPosition="side" labelAlign="start" width="500px" />;
 };

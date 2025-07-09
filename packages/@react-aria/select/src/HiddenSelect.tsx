@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {JSX, ReactNode, useCallback, useRef} from 'react';
+import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -51,7 +51,7 @@ export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
 
 export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   /** A ref to the hidden `<select>` element. */
-  selectRef?: RefObject<HTMLSelectElement | null>
+  selectRef?: RefObject<HTMLSelectElement | HTMLInputElement | null>
 }
 
 export interface HiddenSelectAria {
@@ -124,7 +124,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
 export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null {
   let {state, triggerRef, label, name, form, isDisabled} = props;
   let selectRef = useRef(null);
-  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
+  let inputRef = useRef(null);
+  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef}, state, triggerRef);
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -153,14 +154,34 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
       </div>
     );
   } else if (name) {
+    let data = selectData.get(state) || {};
+    let {validationBehavior} = data;
+
+    let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+      type: 'hidden',
+      autoComplete: selectProps.autoComplete,
+      name,
+      form,
+      disabled: isDisabled,
+      value: state.selectedKey ?? ''
+    };
+
+    if (validationBehavior === 'native') {
+      // Use a hidden <input type="text"> rather than <input type="hidden">
+      // so that an empty value blocks HTML form submission when the field is required.
+      return (
+        <input
+          {...inputProps}
+          ref={inputRef}
+          style={{display: 'none'}}
+          type="text"
+          required={selectProps.required}
+          onChange={() => {/** Ignore react warning. */}} />
+      );
+    }
+
     return (
-      <input
-        type="hidden"
-        autoComplete={selectProps.autoComplete}
-        name={name}
-        form={form}
-        disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
+      <input {...inputProps} ref={inputRef} />
     );
   }
 

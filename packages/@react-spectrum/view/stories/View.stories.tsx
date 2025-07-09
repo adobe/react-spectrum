@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {View} from '../';
 
@@ -19,11 +20,11 @@ let meta = {
     colorVersion: 5,
     backgroundColor: 'blue-400'
   }
-};
+} as Meta<typeof View>;
 
 export default meta;
 
-export const Default = args => (
+export const Default: StoryFn<typeof View> = (args) => (
   <View
     {...args}
     width="single-line-width"
