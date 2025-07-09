@@ -31,7 +31,7 @@ export function PostListing({type}) {
       {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
       <div style={{display: 'flex', justifyContent: 'end'}}>
         <Link
-          href={`../${type}/${type}-feed.rss`}
+          href={`./${type}/${type}-feed.rss`}
           target="_blank">
           <Flex gap="size-100" alignItems="center">
             <span>RSS Link</span><RSS size="S" />
