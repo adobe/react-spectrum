@@ -177,7 +177,7 @@ function SerifExample() {
 }
 
 export const Default = {
-  render: Example,
+  render: () => <Example />,
   parameters: {
     chromaticProvider: {
       colorSchemes: ['light'],
@@ -187,7 +187,7 @@ export const Default = {
 };
 
 export const Serif = {
-  render: SerifExample,
+  render: () => <SerifExample />,
   parameters: {
     chromaticProvider: {
       colorSchemes: ['light'],
