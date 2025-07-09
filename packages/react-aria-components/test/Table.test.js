@@ -334,6 +334,21 @@ describe('Table', () => {
     }
   });
 
+  it('should support aria-label props on column and cells', () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {'aria-label': 'aria column label'},
+      cellProps: {'aria-label': 'aria cell label'}
+    });
+
+    for (let cell of getAllByRole('columnheader')) {
+      expect(cell).toHaveAttribute('aria-label', 'aria column label');
+    }
+
+    for (let cell of getAllByRole('gridcell')) {
+      expect(cell).toHaveAttribute('aria-label', 'aria cell label');
+    }
+  });
+
   it('should render checkboxes for selection', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'}
@@ -2649,7 +2664,7 @@ describe('Table', () => {
       let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
       await tableTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
