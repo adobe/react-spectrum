@@ -201,7 +201,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
                     styles={timeField}
-                    label={stringFormatter.format('calendar.time')}
+                    label={stringFormatter.format('datepicker.time')}
                     value={state.timeValue}
                     // TODO: why do i need the cast?
                     onChange={v => state.setTimeValue(v as TimeValue)}

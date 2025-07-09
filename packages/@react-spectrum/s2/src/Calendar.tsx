@@ -43,8 +43,10 @@ import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {helpTextStyles} from './Field';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -289,6 +291,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     styles,
     ...otherProps
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   return (
     <AriaCalendar
       {...otherProps}
@@ -315,9 +318,9 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 <CalendarGrid months={i} key={i} />
               ))}
             </div>
-            {errorMessage && isInvalid && (
+            {isInvalid && (
               <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
-                {errorMessage}
+                {errorMessage || stringFormatter.format('calendar.invalidSelection', {selectedCount: 1})}
               </Text>
             )}
           </>

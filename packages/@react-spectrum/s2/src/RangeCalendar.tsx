@@ -25,7 +25,10 @@ import {forwardRefType} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Header} from './';
 import {helpTextStyles} from './Field';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -70,6 +73,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
     styles,
     ...otherProps
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <AriaRangeCalendar
@@ -97,9 +101,9 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 <CalendarGrid months={i} key={i} />
               ))}
             </div>
-            {errorMessage && isInvalid && (
+            {isInvalid && (
               <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
-                {errorMessage}
+                {errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 2})}
               </Text>
             )}
           </>

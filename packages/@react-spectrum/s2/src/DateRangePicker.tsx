@@ -141,7 +141,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
                     styles={timeField}
-                    label={stringFormatter.format('rangeCalendar.startTime')}
+                    label={stringFormatter.format('datepicker.startTime')}
                     value={state.timeRange?.start || null}
                     onChange={v => state.setTime('start', v)}
                     placeholderValue={timePlaceholder}
@@ -152,7 +152,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                     hideTimeZone={props.hideTimeZone} />
                   <TimeField
                     styles={timeField}
-                    label={stringFormatter.format('rangeCalendar.endTime')}
+                    label={stringFormatter.format('datepicker.endTime')}
                     value={state.timeRange?.end || null}
                     onChange={v => state.setTime('end', v)}
                     placeholderValue={timePlaceholder}
