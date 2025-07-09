@@ -27,7 +27,7 @@ import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
 import React, {AllHTMLAttributes, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
@@ -57,7 +57,7 @@ export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'sta
   state: RangeCalendarState
 }
 
-export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -72,7 +72,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -116,10 +116,11 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     defaultClassName: 'react-aria-Calendar'
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...renderProps}
-      {...calendarProps}
+      {...mergeProps(DOMProps, renderProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
@@ -193,10 +194,11 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
     defaultClassName: 'react-aria-RangeCalendar'
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...renderProps}
-      {...calendarProps}
+      {...mergeProps(renderProps, DOMProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
@@ -323,7 +325,7 @@ export interface CalendarCellRenderProps {
   isToday: boolean
 }
 
-export interface CalendarGridProps extends StyleProps, Omit<AllHTMLAttributes<HTMLTableElement>, 'children'> {
+export interface CalendarGridProps extends StyleProps, GlobalDOMAttributes<HTMLTableElement>, Pick<AllHTMLAttributes<HTMLTableElement>, 'cellPadding' | 'cellSpacing'> {
   /**
    * Either a function to render calendar cells for each date in the month,
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
@@ -377,11 +379,12 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     firstDayOfWeek
   }, state);
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, weeksInMonth}}>
       <table
-        {...filterDOMProps(props as any)}
-        {...gridProps}
+        {...mergeProps(DOMProps, gridProps)}
         cellPadding={props.cellPadding}
         cellSpacing={props.cellSpacing}
         ref={ref}
@@ -403,7 +406,7 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   );
 });
 
-export interface CalendarGridHeaderProps extends StyleProps {
+export interface CalendarGridHeaderProps extends StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
   /** A function to render a `<CalendarHeaderCell>` for a weekday name. */
   children: (day: string) => ReactElement
 }
@@ -411,11 +414,11 @@ export interface CalendarGridHeaderProps extends StyleProps {
 function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HTMLTableSectionElement>) {
   let {children, style, className} = props;
   let {headerProps, weekDays} = useContext(InternalCalendarGridContext)!;
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <thead
-      {...filterDOMProps(props as any)}
-      {...headerProps}
+      {...mergeProps(DOMProps, headerProps)}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarGridHeader'}>
@@ -432,13 +435,14 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 const CalendarGridHeaderForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
 export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
-export interface CalendarHeaderCellProps extends DOMProps {}
+export interface CalendarHeaderCellProps extends DOMProps, GlobalDOMAttributes<HTMLTableHeaderCellElement> {}
 
 function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let {children, style, className} = props;
+  let DOMProps = filterDOMProps(props, {global: true});
   return (
     <th
-      {...filterDOMProps(props as any)}
+      {...DOMProps}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarHeaderCell'}>
@@ -453,7 +457,7 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
 const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
-export interface CalendarGridBodyProps extends StyleProps {
+export interface CalendarGridBodyProps extends StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
   /** A function to render a `<CalendarCell>` for a given date. */
   children: (date: CalendarDate) => ReactElement
 }
@@ -464,10 +468,11 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate, weeksInMonth} = useContext(InternalCalendarGridContext)!;
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <tbody
-      {...filterDOMProps(props as any)}
+      {...DOMProps}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarGridBody'}>
@@ -490,7 +495,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
   /** The date to render in the cell. */
   date: CalendarDate
 }
@@ -556,9 +561,11 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     'data-today': istoday || undefined
   };
 
+  let DOMProps = filterDOMProps(otherProps, {global: true});
+
   return (
     <td {...cellProps} ref={ref}>
-      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
+      <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
 });

@@ -13,8 +13,8 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
 import Info from '@spectrum-icons/workflow/Info';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {StoryObj} from '@storybook/react';
 import {TextField} from '../';
 
 export default {
@@ -30,7 +30,7 @@ export default {
     necessityIndicator: 'icon',
     labelPosition: 'top',
     labelAlign: 'start',
-    validationState: null
+    validationState: undefined
   },
   argTypes: {
     labelPosition: {
@@ -58,7 +58,7 @@ export default {
       }
     }
   }
-};
+} as Meta<typeof TextField>;
 
 export type TextFieldStory = StoryObj<typeof TextField>;
 

@@ -20,9 +20,9 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
@@ -97,7 +97,7 @@ let withArabic = [
   {name: 'لصق', icon: 'Paste', shortcut: '⌘V'}
 ];
 
-const Template = (args: SpectrumMenuTriggerProps) => (
+const Template = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
     <ActionButton>
       Menu Button
@@ -108,7 +108,7 @@ const Template = (args: SpectrumMenuTriggerProps) => (
   </MenuTrigger>
 );
 
-const TemplateWithSections = (args: SpectrumMenuTriggerProps) => (
+const TemplateWithSections = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
     <ActionButton>
       Menu Button
@@ -123,7 +123,7 @@ const TemplateWithSections = (args: SpectrumMenuTriggerProps) => (
   </MenuTrigger>
 );
 
-const customMenuItem = (item) => {
+const customMenuItem = (item): JSX.Element => {
   let Icon = iconMap[item.icon];
   return (
     <Item childItems={item.children} textValue={item.name} key={item.name}>
@@ -134,7 +134,7 @@ const customMenuItem = (item) => {
   );
 };
 
-const TemplateWithIcons = (args: SpectrumMenuTriggerProps) => (
+const TemplateWithIcons = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
     <ActionButton>
       Menu Button
@@ -149,7 +149,7 @@ const TemplateWithIcons = (args: SpectrumMenuTriggerProps) => (
   </MenuTrigger>
 );
 
-const TemplateArabicWithIcons = (args: SpectrumMenuTriggerProps) => (
+const TemplateArabicWithIcons = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
     <ActionButton>
       Menu Button
@@ -160,88 +160,90 @@ const TemplateArabicWithIcons = (args: SpectrumMenuTriggerProps) => (
   </MenuTrigger>
 );
 
-export const Default = {
-  render: Template,
+export type MenuTriggerStory = StoryObj<typeof Template>;
+
+export const Default: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'flat list'
 };
 
-export const WithSections = {
-  render: TemplateWithSections,
+export const WithSections: MenuTriggerStory = {
+  render: (args) => <TemplateWithSections {...args} />,
   name: 'with sections'
 };
 
-export const Complex = {
-  render: TemplateWithIcons,
+export const Complex: MenuTriggerStory = {
+  render: (args) => <TemplateWithIcons {...args} />,
   name: 'complex items'
 };
 
-export const AlignEnd = {
-  render: Template,
+export const AlignEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'align="end"',
   args: {align: 'end'}
 };
 
-export const DirectionTop = {
-  render: Template,
+export const DirectionTop: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="top"',
   args: {direction: 'top'}
 };
 
-export const DirectionBottom = {
-  render: Template,
+export const DirectionBottom: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="bottom"',
   args: {direction: 'bottom'}
 };
 
-export const DirectionStart = {
-  render: Template,
+export const DirectionStart: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="start"',
   args: {direction: 'start'}
 };
 
-export const DirectionStartEnd = {
-  render: Template,
+export const DirectionStartEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="start", align="end"',
   args: {direction: 'start', align: 'end'}
 };
 
-export const DirectionEnd = {
-  render: Template,
+export const DirectionEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="end"',
   args: {direction: 'end'}
 };
 
-export const DirectionEndEnd = {
-  render: Template,
+export const DirectionEndEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="end" align="end"',
   args: {direction: 'end', align: 'end'}
 };
 
-export const DirectionLeft = {
-  render: Template,
+export const DirectionLeft: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="left"',
   args: {direction: 'left'}
 };
 
-export const DirectionLeftEnd = {
-  render: Template,
+export const DirectionLeftEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="left", align="end"',
   args: {direction: 'left', align: 'end'}
 };
 
-export const DirectionRight = {
-  render: Template,
+export const DirectionRight: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="right"',
   args: {direction: 'right'}
 };
 
-export const DirectionRightEnd = {
-  render: Template,
+export const DirectionRightEnd: MenuTriggerStory = {
+  render: (args) => <Template {...args} />,
   name: 'direction="right", align="end"',
   args: {direction: 'right', align: 'end'}
 };
 
-export const ArabicComplex = {
-  render: TemplateArabicWithIcons,
+export const ArabicComplex: MenuTriggerStory = {
+  render: (args) => <TemplateArabicWithIcons {...args} />,
   name: 'Arabic complex items'
 };

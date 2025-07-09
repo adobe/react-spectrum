@@ -4,7 +4,7 @@ import './styles.css';
 
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Checkbox'
 };
 
 export const CheckboxExample = () => {

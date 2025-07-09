@@ -427,6 +427,97 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('data-focused');
   });
 
+  it('should restore focus visible styles back to the input when typing forward results in only disabled items', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let baz = options[1];
+    expect(baz).toHaveTextContent('Baz');
+    expect(input).toHaveAttribute('aria-activedescendant', baz.id);
+    expect(baz).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('r');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    let bar = options[0];
+    expect(bar).toHaveTextContent('Bar');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(bar).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should maintain focus styles on the input if typing forward results in an completely empty collection', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Q');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).queryAllByRole('menuitem');
+    expect(options).toHaveLength(0);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+  });
+
+  it('should restore focus visible styles back to the input if the user types forward and backspaces in quick succession', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('F');
+    // If 500ms hasn't elapsed the aria-activedecendant hasn't been updated
+    act(() => jest.advanceTimersByTime(300));
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+    expect(foo).toHaveTextContent('Foo');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).not.toHaveAttribute('data-focus-visible');
+  });
+
   it('should work inside a Select', async function () {
     let {getByRole} = render(
       <Select>

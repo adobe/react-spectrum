@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroup} from '../';
+import {ActionGroup, SpectrumActionGroupProps} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
@@ -19,8 +19,9 @@ import DrawIcon from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
+import {Meta, StoryObj} from '@storybook/react';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
-import React from 'react';
+import React, {JSX} from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
@@ -28,11 +29,11 @@ import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
-const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
-const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
-const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}];
-const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
-const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
+export const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}] as const;
+export const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}] as const;
+export const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}] as const;
+export const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}] as const;
+export const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}] as const;
 
 let iconMap = {
   'Document setup': DocumentIcon,
@@ -49,289 +50,373 @@ let iconMap = {
 };
 
 export default {
-  title: 'ActionGroup'
-};
+  title: 'ActionGroup',
+  excludeStories: ['Render', 'RenderText', 'RenderBoth', 'RenderIcons', 'docItems', 'editItems', 'viewItems2', 'viewItems', 'dataItems']
+} as Meta<typeof ActionGroup>;
 
-export const Default = () => render({}, docItems);
+export type ActionGroupStory = StoryObj<typeof Render>;
 
-Default.story = {
+export const Default: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: docItems
+  },
   name: 'default'
 };
 
-export const IsDisabled = () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems);
-
-IsDisabled.story = {
+export const IsDisabled: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: docItems,
+    isDisabled: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'isDisabled'
 };
 
-export const Compact = () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems);
-
-Compact.story = {
+export const Compact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    density: 'compact',
+    defaultSelectedKeys: ['1']
+  },
   name: 'compact'
 };
 
-export const IsJustified = () =>
-  render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2);
-
-IsJustified.story = {
+export const IsJustified: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems2,
+    isJustified: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'isJustified'
 };
 
-export const CompactIsJustified = () =>
-  render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2);
-
-CompactIsJustified.story = {
+export const CompactIsJustified: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems2,
+    density: 'compact',
+    isJustified: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'compact, isJustified'
 };
 
-export const IsQuiet = () => render({isQuiet: true, defaultSelectedKeys: ['1']}, editItems);
-
-IsQuiet.story = {
+export const IsQuiet: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: editItems,
+    isQuiet: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'isQuiet'
 };
 
-export const CompactIsQuiet = () =>
-  render({density: 'compact', isQuiet: true, defaultSelectedKeys: ['1']}, editItems);
-
-CompactIsQuiet.story = {
+export const CompactIsQuiet: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: editItems,
+    density: 'compact',
+    isQuiet: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'compact, isQuiet'
 };
 
-export const IsEmphasized = () =>
-  render({isEmphasized: true, defaultSelectedKeys: ['1']}, docItems);
-
-IsEmphasized.story = {
+export const IsEmphasized: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: docItems,
+    isEmphasized: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'isEmphasized'
 };
 
-export const CompactIsEmphasized = () =>
-  render({isEmphasized: true, density: 'compact', defaultSelectedKeys: ['1']}, viewItems);
-
-CompactIsEmphasized.story = {
+export const CompactIsEmphasized: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    isEmphasized: true,
+    density: 'compact',
+    defaultSelectedKeys: ['1']
+  },
   name: 'compact, isEmphasized'
 };
 
-export const IsQuietIsEmphasized = () =>
-  render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems);
-
-IsQuietIsEmphasized.story = {
+export const IsQuietIsEmphasized: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    isEmphasized: true,
+    isQuiet: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'isQuiet, isEmphasized'
 };
 
-export const SelectionModeMultiple = () =>
-  render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems);
-
-SelectionModeMultiple.story = {
+export const SelectionModeMultiple: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple'
 };
 
-export const StaticColorWhite = () => (
-  <View backgroundColor="static-blue-700" padding="size-1000">
-    {render({staticColor: 'white', defaultSelectedKeys: ['1']}, viewItems)}
-  </View>
-);
-
-StaticColorWhite.story = {
+export const StaticColorWhite: ActionGroupStory = {
+  render: (args) => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Render {...args} />
+    </View>
+  ),
+  args: {
+    items: viewItems,
+    staticColor: 'white',
+    defaultSelectedKeys: ['1']
+  },
   name: 'staticColor=white'
 };
 
-export const StaticColorWhiteIsQuiet = () => (
-  <View backgroundColor="static-blue-700" padding="size-1000">
-    {render({staticColor: 'white', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
-  </View>
-);
-
-StaticColorWhiteIsQuiet.story = {
+export const StaticColorWhiteIsQuiet: ActionGroupStory = {
+  render: (args) => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Render {...args} />
+    </View>
+  ),
+  args: {
+    items: viewItems,
+    staticColor: 'white',
+    isQuiet: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'staticColor=white, isQuiet'
 };
 
-export const StaticColorBlack = () => (
-  <View backgroundColor="static-yellow-400" padding="size-1000">
-    {render({staticColor: 'black', defaultSelectedKeys: ['1']}, viewItems)}
-  </View>
-);
-
-StaticColorBlack.story = {
+export const StaticColorBlack: ActionGroupStory = {
+  render: (args) => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Render {...args} />
+    </View>
+  ),
+  args: {
+    items: viewItems,
+    staticColor: 'black',
+    defaultSelectedKeys: ['1']
+  },
   name: 'staticColor=black'
 };
 
-export const StaticColorBlackIsQuiet = () => (
-  <View backgroundColor="static-yellow-400" padding="size-1000">
-    {render({staticColor: 'black', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
-  </View>
-);
-
-StaticColorBlackIsQuiet.story = {
+export const StaticColorBlackIsQuiet: ActionGroupStory = {
+  render: (args) => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Render {...args} />
+    </View>
+  ),
+  args: {
+    items: viewItems,
+    staticColor: 'black',
+    isQuiet: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'staticColor=black, isQuiet'
 };
 
-export const SelectionModeSingleDisallowEmptySelection = () =>
-  render(
-    {selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']},
-    dataItems
-  );
-
-SelectionModeSingleDisallowEmptySelection.story = {
+export const SelectionModeSingleDisallowEmptySelection: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    selectionMode: 'single',
+    disallowEmptySelection: true,
+    defaultSelectedKeys: ['1']
+  },
   name: 'selectionMode: single, disallowEmptySelection'
 };
 
-export const SelectionModeMultipleIsQuiet = () =>
-  render({isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems);
-
-SelectionModeMultipleIsQuiet.story = {
+export const SelectionModeMultipleIsQuiet: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isQuiet: true,
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isQuiet'
 };
 
-export const SelectionModeMultipleIsQuietCompact = () =>
-  render(
-    {
-      isQuiet: true,
-      density: 'compact',
-      selectionMode: 'multiple',
-      defaultSelectedKeys: ['1', '2']
-    },
-    dataItems
-  );
-
-SelectionModeMultipleIsQuietCompact.story = {
+export const SelectionModeMultipleIsQuietCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isQuiet: true,
+    density: 'compact',
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isQuiet, compact'
 };
 
-export const SelectionModeMultipleIsEmphasized = () =>
-  render(
-    {isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']},
-    dataItems
-  );
-
-SelectionModeMultipleIsEmphasized.story = {
+export const SelectionModeMultipleIsEmphasized: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isEmphasized: true,
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isEmphasized'
 };
 
-export const SelectionModeMultipleIsEmphasizedCompact = () =>
-  render(
-    {
-      isEmphasized: true,
-      density: 'compact',
-      selectionMode: 'multiple',
-      defaultSelectedKeys: ['1', '2']
-    },
-    dataItems
-  );
-
-SelectionModeMultipleIsEmphasizedCompact.story = {
+export const SelectionModeMultipleIsEmphasizedCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isEmphasized: true,
+    density: 'compact',
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isEmphasized, compact'
 };
 
-export const SelectionModeMultipleIsEmphasizedIsQuiet = () =>
-  render(
-    {
-      isEmphasized: true,
-      isQuiet: true,
-      selectionMode: 'multiple',
-      defaultSelectedKeys: ['1', '2']
-    },
-    dataItems
-  );
-
-SelectionModeMultipleIsEmphasizedIsQuiet.story = {
+export const SelectionModeMultipleIsEmphasizedIsQuiet: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isEmphasized: true,
+    isQuiet: true,
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isEmphasized, isQuiet'
 };
 
-export const SelectionModeMultipleIsEmphasizedIsQuietCompact = () =>
-  render(
-    {
-      isEmphasized: true,
-      isQuiet: true,
-      density: 'compact',
-      selectionMode: 'multiple',
-      defaultSelectedKeys: ['1', '2']
-    },
-    dataItems
-  );
-
-SelectionModeMultipleIsEmphasizedIsQuietCompact.story = {
+export const SelectionModeMultipleIsEmphasizedIsQuietCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    isEmphasized: true,
+    isQuiet: true,
+    density: 'compact',
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['1', '2']
+  },
   name: 'selectionMode: multiple, isEmphasized, isQuiet, compact'
 };
 
-export const SelectionModeNone = () => render({selectionMode: 'none'}, editItems);
-
-SelectionModeNone.story = {
+export const SelectionModeNone: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: editItems,
+    selectionMode: 'none'
+  },
   name: 'selectionMode: none'
 };
 
-export const Vertical = () =>
-  render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems);
-
-Vertical.story = {
+export const Vertical: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: docItems,
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical'
 };
 
-export const VerticalIsJustified = () =>
-  render({isJustified: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems);
-
-VerticalIsJustified.story = {
+export const VerticalIsJustified: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: docItems,
+    isJustified: true,
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical, isJustified'
 };
 
-export const VerticalCompact = () =>
-  render({density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems);
-
-VerticalCompact.story = {
+export const VerticalCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    density: 'compact',
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical, compact'
 };
 
-export const VerticalIsJustifiedCompact = () =>
-  render(
-    {isJustified: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']},
-    viewItems
-  );
-
-VerticalIsJustifiedCompact.story = {
+export const VerticalIsJustifiedCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    isJustified: true,
+    density: 'compact',
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical, isJustified, compact'
 };
 
-export const VerticalIsQuiet = () =>
-  render({isQuiet: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, editItems);
-
-VerticalIsQuiet.story = {
+export const VerticalIsQuiet: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: editItems,
+    isQuiet: true,
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical, isQuiet'
 };
 
-export const VerticalIsQuietCompact = () =>
-  render(
-    {isQuiet: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']},
-    viewItems
-  );
-
-VerticalIsQuietCompact.story = {
+export const VerticalIsQuietCompact: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: viewItems,
+    isQuiet: true,
+    density: 'compact',
+    orientation: 'vertical',
+    defaultSelectedKeys: ['1']
+  },
   name: 'vertical, isQuiet, compact'
 };
 
-export const DisabledKeys = () =>
-  render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems);
-
-DisabledKeys.story = {
+export const DisabledKeys: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    disabledKeys: ['1', '2'],
+    selectionMode: 'multiple'
+  },
   name: 'disabledKeys'
 };
 
-export const OverflowAndHide = () =>
-  render({overflowMode: 'collapse', buttonLabelBehavior: 'hide', selectionMode: 'multiple'}, dataItems);
-
-OverflowAndHide.story = {
+export const OverflowAndHide: ActionGroupStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    items: dataItems,
+    overflowMode: 'collapse',
+    buttonLabelBehavior: 'hide',
+    selectionMode: 'multiple'
+  },
   name: 'overflowMode: collapse, buttonLabelBehavior: hide'
 };
 
-function render(props, items) {
+export function Render(props: Omit<SpectrumActionGroupProps<unknown>, 'children'> & {items: any}): JSX.Element {
   return (
     <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">
-      {renderText(props, items)}
-      {renderBoth(props, items)}
-      {renderIcons(props, items)}
+      <RenderText {...props} />
+      <RenderBoth {...props} />
+      <RenderIcons {...props} />
     </Flex>
   );
 }
 
-function renderText(props, items: any = docItems) {
+export function RenderText(props: Omit<SpectrumActionGroupProps<unknown>, 'children'> & {items: any}): JSX.Element {
+  let {items} = props;
   return (
     <ActionGroup selectionMode="single" {...props}>
       {
@@ -343,7 +428,8 @@ function renderText(props, items: any = docItems) {
   );
 }
 
-function renderBoth(props, items: any = docItems) {
+export function RenderBoth(props: Omit<SpectrumActionGroupProps<unknown>, 'children'> & {items: any}): JSX.Element {
+  let {items = docItems} = props;
   return (
     <ActionGroup selectionMode="single" {...props}>
       {
@@ -361,7 +447,8 @@ function renderBoth(props, items: any = docItems) {
   );
 }
 
-function renderIcons(props, items: any = docItems) {
+export function RenderIcons(props: Omit<SpectrumActionGroupProps<unknown>, 'children'> & {items: any}): JSX.Element {
+  let {items = docItems} = props;
   return (
     <ActionGroup selectionMode="single" {...props}>
       {
