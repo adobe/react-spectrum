@@ -59,11 +59,8 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
     shouldFlip = true,
     placeholder = stringFormatter.format('placeholder'),
     isQuiet,
-    label,
     labelPosition = 'top' as LabelPosition,
     menuWidth,
-    name,
-    form,
     autoFocus
   } = props;
 
@@ -83,7 +80,7 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
   let layout = useListBoxLayout();
-  let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
+  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
     ...props,
     'aria-describedby': (isLoadingInitial ? progressCircleId : undefined)
   }, state, unwrappedTriggerRef);
@@ -181,12 +178,7 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
       }>
       <HiddenSelect
         autoComplete={autoComplete}
-        isDisabled={isDisabled}
-        state={state}
-        triggerRef={unwrappedTriggerRef}
-        label={label}
-        name={name}
-        form={form} />
+        {...hiddenSelectProps} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
         <FieldButton
           ref={triggerRef}

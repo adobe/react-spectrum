@@ -30,7 +30,7 @@ export default {
 
 export type CardStory = StoryObj<typeof Card>;
 
-export const Default = DefaultCard;
+export const Default: CardStory = DefaultCard;
 
 export const DefaultSquare: CardStory = {
   ...Default,
@@ -257,7 +257,7 @@ export const Selected: CardStory = SelectedStory;
 
 // actually use Illustration???
 // where to get the three asset svgs to use with Illustration
-export function File(props) {
+export function File(props: any): JSX.Element {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);
   return (

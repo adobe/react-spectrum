@@ -16,7 +16,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta<typeof TagGroup> = {
-  title: 'React Aria Components',
+  title: 'React Aria Components/TagGroup',
   component: TagGroup,
   args: {
     selectionMode: 'none',
