@@ -45,7 +45,7 @@ import {ChevronRight} from 'lucide-react';
 <Disclosure>
   <Heading>
     <Button slot="trigger">
-      <ChevronRight />
+      <ChevronRight size={18} />
       System Requirements
     </Button>
   </Heading>
@@ -144,7 +144,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
     <Disclosure {...props}>
       <Heading>
         <Button slot="trigger">
-          <ChevronRight />
+          <ChevronRight size={18} />
           {title}
         </Button>
       </Heading>
@@ -206,7 +206,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
   <div style={{display: 'flex', alignItems: 'center'}}>
     <Heading>
       <Button slot="trigger">
-        <ChevronRight />
+        <ChevronRight size={18} />
         System Requirements
       </Button>
     </Heading>
