@@ -125,6 +125,9 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
   if (React.isValidElement(value)) {
     children = value;
   }
+  if (value === null || value === undefined && process.env.NODE_ENV !== 'production') {
+    console.warn('LabeledValue cannot display null or undefined values.');
+  }
 
   return (
     <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={domRef} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
