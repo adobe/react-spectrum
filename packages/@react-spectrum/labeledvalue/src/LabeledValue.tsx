@@ -114,7 +114,7 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
     children = <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />;
   }
 
-  if (typeof value === 'object' && ('calendar' in value || 'hour' in value) || (value instanceof Date)) {
+  if ((value instanceof Date) || (value != null && typeof value === 'object' && ('calendar' in value || 'hour' in value))) {
     children = <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
   }
 
