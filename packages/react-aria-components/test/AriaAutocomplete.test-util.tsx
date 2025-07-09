@@ -178,6 +178,32 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(options[0]).toHaveTextContent('Foo');
       });
 
+      it('should completely clear the focused key when pasting', async function () {
+        let {getByRole} = renderers.standard();
+        let input = getByRole('searchbox');
+        let menu = getByRole(collectionNodeRole);
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('B');
+        act(() => jest.runAllTimers());
+        let options = within(menu).getAllByRole(collectionItemRole);
+        let firstActiveDescendant = options[0].id;
+        expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
+
+        await user.paste('az');
+        act(() => jest.runAllTimers());
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        options = within(menu).getAllByRole(collectionItemRole);
+        await user.keyboard('{ArrowDown}');
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(firstActiveDescendant).not.toEqual(options[0].id);
+        expect(options[0]).toHaveTextContent('Baz');
+      });
+
       it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
         let {getByRole} = renderers.standard();
         let input = getByRole('searchbox');
@@ -677,10 +703,10 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           let options = within(menu).getAllByRole(collectionItemRole);
           expect(options[2].tagName).toBe('A');
           expect(options[2]).toHaveAttribute('href', 'https://google.com');
-          let onClick = mockClickDefault();
+          let onClick = mockClickDefault({capture: true});
 
           await user.keyboard('{Enter}');
-          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick).toHaveBeenCalled(); // count differs between menu and listbox because useSelectableItem prevents default on one of them
           window.removeEventListener('click', onClick);
         });
       });
@@ -706,7 +732,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         describe('pointer events', function () {
           installPointerEvent();
-          
+
           it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
             let {getByRole, getAllByRole} = (renderers.submenus!)();
             let menu = getByRole('menu');

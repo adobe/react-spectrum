@@ -14,7 +14,7 @@ import {ColorSwatch} from '../src/ColorSwatch';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ColorSwatch'
 };
 
 export const ColorSwatchExample = (args) => (

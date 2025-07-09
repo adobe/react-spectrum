@@ -28,7 +28,8 @@ export function Select<T extends object>(props: AriaSelectProps<T>): JSX.Element
     labelProps,
     triggerProps,
     valueProps,
-    menuProps
+    menuProps,
+    hiddenSelectProps
   } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
@@ -37,11 +38,7 @@ export function Select<T extends object>(props: AriaSelectProps<T>): JSX.Element
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
-      <HiddenSelect
-        state={state}
-        triggerRef={ref}
-        label={props.label}
-        name={props.name} />
+      <HiddenSelect {...hiddenSelectProps} />
       <button
         {...buttonProps}
         ref={ref}

@@ -14,7 +14,7 @@ import {Label, ProgressBar} from 'react-aria-components';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/ProgressBar',
   component: ProgressBar,
   args: {
     value: 50

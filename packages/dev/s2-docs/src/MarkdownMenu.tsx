@@ -42,7 +42,7 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
 
   return (
     <MenuTrigger>
-      <ActionButton isQuiet aria-label="Markdown options">
+      <ActionButton size="L" isQuiet aria-label="Markdown options">
         <Copy />
       </ActionButton>
       <Menu onAction={onAction}>

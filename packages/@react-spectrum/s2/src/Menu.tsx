@@ -293,6 +293,7 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
   marginStart: 8,
   font: 'ui',
   fontWeight: 'light',
+  textAlign: 'end',
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',

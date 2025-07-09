@@ -68,7 +68,30 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * Caution, this can make the button inaccessible and should only be used when alternative keyboard interaction is provided,
    * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
    */
-  preventFocusOnPress?: boolean
+  preventFocusOnPress?: boolean,
+  /**
+   * The `<form>` element to associate the button with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button#form).
+   */
+  form?: string,
+  /**
+   * The URL that processes the information submitted by the button.
+   * Overrides the action attribute of the button's form owner.
+   */
+  formAction?: string,
+  /** Indicates how to encode the form data that is submitted. */
+  formEncType?: string,
+  /** Indicates the HTTP method used to submit the form. */
+  formMethod?: string,
+  /** Indicates that the form is not to be validated when it is submitted. */
+  formNoValidate?: boolean,
+  /** Overrides the target attribute of the button's form owner. */
+  formTarget?: string,
+  /** Submitted as a pair with the button's value as part of the form data. */
+  name?: string,
+  /** The value associated with the button's name when it's submitted with the form data. */
+  value?: string
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}

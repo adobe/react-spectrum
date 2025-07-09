@@ -24,8 +24,9 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {ToggleButton} from '@adobe/react-spectrum';
 import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.stories';
 
@@ -110,9 +111,12 @@ let itemsWithFalsyId = [
 export default {
   title: 'MenuTrigger',
   excludeStories: ['render']
-};
+} as Meta<typeof MenuTrigger>;
 
-export const DefaultMenuStatic = () =>
+export type MenuTriggerStoryFn = StoryFn<typeof MenuTrigger>;
+export type MenuTriggerStory = StoryObj<typeof MenuTrigger>;
+
+export const DefaultMenuStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu onAction={action('onAction')}>
       <Item>One</Item>
@@ -125,7 +129,7 @@ DefaultMenuStatic.story = {
   name: 'default menu (static)'
 };
 
-export const DefaultMenuGenerative = () =>
+export const DefaultMenuGenerative: MenuTriggerStoryFn = () =>
   render(
     <Menu items={flatMenu} onAction={action('onAction')}>
       {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -136,7 +140,7 @@ DefaultMenuGenerative.story = {
   name: 'default menu (generative)'
 };
 
-export const DefaultMenuWSectionStatic = () =>
+export const DefaultMenuWSectionStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu onAction={action('onAction')}>
       <Section title="Section 1">
@@ -156,19 +160,19 @@ DefaultMenuWSectionStatic.story = {
   name: 'default menu w/ section (static)'
 };
 
-export const DefaultMenuWSectionGenerative = () => render(defaultMenu);
+export const DefaultMenuWSectionGenerative: MenuTriggerStoryFn = () => render(defaultMenu);
 
 DefaultMenuWSectionGenerative.story = {
   name: 'default menu w/ section (generative)'
 };
 
-export const DefaultMenuWSectionGenerativeManyItems = () => render(manyItemsMenu);
+export const DefaultMenuWSectionGenerativeManyItems: MenuTriggerStoryFn = () => render(manyItemsMenu);
 
 DefaultMenuWSectionGenerativeManyItems.story = {
   name: 'default menu w/ section (generative), many items per section'
 };
 
-export const DefaultMenuWTitlelessSectionsStatic = () =>
+export const DefaultMenuWTitlelessSectionsStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu onAction={action('onAction')}>
       <Section aria-label="Section 1">
@@ -188,7 +192,7 @@ DefaultMenuWTitlelessSectionsStatic.story = {
   name: 'default menu w/ titleless sections (static)'
 };
 
-export const DefaultMenuWTitlelessSectionsGenerative = () =>
+export const DefaultMenuWTitlelessSectionsGenerative: MenuTriggerStoryFn = () =>
   render(
     <Menu items={withSection} onAction={action('onAction')}>
       {(item) => (
@@ -203,7 +207,7 @@ DefaultMenuWTitlelessSectionsGenerative.story = {
   name: 'default menu w/ titleless sections (generative)'
 };
 
-export const WithFalsyItemKeys = () =>
+export const WithFalsyItemKeys: MenuTriggerStoryFn = () =>
   render(
     <Menu items={itemsWithFalsyId} onAction={action('onAction')}>
       {(item) => (
@@ -218,7 +222,7 @@ WithFalsyItemKeys.story = {
   name: 'with falsy item keys'
 };
 
-export const SingleSelectedKeyControlledStatic = () =>
+export const SingleSelectedKeyControlledStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu selectionMode="single" onAction={action('onAction')} selectedKeys={['2']}>
       <Section title="Section 1">
@@ -239,14 +243,14 @@ SingleSelectedKeyControlledStatic.story = {
   name: 'single selected key (controlled, static)'
 };
 
-export const SingleSelectedKeyControlledGenerative = () =>
+export const SingleSelectedKeyControlledGenerative: MenuTriggerStoryFn = () =>
   render(defaultMenu, {}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'});
 
 SingleSelectedKeyControlledGenerative.story = {
   name: 'single selected key (controlled, generative)'
 };
 
-export const SingleDefaultSelectedKeyUncontrolledStatic = () =>
+export const SingleDefaultSelectedKeyUncontrolledStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu selectionMode="single" onAction={action('onAction')} defaultSelectedKeys={['2']}>
       <Section title="Section 1">
@@ -267,14 +271,14 @@ SingleDefaultSelectedKeyUncontrolledStatic.story = {
   name: 'single default selected key (uncontrolled, static)'
 };
 
-export const SingleDefaultSelectedKeyUncontrolledGenerative = () =>
+export const SingleDefaultSelectedKeyUncontrolledGenerative: MenuTriggerStoryFn = () =>
   render(defaultMenu, {}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'});
 
 SingleDefaultSelectedKeyUncontrolledGenerative.story = {
   name: 'single default selected key (uncontrolled, generative)'
 };
 
-export const MultipleDefaultSelectedKeyControlledStatic = () =>
+export const MultipleDefaultSelectedKeyControlledStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu
       onAction={action('onAction')}
@@ -298,14 +302,14 @@ MultipleDefaultSelectedKeyControlledStatic.story = {
   name: 'multiple default selected key (controlled, static)'
 };
 
-export const MultipleSelectedKeyControlledGenerative = () =>
+export const MultipleSelectedKeyControlledGenerative: MenuTriggerStoryFn = () =>
   render(defaultMenu, {}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'});
 
 MultipleSelectedKeyControlledGenerative.story = {
   name: 'multiple selected key (controlled, generative)'
 };
 
-export const MultipleDefaultSelectedKeyUncontrolledStatic = () =>
+export const MultipleDefaultSelectedKeyUncontrolledStatic: MenuTriggerStoryFn = () =>
   render(
     <Menu
       onAction={action('onAction')}
@@ -329,7 +333,7 @@ MultipleDefaultSelectedKeyUncontrolledStatic.story = {
   name: 'multiple default selected key (uncontrolled, static)'
 };
 
-export const MultipleDefaultSelectedKeyUncontrolledGenerative = () =>
+export const MultipleDefaultSelectedKeyUncontrolledGenerative: MenuTriggerStoryFn = () =>
   render(
     defaultMenu,
     {},
@@ -340,19 +344,19 @@ MultipleDefaultSelectedKeyUncontrolledGenerative.story = {
   name: 'multiple default selected key (uncontrolled, generative)'
 };
 
-export const MenuWithAutoFocusTrue = () => render(defaultMenu, {}, {autoFocus: true});
+export const MenuWithAutoFocusTrue: MenuTriggerStoryFn = () => render(defaultMenu, {}, {autoFocus: true});
 
 MenuWithAutoFocusTrue.story = {
   name: 'Menu with autoFocus=true'
 };
 
-export const MenuWithAutoFocusFalse = () => render(defaultMenu, {}, {autoFocus: false});
+export const MenuWithAutoFocusFalse: MenuTriggerStoryFn = () => render(defaultMenu, {}, {autoFocus: false});
 
 MenuWithAutoFocusFalse.story = {
   name: 'Menu with autoFocus=false'
 };
 
-export const MenuWithAutoFocusTrueDefaultSelectedKeyUncontrolledSelectionModeSingle = () =>
+export const MenuWithAutoFocusTrueDefaultSelectedKeyUncontrolledSelectionModeSingle: MenuTriggerStoryFn = () =>
   render(
     defaultMenu,
     {},
@@ -363,26 +367,26 @@ MenuWithAutoFocusTrueDefaultSelectedKeyUncontrolledSelectionModeSingle.story = {
   name: 'Menu with autoFocus=true, default selected key (uncontrolled), selectionMode single'
 };
 
-export const MenuWithAutoFocusFirst = () => render(defaultMenu, {}, {autoFocus: 'first'});
+export const MenuWithAutoFocusFirst: MenuTriggerStoryFn = () => render(defaultMenu, {}, {autoFocus: 'first'});
 
 MenuWithAutoFocusFirst.story = {
   name: 'Menu with autoFocus="first"'
 };
 
-export const MenuWithAutoFocusLast = () => render(defaultMenu, {}, {autoFocus: 'last'});
+export const MenuWithAutoFocusLast: MenuTriggerStoryFn = () => render(defaultMenu, {}, {autoFocus: 'last'});
 
 MenuWithAutoFocusLast.story = {
   name: 'Menu with autoFocus="last"'
 };
 
-export const MenuWithKeyboardSelectionWrappingFalse = () =>
+export const MenuWithKeyboardSelectionWrappingFalse: MenuTriggerStoryFn = () =>
   render(defaultMenu, {}, {shouldFocusWrap: false});
 
 MenuWithKeyboardSelectionWrappingFalse.story = {
   name: 'Menu with keyboard selection wrapping false'
 };
 
-export const AlignEnd = () =>
+export const AlignEnd: MenuTriggerStoryFn = () =>
   render(
     <Menu onAction={action('onAction')}>
       <Item>One</Item>
@@ -396,118 +400,118 @@ AlignEnd.story = {
   name: 'align="end"'
 };
 
-export const DirectionTop = () => render(defaultMenu, {direction: 'top'});
+export const DirectionTop: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'top'});
 
 DirectionTop.story = {
   name: 'direction="top"'
 };
 
-export const DirectionBottom = () => render(defaultMenu, {direction: 'bottom'});
+export const DirectionBottom: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'bottom'});
 
 DirectionBottom.story = {
   name: 'direction="bottom"'
 };
 
-export const DirectionStart = () => render(defaultMenu, {direction: 'start'});
+export const DirectionStart: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'start'});
 
 DirectionStart.story = {
   name: 'direction="start"'
 };
 
-export const DirectionStartAlignEnd = () =>
+export const DirectionStartAlignEnd: MenuTriggerStoryFn = () =>
   render(defaultMenu, {direction: 'start', align: 'end'});
 
 DirectionStartAlignEnd.story = {
   name: 'direction="start", align="end"'
 };
 
-export const DirectionEnd = () => render(defaultMenu, {direction: 'end'});
+export const DirectionEnd: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'end'});
 
 DirectionEnd.story = {
   name: 'direction="end"'
 };
 
-export const DirectionEndAlignEnd = () => render(defaultMenu, {direction: 'end', align: 'end'});
+export const DirectionEndAlignEnd: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'end', align: 'end'});
 
 DirectionEndAlignEnd.story = {
   name: 'direction="end", align="end"'
 };
 
-export const DirectionLeft = () => render(defaultMenu, {direction: 'left'});
+export const DirectionLeft: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'left'});
 
 DirectionLeft.story = {
   name: 'direction="left"'
 };
 
-export const DirectionLeftAlignEnd = () => render(defaultMenu, {direction: 'left', align: 'end'});
+export const DirectionLeftAlignEnd: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'left', align: 'end'});
 
 DirectionLeftAlignEnd.story = {
   name: 'direction="left", align="end"'
 };
 
-export const DirectionRight = () => render(defaultMenu, {direction: 'right'});
+export const DirectionRight: MenuTriggerStoryFn = () => render(defaultMenu, {direction: 'right'});
 
 DirectionRight.story = {
   name: 'direction="right"'
 };
 
-export const DirectionRightAlignEnd = () =>
+export const DirectionRightAlignEnd: MenuTriggerStoryFn = () =>
   render(defaultMenu, {direction: 'right', align: 'end'});
 
 DirectionRightAlignEnd.story = {
   name: 'direction="right", align="end"'
 };
 
-export const ShouldFlip = () => render(defaultMenu, {shouldFlip: true});
+export const ShouldFlip: MenuTriggerStoryFn = () => render(defaultMenu, {shouldFlip: true});
 
 ShouldFlip.story = {
   name: 'shouldFlip'
 };
 
-export const IsOpen = () => render(defaultMenu, {isOpen: true});
+export const IsOpen: MenuTriggerStoryFn = () => render(defaultMenu, {isOpen: true});
 
 IsOpen.story = {
   name: 'isOpen'
 };
 
-export const DefaultOpen = () => render(defaultMenu, {defaultOpen: true});
+export const DefaultOpen: MenuTriggerStoryFn = () => render(defaultMenu, {defaultOpen: true});
 
 DefaultOpen.story = {
   name: 'defaultOpen'
 };
 
-export const DisabledButton = () => render(defaultMenu, {isDisabled: true});
+export const DisabledButton: MenuTriggerStoryFn = () => render(defaultMenu, {isDisabled: true});
 
 DisabledButton.story = {
   name: 'disabled button'
 };
 
-export const MultiselectMenu = () => render(defaultMenu, {}, {selectionMode: 'multiple'});
+export const MultiselectMenu: MenuTriggerStoryFn = () => render(defaultMenu, {}, {selectionMode: 'multiple'});
 
 MultiselectMenu.story = {
   name: 'multiselect menu'
 };
 
-export const NoSelectionAllowedMenu = () => render(defaultMenu, {}, {selectionMode: 'none'});
+export const NoSelectionAllowedMenu: MenuTriggerStoryFn = () => render(defaultMenu, {}, {selectionMode: 'none'});
 
 NoSelectionAllowedMenu.story = {
   name: 'no selection allowed menu'
 };
 
-export const CloseOnSelectFalse = () => render(defaultMenu, {closeOnSelect: false}, {});
+export const CloseOnSelectFalse: MenuTriggerStoryFn = () => render(defaultMenu, {closeOnSelect: false}, {});
 
 CloseOnSelectFalse.story = {
   name: 'closeOnSelect=false'
 };
 
-export const CloseOnSelectTrueMultiselectMenu = () =>
+export const CloseOnSelectTrueMultiselectMenu: MenuTriggerStoryFn = () =>
   render(defaultMenu, {closeOnSelect: true}, {selectionMode: 'multiple'});
 
 CloseOnSelectTrueMultiselectMenu.story = {
   name: 'closeOnSelect=true, multiselect menu'
 };
 
-export const MenuWithSemanticElementsStatic = () => (
+export const MenuWithSemanticElementsStatic: MenuTriggerStoryFn = () => (
   <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
     <MenuTrigger onOpenChange={action('onOpenChange')}>
       <ActionButton
@@ -560,7 +564,7 @@ MenuWithSemanticElementsStatic.story = {
   name: 'menu with semantic elements (static)'
 };
 
-export const MenuWithSemanticElementsGenerative = () =>
+export const MenuWithSemanticElementsGenerative: MenuTriggerStoryFn = () =>
   render(
     <Menu items={hardModeProgrammatic} onAction={action('onAction')}>
       {(item) => (
@@ -575,7 +579,7 @@ MenuWithSemanticElementsGenerative.story = {
   name: 'menu with semantic elements (generative)'
 };
 
-export const MenuShouldPreventScrolling = () => (
+export const MenuShouldPreventScrolling: MenuTriggerStoryFn = () => (
   <div style={{height: 100, display: 'flex'}}>
     <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
       <div style={{height: 200}}>
@@ -611,7 +615,7 @@ MenuShouldPreventScrolling.story = {
   name: 'menu should prevent scrolling'
 };
 
-export const MenuClosesOnBlur = () => (
+export const MenuClosesOnBlur: MenuTriggerStoryFn = () => (
   <>
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <label htmlFor="focus-before">Focus before</label>
@@ -645,7 +649,7 @@ MenuClosesOnBlur.story = {
   name: 'menu closes on blur'
 };
 
-export const WithFalsyKey = () =>
+export const WithFalsyKey: MenuTriggerStoryFn = () =>
   render(
     <Menu onAction={action('onAction')}>
       <Item key="1">One</Item>
@@ -658,19 +662,19 @@ WithFalsyKey.story = {
   name: 'with falsy key'
 };
 
-export const MenuTriggerWithTriggerLongPress = () => render(defaultMenu, {trigger: 'longPress'});
+export const MenuTriggerWithTriggerLongPress: MenuTriggerStoryFn = () => render(defaultMenu, {trigger: 'longPress'});
 
 MenuTriggerWithTriggerLongPress.story = {
   name: 'MenuTrigger with trigger="longPress"'
 };
 
-export const ControlledIsOpen = () => <ControlledOpeningMenuTrigger />;
+export const ControlledIsOpen: MenuTriggerStoryFn = () => <ControlledOpeningMenuTrigger />;
 
 ControlledIsOpen.story = {
   name: 'controlled isOpen'
 };
 
-export const WithTranslations = () => <TranslateMenu />;
+export const WithTranslations: MenuTriggerStoryFn = () => <TranslateMenu />;
 
 WithTranslations.story = {
   name: 'with translations',
@@ -688,7 +692,7 @@ let customMenuItem = (item) => {
   );
 };
 
-export function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
+export function render(menu: React.ReactElement, {isDisabled, ...props}: any = {}, menuProps = {}): JSX.Element {
   let menuRender = React.cloneElement(menu, menuProps);
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
@@ -747,7 +751,7 @@ function ControlledOpeningMenuTrigger() {
   );
 }
 
-export let MenuItemUnavailable = {
+export let MenuItemUnavailable: StoryObj<typeof Menu> = {
   render: () => render(
     <Menu onAction={action('onAction')}>
       <Item key="1">One</Item>
@@ -782,7 +786,7 @@ export let MenuItemUnavailable = {
   )
 };
 
-export let MenuItemUnavailableDynamic = {
+export let MenuItemUnavailableDynamic: StoryObj<typeof Menu> = {
   render: () => render(
     <Menu items={flatMenu} onAction={action('onAction')}>
       {(item) => {
@@ -803,7 +807,7 @@ export let MenuItemUnavailableDynamic = {
   )
 };
 
-export let MenuItemUnavailableToggling = {
+export let MenuItemUnavailableToggling: StoryObj<typeof Menu> = {
   render: () => <MenuWithUnavailableSometimes />
 };
 
@@ -854,7 +858,7 @@ function MenuWithUnavailableSometimes(props) {
   );
 }
 
-export const MenuWithLinks = (props) =>
+export const MenuWithLinks: StoryFn<typeof Menu> = (props) =>
   render(
     <Menu {...props} onAction={action('onAction')}>
       <Item href="https://adobe.com">Adobe</Item>

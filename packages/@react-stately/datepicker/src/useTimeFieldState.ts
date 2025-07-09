@@ -36,19 +36,20 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     placeholderValue = new Time(),
     minValue,
     maxValue,
+    defaultValue,
     granularity,
     validate
   } = props;
 
   let [value, setValue] = useControlledState<TimeValue | null, MappedTimeValue<T> | null>(
     props.value,
-    props.defaultValue ?? null,
+    defaultValue ?? null,
     props.onChange
   );
 
   let v = value || placeholderValue;
   let day = v && 'day' in v ? v : undefined;
-  let defaultValueTimeZone = props.defaultValue && 'timeZone' in props.defaultValue ? props.defaultValue.timeZone : undefined;
+  let defaultValueTimeZone = defaultValue && 'timeZone' in defaultValue ? defaultValue.timeZone : undefined;
   let placeholderDate = useMemo(() => {
     let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
 
@@ -59,6 +60,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
 
   let timeValue = useMemo(() => value && 'day' in value ? toTime(value) : value as Time, [value]);
   let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
+  let defaultDateTime = useMemo(() => defaultValue == null ? null : convertValue(defaultValue), [defaultValue]);
   let onChange = newValue => {
     setValue(day || defaultValueTimeZone ? newValue : newValue && toTime(newValue));
   };
@@ -66,7 +68,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
   let state = useDateFieldState({
     ...props,
     value: dateTime,
-    defaultValue: undefined,
+    defaultValue: defaultDateTime,
     minValue: minDate,
     maxValue: maxDate,
     onChange,

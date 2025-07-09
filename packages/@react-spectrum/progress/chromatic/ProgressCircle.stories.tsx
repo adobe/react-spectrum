@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
@@ -22,6 +22,8 @@ const meta: Meta<SpectrumProgressCircleProps> = {
 
 export default meta;
 
+export type ProgressCircleStory = StoryObj<typeof ProgressCircle>;
+
 const grayedBoxStyle: CSSProperties = {
   width: '250px',
   height: '60px',
@@ -31,19 +33,19 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-export const Default = {
-  args: {label: 'Progress label', value: 50}
+export const Default: ProgressCircleStory = {
+  args: {value: 50}
 };
 
-export const SizeS = {
+export const SizeS: ProgressCircleStory = {
   args: {...Default.args, size: 'S'}
 };
 
-export const SizeL = {
+export const SizeL: ProgressCircleStory = {
   args: {...Default.args, size: 'L'}
 };
 
-export const OverBackground = {
+export const OverBackground: ProgressCircleStory = {
   args: {...Default.args, variant: 'overBackground'},
   decorators: [
     (Story) => (
@@ -54,7 +56,7 @@ export const OverBackground = {
   ]
 };
 
-export const StaticColorWhite = {
+export const StaticColorWhite: ProgressCircleStory = {
   args: {...Default.args, staticColor: 'white'},
   decorators: [
     (Story) => (
@@ -65,7 +67,7 @@ export const StaticColorWhite = {
   ]
 };
 
-export const StaticColorBlack = {
+export const StaticColorBlack: ProgressCircleStory = {
   args: {...Default.args, staticColor: 'black'},
   decorators: [
     (Story) => (
@@ -76,10 +78,10 @@ export const StaticColorBlack = {
   ]
 };
 
-export const Value0 = {
+export const Value0: ProgressCircleStory = {
   args: {...Default.args, value: 0}
 };
 
-export const Value100 = {
+export const Value100: ProgressCircleStory = {
   args: {...Default.args, value: 100}
 };

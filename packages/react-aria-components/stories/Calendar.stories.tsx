@@ -14,20 +14,20 @@ import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Head
 import React, {useContext} from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Calendar'
 };
 
 function Footer() {
   const state = useContext(CalendarStateContext);
   const setValue = state?.setValue;
-  
+
   return (
     <div>
-      <Button 
-        slot={null} 
+      <Button
+        slot={null}
         className="reset-button"
         onPress={() => {
-          // reset value 
+          // reset value
           setValue?.(null);
         }}>
         Reset value

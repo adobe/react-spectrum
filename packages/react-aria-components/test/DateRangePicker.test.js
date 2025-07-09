@@ -179,11 +179,13 @@ describe('DateRangePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(<TestDateRangePicker startName="start" endName="end" form="test" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
+    expect(start).toHaveAttribute('form', 'test');
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
+    expect(end).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {

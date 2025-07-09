@@ -460,6 +460,40 @@ describe('Radios', function () {
     expect(radios[2]).not.toBeChecked();
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 'cats', 'dogs');
+        
+        return (
+          <Provider theme={theme}>
+            <form action={formAction}>
+              <RadioGroup name="pet" label="Favorite Pet" defaultValue={value}>
+                <Radio value="dogs">Dogs</Radio>
+                <Radio value="cats">Cats</Radio>
+                <Radio value="dragons">Dragons</Radio>
+              </RadioGroup>
+              <input type="submit" data-testid="submit" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let radios = getAllByRole('radio');
+
+      expect(radios[0]).toBeChecked();
+      expect(radios[1]).not.toBeChecked();
+      expect(radios[2]).not.toBeChecked();
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(radios[0]).not.toBeChecked();
+      expect(radios[1]).toBeChecked();
+      expect(radios[2]).not.toBeChecked();
+    });
+  }
+
   describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
       radioBehavior.reset();

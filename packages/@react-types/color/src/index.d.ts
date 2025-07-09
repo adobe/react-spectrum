@@ -208,7 +208,13 @@ export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabeli
   /**
    * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  yName?: string
+  yName?: string,
+  /**
+   * The `<form>` element to associate the ColorArea with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }
 
 export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {

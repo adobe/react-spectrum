@@ -15,7 +15,7 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import Add from '@spectrum-icons/workflow/Add';
 import {AlertDialog, Dialog, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
@@ -27,11 +27,11 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Key} from '@react-types/shared';
 import More from '@spectrum-icons/workflow/More';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
 
-export function CRUDExample(props) {
+export function CRUDExample(props: Omit<SpectrumTableProps<object>, 'children'>): JSX.Element {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -50,7 +50,7 @@ export function CRUDExample(props) {
     <Flex direction="column">
       <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
         <Item key="add" aria-label="Add item"><Add /></Item>
-        {selectedCount > 0 
+        {selectedCount > 0
           ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
           : null
         }

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosurePanel, DisclosureTitle} from '../';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Disclosure, DisclosurePanel, DisclosureTitle, SpectrumDisclosureProps} from '../';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 const meta: Meta = {
   title: 'Disclosure',
@@ -22,7 +22,9 @@ const meta: Meta = {
 
 export default meta;
 
-export const Template = (args) => (
+export type DisclosureStory = StoryObj<SpectrumDisclosureProps>;
+
+export const Template = (args: SpectrumDisclosureProps): JSX.Element => (
   <Disclosure {...args}>
     <DisclosureTitle>
       Your files
@@ -33,27 +35,29 @@ export const Template = (args) => (
   </Disclosure>
 );
 
-export const Default = {
-  render: Template
+export const Default: DisclosureStory = {
+  render: (args) => <Template {...args} />
 };
 
-export const Disabled = {
-  render: Template,
+export const Disabled: DisclosureStory = {
+  render: (args) => <Template {...args} />,
   args: {isDisabled: true}
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: DisclosureStory = {
+  render: (args) => <Template {...args} />,
   args: {isQuiet: true}
 };
 
-export const WrappingTitle = (args) => (
-  <Disclosure maxWidth="size-3000" {...args}>
-    <DisclosureTitle>
-      Long long long long long long long long long long long long long  long long long wrapping title 
-    </DisclosureTitle>
-    <DisclosurePanel>
-      Files content
-    </DisclosurePanel>
-  </Disclosure>
-);
+export const WrappingTitle: DisclosureStory = {
+  render: (args) => (
+    <Disclosure maxWidth="size-3000" {...args}>
+      <DisclosureTitle>
+        Long long long long long long long long long long long long long  long long long wrapping title
+      </DisclosureTitle>
+      <DisclosurePanel>
+        Files content
+      </DisclosurePanel>
+    </Disclosure>
+  )
+};

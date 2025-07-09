@@ -73,7 +73,7 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         inputRef={inputRef}
         {...result}
         inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </>
   );
 }

@@ -20,7 +20,7 @@ import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
 import {useTreeData} from '@react-stately/data';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Tree'
 };
 
 interface StaticTreeItemProps extends TreeItemProps {

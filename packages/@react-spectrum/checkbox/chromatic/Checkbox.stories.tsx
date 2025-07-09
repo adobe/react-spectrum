@@ -10,60 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from '../';
-import React from 'react';
+import {Checkbox, SpectrumCheckboxProps} from '../';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 import {View} from '@react-spectrum/view';
 
 export default {
-  title: 'Checkbox'
-};
+  title: 'Checkbox',
+  excludeStories: ['Render', 'RenderCustomLabel', 'RenderNoLabel']
+} as Meta<typeof Checkbox>;
 
-export const Default = () => render();
-export const ValidationStateInvalid = () => render({isInvalid: true});
+export type CheckboxStory = StoryFn<typeof Checkbox>;
+
+export const Default: CheckboxStory = () => <Render />;
+export const ValidationStateInvalid: CheckboxStory = () => <Render isInvalid />;
 
 ValidationStateInvalid.story = {
   name: 'validationState: "invalid"'
 };
 
-export const IsDisabledTrue = () => render({isDisabled: true});
+export const IsDisabledTrue: CheckboxStory = () => <Render isDisabled />;
 
 IsDisabledTrue.story = {
   name: 'isDisabled: true'
 };
 
-export const IsEmphasizedTrue = () => render({isEmphasized: true});
+export const IsEmphasizedTrue: CheckboxStory = () => <Render isEmphasized />;
 
 IsEmphasizedTrue.story = {
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueValidationStateInvalid = () =>
-  render({isEmphasized: true, isInvalid: true});
+export const IsEmphasizedTrueValidationStateInvalid: CheckboxStory = () =>
+  <Render isEmphasized isInvalid />;
 
 IsEmphasizedTrueValidationStateInvalid.story = {
   name: 'isEmphasized: true, validationState: "invalid"'
 };
 
-export const IsEmphasizedTrueIsDisabledTrue = () =>
-  render({isEmphasized: true, isDisabled: true});
+export const IsEmphasizedTrueIsDisabledTrue: CheckboxStory = () =>
+  <Render isEmphasized isDisabled />;
 
 IsEmphasizedTrueIsDisabledTrue.story = {
   name: 'isEmphasized: true, isDisabled: true'
 };
 
-export const IsReadOnlyTrue = () => render({isReadOnly: true});
+export const IsReadOnlyTrue: CheckboxStory = () => <Render isReadOnly />;
 
 IsReadOnlyTrue.story = {
   name: 'isReadOnly: true'
 };
 
-export const CustomLabel = () => renderCustomLabel();
+export const CustomLabel: CheckboxStory = () => <RenderCustomLabel />;
 
 CustomLabel.story = {
   name: 'custom label'
 };
 
-export const LongLabel = () => (
+export const LongLabel: CheckboxStory = () => (
   <View width="size-2000">
     <Checkbox>
       Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
@@ -75,14 +79,14 @@ LongLabel.story = {
   name: 'long label'
 };
 
-export const NoLabel = () => renderNoLabel({'aria-label': 'This checkbox has no visible label'});
+export const NoLabel: CheckboxStory = () => <RenderNoLabel aria-label="This checkbox has no visible label" />;
 
 NoLabel.story = {
   name: 'no label'
 };
 
 // need selected + indeterminate because there is a sibling selector `checked + ...` so being careful
-function render(props = {}) {
+export function Render(props: SpectrumCheckboxProps): JSX.Element {
   return (
     <>
       <Checkbox {...props}>Label</Checkbox>
@@ -99,7 +103,7 @@ function render(props = {}) {
   );
 }
 
-function renderCustomLabel(props = {}) {
+export function RenderCustomLabel(props: SpectrumCheckboxProps): JSX.Element {
   return (
     <>
       <Checkbox {...props}>
@@ -116,7 +120,7 @@ function renderCustomLabel(props = {}) {
   );
 }
 
-function renderNoLabel(props = {}) {
+export function RenderNoLabel(props: SpectrumCheckboxProps): JSX.Element {
   return (
     <>
       <Checkbox {...props} />

@@ -16,7 +16,7 @@ import React from 'react';
 import './styles.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Disclosure',
   component: Disclosure
 };
 

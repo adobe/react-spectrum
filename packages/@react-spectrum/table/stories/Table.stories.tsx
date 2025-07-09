@@ -27,13 +27,13 @@ import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Key, LoadingState} from '@react-types/shared';
+import {Key, LoadingState, SortDescriptor} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {useCallback, useState} from 'react';
+import React, {JSX, useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -125,7 +125,7 @@ export default {
   }
 } as Meta<typeof TableView>;
 
-export type TableStory = StoryObj<typeof TableView>;
+export type TableStory = StoryObj<Omit<typeof TableView, 'children'>>;
 
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
@@ -163,7 +163,7 @@ export let columns = [
   {name: 'Foo', key: 'foo'},
   {name: 'Bar', key: 'bar'},
   {name: 'Baz', key: 'baz'}
-];
+] as any[];
 
 let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
@@ -444,7 +444,9 @@ let timeTableRows = [
   {id: 6, time: '13:00 - 14:00', monday: 'History', tuesday: 'Math', wednesday: 'English', thursday: 'Science', friday: 'Art'}
 ];
 
-export const TableColSpanExample = () => {
+export type TableStoryFn = StoryFn<Omit<typeof TableView, 'children'>>;
+
+export const TableColSpanExample: TableStoryFn = () => {
   return (
     <TableView aria-label="Timetable">
       <TableHeader columns={timeTableColumns}>
@@ -474,7 +476,7 @@ export const TableColSpanExample = () => {
   );
 };
 
-export const TableCellColSpanWithVariousSpansExample = () => {
+export const TableCellColSpanWithVariousSpansExample: TableStoryFn = () => {
   return (
     <TableView aria-label="Table with various colspans">
       <TableHeader>
@@ -630,7 +632,7 @@ export const ManyColumnsAndRows: TableStory = {
   name: 'many columns and rows'
 };
 
-const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}) => {
+const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}): JSX.Element => {
   let {allowsResizing, ...otherProps} = props;
   return (
     <TableView {...otherProps}>
@@ -861,7 +863,7 @@ export const CRUD: TableStory = {
   name: 'CRUD'
 };
 
-function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
+function DeletableRowsTable(props: Omit<SpectrumTableProps<unknown>, 'children'>) {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -1005,10 +1007,10 @@ function renderEmptyState() {
   );
 }
 
-export function EmptyStateTable(props) {
+export let EmptyStateTable = (props: Omit<SpectrumTableProps<unknown>, 'children'> & {items: any[], columns: any[], allowsSorting: boolean}): JSX.Element => {
   let {items, columns, allowsSorting, ...otherProps} = props;
   let [show, setShow] = useState(false);
-  let [sortDescriptor, setSortDescriptor] = useState({});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>();
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
@@ -1028,9 +1030,9 @@ export function EmptyStateTable(props) {
       </TableView>
     </Flex>
   );
-}
+};
 
-export const EmptyStateStory: TableStory = {
+export const EmptyStateStory: StoryObj<typeof EmptyStateTable> = {
   render: (args) => <EmptyStateTable {...args} />,
   name: 'renderEmptyState'
 };
@@ -1485,14 +1487,13 @@ export const AsyncLoadingClientFiltering: TableStory = {
   name: 'async client side filter loading'
 };
 
+interface StarWarsItem {
+  name: string,
+  height: string,
+  mass: string
+}
 
 function AsyncServerFilterTable(props) {
-  interface Item {
-    name: string,
-    height: string,
-    mass: string
-  }
-
   let columns = [
     {
       name: 'Name',
@@ -1509,7 +1510,7 @@ function AsyncServerFilterTable(props) {
     }
   ];
 
-  let list = useAsyncList<Item>({
+  let list = useAsyncList<StarWarsItem>({
     getKey: (item) => item.name,
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -2118,7 +2119,7 @@ export const TypeaheadWithDialog: TableStory = {
   )
 };
 
-export const Links = (args) => {
+export const Links: TableStoryFn = (args) => {
   return (
     <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
       <TableHeader>
@@ -2152,7 +2153,7 @@ export const Links = (args) => {
   );
 };
 
-export const ColumnHeaderFocusRingTable = {
+export const ColumnHeaderFocusRingTable: StoryObj<typeof LoadingTable> = {
   render: () => <LoadingTable />,
   name: 'column header focus after loading',
   parameters: {
@@ -2167,7 +2168,7 @@ const allItems = [
   {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}
 ];
 
-function LoadingTable() {
+function LoadingTable(): JSX.Element {
   const [items, setItems] = useState(allItems);
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const onSortChange = () => {
@@ -2196,5 +2197,68 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+function AsyncLoadOverflowWrapRepro() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
+  ];
+
+  let list = useAsyncList<StarWarsItem>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <TableView
+      aria-label="example async loading table"
+      height="size-3000"
+      overflowMode="wrap">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column align={column.key !== 'name' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Row key={item.name}>
+            {(key) => (
+              <Cell>{`${item[key]}++++${item[key]}++++${item[key]}++++`}</Cell>
+            )}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const AsyncLoadOverflowWrapReproStory: TableStory = {
+  render: (args) => <AsyncLoadOverflowWrapRepro {...args} />,
+  name: 'async, overflow wrap scroll jumping reproduction',
+  parameters: {description: {data: `
+    Rapidly scrolling down through this table should not cause the scroll position to jump to the top.
+  `}}
+};
 
 export {Performance} from './Performance';

@@ -30,6 +30,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   const toggleState = useToggleState({
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isSelected: state.isSelected(props.value),
+    defaultSelected: state.defaultValue.includes(props.value),
     onChange(isSelected) {
       if (isSelected) {
         state.addValue(props.value);
@@ -43,7 +44,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
-  let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
+  let {name, form, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
   validationBehavior = props.validationBehavior ?? validationBehavior;
 
   // Local validation for this checkbox.
@@ -72,6 +73,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || name,
+    form: props.form || form,
     isRequired: props.isRequired ?? state.isRequired,
     validationBehavior,
     [privateValidationStateProp]: {

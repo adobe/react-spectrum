@@ -2,6 +2,7 @@ import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'reac
 import {ColorSliderContext} from './RSPContexts';
 import {ColorSliderState, useColorSliderState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -25,7 +26,7 @@ export interface ColorSliderRenderProps {
   state: ColorSliderState
 }
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps {}
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 
@@ -65,7 +66,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
     defaultClassName: 'react-aria-ColorSlider'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (

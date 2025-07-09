@@ -1114,6 +1114,42 @@ describe('ListBox', () => {
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
+    it('should pass keys and draggedKey to renderDropIndicator', () => {
+      let onReorder = jest.fn();
+      let renderDropIndicatorCalls = [];
+      let mockRenderDropIndicator = jest.fn((target, keys, draggedKey) => {
+        renderDropIndicatorCalls.push({target, keys, draggedKey});
+        return <DropIndicator target={target}>Test Keys: {keys ? keys.size : 0} DraggedKey: {draggedKey || 'none'}</DropIndicator>;
+      });
+
+      let {getAllByRole} = render(
+        <DraggableListBox 
+          onReorder={onReorder} 
+          renderDropIndicator={mockRenderDropIndicator} />
+      );
+      
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(mockRenderDropIndicator).toHaveBeenCalled();
+      
+      renderDropIndicatorCalls.forEach(call => {
+        expect(call.target).toBeDefined();
+        expect(call.keys).toBeInstanceOf(Set);
+        expect(call.keys.size).toBe(1);
+        expect(call.keys.has('cat')).toBe(true);
+        expect(call.draggedKey).toBe('cat');
+      });
+
+      let options = getAllByRole('option');
+      expect(options[0]).toHaveTextContent('Test Keys: 1 DraggedKey: cat');
+      
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    });
+
     it('should support dropping on options', () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
@@ -1754,6 +1790,29 @@ describe('ListBox', () => {
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('30px');
       });
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderListbox({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
+      let listBoxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+      await listBoxTester.triggerOptionAction({option: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -42,6 +42,8 @@ export interface DateSegment {
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue | null,
+  /** The default field value. */
+  defaultValue: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
@@ -180,6 +182,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     props.onChange
   );
 
+  let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -338,6 +341,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   return {
     ...validation,
     value: calendarValue,
+    defaultValue: props.defaultValue ?? initialValue,
     dateValue,
     calendar,
     setValue,

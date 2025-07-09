@@ -133,7 +133,7 @@ describe('TimeField', () => {
 
   it('should support form value', () => {
     render(
-      <TimeField name="time" value={new Time(8, 30)}>
+      <TimeField name="time" form="test" value={new Time(8, 30)}>
         <Label>Time</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -142,6 +142,7 @@ describe('TimeField', () => {
     );
     let input = document.querySelector('input[name=time]');
     expect(input).toHaveValue('08:30:00');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('supports validation errors', async () => {

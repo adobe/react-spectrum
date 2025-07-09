@@ -11,19 +11,22 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
-import {LogicVariantAnd, LogicVariantOr} from '../chromatic/LogicButton.stories';
 import React from 'react';
+import {Render} from '../chromatic/LogicButton.stories';
+import {StoryFn} from '@storybook/react';
 
 export default {
   title: 'Button/LogicButton'
 };
 
-export const All = () => (
+export type LogicButtonStory = StoryFn<typeof Render>;
+
+export const All: LogicButtonStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>And</h2>
-    <LogicVariantAnd />
+    <Render variant="and" />
     <h2>Or</h2>
-    <LogicVariantOr />
+    <Render variant="or" />
   </Flex>
 );
 All.story = {

@@ -11,15 +11,16 @@
  */
 
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
 
-export interface FileTriggerProps {
+export interface FileTriggerProps extends GlobalDOMAttributes<HTMLInputElement> {
   /**
    * Specifies what mime type of files are allowed.
    */
-  acceptedFileTypes?: Array<string>,
+  acceptedFileTypes?: ReadonlyArray<string>,
   /**
    * Whether multiple files can be selected.
    */
@@ -48,7 +49,7 @@ export interface FileTriggerProps {
 export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
   let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
   let inputRef = useObjectRef(ref);
-  let domProps = filterDOMProps(rest);
+  let domProps = filterDOMProps(rest, {global: true});
 
   return (
     <>

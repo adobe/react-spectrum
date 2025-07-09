@@ -175,7 +175,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumCombo
           validationState={props.validationState || (isInvalid ? 'invalid' : undefined)}
           ref={inputGroupRef} />
       </Field>
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
       <Popover
         state={state}
         UNSAFE_style={style}

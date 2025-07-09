@@ -483,6 +483,34 @@ describe('Shared TextField behavior', () => {
     expect(input).toHaveValue('Devon');
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it.each`
+      Name                | Component
+      ${'v3 TextField'}   | ${TextField}
+      ${'v3 TextArea'}    | ${TextArea}
+      ${'v3 SearchField'} | ${SearchField}
+    `('$Name resets to defaultValue when submitting form action', async ({Component}) => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 'updated', 'initial');
+        
+        return (
+          <form action={formAction}>
+            <Component label="Value" data-testid="input" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let input = getByTestId('input');
+      expect(input).toHaveValue('initial');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('updated');
+    });
+  }
+
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it.each`
@@ -607,6 +635,38 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(true);
       });
+
+      if (parseInt(React.version, 10) >= 19) {
+        it.each`
+          Name                | Component
+          ${'v3 TextField'}   | ${TextField}
+          ${'v3 TextArea'}    | ${TextArea}
+          ${'v3 SearchField'} | ${SearchField}
+        `('$Name retains server validation errors after form action submit', async ({Component}) => {
+          function Test() {        
+            const [errors, formAction] = React.useActionState(() => ({test: 'Error'}), {});
+            
+            return (
+              <Provider theme={theme}>
+                <Form action={formAction}  validationErrors={errors}>
+                  <Component label="Value" data-testid="input" name="test" validationBehavior="native" />
+                  <input type="submit" data-testid="submit" />
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId} = render(<Test />);
+          let input = getByTestId('input');
+          expect(input).not.toHaveAttribute('aria-describedby');
+
+          let button = getByTestId('submit');
+          await user.click(button);
+          expect(input).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Error');
+          expect(input.validity.valid).toBe(false);
+        });
+      }
 
       it.each`
         Name                | Component

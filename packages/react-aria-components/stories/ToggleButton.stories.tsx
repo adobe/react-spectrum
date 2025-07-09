@@ -17,7 +17,7 @@ import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ToggleButton'
 };
 
 export const ToggleButtonExample = () => {
@@ -26,9 +26,9 @@ export const ToggleButtonExample = () => {
 
   return (
     <ToggleButton
-      className={classNames(styles, 'toggleButtonExample')} 
-      data-testid="toggle-button-example" 
-      onKeyUp={action('keyup')} 
+      className={classNames(styles, 'toggleButtonExample')}
+      data-testid="toggle-button-example"
+      onKeyUp={action('keyup')}
       onPress={action('press')}
       onHoverStart={() => setTextColor('red')}
       onHoverEnd={() => setTextColor('black')}
