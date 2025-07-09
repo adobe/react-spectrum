@@ -136,7 +136,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>): JSX.Element | null
         <label>
           {label}
           <select {...selectProps} ref={selectRef}>
-            <option />
+            <option label=" " />
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
               if (item && item.type === 'item') {
