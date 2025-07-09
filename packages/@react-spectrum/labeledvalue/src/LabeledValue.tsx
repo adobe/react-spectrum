@@ -102,11 +102,11 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
     children = <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />;
   }
 
-  if (value != null && typeof value === 'object' && 'start' in value && typeof (value as any).start === 'number' && typeof (value as any).end === 'number') {
+  if (value != null && typeof value === 'object' && 'start' in value && typeof value.start === 'number' && typeof value.end === 'number') {
     children = <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />;
   }
 
-  if (value != null && typeof value === 'object' && 'start' in value && typeof (value as any).start !== 'number' && typeof (value as any).end !== 'number') {
+  if (value != null && typeof value === 'object' && 'start' in value && typeof value.start !== 'number' && typeof value.end !== 'number') {
     children = <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
   }
 
@@ -114,7 +114,7 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
     children = <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />;
   }
 
-  if ((value instanceof Date) || (value != null && typeof value === 'object' && ('calendar' in value || 'hour' in value))) {
+  if (typeof value === 'object' && ('calendar' in value || 'hour' in value) || (value instanceof Date)) {
     children = <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
   }
 
