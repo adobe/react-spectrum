@@ -11,8 +11,8 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {chain, filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import React, {
   ChangeEvent,
   HTMLAttributes,
