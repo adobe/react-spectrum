@@ -48,7 +48,7 @@ import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, U
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -109,7 +109,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -373,7 +373,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -507,7 +507,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends RACColumnProps {
+export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -863,7 +863,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -1119,7 +1119,7 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
 
 /**
  * A row within a `<Table>`.
