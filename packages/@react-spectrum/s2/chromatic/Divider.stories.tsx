@@ -13,7 +13,7 @@
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Divider} from '../src';
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {StaticColorDecorator} from '../stories/utils';
 
 const meta: Meta<typeof Divider> = {
@@ -26,9 +26,10 @@ const meta: Meta<typeof Divider> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Divider>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <section
       className={style({
         display: 'flex',

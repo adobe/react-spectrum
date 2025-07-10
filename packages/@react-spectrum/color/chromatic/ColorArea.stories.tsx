@@ -12,9 +12,9 @@
 
 import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
@@ -27,9 +27,9 @@ const meta: Meta<SpectrumColorAreaProps> = {
 
 export default meta;
 
-const Template: StoryFn<SpectrumColorAreaProps> = (args) => <ColorAreaExample {...args} />;
+export type ColorAreaStory = StoryObj<typeof ColorArea>;
 
-function ColorAreaExample(props: SpectrumColorAreaProps) {
+function ColorAreaExample(props: SpectrumColorAreaProps): JSX.Element {
   let {xChannel, yChannel, isDisabled} = props;
   let defaultValue =
     typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
@@ -92,62 +92,62 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
     </div>
   );
 }
-export const XBlueYGreen = {
-  render: Template,
+export const XBlueYGreen: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="blue", yChannel="green"',
   args: {xChannel: 'blue', yChannel: 'green'}
 };
 
-export const XGreenYBlue = {
-  render: Template,
+export const XGreenYBlue: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="green", yChannel="blue"',
   args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'}
 };
 
-export const XBlueYRed = {
-  render: Template,
+export const XBlueYRed: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="blue", yChannel="red"',
   args: {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'}
 };
 
-export const XRedYBlue = {
-  render: Template,
+export const XRedYBlue: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="red", yChannel="blue"',
   args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'}
 };
 
-export const XRedYGreen = {
-  render: Template,
+export const XRedYGreen: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="red", yChannel="green"',
   args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'}
 };
 
-export const XGreenYRed = {
-  render: Template,
+export const XGreenYRed: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="green", yChannel="red"',
   args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'}
 };
 
-export const XBlueYGreenisDisabled = {
-  render: Template,
+export const XBlueYGreenisDisabled: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="blue", yChannel="green", isDisabled',
   args: {...XBlueYGreen.args, isDisabled: true}
 };
 
-export const XBlueYGreenSize3000 = {
-  render: Template,
+export const XBlueYGreenSize3000: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="blue", yChannel="green", size="size-3000"',
   args: {...XBlueYGreen.args, size: 'size-3000'}
 };
 
-export const XBlueYGreenSize600 = {
-  render: Template,
+export const XBlueYGreenSize600: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'RGB xChannel="blue", yChannel="green", size="size-600"',
   args: {...XBlueYGreen.args, size: 'size-600'}
 };
 
-export const XSaturationYLightness = {
-  render: Template,
+export const XSaturationYLightness: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="saturation", yChannel="lightness"',
   args: {
     ...XBlueYGreen.args,
@@ -157,8 +157,8 @@ export const XSaturationYLightness = {
   }
 };
 
-export const XLightnessYSaturation = {
-  render: Template,
+export const XLightnessYSaturation: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="lightness", yChannel="saturation"',
   args: {
     ...XBlueYGreen.args,
@@ -168,8 +168,8 @@ export const XLightnessYSaturation = {
   }
 };
 
-export const XHueYSaturationHSL = {
-  render: Template,
+export const XHueYSaturationHSL: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="hue", yChannel="saturation"',
   args: {
     ...XSaturationYLightness.args,
@@ -179,8 +179,8 @@ export const XHueYSaturationHSL = {
   }
 };
 
-export const XSaturationYHueHSL = {
-  render: Template,
+export const XSaturationYHueHSL: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="saturation", yChannel="hue"',
   args: {
     ...XSaturationYLightness.args,
@@ -190,8 +190,8 @@ export const XSaturationYHueHSL = {
   }
 };
 
-export const XHueYLightnessHSL = {
-  render: Template,
+export const XHueYLightnessHSL: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="hue", yChannel="lightness"',
   args: {
     ...XHueYSaturationHSL.args,
@@ -201,8 +201,8 @@ export const XHueYLightnessHSL = {
   }
 };
 
-export const XLightnessYHueHSL = {
-  render: Template,
+export const XLightnessYHueHSL: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSL xChannel="lightness", yChannel="hue"',
   args: {
     ...XHueYSaturationHSL.args,
@@ -212,8 +212,8 @@ export const XLightnessYHueHSL = {
   }
 };
 
-export const XSaturationYBrightness = {
-  render: Template,
+export const XSaturationYBrightness: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="saturation", yChannel="brightness"',
   args: {
     ...XHueYSaturationHSL.args,
@@ -223,8 +223,8 @@ export const XSaturationYBrightness = {
   }
 };
 
-export const XBrightnessYSaturation = {
-  render: Template,
+export const XBrightnessYSaturation: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="brightness", yChannel="saturation"',
   args: {
     ...XHueYSaturationHSL.args,
@@ -234,14 +234,14 @@ export const XBrightnessYSaturation = {
   }
 };
 
-export const XSaturationYBrightnessisDisabled = {
-  render: Template,
+export const XSaturationYBrightnessisDisabled: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="saturation", yChannel="brightness", isDisabled',
   args: {...XSaturationYBrightness.args, isDisabled: true}
 };
 
-export const XHueYSaturationHSB = {
-  render: Template,
+export const XHueYSaturationHSB: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="hue", yChannel="saturation"',
   args: {
     ...XSaturationYBrightness.args,
@@ -251,8 +251,8 @@ export const XHueYSaturationHSB = {
   }
 };
 
-export const XSaturationYHueHSB = {
-  render: Template,
+export const XSaturationYHueHSB: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="saturation", yChannel="hue"',
   args: {
     ...XSaturationYBrightness.args,
@@ -262,8 +262,8 @@ export const XSaturationYHueHSB = {
   }
 };
 
-export const XHueYBrightnessHSB = {
-  render: Template,
+export const XHueYBrightnessHSB: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="hue", yChannel="brightness"',
   args: {
     ...XHueYSaturationHSB.args,
@@ -273,8 +273,8 @@ export const XHueYBrightnessHSB = {
   }
 };
 
-export const XBrightnessYHueHSB = {
-  render: Template,
+export const XBrightnessYHueHSB: ColorAreaStory = {
+  render: (args) => <ColorAreaExample {...args} />,
   name: 'HSB xChannel="brightness", yChannel="hue"',
   args: {
     ...XHueYSaturationHSB.args,

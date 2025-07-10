@@ -12,13 +12,15 @@
 
 import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {pxToRem} from './progress-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
+const pxToRemDynamic = (px: number): string => (px / 16) + 'rem';
 export interface ProgressCircleStyleProps {
   /**
    * The size of the ProgressCircle.
@@ -54,6 +56,20 @@ const track = style({
     default: 'gray-300',
     isStaticColor: 'transparent-overlay-300',
     forcedColors: 'Background'
+  },
+  strokeWidth: {
+    default: `[${pxToRem(3)}]`,
+    size: {
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
+    },
+    forcedColors: {
+      default: `[${pxToRem(2)}]`,
+      size: {
+        S: `[${pxToRem(1)}]`,
+        L: `[${pxToRem(3)}]`
+      }
+    }
   }
 });
 
@@ -61,13 +77,34 @@ const fill = style({
   stroke: {
     default: 'blue-900',
     isStaticColor: 'transparent-overlay-900',
-    forcedColors: 'Highlight'
+    forcedColors: 'ButtonText'
   },
   rotate: -90,
-  transformOrigin: 'center'
+  transformOrigin: 'center',
+  strokeWidth: {
+    default: `[${pxToRem(3)}]`,
+    size: {
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
+    }
+  }
 });
 
-export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, UnsafeStyles {
+const hcmStroke = style({
+  stroke: {
+    default: 'transparent',
+    forcedColors: 'ButtonText'
+  },
+  strokeWidth: {
+    default: `[${pxToRem(3)}]`,
+    size: {
+      S: `[${pxToRem(2)}]`,
+      L: `[${pxToRem(4)}]`
+    }
+  }
+});
+
+export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className' | keyof GlobalDOMAttributes>, ProgressCircleStyleProps, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -93,8 +130,6 @@ const dashoffsetAnimation = keyframes(`
   }
 `);
 
-let pxToRem = px => (px / 16) + 'rem';
-
 /**
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
@@ -117,7 +152,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
   }
 
   // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
-  let radius = `calc(50% - ${pxToRem(strokeWidth / 2)})`;
+  let radius = `calc(50% - ${pxToRemDynamic(strokeWidth / 2)})`;
   let isStaticColor = !!staticColor;
 
   return (
@@ -139,14 +174,17 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={pxToRem(strokeWidth)}
-            className={track({isStaticColor})} />
+            className={hcmStroke({size})} />
           <circle
             cx="50%"
             cy="50%"
             r={radius}
-            strokeWidth={pxToRem(strokeWidth)}
-            className={fill({isStaticColor})}
+            className={track({isStaticColor, size})} />
+          <circle
+            cx="50%"
+            cy="50%"
+            r={radius}
+            className={fill({isStaticColor, size})}
             style={{
               // These cubic-bezier timing functions were derived from the previous animation keyframes
               // using a best fit algorithm, and then manually adjusted to approximate the original animation.

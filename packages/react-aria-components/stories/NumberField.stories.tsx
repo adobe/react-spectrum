@@ -14,7 +14,7 @@ import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} 
 import React, {useState} from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/NumberField'
 };
 
 export const NumberFieldExample = {
