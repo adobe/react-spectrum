@@ -114,7 +114,7 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
 
   let window = getOwnerWindow(target);
   let activeElement = window.document.activeElement as FocusableElement | null;
-  if (!activeElement || !target || activeElement === target) {
+  if (!activeElement || activeElement === target) {
     return;
   }
 
