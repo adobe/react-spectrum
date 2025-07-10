@@ -14,7 +14,7 @@ import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
@@ -26,7 +26,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ActionButtonStyleProps {
+export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
   children: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */

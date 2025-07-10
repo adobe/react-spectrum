@@ -20,7 +20,7 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with {type: '
 import {CenterBaseline} from './CenterBaseline';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -41,7 +41,7 @@ interface SwitchStyleProps {
 
 interface RenderProps extends SwitchRenderProps, SwitchStyleProps {}
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, SwitchStyleProps {
+export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, StyleProps, SwitchStyleProps {
   children?: ReactNode
 }
 

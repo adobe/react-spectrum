@@ -32,7 +32,7 @@ import {
   UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -76,7 +76,7 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -359,7 +359,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -409,7 +409,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
