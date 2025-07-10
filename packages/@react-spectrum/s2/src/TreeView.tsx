@@ -30,7 +30,7 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, DOMRefValue, forwardRefType, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
@@ -48,12 +48,12 @@ interface S2TreeProps {
   isEmphasized?: boolean
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
 }

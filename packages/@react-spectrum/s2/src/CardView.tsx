@@ -24,7 +24,7 @@ import {
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
 import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
@@ -33,7 +33,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
