@@ -20,7 +20,7 @@ import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Tree'
 };
 
 interface StaticTreeItemProps extends TreeItemProps {

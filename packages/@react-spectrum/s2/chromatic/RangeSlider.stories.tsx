@@ -13,7 +13,7 @@
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider} from '../src';
 
 const meta: Meta<typeof RangeSlider> = {
@@ -26,8 +26,9 @@ const meta: Meta<typeof RangeSlider> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof RangeSlider>;
 
-export const Example = {
+export const Example: Story = {
   render: (args: any) => <RangeSlider {...args} />,
   args: {
     label: 'Range',
@@ -38,7 +39,7 @@ export const Example = {
   }
 };
 
-export const ContextualHelpExample = {
+export const ContextualHelpExample: Story = {
   render: (args: any) => <RangeSlider {...args} />,
   args: {
     label: 'Range',

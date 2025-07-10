@@ -20,7 +20,7 @@ import {TableLoadMoreItem} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Table',
   excludeStories: ['DndTable', 'makePromise']
 };
 

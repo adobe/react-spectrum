@@ -167,7 +167,9 @@ describe('RadioGroup', () => {
   });
 
   it('should support press state', async () => {
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -180,6 +182,31 @@ describe('RadioGroup', () => {
     await user.pointer({target: radio, keys: '[/MouseLeft]'});
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press state with keyboard', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
+    let radio = getAllByRole('radio')[0].closest('label');
+
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    await user.tab();
+    await user.keyboard('[Space>]');
+    expect(radio).toHaveAttribute('data-pressed', 'true');
+    expect(radio).toHaveClass('pressed');
+
+    await user.keyboard('[/Space]');
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state on radio', () => {
@@ -558,6 +585,29 @@ describe('RadioGroup', () => {
     expect(contextInputRef.current).toBe(radio);
   });
 
+  it('should navigate within the group using ArrowRight/Left but skip non-radios', async () => {
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a">
+          <object tabIndex={-1}>
+            <img alt="" />
+          </object>
+          <span>A</span>
+        </Radio>
+        <Radio value="b">B</Radio>
+        <Radio value="c">C</Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(radios[1]);
+    await user.keyboard('[ArrowLeft]');
+    expect(document.activeElement).toBe(radios[0]);
+  });
+  
   it('should support form prop', () => {
     let {getAllByRole} = renderGroup({form: 'test'});
     for (let radio of getAllByRole('radio')) {

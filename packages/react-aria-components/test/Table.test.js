@@ -2631,6 +2631,29 @@ describe('Table', () => {
     await user.click(button);
     expect(button).toHaveTextContent('Hide Columns');
   });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await tableTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 function HidingColumnsExample({dynamic = false}) {

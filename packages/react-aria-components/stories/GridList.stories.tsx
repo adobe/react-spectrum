@@ -43,7 +43,7 @@ import React, {useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/GridList'
 };
 
 export const GridListExample = (args) => (

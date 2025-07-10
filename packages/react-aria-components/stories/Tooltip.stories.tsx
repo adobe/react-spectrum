@@ -14,7 +14,7 @@ import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-componen
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Tooltip'
 };
 
 export const TooltipExample = () => (

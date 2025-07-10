@@ -13,7 +13,8 @@
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
 import Info from '@spectrum-icons/workflow/Info';
-import React from 'react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 import {TextArea} from '../';
 
 export default {
@@ -22,106 +23,108 @@ export default {
     chromaticProvider: {locales: ['en-US', 'ar-AE']}
   },
   excludeStories: ['render']
-};
+} as Meta<typeof TextArea>;
 
-export const Default = () => render();
-export const ValueTestControlled = () => render({value: 'Test'});
+export type TextAreaStory = StoryFn<typeof TextArea>;
+
+export const Default: TextAreaStory = () => render();
+export const ValueTestControlled: TextAreaStory = () => render({value: 'Test'});
 
 ValueTestControlled.story = {
   name: 'value: Test (controlled)'
 };
 
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+export const ValidationStateInvalid: TextAreaStory = () => render({validationState: 'invalid'});
 
 ValidationStateInvalid.story = {
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid = () => render({validationState: 'valid'});
+export const ValidationStateValid: TextAreaStory = () => render({validationState: 'valid'});
 
 ValidationStateValid.story = {
   name: 'validationState: valid'
 };
 
-export const IsReadOnlyTrue = () => render({isReadOnly: true});
+export const IsReadOnlyTrue: TextAreaStory = () => render({isReadOnly: true});
 
 IsReadOnlyTrue.story = {
   name: 'isReadOnly: true'
 };
 
-export const IsReadOnlyTrueValueReadOnlyValue = () => render({value: 'Read only value', isReadOnly: true});
+export const IsReadOnlyTrueValueReadOnlyValue: TextAreaStory = () => render({value: 'Read only value', isReadOnly: true});
 
 IsReadOnlyTrueValueReadOnlyValue.story = {
   name: 'isReadOnly: true, value: read only value'
 };
 
-export const IsRequiredTrue = () => render({isRequired: true});
+export const IsRequiredTrue: TextAreaStory = () => render({isRequired: true});
 
 IsRequiredTrue.story = {
   name: 'isRequired: true'
 };
 
-export const IsRequiredTrueNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'}, false);
+export const IsRequiredTrueNecessityIndicatorLabel: TextAreaStory = () => render({isRequired: true, necessityIndicator: 'label'}, false);
 
 IsRequiredTrueNecessityIndicatorLabel.story = {
   name: 'isRequired: true, necessityIndicator: label'
 };
 
-export const IsRequiredFalseNecessityIndicatorLabel = () => render({isRequired: false, necessityIndicator: 'label'}, false);
+export const IsRequiredFalseNecessityIndicatorLabel: TextAreaStory = () => render({isRequired: false, necessityIndicator: 'label'}, false);
 
 IsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'isRequired: false, necessityIndicator: label'
 };
 
-export const IconInfo = () => render({icon: <Info />});
+export const IconInfo: TextAreaStory = () => render({icon: <Info />});
 
 IconInfo.story = {
   name: 'icon: Info'
 };
 
-export const IconInfoValidationStateInvalid = () => render({icon: <Info />, validationState: 'invalid'});
+export const IconInfoValidationStateInvalid: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid'});
 
 IconInfoValidationStateInvalid.story = {
   name: 'icon: Info, validationState: invalid'
 };
 
-export const LabelAlignEnd = () => render({labelAlign: 'end'}, false);
+export const LabelAlignEnd: TextAreaStory = () => render({labelAlign: 'end'}, false);
 
 LabelAlignEnd.story = {
   name: 'labelAlign: end'
 };
 
-export const LabelPositionSide = () => render({labelPosition: 'side'}, false);
+export const LabelPositionSide: TextAreaStory = () => render({labelPosition: 'side'}, false);
 
 LabelPositionSide.story = {
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEndLabelPositionSide = () => render({labelAlign: 'end', labelPosition: 'side'}, false);
+export const LabelAlignEndLabelPositionSide: TextAreaStory = () => render({labelAlign: 'end', labelPosition: 'side'}, false);
 
 LabelAlignEndLabelPositionSide.story = {
   name: 'labelAlign: end, labelPosition: side'
 };
 
-export const NoVisibleLabel = () => render({label: null, 'aria-label': 'Street address'}, false);
+export const NoVisibleLabel: TextAreaStory = () => render({label: null, 'aria-label': 'Street address'}, false);
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const CustomWidth = () => render({icon: <Info />, validationState: 'invalid', width: 275});
+export const CustomWidth: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid', width: 275});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const CustomHeight = () => render({icon: <Info />, validationState: 'invalid', height: 350});
+export const CustomHeight: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid', height: 350});
 
 CustomHeight.story = {
   name: 'custom height'
 };
 
-export const _ContextualHelp = args => render({...args, contextualHelp: (
+export const _ContextualHelp: TextAreaStory = (args) => render({...args, contextualHelp: (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
     <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
@@ -132,7 +135,7 @@ _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const ContextualHelpLabelAlignEnd = args => render({...args, labelAlign: 'end', contextualHelp: (
+export const ContextualHelpLabelAlignEnd: TextAreaStory = (args) => render({...args, labelAlign: 'end', contextualHelp: (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
     <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
@@ -143,7 +146,7 @@ ContextualHelpLabelAlignEnd.story = {
   name: 'contextual help, labelAlign: end'
 };
 
-export const ContextualHelpLabelPositionSide = args => render({...args, labelPosition: 'side', contextualHelp: (
+export const ContextualHelpLabelPositionSide: TextAreaStory = (args) => render({...args, labelPosition: 'side', contextualHelp: (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
     <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
@@ -155,7 +158,7 @@ ContextualHelpLabelPositionSide.story = {
 };
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
-export function render(props = {}, disabled = true) {
+export function render(props = {}, disabled = true): JSX.Element {
   return (
     <Flex gap="size-100" wrap>
       <TextArea

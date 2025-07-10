@@ -1744,6 +1744,36 @@ describe('Tree', () => {
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
+    it('should pass keys and draggedKey to renderDropIndicator', async () => {
+      let onReorder = jest.fn();
+      let renderDropIndicatorCalls: {target: HTMLElement, keys: Set<string>, draggedKey: string}[] = [];
+      let mockRenderDropIndicator = jest.fn((target, keys, draggedKey) => {
+        renderDropIndicatorCalls.push({target, keys, draggedKey});
+        return <DropIndicator target={target}>Test {keys.size} keys {draggedKey ? 'dragging ' + draggedKey : 'no drag'}</DropIndicator>;
+      });
+
+      let {getAllByRole} = render(<DraggableTree onReorder={onReorder} renderDropIndicator={mockRenderDropIndicator} />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(mockRenderDropIndicator).toHaveBeenCalled();
+      
+      renderDropIndicatorCalls.forEach(call => {
+        expect(call.target).toBeDefined();
+        expect(call.keys).toBeInstanceOf(Set);
+        expect(call.keys.size).toBe(1);
+        expect(call.keys.has('projects')).toBe(true);
+        expect(call.draggedKey).toBe('projects');
+      });
+
+      let rows = getAllByRole('row');
+      expect(rows[0]).toHaveTextContent('Test 1 keys dragging projects');
+
+      await user.keyboard('{Enter}');
+    });
+
     it('should support dropping on items', async () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
@@ -1857,6 +1887,29 @@ describe('Tree', () => {
       fireEvent(projectsRow, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
       expect(getItems).toHaveBeenCalledTimes(1);
       expect(getItems).toHaveBeenCalledWith(new Set(['projects', 'reports']));
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = render(<StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />);
+      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
+      await gridListTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

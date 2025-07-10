@@ -18,7 +18,7 @@ import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ComboBox'
 };
 
 export const ComboBoxExample = () => (
