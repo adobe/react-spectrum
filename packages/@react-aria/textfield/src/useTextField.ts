@@ -134,7 +134,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
       return;
     }
 
-    onChangeProp && onChangeProp(val);
+    onChangeProp?.(val);
   }, [onChangeProp]);
 
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', onChange);
@@ -185,7 +185,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   let onCompositionEnd = useCallback((e) => {
     isComposing.current = false;
     if (e.data !== '') {
-      onChangeProp && onChangeProp(value);
+      onChangeProp?.(value);
     }
   }, [onChangeProp, value]);
 
