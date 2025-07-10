@@ -167,7 +167,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       placement={placement}
       shouldFlip={shouldFlip}
       ref={tooltipRef}
-      style={UNSAFE_style}
+      style={{overflowWrap: 'break-word', ...UNSAFE_style}}
       className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
       {renderProps => (
         <>
