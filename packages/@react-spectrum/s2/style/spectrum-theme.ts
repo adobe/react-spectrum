@@ -750,11 +750,11 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'adobe-clean-spectrum-vf, adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
-        default: 'adobe-clean-spectrum-srf-vf, adobe-clean-serif, "Source Serif", Georgia, serif',
+        default: 'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
         ...i18nFonts
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
