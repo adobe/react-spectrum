@@ -169,7 +169,7 @@ export const DefaultCollectionRenderer: DefaultRenderer = {
     return useCollectionRender(collection, parent, renderDropIndicator);
   },
   CollectionNode({node, before, after}) {
-    return <>{before}{node.render?.(node)}{after}</>;
+    return <>{before}{node.render!(node)}{after}</>;
   }
 };
 
@@ -182,11 +182,11 @@ function useCollectionRender(
 
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
-    dependencies: [CollectionNode, renderDropIndicator],
+    dependencies: [CollectionNode, parent, renderDropIndicator],
     children(node) {
       let pseudoProps = {};
 
-      if (renderDropIndicator && node.type !== 'item') {
+      if (renderDropIndicator && node.type === 'item') {
         pseudoProps = {
           before: renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'}),
           after: renderAfterDropIndicators(collection, node, renderDropIndicator)
