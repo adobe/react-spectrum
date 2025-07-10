@@ -1,18 +1,16 @@
 'use client';
 import {
-  DateInput,
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
-  DateSegment,
   DateValue,
-  FieldError,
   Group,
-  Label,
-  Text,
   ValidationResult
 } from 'react-aria-components';
-import {Button} from './Button';
+import {DateInput, DateSegment} from './DateField';
+import {FieldButton} from './Form';
 import {Popover} from './Popover';
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 import {RangeCalendar} from './RangeCalendar';
 import {ChevronDown} from 'lucide-react';
 import './DateRangePicker.css';
@@ -40,7 +38,7 @@ export function DateRangePicker<T extends DateValue>(
           <DateInput slot="end">
             {(segment) => <DateSegment segment={segment} />}
           </DateInput>
-          <Button><ChevronDown size={16} /></Button>
+          <FieldButton><ChevronDown size={16} /></FieldButton>
         </Group>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>

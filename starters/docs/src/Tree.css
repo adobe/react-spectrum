@@ -1,7 +1,4 @@
 @import "./theme.css";
-@import './Button.css';
-@import './ToggleButton.css';
-@import './Checkbox.css';
 
 .react-aria-Tree {
   display: flex;

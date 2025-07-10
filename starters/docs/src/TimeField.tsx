@@ -2,14 +2,13 @@
 import {
   DateInput,
   DateSegment,
-  FieldError,
-  Label,
-  Text,
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
   TimeValue,
   ValidationResult
 } from 'react-aria-components';
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 
 import './TimeField.css';
 

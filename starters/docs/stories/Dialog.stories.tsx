@@ -1,13 +1,8 @@
-import {Dialog} from '../src/Dialog';
-import {
-  Button,
-  DialogTrigger,
-  Heading,
-  Input,
-  Label,
-  Modal,
-  TextField
-} from 'react-aria-components';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Button} from '../src/Button';
+import {Modal} from '../src/Modal';
+import {TextField} from '../src/TextField';
+import {Heading} from '../src/Content';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -29,14 +24,8 @@ export const Example: Story = (args) => (
       <Dialog {...args}>
         <form>
           <Heading slot="title">Sign up</Heading>
-          <TextField autoFocus>
-            <Label>First Name</Label>
-            <Input />
-          </TextField>
-          <TextField>
-            <Label>Last Name</Label>
-            <Input />
-          </TextField>
+          <TextField autoFocus label='First Name' />
+          <TextField label='Last Name' />
           <Button slot="close" style={{ marginTop: 8 }}>
             Submit
           </Button>

@@ -1,5 +1,5 @@
 import {Autocomplete} from '../src/Autocomplete';
-import {MenuItem} from 'react-aria-components';
+import {MenuItem} from '../src/Menu';
 
 import type {Meta, StoryFn} from '@storybook/react';
 

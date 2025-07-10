@@ -1,15 +1,15 @@
 'use client';
 import {
   Button,
-  Label,
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
   TagList,
   TagListProps,
   TagProps,
-  Text
 } from 'react-aria-components';
+import {Label} from './Form';
+import {Text} from './Content';
 import {X} from 'lucide-react';
 import './TagGroup.css';
 

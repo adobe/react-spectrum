@@ -1,5 +1,4 @@
-import {Tabs} from '../src/Tabs';
-import {Tab, TabList, TabPanel} from 'react-aria-components';
+import {Tabs, Tab, TabList, TabPanel} from '../src/Tabs';
 import {fn} from '@storybook/test';
 
 import type {Meta, StoryFn} from '@storybook/react';

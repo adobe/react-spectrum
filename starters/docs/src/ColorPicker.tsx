@@ -1,15 +1,15 @@
 'use client';
 import {
   ColorPicker as AriaColorPicker,
-  ColorPickerProps as AriaColorPickerProps,
-  DialogTrigger,
-  Popover
+  ColorPickerProps as AriaColorPickerProps
 } from 'react-aria-components';
+import {DialogTrigger} from './Dialog';
 import {Button} from './Button';
 import {ColorSwatch} from './ColorSwatch';
 import {ColorSlider} from './ColorSlider';
 import {ColorArea} from './ColorArea';
 import {ColorField} from './ColorField';
+import {Popover} from './Popover';
 
 import './ColorPicker.css';
 
@@ -27,7 +27,7 @@ export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
             <ColorSwatch />
             <span>{label}</span>
           </Button>
-          <Popover placement="bottom start" className="react-aria-Popover color-picker-dialog">
+          <Popover noPadding placement="bottom start" className="color-picker-dialog">
             {children || (
               <>
                 <ColorArea

@@ -1,17 +1,15 @@
 'use client';
 import {
-  Button,
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
-  FieldError,
   Input,
-  Label,
   ListBoxItemProps,
-  Popover,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Label, FieldError, FieldButton} from './Form';
+import {Text} from './Content';
 import {ListBox, ListBoxItem} from './ListBox';
+import {Popover} from './Popover';
 import {ChevronDown} from 'lucide-react';
 
 import './ComboBox.css';
@@ -33,11 +31,11 @@ export function ComboBox<T extends object>(
         <Label>{label}</Label>
         <div className="my-combobox-container">
           <Input />
-          <Button><ChevronDown size={16} /></Button>
+          <FieldButton><ChevronDown size={16} /></FieldButton>
         </div>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover>
+        <Popover hideArrow>
           <ListBox>
             {children}
           </ListBox>

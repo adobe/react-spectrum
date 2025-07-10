@@ -1,10 +1,9 @@
 'use client';
 import {
-  Label,
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
 } from 'react-aria-components';
-
+import {Label} from './Form';
 import './Meter.css';
 
 export interface MeterProps extends AriaMeterProps {

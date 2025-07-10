@@ -2,14 +2,15 @@
 import {
   DateField as AriaDateField,
   DateFieldProps as AriaDateFieldProps,
-  DateInput,
-  DateSegment,
+  DateInput as AriaDateInput,
+  DateInputProps,
+  DateSegment as AriaDateSegment,
+  DateSegmentProps,
   DateValue,
-  FieldError,
-  Label,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 
 import './DateField.css';
 
@@ -35,4 +36,12 @@ export function DateField<T extends DateValue>(
       </AriaDateField>
     )
   );
+}
+
+export function DateSegment(props: DateSegmentProps) {
+  return <AriaDateSegment {...props} />;
+}
+
+export function DateInput(props: DateInputProps) {
+  return <AriaDateInput {...props} />;
 }

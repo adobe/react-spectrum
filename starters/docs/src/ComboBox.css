@@ -1,8 +1,3 @@
-@import './Checkbox.css';
-@import './ListBox.css';
-@import './Popover.css';
-@import './Form.css';
-@import './Button.css';
 @import "./theme.css";
 
 .react-aria-ComboBox {
@@ -31,24 +26,8 @@
     }
   }
 
-  .react-aria-Button {
-    background: var(--highlight-background);
-    color: var(--highlight-foreground);
-    forced-color-adjust: none;
-    border-radius: 4px;
-    border: none;
+  .field-Button {
     margin-left: -1.49975rem;
-    width: 1.250375rem;
-    height: 1.250375rem;
-    padding: 0;
-    font-size: 0.749875rem;
-    cursor: default;
-    flex-shrink: 0;
-
-    &[data-pressed] {
-      box-shadow: none;
-      background: var(--highlight-background);
-    }
   }
 }
 
@@ -119,11 +98,6 @@
     &[data-invalid]:not([data-focused]) {
       border-color: var(--invalid-color);
     }
-  }
-
-  .react-aria-FieldError {
-    font-size: 12px;
-    color: var(--invalid-color);
   }
 
   [slot=description] {

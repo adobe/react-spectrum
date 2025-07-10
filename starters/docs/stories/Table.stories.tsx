@@ -1,5 +1,4 @@
-import {Column, Row, Table, TableHeader} from '../src/Table';
-import {Cell, TableBody} from 'react-aria-components';
+import {Column, Row, Table, TableHeader, TableBody, Cell} from '../src/Table';
 
 import type {Meta, StoryFn} from '@storybook/react';
 

@@ -1,7 +1,5 @@
 'use client';
 import {
-  CalendarCell,
-  CalendarGrid,
   DateValue,
   Heading,
   RangeCalendar as AriaRangeCalendar,
@@ -10,6 +8,7 @@ import {
 } from 'react-aria-components';
 import {Button} from './Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
+import {CalendarCell, CalendarGrid} from './Calendar';
 import './RangeCalendar.css';
 
 export interface RangeCalendarProps<T extends DateValue>

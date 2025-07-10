@@ -1,5 +1,4 @@
-import {RadioGroup} from '../src/RadioGroup';
-import {Radio} from 'react-aria-components';
+import {RadioGroup, Radio} from '../src/RadioGroup';
 
 import type {Meta, StoryFn} from '@storybook/react';
 

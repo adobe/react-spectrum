@@ -1,6 +1,4 @@
-@import './Button.css';
-@import './Dialog.css';
-@import './Switch.css';
+@import "./Dialog.css";
 @import "./theme.css";
 
 .react-aria-Popover {

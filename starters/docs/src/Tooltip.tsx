@@ -2,7 +2,9 @@
 import {
   OverlayArrow,
   Tooltip as AriaTooltip,
-  TooltipProps as AriaTooltipProps
+  TooltipProps as AriaTooltipProps,
+  TooltipTrigger as AriaTooltipTrigger,
+  TooltipTriggerComponentProps
 } from 'react-aria-components';
 
 import './Tooltip.css';
@@ -24,4 +26,8 @@ export function Tooltip({ children, ...props }: TooltipProps) {
       </AriaTooltip>
     )
   );
+}
+
+export function TooltipTrigger(props: TooltipTriggerComponentProps) {
+  return <AriaTooltipTrigger {...props} />;
 }

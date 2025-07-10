@@ -1,5 +1,4 @@
 @import "./theme.css";
-@import './Button.css';
 
 .react-aria-Disclosure {
   .react-aria-Button[slot=trigger] {

@@ -1,17 +1,22 @@
 'use client';
+import {Button} from './Button';
+import {ChevronRight} from 'lucide-react';
 import {
-  Button,
-  Menu,
+  Menu as AriaMenu,
   MenuItem as AriaMenuItem,
+  MenuSection as AriaMenuSection,
+  MenuTrigger as AriaMenuTrigger,
+  SubmenuTrigger as AriaSubmenuTrigger,
   MenuItemProps,
   MenuProps,
-  MenuTrigger,
+  MenuSectionProps,
   MenuTriggerProps,
-  Popover
+  SubmenuTriggerProps,
 } from 'react-aria-components';
-import {ChevronRight} from 'lucide-react';
+import {Popover} from './Popover';
 
 import './Menu.css';
+import React from 'react';
 
 export interface MenuButtonProps<T extends object>
   extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
@@ -24,12 +29,25 @@ export function MenuButton<T extends object>(
   return (
     <MenuTrigger {...props}>
       <Button>{label}</Button>
-      <Popover>
+      <Popover noPadding>
         <Menu {...props}>
           {children}
         </Menu>
       </Popover>
     </MenuTrigger>
+  );
+}
+
+export function MenuTrigger(props: MenuTriggerProps) {
+  return <AriaMenuTrigger {...props} />;
+}
+
+export function Menu<T extends object>(props: MenuProps<T>) {
+  return (
+    <AriaMenu
+      {...props} >
+      {props.children}
+    </AriaMenu>
   );
 }
 
@@ -51,5 +69,23 @@ export function MenuItem(
         )}
       </AriaMenuItem>
     )
+  );
+}
+
+export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+  return <AriaMenuSection {...props} />;
+}
+
+export function SubmenuTrigger(
+  props: SubmenuTriggerProps
+) {
+  let [trigger, menu] = React.Children.toArray(props.children) as [React.ReactElement, React.ReactElement];
+  return (
+    <AriaSubmenuTrigger {...props}>
+      {trigger}
+      <Popover noPadding>
+        {menu}
+      </Popover>
+    </AriaSubmenuTrigger>
   );
 }

@@ -34,13 +34,3 @@
     color: var(--text-color-disabled);
   }
 }
-
-@keyframes toggle {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}

@@ -1,14 +1,13 @@
 'use client';
 import {
   Button,
-  FieldError,
   Input,
-  Label,
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 import {X} from 'lucide-react';
 import './SearchField.css';
 

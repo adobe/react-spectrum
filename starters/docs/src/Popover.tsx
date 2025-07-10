@@ -6,16 +6,20 @@ import {
 } from 'react-aria-components';
 
 import './Popover.css';
+import clsx from 'clsx';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
   children: React.ReactNode;
   hideArrow?: boolean;
+  noPadding?: boolean;
 }
 
-export function Popover({ children, hideArrow, ...props }: PopoverProps) {
+export function Popover({ children, hideArrow, noPadding, ...props }: PopoverProps) {
   return (
     (
-      <AriaPopover {...props} className="react-aria-Popover react-aria-Dialog">
+      <AriaPopover {...props} className={clsx("react-aria-Popover react-aria-Dialog", props.className, {
+        'no-padding': noPadding
+      })}>
         {!hideArrow && (
           <OverlayArrow>
             <svg width={12} height={12} viewBox="0 0 12 12">

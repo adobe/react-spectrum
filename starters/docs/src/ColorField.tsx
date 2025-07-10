@@ -2,12 +2,11 @@
 import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps,
-  FieldError,
   Input,
-  Label,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Text} from './Content';
+import {Label, FieldError} from './Form';
 
 import './ColorField.css';
 

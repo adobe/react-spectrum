@@ -1,17 +1,15 @@
 'use client';
 import {
   Button,
-  FieldError,
   Group,
   Input,
-  Label,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
-  Text,
   ValidationResult
 } from 'react-aria-components';
 import {Plus, Minus} from 'lucide-react';
-
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 import './NumberField.css';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {

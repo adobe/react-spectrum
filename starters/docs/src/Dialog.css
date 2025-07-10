@@ -1,7 +1,4 @@
 @import "./theme.css";
-@import './Button.css';
-@import './TextField.css';
-@import './Modal.css';
 
 .react-aria-Dialog {
   outline: none;
@@ -9,6 +6,10 @@
   max-height: inherit;
   box-sizing: border-box;
   overflow: auto;
+
+  &.no-padding {
+    padding: 0;
+  }
 
   .react-aria-Heading[slot=title] {
     line-height: 1em;

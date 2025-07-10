@@ -4,8 +4,8 @@ import {
   Disclosure as AriaDisclosure,
   DisclosurePanel,
   DisclosureProps as AriaDisclosureProps,
-  Heading
 } from 'react-aria-components';
+import {Heading} from './Content';
 import {ChevronRight} from 'lucide-react';
 
 import './Disclosure.css';

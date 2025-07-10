@@ -1,13 +1,14 @@
 'use client';
 import {
   Calendar as AriaCalendar,
-  CalendarCell,
-  CalendarGrid,
+  CalendarCell as AriaCalendarCell,
+  CalendarGrid as AriaCalendarGrid,
   CalendarProps as AriaCalendarProps,
   DateValue,
-  Heading,
-  Text
+  CalendarCellProps,
+  CalendarGridProps
 } from 'react-aria-components';
+import {Heading, Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 import {Button} from './Button';
@@ -37,4 +38,12 @@ export function Calendar<T extends DateValue>(
       </AriaCalendar>
     )
   );
+}
+
+export function CalendarCell(props: CalendarCellProps) {
+  return <AriaCalendarCell {...props} />;
+}
+
+export function CalendarGrid(props: CalendarGridProps) {
+  return <AriaCalendarGrid {...props} />;
 }

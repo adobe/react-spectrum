@@ -2,11 +2,10 @@
 import {
   CheckboxGroup as AriaCheckboxGroup,
   CheckboxGroupProps as AriaCheckboxGroupProps,
-  FieldError,
-  Label,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Text} from './Content';
+import {Label, FieldError} from './Form';
 
 import './CheckboxGroup.css';
 
@@ -38,5 +37,3 @@ export function CheckboxGroup(
     )
   );
 }
-
-export { CheckboxGroup as MyCheckboxGroup };

@@ -1,18 +1,17 @@
 'use client';
 import {
-  Button,
-  FieldError,
-  Label,
   ListBoxItemProps,
-  Popover,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectValue,
-  Text,
   ValidationResult
 } from 'react-aria-components';
+import {Button} from './Button';
 import {ListBox, ListBoxItem} from './ListBox';
 import {ChevronDown} from 'lucide-react';
+import {Popover} from './Popover';
+import {Text} from './Content';
+import {Label, FieldError} from './Form';
 import './Select.css';
 
 export interface SelectProps<T extends object>
@@ -39,7 +38,7 @@ export function Select<T extends object>(
         </Button>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover>
+        <Popover noPadding hideArrow>
           <ListBox items={items}>
             {children}
           </ListBox>

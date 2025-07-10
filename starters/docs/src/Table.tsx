@@ -1,7 +1,6 @@
 'use client';
 import {
   Button,
-  Cell,
   Collection,
   Column as AriaColumn,
   ColumnProps,
@@ -11,7 +10,11 @@ import {
   TableHeader as AriaTableHeader,
   TableHeaderProps,
   TableProps,
-  useTableOptions
+  useTableOptions,
+  TableBodyProps,
+  TableBody as AriaTableBody,
+  CellProps,
+  Cell as AriaCell
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {ChevronUp, ChevronDown, GripVertical} from 'lucide-react';
@@ -89,4 +92,12 @@ export function Row<T extends object>(
       </AriaRow>
     )
   );
+}
+
+export function TableBody<T extends object>(props: TableBodyProps<T>) {
+  return <AriaTableBody {...props} />;
+}
+
+export function Cell(props: CellProps) {
+  return <AriaCell {...props} />;
 }

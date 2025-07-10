@@ -1,9 +1,3 @@
-@import './Button.css';
-@import './ToggleButton.css';
-@import './CheckboxGroup.css';
-@import './Checkbox.css';
-@import './Popover.css';
-@import './Menu.css';
 @import "./theme.css";
 
 .react-aria-Table {

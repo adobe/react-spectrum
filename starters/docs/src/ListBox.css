@@ -1,4 +1,3 @@
-@import './Checkbox.css';
 @import "./theme.css";
 
 .react-aria-ListBox {
@@ -21,6 +20,22 @@
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
+  }
+
+  .react-aria-ListBoxSection:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.000125rem;
+    font-weight: bold;
+    padding: 0 0.6247499999999999rem;
+  }
+
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
   }
 }
 
@@ -51,6 +66,21 @@
       outline-offset: -4px;
     }
   }
+  [slot=label] {
+    font-weight: bold;
+  }
+
+  [slot=description] {
+    font-size: small;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  &[data-dragging] {
+    opacity: 0.6;
+  }
 }
 
 .react-aria-ListBoxItem[href] {
@@ -59,27 +89,6 @@
   -webkit-touch-callout: none;
 }
 
-.react-aria-ListBox {
-  .react-aria-ListBoxSection:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.000125rem;
-    font-weight: bold;
-    padding: 0 0.6247499999999999rem;
-  }
-}
-
-.react-aria-ListBoxItem {
-  [slot=label] {
-    font-weight: bold;
-  }
-
-  [slot=description] {
-    font-size: small;
-  }
-}
 
 .react-aria-ListBox[data-orientation=horizontal],
 .react-aria-ListBox[data-layout=grid] {
@@ -176,26 +185,6 @@
     [slot=description] {
       grid-area: description;
     }
-  }
-}
-
-.react-aria-ListBoxItem {
-  &[data-disabled] {
-    color: var(--text-color-disabled);
-  }
-}
-
-.react-aria-ListBox {
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-}
-
-.react-aria-ListBoxItem {
-  &[data-dragging] {
-    opacity: 0.6;
   }
 }
 

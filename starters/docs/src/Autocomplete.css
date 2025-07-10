@@ -1,6 +1,3 @@
-@import './Menu.css';
-@import './Button.css';
-@import './SearchField.css';
 @import "./theme.css";
 
 .my-autocomplete {

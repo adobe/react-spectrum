@@ -1,10 +1,9 @@
 'use client';
 import {
-  Label,
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
-
+import {Label} from './Form';
 import './ProgressBar.css';
 
 export interface ProgressBarProps extends AriaProgressBarProps {

@@ -1,10 +1,11 @@
 'use client';
 import {
-  ColorThumb,
   ColorWheel as AriaColorWheel,
   ColorWheelProps as AriaColorWheelProps,
   ColorWheelTrack
 } from 'react-aria-components';
+
+import {ColorThumb} from './ColorThumb';
 
 import './ColorWheel.css';
 export interface ColorWheelProps

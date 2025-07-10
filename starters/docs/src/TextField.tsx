@@ -1,13 +1,12 @@
 'use client';
 import {
-  FieldError,
   Input,
-  Label,
-  Text,
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
   ValidationResult
 } from 'react-aria-components';
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 
 import './TextField.css';
 

@@ -1,11 +1,11 @@
 import {Toolbar} from '../src/Toolbar';
 import {
-  Button,
-  Checkbox,
   Group,
-  Separator,
-  ToggleButton
+  Separator
 } from 'react-aria-components';
+import {Button} from '../src/Button';
+import {ToggleButton} from '../src/ToggleButton';
+import {Checkbox} from '../src/Checkbox';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -42,11 +42,6 @@ export const Example: Story = (args) => (
     </Group>
     <Separator orientation="vertical" />
     <Checkbox>
-      <div className="checkbox">
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          <polyline points="1 9 7 14 15 4" />
-        </svg>
-      </div>
       Night Mode
     </Checkbox>
   </Toolbar>

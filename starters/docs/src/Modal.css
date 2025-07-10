@@ -1,5 +1,3 @@
-@import './Button.css';
-@import './TextField.css';
 @import "./theme.css";
 
 .react-aria-ModalOverlay {
@@ -58,27 +56,5 @@
 
   to {
     transform: scale(1);
-  }
-}
-
-@keyframes mymodal-blur {
-  from {
-    background: rgba(45 0 0 / 0);
-    backdrop-filter: blur(0);
-  }
-
-  to {
-    background: rgba(45 0 0 / .3);
-    backdrop-filter: blur(10px);
-  }
-}
-
-@keyframes mymodal-slide {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
   }
 }

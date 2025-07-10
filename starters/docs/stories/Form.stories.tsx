@@ -1,11 +1,6 @@
 import {Form} from '../src/Form';
-import {
-  Button,
-  FieldError,
-  Input,
-  Label,
-  TextField
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {TextField} from '../src/TextField';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -22,11 +17,7 @@ type Story = StoryFn<typeof Form>;
 
 export const Example: Story = (args) => (
   <Form {...args}>
-    <TextField name="email" type="email" isRequired>
-      <Label>Email</Label>
-      <Input />
-      <FieldError />
-    </TextField>
+    <TextField name="email" type="email" isRequired label="Email" />
     <Button type="submit">Submit</Button>
   </Form>
 );

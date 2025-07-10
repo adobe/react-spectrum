@@ -1,13 +1,13 @@
 'use client';
 import {
-  FieldError,
-  Label,
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps,
-  Text,
-  ValidationResult
+  ValidationResult,
+  RadioProps,
+  Radio as AriaRadio
 } from 'react-aria-components';
-
+import {Label, FieldError} from './Form';
+import {Text} from './Content';
 import './RadioGroup.css';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children'> {
@@ -36,4 +36,8 @@ export function RadioGroup(
       </AriaRadioGroup>
     )
   );
+}
+
+export function Radio(props: RadioProps) {
+  return <AriaRadio {...props} />;
 }

@@ -3,10 +3,9 @@ import {
   Autocomplete as AriaAutocomplete,
   AutocompleteProps as AriaAutocompleteProps,
   Key,
-  Menu,
   useFilter
 } from 'react-aria-components';
-
+import {Menu} from './Menu';
 import {SearchField} from './SearchField';
 
 import './Autocomplete.css';

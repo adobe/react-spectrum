@@ -1,5 +1,5 @@
-import {Breadcrumbs} from '../src/Breadcrumbs';
-import {Breadcrumb, Link} from 'react-aria-components';
+import {Breadcrumbs, Breadcrumb} from '../src/Breadcrumbs';
+import {Link} from '../src/Link';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
