@@ -528,12 +528,12 @@ const fontSize = {
 
 // Line heights linearly interpolate between 1.3 and 1.15 for font sizes between 10 and 32, rounded to the nearest 2px.
 // Text above 32px always has a line height of 1.15.
-const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fx)';
+const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fs)';
 const minFontScale = 1.15;
 const maxFontScale = 1.3;
 const minFontSize = 10;
 const maxFontSize = 32;
-const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${maxFontScale - minFontScale}), 2px)`;
+const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${(maxFontScale - minFontScale).toFixed(2)}), 2px)`;
 
 export const style = createTheme({
   properties: {
@@ -761,7 +761,7 @@ export const style = createTheme({
     },
     fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
       return {
-        '--fx': Math.pow(1.125, value as number),
+        '--fs': `pow(1.125, ${value})`,
         fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
       };
     }, fontSize),
