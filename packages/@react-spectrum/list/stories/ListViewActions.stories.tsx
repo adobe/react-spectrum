@@ -7,9 +7,9 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import Info from '@spectrum-icons/workflow/Info';
-import {Item, ListView} from '../';
+import {Item, ListView, SpectrumListViewProps} from '../';
 import {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
+import React, {JSX} from 'react';
 import RemoveCircle from '@spectrum-icons/workflow/RemoveCircle';
 import {Text} from '@react-spectrum/text';
 import {useListData} from '@react-stately/data';
@@ -151,7 +151,7 @@ function renderActionsExample(renderActions, props?) {
   );
 }
 
-export const FocusExample = (args) => {
+export const FocusExample = (args: Omit<SpectrumListViewProps<any>, 'children'>): JSX.Element => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},

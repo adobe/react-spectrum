@@ -12,11 +12,12 @@
 
 import {categorizeArgTypes, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
-import {Text, ToggleButton} from '../src';
+import {Text, ToggleButton, ToggleButtonProps} from '../src';
 
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
@@ -43,7 +44,7 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args) => {
+const Template = (args: ToggleButtonProps): ReactElement => {
   let {children, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
@@ -69,25 +70,25 @@ const Template = (args) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithIcon = {
-  render: Template,
+export const WithIcon: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><NewIcon /><Text>Press me</Text></>
   }
 };
 
-export const IconOnly = {
-  render: Template,
+export const IconOnly: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
   }
 };
 
-export const Truncate = {
+export const Truncate: StoryObj<typeof Template> = {
   render: (args) => (
     <div style={{display: 'flex', gap: 8, width: 160}}>
       <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>

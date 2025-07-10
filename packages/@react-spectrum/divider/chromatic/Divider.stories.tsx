@@ -14,15 +14,18 @@ import {ActionButton} from '@react-spectrum/button';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Divider} from '../';
 import Edit from '@spectrum-icons/workflow/Edit';
+import {Meta, StoryFn} from '@storybook/react';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
 
 export default {
   title: 'Divider'
-};
+} as Meta<typeof Divider>;
 
-export const Horizontal = () => (
+export type DividerStory = StoryFn<typeof Divider>;
+
+export const Horizontal: DividerStory = () => (
   <section>
     <h1>Large</h1>
     <Divider />
@@ -34,7 +37,7 @@ export const Horizontal = () => (
   </section>
 );
 
-export const Vertical = () => (
+export const Vertical: DividerStory = () => (
   <section style={{display: 'flex'}}>
     <ActionButton aria-label="Properties" isQuiet>
       <Properties />
