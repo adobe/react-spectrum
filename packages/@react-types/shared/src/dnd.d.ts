@@ -275,7 +275,7 @@ export interface DraggableCollectionEndEvent extends DragEndEvent {
   isInternal: boolean
 }
 
-export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null) => void) => void;
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null, x?: number, y?: number) => void) => void;
 
 export interface DraggableCollectionProps {
   /** Handler that is called when a drag operation is started. */
@@ -289,22 +289,5 @@ export interface DraggableCollectionProps {
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
-  getAllowedDropOperations?: () => DropOperation[],
-  /**
-   * A function that returns the offset of the drag preview relative to the pointer.
-   *
-   * If not provided, a default offset is automatically calculated based on the click/touch
-   * position, falling back to the center of the preview in cases where the preview is smaller
-   * than the interaction point.
-   */
-  getPreviewOffset?: (options: {
-    /** Bounding rect for the preview element returned from `preview`. */
-    previewRect: DOMRect,
-    /** Bounding rect for the element that initiated the drag. */
-    sourceRect: DOMRect,
-    /** The pointer coordinates at the start of the drag. */
-    pointerPosition: {x: number, y: number},
-    /** The default offset that would be used if no custom offset is provided. */
-    defaultOffset: {x: number, y: number}
-  }) => {x: number, y: number}
+  getAllowedDropOperations?: () => DropOperation[]
 }

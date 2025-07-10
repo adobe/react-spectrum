@@ -1351,10 +1351,9 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer._dragImage.y).toBe(10);
       });
 
-      it('should use the offset returned by getPreviewOffset', () => {
-        let renderPreview = jest.fn().mockImplementation(() => <div>Drag preview</div>);
-        let getPreviewOffset = jest.fn().mockReturnValue({x: 12, y: 15});
-        let tree = render(<Draggable renderPreview={renderPreview} getPreviewOffset={getPreviewOffset} />);
+      it('should use the offset returned from renderPreview', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 12, y: 15}));
+        let tree = render(<Draggable renderPreview={renderPreview} />);
 
         let draggable = tree.getByText('Drag me');
 
@@ -1373,17 +1372,16 @@ describe('useDrag and useDrop', function () {
         let dataTransfer = new DataTransfer();
         fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 10, clientY: 10}));
 
-        // getPreviewOffset should have been called and its return value used without modification.
-        expect(getPreviewOffset).toHaveBeenCalledTimes(1);
+        // renderPreview should have been called and its offset returned used without modification.
+        expect(renderPreview).toHaveBeenCalledTimes(1);
         expect(dataTransfer._dragImage.x).toBe(12);
         expect(dataTransfer._dragImage.y).toBe(15);
       });
 
-      it('should clamp the offset returned by getPreviewOffset to the preview bounds', () => {
-        let renderPreview = jest.fn().mockImplementation(() => <div>Drag preview</div>);
+      it('should clamp the offset returned from renderPreview to the preview bounds', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 50, y: -10}));
         // Return values outside of the preview bounds to verify clamping logic.
-        let getPreviewOffset = jest.fn().mockReturnValue({x: 50, y: -10});
-        let tree = render(<Draggable renderPreview={renderPreview} getPreviewOffset={getPreviewOffset} />);
+        let tree = render(<Draggable renderPreview={renderPreview} />);
 
         let draggable = tree.getByText('Drag me');
 

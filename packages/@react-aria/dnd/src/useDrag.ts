@@ -35,23 +35,6 @@ export interface DragOptions {
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /**
-   * A function that returns the offset of the drag preview relative to the pointer.
-   *
-   * If not provided, a default offset is automatically calculated based on the click/touch
-   * position, falling back to the center of the preview in cases where the preview is smaller
-   * than the interaction point.
-   */
-  getPreviewOffset?: (options: {
-    /** Bounding rect for the preview element returned from `preview`. */
-    previewRect: DOMRect,
-    /** Bounding rect for the element that initiated the drag. */
-    sourceRect: DOMRect,
-    /** The pointer coordinates at the start of the drag. */
-    pointerPosition: {x: number, y: number},
-    /** The default offset that would be used if no custom offset is provided. */
-    defaultOffset: {x: number, y: number}
-  }) => {x: number, y: number},
-  /**
    * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
    * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
    */
@@ -151,7 +134,7 @@ export function useDrag(options: DragOptions): DragResult {
     // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
     if (typeof options.preview?.current === 'function') {
-      options.preview.current(items, node => {
+      options.preview.current(items, (node, userX, userY) => {
         if (!node) {
           return;
         }
@@ -167,27 +150,14 @@ export function useDrag(options: DragOptions): DragResult {
           defaultY = size.height / 2;
         }
 
-        // Allow callers to override the preview offset.
-        let {getPreviewOffset} = options;
+        // Start with default offsets.
         let offsetX = defaultX;
         let offsetY = defaultY;
-        if (typeof getPreviewOffset === 'function') {
-          try {
-            let custom = getPreviewOffset({
-              previewRect: size,
-              sourceRect: rect,
-              pointerPosition: {x: e.clientX, y: e.clientY},
-              defaultOffset: {x: defaultX, y: defaultY}
-            });
 
-            if (custom && typeof custom.x === 'number' && typeof custom.y === 'number') {
-              offsetX = custom.x;
-              offsetY = custom.y;
-            }
-          } catch (err) {
-            // Fail gracefully if the callback throws, and use the default offset instead.
-            console.error('Error in getPreviewOffset callback', err);
-          }
+        // If the preview renderer supplied explicit offsets, use those.
+        if (typeof userX === 'number' && typeof userY === 'number') {
+          offsetX = userX;
+          offsetY = userY;
         }
 
         // Clamp the offset so it stays within the preview bounds. Browsers

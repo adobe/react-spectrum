@@ -246,7 +246,7 @@ ListBoxDndCustomDropIndicator.story = {
 
 interface PreviewOffsetArgs {
   /** Strategy for positioning the preview. */
-  mode: 'default' | 'center' | 'custom',
+  mode: 'default' | 'custom',
   /** X offset in pixels (only used when mode = custom). */
   offsetX: number,
   /** Y offset in pixels (only used when mode = custom). */
@@ -258,18 +258,6 @@ function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffset
     initialItems: albums
   });
 
-  let getPreviewOffset = React.useCallback(({previewRect, defaultOffset}: any) => {
-    switch (mode) {
-      case 'center':
-        return {x: previewRect.width / 2, y: previewRect.height / 2};
-      case 'custom':
-        return {x: offsetX, y: offsetY};
-      case 'default':
-      default:
-        return defaultOffset;
-    }
-  }, [mode, offsetX, offsetY]);
-
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
     onReorder(e) {
@@ -279,14 +267,18 @@ function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffset
         list.moveAfter(e.target.key, e.keys);
       }
     },
-    getPreviewOffset,
     renderDragPreview(items) {
-      return (
+      let element = (
         <div style={{display: 'flex', alignItems: 'center', padding: 4, background: 'white', border: '1px solid gray'}}>
           <Text>{items[0]['text/plain']}</Text>
           {items.length > 1 && <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>}
         </div>
       );
+
+      if (mode === 'custom') {
+        return {element, x: offsetX, y: offsetY};
+      }
+      return element;
     }
   });
 
@@ -330,7 +322,7 @@ export const ListBoxPreviewOffset = {
     },
     mode: {
       control: 'select',
-      options: ['default', 'center', 'custom']
+      options: ['default', 'custom']
     },
     offsetX: {
       control: 'number'

@@ -44,23 +44,6 @@ export interface DraggableCollectionState {
   preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
-  /**
-   * A function that returns the offset of the drag preview relative to the pointer.
-   *
-   * If not provided, a default offset is automatically calculated based on the click/touch
-   * position, falling back to the center of the preview in cases where the preview is smaller
-   * than the interaction point.
-   */
-  getPreviewOffset?: (options: {
-    /** Bounding rect for the preview element returned from `preview`. */
-    previewRect: DOMRect,
-    /** Bounding rect for the element that initiated the drag. */
-    sourceRect: DOMRect,
-    /** The pointer coordinates at the start of the drag. */
-    pointerPosition: {x: number, y: number},
-    /** The default offset that would be used if no custom offset is provided. */
-    defaultOffset: {x: number, y: number}
-  }) => {x: number, y: number},
   /** Begins a drag for the given key. This triggers the onDragStart event. */
   startDrag(key: Key, event: DragStartEvent): void,
   /** Triggers an onDragMove event. */
@@ -82,8 +65,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     onDragMove,
     onDragEnd,
     preview,
-    getAllowedDropOperations,
-    getPreviewOffset
+    getAllowedDropOperations
   } = props;
   let [, setDragging] = useState(false);
   let draggingKeys = useRef(new Set<Key>());
@@ -141,7 +123,6 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     isDisabled,
     preview,
     getAllowedDropOperations,
-    getPreviewOffset,
     startDrag(key, event) {
       let keys = getKeys(key);
       draggingKeys.current = keys;

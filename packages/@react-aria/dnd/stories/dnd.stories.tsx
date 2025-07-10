@@ -385,7 +385,14 @@ function DraggableCollectionExample(props) {
   };
 
   return (
-    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd} onCut={onCut} isDisabled={props.isDisabled} getPreviewOffset={props.getPreviewOffset}>
+    <DraggableCollection
+      items={list.items}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      onDragEnd={onDragEnd}
+      onCut={onCut}
+      isDisabled={props.isDisabled}
+      {...props}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -397,7 +404,7 @@ function DraggableCollectionExample(props) {
 }
 
 function DraggableCollection(props) {
-  let {isDisabled, getPreviewOffset} = props;
+  let {isDisabled, mode, offsetX, offsetY} = props;
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState<ItemValue>(props);
   let gridState = useGridState({
@@ -440,7 +447,6 @@ function DraggableCollection(props) {
       }).filter(item => item != null);
     },
     preview,
-    getPreviewOffset,
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
@@ -473,7 +479,7 @@ function DraggableCollection(props) {
           let selectedKeys = dragState.draggingKeys;
           let draggedKey = [...selectedKeys][0];
           let item = state.collection.getItem(draggedKey);
-          return (
+          let element = (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
@@ -484,6 +490,12 @@ function DraggableCollection(props) {
               }
             </div>
           );
+
+          if (mode === 'custom') {
+            return {element, x: offsetX, y: offsetY};
+          }
+
+          return element;
         }}
       </DragPreview>
     </div>
@@ -579,7 +591,7 @@ export const DroppableEnabledDisabledControl: DnDStoryObj = {
 
 interface PreviewOffsetArgs {
   /** Strategy for positioning the preview. */
-  mode: 'default' | 'center' | 'custom',
+  mode: 'default' | 'custom',
   /** X offset in pixels (only used when mode = custom). */
   offsetX: number,
   /** Y offset in pixels (only used when mode = custom). */
@@ -589,18 +601,6 @@ interface PreviewOffsetArgs {
 function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.Element {
   const preview = React.useRef(null);
 
-  const getPreviewOffset = React.useCallback(({previewRect, defaultOffset}: any) => {
-    switch (mode) {
-      case 'center':
-        return {x: previewRect.width / 2, y: previewRect.height / 2};
-      case 'custom':
-        return {x: offsetX, y: offsetY};
-      case 'default':
-      default:
-        return defaultOffset;
-    }
-  }, [mode, offsetX, offsetY]);
-
   const {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
@@ -608,7 +608,6 @@ function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.
       }];
     },
     preview,
-    getPreviewOffset,
     onDragStart: action('onDragStart'),
     onDragEnd: action('onDragEnd')
   });
@@ -637,32 +636,22 @@ function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.
 
       {/* Custom drag preview */}
       <DragPreview ref={preview}>
-        {() => (
-          <div className={classNames(dndStyles, 'draggable', 'is-drag-preview')}>
-            <ShowMenu size="XS" />
-            <span>Preview</span>
-          </div>
-          )}
+        {() => {
+          const elem = (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview')}>
+              <ShowMenu size="XS" />
+              <span>Preview</span>
+            </div>
+          );
+
+          if (mode === 'custom') {
+            return {element: elem, x: offsetX, y: offsetY};
+          }
+
+          return elem;
+        }}
       </DragPreview>
     </>
-  );
-}
-
-function DraggableCollectionWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.Element {
-  const getPreviewOffset = React.useCallback(({previewRect, defaultOffset}: any) => {
-    switch (mode) {
-      case 'center':
-        return {x: previewRect.width / 2, y: previewRect.height / 2};
-      case 'custom':
-        return {x: offsetX, y: offsetY};
-      case 'default':
-      default:
-        return defaultOffset;
-    }
-  }, [mode, offsetX, offsetY]);
-
-  return (
-    <DraggableCollectionExample getPreviewOffset={getPreviewOffset} />
   );
 }
 
@@ -677,7 +666,7 @@ export const PreviewOffset: DnDStoryObj = {
   argTypes: {
     mode: {
       control: 'select',
-      options: ['default', 'center', 'custom'],
+      options: ['default', 'custom'],
       defaultValue: 'default'
     },
     offsetX: {
@@ -699,7 +688,7 @@ export const PreviewOffset: DnDStoryObj = {
 export const CollectionPreviewOffset: DnDStoryObj = {
   render: (args) => (
     <Flex direction="column" gap="size-200" alignItems="center">
-      <DraggableCollectionWithPreview {...args} />
+      <DraggableCollectionExample {...args} />
       <Droppable />
     </Flex>
   ),
@@ -707,7 +696,7 @@ export const CollectionPreviewOffset: DnDStoryObj = {
   argTypes: {
     mode: {
       control: 'select',
-      options: ['default', 'center', 'custom'],
+      options: ['default', 'custom'],
       defaultValue: 'default'
     },
     offsetX: {
