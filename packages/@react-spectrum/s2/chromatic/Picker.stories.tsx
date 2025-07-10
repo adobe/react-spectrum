@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncPickerStory, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/Picker.stories';
+import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/Picker.stories';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../src';
@@ -27,8 +27,9 @@ const meta: Meta<typeof Picker<any>> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Picker<any>>;
 
-export const Default = {
+export const Default: Story = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -36,31 +37,31 @@ export const Default = {
     let body = canvasElement.ownerDocument.body;
     await within(body).findByRole('listbox');
   }
-} as StoryObj;
-
-export const WithSections = {
-  ...Sections,
-  play: async (context) => await Default.play!(context)
 };
 
-export const DynamicExample = {
+export const WithSections: Story = {
+  ...Sections,
+  play: Default.play
+};
+
+export const DynamicExample: Story = {
   ...Dynamic,
   name: 'Dynamic',
-  play: async (context) => await Default.play!(context)
-} as StoryObj;
+  play: Default.play
+};
 
-export const Icons = {
+export const Icons: Story = {
   ...WithIcons,
   name: 'With Icons',
-  play: async (context) => await Default.play!(context)
-} as StoryObj;
+  play: Default.play
+};
 
-export const WithCustomWidth = {
+export const WithCustomWidth: Story = {
   ...CustomWidth,
-  play: async (context) => await Default.play!(context)
-} as StoryObj;
+  play: Default.play
+};
 
-export const ContextualHelp = {
+export const ContextualHelp: Story = {
   ...ContextualHelpExample,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -70,7 +71,7 @@ export const ContextualHelp = {
   }
 };
 
-export const EmptyAndLoading = {
+export const EmptyAndLoading: Story = {
   render: () => (
     <Picker label="loading" loadingState="loading">
       {[]}
@@ -87,7 +88,7 @@ export const EmptyAndLoading = {
   }
 };
 
-export const AsyncResults = {
+export const AsyncResults: StoryObj<AsyncPickerStoryType> = {
   ...AsyncPickerStory,
   args: {
     ...AsyncPickerStory.args,
