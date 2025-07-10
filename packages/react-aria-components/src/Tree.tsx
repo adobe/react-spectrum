@@ -20,7 +20,7 @@ import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, Hover
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
@@ -723,13 +723,13 @@ export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadi
   let sentinelRef = useRef(null);
   let memoedLoadMoreProps = useMemo(() => ({
     onLoadMore,
-    // TODO: this collection will update anytime a row is expanded/collapsed becaused the flattenedRows will change.
+    // this collection will update anytime a row is expanded/collapsed becaused the flattenedRows will change.
     // This means onLoadMore will trigger but that might be ok cause the user should have logic to handle multiple loadMore calls
     collection: state?.collection,
     sentinelRef,
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   ref = useObjectRef<HTMLDivElement>(ref);
   let {rowProps, gridCellProps} = useTreeItem({node: item}, state, ref);
