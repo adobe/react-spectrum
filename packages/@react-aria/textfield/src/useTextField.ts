@@ -182,9 +182,11 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isComposing.current = true;
   }, []);
 
-  let onCompositionEnd = useCallback(() => {
+  let onCompositionEnd = useCallback((e) => {
     isComposing.current = false;
-    onChangeProp && onChangeProp(value);
+    if (e.data !== '') {
+      onChangeProp && onChangeProp(value);
+    }
   }, [onChangeProp, value]);
 
   return {
