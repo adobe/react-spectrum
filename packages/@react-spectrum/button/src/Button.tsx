@@ -145,6 +145,10 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
         aria-disabled={isPending ? 'true' : undefined}
         aria-label={isPending ? isPendingAriaLiveLabel : buttonProps['aria-label']}
         aria-labelledby={isPending ? isPendingAriaLiveLabelledby : buttonProps['aria-labelledby']}
+        onClick={(e) => {
+           e.currentTarget.blur();
+          props.onClick?.(e);
+        }}
         className={
           classNames(
             styles,
