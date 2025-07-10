@@ -312,7 +312,7 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
               href={props.href} />
           )}
         </Collection>
-        <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} />
+        {onLoadMore && loadingState && <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} /> }
       </TreeViewItem>
     </>
   );
