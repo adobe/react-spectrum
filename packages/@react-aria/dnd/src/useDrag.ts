@@ -128,7 +128,8 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     setGlobalAllowedDropOperations(allowed);
-    e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
+    let effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
+    e.dataTransfer.effectAllowed = effectAllowed === 'cancel' ? 'none' : effectAllowed;
 
     // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
@@ -221,7 +222,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
   // In this case, we need to manually call onDragEnd on cleanup
-   
+
   useLayoutEffect(() => {
     return () => {
       if (isDraggingRef.current) {

@@ -41,7 +41,7 @@ let changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
 }
-export let hasSetupGlobalListeners = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
+export let hasSetupGlobalListeners: Map<Window, GlobalListenerData> = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 

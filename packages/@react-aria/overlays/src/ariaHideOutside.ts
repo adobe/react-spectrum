@@ -207,7 +207,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   };
 }
 
-export function keepVisible(element: Element) {
+export function keepVisible(element: Element): (() => void) | undefined {
   let observer = observerStack[observerStack.length - 1];
   if (observer && !observer.visibleNodes.has(element)) {
     observer.visibleNodes.add(element);

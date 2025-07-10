@@ -11,26 +11,30 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
-import {LogicButton} from '../';
-import React from 'react';
+import {LogicButton, SpectrumLogicButtonProps} from '../';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 
 export default {
-  title: 'Button/LogicButton'
-};
+  title: 'Button/LogicButton',
+  excludeStories: ['Render']
+} as Meta<typeof LogicButton>;
 
-export const LogicVariantAnd = () => render({variant: 'and', label: 'and'});
+export type LogicButtonStory = StoryFn<typeof LogicButton>;
+
+export const LogicVariantAnd: LogicButtonStory = () => <Render variant="and" />;
 
 LogicVariantAnd.story = {
   name: 'logic variant: and'
 };
 
-export const LogicVariantOr = () => render({variant: 'or', label: 'or'});
+export const LogicVariantOr: LogicButtonStory = () => <Render variant="or" />;
 
 LogicVariantOr.story = {
   name: 'logic variant: or'
 };
 
-function render(props: any = {}) {
+export function Render(props: SpectrumLogicButtonProps = {variant: 'and'}): JSX.Element {
   return (
     <Flex gap="size-100">
       <LogicButton {...props}>

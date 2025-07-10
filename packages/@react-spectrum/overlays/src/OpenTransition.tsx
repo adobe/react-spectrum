@@ -11,8 +11,7 @@
  */
 
 import React, {JSX, JSXElementConstructor, ReactElement} from 'react';
-import {Transition} from 'react-transition-group';
-// TODO install @types/react-transition-group
+import {Transition, TransitionProps} from 'react-transition-group';
 
 const OPEN_STATES = {
   entering: false,
@@ -33,8 +32,7 @@ const OPEN_STATES = {
  */
 
 export function OpenTransition(
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  props
+  props: TransitionProps
 ): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
   if (process.env.CHROMATIC) {

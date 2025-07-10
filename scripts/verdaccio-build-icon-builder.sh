@@ -37,8 +37,11 @@ mkdir -p $verdaccio_path
 echo 'test icon builder'
 cd examples/s2-webpack-5-example
 mkdir icon-test
+
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
+npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
 echo 'concluded icon builder'
 
 echo 'testing icon builder library'
@@ -79,13 +82,16 @@ cat > icon-library-test/package.json << EOF
 EOF
 
 mkdir icon-library-test/src
+mkdir icon-library-test/src/illustrations
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_AlignRight_20_N.svg icon-library-test/src/S2_Icon_AlignRight_20_N.svg
+cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-library-test/src/illustrations/S2_lin_3D_48.svg
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
+yarn transform-icons --type illustration -i './src/illustrations/*.svg' -o ./ --isLibrary
 
 ls .
 
@@ -106,6 +112,7 @@ yarn npm publish --tag latest
 echo "Building icon builder fixture"
 cd ../../../scripts/icon-builder-fixture
 yarn install --no-immutable
+yarn tsc
 yarn build --public-url ./
 
 echo "Moving icon builder fixture to verdaccio"

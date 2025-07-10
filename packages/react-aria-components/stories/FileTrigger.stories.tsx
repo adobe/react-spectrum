@@ -15,7 +15,7 @@ import {Button, FileTrigger, Link} from 'react-aria-components';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/FileTrigger'
 };
 
 export const FileTriggerButton = (props) => (

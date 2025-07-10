@@ -1,4 +1,4 @@
-<svg style="max-height: 115px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 275 115">
+<svg style="max-height: 115px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 275 115">
   <title>Slider anatomy diagram</title>
   <desc>Shows a slider with labels pointing to its parts including the label, group, track, thumb, and output elements.</desc>
   <g transform="translate(-36 -40)">

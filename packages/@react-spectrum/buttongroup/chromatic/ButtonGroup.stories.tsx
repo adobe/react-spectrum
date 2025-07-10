@@ -11,52 +11,55 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {ButtonGroup} from '../';
-import React from 'react';
+import {ButtonGroup, SpectrumButtonGroupProps} from '../';
+import React, {JSX} from 'react';
+import {StoryFn} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
 export default {
   title: 'ButtonGroup'
 };
 
-export const Default = () => render({});
+export type ButtonGroupStory = StoryFn<typeof ButtonGroup>;
+
+export const Default: ButtonGroupStory = () => render({});
 
 Default.story = {
   name: 'default'
 };
 
-export const AlignCenter = () => render({align: 'center'});
+export const AlignCenter: ButtonGroupStory = () => render({align: 'center'});
 
 AlignCenter.story = {
   name: 'align: center'
 };
 
-export const AlignEnd = () => render({align: 'end'});
+export const AlignEnd: ButtonGroupStory = () => render({align: 'end'});
 
 AlignEnd.story = {
   name: 'align: end'
 };
 
-export const OrientationVertical = () => render({orientation: 'vertical'});
+export const OrientationVertical: ButtonGroupStory = () => render({orientation: 'vertical'});
 
 OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
-export const OrientationVerticalAlignCenter = () =>
+export const OrientationVerticalAlignCenter: ButtonGroupStory = () =>
   render({orientation: 'vertical', align: 'center'});
 
 OrientationVerticalAlignCenter.story = {
   name: 'orientation: vertical, align: center'
 };
 
-export const OrientationVerticalAlignEnd = () => render({orientation: 'vertical', align: 'end'});
+export const OrientationVerticalAlignEnd: ButtonGroupStory = () => render({orientation: 'vertical', align: 'end'});
 
 OrientationVerticalAlignEnd.story = {
   name: 'orientation: vertical, align: end'
 };
 
-function render(props) {
+function render(props: Omit<SpectrumButtonGroupProps, 'children'>): JSX.Element {
   return (
     <>
       <View borderColor="static-blue-400" borderWidth="thin">

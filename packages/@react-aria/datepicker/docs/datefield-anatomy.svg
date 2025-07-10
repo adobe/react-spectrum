@@ -1,4 +1,4 @@
-<svg style="max-height: 142px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 272 142">
+<svg style="max-height: 142px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 272 142">
   <title>Date field anatomy diagram</title>
   <desc>Shows a date field with labels pointing to its parts, including the label, field, and segments.</desc>
   <g id="Group_151081" data-name="Group 151081" transform="translate(-341 -39)">

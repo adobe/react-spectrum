@@ -30,7 +30,7 @@ import {
   StaticCardViewStory
 } from './GridCardView.stories';
 import {CardView, WaterfallLayout} from '../';
-import {ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
@@ -86,7 +86,7 @@ export default {
       options: ['none', 'single', 'multiple']
     }
   }
-} as ComponentStoryObj<typeof CardView>;
+} as Meta<typeof CardView>;
 
 export const DefaultWaterfallStatic: StaticCardViewStory = {
   ...StaticCards,
@@ -214,8 +214,8 @@ interface LayoutOptions {
   layoutOptions?: WaterfallLayoutOptions
 }
 
-type CustomWaterfallLayoutStory = ComponentStoryObj<typeof CustomWaterfallLayout>;
-function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
+type CustomWaterfallLayoutStory = StoryObj<typeof CustomWaterfallLayout>;
+function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOptions): JSX.Element {
   let {
     layoutOptions,
     ...otherProps

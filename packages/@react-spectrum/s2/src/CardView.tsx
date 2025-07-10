@@ -24,7 +24,7 @@ import {
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
 import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
@@ -33,7 +33,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -178,13 +178,15 @@ const cardViewStyles = style({
       isFocusVisible: 'solid'
     }
   },
-  outlineOffset: -2
+  outlineOffset: -2,
+  height: {
+    isActionBar: 'full'
+  }
 }, getAllowedOverrides({height: true}));
 
 const wrapperStyles = style({
   position: 'relative',
-  overflow: 'clip',
-  size: 'fit'
+  overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
@@ -288,7 +290,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading', isActionBar: !!props.renderActionBar}, !props.renderActionBar ? styles : undefined)}>
               {renderer}
             </AriaGridList>
           </ImageCoordinator>

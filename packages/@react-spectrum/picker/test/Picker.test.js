@@ -1674,6 +1674,7 @@ describe('Picker', function () {
       expect(options.length).toBe(60);
       options.forEach((option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name));
 
+      fireEvent.input(hiddenSelect, {target: {value: 'CA'}});
       fireEvent.change(hiddenSelect, {target: {value: 'CA'}});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('CA');
@@ -2014,6 +2015,54 @@ describe('Picker', function () {
       await user.click(button);
       expect(input).toHaveValue('one');
     });
+
+
+    it('should support form prop', () => {
+      render(
+        <Provider theme={theme}>
+          <Picker label="Test" name="picker" form="test">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let input = document.querySelector('[name=picker]');
+      expect(input).toHaveAttribute('form', 'test');
+    });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultSelectedKey when submitting form action', async () => {
+        function Test() {        
+          const [value, formAction] = React.useActionState(() => 'two', 'one');
+          
+          return (
+            <Provider theme={theme}>
+              <form action={formAction}>
+                <Picker data-testid="picker" name="picker" label="Test" defaultSelectedKey={value}>
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+                <input type="submit" data-testid="submit" />
+              </form>
+            </Provider>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let picker = getByTestId('picker');
+        let input = document.querySelector('[name=picker]');
+        expect(picker).toHaveTextContent('One');
+        expect(input).toHaveValue('one');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(picker).toHaveTextContent('Two');
+        expect(input).toHaveValue('two');
+      });
+    }
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {

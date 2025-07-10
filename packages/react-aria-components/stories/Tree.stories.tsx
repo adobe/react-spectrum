@@ -20,7 +20,7 @@ import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
 import {useTreeData} from '@react-stately/data';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Tree'
 };
 
 interface StaticTreeItemProps extends TreeItemProps {
@@ -875,4 +875,23 @@ export const TreeWithDragAndDrop = {
     },
     ...TreeExampleDynamic.argTypes
   }
+};
+
+function TreeDragAndDropVirtualizedRender(args) {
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <TreeDragAndDropExample defaultExpandedKeys={['projects', 'reports', 'project-2', 'project-5', 'report-1', 'reports-1', 'reports-1A', 'reports-1AB']} {...args} />
+      </Virtualizer>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <SecondTree {...args} />
+      </Virtualizer>
+    </div>
+  );
+}
+
+export const TreeWithDragAndDropVirtualized = {
+  ...TreeWithDragAndDrop,
+  render: TreeDragAndDropVirtualizedRender,
+  name: 'Tree with drag and drop (virtualized)'
 };

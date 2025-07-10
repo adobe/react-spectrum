@@ -1,0 +1,69 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Slider} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const section = 'S2';
+
+# Slider
+
+<PageDescription>{docs.exports.Slider.description}</PageDescription>
+
+<VisualExample
+  component={Slider}
+  docs={docs.exports.Slider}
+  links={docs.links}
+  props={['trackStyle', 'thumbStyle', 'size', 'labelPosition', 'labelAlign', 'isEmphasized', 'isDisabled']}
+  initialProps={{label: 'Cookies', defaultValue: 30}}
+  type="s2"
+  importSource="@react-spectrum/s2" />
+
+## Controlled
+
+```tsx render expanded
+"use client";
+import {Slider} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(25);
+  let [lastValue, setLastValue] = useState(value);
+
+  return (
+    <>
+      <Slider
+        label="Cookies to buy"
+        value={value}
+        onChange={setValue}
+        onChangeEnd={setLastValue} />
+      <p>Current value: {value}</p>
+      <p>Last value: {lastValue}</p>
+    </>
+  );
+}
+```
+
+## Value scale
+
+By default, slider values are percentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+
+The `step` prop can be used to snap the value to certain increments. The steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={Slider}
+  docs={docs.exports.Slider}
+  links={docs.links}
+  props={['minValue', 'maxValue', 'step', 'formatOptions']}
+  initialProps={{
+    label: 'Amount',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: 50,
+    step: 5
+  }} />
+
+## Props
+
+<PropTable component={docs.exports.Slider} links={docs.links} />

@@ -6,7 +6,7 @@ import {
   SelectionBehavior
 } from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
 function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
@@ -32,7 +32,7 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
   );
 }
 
-export function List<T extends object>(props: ListProps<T>) {
+export function List<T extends object>(props: ListProps<T>): JSX.Element {
   const ref = useRef<HTMLUListElement>(null);
   const state = useListState(props);
   const {listProps} = useSelectableList({
