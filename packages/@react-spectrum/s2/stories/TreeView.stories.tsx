@@ -33,7 +33,9 @@ import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useCallback, useState} from 'react';
+import { useAsyncList, useListData } from 'react-stately';
+import { TreeViewLoadMoreItem, TreeViewLoadMoreItemProps } from '../src/TreeView';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -243,9 +245,9 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
 };
 
 interface TreeViewItemType {
-  id: string,
+  id?: string,
   name: string,
-  icon: ReactElement,
+  icon?: ReactElement,
   childItems?: TreeViewItemType[]
 }
 
@@ -280,8 +282,8 @@ let rows: TreeViewItemType[] = [
   ]}
 ];
 
-const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType): ReactElement => {
-  let {childItems, name, icon} = props;
+const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps): ReactElement => {
+  let {childItems, name, icon = <FileTxt />, loadingState, onLoadMore} = props;
   return (
     <>
       <TreeViewItem id={props.id} textValue={name} href={props.href}>
@@ -302,7 +304,7 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
         <Collection items={childItems}>
           {(item) => (
             <DynamicTreeItem
-              id={item.id}
+              id={item.id || item.name}
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
@@ -310,6 +312,7 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
               href={props.href} />
           )}
         </Collection>
+        <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} />
       </TreeViewItem>
     </>
   );
@@ -384,5 +387,96 @@ export const WithLinks: StoryObj<typeof TreeExampleWithLinks> = {
     description: {
       data: 'every tree item should link to adobe.com'
     }
+  }
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => {
+  let root = [
+    {id: 'photos-1', name: 'Photos 1'},
+    {id: 'photos-2', name: 'Photos 2'},
+    {id: 'photos-3', name: 'Photos 3'},
+    {id: 'photos-4', name: 'Photos 4'},
+    {id: 'photos-5', name: 'Photos 5'},
+    {id: 'photos-6', name: 'Photos 6'}
+  ];
+
+  let rootData = useListData({
+    initialItems: root
+  });
+
+  let starWarsList = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      action('starwars loading')();
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let [isRootLoading, setRootLoading] = useState(false);
+  let onRootLoadMore = useCallback(() => {
+    if (!isRootLoading) {
+      action('root loading')();
+      setRootLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, name: string}[] = [];
+        let rootLength = rootData.items.length;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `photos-${i + rootLength + 1}`, name: `Photos-${i + rootLength + 1}`});
+        }
+        rootData.append(...dataToAppend);
+        setRootLoading(false);
+      }, args.delay);
+    }
+  }, [isRootLoading, rootData, args.delay]);
+
+  return (
+    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
+      <TreeView aria-label="async loading tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+        <DynamicTreeItem
+          id="starwars"
+          icon={<Folder />}
+          name="Star Wars"
+          textValue="Star Wars"
+          childItems={starWarsList.items}
+          loadingState={starWarsList.loadingState}
+          onLoadMore={starWarsList.loadMore} />
+        <Collection items={rootData.items}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={<FileTxt />}
+              name={item.name}
+              textValue={item.name} />
+          )}
+        </Collection>
+        <TreeViewLoadMoreItem loadingState={isRootLoading ? 'loading' : 'idle'} onLoadMore={onRootLoadMore} />
+      </TreeView>
+    </div>
+  );
+};
+
+export const AsyncLoading: StoryObj<typeof AsyncTree> = {
+  render: AsyncTree,
+  name: 'Async loading',
+  args: {
+    selectionMode: 'multiple',
+    delay: 500
   }
 };

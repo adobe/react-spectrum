@@ -720,6 +720,7 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
 }
 
 export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
   let sentinelRef = useRef(null);
@@ -754,6 +755,11 @@ export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadi
       level
     }
   });
+  let style = {};
+
+  if (isVirtualized) {
+    style = {display: 'contents'};
+  }
 
   return (
     <>
@@ -768,7 +774,7 @@ export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadi
           {...mergeProps(filterDOMProps(props as any), ariaProps)}
           {...renderProps}
           data-level={level}>
-          <div {...gridCellProps}>
+          <div {...gridCellProps} style={style}>
             {renderProps.children}
           </div>
         </div>
