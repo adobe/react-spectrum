@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, UNSTABLE_useLoadMoreSentinel, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -108,10 +108,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
     yield this.head;
     yield this.body;
-  }
-
-  get size() {
-    return this.rows.length;
   }
 
   getFirstKey() {
@@ -932,7 +928,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
-  let isEmpty = collection.size === 0 || (collection.rows.length === 1 && collection.rows[0].type === 'loader');
+  let isEmpty = collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty
@@ -955,7 +951,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     let rowHeaderProps = {};
     let style = {};
     if (isVirtualized) {
-      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
       rowHeaderProps['aria-colspan'] = numColumns;
       style = {display: 'contents'};
     } else {
@@ -1353,7 +1348,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLTableRowElement> {
+export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLTableRowElement> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -1364,7 +1359,7 @@ export interface TableLoadingSentinelProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingSentinelProps, ref: ForwardedRef<HTMLTableRowElement | HTMLDivElement>, item: Node<T>) {
+export const TableLoadMoreItem = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -1377,7 +1372,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
     sentinelRef,
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   let renderProps = useRenderProps({
     ...otherProps,
@@ -1393,7 +1388,9 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
   let style = {};
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = item.index + 1 + state.collection.headerRows.length;
+    // For now don't include aria-rowindex on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // row count
     rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {

@@ -23,7 +23,7 @@ import {clamp} from '@react-aria/utils';
 import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {FieldLabel} from './Field';
-import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
@@ -32,7 +32,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
+export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation' | keyof GlobalDOMAttributes>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
   /**
    * The size of the Slider.
