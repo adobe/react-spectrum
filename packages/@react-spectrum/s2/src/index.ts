@@ -86,7 +86,7 @@ export {ToastContainer as UNSTABLE_ToastContainer, ToastQueue as UNSTABLE_ToastQ
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
-export {TreeView, TreeViewItem, TreeViewItemContent} from './TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from './TreeView';
 
 export {pressScale} from './pressScale';
 
@@ -164,5 +164,5 @@ export type {ToastOptions, ToastContainerProps} from './Toast';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
-export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps} from './TreeView';
+export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from './TreeView';
 export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';
