@@ -119,7 +119,8 @@ let popover = style({
   zIndex: 9999,
   pointerEvents: {
     isExiting: 'none'
-  }
+  },
+  outlineStyle: 'none'
 }, getAllowedOverrides());
 // TODO: animations and real Popover Arrow
 
