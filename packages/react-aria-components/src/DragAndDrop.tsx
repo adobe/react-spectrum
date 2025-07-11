@@ -78,7 +78,7 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
       let nextKey = dropState.collection.getKeyAfter(dropTargetKey);
       if (nextKey != null) {
         let targetLevel = dropState.collection.getItem(dropTargetKey)?.level ?? 0;
-        // Skip over any rows that are descendants of the target (can't drop an item into itself)
+        // Skip over any rows that are descendants of the target ("after" position should be after all children)
         while (nextKey) {
           let node = dropState.collection.getItem(nextKey);
           // eslint-disable-next-line max-depth
