@@ -10,36 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorThumb} from '../src';
-import {ColorSliderExample} from './ColorSlider.stories';
+import {ColorArea, ColorAreaProps, ColorThumb} from '../src';
+import {ColorSliderExampleRender} from './ColorSlider.stories';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from 'react-stately';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 
 export default {
   title: 'React Aria Components/ColorArea',
   decorators: [
     (Story, ctx) => {
       let args = ctx.args;
-      let [color, setColor] = useState(parseColor(args.defaultValue));
+      let [color, setColor] = useState(parseColor(args.defaultValue?.toString() ?? ''));
       let zChannel = color.getColorChannels().find(c => c !== args.xChannel && c !== args.yChannel);
       return (
         <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
           {Story({...ctx, args: {...ctx.args, value: color, onChange: setColor}})}
-          <ColorSliderExample channel={zChannel} value={color} onChange={setColor} />
+          <ColorSliderExampleRender channel={zChannel!} value={color} onChange={setColor} />
         </div>
       );
     }
-  ]
-};
+  ],
+  component: ColorArea,
+  excludeStories: ['ColorAreaExampleRender']
+} as Meta<typeof ColorArea>;
+
+export type ColorAreaStory = StoryObj<typeof ColorArea>;
 
 const SIZE = 192;
 const FOCUSED_THUMB_SIZE = 28;
 const THUMB_SIZE = 20;
 const BORDER_RADIUS = 4;
 
-export const ColorAreaExample = (args) => (
+export const ColorAreaExampleRender = (props: ColorAreaProps): JSX.Element => (
   <ColorArea
-    {...args}
+    {...props}
     style={({isDisabled}) => ({
       width: SIZE,
       height: SIZE,
@@ -62,57 +67,61 @@ export const ColorAreaExample = (args) => (
   </ColorArea>
 );
 
-ColorAreaExample.args = {
-  defaultValue: 'rgb(100, 149, 237)',
-  xChannel: 'red',
-  yChannel: 'green'
-};
-
-ColorAreaExample.argTypes = {
-  xChannel: {
-    control: 'select',
-    options: ['red', 'green', 'blue']
+export const ColorAreaExample: ColorAreaStory = {
+  render: (args) => (
+    <ColorAreaExampleRender {...args} />
+  ),
+  args: {
+    defaultValue: 'rgb(100, 149, 237)',
+    xChannel: 'red',
+    yChannel: 'green'
   },
-  yChannel: {
-    control: 'select',
-    options: ['red', 'green', 'blue']
+  argTypes: {
+    xChannel: {
+      control: 'select',
+      options: ['red', 'green', 'blue']
+    },
+    yChannel: {
+      control: 'select',
+      options: ['red', 'green', 'blue']
+    }
   }
 };
 
-export const ColorAreaHSL = (args) => <ColorAreaExample {...args} />;
-
-ColorAreaHSL.args = {
-  defaultValue: 'hsl(219, 79%, 66%)',
-  xChannel: 'hue',
-  yChannel: 'saturation'
-};
-
-ColorAreaHSL.argTypes = {
-  xChannel: {
-    control: 'select',
-    options: ['hue', 'saturation', 'lightness']
+export const ColorAreaHSL: ColorAreaStory = {
+  render: ColorAreaExample.render,
+  args: {
+    defaultValue: 'hsl(219, 79%, 66%)',
+    xChannel: 'hue',
+    yChannel: 'saturation'
   },
-  yChannel: {
-    control: 'select',
-    options: ['hue', 'saturation', 'lightness']
+  argTypes: {
+    xChannel: {
+      control: 'select',
+      options: ['hue', 'saturation', 'lightness']
+    },
+    yChannel: {
+      control: 'select',
+      options: ['hue', 'saturation', 'lightness']
+    }
   }
 };
 
-export const ColorAreaHSB = (args) => <ColorAreaExample {...args} />;
-
-ColorAreaHSB.args = {
-  defaultValue: 'hsb(219, 79%, 66%)',
-  xChannel: 'hue',
-  yChannel: 'saturation'
-};
-
-ColorAreaHSB.argTypes = {
-  xChannel: {
-    control: 'select',
-    options: ['hue', 'saturation', 'brightness']
+export const ColorAreaHSB: ColorAreaStory = {
+  render: ColorAreaExample.render,
+  args: {
+    defaultValue: 'hsb(219, 79%, 66%)',
+    xChannel: 'hue',
+    yChannel: 'saturation'
   },
-  yChannel: {
-    control: 'select',
-    options: ['hue', 'saturation', 'brightness']
+  argTypes: {
+    xChannel: {
+      control: 'select',
+      options: ['hue', 'saturation', 'brightness']
+    },
+    yChannel: {
+      control: 'select',
+      options: ['hue', 'saturation', 'brightness']
+    }
   }
 };

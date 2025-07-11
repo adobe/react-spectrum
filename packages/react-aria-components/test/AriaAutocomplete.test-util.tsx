@@ -63,7 +63,7 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
   selectionListener?: jest.Mock<any, any>,
   actionListener?: jest.Mock<any, any>
 }
-export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = 'menu', selectionListener, actionListener}: AriaAutocompleteTestProps) => {
+export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = 'menu', selectionListener, actionListener}: AriaAutocompleteTestProps): void => {
   describe(prefix ? prefix + ' AriaAutocomplete' : 'AriaAutocomplete', function () {
     let user;
     let collectionNodeRole;
