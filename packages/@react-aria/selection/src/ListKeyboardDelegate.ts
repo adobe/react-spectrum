@@ -50,7 +50,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.orientation = opts.orientation || 'vertical';
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
-      this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref);
+      this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref, this.orientation);
     } else {
       this.collection = args[0];
       this.disabledKeys = args[1];
@@ -59,7 +59,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.layout = 'stack';
       this.orientation = 'vertical';
       this.disabledBehavior = 'all';
-      this.layoutDelegate = new DOMLayoutDelegate(this.ref);
+      this.layoutDelegate = new DOMLayoutDelegate(this.ref, this.orientation);
     }
 
     // If this is a vertical stack, remove the left/right methods completely

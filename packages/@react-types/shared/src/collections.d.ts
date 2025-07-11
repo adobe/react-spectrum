@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {Key, Orientation} from '@react-types/shared';
 import {LinkDOMProps} from './dom';
 import {ReactElement, ReactNode} from 'react';
 
@@ -137,6 +137,8 @@ export interface Size {
 
 /** A LayoutDelegate provides layout information for collection items. */
 export interface LayoutDelegate {
+  /** Returns the orientation of the layout. */
+  getOrientation(): Orientation,
   /** Returns a rectangle for the item with the given key. */
   getItemRect(key: Key): Rect | null,
   /** Returns the visible rectangle of the collection. */

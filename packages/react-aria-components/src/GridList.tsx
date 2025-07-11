@@ -19,7 +19,7 @@ import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPers
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Orientation, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -75,7 +75,13 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid'
+  layout?: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items. Usually this is the
+   * direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
 }
 
 
