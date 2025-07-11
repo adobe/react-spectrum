@@ -334,7 +334,6 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
   // use isolation to start a new stacking context so that we can use zIndex -1 for the selection span.
   return (
     <AriaCalendarGrid
-      cellPadding={0}
       className={style({
         borderCollapse: 'collapse',
         borderSpacing: 0,

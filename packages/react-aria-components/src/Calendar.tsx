@@ -30,7 +30,7 @@ import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, us
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {AllHTMLAttributes, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -325,7 +325,7 @@ export interface CalendarCellRenderProps {
   isToday: boolean
 }
 
-export interface CalendarGridProps extends StyleProps, GlobalDOMAttributes<HTMLTableElement>, Pick<AllHTMLAttributes<HTMLTableElement>, 'cellPadding' | 'cellSpacing'> {
+export interface CalendarGridProps extends StyleProps, GlobalDOMAttributes<HTMLTableElement> {
   /**
    * Either a function to render calendar cells for each date in the month,
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
@@ -385,8 +385,6 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, weeksInMonth}}>
       <table
         {...mergeProps(DOMProps, gridProps)}
-        cellPadding={props.cellPadding}
-        cellSpacing={props.cellSpacing}
         ref={ref}
         style={props.style}
         className={props.className ?? 'react-aria-CalendarGrid'}>
