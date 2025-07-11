@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -197,8 +197,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
@@ -503,7 +502,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -514,7 +513,7 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+export const GridListLoadMoreItem = createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -526,7 +525,7 @@ export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponen
     sentinelRef,
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   let renderProps = useRenderProps({
     ...otherProps,
@@ -535,6 +534,9 @@ export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponen
     defaultClassName: 'react-aria-GridListLoadingIndicator',
     values: null
   });
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
 
   return (
     <>
@@ -548,7 +550,6 @@ export const UNSTABLE_GridListLoadingSentinel = /*#__PURE__*/ createLeafComponen
           {...renderProps}
           {...filterDOMProps(props, {global: true})}
           role="row"
-          aria-rowindex={isVirtualized ? item.index + 1 : undefined}
           ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}

@@ -23,6 +23,8 @@ import {
   GridList,
   GridListItem,
   GridListItemProps,
+  GridListLoadMoreItem,
+  GridListProps,
   Heading,
   ListLayout,
   Modal,
@@ -42,7 +44,6 @@ import {LoadingSpinner} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
   title: 'React Aria Components/GridList',
@@ -143,7 +144,7 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export let VirtualizedGridList: GridListStory = () => {
+const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -180,12 +181,22 @@ export let VirtualizedGridList: GridListStory = () => {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         style={{height: 400}}
-        aria-label="virtualized listbox"
+        aria-label="virtualized gridlist"
         items={list.items}>
-        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        <Collection items={list.items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={args.isLoading} />
       </GridList>
     </Virtualizer>
   );
+};
+
+export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
+  render: (args) => <VirtualizedGridListRender {...args} />,
+  args: {
+    isLoading: false
+  }
 };
 
 export let VirtualizedGridListGrid: GridListStory = () => {
@@ -224,7 +235,7 @@ interface Character {
 
 const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       style={{
         height: 30,
         width: '100%',
@@ -234,7 +245,7 @@ const MyGridListLoaderIndicator = (props) => {
       }}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_GridListLoadingSentinel>
+    </GridListLoadMoreItem>
   );
 };
 

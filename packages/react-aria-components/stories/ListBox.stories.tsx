@@ -11,8 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {ListBoxProps, UNSTABLE_ListBoxLoadingSentinel} from '../';
+import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
@@ -256,8 +256,96 @@ ListBoxDndCustomDropIndicator.story = {
   }
 };
 
+interface PreviewOffsetArgs {
+  /** Strategy for positioning the preview. */
+  mode: 'default' | 'custom',
+  /** X offset in pixels (only used when mode = custom). */
+  offsetX: number,
+  /** Y offset in pixels (only used when mode = custom). */
+  offsetY: number
+}
 
-export const ListBoxHoverr: ListBoxStory = () => (
+function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffsetArgs & ListBoxProps<typeof albums[0]>) {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview(items) {
+      let element = (
+        <div style={{display: 'flex', alignItems: 'center', padding: 4, background: 'white', border: '1px solid gray'}}>
+          <Text>{items[0]['text/plain']}</Text>
+          {items.length > 1 && <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>}
+        </div>
+      );
+
+      if (mode === 'custom') {
+        return {element, x: offsetX, y: offsetY};
+      }
+      return element;
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums with preview offset"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <ListBoxItem>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+
+export const ListBoxPreviewOffset = {
+  render(args) {
+    return <ListBoxDndWithPreview {...args} />;
+  },
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal',
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    },
+    mode: {
+      control: 'select',
+      options: ['default', 'custom']
+    },
+    offsetX: {
+      control: 'number'
+    },
+    offsetY: {
+      control: 'number'
+    }
+  }
+};
+
+export const ListBoxHover: ListBoxStory = () => (
   <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
     <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
@@ -317,7 +405,7 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-function VirtualizedListBoxRender({variableHeight}: {variableHeight: boolean}): JSX.Element {
+function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: boolean, isLoading?: boolean}): JSX.Element {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
@@ -332,17 +420,21 @@ function VirtualizedListBoxRender({variableHeight}: {variableHeight: boolean}): 
     <Virtualizer
       layout={new ListLayout({
         estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26
+        estimatedHeadingHeight: 26,
+        loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
-        {section => (
-          <ListBoxSection className={styles.group}>
-            <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
-            <Collection items={section.children}>
-              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-            </Collection>
-          </ListBoxSection>
-        )}
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+        <Collection items={sections}>
+          {section => (
+            <ListBoxSection className={styles.group}>
+              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <Collection items={section.children}>
+                {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+              </Collection>
+            </ListBoxSection>
+          )}
+        </Collection>
+        <MyListBoxLoaderIndicator orientation="vertical" isLoading={isLoading} />
       </ListBox>
     </Virtualizer>
   );
@@ -351,7 +443,8 @@ function VirtualizedListBoxRender({variableHeight}: {variableHeight: boolean}): 
 export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
   render: (args) => <VirtualizedListBoxRender {...args} />,
   args: {
-    variableHeight: false
+    variableHeight: false,
+    isLoading: false
   }
 };
 
@@ -364,7 +457,7 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
         estimatedHeadingHeight: 26
       }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
-        <></>
+        <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
   )
@@ -532,7 +625,7 @@ interface Character {
 const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       style={{
         height: orientation === 'horizontal' ? 100 : 30,
         width: orientation === 'horizontal' ? 30 : '100%',
@@ -543,7 +636,7 @@ const MyListBoxLoaderIndicator = (props) => {
       }}
       {...otherProps}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };
 

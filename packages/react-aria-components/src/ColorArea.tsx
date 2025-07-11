@@ -60,7 +60,7 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
   return (
     <div
       ref={ref}
-      {...mergeProps(DOMProps, renderProps, colorAreaProps)}
+      {...mergeProps(DOMProps, colorAreaProps, renderProps)}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}>
       <Provider

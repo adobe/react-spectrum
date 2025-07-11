@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -50,7 +50,7 @@ interface ProgressBarStyleProps {
 
 }
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
+export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }

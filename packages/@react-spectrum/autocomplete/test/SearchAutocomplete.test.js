@@ -1844,7 +1844,7 @@ describe('SearchAutocomplete', function () {
       expect(() => within(tray).getByText('No results')).toThrow();
     });
 
-    it.skip('user can select options by pressing them', async function () {
+    it('user can select options by pressing them', async function () {
       let {getByRole, getByText, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1892,7 +1892,7 @@ describe('SearchAutocomplete', function () {
       expect(items[1]).toHaveAttribute('aria-selected', 'true');
     });
 
-    it.skip('user can select options by focusing them and hitting enter', async function () {
+    it('user can select options by focusing them and hitting enter', async function () {
       let {getByRole, getByText, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
