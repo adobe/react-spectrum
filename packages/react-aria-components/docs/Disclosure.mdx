@@ -40,13 +40,12 @@ type: component
 
 ```tsx example
 import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 <Disclosure>
   <Heading>
     <Button slot="trigger">
-      <svg viewBox="0 0 24 24">
-        <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-      </svg>
+      <ChevronRight size={18} />
       System Requirements
     </Button>
   </Heading>
@@ -79,8 +78,6 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
     svg {
       rotate: 0deg;
       transition: rotate 200ms;
-      width: 12px;
-      height: 12px;
       fill: none;
       stroke: currentColor;
       stroke-width: 3px;
@@ -102,7 +99,7 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
 
 ## Features
 
-Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
+Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy.
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
 * **Keyboard Interaction** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
@@ -147,9 +144,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
     <Disclosure {...props}>
       <Heading>
         <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
+          <ChevronRight size={18} />
           {title}
         </Button>
       </Heading>
@@ -194,7 +189,7 @@ function ControlledExpanded() {
 
 ## Disabled
 
-A Disclosure can be disabled using the `isDisabled` prop. 
+A Disclosure can be disabled using the `isDisabled` prop.
 
 ```tsx example
 <MyDisclosure title="Introduction to Knitting" isDisabled>
@@ -211,9 +206,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
   <div style={{display: 'flex', alignItems: 'center'}}>
     <Heading>
       <Button slot="trigger">
-        <svg viewBox="0 0 24 24">
-          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-        </svg>
+        <ChevronRight size={18} />
         System Requirements
       </Button>
     </Heading>

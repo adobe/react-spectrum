@@ -1,0 +1,76 @@
+@import "./theme.css";
+
+.react-aria-Switch {
+  display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
+  align-items: center;
+  gap: 0.499625rem;
+  font-size: 1.000125rem;
+  color: var(--text-color);
+  forced-color-adjust: none;
+
+  .indicator {
+    width: 1.75rem;
+    height: 1.000125rem;
+    border: 2px solid var(--border-color);
+    background: var(--background-color);
+    border-radius: 1.000125rem;
+    transition: all 200ms;
+
+    &:before {
+      content: '';
+      display: block;
+      margin: 0.125125rem;
+      width: 0.749875rem;
+      height: 0.749875rem;
+      background: var(--highlight-background);
+      border-radius: 16px;
+      transition: all 200ms;
+    }
+  }
+
+  &[data-pressed] .indicator {
+    border-color: var(--border-color-pressed);
+
+    &:before {
+      background: var(--highlight-background-pressed);
+    }
+  }
+
+  &[data-selected] {
+    .indicator {
+      border-color: var(--highlight-background);
+      background: var(--highlight-background);
+
+      &:before {
+        background: var(--field-background);
+        transform: translateX(100%);
+      }
+    }
+
+    &[data-pressed] {
+      .indicator {
+        border-color: var(--highlight-background-pressed);
+        background: var(--highlight-background-pressed);
+      }
+    }
+  }
+
+  &[data-focus-visible] .indicator {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+
+    .indicator {
+      border-color: var(--border-color-disabled);
+
+      &:before {
+        background: var(--border-color-disabled);
+      }
+    }
+  }
+}

@@ -707,6 +707,7 @@ This example shows a `TabNavigation` component that can be placed within `Tabs` 
 
 ```tsx example
 import {TabListStateContext, Button} from 'react-aria-components';
+import {ArrowLeft, ArrowRight} from 'lucide-react';
 
 function TabNavigation() {
   /*- begin highlight -*/
@@ -718,8 +719,8 @@ function TabNavigation() {
   let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
   return (
     <div className="button-group">
-      <Button aria-label="Previous tab" onPress={onPrev}>←</Button>
-      <Button aria-label="Next tab" onPress={onNext}>→</Button>
+      <Button aria-label="Previous tab" onPress={onPrev}><ArrowLeft size={16} /></Button>
+      <Button aria-label="Next tab" onPress={onNext}><ArrowRight size={16} /></Button>
     </div>
   );
 }
