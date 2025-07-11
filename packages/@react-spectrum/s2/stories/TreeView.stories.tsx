@@ -68,16 +68,6 @@ const meta: Meta<typeof TreeView> = {
         }
       },
       table: {category: 'Events'}
-    },
-    isDetached: {
-      table: {
-        disable: true
-      }
-    },
-    isEmphasized: {
-      table: {
-        disable: true
-      }
     }
   }
 };

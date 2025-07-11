@@ -47,12 +47,12 @@ import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
-  /** @private */
+  // See https://github.com/adobe/react-spectrum/pull/7343 for what remaining combinations are left
+  /** Whether the tree should be displayed with a [detached style](https://spectrum.adobe.com/page/tree-view/#Detached). */
   isDetached?: boolean,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
-  // not fully supported yet
-  /** @private */
+  /** Whether the tree should be displayed with a [emphasized style](https://spectrum.adobe.com/page/tree-view/#Emphasis). */
   isEmphasized?: boolean
 }
 
