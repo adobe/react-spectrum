@@ -244,6 +244,94 @@ ListBoxDndCustomDropIndicator.story = {
   }
 };
 
+interface PreviewOffsetArgs {
+  /** Strategy for positioning the preview. */
+  mode: 'default' | 'custom',
+  /** X offset in pixels (only used when mode = custom). */
+  offsetX: number,
+  /** Y offset in pixels (only used when mode = custom). */
+  offsetY: number
+}
+
+function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffsetArgs & ListBoxProps<typeof albums[0]>) {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview(items) {
+      let element = (
+        <div style={{display: 'flex', alignItems: 'center', padding: 4, background: 'white', border: '1px solid gray'}}>
+          <Text>{items[0]['text/plain']}</Text>
+          {items.length > 1 && <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>}
+        </div>
+      );
+
+      if (mode === 'custom') {
+        return {element, x: offsetX, y: offsetY};
+      }
+      return element;
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums with preview offset"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <ListBoxItem>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+
+export const ListBoxPreviewOffset = {
+  render(args) {
+    return <ListBoxDndWithPreview {...args} />;
+  },
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal',
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    },
+    mode: {
+      control: 'select',
+      options: ['default', 'custom']
+    },
+    offsetX: {
+      control: 'number'
+    },
+    offsetY: {
+      control: 'number'
+    }
+  }
+};
 
 export const ListBoxHover = () => (
   <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
