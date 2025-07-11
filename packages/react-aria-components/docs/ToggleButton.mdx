@@ -130,6 +130,7 @@ A default selection state for a toggle button can be set using the `defaultSelec
 
 ```tsx example
 import {Star} from 'lucide-react';
+
 function Example() {
   let [isSelected, setSelected] = React.useState(false);
 
@@ -138,7 +139,7 @@ function Example() {
       isSelected={isSelected}
       onChange={setSelected}
       aria-label="Star">
-      <Star />
+      <Star size={18} />
     </ToggleButton>
   );
 }
@@ -232,6 +233,7 @@ This example shows a `ButtonGroup` component that renders a group of buttons. Th
 
 ```tsx example
 import {ToggleButtonContext} from 'react-aria-components';
+import {Star, Flag} from 'lucide-react';
 
 interface ButtonGroupProps {
   children?: React.ReactNode,
@@ -251,8 +253,8 @@ function ButtonGroup({children, isDisabled}: ButtonGroupProps) {
 }
 
 <ButtonGroup isDisabled>
-  <ToggleButton isSelected aria-label="Favorite">★</ToggleButton>
-  <ToggleButton aria-label="Flag">⚑</ToggleButton>
+  <ToggleButton isSelected aria-label="Favorite"><Star size={18} /></ToggleButton>
+  <ToggleButton aria-label="Flag"><Flag size={18} /></ToggleButton>
 </ButtonGroup>
 ```
 

@@ -1,7 +1,5 @@
 'use client';
 import {
-  DateInput,
-  DateSegment,
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
   TimeValue,
@@ -9,6 +7,7 @@ import {
 } from 'react-aria-components';
 import {Label, FieldError} from './Form';
 import {Text} from './Content';
+import {DateInput, DateSegment} from './DateField';
 
 import './TimeField.css';
 
