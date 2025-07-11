@@ -13,10 +13,11 @@
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {Text} from '@react-spectrum/s2';
+import {userEvent} from '@storybook/test';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -27,9 +28,10 @@ const meta: Meta<typeof Tabs> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Tabs>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <Tabs {...args} styles={style({width: 450, height: 256})} aria-label="History of Ancient Rome">
       <TabList>
         <Tab id="FoR">Founding of Rome</Tab>
@@ -56,8 +58,8 @@ export const Example = {
   )
 };
 
-export const Disabled = {
-  render: (args: any) => (
+export const Disabled: Story = {
+  render: (args) => (
     <Tabs {...args} aria-label="History of Ancient Rome" styles={style({width: 450, height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
       <TabList>
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
@@ -77,8 +79,8 @@ export const Disabled = {
   )
 };
 
-export const Icons = {
-  render: (args: any) => (
+export const Icons: Story = {
+  render: (args) => (
     <Tabs {...args} aria-label="History of Ancient Rome" styles={style({width: 208, height: 144})} labelBehavior="hide">
       <TabList>
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
@@ -96,4 +98,29 @@ export const Icons = {
       </TabPanel>
     </Tabs>
   )
+};
+
+export const Collasped = {
+  render: (args: any) => (
+    <Tabs {...args} aria-label="Settings" styles={style({width: 200, height: 144})}>
+      <TabList>
+        <Tab id="Mouse">Mouse settings</Tab>
+        <Tab id="Keyboard">Keyboard settings</Tab>
+        <Tab id="Gamepad">Gamepad settings</Tab>
+      </TabList>
+      <TabPanel id="Mouse">
+        Adjust the sensitivity and speed of your mouse
+      </TabPanel>
+      <TabPanel id="Keyboard">
+        Customize the layout and function of your keyboard.
+      </TabPanel>
+      <TabPanel id="Gamepad">
+        Configure the buttons and triggers on your gamepad.
+      </TabPanel>
+    </Tabs>
+  ),
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+  }
 };

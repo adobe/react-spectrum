@@ -12,15 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ListBox'
 };
 
 export const ListBoxExample = (args) => (
@@ -181,6 +181,158 @@ ListBoxDnd.story = {
   }
 };
 
+export const ListBoxDndCustomDropIndicator = (props: ListBoxProps<typeof albums[0]>) => {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target, keys, draggedKey) {
+      return (
+        <DropIndicator target={target} style={({isDropTarget}) => ({width: '150px', height: '150px', background: isDropTarget ? 'blue' : 'transparent', color: 'white', display: isDropTarget ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'})}>
+          <div>
+            keys: {keys ? Array.from(keys).join(', ') : 'undefined'}
+          </div>
+          <div>
+            draggedKey: {draggedKey}
+          </div>
+        </DropIndicator>
+      );
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <ListBoxItem>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+};
+
+ListBoxDndCustomDropIndicator.story = {
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
+
+interface PreviewOffsetArgs {
+  /** Strategy for positioning the preview. */
+  mode: 'default' | 'custom',
+  /** X offset in pixels (only used when mode = custom). */
+  offsetX: number,
+  /** Y offset in pixels (only used when mode = custom). */
+  offsetY: number
+}
+
+function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffsetArgs & ListBoxProps<typeof albums[0]>) {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview(items) {
+      let element = (
+        <div style={{display: 'flex', alignItems: 'center', padding: 4, background: 'white', border: '1px solid gray'}}>
+          <Text>{items[0]['text/plain']}</Text>
+          {items.length > 1 && <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>}
+        </div>
+      );
+
+      if (mode === 'custom') {
+        return {element, x: offsetX, y: offsetY};
+      }
+      return element;
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums with preview offset"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <ListBoxItem>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+
+export const ListBoxPreviewOffset = {
+  render(args) {
+    return <ListBoxDndWithPreview {...args} />;
+  },
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal',
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    },
+    mode: {
+      control: 'select',
+      options: ['default', 'custom']
+    },
+    offsetX: {
+      control: 'number'
+    },
+    offsetY: {
+      control: 'number'
+    }
+  }
+};
+
 export const ListBoxHover = () => (
   <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
     <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
@@ -241,13 +393,13 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-export function VirtualizedListBox({variableHeight}) {
+export function VirtualizedListBox(args) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
       const l = (s * 5) + i + 10;
-      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${args.variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
@@ -256,24 +408,31 @@ export function VirtualizedListBox({variableHeight}) {
     <Virtualizer
       layout={new ListLayout({
         estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26
+        estimatedHeadingHeight: 26,
+        loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
-        {section => (
-          <ListBoxSection className={styles.group}>
-            <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
-            <Collection items={section.children}>
-              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-            </Collection>
-          </ListBoxSection>
-        )}
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+        <Collection items={sections}>
+          {section => (
+            <ListBoxSection className={styles.group}>
+              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <Collection items={section.children}>
+                {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+              </Collection>
+            </ListBoxSection>
+          )}
+        </Collection>
+        <MyListBoxLoaderIndicator orientation="vertical" isLoading={args.isLoading} />
       </ListBox>
     </Virtualizer>
   );
 }
 
-VirtualizedListBox.args = {
-  variableHeight: false
+VirtualizedListBox.story = {
+  args: {
+    variableHeight: false,
+    isLoading: false
+  }
 };
 
 export function VirtualizedListBoxEmpty() {
@@ -285,7 +444,7 @@ export function VirtualizedListBoxEmpty() {
         estimatedHeadingHeight: 26
       }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
-        <></>
+        <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
   );
@@ -453,7 +612,7 @@ interface Character {
 const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       style={{
         height: orientation === 'horizontal' ? 100 : 30,
         width: orientation === 'horizontal' ? 30 : '100%',
@@ -464,7 +623,7 @@ const MyListBoxLoaderIndicator = (props) => {
       }}
       {...otherProps}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };
 

@@ -15,7 +15,7 @@ import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, Selec
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Form'
 };
 
 
@@ -43,7 +43,7 @@ export const FormAutoFillExample = () => {
         <Label>Zip</Label>
         <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
       </TextField>
-      <Select name="country" id="country" autoComplete="shipping country">
+      <Select style={{position: 'relative'}} name="country" id="country" autoComplete="shipping country">
         <Label>Country</Label>
         <Button>
           <SelectValue />

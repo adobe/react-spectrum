@@ -17,37 +17,7 @@ import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components',
-  argTypes: {
-    onChange: {
-      table: {
-        disable: true
-      }
-    },
-    granularity: {
-      control: 'select',
-      options: ['day', 'hour', 'minute', 'second']
-    },
-    minValue: {
-      control: 'date'
-    },
-    maxValue: {
-      control: 'date'
-    },
-    isRequired: {
-      control: 'boolean'
-    },
-    isInvalid: {
-      control: 'boolean'
-    },
-    validationBehavior: {
-      control: 'select',
-      options: ['native', 'aria']
-    }
-  },
-  args: {
-    onChange: action('OnChange')
-  }
+  title: 'React Aria Components/DatePicker'
 };
 
 export const DatePickerExample = () => (

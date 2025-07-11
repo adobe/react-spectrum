@@ -13,6 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
+import {Meta, StoryFn} from '@storybook/react';
 import {parseZonedDateTime, Time} from '@internationalized/date';
 import React from 'react';
 import {TimeField} from '../';
@@ -24,14 +25,16 @@ export default {
       locales: ['en-US', 'ar-EG', 'ja-JP']
     }
   }
-};
+} as Meta<typeof TimeField>;
+
+export type TimeFieldStory = StoryFn<typeof TimeField>;
 
 const time = new Time(8, 45);
 const zoned = parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]');
 
-export const Placeholder = () => <TimeField label="Time" placeholderValue={time} />;
-export const PlaceholderZoned = () => <TimeField label="Time" placeholderValue={zoned} />;
-export const PlaceholderFocus = () => <TimeField label="Time" placeholderValue={time} autoFocus />;
+export const Placeholder: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} {...args} />;
+export const PlaceholderZoned: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={zoned} {...args} />;
+export const PlaceholderFocus: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} autoFocus {...args} />;
 PlaceholderFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -41,7 +44,7 @@ PlaceholderFocus.parameters = {
   }
 };
 
-export const PlaceholderFocusRTL = () => <TimeField label="Time" placeholderValue={time} autoFocus />;
+export const PlaceholderFocusRTL: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} autoFocus {...args} />;
 PlaceholderFocusRTL.parameters = {
   chromaticProvider: {
     locales: ['ar-EG'],
@@ -51,16 +54,16 @@ PlaceholderFocusRTL.parameters = {
   }
 };
 
-export const PlaceholderFocusExpress = () => <TimeField label="Time" placeholderValue={time} autoFocus />;
+export const PlaceholderFocusExpress: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} autoFocus {...args} />;
 PlaceholderFocusExpress.parameters = {
   chromaticProvider: {
     express: true
   }
 };
 
-export const Value = () => <TimeField label="Time" value={time} />;
-export const ValueZoned = () => <TimeField label="Time" value={zoned} />;
-export const ValueFocus = () => <TimeField label="Time" value={time} autoFocus />;
+export const Value: TimeFieldStory = (args) => <TimeField label="Time" value={time} {...args} />;
+export const ValueZoned: TimeFieldStory = (args) => <TimeField label="Time" value={zoned} {...args} />;
+export const ValueFocus: TimeFieldStory = (args) => <TimeField label="Time" value={time} autoFocus {...args} />;
 ValueFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -70,30 +73,30 @@ ValueFocus.parameters = {
   }
 };
 
-export const DisabledPlaceholder = () => <TimeField label="Time" placeholderValue={time} isDisabled />;
-export const DisabledValue = () => <TimeField label="Time" value={time} isDisabled />;
-export const ReadOnly = () => <TimeField label="Time" value={time} isReadOnly />;
-export const QuietPlaceholder = () => <TimeField label="Time" placeholderValue={time} isQuiet />;
-export const QuietValue = () => <TimeField label="Time" value={time} isQuiet />;
-export const Invalid = () => <TimeField label="Time" value={time} validationState="invalid" />;
-export const ErrorMessage = () => <TimeField label="Time" value={time} validationState="invalid" errorMessage="Invalid selection" />;
-export const HelpText = () => <TimeField label="Time" value={time} description="Enter a date" />;
-export const LabelPositionSide = () => <TimeField label="Time" value={time} labelPosition="side" />;
-export const LabelAlignEnd = () => <TimeField label="Time" value={time} labelAlign="end" />;
-export const Required = () => <TimeField label="Time" value={time} isRequired />;
-export const RequiredLabel = () => <TimeField label="Time" value={time} isRequired necessityIndicator="label" />;
-export const Optional = () => <TimeField label="Time" value={time} necessityIndicator="label" />;
-export const NoLabel = () => <TimeField aria-label="Time" value={time} />;
-export const QuietNoLabel = () => <TimeField aria-label="Time" isQuiet value={time} />;
-export const CustomWidth = () => <TimeField label="Time" value={time} width={500} />;
-export const QuietCustomWidth = () => <TimeField label="Time" value={time} width={500} isQuiet />;
-export const CustomWidthNoLabel = () => <TimeField aria-label="Time" value={time} width={500} />;
-export const QuietCustomWidthNoLabel = () => <TimeField aria-label="Time" value={time} width={500} isQuiet />;
-export const CustomWidthLabelPositionSide = () => <TimeField label="Time" value={time} width={500} labelPosition="side" />;
-export const QuietCustomWidthLabelPositionSide = () => <TimeField label="Time" value={time} width={500} labelPosition="side" isQuiet />;
-export const CustomWidthSmall = () => <TimeField label="Time" value={zoned} width={50} />;
-export const CustomWidthSmallInvalid = () => <TimeField label="Time" value={zoned} width={50} validationState="invalid" />;
-export const CustomWidthSmallNoLabel = () => <TimeField aria-label="Time" value={zoned} width={50} />;
+export const DisabledPlaceholder: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} isDisabled {...args} />;
+export const DisabledValue: TimeFieldStory = (args) => <TimeField label="Time" value={time} isDisabled {...args} />;
+export const ReadOnly: TimeFieldStory = (args) => <TimeField label="Time" value={time} isReadOnly {...args} />;
+export const QuietPlaceholder: TimeFieldStory = (args) => <TimeField label="Time" placeholderValue={time} isQuiet {...args} />;
+export const QuietValue: TimeFieldStory = (args) => <TimeField label="Time" value={time} isQuiet {...args} />;
+export const Invalid: TimeFieldStory = (args) => <TimeField label="Time" value={time} validationState="invalid" {...args} />;
+export const ErrorMessage: TimeFieldStory = (args) => <TimeField label="Time" value={time} validationState="invalid" errorMessage="Invalid selection" {...args} />;
+export const HelpText: TimeFieldStory = (args) => <TimeField label="Time" value={time} description="Enter a date" {...args} />;
+export const LabelPositionSide: TimeFieldStory = (args) => <TimeField label="Time" value={time} labelPosition="side" {...args} />;
+export const LabelAlignEnd: TimeFieldStory = (args) => <TimeField label="Time" value={time} labelAlign="end" {...args} />;
+export const Required: TimeFieldStory = (args) => <TimeField label="Time" value={time} isRequired {...args} />;
+export const RequiredLabel: TimeFieldStory = (args) => <TimeField label="Time" value={time} isRequired necessityIndicator="label" {...args} />;
+export const Optional: TimeFieldStory = (args) => <TimeField label="Time" value={time} necessityIndicator="label" {...args} />;
+export const NoLabel: TimeFieldStory = (args) => <TimeField aria-label="Time" value={time} {...args} />;
+export const QuietNoLabel: TimeFieldStory = (args) => <TimeField aria-label="Time" isQuiet value={time} {...args} />;
+export const CustomWidth: TimeFieldStory = (args) => <TimeField label="Time" value={time} width={500} {...args} />;
+export const QuietCustomWidth: TimeFieldStory = (args) => <TimeField label="Time" value={time} width={500} isQuiet {...args} />;
+export const CustomWidthNoLabel: TimeFieldStory = (args) => <TimeField aria-label="Time" value={time} width={500} {...args} />;
+export const QuietCustomWidthNoLabel: TimeFieldStory = (args) => <TimeField aria-label="Time" value={time} width={500} isQuiet {...args} />;
+export const CustomWidthLabelPositionSide: TimeFieldStory = (args) => <TimeField label="Time" value={time} width={500} labelPosition="side" {...args} />;
+export const QuietCustomWidthLabelPositionSide: TimeFieldStory = (args) => <TimeField label="Time" value={time} width={500} labelPosition="side" isQuiet {...args} />;
+export const CustomWidthSmall: TimeFieldStory = (args) => <TimeField label="Time" value={zoned} width={50} {...args} />;
+export const CustomWidthSmallInvalid: TimeFieldStory = (args) => <TimeField label="Time" value={zoned} width={50} validationState="invalid" {...args} />;
+export const CustomWidthSmallNoLabel: TimeFieldStory = (args) => <TimeField aria-label="Time" value={zoned} width={50} {...args} />;
 
 let contextualHelp = (
   <ContextualHelp>
@@ -102,5 +105,5 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = () => <TimeField label="Date" contextualHelp={contextualHelp} value={time} />;
-export const ContextualHelpSideLabel = () => <TimeField label="Date" labelPosition="side" contextualHelp={contextualHelp} value={time} />;
+export const _ContextualHelp: TimeFieldStory = (args) => <TimeField label="Date" contextualHelp={contextualHelp} value={time} {...args} />;
+export const ContextualHelpSideLabel: TimeFieldStory = (args) => <TimeField label="Date" labelPosition="side" contextualHelp={contextualHelp} value={time} {...args} />;

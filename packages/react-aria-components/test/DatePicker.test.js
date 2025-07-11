@@ -153,9 +153,10 @@ describe('DatePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDatePicker name="birthday" value={new CalendarDate(2020, 2, 3)} />);
+    render(<TestDatePicker name="birthday" form="test" value={new CalendarDate(2020, 2, 3)} />);
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {

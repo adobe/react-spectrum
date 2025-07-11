@@ -281,4 +281,11 @@ describe('CheckboxGroup', () => {
     expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
+
+  it('should support form prop', () => {
+    let {getAllByRole} = renderGroup({form: 'test'});
+    for (let checkbox of getAllByRole('checkbox')) {
+      expect(checkbox).toHaveAttribute('form', 'test');
+    }
+  });
 });

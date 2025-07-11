@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxGroup, Content, ContextualHelp, Heading} from '../src';
+import {Checkbox, CheckboxGroup, CheckboxGroupProps, Content, ContextualHelp, Heading} from '../src';
 import {generateComboChunks, shortName} from './utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactNode} from 'react';
 import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof CheckboxGroup> = {
@@ -37,7 +38,7 @@ let states = [
   {size: ['S', 'M', 'L', 'XL']}
 ];
 
-const Template = ({combos, containerStyle, ...args}) => {
+const Template = ({combos, containerStyle, ...args}: CheckboxGroupProps & {combos: any[], containerStyle: string}): ReactNode => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
@@ -61,8 +62,8 @@ const Template = ({combos, containerStyle, ...args}) => {
 
 let chunks = generateComboChunks({states, numChunks: 5});
 
-export const Horizontal = {
-  render: Template,
+export const Horizontal: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: chunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
@@ -70,40 +71,40 @@ export const Horizontal = {
   }
 };
 
-export const HorizontalPt2 = {
-  render: Template,
+export const HorizontalPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Horizontal.args,
     combos: chunks[1]
   }
 };
 
-export const HorizontalPt3 = {
-  render: Template,
+export const HorizontalPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Horizontal.args,
     combos: chunks[2]
   }
 };
 
-export const HorizontalPt4 = {
-  render: Template,
+export const HorizontalPt4: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Horizontal.args,
     combos: chunks[3]
   }
 };
 
-export const HorizontalPt5 = {
-  render: Template,
+export const HorizontalPt5: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Horizontal.args,
     combos: chunks[4]
   }
 };
 
-export const Vertical = {
-  render: Template,
+export const Vertical: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: chunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
@@ -111,32 +112,32 @@ export const Vertical = {
   }
 };
 
-export const VerticalPt2 = {
-  render: Template,
+export const VerticalPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Vertical.args,
     combos: chunks[1]
   }
 };
 
-export const VerticalPt3 = {
-  render: Template,
+export const VerticalPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Vertical.args,
     combos: chunks[2]
   }
 };
 
-export const VerticalPt4 = {
-  render: Template,
+export const VerticalPt4: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Vertical.args,
     combos: chunks[3]
   }
 };
 
-export const VerticalPt5 = {
-  render: Template,
+export const VerticalPt5: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...Vertical.args,
     combos: chunks[4]
@@ -153,8 +154,8 @@ let statesWithContextual = [
 
 let contextualHelpChunks = generateComboChunks({states: statesWithContextual, numChunks: 3});
 
-export const ContextualHelpStories = {
-  render: Template,
+export const ContextualHelpStories: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: contextualHelpChunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
@@ -168,24 +169,24 @@ export const ContextualHelpStories = {
   }
 };
 
-export const ContextualHelpPt2 = {
-  render: Template,
+export const ContextualHelpPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...ContextualHelpStories.args,
     combos: contextualHelpChunks[1]
   }
 };
 
-export const ContextualHelpPt3 = {
-  render: Template,
+export const ContextualHelpPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...ContextualHelpStories.args,
     combos: contextualHelpChunks[2]
   }
 };
 
-export const ContextualHelpVertical = {
-  render: Template,
+export const ContextualHelpVertical: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...ContextualHelpStories.args,
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'}),
@@ -193,16 +194,16 @@ export const ContextualHelpVertical = {
   }
 };
 
-export const ContextualHelpVerticalPt2 = {
-  render: Template,
+export const ContextualHelpVerticalPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...ContextualHelpVertical.args,
     combos: contextualHelpChunks[1]
   }
 };
 
-export const ContextualHelpVerticalPt3 = {
-  render: Template,
+export const ContextualHelpVerticalPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...ContextualHelpVertical.args,
     combos: contextualHelpChunks[2]

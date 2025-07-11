@@ -12,6 +12,7 @@
 
 import {BackgroundColorValue, Responsive} from '@react-types/shared';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 
@@ -42,9 +43,11 @@ export default {
   parameters: {
     chromaticProvider: {colorSchemes: ['light']}
   }
-};
+} as Meta<typeof Grid>;
 
-export const ExplicitGrid = () => (
+export type GridStory = StoryObj<typeof Grid>;
+
+export const ExplicitGrid: GridStory = () => (
   <Grid
     areas={['header  header', 'sidebar content', 'footer  footer']}
     columns={['size-3000', 'auto']}
@@ -71,7 +74,7 @@ ExplicitGrid.story = {
   name: 'Explicit grid'
 };
 
-export const ImplicitGrid = () => (
+export const ImplicitGrid: GridStory = () => (
   <Grid
     columns={repeat('auto-fit', 'size-800')}
     autoRows="size-800"

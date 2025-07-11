@@ -16,7 +16,7 @@ import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldS
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {Group, GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
 import {Input, InputContext} from './Input';
@@ -40,8 +40,8 @@ export interface DateFieldRenderProps {
    */
   isDisabled: boolean
 }
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
 export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
@@ -86,7 +86,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     defaultClassName: 'react-aria-DateField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -157,7 +157,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
     defaultClassName: 'react-aria-TimeField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -215,7 +215,7 @@ export interface DateInputRenderProps {
   isInvalid: boolean
 }
 
-export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps> {
+export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   children: (segment: IDateSegment) => ReactElement
 }
 
@@ -321,7 +321,7 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, HoverEvents {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
   segment: IDateSegment
 }
 
@@ -329,7 +329,7 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, H
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLSpanElement>) {
   let dateFieldState = useContext(DateFieldStateContext);
   let timeFieldState = useContext(TimeFieldStateContext);
   let state = dateFieldState ?? timeFieldState!;
@@ -355,7 +355,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
   return (
     <span
-      {...mergeProps(filterDOMProps(otherProps as any), segmentProps, focusProps, hoverProps)}
+      {...mergeProps(filterDOMProps(otherProps, {global: true}), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       style={segmentProps.style}
       ref={domRef}

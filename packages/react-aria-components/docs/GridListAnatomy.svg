@@ -1,4 +1,4 @@
-<svg style="max-height: 187px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 375 187">
+<svg style="max-height: 187px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 375 187">
   <g id="Group_156898" data-name="Group 156898" transform="translate(-267 -112)">
     <g id="rectangle-33" transform="translate(342 112)" fill="var(--anatomy-gray-50)">
       <path d="M 296 186.5 L 4 186.5 C 2.070076942443848 186.5 0.5 184.9488830566406 0.5 183.0423431396484 L 0.5 3.957692384719849 C 0.5 2.051115274429321 2.070076942443848 0.5 4 0.5 L 296 0.5 C 297.929931640625 0.5 299.5 2.051115274429321 299.5 3.957692384719849 L 299.5 183.0423431396484 C 299.5 184.9488830566406 297.929931640625 186.5 296 186.5 Z" stroke="none"/>

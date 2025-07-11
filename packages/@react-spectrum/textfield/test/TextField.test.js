@@ -337,7 +337,9 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     let helpText = tree.getByText('Enter a single digit number.');
     expect(helpText).toHaveAttribute('id');
-    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    let validIcon = tree.getByLabelText('Valid');
+    expect(validIcon).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id} ${validIcon.id}`);
     expect(input.value).toBe('0');
     let newValue = 's';
     fireEvent.change(input, {target: {value: newValue}});
@@ -356,7 +358,9 @@ describe('Shared TextField behavior', () => {
     expect(input.value).toBe(newValue);
     helpText = tree.getByText('Enter a single digit number.');
     expect(helpText).toHaveAttribute('id');
-    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    validIcon = tree.getByLabelText('Valid');
+    expect(validIcon).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id} ${validIcon.id}`);
   });
 
   it.each`
@@ -387,7 +391,9 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Example);
     let input = tree.getByTestId(testId);
     let helpText;
-    expect(tree.getByTestId(testId)).not.toHaveAttribute('aria-describedby');
+    let validIcon = tree.getByLabelText('Valid');
+    expect(validIcon).toHaveAttribute('id');
+    expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', validIcon.id);
 
     fireEvent.change(input, {target: {value: 's'}});
 
@@ -418,7 +424,9 @@ describe('Shared TextField behavior', () => {
       expect(input.value).toEqual('4');
     });
 
-    expect(input).not.toHaveAttribute('aria-describedby');
+    validIcon = tree.getByLabelText('Valid');
+    expect(validIcon).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', validIcon.id);
   });
 
   it.each`
@@ -474,6 +482,34 @@ describe('Shared TextField behavior', () => {
     await user.click(button);
     expect(input).toHaveValue('Devon');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it.each`
+      Name                | Component
+      ${'v3 TextField'}   | ${TextField}
+      ${'v3 TextArea'}    | ${TextArea}
+      ${'v3 SearchField'} | ${SearchField}
+    `('$Name resets to defaultValue when submitting form action', async ({Component}) => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 'updated', 'initial');
+        
+        return (
+          <form action={formAction}>
+            <Component label="Value" data-testid="input" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let input = getByTestId('input');
+      expect(input).toHaveValue('initial');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('updated');
+    });
+  }
 
   describe('validation', () => {
     describe('validationBehavior=native', () => {
@@ -599,6 +635,38 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(true);
       });
+
+      if (parseInt(React.version, 10) >= 19) {
+        it.each`
+          Name                | Component
+          ${'v3 TextField'}   | ${TextField}
+          ${'v3 TextArea'}    | ${TextArea}
+          ${'v3 SearchField'} | ${SearchField}
+        `('$Name retains server validation errors after form action submit', async ({Component}) => {
+          function Test() {        
+            const [errors, formAction] = React.useActionState(() => ({test: 'Error'}), {});
+            
+            return (
+              <Provider theme={theme}>
+                <Form action={formAction}  validationErrors={errors}>
+                  <Component label="Value" data-testid="input" name="test" validationBehavior="native" />
+                  <input type="submit" data-testid="submit" />
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId} = render(<Test />);
+          let input = getByTestId('input');
+          expect(input).not.toHaveAttribute('aria-describedby');
+
+          let button = getByTestId('submit');
+          await user.click(button);
+          expect(input).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Error');
+          expect(input.validity.valid).toBe(false);
+        });
+      }
 
       it.each`
         Name                | Component

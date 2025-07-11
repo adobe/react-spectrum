@@ -1,4 +1,4 @@
-<svg style="max-height: 129px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 246 129">
+<svg style="max-height: 129px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 246 129">
   <title>Color slider anatomy diagram</title>
   <desc>Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements.</desc>
   <g transform="translate(-52 -34)">

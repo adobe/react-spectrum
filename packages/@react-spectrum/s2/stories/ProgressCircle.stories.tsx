@@ -49,9 +49,11 @@ export const Example: Story = {
   }
 };
 
-export const CustomSize = (args) => <ProgressCircle aria-label="Test Progress Circle" value="40" size="S" {...args} styles={style({size: 20})} />;
-CustomSize.parameters = {
-  docs: {
-    disable: true
+export const CustomSize: Story = {
+  render: (args) => <ProgressCircle aria-label="Test Progress Circle" value={40} size="S" {...args} styles={style({size: 20})} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
