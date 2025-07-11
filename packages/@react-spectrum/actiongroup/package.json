@@ -42,6 +42,7 @@
   "dependencies": {
     "@react-aria/actiongroup": "^3.7.18",
     "@react-aria/focus": "^3.20.5",
+    "@react-aria/i18n": "^3.12.10",
     "@react-aria/interactions": "^3.25.3",
     "@react-aria/utils": "^3.29.1",
     "@react-spectrum/button": "^3.16.16",

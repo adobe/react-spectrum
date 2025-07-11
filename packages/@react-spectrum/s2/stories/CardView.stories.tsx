@@ -31,7 +31,7 @@ import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
 import {fn} from '@storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
@@ -43,10 +43,13 @@ const meta: Meta<typeof CardView> = {
   tags: ['autodocs'],
   args: {
     onLoadMore: fn()
-  }
+  },
+  excludeStories: ['ExampleRender']
 };
 
 export default meta;
+
+type Story = StoryObj<typeof CardView>;
 
 const cardViewStyles = style({
   width: 'screen',
@@ -112,7 +115,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
   );
 }
 
-export const Example = (args: CardViewProps<any>) => {
+export const ExampleRender = (args: CardViewProps<any>) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -162,14 +165,17 @@ export const Example = (args: CardViewProps<any>) => {
   );
 };
 
-Example.args = {
-  loadingState: 'idle',
-  onAction: null,
-  selectionMode: 'multiple'
+export const Example: Story = {
+  render: (args) => <ExampleRender {...args} />,
+  args: {
+    loadingState: 'idle',
+    onAction: undefined,
+    selectionMode: 'multiple'
+  }
 };
 
-export const Empty = (args: CardViewProps<any>) => {
-  return (
+export const Empty: Story = {
+  render: (args: CardViewProps<any>) => (
     <CardView
       aria-label="Assets"
       {...args}
@@ -183,7 +189,7 @@ export const Empty = (args: CardViewProps<any>) => {
       )}>
       {[]}
     </CardView>
-  );
+  )
 };
 
 interface Topic {
@@ -213,7 +219,7 @@ function TopicCard({topic}: {topic: Topic}) {
   );
 }
 
-export const CollectionCards = (args: CardViewProps<any>) => {
+const CollectionCardsRender = (args: CardViewProps<any>) => {
   let list = useAsyncList<Topic, number | null>({
     async load({signal, cursor}) {
       let page = cursor || 1;
@@ -262,7 +268,10 @@ export const CollectionCards = (args: CardViewProps<any>) => {
   );
 };
 
-CollectionCards.args = {
-  loadingState: 'idle',
-  onAction: null
+export const CollectionCards: Story = {
+  render: (args) => <CollectionCardsRender {...args} />,
+  args: {
+    loadingState: 'idle',
+    onAction: undefined
+  }
 };

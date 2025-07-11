@@ -11,14 +11,20 @@
  */
 
 import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Select',
+  argTypes: {
+    validationBehavior: {
+      control: 'select',
+      options: ['native', 'aria']
+    }
+  }
 };
 
 export const SelectExample = () => (
@@ -64,7 +70,73 @@ export const SelectRenderProps = () => (
   </Select>
 );
 
-let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
+let makeItems = (length: number) => Array.from({length}, (_, i) => ({
+  id: i,
+  name: `Item ${i}`
+}));
+let manyItems = makeItems(100);
+
+const usStateOptions = [
+  {id: 'AL', name: 'Alabama'},
+  {id: 'AK', name: 'Alaska'},
+  {id: 'AS', name: 'American Samoa'},
+  {id: 'AZ', name: 'Arizona'},
+  {id: 'AR', name: 'Arkansas'},
+  {id: 'CA', name: 'California'},
+  {id: 'CO', name: 'Colorado'},
+  {id: 'CT', name: 'Connecticut'},
+  {id: 'DE', name: 'Delaware'},
+  {id: 'DC', name: 'District Of Columbia'},
+  {id: 'FM', name: 'Federated States Of Micronesia'},
+  {id: 'FL', name: 'Florida'},
+  {id: 'GA', name: 'Georgia'},
+  {id: 'GU', name: 'Guam'},
+  {id: 'HI', name: 'Hawaii'},
+  {id: 'ID', name: 'Idaho'},
+  {id: 'IL', name: 'Illinois'},
+  {id: 'IN', name: 'Indiana'},
+  {id: 'IA', name: 'Iowa'},
+  {id: 'KS', name: 'Kansas'},
+  {id: 'KY', name: 'Kentucky'},
+  {id: 'LA', name: 'Louisiana'},
+  {id: 'ME', name: 'Maine'},
+  {id: 'MH', name: 'Marshall Islands'},
+  {id: 'MD', name: 'Maryland'},
+  {id: 'MA', name: 'Massachusetts'},
+  {id: 'MI', name: 'Michigan'},
+  {id: 'MN', name: 'Minnesota'},
+  {id: 'MS', name: 'Mississippi'},
+  {id: 'MO', name: 'Missouri'},
+  {id: 'MT', name: 'Montana'},
+  {id: 'NE', name: 'Nebraska'},
+  {id: 'NV', name: 'Nevada'},
+  {id: 'NH', name: 'New Hampshire'},
+  {id: 'NJ', name: 'New Jersey'},
+  {id: 'NM', name: 'New Mexico'},
+  {id: 'NY', name: 'New York'},
+  {id: 'NC', name: 'North Carolina'},
+  {id: 'ND', name: 'North Dakota'},
+  {id: 'MP', name: 'Northern Mariana Islands'},
+  {id: 'OH', name: 'Ohio'},
+  {id: 'OK', name: 'Oklahoma'},
+  {id: 'OR', name: 'Oregon'},
+  {id: 'PW', name: 'Palau'},
+  {id: 'PA', name: 'Pennsylvania'},
+  {id: 'PR', name: 'Puerto Rico'},
+  {id: 'RI', name: 'Rhode Island'},
+  {id: 'SC', name: 'South Carolina'},
+  {id: 'SD', name: 'South Dakota'},
+  {id: 'TN', name: 'Tennessee'},
+  {id: 'TX', name: 'Texas'},
+  {id: 'UT', name: 'Utah'},
+  {id: 'VT', name: 'Vermont'},
+  {id: 'VI', name: 'Virgin Islands'},
+  {id: 'VA', name: 'Virginia'},
+  {id: 'WA', name: 'Washington'},
+  {id: 'WV', name: 'West Virginia'},
+  {id: 'WI', name: 'Wisconsin'},
+  {id: 'WY', name: 'Wyoming'}
+];
 
 export const SelectManyItems = () => (
   <Select style={{position: 'relative'}}>
@@ -77,7 +149,7 @@ export const SelectManyItems = () => (
       <OverlayArrow>
         <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
       </OverlayArrow>
-      <ListBox items={manyItems} className={styles.menu}>
+      <ListBox items={usStateOptions} className={styles.menu}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
       </ListBox>
     </Popover>
@@ -113,9 +185,9 @@ interface Character {
 
 const MyListBoxLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+    <ListBoxLoadMoreItem style={{height: 30, width: '100%'}} {...props}>
       <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };
 
@@ -211,4 +283,26 @@ export const SelectSubmitExample = () => (
     <Button type="submit">Submit</Button>
     <Button type="reset">Reset</Button>
   </Form>
+);
+
+// Test case for https://github.com/adobe/react-spectrum/issues/8034
+// Required select validation cannot currently be tested in the jsdom environment.
+// In jsdom, forms are submitted even when required fields are empty.
+// See: https://github.com/jsdom/jsdom/issues/2898
+export const RequiredSelectWithManyItems = (props) => (
+  <form>
+    <Select {...props} name="select" isRequired>
+      <Label style={{display: 'block'}}>Required Select with many items</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      <Popover>
+        <ListBox items={makeItems(301)} className={styles.menu}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </Select>
+    <Button type="submit">Submit</Button>
+  </form>
 );

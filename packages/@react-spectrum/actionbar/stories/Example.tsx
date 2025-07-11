@@ -19,7 +19,7 @@ import Duplicate from '@spectrum-icons/workflow/Duplicate';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {mergeProps} from '@react-aria/utils';
 import Move from '@spectrum-icons/workflow/Move';
-import React, {useRef, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import {Text} from '@react-spectrum/text';
 
@@ -48,7 +48,7 @@ let defaultItems = [
   {test: 'Test 2', foo: 'Foo 16', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
-export function Example(props: any = {}) {
+export function Example(props: any = {}): JSX.Element {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
   let [items, setItems] = useState(defaultItems);
 
@@ -118,7 +118,7 @@ export function Example(props: any = {}) {
   );
 }
 
-export function Example2(props: any = {}) {
+export function Example2(props: any = {}): JSX.Element {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
   let [items, setItems] = useState(defaultItems);
 

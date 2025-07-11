@@ -187,6 +187,12 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   });
 
+  it('should support form prop', () => {
+    let {getByRole} = renderSlider({form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
+  });
+
   it('onChange event bubbles to form', async () => {
     let onChange = jest.fn();
     let onInput = jest.fn();

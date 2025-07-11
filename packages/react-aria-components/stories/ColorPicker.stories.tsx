@@ -19,7 +19,7 @@ import {ColorSwatchExample} from './ColorSwatch.stories';
 import React, {useState} from 'react';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/ColorPicker'
 };
 
 export const ColorPickerExample = (args) => {

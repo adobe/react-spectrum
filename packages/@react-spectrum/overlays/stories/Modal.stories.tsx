@@ -17,8 +17,9 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
+import {Meta, StoryFn} from '@storybook/react';
 import {Modal} from '../';
-import React, {Fragment} from 'react';
+import React, {Fragment, JSX} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export default {
@@ -26,21 +27,23 @@ export default {
   parameters: {
     providerSwitcher: {status: 'notice'}
   }
-};
+} as Meta<typeof ModalExample>;
 
-export const Default = () => <ModalExample />;
+export type ModalExampleStory = StoryFn<typeof ModalExample>;
+
+export const Default: ModalExampleStory = () => <ModalExample />;
 
 Default.story = {
   name: 'default'
 };
 
-export const _UnmountingTrigger = () => <UnmountingTrigger />;
+export const _UnmountingTrigger: ModalExampleStory = () => <UnmountingTrigger />;
 
 _UnmountingTrigger.story = {
   name: 'unmounting trigger'
 };
 
-function ModalExample() {
+function ModalExample(): JSX.Element {
   let state = useOverlayTriggerState({});
 
   return (

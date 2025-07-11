@@ -275,6 +275,30 @@ describe('Slider', () => {
     expect(onChange).toHaveBeenCalled();
   });
 
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+  
+    let {getByRole} = render(
+      <Slider>
+        <Label>Test</Label>
+        <SliderOutput />
+        <SliderTrack>
+          <SliderThumb inputRef={inputRef} />
+        </SliderTrack>
+      </Slider>
+    );
+  
+    let group = getByRole('group');
+    let thumbInput = group.querySelector('input');
+    expect(inputRef.current).toBe(thumbInput);
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = renderSlider({}, {form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
+  });
+
   it('onChange event bubbles to form', async () => {
     let onChange = jest.fn();
     let onInput = jest.fn();
@@ -305,20 +329,3 @@ describe('Slider', () => {
   });
 });
 
-it('should support input ref', () => {
-  let inputRef = React.createRef();
-
-  let {getByRole} = render(
-    <Slider>
-      <Label>Test</Label>
-      <SliderOutput />
-      <SliderTrack>
-        <SliderThumb inputRef={inputRef} />
-      </SliderTrack>
-    </Slider>
-  );
-
-  let group = getByRole('group');
-  let thumbInput = group.querySelector('input');
-  expect(inputRef.current).toBe(thumbInput);
-});

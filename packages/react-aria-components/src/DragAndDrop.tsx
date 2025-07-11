@@ -47,17 +47,23 @@ export const DropIndicator = forwardRef(function DropIndicator(props: DropIndica
 
 type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined
 
-export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
+export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState, dragState?: DraggableCollectionState): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
   let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
   let fn = useCallback((target: ItemDropTarget) => {
     // Only show drop indicators when virtual dragging or this is the current drop target.
     if (isVirtualDragging || dropState?.isDropTarget(target)) {
-      return renderDropIndicator ? renderDropIndicator(target) : <DropIndicator target={target} />;
+      if (renderDropIndicator) {
+        let keys = dragState?.draggingKeys ?? undefined;
+        let draggedKey = dragState?.draggedKey ?? undefined;
+        return renderDropIndicator(target, keys, draggedKey);
+      } else {
+        return <DropIndicator target={target} />;
+      }
     }
     // We invalidate whenever the target changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dropState?.target, isVirtualDragging, renderDropIndicator]);
+  }, [dropState?.target, isVirtualDragging, renderDropIndicator, dragState?.draggingKeys, dragState?.draggedKey]);
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;
 }
 
@@ -69,7 +75,26 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
     dropTargetKey = dropState.target.key;
     if (dropState.target.dropPosition === 'after') {
       // Normalize to the "before" drop position since we only render those to the DOM.
-      dropTargetKey = dropState.collection.getKeyAfter(dropTargetKey) ?? dropTargetKey;
+      let nextKey = dropState.collection.getKeyAfter(dropTargetKey);
+      if (nextKey != null) {
+        let targetLevel = dropState.collection.getItem(dropTargetKey)?.level ?? 0;
+        // Skip over any rows that are descendants of the target ("after" position should be after all children)
+        while (nextKey) {
+          let node = dropState.collection.getItem(nextKey);
+          // eslint-disable-next-line max-depth
+          if (!node) {
+            break;
+          }
+          // Stop once we find a node at the same level or higher
+          // eslint-disable-next-line max-depth
+          if ((node.level ?? 0) <= targetLevel) {
+            break;
+          }
+          nextKey = dropState.collection.getKeyAfter(nextKey);
+        }
+      }
+
+      dropTargetKey = nextKey ?? dropTargetKey;
     }
   }
 

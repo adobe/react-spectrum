@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Text} from '../src';
+import {Button, ButtonGroup, ButtonGroupProps, Text} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
 
@@ -27,7 +28,7 @@ const meta: Meta<typeof ButtonGroup> = {
 
 export default meta;
 
-const Template = ({combos, containerStyle, ...args}) => {
+const Template = ({combos, containerStyle, ...args}: {combos: any[], containerStyle: string, args: ButtonGroupProps}): ReactNode => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
@@ -61,8 +62,8 @@ let horizontalStates = [
 ];
 
 let horizontalCombos = generatePowerset(horizontalStates);
-export const Horizontal = {
-  render: Template,
+export const Horizontal: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: horizontalCombos,
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})
@@ -77,8 +78,8 @@ let verticalStates = [
 ];
 
 let verticalCombos = generatePowerset(verticalStates);
-export const Vertical = {
-  render: Template,
+export const Vertical: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: verticalCombos,
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})

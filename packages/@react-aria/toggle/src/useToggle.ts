@@ -43,11 +43,18 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isReadOnly = false,
     value,
     name,
+    form,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     validationState = 'valid',
-    isInvalid
+    isInvalid,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick
   } = props;
 
   let onChange = (e) => {
@@ -62,12 +69,24 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick,
     isDisabled
   });
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
-    onPress() {
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onClick,
+    onPress(e) {
+      onPress?.(e);
       state.toggle();
       ref.current?.focus();
     },
@@ -78,7 +97,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
-  useFormReset(ref, state.isSelected, state.setSelected);
+  useFormReset(ref, state.defaultSelected, state.setSelected);
 
   return {
     labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
@@ -91,6 +110,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
       name,
+      form,
       type: 'checkbox',
       ...interactions
     }),

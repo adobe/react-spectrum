@@ -44,7 +44,13 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     value,
     children,
     'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    'aria-labelledby': ariaLabelledby,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick
   } = props;
 
   const isDisabled = props.isDisabled || state.isDisabled;
@@ -63,13 +69,25 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick,
     isDisabled
   });
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onClick,
     isDisabled,
-    onPress() {
+    onPress(e) {
+      onPress?.(e);
       state.setSelectedValue(value);
       ref.current?.focus();
     }
@@ -92,8 +110,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
-  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
-  useFormReset(ref, state.selectedValue, state.setSelectedValue);
+  let {name, form, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
+  useFormReset(ref, state.defaultSelectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
   return {
@@ -102,6 +120,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       ...interactions,
       type: 'radio',
       name,
+      form,
       tabIndex,
       disabled: isDisabled,
       required: state.isRequired && validationBehavior === 'native',

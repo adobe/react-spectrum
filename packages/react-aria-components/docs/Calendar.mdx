@@ -913,8 +913,8 @@ function CalendarValue() {
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let {format} = useDateFormatter();
-  let formatted = date ? format(date) : 'None';
+  let formatter = useDateFormatter();
+  let formatted = date ? formatter.format(date) : 'None';
   return <small>Selected date: {formatted}</small>;
 }
 
