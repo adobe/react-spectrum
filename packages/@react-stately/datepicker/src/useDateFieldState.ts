@@ -96,7 +96,7 @@ export interface DateFieldState extends FormValidationState {
   formatValue(fieldOptions: FieldOptions): string,
   /** Gets a formatter based on state's props. */
   getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter,
-  constrain(): void,
+  onBlur(): void
 }
 
 const EDITABLE_SEGMENTS = {
@@ -181,6 +181,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     props.onChange
   );
 
+  const previousValue = useRef(value)
+
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -236,18 +238,17 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
-  if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
+  if (value !== previousValue.current && value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
     validSegments = {...allSegments};
     setValidSegments(validSegments);
   }
 
   // If the value is set to null and all segments are valid, reset the placeholder.
-  if (value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
+  if (value !== previousValue.current && value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
     validSegments = {};
-    setValidSegments(validSegments);
+    setValidSegments(validSegments);   //reason
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
   }
-
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let displayValue = calendarValue && Object.keys(validSegments).length >= Object.keys(allSegments).length ? calendarValue : placeholderDate;
   let setValue = (newValue: DateValue) => {
@@ -273,16 +274,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         validSegments = {...allSegments};
         setValidSegments(validSegments);
       }
-
-      // The display calendar should not have any effect on the emitted value.
-      // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-      newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
-      setDate(newValue);
-    } else {
-      setPlaceholderDate(newValue);
     }
+    setPlaceholderDate(newValue);
     clearedSegment.current = null;
   };
+
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
   let segments = useMemo(() => 
@@ -404,8 +400,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       } else if (part in displayValue) {
         value = displayValue.set({[part]: placeholder[part]});
       }
-
-      setDate(null);
       setValue(value);
     },
     formatValue(fieldOptions: FieldOptions) {
@@ -422,19 +416,17 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let newFormatOptions = getFormatOptions({}, newOptions);
       return new DateFormatter(locale, newFormatOptions);
     },
-    constrain() {
-      setValidSegments(validSegments => {
+    onBlur() {
         let validKeys = Object.keys(validSegments);
         let allKeys = Object.keys(allSegments);
 
-        if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-          const value = Math.max(1, Math.min( displayValue.calendar.getDaysInMonth(displayValue),displayValue.day));
-          console.log(value)
-          setValue(setSegment(displayValue, "day", value, resolvedOptions))
-        } 
-        return validSegments
-      })
-    }
+        if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
+            const value = Math.max(1, Math.min(displayValue.calendar.getDaysInMonth(displayValue),displayValue.day));
+            setDate(setSegment(displayValue, "day", value, resolvedOptions))
+        }else {
+          setDate(null)
+        }
+    },
   };
 }
 
@@ -593,6 +585,7 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
 }
 
 function addSegment(value: DateValue, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
+  console.log(amount)
   switch (part) {
     case 'era':
     case 'year':

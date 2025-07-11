@@ -276,9 +276,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   };
 
 
-  const onBlur = () => { 
-    state.constrain()
-  }
 
   let documentRef = useRef(typeof document !== 'undefined' ? document : null);
   useEvent(documentRef, 'selectionchange', () => {
@@ -425,7 +422,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onPointerDown(e) {
         e.stopPropagation();
       },
-      onBlur,
       onMouseDown(e) {
         e.stopPropagation();
       }
