@@ -21,24 +21,21 @@ import {
   within
 } from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {composeStories} from '@storybook/react';
+import {
+  DynamicExpandableRowsStoryRender as DynamicExpandableTable,
+  EmptyTreeGridStoryRender as EmptyStateTable,
+  LoadingTreeGridStoryRender as LoadingTable,
+  ManyExpandableRowsStoryRender as ManyRowsExpandableTable,
+  StaticExpandableRowsRender as StaticExpandableTable,
+  UserSetRowHeaderRender as UserSetRowHeaderTable
+} from '../stories/TreeGridTable.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
 import {scrollIntoView} from '@react-aria/utils';
-import * as stories from '../stories/TreeGridTable.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
-let {
-  StaticExpandableRows: StaticExpandableTable,
-  DynamicExpandableRowsStory: DynamicExpandableTable,
-  ManyExpandableRowsStory: ManyRowsExpandableTable,
-  EmptyTreeGridStory: EmptyStateTable,
-  LoadingTreeGridStory: LoadingTable,
-  UserSetRowHeader: UserSetRowHeaderTable
-} = composeStories(stories);
 
 let onSelectionChange = jest.fn();
 let onExpandedChange = jest.fn();

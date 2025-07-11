@@ -19,7 +19,7 @@ import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Autocomplete',
   args: {
     onAction: action('onAction'),
     selectionMode: 'multiple',
@@ -831,7 +831,7 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
 export const AutocompleteSelect = () => (
-  <Select style={{marginBottom: 40}}>
+  <Select style={{marginBottom: 40, position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />

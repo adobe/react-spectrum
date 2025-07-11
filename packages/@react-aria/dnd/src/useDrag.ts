@@ -128,12 +128,13 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     setGlobalAllowedDropOperations(allowed);
-    e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
+    let effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
+    e.dataTransfer.effectAllowed = effectAllowed === 'cancel' ? 'none' : effectAllowed;
 
     // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
     if (typeof options.preview?.current === 'function') {
-      options.preview.current(items, node => {
+      options.preview.current(items, (node, userX, userY) => {
         if (!node) {
           return;
         }
@@ -142,18 +143,35 @@ export function useDrag(options: DragOptions): DragResult {
         // If the preview is much smaller, then just use the center point of the preview.
         let size = node.getBoundingClientRect();
         let rect = e.currentTarget.getBoundingClientRect();
-        let x = e.clientX - rect.x;
-        let y = e.clientY - rect.y;
-        if (x > size.width || y > size.height) {
-          x = size.width / 2;
-          y = size.height / 2;
+        let defaultX = e.clientX - rect.x;
+        let defaultY = e.clientY - rect.y;
+        if (defaultX > size.width || defaultY > size.height) {
+          defaultX = size.width / 2;
+          defaultY = size.height / 2;
         }
+
+        // Start with default offsets.
+        let offsetX = defaultX;
+        let offsetY = defaultY;
+
+        // If the preview renderer supplied explicit offsets, use those.
+        if (typeof userX === 'number' && typeof userY === 'number') {
+          offsetX = userX;
+          offsetY = userY;
+        }
+
+        // Clamp the offset so it stays within the preview bounds. Browsers
+        // automatically clamp out-of-range values, but doing it ourselves
+        // prevents the visible "snap" that can occur when the browser adjusts
+        // them after the first drag update.
+        offsetX = Math.max(0, Math.min(offsetX, size.width));
+        offsetY = Math.max(0, Math.min(offsetY, size.height));
 
         // Rounding height to an even number prevents blurry preview seen on some screens
         let height = 2 * Math.round(size.height / 2);
         node.style.height = `${height}px`;
 
-        e.dataTransfer.setDragImage(node, x, y);
+        e.dataTransfer.setDragImage(node, offsetX, offsetY);
       });
     }
 
@@ -221,7 +239,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
   // In this case, we need to manually call onDragEnd on cleanup
-   
+
   useLayoutEffect(() => {
     return () => {
       if (isDraggingRef.current) {

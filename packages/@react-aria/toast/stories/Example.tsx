@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, useContext, useRef} from 'react';
-import {ToastState, useToastState} from '@react-stately/toast';
+import React, {createContext, JSX, useContext, useRef} from 'react';
+import {ToastState, ToastStateProps, useToastState} from '@react-stately/toast';
 import {useButton} from 'react-aria';
 import {useToast, useToastRegion} from '../src';
 
 const ToastContext = createContext<ToastState<string> | null>(null);
 
-export function ToastContainer({children, ...otherProps}) {
+export function ToastContainer({children, ...otherProps}: ToastStateProps & {children: (state: ToastState<string>) => React.ReactNode}): JSX.Element {
   let state = useToastState<string>(otherProps);
   return (
     <ToastContext.Provider value={state}>

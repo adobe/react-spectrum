@@ -42,6 +42,8 @@ export interface DateSegment {
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue | null,
+  /** The default field value. */
+  defaultValue: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
@@ -180,6 +182,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     props.onChange
   );
 
+  let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -260,7 +263,18 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
-    } else if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
+    } else if (
+      validKeys.length === 0 || 
+      validKeys.length >= allKeys.length || 
+      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
+    ) {
+      // If the field was empty (no valid segments) or all segments are completed, commit the new value.
+      // When committing from an empty state, mark every segment as valid so value is committed.
+      if (validKeys.length === 0) {
+        validSegments = {...allSegments};
+        setValidSegments(validSegments);
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
@@ -327,6 +341,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   return {
     ...validation,
     value: calendarValue,
+    defaultValue: props.defaultValue ?? initialValue,
     dateValue,
     calendar,
     setValue,

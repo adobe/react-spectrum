@@ -1,4 +1,4 @@
-<svg style="max-height: 119px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 242 119">
+<svg style="max-height: 119px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 242 119">
   <title>Meter anatomy diagram</title>
   <desc>Shows a meter with labels pointing to its parts, including the label, fill, track, and value label elements.</desc>
   <defs>

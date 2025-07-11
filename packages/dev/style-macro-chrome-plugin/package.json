@@ -6,11 +6,11 @@
     "build": "parcel build src/manifest.json --config .parcelrc"
   },
   "devDependencies": {
-    "@parcel/config-default": "^2.14.0",
-    "@parcel/config-webextension": "^2.14.0",
-    "@parcel/core": "^2.14.0",
-    "@parcel/transformer-js": "^2.14.0",
-    "parcel": "^2.14.0"
+    "@parcel/config-default": "^2.15.4",
+    "@parcel/config-webextension": "^2.15.4",
+    "@parcel/core": "^2.15.4",
+    "@parcel/transformer-js": "^2.15.4",
+    "parcel": "^2.15.4"
   },
   "rsp": {
     "type": "cli"
