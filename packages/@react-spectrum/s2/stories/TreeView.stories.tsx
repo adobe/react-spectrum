@@ -24,6 +24,8 @@ import {
   TreeViewItem,
   TreeViewItemContent,
   TreeViewItemProps,
+  TreeViewLoadMoreItem,
+  TreeViewLoadMoreItemProps,
   TreeViewProps
 } from '../src';
 import {categorizeArgTypes} from './utils';
@@ -34,13 +36,11 @@ import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useState} from 'react';
-import { useAsyncList, useListData } from 'react-stately';
-import { TreeViewLoadMoreItem, TreeViewLoadMoreItemProps } from '../src/TreeView';
+import {useAsyncList, useListData} from 'react-stately';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
 const onActionOptions = {onActionFunc, noOnAction};
-
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -68,6 +68,16 @@ const meta: Meta<typeof TreeView> = {
         }
       },
       table: {category: 'Events'}
+    },
+    isDetached: {
+      table: {
+        disable: true
+      }
+    },
+    isEmphasized: {
+      table: {
+        disable: true
+      }
     }
   }
 };
@@ -186,6 +196,118 @@ export const Example: StoryObj<typeof TreeExampleStatic> = {
   render: TreeExampleStatic,
   args: {
     selectionMode: 'multiple'
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+<div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
+  <TreeView
+    disabledKeys={['projects-1']}
+    aria-label="test static tree">
+    <TreeViewItem id="Photos" textValue="Photos">
+      <TreeViewItemContent>
+        <Text>Photos</Text>
+        <Folder />
+        <ActionMenu>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
+        </ActionMenu>
+      </TreeViewItemContent>
+    </TreeViewItem>
+    <TreeViewItem id="projects" textValue="Projects">
+      <TreeViewItemContent>
+        <Text>Projects</Text>
+        <Folder />
+        <ActionMenu>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
+        </ActionMenu>
+      </TreeViewItemContent>
+      <TreeViewItem id="projects-1" textValue="Projects-1">
+        <TreeViewItemContent>
+          <Text>Projects-1</Text>
+          <Folder />
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <TreeViewItem id="projects-1A" textValue="Projects-1A">
+          <TreeViewItemContent>
+            <Text>Projects-1A</Text>
+            <FileTxt />
+            <ActionMenu>
+              <MenuItem id="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </MenuItem>
+              <MenuItem id="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </MenuItem>
+            </ActionMenu>
+          </TreeViewItemContent>
+        </TreeViewItem>
+      </TreeViewItem>
+      <TreeViewItem id="projects-2" textValue="Projects-2">
+        <TreeViewItemContent>
+          <Text>Projects-2</Text>
+          <FileTxt />
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+      </TreeViewItem>
+      <TreeViewItem id="projects-3" textValue="Projects-3">
+        <TreeViewItemContent>
+          <Text>Projects-3</Text>
+          <FileTxt />
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
+</div>
+          `
+        }
+      }
+    }
   }
 };
 
@@ -241,6 +363,11 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
   render: TreeExampleStaticNoActions,
   args: {
     selectionMode: 'multiple'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -338,6 +465,64 @@ export const Dynamic: StoryObj<typeof TreeExampleDynamic> = {
   args: {
     ...Example.args,
     disabledKeys: ['project-2C', 'project-5']
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps): ReactElement => {
+  let {childItems, name, icon = <FileTxt />, loadingState, onLoadMore} = props;
+  return (
+    <>
+      <TreeViewItem id={props.id} textValue={name} href={props.href}>
+        <TreeViewItemContent>
+          <Text>{name}</Text>
+          {icon}
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={childItems}>
+          {(item) => (
+            <DynamicTreeItem
+              id={item.id || item.name}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}
+              href={props.href} />
+          )}
+        </Collection>
+        {onLoadMore && loadingState && <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} /> }
+      </TreeViewItem>
+    </>
+  );
+};
+
+<div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
+  <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows}>
+    {(item) => (
+      <DynamicTreeItem
+        id={item.id}
+        icon={item.icon}
+        childItems={item.childItems}
+        textValue={item.name}
+        name={item.name} />
+    )}
+  </TreeView>
+</div>
+          `
+        }
+      }
+    }
   }
 };
 
@@ -360,6 +545,42 @@ export const Empty: StoryObj<typeof TreeExampleDynamic> = {
   args: {
     renderEmptyState,
     items: []
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+function renderEmptyState(): ReactElement {
+  return (
+    <IllustratedMessage>
+      <FolderOpen />
+      <Heading>
+        No results
+      </Heading>
+      <Content>
+        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+      </Content>
+    </IllustratedMessage>
+  );
+}
+
+<div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
+  <TreeView items={[]}>
+    {(item) => (
+      <DynamicTreeItem
+        id={item.id}
+        icon={item.icon}
+        childItems={item.childItems}
+        textValue={item.name}
+        name={item.name} />
+    )}
+  </TreeView>
+</div>
+          `
+        }
+      }
+    }
   }
 };
 
@@ -386,6 +607,9 @@ export const WithLinks: StoryObj<typeof TreeExampleWithLinks> = {
   parameters: {
     description: {
       data: 'every tree item should link to adobe.com'
+    },
+    docs: {
+      disable: true
     }
   }
 };
@@ -478,5 +702,73 @@ export const AsyncLoading: StoryObj<typeof AsyncTree> = {
   args: {
     selectionMode: 'multiple',
     delay: 500
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps): ReactElement => {
+  let {childItems, name, icon = <FileTxt />, loadingState, onLoadMore} = props;
+  return (
+    <>
+      <TreeViewItem id={props.id} textValue={name} href={props.href}>
+        <TreeViewItemContent>
+          <Text>{name}</Text>
+          {icon}
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={childItems}>
+          {(item) => (
+            <DynamicTreeItem
+              id={item.id || item.name}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}
+              href={props.href} />
+          )}
+        </Collection>
+        {onLoadMore && loadingState && <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} /> }
+      </TreeViewItem>
+    </>
+  );
+};
+
+<div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
+  <TreeView aria-label="async loading tree">
+    <DynamicTreeItem
+      id="starwars"
+      icon={<Folder />}
+      name="Star Wars"
+      textValue="Star Wars"
+      childItems={starWarsList.items}
+      loadingState={starWarsList.loadingState}
+      onLoadMore={starWarsList.loadMore} />
+    <Collection items={rootList.items}>
+      {(item: any) => (
+        <DynamicTreeItem
+          id={item.id}
+          icon={<FileTxt />}
+          name={item.name}
+          textValue={item.name} />
+      )}
+    </Collection>
+    <TreeViewLoadMoreItem loadingState={rootList.loadingState} onLoadMore={rootList.loadMore} />
+  </TreeView>
+</div>
+          `
+        }
+      }
+    }
   }
 };

@@ -32,7 +32,7 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -47,9 +47,12 @@ import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
+  /** @private */
   isDetached?: boolean,
+  /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   // not fully supported yet
+  /** @private */
   isEmphasized?: boolean
 }
 
@@ -101,7 +104,10 @@ const tree = style({
   }
 }, getAllowedOverrides({height: true}));
 
-const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A tree view provides users with a way to navigate nested hierarchical information.
+ */
+export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
@@ -472,9 +478,3 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     </Button>
   );
 }
-
-/**
- * A tree view provides users with a way to navigate nested hierarchical information.
- */
-const _TreeView: <T extends object>(props: TreeViewProps<T> & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null = TreeView;
-export {_TreeView as TreeView};
