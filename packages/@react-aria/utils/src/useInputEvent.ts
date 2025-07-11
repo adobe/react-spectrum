@@ -8,7 +8,7 @@ export function useInputEvent<T>(
   useEffect(() => {
     return subscribe(value => {
       let el = ref.current;
-      if (el && window.event?.type !== 'reset') {
+      if (el && window.event?.type !== 'reset' && (type === 'change' || el.value !== String(value ?? ''))) {
         // Use native input element value property setter from the element's prototype.
         // React overrides the setter directly on the element and ignores the input event.
         // This matches more closely what the browser does natively (setter is not triggered).

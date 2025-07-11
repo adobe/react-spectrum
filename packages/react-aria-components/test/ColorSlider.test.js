@@ -203,7 +203,7 @@ describe('ColorSlider', () => {
         onChange={onChange}
         onInput={onInput}
         ref={ref}>
-        <TestColorSlider sliderProps={{defaultValue: '#000'}} />
+        <TestColorSlider sliderProps={{defaultValue: '#111'}} />
       </form>
     );
 

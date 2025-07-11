@@ -84,6 +84,7 @@ describe('useTextField hook', () => {
       let onChange = jest.fn();
       let props = renderTextFieldHook({onChange, 'aria-label': 'mandatory label'});
       let mockEvent = {
+        nativeEvent: {},
         target: {
           value: 1
         }

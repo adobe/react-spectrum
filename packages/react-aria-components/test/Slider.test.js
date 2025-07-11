@@ -309,7 +309,7 @@ describe('Slider', () => {
         onChange={onChange}
         onInput={onInput}
         ref={ref}>
-        <TestSlider />
+        <TestSlider defaultValue={50} />
       </form>
     );
 
