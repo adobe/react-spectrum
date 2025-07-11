@@ -304,7 +304,7 @@ export const Example: StoryObj<typeof TreeExampleStatic> = {
     </TreeViewItem>
   </TreeView>
 </div>
-          `
+          `;
         }
       }
     }
@@ -519,7 +519,7 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
     )}
   </TreeView>
 </div>
-          `
+          `;
         }
       }
     }
@@ -577,7 +577,7 @@ function renderEmptyState(): ReactElement {
     )}
   </TreeView>
 </div>
-          `
+          `;
         }
       }
     }
@@ -766,7 +766,7 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
     <TreeViewLoadMoreItem loadingState={rootList.loadingState} onLoadMore={rootList.loadMore} />
   </TreeView>
 </div>
-          `
+          `;
         }
       }
     }
