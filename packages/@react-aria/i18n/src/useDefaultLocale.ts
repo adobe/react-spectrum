@@ -13,6 +13,7 @@
 import {Direction} from '@react-types/shared';
 import {isRTL} from './utils';
 import {useEffect, useState} from 'react';
+import {useIsSSR} from '@react-aria/ssr';
 
 export interface Locale {
   /** The [BCP47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code for the locale. */
@@ -58,6 +59,7 @@ function updateLocale() {
  * Returns the current browser/system language, and updates when it changes.
  */
 export function useDefaultLocale(): Locale {
+  let isSSR = useIsSSR();
   let [defaultLocale, setDefaultLocale] = useState(currentLocale);
 
   useEffect(() => {
@@ -74,6 +76,15 @@ export function useDefaultLocale(): Locale {
       }
     };
   }, []);
+
+  // We cannot determine the browser's language on the server, so default to
+  // en-US. This will be updated after hydration on the client to the correct value.
+  if (isSSR) {
+    return {
+      locale: 'en-US',
+      direction: 'ltr'
+    };
+  }
 
   return defaultLocale;
 }
