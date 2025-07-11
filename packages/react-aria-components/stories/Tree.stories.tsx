@@ -15,7 +15,7 @@ import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderE
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useCallback, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
