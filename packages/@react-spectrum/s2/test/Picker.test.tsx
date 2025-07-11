@@ -103,12 +103,20 @@ describe('Picker', () => {
     let options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
     }
 
     tree.rerender(<DynamicPicker items={items} loadingState="loadingMore" />);
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
-      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      if (index === options.length - 1) {
+        // The last row is the loader here which shouldn't have posinset
+        expect(option).not.toHaveAttribute('aria-posinset');
+        expect(option).not.toHaveAttribute('aria-setsize');
+      } else {
+        expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+        expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
+      }
     }
 
     let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}];
@@ -117,6 +125,7 @@ describe('Picker', () => {
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${newItems.length}`);
     }
   });
 
