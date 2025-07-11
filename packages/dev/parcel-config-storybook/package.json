@@ -1,6 +1,7 @@
 {
   "name": "@parcel/config-storybook",
   "version": "0.0.2",
+  "private": true,
   "main": "storybook-config.json",
   "engines": {
     "parcel": "^2.8.0"

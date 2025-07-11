@@ -51,12 +51,13 @@ type: component
 
 ```tsx example
 import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import {ChevronDown} from 'lucide-react';
 
 <Select>
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   <Popover>
     <ListBox>
@@ -105,6 +106,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 
   .react-aria-SelectValue {
+    flex: 1 0 auto;
+    text-align: start;
+
     &[data-placeholder] {
       font-style: italic;
       color: var(--text-color-placeholder);
@@ -112,7 +116,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 
   span[aria-hidden] {
-    width: 1.5rem;
+    width: 1.429rem;
+    height: 1.429rem;
     line-height: 1.375rem;
     margin-left: 1rem;
     padding: 1px;
@@ -121,6 +126,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     forced-color-adjust: none;
     border-radius: 4px;
     font-size: 0.857rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 }
 
@@ -324,7 +333,7 @@ export function MySelect<T extends object>({label, description, errorMessage, ch
       <Label>{label}</Label>
       <Button>
         <SelectValue />
-        <span aria-hidden="true">▼</span>
+        <span aria-hidden="true"><ChevronDown size={16} /></span>
       </Button>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -836,7 +845,7 @@ The `description` slot can be used to associate additional help text with a Sele
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   {/*- begin highlight -*/}
   <Text slot="description">Please select an animal.</Text>
@@ -903,7 +912,7 @@ Select passes the rendered children of the selected item in the render props of 
       }}
     </SelectValue>
     {/*- end highlight -*/}
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   <Popover>
     <ListBox>
@@ -1260,7 +1269,7 @@ function SelectClearButton() {
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   {/*- begin highlight -*/}
   <SelectClearButton />
@@ -1340,7 +1349,7 @@ Note: you do not need to set the style inline, you can use any CSS method to do 
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   <Popover>
     <ListBox>

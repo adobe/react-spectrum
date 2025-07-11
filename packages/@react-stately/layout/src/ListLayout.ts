@@ -589,8 +589,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect: Rect;
     if (target.dropPosition === 'before') {
       rect = this.orientation === 'horizontal' ? 
-        new Rect(layoutInfo.rect.x - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
-        : new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+        new Rect(Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2), layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
     } else if (target.dropPosition === 'after') {
       // Render after last visible descendant of the drop target.
       let targetNode = this.collection.getItem(target.key);
