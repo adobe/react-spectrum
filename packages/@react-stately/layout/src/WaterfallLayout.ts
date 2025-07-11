@@ -170,7 +170,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     }
 
     // Reset all columns to the maximum for the next section. If loading, set to 0 so virtualizer doesn't render its body since there aren't items to render
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     let maxHeight = isEmptyOrLoading ? 0 : Math.max(...columnHeights);
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
