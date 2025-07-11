@@ -20,7 +20,7 @@ import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, Globa
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
@@ -28,13 +28,15 @@ import {useControlledState} from '@react-stately/utils';
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
+  private itemCount: number = 0;
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
-    let {flattenedRows, keyMap} = flattenTree<T>(collection, {expandedKeys});
+    let {flattenedRows, keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     this.keyMap = keyMap;
+    this.itemCount = itemCount;
   }
 
   // TODO: should this collection's getters reflect the flattened structure or the original structure
@@ -44,7 +46,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   get size() {
-    return this.flattenedRows.length;
+    return this.itemCount;
   }
 
   getKeys() {
@@ -64,7 +66,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getLastKey() {
-    return this.flattenedRows[this.size - 1]?.key;
+    return this.flattenedRows[this.flattenedRows.length - 1]?.key;
   }
 
   getKeyAfter(key: Key) {
@@ -364,9 +366,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     let {isEmpty, ...values} = renderValues;
     let content = props.renderEmptyState({...values});
     let treeGridRowProps = {
-      'aria-level': 1,
-      'aria-posinset': 1,
-      'aria-setsize': 1
+      'aria-level': 1
     };
 
     emptyState = (
@@ -700,7 +700,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
+export interface TreeLoadMoreItemRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -708,23 +708,45 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   level: number
 }
 
-export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
+export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode | ((values: TreeLoadMoreItemRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
+}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext)!;
-  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
-  // @ts-ignore
-  let {rowProps} = useTreeItem({node: item}, state, ref);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+  let sentinelRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    onLoadMore,
+    // this collection will update anytime a row is expanded/collapsed becaused the flattenedRows will change.
+    // This means onLoadMore will trigger but that might be ok cause the user should have logic to handle multiple loadMore calls
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [onLoadMore, scrollOffset, state?.collection]);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {rowProps, gridCellProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
   let ariaProps = {
-    'aria-level': rowProps['aria-level'],
-    'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize']
+    role: 'row',
+    'aria-level': rowProps['aria-level']
   };
 
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
@@ -735,16 +757,22 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
 
   return (
     <>
-      <div
-        role="row"
-        ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps)}
-        {...renderProps}
-        data-level={level}>
-        <div role="gridcell" aria-colindex={1}>
-          {renderProps.children}
-        </div>
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
+      {isLoading && renderProps.children && (
+        <div
+          ref={ref}
+          {...mergeProps(filterDOMProps(props as any), ariaProps)}
+          {...renderProps}
+          data-level={level}>
+          <div {...gridCellProps}>
+            {renderProps.children}
+          </div>
+        </div>
+      )}
     </>
   );
 });
@@ -764,7 +792,8 @@ interface TreeGridCollectionOptions {
 
 interface FlattenedTree<T> {
   flattenedRows: Node<T>[],
-  keyMap: Map<Key, CollectionNode<T>>
+  keyMap: Map<Key, CollectionNode<T>>,
+  itemCount: number
 }
 
 function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
@@ -773,6 +802,8 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   } = opts;
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
   let flattenedRows: Node<T>[] = [];
+  // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
+  let itemCount = 0;
 
   let visitNode = (node: Node<T>) => {
     if (node.type === 'item' || node.type === 'loader') {
@@ -797,9 +828,14 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         keyMap.set(node.key, node as CollectionNode<T>);
       }
 
-      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
-        // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
-        flattenedRows.push(keyMap.get(node.key) || node);
+      // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
+      let modifiedNode = keyMap.get(node.key) || node;
+      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && flattenedRows.find(row => row.key === modifiedNode.parentKey))) {
+        if (modifiedNode.type === 'item') {
+          itemCount++;
+        }
+
+        flattenedRows.push(modifiedNode);
       }
     } else if (node.type !== null) {
       keyMap.set(node.key, node as CollectionNode<T>);
@@ -816,7 +852,8 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
 
   return {
     flattenedRows,
-    keyMap
+    keyMap,
+    itemCount
   };
 }
 

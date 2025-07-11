@@ -27,7 +27,7 @@ import {
 } from 'react-aria-components';
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
@@ -62,7 +62,7 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className'>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
   children: ReactNode
 }
@@ -291,7 +291,7 @@ const heading = style({
   fontWeight: 'extra-bold'
 });
 
-export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus' | 'onClick'>, LinkDOMProps {
+export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus' | 'onClick' | keyof GlobalDOMAttributes>, LinkDOMProps {
   /** The children of the breadcrumb item. */
   children: ReactNode
 }

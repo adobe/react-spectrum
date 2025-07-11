@@ -11,7 +11,7 @@
  */
 
 import {Avatar, AvatarGroup, Provider} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof AvatarGroup> = {
@@ -28,36 +28,44 @@ const meta: Meta<typeof AvatarGroup> = {
 
 export default meta;
 
+type Story = StoryObj<typeof AvatarGroup>;
+
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 
-export const Example = (args: any) => (
-  <AvatarGroup aria-label="Online users" {...args}>
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="design provided" src={SRC_URL_2} />
-  </AvatarGroup>
-);
+export const Example: Story = {
+  render: (args) => (
+    <AvatarGroup aria-label="Online users" {...args}>
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="design provided" src={SRC_URL_2} />
+    </AvatarGroup>
+  )
+};
 
-export const WithLabel = (args: any) => (
-  <AvatarGroup label="145 members" {...args}>
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="design provided" src={SRC_URL_2} />
-  </AvatarGroup>
-);
-
-export const WithProviderBackground = (args: any) => (
-  <Provider background="layer-1" styles={style({padding: 40})}>
+export const WithLabel: Story = {
+  render: (args) => (
     <AvatarGroup label="145 members" {...args}>
       <Avatar alt="default adobe" src={SRC_URL_1} />
       <Avatar alt="default adobe" src={SRC_URL_1} />
       <Avatar alt="default adobe" src={SRC_URL_1} />
       <Avatar alt="design provided" src={SRC_URL_2} />
     </AvatarGroup>
-  </Provider>
-);
+  )
+};
+
+export const WithProviderBackground: Story = {
+  render: (args) => (
+    <Provider background="layer-1" styles={style({padding: 40})}>
+      <AvatarGroup label="145 members" {...args}>
+        <Avatar alt="default adobe" src={SRC_URL_1} />
+        <Avatar alt="default adobe" src={SRC_URL_1} />
+        <Avatar alt="default adobe" src={SRC_URL_1} />
+        <Avatar alt="design provided" src={SRC_URL_2} />
+      </AvatarGroup>
+    </Provider>
+  )
+};

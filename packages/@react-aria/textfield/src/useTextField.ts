@@ -11,15 +11,17 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
+import {chain, filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
   LabelHTMLAttributes,
   RefObject,
+  useCallback,
   useEffect,
+  useRef,
   useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -122,9 +124,20 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isRequired = false,
     isReadOnly = false,
     type = 'text',
-    validationBehavior = 'aria'
+    validationBehavior = 'aria',
+    onChange: onChangeProp
   } = props;
-  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
+
+  let isComposing = useRef(false);
+  let onChange = useCallback((val) => {
+    if (isComposing.current) {
+      return;
+    }
+
+    onChangeProp?.(val);
+  }, [onChangeProp]);
+
+  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', onChange);
   let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
   let validationState = useFormValidationState({
     ...props,
@@ -165,6 +178,17 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     }
   }, [ref]);
 
+  let onCompositionStart = useCallback(() => {
+    isComposing.current = true;
+  }, []);
+
+  let onCompositionEnd = useCallback((e) => {
+    isComposing.current = false;
+    if (e.data !== '') {
+      onChangeProp?.(value);
+    }
+  }, [onChangeProp, value]);
+
   return {
     labelProps,
     inputProps: mergeProps(
@@ -201,8 +225,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         onPaste: props.onPaste,
 
         // Composition events
-        onCompositionEnd: props.onCompositionEnd,
-        onCompositionStart: props.onCompositionStart,
+        onCompositionEnd: chain(onCompositionEnd, props.onCompositionEnd),
+        onCompositionStart: chain(onCompositionStart, props.onCompositionStart),
         onCompositionUpdate: props.onCompositionUpdate,
 
         // Selection events

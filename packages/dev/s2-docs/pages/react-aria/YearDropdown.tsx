@@ -1,7 +1,7 @@
 import type {CalendarDate} from '@internationalized/date';
 import {CalendarStateContext} from 'react-aria-components';
+import {ReactElement, useContext} from 'react';
 import {Select, SelectItem} from 'vanilla-starter/Select';
-import {useContext} from 'react';
 import {useDateFormatter} from 'react-aria';
 
 interface YearItem {
@@ -10,7 +10,7 @@ interface YearItem {
   formatted: string
 }
 
-export function YearDropdown() {
+export function YearDropdown(): ReactElement {
   let state = useContext(CalendarStateContext)!;
   let formatter = useDateFormatter({
     year: 'numeric',

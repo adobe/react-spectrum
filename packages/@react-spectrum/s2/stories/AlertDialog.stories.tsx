@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, AlertDialog, DialogTrigger} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog as any,
@@ -24,7 +24,9 @@ const meta: Meta<typeof AlertDialog> = {
 
 export default meta;
 
-export const Example = {
+type Story = StoryObj<typeof AlertDialog>;
+
+export const Example: Story = {
   render: (args) => {
     return (
       <DialogTrigger>

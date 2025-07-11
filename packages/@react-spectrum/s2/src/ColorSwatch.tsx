@@ -18,13 +18,13 @@ import {
   parseColor
 } from 'react-aria-components';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style'>, UnsafeStyles {
+export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The size of the ColorSwatch.
    * @default 'M'

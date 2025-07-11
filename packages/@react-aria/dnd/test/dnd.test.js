@@ -1350,6 +1350,59 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer._dragImage.x).toBe(10);
         expect(dataTransfer._dragImage.y).toBe(10);
       });
+
+      it('should use the offset returned from renderPreview', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 12, y: 15}));
+        let tree = render(<Draggable renderPreview={renderPreview} />);
+
+        let draggable = tree.getByText('Drag me');
+
+        // Ensure consistent element sizes between draggable source and preview.
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          return {
+            left: 0,
+            top: 0,
+            x: 0,
+            y: 0,
+            width: this.style.position === 'absolute' ? 20 : 100,
+            height: this.style.position === 'absolute' ? 20 : 50
+          };
+        });
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 10, clientY: 10}));
+
+        // renderPreview should have been called and its offset returned used without modification.
+        expect(renderPreview).toHaveBeenCalledTimes(1);
+        expect(dataTransfer._dragImage.x).toBe(12);
+        expect(dataTransfer._dragImage.y).toBe(15);
+      });
+
+      it('should clamp the offset returned from renderPreview to the preview bounds', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 50, y: -10}));
+        // Return values outside of the preview bounds to verify clamping logic.
+        let tree = render(<Draggable renderPreview={renderPreview} />);
+
+        let draggable = tree.getByText('Drag me');
+
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          return {
+            left: 0,
+            top: 0,
+            x: 0,
+            y: 0,
+            width: this.style.position === 'absolute' ? 20 : 100,
+            height: this.style.position === 'absolute' ? 20 : 50
+          };
+        });
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+        // Offsets should be clamped to 0 <= offset <= width/height (20 in this mock).
+        expect(dataTransfer._dragImage.x).toBe(20);
+        expect(dataTransfer._dragImage.y).toBe(0);
+      });
     });
   });
 

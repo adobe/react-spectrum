@@ -36,11 +36,11 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 
 export default {
   title: 'React Aria Components/GridList'
@@ -138,7 +138,7 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export function VirtualizedGridList() {
+export function VirtualizedGridList(args) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -175,13 +175,22 @@ export function VirtualizedGridList() {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         style={{height: 400}}
-        aria-label="virtualized listbox"
+        aria-label="virtualized gridlist"
         items={list.items}>
-        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        <Collection items={list.items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={args.isLoading} />
       </GridList>
     </Virtualizer>
   );
 }
+
+VirtualizedGridList.story = {
+  args: {
+    isLoading: false
+  }
+};
 
 export function VirtualizedGridListGrid() {
   let items: {id: number, name: string}[] = [];
@@ -219,7 +228,7 @@ interface Character {
 
 const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       style={{
         height: 30,
         width: '100%',
@@ -229,7 +238,7 @@ const MyGridListLoaderIndicator = (props) => {
       }}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_GridListLoadingSentinel>
+    </GridListLoadMoreItem>
   );
 };
 

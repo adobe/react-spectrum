@@ -13,7 +13,7 @@
 import {categorizeArgTypes} from './utils';
 
 import {ColorWheel} from '../src/ColorWheel';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,
@@ -28,9 +28,11 @@ const meta: Meta<typeof ColorWheel> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorWheel>;
 
-export const Example = (args: any) => <ColorWheel {...args} onChange={undefined} />;
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
+export const Example: Story = {
+  render: (args) => <ColorWheel {...args} onChange={undefined} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
 };

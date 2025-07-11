@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
+import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -457,6 +457,55 @@ describe('Select', () => {
     expect(text).not.toHaveAttribute('id');
   });
 
+  it('shouldn\'t allow the user to open the select if there are no items', async function () {
+    let {getByTestId, queryByTestId, rerender} = render(
+      <Select data-testid="select" defaultSelectedKey="cat">
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="popover">
+          <Label>Hello</Label>
+          <Button>Yo</Button>
+          <Text>hi</Text>
+          <ListBox>
+            {[]}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    await user.click(selectTester.trigger);
+
+    let popover = queryByTestId('popover');
+    expect(popover).toBeFalsy();
+
+    rerender(
+      <Select data-testid="select" defaultSelectedKey="cat">
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="popover">
+          <Label>Hello</Label>
+          <Button>Yo</Button>
+          <Text>hi</Text>
+          <ListBox>
+            <ListBoxLoadMoreItem isLoading>
+              Loading more
+            </ListBoxLoadMoreItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    await user.click(selectTester.trigger);
+    popover = queryByTestId('popover');
+    expect(popover).toBeFalsy();
+  });
+
   it('should support form prop', () => {
     render(
       <TestSelect name="select" form="test" />
@@ -465,7 +514,7 @@ describe('Select', () => {
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('form', 'test');
   });
-  
+
   it('should not submit if required and selectedKey is null', async () => {
     const onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
 

@@ -33,7 +33,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
   
   return (
     <div
-      {...mergeProps(DOMProps, renderProps, colorSwatchProps)}
+      {...mergeProps(DOMProps, colorSwatchProps, renderProps)}
       slot={props.slot || undefined}
       ref={ref} />
   );

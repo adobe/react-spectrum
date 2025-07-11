@@ -20,7 +20,7 @@ import {
   RadioGroup,
   Text
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {
@@ -32,8 +32,9 @@ const meta: Meta<typeof RadioGroup> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof RadioGroup>;
 
-export const Example = {
+export const Example: Story = {
   render: (args: any) => (
     <RadioGroup {...args}>
       <Radio value="soccer">Soccer</Radio>
@@ -48,7 +49,7 @@ export const Example = {
 };
 
 
-export const LongLabel = {
+export const LongLabel: Story = {
   render: (args: any) => (
     <RadioGroup styles={style({maxWidth: 128})} {...args}>
       <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
@@ -61,7 +62,7 @@ export const LongLabel = {
   }
 };
 
-export const ErrorAndDescription = {
+export const ErrorAndDescription: Story = {
   render: (args: any) => (
     <RadioGroup {...args}>
       <Radio value="soccer">Soccer</Radio>
@@ -82,7 +83,7 @@ export const ErrorAndDescription = {
   }
 };
 
-export const ContextualHelpExample = {
+export const ContextualHelpExample: Story = {
   render: (args: any) => (
     <RadioGroup {...args}>
       <Radio isDisabled value="soccer">Soccer</Radio>

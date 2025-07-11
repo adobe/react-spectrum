@@ -54,7 +54,7 @@ export const Example: Story = {
 };
 
 
-export const PendingButton = {
+export const PendingButton: Story = {
   render: (args) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>

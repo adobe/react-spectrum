@@ -1440,8 +1440,8 @@ describe('Tree', () => {
 
       let row = treeTester.rows[0];
       expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(row).not.toHaveAttribute('aria-posinset');
+      expect(row).not.toHaveAttribute('aria-setsize');
       let gridCell = treeTester.cells({element: row})[0];
       expect(gridCell).toHaveTextContent('No resultsNo results found.');
 

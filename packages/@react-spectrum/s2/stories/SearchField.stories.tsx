@@ -20,7 +20,7 @@ import {
   SearchField,
   Text
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
@@ -40,45 +40,49 @@ const meta: Meta<typeof SearchField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof SearchField>;
 
-export const Example = (args: any) => <SearchField {...args} />;
-
-Example.args = {
-  label: 'Search'
-};
-
-export const CustomWidth = (args: any) => <SearchField {...args} styles={style({width: 256})} />;
-
-CustomWidth.args = {
-  label: 'Search'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const Example: Story = {
+  render: (args) => <SearchField {...args} />,
+  args: {
+    label: 'Search'
   }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <SearchField
-    {...args}
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>Search tips</Heading>
-        <Content>
-          <Text>
-            You can use modifiers like "date:" and "from:" to search by specific attributes.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://react-spectrum.adobe.com/"
-            target="_blank">React Spectrum</Link>
-        </Footer>
-      </ContextualHelp>
-    } />
-);
+export const CustomWidth: Story = {
+  render: (args) => <SearchField {...args} styles={style({width: 256})} />,
+  args: {
+    label: 'Search'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
 
-ContextualHelpExample.args = {
-  label: 'Search'
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <SearchField
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>Search tips</Heading>
+          <Content>
+            <Text>
+              You can use modifiers like "date:" and "from:" to search by specific attributes.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://react-spectrum.adobe.com/"
+              target="_blank">React Spectrum</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
+  ),
+  args: {
+    label: 'Search'
+  }
 };

@@ -28,8 +28,8 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import React, {useState} from 'react';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1602,9 +1602,9 @@ describe('ListBox', () => {
               <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
             )}
           </Collection>
-          <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_ListBoxLoadingSentinel>
+          </ListBoxLoadMoreItem>
         </ListBox>
       );
     };
@@ -1719,9 +1719,9 @@ describe('ListBox', () => {
                   <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
                 )}
               </Collection>
-              <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_ListBoxLoadingSentinel>
+              </ListBoxLoadMoreItem>
             </ListBox>
           </Virtualizer>
         );
@@ -1734,8 +1734,8 @@ describe('ListBox', () => {
         expect(options).toHaveLength(8);
         let loaderRow = options[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-posinset', '51');
-        expect(loaderRow).toHaveAttribute('aria-setSize', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-posinset');
+        expect(loaderRow).not.toHaveAttribute('aria-setSize');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250

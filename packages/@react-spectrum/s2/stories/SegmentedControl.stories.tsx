@@ -17,7 +17,7 @@ import {fn} from '@storybook/test';
 import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
 import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {SegmentedControl, SegmentedControlItem, Text} from '../src';
 import {style} from '../style' with {type: 'macro'};
 
@@ -38,44 +38,48 @@ const meta: Meta<typeof SegmentedControl> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof SegmentedControl>;
 
 const justifiedStyle = style({
   width: 400
 });
 
-export const Example = (args: any) => (
-  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
-    <SegmentedControlItem id="day">Day</SegmentedControlItem>
-    <SegmentedControlItem id="week">Week</SegmentedControlItem>
-    <SegmentedControlItem id="month">Month</SegmentedControlItem>
-    <SegmentedControlItem id="year">Year</SegmentedControlItem>
-  </SegmentedControl>
-);
-
-Example.args = {
-  'aria-label': 'Time granularity'
+export const Example: Story = {
+  render: (args) => (
+    <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
+      <SegmentedControlItem id="day">Day</SegmentedControlItem>
+      <SegmentedControlItem id="week">Week</SegmentedControlItem>
+      <SegmentedControlItem id="month">Month</SegmentedControlItem>
+      <SegmentedControlItem id="year">Year</SegmentedControlItem>
+    </SegmentedControl>
+  ),
+  args: {
+    'aria-label': 'Time granularity'
+  }
 };
 
-export const WithIcons = (args: any) => (
-  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
-    <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
-    <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
-    <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
-  </SegmentedControl>
-);
-
-WithIcons.args = {
-  'aria-label': 'List organization'
+export const WithIcons: Story = {
+  render: (args) => (
+    <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
+      <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
+      <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
+      <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
+    </SegmentedControl>
+  ),
+  args: {
+    'aria-label': 'List organization'
+  }
 };
 
-export const OnlyIcons = (args: any) => (
-  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
-    <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
-    <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
-    <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
-  </SegmentedControl>
-);
-
-OnlyIcons.args = {
-  'aria-label': 'Text alignment'
+export const OnlyIcons: Story = {
+  render: (args) => (
+    <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
+      <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
+      <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
+      <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
+    </SegmentedControl>
+  ),
+  args: {
+    'aria-label': 'Text alignment'
+  }
 };

@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonContext} from './ActionButton';
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {baseColor, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
@@ -22,7 +22,7 @@ import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the disclosure.
    * @default 'M'

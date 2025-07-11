@@ -11,7 +11,8 @@
  */
 
 import {Link} from '../src';
-import React from 'react';
+import type {Meta} from '@storybook/react';
+import React, {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 
 export default {
@@ -19,9 +20,9 @@ export default {
   parameters: {
     docs: {disable: true}
   }
-};
+} as Meta<typeof Example>;
 
-export function Example() {
+export function Example(): ReactElement {
   return (
     <div className={style({backgroundColor: 'orange-500', color: 'black', font: 'body', paddingX: 8, paddingY: 4, borderRadius: 'lg'})}>
       Test
@@ -29,7 +30,7 @@ export function Example() {
   );
 }
 
-export function Well() {
+export function Well(): ReactElement {
   return (
     <div
       className={style({
