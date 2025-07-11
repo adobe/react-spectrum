@@ -925,7 +925,8 @@ export const style = createTheme({
     zIndex: new ArbitraryProperty<number>('zIndex'),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)'),
-    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const
+    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const,
+    caretColor: ['auto', 'transparent'] as const
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,
