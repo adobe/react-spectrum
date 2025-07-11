@@ -22,7 +22,7 @@ import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
-import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendar, RangeCalendarProps, TimeField} from '../';
@@ -32,7 +32,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateRangePickerProps<T extends DateValue> extends
-  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style'>,
+  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   Pick<RangeCalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
   StyleProps,
   SpectrumLabelableProps,

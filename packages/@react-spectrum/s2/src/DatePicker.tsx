@@ -29,7 +29,7 @@ import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps}
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
-import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PopoverBase} from './Popover';
@@ -39,7 +39,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DatePickerProps<T extends DateValue> extends
-  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style'>,
+  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   Pick<CalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
   StyleProps,
   SpectrumLabelableProps,
