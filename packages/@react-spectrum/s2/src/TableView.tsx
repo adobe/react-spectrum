@@ -38,8 +38,8 @@ import {
   RowRenderProps,
   TableBodyRenderProps,
   TableLayout,
+  TableLoadMoreItem,
   TableRenderProps,
-  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -196,11 +196,10 @@ export class S2TableLayout<T> extends TableLayout<T> {
     if (!header) {
       return [];
     }
-    let {children, layoutInfo} = body;
+    let {layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    // TODO: we may want to adjust RAC layouts to do something simlar? Current users of RAC table will probably run into something similar
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
@@ -219,7 +218,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
@@ -227,11 +226,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
   // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
-    let {children, layoutInfo} = layoutNode;
+    let {layoutInfo} = layoutNode;
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
@@ -390,13 +389,13 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingSentinel>
+    </TableLoadMoreItem>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
