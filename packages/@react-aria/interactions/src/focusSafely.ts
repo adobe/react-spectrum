@@ -37,9 +37,11 @@ export function focusSafely(element: FocusableElement): void {
       // If focus did not move and the element is still in the document, focus it.
       if (getActiveElement(ownerDocument) === lastFocusedElement && element.isConnected) {
         focusWithoutScrolling(element);
+        (element as HTMLInputElement).select?.();
       }
     });
   } else {
     focusWithoutScrolling(element);
+    (element as HTMLInputElement).select?.();
   }
 }
