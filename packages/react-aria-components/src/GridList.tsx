@@ -130,9 +130,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior,
       layoutDelegate,
       layout,
-      direction
+      direction,
+      orientation
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction, orientation]);
 
   let {gridProps} = useGridList({
     ...props,
@@ -187,13 +188,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate({
-      collection,
-      orientation,
-      disabledKeys: selectionManager.disabledKeys,
-      disabledBehavior: selectionManager.disabledBehavior,
-      ref
-    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
