@@ -4331,6 +4331,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@parcel/config-webextension@npm:^2.15.4":
+  version: 2.15.4
+  resolution: "@parcel/config-webextension@npm:2.15.4"
+  dependencies:
+    "@parcel/config-default": "npm:2.15.4"
+    "@parcel/packager-webextension": "npm:2.15.4"
+    "@parcel/runtime-webextension": "npm:2.15.4"
+    "@parcel/transformer-raw": "npm:2.15.4"
+    "@parcel/transformer-webextension": "npm:2.15.4"
+  peerDependencies:
+    "@parcel/core": ^2.15.4
+  checksum: 10c0/c4de0c7b3c5f49f417d227644da3677cc6d95639c7c6913a2117bc920378b209e0c27943fe9843fcc175ab0fadfedfe05a38c2dfb71508cec81c0a01954ca677
+  languageName: node
+  linkType: hard
+
 "@parcel/core@npm:2.15.4, @parcel/core@npm:^2.13.1, @parcel/core@npm:^2.15.4":
   version: 2.15.4
   resolution: "@parcel/core@npm:2.15.4"
@@ -4680,6 +4695,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/packager-webextension@npm:2.15.4":
+  version: 2.15.4
+  resolution: "@parcel/packager-webextension@npm:2.15.4"
+  dependencies:
+    "@parcel/plugin": "npm:2.15.4"
+    "@parcel/utils": "npm:2.15.4"
+    nullthrows: "npm:^1.1.1"
+  checksum: 10c0/559f06648cd292ea798076387603909947db690f643395fdd747d854124736040f9a8aeb3bd01c0357772d81cf84adc33d98cd146b8c714b8a41c6005fd5e3c6
+  languageName: node
+  linkType: hard
+
 "@parcel/plugin@npm:2.15.4, @parcel/plugin@npm:^2.13.1, @parcel/plugin@npm:^2.15.4":
   version: 2.15.4
   resolution: "@parcel/plugin@npm:2.15.4"
@@ -4827,6 +4853,17 @@ __metadata:
     "@parcel/utils": "npm:2.15.4"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/a04f3e9105ddf06cb4aa412e2052070323cfb2865a4ff97dd0dc5d86918cd4d5204d090243d30db3a0ce6198cceba9cef42ed65e8b72036f85eb35d81305c7ca
+  languageName: node
+  linkType: hard
+
+"@parcel/runtime-webextension@npm:2.15.4":
+  version: 2.15.4
+  resolution: "@parcel/runtime-webextension@npm:2.15.4"
+  dependencies:
+    "@parcel/plugin": "npm:2.15.4"
+    "@parcel/utils": "npm:2.15.4"
+    nullthrows: "npm:^1.1.1"
+  checksum: 10c0/05d2c9ebd12578bb8512fa04cc951e3df310fcb51469b765af788fddc848aafb78154cfcaa574f14397ded03942ee9989052008d48f79b0346a01fb599f988de
   languageName: node
   linkType: hard
 
@@ -5156,6 +5193,19 @@ __metadata:
   peerDependencies:
     typescript: ">=3.0.0"
   checksum: 10c0/e6f485e7d5d9a76522334aeef30d302a9af0db223b13d0795f3e9c82b168d7f782ffc021cb01321758a91280db04395c3d53b5fdf9c071db51cbac9da2439252
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-webextension@npm:2.15.4":
+  version: 2.15.4
+  resolution: "@parcel/transformer-webextension@npm:2.15.4"
+  dependencies:
+    "@mischnic/json-sourcemap": "npm:^0.1.1"
+    "@parcel/diagnostic": "npm:2.15.4"
+    "@parcel/plugin": "npm:2.15.4"
+    "@parcel/utils": "npm:2.15.4"
+    content-security-policy-parser: "npm:^0.6.0"
+  checksum: 10c0/7992f55d4065d0fed6e76446a525e6b149e13189da91ae993a95c1a197c89548777b317ab0ae64ef0539fb5cc9fc923c772aa8bda5eb02ffdedd3616e10bfa36
   languageName: node
   linkType: hard
 
@@ -13799,6 +13849,13 @@ __metadata:
   dependencies:
     safe-buffer: "npm:5.2.1"
   checksum: 10c0/bac0316ebfeacb8f381b38285dc691c9939bf0a78b0b7c2d5758acadad242d04783cee5337ba7d12a565a19075af1b3c11c728e1e4946de73c6ff7ce45f3f1bb
+  languageName: node
+  linkType: hard
+
+"content-security-policy-parser@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "content-security-policy-parser@npm:0.6.0"
+  checksum: 10c0/f494e69020e2320179eab47ad2cdafb09752ed63ca4fb5445071381e392d19edd110c0c3ec43f135d27c34b49dbab851b7fcf188dd2ba30cacd6e1107b15b674
   languageName: node
   linkType: hard
 
@@ -28780,6 +28837,18 @@ __metadata:
   checksum: 10c0/3c3b8aa8f34d661910563ff996412e2f527fc814e699a376854b554d4a4294ab7e285b4e2c08a080a7b19c5600a9b93a98798d3ac600fe3de545ca6605c07829
   languageName: node
   linkType: hard
+
+"style-macro-chrome-plugin@workspace:packages/dev/style-macro-chrome-plugin":
+  version: 0.0.0-use.local
+  resolution: "style-macro-chrome-plugin@workspace:packages/dev/style-macro-chrome-plugin"
+  dependencies:
+    "@parcel/config-default": "npm:^2.15.4"
+    "@parcel/config-webextension": "npm:^2.15.4"
+    "@parcel/core": "npm:^2.15.4"
+    "@parcel/transformer-js": "npm:^2.15.4"
+    parcel: "npm:^2.15.4"
+  languageName: unknown
+  linkType: soft
 
 "style-to-object@npm:^0.3.0":
   version: 0.3.0
