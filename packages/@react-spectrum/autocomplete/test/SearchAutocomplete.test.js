@@ -2512,6 +2512,8 @@ describe('SearchAutocomplete', function () {
               jest.runAllTimers();
             });
 
+            expect(input).toHaveAttribute('aria-describedby');
+
             let listbox = getByRole('listbox');
             let items = within(listbox).getAllByRole('option');
             await user.click(items[0]);
@@ -2519,9 +2521,6 @@ describe('SearchAutocomplete', function () {
               jest.runAllTimers();
             });
 
-            expect(input).toHaveAttribute('aria-describedby');
-
-            await user.tab();
             expect(input).not.toHaveAttribute('aria-describedby');
           });
 
@@ -2550,16 +2549,14 @@ describe('SearchAutocomplete', function () {
               jest.runAllTimers();
             });
 
+            expect(input).toHaveAttribute('aria-describedby');
+
             let listbox = getByRole('listbox');
             let items = within(listbox).getAllByRole('option');
             await user.click(items[0]);
             act(() => {
               jest.runAllTimers();
             });
-
-            expect(input).toHaveAttribute('aria-describedby');
-
-            await user.tab();
 
             expect(input).not.toHaveAttribute('aria-describedby');
             expect(input.validity.valid).toBe(true);
@@ -2603,15 +2600,14 @@ describe('SearchAutocomplete', function () {
               jest.runAllTimers();
             });
 
+            expect(input).toHaveAttribute('aria-describedby');
+
             let listbox = getByRole('listbox');
             let items = within(listbox).getAllByRole('option');
             await user.click(items[0]);
             act(() => {
               jest.runAllTimers();
             });
-
-            expect(input).toHaveAttribute('aria-describedby');
-            await user.tab();
 
             expect(input).not.toHaveAttribute('aria-describedby');
             expect(input.validity.valid).toBe(true);

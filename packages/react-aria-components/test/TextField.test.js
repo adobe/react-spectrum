@@ -266,5 +266,21 @@ describe('TextField', () => {
       let input = getByRole('textbox');
       expect(input).toHaveAttribute('form', 'test');
     });
+
+    it('should allow onChange event to bubble to the form', async () => {
+      let onChange = jest.fn();
+  
+      render(
+        <form onChange={onChange}>
+          <TestTextField input={component} name="test" />
+        </form>
+      );
+  
+      await user.tab();
+      await user.keyboard('Hi');
+  
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange.mock.lastCall[0].target.name).toBe('test');
+    });
   });
 });

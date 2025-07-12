@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useInputEvent} from '@react-aria/utils';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
@@ -232,6 +232,22 @@ export function useSliderThumb(
     state.setThumbValue(index, v);
   });
 
+  let {onChange, onChangeEnd} = state;
+  useInputEvent<number>(inputRef, useCallback(fn => {
+    return onChange((changedIndex, value) => {
+      if (index === changedIndex) {
+        fn(value);
+      }
+    });
+  }, [onChange, index]), 'input');
+  useInputEvent<number>(inputRef, useCallback(fn => {
+    return onChangeEnd((changedIndex, value) => {
+      if (index === changedIndex) {
+        fn(value);
+      }
+    });
+  }, [onChangeEnd, index]), 'change');
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -255,7 +271,9 @@ export function useSliderThumb(
       'aria-describedby': [data['aria-describedby'], opts['aria-describedby']].filter(Boolean).join(' '),
       'aria-details': [data['aria-details'], opts['aria-details']].filter(Boolean).join(' '),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setThumbValue(index, parseFloat(e.target.value));
+        if (!e.nativeEvent['__reactAriaIgnore']) {
+          state.setThumbValue(index, parseFloat(e.target.value));
+        }
       }
     }),
     thumbProps: {

@@ -58,9 +58,6 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   } = props;
 
   let onChange = (e) => {
-    // since we spread props on label, onChange will end up there as well as in here.
-    // so we have to stop propagation at the lowest level that we care about
-    e.stopPropagation();
     state.setSelected(e.target.checked);
   };
 
