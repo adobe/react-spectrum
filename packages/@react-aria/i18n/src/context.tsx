@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {getDefaultLocale, Locale, useDefaultLocale} from './useDefaultLocale';
 import {isRTL} from './utils';
-import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {JSX, ReactNode, useContext} from 'react';
 
 export interface I18nProviderProps {
@@ -23,23 +23,19 @@ export interface I18nProviderProps {
 
 const I18nContext = React.createContext<Locale | null>(null);
 
+interface I18nProviderWithLocaleProps extends I18nProviderProps {
+  locale: string
+}
+
 /**
- * Provides the locale for the application to all child components.
+ * Internal component that handles the case when locale is provided.
  */
-export function I18nProvider(props: I18nProviderProps): JSX.Element {
-  let {locale, children} = props;
-  let defaultLocale = useDefaultLocale();
-
-  let value: Locale = React.useMemo(() => {
-    if (!locale) {
-      return defaultLocale;
-    }
-
-    return {
-      locale,
-      direction: isRTL(locale) ? 'rtl' : 'ltr'
-    };
-  }, [defaultLocale, locale]);
+function I18nProviderWithLocale(props: I18nProviderWithLocaleProps): JSX.Element {
+  let {locale, children} = props;  
+  let value: Locale = React.useMemo(() => ({
+    locale,
+    direction: isRTL(locale) ? 'rtl' : 'ltr'
+  }), [locale]);
 
   return (
     <I18nContext.Provider value={value}>
@@ -48,11 +44,44 @@ export function I18nProvider(props: I18nProviderProps): JSX.Element {
   );
 }
 
+interface I18nProviderWithDefaultLocaleProps {
+  children: ReactNode
+}
+
+/**
+ * Internal component that handles the case when no locale is provided.
+ */
+function I18nProviderWithDefaultLocale(props: I18nProviderWithDefaultLocaleProps): JSX.Element {
+  let {children} = props;
+  let defaultLocale = useDefaultLocale();
+
+  return (
+    <I18nContext.Provider value={defaultLocale}>
+      {children}
+    </I18nContext.Provider>
+  );
+}
+
+/**
+ * Provides the locale for the application to all child components.
+ */
+export function I18nProvider(props: I18nProviderProps): JSX.Element {
+  let {locale, children} = props;
+
+  // Conditionally render different components to avoid calling useDefaultLocale.
+  // This is necessary because useDefaultLocale triggers a re-render.
+  if (locale) {
+    return <I18nProviderWithLocale locale={locale} children={children} />;
+  }
+
+  return <I18nProviderWithDefaultLocale children={children} />;
+}
+
 /**
  * Returns the current locale and layout direction.
  */
 export function useLocale(): Locale {
-  let defaultLocale = useDefaultLocale();
+  let defaultLocale = getDefaultLocale();
   let context = useContext(I18nContext);
   return context || defaultLocale;
 }
