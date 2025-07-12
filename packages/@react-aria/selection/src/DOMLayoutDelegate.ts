@@ -11,13 +11,19 @@
  */
 
 import {getItemElement} from './utils';
-import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
+import {Key, LayoutDelegate, Orientation, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
   private ref: RefObject<HTMLElement | null>;
+  private orientation: Orientation;
 
-  constructor(ref: RefObject<HTMLElement | null>) {
+  constructor(ref: RefObject<HTMLElement | null>, orientation?: Orientation) {
     this.ref = ref;
+    this.orientation = orientation ?? 'vertical';
+  }
+
+  getOrientation(): Orientation {
+    return this.orientation;
   }
 
   getItemRect(key: Key): Rect | null {
