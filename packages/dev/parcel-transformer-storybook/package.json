@@ -1,6 +1,7 @@
 {
   "name": "@parcel/transformer-storybook",
   "version": "0.0.2",
+  "private": true,
   "main": "dist/StoryTransformer.js",
   "source": "StoryTransformer.ts",
   "engines": {

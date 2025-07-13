@@ -117,7 +117,6 @@ check-examples:
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	node scripts/extractStarter.mjs
 	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
