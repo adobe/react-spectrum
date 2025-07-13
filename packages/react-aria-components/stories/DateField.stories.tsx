@@ -53,13 +53,16 @@ export default {
   component: DateField
 } as Meta<typeof DateField>;
 
-export type DateFieldStory = StoryFn<typeof DateField>;
+export type DateFieldStory = StoryFn<Omit<typeof DateField, 'minValue' | 'maxValue'> & {
+  minValue?: number,
+  maxValue?: number
+}>;
 
 export const DateFieldExample: DateFieldStory = (props) => (
   <DateField
     {...props}
-    minValue={props.minValue ? fromAbsolute(props.minValue as unknown as number, getLocalTimeZone()) : undefined}
-    maxValue={props.maxValue ? fromAbsolute(props.maxValue as unknown as number, getLocalTimeZone()) : undefined}
+    minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
+    maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
     data-testid="date-field-example"
     defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>
