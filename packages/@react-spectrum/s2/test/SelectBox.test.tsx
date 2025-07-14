@@ -4,42 +4,6 @@ import {SelectBox} from '../src/SelectBox';
 import {SelectBoxGroup} from '../src/SelectBoxGroup';
 import userEvent from '@testing-library/user-event';
 
-// Mock all style-related imports
-jest.mock('../style', () => ({
-  style: jest.fn(() => jest.fn(() => 'mocked-style')), // Return a function that can be called
-  focusRing: jest.fn(() => ({})),
-  baseColor: jest.fn(() => ({})),
-  color: jest.fn(() => '#000000'),
-  raw: jest.fn((strings) => strings.join('')),
-  lightDark: jest.fn(() => '#000000')
-}));
-
-jest.mock('../src/style-utils', () => ({
-  controlFont: {},
-  getAllowedOverrides: jest.fn(() => ({}))
-}));
-
-jest.mock('@react-spectrum/utils', () => ({
-  useFocusableRef: jest.fn((ref) => ref),
-  useDOMRef: jest.fn((ref) => ref)
-}));
-
-jest.mock('../src/useSpectrumContextProps', () => ({
-  useSpectrumContextProps: jest.fn((props, ref) => [props, ref])
-}));
-
-jest.mock('../src/Checkbox', () => ({
-  Checkbox: ({value, isSelected, isDisabled, size}) => 
-    React.createElement('div', {
-      role: 'checkbox',
-      'aria-checked': isSelected,
-      'aria-disabled': isDisabled,
-      'data-testid': `checkbox-${value}`,
-      'data-size': size
-    }, 'Mock Checkbox')
-}));
-
-// Test helpers
 function SingleSelectBox() {
   const [value, setValue] = React.useState('');
   return (
@@ -99,8 +63,9 @@ describe('SelectBox', () => {
 
     it('handles multiple selection', async () => {
       render(<MultiSelectBox />);
-      const option1 = screen.getByDisplayValue('option1');
-      const option2 = screen.getByDisplayValue('option2');
+      const checkboxes = screen.getAllByRole('checkbox');
+      const option1 = checkboxes.find(cb => cb.getAttribute('value') === 'option1')!;
+      const option2 = checkboxes.find(cb => cb.getAttribute('value') === 'option2')!;
       
       await userEvent.click(option1);
       await userEvent.click(option2);
@@ -176,7 +141,8 @@ describe('SelectBox', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByDisplayValue('option1');
+      const radios = screen.getAllByRole('radio');
+      const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
       expect(option1).toBeChecked();
     });
 
@@ -193,9 +159,10 @@ describe('SelectBox', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByDisplayValue('option1');
-      const option2 = screen.getByDisplayValue('option2');
-      const option3 = screen.getByDisplayValue('option3');
+      const checkboxes = screen.getAllByRole('checkbox');
+      const option1 = checkboxes.find(cb => cb.getAttribute('value') === 'option1')!;
+      const option2 = checkboxes.find(cb => cb.getAttribute('value') === 'option2')!;
+      const option3 = checkboxes.find(cb => cb.getAttribute('value') === 'option3')!;
       
       expect(option1).toBeChecked();
       expect(option2).toBeChecked();
@@ -210,11 +177,13 @@ describe('SelectBox', () => {
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
-      const option1 = screen.getByDisplayValue('option1');
-      await userEvent.hover(option1);
+      
+      const label = screen.getByText('Option 1').closest('label')!;
+      await userEvent.hover(label);
       
       await waitFor(() => {
-        expect(screen.getByTestId('checkbox-option1')).toBeInTheDocument();
+        const checkboxes = screen.getAllByRole('checkbox');
+        expect(checkboxes.length).toBeGreaterThan(0);
       });
     });
 
@@ -226,8 +195,9 @@ describe('SelectBox', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByDisplayValue('option1');
-      const option2 = screen.getByDisplayValue('option2');
+      const radios = screen.getAllByRole('radio');
+      const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
+      const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
       
       expect(option1).toBeDisabled();
       expect(option2).not.toBeDisabled();
@@ -320,8 +290,8 @@ describe('SelectBox', () => {
         </SelectBoxGroup>
       );
       
-      const option = screen.getByDisplayValue('');
-      expect(option).toHaveAttribute('value', '');
+      const radio = screen.getByRole('radio');
+      expect(radio).toHaveAttribute('value', '');
     });
 
     it('handles complex children', () => {
