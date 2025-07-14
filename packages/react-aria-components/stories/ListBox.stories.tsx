@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {LoadingSpinner, MyListBoxItem} from './utils';
+import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
@@ -394,6 +394,8 @@ function generateRandomString(minLength: number, maxLength: number): string {
 }
 
 export function VirtualizedListBox(args) {
+  let heightProperty = args.orientation === 'horizontal' ? 'width' : 'height';
+  let widthProperty = args.orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
@@ -407,15 +409,16 @@ export function VirtualizedListBox(args) {
   return (
     <Virtualizer
       layout={new ListLayout({
+        orientation: args.orientation,
         estimatedRowHeight: 25,
         estimatedHeadingHeight: 26,
         loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+      <ListBox orientation={args.orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
         <Collection items={sections}>
           {section => (
             <ListBoxSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <MyHeader style={{fontSize: '1.2em'}}>{section.name}</MyHeader>
               <Collection items={section.children}>
                 {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
               </Collection>
@@ -430,8 +433,15 @@ export function VirtualizedListBox(args) {
 
 VirtualizedListBox.story = {
   args: {
+    orientation: 'vertical',
     variableHeight: false,
     isLoading: false
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
   }
 };
 
@@ -450,7 +460,7 @@ export function VirtualizedListBoxEmpty() {
   );
 }
 
-export function VirtualizedListBoxDnd() {
+export function VirtualizedListBoxDnd(args) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -481,13 +491,15 @@ export function VirtualizedListBoxDnd() {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          rowHeight: 25,
+          orientation: args.orientation,
+          rowHeight: args.orientation === 'horizontal' ? 45 : 25,
           gap: 8
         }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
+          orientation={args.orientation}
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={list.items}
@@ -498,6 +510,18 @@ export function VirtualizedListBoxDnd() {
     </div>
   );
 }
+
+VirtualizedListBoxDnd.story = {
+  args: {
+    orientation: 'vertical'
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
+  }
+};
 
 function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}) {
   let items: {id: number, name: string}[] = [];

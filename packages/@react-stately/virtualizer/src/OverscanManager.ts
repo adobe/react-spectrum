@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Orientation} from '@react-types/shared';
 import {Point} from './Point';
 import {Rect} from './Rect';
 
@@ -34,16 +35,18 @@ export class OverscanManager {
     this.visibleRect = rect;
   }
 
-  getOverscannedRect(): Rect {
+  getOverscannedRect(orientation: Orientation): Rect {
     let overscanned = this.visibleRect.copy();
 
-    let overscanY = this.visibleRect.height / 3;
-    overscanned.height += overscanY;
-    if (this.velocity.y < 0) {
-      overscanned.y -= overscanY;
+    if (orientation === 'vertical' || this.velocity.y !== 0) {
+      let overscanY = this.visibleRect.height / 3;
+      overscanned.height += overscanY;
+      if (this.velocity.y < 0) {
+        overscanned.y -= overscanY;
+      }
     }
 
-    if (this.velocity.x !== 0) {
+    if (orientation === 'horizontal' || this.velocity.x !== 0) {
       let overscanX = this.visibleRect.width / 3;
       overscanned.width += overscanX;
       if (this.velocity.x < 0) {
