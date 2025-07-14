@@ -103,7 +103,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
             </div>
             {isInvalid && (
               <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
-                {errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 2})}
+                {errorMessage || stringFormatter.format('calendar.invalidSelection', {selectedCount: 2})}
               </Text>
             )}
           </>

@@ -18,7 +18,7 @@ export function Popover({ children, hideArrow, noPadding, ...props }: PopoverPro
   return (
     (
       <AriaPopover {...props} className={clsx("react-aria-Popover react-aria-Dialog", props.className, {
-        'no-padding': noPadding
+        'dialog-padding': !noPadding
       })}>
         {!hideArrow && (
           <OverlayArrow>
