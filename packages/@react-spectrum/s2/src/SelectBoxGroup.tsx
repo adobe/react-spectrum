@@ -10,14 +10,13 @@
  */
 
 import {
-  RadioGroup as AriaRadioGroup,
   CheckboxGroup as AriaCheckboxGroup,
-  Label,
+  RadioGroup as AriaRadioGroup,
   ContextValue
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useState, useEffect, useMemo, ReactElement} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useMemo, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -97,8 +96,12 @@ const unwrapValue = (value: SelectBoxValueType | undefined): string | undefined 
 };
 
 const ensureArray = (value: SelectBoxValueType | undefined): string[] => {
-  if (value === undefined) return [];
-  if (Array.isArray(value)) return value;
+  if (value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
   return [value];
 };
 
@@ -124,15 +127,16 @@ const gridStyles = style({
 
 // Selector Group component
 interface SelectorGroupProps {
-  allowMultiSelect: boolean;
-  children: ReactNode;
-  style?: React.CSSProperties;
-  className?: string;
-  onChange: (value: SelectBoxValueType) => void;
-  value?: SelectBoxValueType;
-  defaultValue?: SelectBoxValueType;
-  isRequired?: boolean;
-  isDisabled?: boolean;
+  allowMultiSelect: boolean,
+  children: ReactNode,
+  style?: React.CSSProperties,
+  className?: string,
+  onChange: (value: SelectBoxValueType) => void,
+  value?: SelectBoxValueType,
+  defaultValue?: SelectBoxValueType,
+  isRequired?: boolean,
+  isDisabled?: boolean,
+  label?: ReactNode
 }
 
 const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function SelectorGroupComponent({
@@ -145,6 +149,7 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
   defaultValue,
   isRequired,
   isDisabled,
+  label
 }, ref) {
   const props = { 
     isRequired,
@@ -153,7 +158,7 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
     style,
     children,
     onChange,
-    ref,
+    ref
   };
 
   return allowMultiSelect ? (
@@ -161,13 +166,13 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
       {...props}
       value={ensureArray(value)}
       defaultValue={ensureArray(defaultValue)}
-    />
+      aria-label={label ? String(label) : undefined} />
   ) : (
     <AriaRadioGroup
       {...props}
       value={unwrapValue(value)}
       defaultValue={unwrapValue(defaultValue)}
-    />
+      aria-label={label ? String(label) : undefined} />
   );
 });
 
@@ -191,7 +196,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     gutterWidth = 'default',
     isRequired = false,
     isDisabled = false,
-    UNSAFE_style,
+    UNSAFE_style
   } = props;
 
   const [value, setValue] = useState<SelectBoxValueType | undefined>(defaultValue);
@@ -241,15 +246,15 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       onChange={setValue}
       isRequired={isRequired}
       isDisabled={isDisabled}
+      label={label}
       ref={domRef}
       className={gridStyles({gutterWidth, orientation}, props.styles)}
       style={{
         ...UNSAFE_style,
         gridTemplateColumns: `repeat(${numColumns}, 1fr)`
-      }}
-    >
+      }}>
       <SelectBoxContext.Provider value={selectBoxContextValue}>
-        {getChildrenToRender().map((child, _) => {
+        {getChildrenToRender().map((child) => {
           return child as ReactElement;
         })}
       </SelectBoxContext.Provider>

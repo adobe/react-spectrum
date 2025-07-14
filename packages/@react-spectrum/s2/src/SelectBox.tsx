@@ -9,16 +9,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Radio as AriaRadio, Checkbox as AriaCheckbox, ContextValue, RadioProps, CheckboxProps} from 'react-aria-components';
-import {FocusableRef, FocusableRefValue, SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
+import {Checkbox as AriaCheckbox, Radio as AriaRadio, CheckboxProps, ContextValue, RadioProps} from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-import {forwardRef, ReactNode, useContext, useRef, createContext} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {SelectBoxContext} from './SelectBoxGroup';
-import {style, focusRing, baseColor} from '../style' with {type: 'macro'};
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import React from 'react';
 
 export interface SelectBoxProps extends 
   Omit<CheckboxProps & RadioProps, 'className' | 'style' | 'children'>, StyleProps {
@@ -33,7 +32,15 @@ export interface SelectBoxProps extends
   /**
    * Whether the SelectBox is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Whether the SelectBox is selected (controlled).
+   */
+  isSelected?: boolean,
+  /**
+   * Handler called when the SelectBox selection changes.
+   */
+  onChange?: (isSelected: boolean) => void
 }
 
 export const SelectBoxItemContext = createContext<ContextValue<Partial<SelectBoxProps>, FocusableRefValue<HTMLLabelElement>>>(null);
@@ -49,102 +56,76 @@ const selectBoxStyles = style({
   alignItems: 'center',
   fontFamily: 'sans',
   font: 'ui',
-  //vertical orientation
-  size: {
+  
+  // Vertical orientation (default) - Fixed square dimensions
+  width: {
     default: {
       size: {
-        S: 120,
-        M: 170,
-        L: 220,
-        XL: 270
+        XS: 100,
+        S: 128,
+        M: 136,
+        L: 160,
+        XL: 192
       }
     },
-    //WIP horizontal orientation
     orientation: {
       horizontal: {
         size: {
-          S: 280,
-          M: 368,
-          L: 420,
-          XL: 480
+          XS: 'auto',
+          S: 'auto',
+          M: 'auto',
+          L: 'auto',
+          XL: 'auto'
         }
       }
     }
   },
+  
+  height: {
+    default: {
+      size: {
+        XS: 100,
+        S: 128,
+        M: 136,
+        L: 160,
+        XL: 192
+      }
+    },
+    orientation: {
+      horizontal: {
+        size: {
+          XS: 'auto',
+          S: 'auto',
+          M: 'auto',
+          L: 'auto',
+          XL: 'auto'
+        }
+      }
+    }
+  },
+  
   minWidth: {
-    default: {
-      size: {
-        S: 100,
-        M: 144,
-        L: 180,
-        XL: 220
-      }
-    },
     orientation: {
-      horizontal: {
-        size: {
-          S: 160,
-          M: 188,
-          L: 220,
-          XL: 250
-        }
-      }
+      horizontal: 160
     }
   },
+  
   maxWidth: {
-    default: {
-      size: {
-        S: 140,
-        M: 200,
-        L: 260,
-        XL: 320
-      }
-    },
     orientation: {
-      horizontal: {
-        size: {
-          S: 360,
-          M: 420,
-          L: 480,
-          XL: 540
-        }
-      }
+      horizontal: 272
     }
   },
-  minHeight: {
-    default: {
-      size: {
-        S: 100,
-        M: 144,
-        L: 180,
-        XL: 220
-      }
-    },
-    orientation: {
-      horizontal: 80
-    }
-  },
-  maxHeight: {
-    default: {
-      size: {
-        S: 140,
-        M: 200,
-        L: 260,
-        XL: 320
-      }
-    },
-    orientation: {
-      horizontal: 240
-    }
-  },
+
   padding: {
     size: {
+      XS: 12,
       S: 16,
-      M: 24,
-      L: 32,
-      XL: 40
+      M: 20,
+      L: 24,
+      XL: 28
     }
   },
+  
   borderRadius: 'lg',
   backgroundColor: 'layer-2',
   boxShadow: {
@@ -179,7 +160,7 @@ const checkboxContainer = style({
  */
 export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxItemContext);
-  let {children, value, isDisabled = false, UNSAFE_className = '', UNSAFE_style} = props;
+  let {children, value, isDisabled = false, isSelected, onChange, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
   
@@ -188,14 +169,23 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
     allowMultiSelect = false,
     size = 'M',
     orientation = 'vertical'
-  } = groupContext || {};
+  } = groupContext;
 
   const Selector = allowMultiSelect ? AriaCheckbox : AriaRadio;
+  
+  // Handle controlled selection
+  const handleSelectionChange = (selected: boolean) => {
+    if (onChange) {
+      onChange(selected);
+    }
+  };
   
   return (
     <Selector
       value={value}
       isDisabled={isDisabled}
+      isSelected={isSelected}
+      onChange={handleSelectionChange}
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
@@ -208,8 +198,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
                 value={value}
                 isSelected={renderProps.isSelected}
                 isDisabled={isDisabled}
-                size={size}
-              />
+                size={size} />
             </div>
           )}
           {children}
