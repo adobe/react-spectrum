@@ -63,7 +63,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   /**
    * Returns the orientation of the layout.
    */
-  getOrientation(): Orientation {
+  getOrientation?(): Orientation | null {
     return this.orientation;
   }
 
