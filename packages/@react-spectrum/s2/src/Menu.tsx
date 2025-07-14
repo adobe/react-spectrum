@@ -292,7 +292,6 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
-  fontWeight: 'light',
   textAlign: 'end',
   color: {
     default: 'gray-600',

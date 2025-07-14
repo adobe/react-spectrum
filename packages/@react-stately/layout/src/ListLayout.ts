@@ -591,7 +591,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
-      rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+      rect = new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
     } else if (target.dropPosition === 'after') {
       // Render after last visible descendant of the drop target.
       let targetNode = this.collection.getItem(target.key);

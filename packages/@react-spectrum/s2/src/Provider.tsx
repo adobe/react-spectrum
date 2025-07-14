@@ -13,6 +13,7 @@
 import type {ColorScheme, Router} from '@react-types/provider';
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
+import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
@@ -100,7 +101,8 @@ function ProviderInner(props: ProviderProps) {
     UNSAFE_className = '',
     styles,
     children,
-    background,
+    // Set a default background if the provider is rendered as the root <html> element.
+    background = Element === 'html' ? 'base' : undefined,
     colorScheme
   } = props;
   let {locale, direction} = useLocale();
@@ -113,6 +115,7 @@ function ProviderInner(props: ProviderProps) {
         styles,
         providerStyles({background, colorScheme})
       )}>
+      <Fonts />
       {children}
     </Element>
   );

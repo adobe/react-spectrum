@@ -21,6 +21,7 @@ import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
+import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
@@ -73,7 +74,7 @@ export const DatePickerStateContext = createContext<DatePickerState | null>(null
 export const DateRangePickerStateContext = createContext<DateRangePickerState | null>(null);
 
 // Contexts to clear inside the popover.
-const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
+const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext, OverlayTriggerStateContext];
 
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
@@ -172,6 +173,11 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-open={state.isOpen || undefined} />
+      <HiddenDateInput 
+        autoComplete={props.autoComplete}
+        name={props.name}
+        isDisabled={props.isDisabled}
+        state={state} />
     </Provider>
   );
 });

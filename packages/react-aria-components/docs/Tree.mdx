@@ -58,22 +58,23 @@ import {
   Button,
   Collection
 } from 'react-aria-components';
+import {Info} from 'lucide-react';
 
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']} selectionMode="multiple" defaultSelectedKeys={['photos']}>
   <TreeItem id="documents" textValue="Documents">
     <MyTreeItemContent>
       Documents
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="project" textValue="Project">
       <MyTreeItemContent>
         Project
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
       <TreeItem id="report" textValue="Weekly Report">
         <MyTreeItemContent>
           Weekly Report
-          <Button aria-label="Info">ⓘ</Button>
+          <Button aria-label="Info"><Info size={20} /></Button>
         </MyTreeItemContent>
       </TreeItem>
     </TreeItem>
@@ -81,18 +82,18 @@ import {
   <TreeItem id="photos" textValue="Photos">
     <MyTreeItemContent>
       Photos
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="one" textValue="Image 1">
       <MyTreeItemContent>
         Image 1
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
     <TreeItem id="two" textValue="Image 2">
       <MyTreeItemContent>
         Image 2
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
   </TreeItem>
@@ -164,6 +165,12 @@ import {
         stroke: currentColor;
         stroke-width: 3px;
       }
+    }
+
+    .react-aria-Button[slot=drag] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     &[data-has-child-items] .react-aria-Button[slot=chevron] {
@@ -360,13 +367,14 @@ If you will use a Tree in multiple places in your app, you can wrap all of the p
 ```tsx example export=true render=false
 import type {TreeItemContentProps, TreeItemContentRenderProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 function MyTreeItemContent(props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <TreeItemContent>
       {({hasChildItems, selectionBehavior, selectionMode, allowsDragging}: TreeItemContentRenderProps) => (
         <>
-          {allowsDragging && <Button slot="drag">≡</Button>}
+          {allowsDragging && <Button slot="drag"><GripVertical size={18} /></Button>}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
           <Button slot="chevron">
             <svg viewBox="0 0 24 24">
