@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getDefaultLocale, Locale, useDefaultLocale} from './useDefaultLocale';
 import {isRTL} from './utils';
+import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {JSX, ReactNode, useContext} from 'react';
 
 export interface I18nProviderProps {
@@ -81,7 +81,7 @@ export function I18nProvider(props: I18nProviderProps): JSX.Element {
  * Returns the current locale and layout direction.
  */
 export function useLocale(): Locale {
-  let defaultLocale = getDefaultLocale();
+  let defaultLocale = useDefaultLocale();
   let context = useContext(I18nContext);
   return context || defaultLocale;
 }
