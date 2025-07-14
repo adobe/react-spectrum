@@ -507,7 +507,6 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let isOutsideMonth = !isSameMonth(currentMonth, date);
-  // TODO: check api with team, this seemed useful though
   let istoday = isToday(date, state.timeZone);
 
   let buttonRef = useRef<HTMLDivElement>(null);
