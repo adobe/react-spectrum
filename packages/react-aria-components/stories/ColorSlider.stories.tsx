@@ -10,61 +10,70 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
-import React from 'react';
+import {ColorSlider, ColorSliderProps, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 export default {
-  title: 'React Aria Components/ColorSlider'
-};
+  title: 'React Aria Components/ColorSlider',
+  component: ColorSlider,
+  excludeStories: ['ColorSliderExampleRender']
+} as Meta<typeof ColorSlider>;
+
+export type ColorSliderStory = StoryObj<typeof ColorSlider>;
 
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
-export const ColorSliderExample = (args) => (
-  <ColorSlider
-    {...args}
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: 192
-    }}>
-    <div style={{display: 'flex', alignSelf: 'stretch', justifyContent: 'space-between'}}>
-      <Label />
-      <SliderOutput />
-    </div>
-    <SliderTrack
-      style={({defaultStyle}) => ({
-        height: TRACK_THICKNESS,
-        width: '100%',
-        borderRadius: 4,
-        background: `
-            ${defaultStyle.background},
-            repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
-      })}>
-      <ColorThumb
-        style={({isFocusVisible, color}) => ({
-          top: TRACK_THICKNESS / 2,
-          border: '2px solid white',
-          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
-          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-          borderRadius: '50%',
-          boxSizing: 'border-box',
-          background: color.toString()
-        })} />
-    </SliderTrack>
-  </ColorSlider>
-);
+export function ColorSliderExampleRender(args: ColorSliderProps): JSX.Element {
+  return (
+    <ColorSlider
+      {...args}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 192
+      }}>
+      <div style={{display: 'flex', alignSelf: 'stretch', justifyContent: 'space-between'}}>
+        <Label />
+        <SliderOutput />
+      </div>
+      <SliderTrack
+        style={({defaultStyle}) => ({
+          height: TRACK_THICKNESS,
+          width: '100%',
+          borderRadius: 4,
+          background: `
+              ${defaultStyle.background},
+              repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
+        })}>
+        <ColorThumb
+          style={({isFocusVisible, color}) => ({
+            top: TRACK_THICKNESS / 2,
+            border: '2px solid white',
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            boxSizing: 'border-box',
+            background: color.toString()
+          })} />
+      </SliderTrack>
+    </ColorSlider>
+  );
+}
 
-ColorSliderExample.args = {
-  channel: 'hue',
-  defaultValue: 'hsl(0, 100%, 50%)'
-};
-
-ColorSliderExample.argTypes = {
-  channel: {
-    control: 'select',
-    options: ['hue', 'saturation', 'lightness', 'alpha']
+export const ColorSliderExample: ColorSliderStory = {
+  render: (args) => <ColorSliderExampleRender {...args} />,
+  args: {
+    channel: 'hue',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  },
+  argTypes: {
+    channel: {
+      control: 'select',
+      options: ['hue', 'saturation', 'lightness', 'alpha']
+    }
   }
 };

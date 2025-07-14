@@ -483,7 +483,7 @@ export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'c
   isLoading?: boolean
 }
 
-export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
@@ -525,7 +525,7 @@ export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBo
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
           role="option"
-          ref={ref}>
+          ref={ref as ForwardedRef<HTMLDivElement>}>
           {renderProps.children}
         </div>
       )}
