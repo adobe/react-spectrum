@@ -15,6 +15,7 @@ import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import { parseDate, toZoned } from '@internationalized/date';
 
 const meta: Meta<typeof DatePicker> = {
   component: DatePicker,
@@ -55,6 +56,13 @@ type Story = StoryObj<typeof DatePicker>;
 export const Example: Story = {
   args: {
     label: 'Birthday'
+  }
+};
+
+export const Zoned: Story = {
+  args: {
+    label: 'Birthday',
+    defaultValue: toZoned(parseDate('2020-02-03'), 'America/New_York')
   }
 };
 

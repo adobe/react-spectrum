@@ -14,6 +14,7 @@ import {Button, Content, ContextualHelp, DateField, Footer, Form, Heading, Link,
 import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import { parseDate, toZoned } from '@internationalized/date';
 
 const meta: Meta<typeof DateField> = {
   component: DateField,
@@ -44,6 +45,13 @@ type Story = StoryObj<typeof DateField>;
 export const Example: Story = {
   args: {
     label: 'Birthday'
+  }
+};
+
+export const Zoned: Story = {
+  args: {
+    label: 'Birthday',
+    defaultValue: toZoned(parseDate('2020-02-03'), 'America/New_York')
   }
 };
 
