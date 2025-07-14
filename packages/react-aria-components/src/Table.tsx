@@ -425,6 +425,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
     let keyboardDelegate = new ListKeyboardDelegate({
       collection,
+      orientation: 'vertical',
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
       ref,

@@ -11,7 +11,7 @@
  */
 
 import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
-import {Collection, DOMAttributes, Key, KeyboardDelegate, LayoutDelegate, Node} from '@react-types/shared';
+import {Collection, DOMAttributes, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -34,7 +34,12 @@ export interface AriaSelectableListOptions extends Omit<AriaSelectableCollection
   /**
    * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
    */
-  disabledKeys: Set<Key>
+  disabledKeys: Set<Key>,
+  /**
+   * The primary orientation of the items. Usually this is the
+   * direction that the collection scrolls.
+   */
+  orientation?: Orientation
 }
 
 export interface SelectableListAria {
@@ -54,7 +59,8 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     disabledKeys,
     ref,
     keyboardDelegate,
-    layoutDelegate
+    layoutDelegate,
+    orientation
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -68,9 +74,10 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
       disabledBehavior,
       ref,
       collator,
-      layoutDelegate
+      layoutDelegate,
+      orientation
     })
-  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
+  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, ref, collator, disabledBehavior, orientation]);
 
   let {collectionProps} = useSelectableCollection({
     ...props,

@@ -50,6 +50,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.focusMode = options.focusMode ?? 'row';
   }
 
+  getOrientation(): Orientation | null {
+    return this.layoutDelegate.getOrientation?.() || 'vertical';
+  }
+
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell';
   }

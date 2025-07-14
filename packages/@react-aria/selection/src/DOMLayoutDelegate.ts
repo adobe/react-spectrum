@@ -15,15 +15,35 @@ import {Key, LayoutDelegate, Orientation, Rect, RefObject, Size} from '@react-ty
 
 export class DOMLayoutDelegate implements LayoutDelegate {
   private ref: RefObject<HTMLElement | null>;
-  private orientation: Orientation;
+  private orientation?: Orientation;
 
   constructor(ref: RefObject<HTMLElement | null>, orientation?: Orientation) {
     this.ref = ref;
-    this.orientation = orientation ?? 'vertical';
+    this.orientation = orientation;
   }
 
-  getOrientation(): Orientation {
-    return this.orientation;
+  getOrientation(): Orientation | null {
+    let container = this.ref.current;
+    if (this.orientation) {
+      return this.orientation;
+    }
+
+    // https://w3c.github.io/aria/#aria-orientation
+    switch (container?.role) {
+      case 'menubar':
+      case 'slider':
+      case 'separator':
+      case 'tablist':
+      case 'toolbar':
+        return 'horizontal';
+      case 'listbox':
+      case 'menu':
+      case 'scrollbar':
+      case 'tree':
+        return 'vertical';
+      default:
+        return null;
+    }
   }
 
   getItemRect(key: Key): Rect | null {

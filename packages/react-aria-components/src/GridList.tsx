@@ -51,6 +51,12 @@ export interface GridListRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
+   * The primary orientation of the items. Usually this is the
+   * direction that the collection scrolls.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>
@@ -201,6 +207,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
+    orientation: keyboardDelegate.getOrientation(),
     isEmpty,
     isFocused,
     isFocusVisible,
@@ -241,7 +248,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-orientation={renderValues.orientation}>
         <Provider
           values={[
             [ListStateContext, state],
