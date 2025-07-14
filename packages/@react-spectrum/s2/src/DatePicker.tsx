@@ -19,6 +19,7 @@ import {
   DateValue,
   Dialog,
   FormContext,
+  OverlayTriggerStateContext,
   Provider,
   TimeValue
 } from 'react-aria-components';
@@ -241,7 +242,12 @@ export function CalendarPopover(props: PropsWithChildren): ReactElement {
         gap: 16
       })}>
       <Dialog>
-        {props.children}
+        <Provider
+          values={[
+            [OverlayTriggerStateContext, null]
+          ]}>
+          {props.children}
+        </Provider>
       </Dialog>
     </PopoverBase>
   );
