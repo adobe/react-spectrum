@@ -387,6 +387,7 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
         {...mergeProps(DOMProps, gridProps)}
         ref={ref}
         style={props.style}
+        cellPadding={0}
         className={props.className ?? 'react-aria-CalendarGrid'}>
         {typeof props.children !== 'function'
           ? props.children
