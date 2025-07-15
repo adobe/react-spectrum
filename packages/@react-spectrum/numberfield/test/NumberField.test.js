@@ -2272,10 +2272,11 @@ describe('NumberField', function () {
   });
 
   it('supports form value', () => {
-    let {textField, rerender} = renderNumberField({name: 'age', value: 30});
+    let {textField, rerender} = renderNumberField({name: 'age', form: 'test', value: 30});
     expect(textField).not.toHaveAttribute('name');
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'age');
+    expect(hiddenInput).toHaveAttribute('form', 'test');
     expect(hiddenInput).toHaveValue('30');
 
     rerender({name: 'age', value: null});
@@ -2308,6 +2309,31 @@ describe('NumberField', function () {
     await user.click(button);
     expect(input).toHaveValue('10');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {
+        const [value, formAction] = React.useActionState(() => 33, 22);
+        
+        return (
+          <Provider theme={theme}>
+            <form action={formAction}>
+              <NumberField label="Value" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+      expect(input).toHaveValue('22');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('33');
+    });
+  }
 
   describe('validation', () => {
     describe('validationBehavior=native', () => {

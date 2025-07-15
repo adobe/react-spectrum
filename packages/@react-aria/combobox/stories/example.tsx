@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useButton} from '@react-aria/button';
-import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useListBox, useOption} from '@react-aria/listbox';
 
-export function ComboBox(props) {
+export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
   // Setup filter function and state.
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});

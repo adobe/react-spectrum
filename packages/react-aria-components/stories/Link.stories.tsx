@@ -11,13 +11,17 @@
  */
 
 import {Link} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Link',
+  component: Link
+} as Meta<typeof Link>;
 
-export const LinkExample = () => {
+export type LinkStory = StoryFn<typeof Link>;
+
+export const LinkExample: LinkStory = () => {
   return (
     <Link data-testid="link-example" href="https://www.imdb.com/title/tt6348138/" hrefLang="en"  target="_blank">
       The missing link

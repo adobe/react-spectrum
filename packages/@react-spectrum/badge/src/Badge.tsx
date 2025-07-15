@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
@@ -47,23 +47,25 @@ export const Badge = forwardRef(function Badge(props: SpectrumBadgeProps, ref: D
         styleProps.className
       )}
       ref={domRef}>
-      <SlotProvider
-        slots={{
-          icon: {
-            size: 'S',
-            UNSAFE_className: classNames(styles, 'spectrum-Badge-icon')
-          },
-          text: {
-            UNSAFE_className: classNames(styles, 'spectrum-Badge-label')
-          }
-        }}>
+      <ClearSlots>
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Badge-icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-Badge-label')
+            }
+          }}>
 
-        {
-          typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children
-        }
-      </SlotProvider>
+          {
+            typeof children === 'string' || isTextOnly
+              ? <Text>{children}</Text>
+              : children
+          }
+        </SlotProvider>
+      </ClearSlots>
     </span>
   );
 });

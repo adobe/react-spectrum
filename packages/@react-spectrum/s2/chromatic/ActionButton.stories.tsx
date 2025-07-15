@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Text} from '../src';
+import {ActionButton, ActionButtonProps, Avatar, Text} from '../src';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
@@ -29,6 +30,8 @@ const meta: Meta<typeof ActionButton> = {
 
 export default meta;
 
+type ActionButtonStory = StoryObj<typeof ActionButton>;
+
 let states = [
   {isQuiet: true},
   {isDisabled: true},
@@ -38,7 +41,7 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args) => {
+const Template = (args: ActionButtonProps): ReactElement => {
   let {children, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
@@ -64,21 +67,35 @@ const Template = (args) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: ActionButtonStory = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithIcon = {
-  render: Template,
+export const WithIcon: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><NewIcon /><Text>Press me</Text></>
   }
 };
 
-export const IconOnly = {
-  render: Template,
+export const IconOnly: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
+  }
+};
+
+export const WithAvatar: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
+  args: {
+    children: <><Avatar src="https://i.imgur.com/xIe7Wlb.png" /><Text>Press me</Text></>
+  }
+};
+
+export const AvatarOnly: ActionButtonStory = {
+  render: (args) => <Template {...args} />,
+  args: {
+    children: <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
   }
 };
 

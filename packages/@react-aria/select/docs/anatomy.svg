@@ -1,4 +1,4 @@
-<svg style="max-height: 319px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 484 319">
+<svg style="max-height: 319px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 484 319">
   <title>Select anatomy diagram</title>
   <desc>Shows two select elements, one open and one closed, with labels pointing to their parts including the label, trigger, value, and menu.</desc>
   <g transform="translate(-246 -33)">

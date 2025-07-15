@@ -1,13 +1,14 @@
-import {Meta, StoryFn} from '@storybook/react';
-import React, {useRef} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, useRef} from 'react';
 import {useTextField} from '../';
 
 interface TextFieldProps {
   label: string,
-  value?: string
+  value?: string,
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
 }
 
-const TextInputField = (props: TextFieldProps) => {
+const TextInputField = (props: TextFieldProps): JSX.Element => {
   const {label} = props;
   const ref = useRef<HTMLInputElement>(null);
   const {labelProps, inputProps} = useTextField(props, ref);
@@ -20,7 +21,7 @@ const TextInputField = (props: TextFieldProps) => {
   );
 };
 
-const TextAreaField = (props: TextFieldProps) => {
+const TextAreaField = (props: TextFieldProps): JSX.Element => {
   const {label} = props;
   const ref = useRef<HTMLTextAreaElement>(null);
   const {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);
@@ -37,29 +38,24 @@ export default {
   title: 'useTextField'
 } as Meta;
 
-const TextInputFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextInputField {...args} />;
-
-const TextAreaFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextAreaField {...args} />;
-
-export const WithHTMLInputElement = {
-  render: TextInputFieldTemplate,
+export const WithHTMLInputElement: StoryObj<typeof TextInputField> = {
+  render: (args) => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value'
   }
 };
 
-export const WithHTMLTextAreaElement = {
-  render: TextAreaFieldTemplate,
+export const WithHTMLTextAreaElement: StoryObj<typeof TextAreaField> = {
+  render: (args) => <TextAreaField {...args} />,
   args: {
-    inputElementType: 'textarea',
     label: 'Test label',
     value: 'Test value'
   }
 };
 
-export const WithAutoCapitalization = {
-  render: TextInputFieldTemplate,
+export const WithAutoCapitalization: StoryObj<typeof TextInputField> = {
+  render: (args) => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     autoCapitalize: undefined

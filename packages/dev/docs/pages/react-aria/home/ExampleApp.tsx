@@ -188,16 +188,16 @@ export function ExampleApp(): React.ReactNode {
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
-                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
+                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles} escapeKeyBehavior="none">
                   <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 shrink-0" /> Annual</Tag>
                   <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 shrink-0" /> Perennial</Tag>
                 </TagGroup>
-                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
+                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight} escapeKeyBehavior="none">
                   <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
                   <Tag id="part sun" color="yellow" textValue="Part Sun">{sunIcons['part sun']} Part Sun</Tag>
                   <Tag id="part shade" color="yellow" textValue="Part Shade">{sunIcons['part shade']} Part Shade</Tag>
                 </TagGroup>
-                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering}>
+                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering} escapeKeyBehavior="none">
                   <Tag id="Frequent" color="blue" textValue="Frequent">{wateringIcons['Frequent']} Frequent</Tag>
                   <Tag id="Average" color="blue" textValue="Average">{wateringIcons['Average']} Average</Tag>
                   <Tag id="Minimum" color="blue" textValue="Minimum">{wateringIcons['Minimum']} Minimum</Tag>

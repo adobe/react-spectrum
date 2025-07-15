@@ -11,13 +11,17 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useEffect} from 'react';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Modal',
+  component: Modal
+} as Meta<typeof Modal>;
 
-export const ModalExample = () => (
+export type ModalStory = StoryFn<typeof Modal>;
+
+export const ModalExample: ModalStory = () => (
   <DialogTrigger>
     <Button>Open modal</Button>
     <ModalOverlay
@@ -61,7 +65,7 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const ModalInteractionOutsideExample = () => {
+export const ModalInteractionOutsideExample: ModalStory = () => {
 
   useEffect(() => {
     let button = document.createElement('button');
@@ -128,7 +132,7 @@ export const ModalInteractionOutsideExample = () => {
   );
 };
 
-export const ModalInteractionOutsideDefaultOverlayExample = () => {
+export const ModalInteractionOutsideDefaultOverlayExample: ModalStory = () => {
 
   useEffect(() => {
     let button = document.createElement('button');

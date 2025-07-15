@@ -55,7 +55,10 @@ interface AriaTabListBase extends AriaLabelingProps {
 
 export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
 
-export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
+export interface AriaTabPanelProps extends Omit<DOMProps, 'id'>, AriaLabelingProps {
+  /** The unique id of the tab. */
+  id?: Key
+}
 
 export interface SpectrumTabsProps<T> extends AriaTabListBase, Omit<SingleSelection, 'onSelectionChange'>, DOMProps, StyleProps {
   /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
