@@ -13,6 +13,7 @@
 import {Label, Slider, SliderOutput, SliderProps, SliderThumb, SliderTrack} from 'react-aria-components';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Slider'

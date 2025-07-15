@@ -12,6 +12,7 @@
 
 import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, RangeCalendar} from 'react-aria-components';
 import React, {useContext} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Calendar'

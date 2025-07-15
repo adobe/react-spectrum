@@ -13,6 +13,7 @@
 import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/RadioGroup'

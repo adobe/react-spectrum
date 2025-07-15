@@ -16,6 +16,7 @@ import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Select',

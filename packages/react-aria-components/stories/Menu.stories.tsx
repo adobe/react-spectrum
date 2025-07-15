@@ -15,6 +15,7 @@ import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, Menu
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Menu'

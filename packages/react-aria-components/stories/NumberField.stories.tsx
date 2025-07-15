@@ -12,6 +12,7 @@
 
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/NumberField'

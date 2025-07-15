@@ -14,6 +14,7 @@ import {ColorArea, ColorThumb} from '../src';
 import {ColorSliderExample} from './ColorSlider.stories';
 import {parseColor} from 'react-stately';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorArea',

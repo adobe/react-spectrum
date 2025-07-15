@@ -17,6 +17,7 @@ import {ColorPicker} from '../src/ColorPicker';
 import {ColorSliderExample} from './ColorSlider.stories';
 import {ColorSwatchExample} from './ColorSwatch.stories';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorPicker'

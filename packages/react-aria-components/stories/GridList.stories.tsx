@@ -41,6 +41,7 @@ import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/GridList'

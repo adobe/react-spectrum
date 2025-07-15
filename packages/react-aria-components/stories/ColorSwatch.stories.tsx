@@ -12,6 +12,7 @@
 
 import {ColorSwatch} from '../src/ColorSwatch';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorSwatch'

@@ -14,6 +14,7 @@ import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-comp
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/TextField'

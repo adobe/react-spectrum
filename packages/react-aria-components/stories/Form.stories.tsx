@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, SelectValue, TextField} from 'react-aria-components';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Form'

@@ -16,6 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Dropzone'

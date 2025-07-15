@@ -12,6 +12,7 @@
 
 import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorSlider'

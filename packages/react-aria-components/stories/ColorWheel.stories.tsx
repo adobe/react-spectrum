@@ -12,6 +12,7 @@
 
 import {ColorThumb, ColorWheel, ColorWheelTrack} from '../src';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorWheel'
