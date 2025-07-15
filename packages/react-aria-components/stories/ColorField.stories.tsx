@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, FieldError, Input, Label} from 'react-aria-components';
+import {ColorField, ColorFieldProps, FieldError, Input, Label} from 'react-aria-components';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -25,18 +26,23 @@ export default {
       control: 'select',
       options: [null, 'red', 'green', 'blue', 'hue', 'saturation', 'lightness', 'brightness']
     }
+  },
+  component: ColorField
+} as Meta<typeof ColorField>;
+
+;
+export type ColorFieldStory = StoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
+
+export const ColorFieldExample: ColorFieldStory = {
+  render: (args) => (
+    <ColorField {...args} validate={(v) => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
+      <Label>{args.label}</Label>
+      <Input style={{display: 'block'}} />
+      <FieldError />
+    </ColorField>
+  ),
+  args: {
+    label: 'Test',
+    defaultValue: '#f00'
   }
-};
-
-export const ColorFieldExample = (args) => (
-  <ColorField {...args} validate={(v) => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
-    <Label>{args.label}</Label>
-    <Input style={{display: 'block'}} />
-    <FieldError />
-  </ColorField>
-);
-
-ColorFieldExample.args = {
-  label: 'Test',
-  defaultValue: '#f00'
 };

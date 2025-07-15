@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, DateField, DateInput, DateSegment, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import clsx from 'clsx';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import './styles.css';
@@ -49,10 +50,16 @@ export default {
   },
   args: {
     onChange: action('OnChange')
-  }
-};
+  },
+  component: DateField
+} as Meta<typeof DateField>;
 
-export const DateFieldExample = (props) => (
+export type DateFieldStory = StoryFn<Omit<typeof DateField, 'minValue' | 'maxValue'> & {
+  minValue?: number,
+  maxValue?: number
+}>;
+
+export const DateFieldExample: DateFieldStory = (props) => (
   <DateField
     {...props}
     minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}

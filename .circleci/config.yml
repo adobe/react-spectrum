@@ -37,6 +37,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-2xlarge:
+    docker:
+      - image: cimg/node:22.13.1
+    resource_class: 2xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
     executor: rsp-large
@@ -325,7 +333,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -508,7 +516,7 @@ jobs:
             - storage
 
   v-docs:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}

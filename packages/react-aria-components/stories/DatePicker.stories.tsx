@@ -13,15 +13,19 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Form, Group, Heading, Input, Label, Popover, RangeCalendar, TextField} from 'react-aria-components';
 import clsx from 'clsx';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import './styles.css';
 
 export default {
-  title: 'React Aria Components/DatePicker'
-};
+  title: 'React Aria Components/DatePicker',
+  component: DatePicker
+} as Meta<typeof DatePicker>;
 
-export const DatePickerExample = () => (
+export type DatePickerStory = StoryFn<typeof DatePicker>;
+
+export const DatePickerExample: DatePickerStory = () => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -54,7 +58,7 @@ export const DatePickerExample = () => (
   </DatePicker>
 );
 
-export const DatePickerTriggerWidthExample = () => (
+export const DatePickerTriggerWidthExample: DatePickerStory = () => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
@@ -89,7 +93,7 @@ export const DatePickerTriggerWidthExample = () => (
   </DatePicker>
 );
 
-export const DateRangePickerExample = () => (
+export const DateRangePickerExample: DatePickerStory = () => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -128,7 +132,7 @@ export const DateRangePickerExample = () => (
   </DateRangePicker>
 );
 
-export const DateRangePickerTriggerWidthExample = () => (
+export const DateRangePickerTriggerWidthExample: DatePickerStory = () => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>

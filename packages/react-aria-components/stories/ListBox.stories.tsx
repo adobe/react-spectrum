@@ -12,19 +12,24 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import './styles.css';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components/ListBox'
-};
+  title: 'React Aria Components/ListBox',
+  component: ListBox
+} as Meta<typeof ListBox>;
 
-export const ListBoxExample = (args) => (
+export type ListBoxStory = StoryFn<typeof ListBox>;
+export type ListBoxStoryObj = StoryObj<typeof ListBox>;
+
+export const ListBoxExample: ListBoxStory = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyListBoxItem>Foo</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
@@ -63,7 +68,7 @@ ListBoxExample.story = {
 
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
-export const ListBoxSections = () => (
+export const ListBoxSections: ListBoxStory = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
     <ListBoxSection className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
@@ -80,7 +85,7 @@ export const ListBoxSections = () => (
   </ListBox>
 );
 
-export const ListBoxComplex = () => (
+export const ListBoxComplex: ListBoxStory = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
     <MyListBoxItem>
       <Text slot="label">Item 1</Text>
@@ -97,8 +102,14 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
+interface Album {
+  id: number,
+  image: string,
+  title: string,
+  artist: string
+}
 
-let albums = [
+let albums: Album[] = [
   {
     id: 1,
     image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
@@ -131,7 +142,8 @@ let albums = [
   }
 ];
 
-export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
+type AlbumListBoxStory = StoryFn<typeof ListBox<Album>>;
+export const ListBoxDnd: AlbumListBoxStory = (props) => {
   let list = useListData({
     initialItems: albums
   });
@@ -182,7 +194,7 @@ ListBoxDnd.story = {
   }
 };
 
-export const ListBoxDndCustomDropIndicator = (props: ListBoxProps<typeof albums[0]>) => {
+export const ListBoxDndCustomDropIndicator: StoryFn<ListBoxProps<typeof albums[0]>> = (props) => {
   let list = useListData({
     initialItems: albums
   });
@@ -334,7 +346,7 @@ export const ListBoxPreviewOffset = {
   }
 };
 
-export const ListBoxHover = () => (
+export const ListBoxHover: ListBoxStory = () => (
   <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
     <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
@@ -343,7 +355,7 @@ export const ListBoxHover = () => (
   </ListBox>
 );
 
-export const ListBoxGrid = (args) => (
+export const ListBoxGrid: ListBoxStory = (args) => (
   <ListBox
     {...args}
     className={styles.menu}
@@ -394,13 +406,13 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-export function VirtualizedListBox(args) {
+function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: boolean, isLoading?: boolean}): JSX.Element {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
       const l = (s * 5) + i + 10;
-      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${args.variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
@@ -423,21 +435,22 @@ export function VirtualizedListBox(args) {
             </ListBoxSection>
           )}
         </Collection>
-        <MyListBoxLoaderIndicator orientation="vertical" isLoading={args.isLoading} />
+        <MyListBoxLoaderIndicator orientation="vertical" isLoading={isLoading} />
       </ListBox>
     </Virtualizer>
   );
 }
 
-VirtualizedListBox.story = {
+export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
+  render: (args) => <VirtualizedListBoxRender {...args} />,
   args: {
     variableHeight: false,
     isLoading: false
   }
 };
 
-export function VirtualizedListBoxEmpty() {
-  return (
+export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
+  render: () => (
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
@@ -448,10 +461,10 @@ export function VirtualizedListBoxEmpty() {
         <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
-  );
-}
+  )
+};
 
-export function VirtualizedListBoxDnd() {
+export let VirtualizedListBoxDnd: ListBoxStory = () => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -498,9 +511,9 @@ export function VirtualizedListBoxDnd() {
       </Virtualizer>
     </div>
   );
-}
+};
 
-function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}) {
+function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}: {minSize: number, maxSize: number, preserveAspectRatio: boolean}): JSX.Element {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -551,8 +564,8 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
   );
 }
 
-export const VirtualizedListBoxGrid = {
-  render(args) {
+export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExample> = {
+  render: (args) => {
     return <VirtualizedListBoxGridExample {...args} />;
   },
   args: {
@@ -564,7 +577,7 @@ export const VirtualizedListBoxGrid = {
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
 
-export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
+export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}: {minSize: number, maxSize: number}): JSX.Element {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 1000; i++) {
     let words = Math.max(2, Math.floor(Math.random() * 25));
@@ -628,7 +641,7 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncListBox = (args) => {
+function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'vertical'}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -675,7 +688,8 @@ export const AsyncListBox = (args) => {
   );
 };
 
-AsyncListBox.story = {
+export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
+  render: (args) => <AsyncListBoxRender {...args} />,
   args: {
     orientation: 'horizontal',
     delay: 50
@@ -688,7 +702,7 @@ AsyncListBox.story = {
   }
 };
 
-export const AsyncListBoxVirtualized = (args) => {
+export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {

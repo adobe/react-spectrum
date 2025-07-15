@@ -11,6 +11,7 @@
  */
 
 import {Label, ProgressBar} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -25,9 +26,11 @@ export default {
     minValue: {control: 'number'},
     maxValue: {control: 'number'}
   }
-};
+} as Meta<typeof ProgressBar>;
 
-export const ProgressBarExample = (args) => {
+export type ProgressBarStory = StoryFn<typeof ProgressBar>;
+
+export const ProgressBarExample: ProgressBarStory = (args) => {
   return (
     <ProgressBar {...args}>
       {({percentage, valueText}) => (

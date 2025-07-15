@@ -11,15 +11,20 @@
  */
 
 import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './combobox-reproductions.css';
 import './styles.css';
 
-export default {
-  title: 'React Aria Components/ComboBoxReproductions'
-};
 
-export const ComboBoxReproductionExample = () => (
+export default {
+  title: 'React Aria Components/ComboBoxReproductions',
+  component: ComboBox
+} as Meta<typeof ComboBox>;
+
+export type ComboBoxReproductionStory = StoryFn<typeof ComboBox>;
+
+export const ComboBoxReproductionExample: ComboBoxReproductionStory = () => (
   <ComboBox>
     <Label>Favorite Animal</Label>
     <div>

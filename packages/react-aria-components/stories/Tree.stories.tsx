@@ -13,16 +13,20 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useCallback, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import './styles.css';
 
 export default {
-  title: 'React Aria Components/Tree'
-};
+  title: 'React Aria Components/Tree',
+  component: Tree
+} as Meta<typeof Tree>;
+
+export type TreeStory = StoryFn<typeof Tree>;
 
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string,
@@ -139,7 +143,7 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-const TreeExampleStaticRender = (args) => (
+const TreeExampleStaticRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
@@ -186,7 +190,7 @@ const TreeExampleStaticRender = (args) => (
   </Tree>
 );
 
-const TreeExampleStaticNoActionsRender = (args) => (
+const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItemNoActions id="Photos" textValue="Photos">Photos</StaticTreeItemNoActions>
     <StaticTreeItemNoActions id="projects" textValue="Projects" title="Projects">
@@ -233,13 +237,12 @@ const TreeExampleStaticNoActionsRender = (args) => (
   </Tree>
 );
 
-export const TreeExampleStatic = {
-  render: TreeExampleStaticRender,
+export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
+  render: (args) => <TreeExampleStaticRender {...args} />,
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection',
-    disallowClearAll: false
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -262,13 +265,12 @@ export const TreeExampleStatic = {
   }
 };
 
-export const TreeExampleStaticNoActions = {
-  render: TreeExampleStaticNoActionsRender,
+export const TreeExampleStaticNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
+  render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection',
-    disallowClearAll: false
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -419,7 +421,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
 
-const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
+const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -437,13 +439,13 @@ const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
   );
 };
 
-export const TreeExampleDynamic = {
+export const TreeExampleDynamic: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleStatic,
-  render: TreeExampleDynamicRender,
-  parameters: null
+  render: (args) => <TreeExampleDynamicRender {...args} />,
+  parameters: undefined
 };
 
-export const WithActions = {
+export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleDynamic,
   args: {
     onAction: action('onAction'),
@@ -452,7 +454,7 @@ export const WithActions = {
   name: 'Tree with actions'
 };
 
-const WithLinksRender = (args: TreeProps<unknown>) => {
+const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -469,9 +471,9 @@ const WithLinksRender = (args: TreeProps<unknown>) => {
   );
 };
 
-export const WithLinks = {
+export const WithLinks: StoryObj<typeof WithLinksRender> = {
   ...TreeExampleDynamic,
-  render: WithLinksRender,
+  render: (args) => <WithLinksRender {...args} />,
   name: 'Tree with links',
   parameters: {
     description: {
@@ -484,7 +486,7 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
-const EmptyTreeStatic = (args: {isLoading: boolean}) => (
+const EmptyTreeStatic = <T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree
     {...args}
     className={styles.tree}
@@ -500,15 +502,16 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
   </Tree>
 );
 
-export const EmptyTreeStaticStory = {
-  render: EmptyTreeStatic,
+export const EmptyTreeStaticStory: StoryObj<typeof EmptyTreeStatic> = {
+  render: (args) => <EmptyTreeStatic {...args} />,
   args: {
     isLoading: false
   },
   name: 'Empty/Loading Tree rendered with TreeLoader collection element'
 };
 
-function LoadingStoryDepOnCollection(args) {
+function LoadingStoryDepOnCollection<T extends object>(props: TreeProps<T> & {isLoading: boolean}): JSX.Element {
+  let {isLoading, ...args} = props;
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -517,20 +520,20 @@ function LoadingStoryDepOnCollection(args) {
 
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <Collection items={treeData.items} dependencies={[args.isLoading]}>
+      <Collection items={treeData.items} dependencies={[isLoading]}>
         {(item) => (
-          <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
             {item.value.name}
           </DynamicTreeItem>
         )}
       </Collection>
-      <MyTreeLoader isLoading={args.isLoading} />
+      <MyTreeLoader isLoading={isLoading} />
     </Tree>
   );
 }
 
-export const LoadingStoryDepOnCollectionStory = {
-  render: LoadingStoryDepOnCollection,
+export const LoadingStoryDepOnCollectionStory: StoryObj<typeof LoadingStoryDepOnCollection> = {
+  render: (args) => <LoadingStoryDepOnCollection {...args} />,
   args: {
     isLoading: false
   },
@@ -542,7 +545,7 @@ export const LoadingStoryDepOnCollectionStory = {
   }
 };
 
-function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
+function LoadingStoryDepOnTop<T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -560,8 +563,8 @@ function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   );
 }
 
-export const LoadingStoryDepOnTopStory = {
-  render: LoadingStoryDepOnTop,
+export const LoadingStoryDepOnTopStory: StoryObj<typeof LoadingStoryDepOnTop> = {
+  render: (args) => <LoadingStoryDepOnTop {...args} />,
   args: {
     isLoading: false
   },
@@ -639,7 +642,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
   );
 };
 
-function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean}) {
+function ButtonLoadingIndicator<T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -656,8 +659,8 @@ function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean})
   );
 }
 
-export const ButtonLoadingIndicatorStory = {
-  render: ButtonLoadingIndicator,
+export const ButtonLoadingIndicatorStory: StoryObj<typeof ButtonLoadingIndicator> = {
+  render: (args) => <ButtonLoadingIndicator {...args} />,
   args: {
     isLoading: false
   },
@@ -668,7 +671,8 @@ export const ButtonLoadingIndicatorStory = {
     }
   }
 };
-function VirtualizedTreeRender(args) {
+
+function VirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
       <TreeExampleDynamicRender {...args} />
@@ -676,9 +680,9 @@ function VirtualizedTreeRender(args) {
   );
 }
 
-export const VirtualizedTree = {
+export const VirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
   ...TreeExampleDynamic,
-  render: VirtualizedTreeRender
+  render: (args) => <VirtualizedTreeRender {...args} />
 };
 
 let projects: {id: string, value: string}[] = [];
@@ -966,7 +970,7 @@ dependencies={[isRootLoading]}>
   );
 }} */}
 
-function TreeDragAndDropExample(args) {
+function TreeDragAndDropExample<T extends object>(args: TreeProps<T> & {shouldAcceptItemDrop: 'folders' | 'all', dropFunction: 'onMove' | 'onInsert' | 'onRootDrop', shouldAllowInsert: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1142,9 +1146,9 @@ function SecondTree(args) {
   );
 }
 
-export const TreeWithDragAndDrop = {
+export const TreeWithDragAndDrop: StoryObj<typeof TreeDragAndDropExample> = {
   ...TreeExampleDynamic,
-  render: function TreeDndExample(args) {
+  render: (args) => {
     return (
       <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
         <TreeDragAndDropExample {...args} />
