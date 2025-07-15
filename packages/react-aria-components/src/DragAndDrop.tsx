@@ -76,6 +76,7 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
     if (dropState.target.dropPosition === 'after') {
       // Normalize to the "before" drop position since we only render those to the DOM.
       let nextKey = dropState.collection.getKeyAfter(dropTargetKey);
+      let lastDescendantKey: Key | null = null;
       if (nextKey != null) {
         let targetLevel = dropState.collection.getItem(dropTargetKey)?.level ?? 0;
         // Skip over any rows that are descendants of the target ("after" position should be after all children)
@@ -97,11 +98,14 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
           if ((node.level ?? 0) <= targetLevel) {
             break;
           }
+          
+          lastDescendantKey = nextKey;
           nextKey = dropState.collection.getKeyAfter(nextKey);
         }
       }
 
-      dropTargetKey = nextKey ?? dropTargetKey;
+      // If nextKey is null (end of collection), use the last descendant
+      dropTargetKey = nextKey ?? lastDescendantKey ?? dropTargetKey;
     }
   }
 
