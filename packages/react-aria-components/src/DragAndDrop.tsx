@@ -85,7 +85,14 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
           if (!node) {
             break;
           }
-          // Stop once we find a node at the same level or higher
+          // Skip over non-item nodes (e.g., loaders) since they can't be drop targets.
+          // eslint-disable-next-line max-depth
+          if (node.type !== 'item') {
+            nextKey = dropState.collection.getKeyAfter(nextKey);
+            continue;
+          }
+
+          // Stop once we find an item at the same level or higher
           // eslint-disable-next-line max-depth
           if ((node.level ?? 0) <= targetLevel) {
             break;
