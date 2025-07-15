@@ -21,7 +21,6 @@ import React, {
   RefObject,
   useCallback,
   useEffect,
-  useRef,
   useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -128,14 +127,16 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     onChange: onChangeProp
   } = props;
 
-  let isComposing = useRef(false);
+  let [isComposing, setIsComposing] = useState(false);
+  let [compositionValue, setCompositionValue] = useState('');
   let onChange = useCallback((val) => {
-    if (isComposing.current) {
+    if (isComposing) {
+      setCompositionValue(val);
       return;
     }
 
     onChangeProp?.(val);
-  }, [onChangeProp]);
+  }, [onChangeProp, isComposing]);
 
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', onChange);
   let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
@@ -179,15 +180,16 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   }, [ref]);
 
   let onCompositionStart = useCallback(() => {
-    isComposing.current = true;
-  }, []);
+    setIsComposing(true);
+    setCompositionValue(value || '');
+  }, [value]);
 
   let onCompositionEnd = useCallback((e) => {
-    isComposing.current = false;
+    setIsComposing(false);
     if (e.data !== '') {
-      onChangeProp?.(value);
+      onChangeProp?.(compositionValue);
     }
-  }, [onChangeProp, value]);
+  }, [onChangeProp, compositionValue]);
 
   return {
     labelProps,
@@ -205,7 +207,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
         'aria-controls': props['aria-controls'],
-        value,
+        value: isComposing ? compositionValue : value,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
         autoCapitalize: props.autoCapitalize,
