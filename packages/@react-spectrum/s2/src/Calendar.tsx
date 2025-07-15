@@ -312,7 +312,8 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 display: 'flex',
                 flexDirection: 'row',
                 gap: 24,
-                width: 'full'
+                width: 'full',
+                alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
                 <CalendarGrid months={i} key={i} />

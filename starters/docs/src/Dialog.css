@@ -5,13 +5,10 @@
   max-height: inherit;
   box-sizing: border-box;
   overflow: auto;
+  padding: 30px;
 
   .react-aria-Heading[slot=title] {
     line-height: 1em;
     margin-top: 0;
   }
-}
-
-.dialog-padding {
-  padding: 30px;
 }

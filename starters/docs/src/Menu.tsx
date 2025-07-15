@@ -29,7 +29,7 @@ export function MenuButton<T extends object>(
   return (
     <MenuTrigger {...props}>
       <Button>{label}</Button>
-      <Popover noPadding>
+      <Popover hideArrow>
         <Menu {...props}>
           {children}
         </Menu>
@@ -83,7 +83,7 @@ export function SubmenuTrigger(
   return (
     <AriaSubmenuTrigger {...props}>
       {trigger}
-      <Popover noPadding>
+      <Popover hideArrow>
         {menu}
       </Popover>
     </AriaSubmenuTrigger>
