@@ -33,18 +33,15 @@ describe('mergeRefs', () => {
   });
 
   it('should support additional properties on the refs', () => {
-    let ref1;
-    let ref2;
-
-    const TextField = (props) => {
-      ref1 = useRef(null);
-      ref1.foo = 'bar';
-
-      ref2 = mergeRefs(ref1, ref2);
-      return <input {...props} ref={ref2} />;
-    };
-    render(<TextField />);
-    expect(ref2.foo).toBe('bar');
+    // We mock refs here because they are only mutable in React18+
+    let ref1 = {current: null};
+    let ref2 = {current: null, foo: 'bar'};
+    let ref3 = (() => {}) as any;
+    ref3.baz = 'foo';
+    
+    let ref = mergeRefs(ref1, ref2, ref3) as any;
+    expect(ref.foo).toBe('bar');
+    expect(ref.baz).toBe('foo');
   });
 
   if (parseInt(React.version.split('.')[0], 10) >= 19) {
