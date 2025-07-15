@@ -287,8 +287,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
   let segments = useMemo(() => 
-    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly), 
-    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly]);
+    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity), 
+    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
