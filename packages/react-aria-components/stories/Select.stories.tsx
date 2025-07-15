@@ -13,21 +13,25 @@
 import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
 
 export default {
   title: 'React Aria Components/Select',
+  component: Select,
   argTypes: {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
     }
   }
-};
+} as Meta<typeof Select>;
 
-export const SelectExample = () => (
+export type SelectStory = StoryFn<typeof Select>;
+
+export const SelectExample: SelectStory = () => (
   <Select data-testid="select-example" id="select-example-id" style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -48,7 +52,7 @@ export const SelectExample = () => (
   </Select>
 );
 
-export const SelectRenderProps = () => (
+export const SelectRenderProps: SelectStory = () => (
   <Select data-testid="select-render-props" style={{position: 'relative'}}>
     {({isOpen}) => (
       <>
@@ -138,7 +142,7 @@ const usStateOptions = [
   {id: 'WY', name: 'Wyoming'}
 ];
 
-export const SelectManyItems = () => (
+export const SelectManyItems: SelectStory = () => (
   <Select style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -156,7 +160,7 @@ export const SelectManyItems = () => (
   </Select>
 );
 
-export const VirtualizedSelect = () => (
+export const VirtualizedSelect: SelectStory = () => (
   <Select style={{position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -191,7 +195,7 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncVirtualizedCollectionRenderSelect = (args) => {
+function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -241,13 +245,14 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   );
 };
 
-AsyncVirtualizedCollectionRenderSelect.story = {
+export const AsyncVirtualizedCollectionRenderSelect: StoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
+  render: (args) => <AsyncVirtualizedCollectionRenderSelectRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export const SelectSubmitExample = () => (
+export const SelectSubmitExample: SelectStory = () => (
   <Form>
     <TextField
       isRequired

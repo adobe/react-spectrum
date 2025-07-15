@@ -16,7 +16,7 @@ export default {
 };
 
 export let ModalAnimation = {
-  render: () => {
+  render: (): React.ReactElement => {
     return (
       <div className="App">
         <DialogTrigger>

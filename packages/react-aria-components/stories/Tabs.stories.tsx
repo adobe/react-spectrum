@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, TabsProps, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
+import {Orientation} from 'react-aria';
 import React, {useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 
 export default {
-  title: 'React Aria Components/Tabs'
-};
+  title: 'React Aria Components/Tabs',
+  component: Tabs
+} as Meta<typeof Tabs>;
 
-export const TabsExample = () => {
+export type TabsStory = StoryFn<typeof Tabs>;
+
+export const TabsExample: TabsStory = () => {
   let [url, setUrl] = useState('/FoR');
 
   return (
@@ -62,8 +67,8 @@ export const TabsExample = () => {
 };
 
 // Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
+export const TabsRenderProps: TabsStory = () => {
+  const [tabOrientation, setTabOrientation] = useState<Orientation>('vertical');
 
   return (
     <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
@@ -108,7 +113,7 @@ const CustomTab = (props: TabProps) => {
   );
 };
 
-export const NestedTabs = () => (
+export const NestedTabs: TabsStory = () => (
   <Tabs>
     <TabList style={{display: 'flex', gap: 8}}>
       <CustomTab id="foo">Foo</CustomTab>

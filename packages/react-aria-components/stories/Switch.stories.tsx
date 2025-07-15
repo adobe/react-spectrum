@@ -11,15 +11,19 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import {Switch} from 'react-aria-components';
 
 export default {
-  title: 'React Aria Components/Switch'
-};
+  title: 'React Aria Components/Switch',
+  component: Switch
+} as Meta<typeof Switch>;
 
-export const SwitchExample = () => {
+export type SwitchStory = StoryFn<typeof Switch>;
+
+export const SwitchExample: SwitchStory = () => {
   return (
     <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
       <div className={classNames(styles, 'switchExample-indicator')} />
