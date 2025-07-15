@@ -10,15 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Slider, SliderOutput, SliderProps, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label, Slider, SliderOutput, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Slider',
+  component: Slider
+} as Meta<typeof Slider>;
 
-export const SliderExample = () => {
+export type SliderStory = StoryFn<typeof Slider>;
+
+export const SliderExample: SliderStory = () => {
   const [value, setValue] = React.useState([30, 60]);
   return (
     <div>
@@ -66,7 +70,7 @@ export const SliderExample = () => {
   );
 };
 
-export const SliderCSS = (props: SliderProps) => (
+export const SliderCSS: SliderStory = (props) => (
   <Slider {...props} defaultValue={30} className={styles.slider}>
     <div className={styles.label}>
       <Label>Test</Label>

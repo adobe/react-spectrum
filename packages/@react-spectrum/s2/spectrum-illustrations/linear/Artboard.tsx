@@ -13,10 +13,11 @@
 import Artboard_L from 'illustration:./S2_lin_artboard_160.svg';
 import Artboard_M from 'illustration:./S2_lin_artboard_96.svg';
 import Artboard_S from 'illustration:./S2_lin_artboard_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Artboard(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Artboard(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

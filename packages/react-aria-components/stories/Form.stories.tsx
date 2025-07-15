@@ -12,14 +12,18 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, SelectValue, TextField} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Form',
+  component: Form
+} as Meta<typeof Form>;
+
+export type FormStory = StoryFn<typeof Form>;
 
 
-export const FormAutoFillExample = () => {
+export const FormAutoFillExample: FormStory = () => {
   return (
     <Form
       aria-label="Shipping information"
@@ -43,7 +47,7 @@ export const FormAutoFillExample = () => {
         <Label>Zip</Label>
         <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
       </TextField>
-      <Select name="country" id="country" autoComplete="shipping country">
+      <Select style={{position: 'relative'}} name="country" id="country" autoComplete="shipping country">
         <Label>Country</Label>
         <Button>
           <SelectValue />

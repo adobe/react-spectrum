@@ -31,9 +31,10 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {PressResponder} from '@react-aria/interactions';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
@@ -54,12 +55,17 @@ for (let i = 0; i < 20; i++) {
   manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
 }
 
-export default {
+const meta = {
   title: 'Drag and Drop',
-  excludeStories: ['Droppable']
-};
+  excludeStories: ['Droppable', 'Draggable']
+} as Meta<typeof Droppable>;
 
-export const Default = () => (
+export default meta;
+
+export type DnDStory = StoryFn<typeof Droppable>;
+export type DnDStoryObj = StoryObj<typeof Droppable>;
+
+export const Default: DnDStory = () => (
   <Flex direction="column" gap="size-200" alignItems="center">
     <Draggable />
     <Droppable />
@@ -70,7 +76,7 @@ export const Default = () => (
   </Flex>
 );
 
-export const NestedDropRegions = {
+export const NestedDropRegions: DnDStoryObj = {
   render: () => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <Draggable />
@@ -89,7 +95,7 @@ export const NestedDropRegions = {
   }
 };
 
-export const DraggableListbox = {
+export const DraggableListbox: DnDStoryObj = {
   render: () => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
@@ -103,7 +109,7 @@ export const DraggableListbox = {
   name: 'Draggable listbox'
 };
 
-export const DraggableListboxOnAction = {
+export const DraggableListboxOnAction: DnDStoryObj = {
   render: () => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <DraggableListBox
@@ -120,7 +126,7 @@ export const DraggableListboxOnAction = {
   name: 'Draggable listbox, onAction'
 };
 
-export const DroppableListbox = {
+export const DroppableListbox: DnDStoryObj = {
   render: () => (
     <Flex direction="row" gap="size-200" alignItems="center">
       <Draggable />
@@ -140,7 +146,7 @@ export const DroppableListbox = {
   name: 'Droppable listbox'
 };
 
-export const InDialog = {
+export const InDialog: DnDStoryObj = {
   render: () => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <Draggable />
@@ -162,7 +168,7 @@ export const InDialog = {
   name: 'In dialog'
 };
 
-export const DraggableGridDroppableListbox = {
+export const DraggableGridDroppableListbox: DnDStoryObj = {
   render: () => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
@@ -172,7 +178,7 @@ export const DraggableGridDroppableListbox = {
   name: 'Draggable grid, droppable listbox'
 };
 
-export const DroppableGrid = {
+export const DroppableGrid: DnDStoryObj = {
   render: () => (
     <Flex direction="column" alignItems="start">
       <ActionGroup
@@ -220,7 +226,7 @@ export const DroppableGrid = {
   name: 'Droppable grid'
 };
 
-export const DroppableGridWithManyItems = {
+export const DroppableGridWithManyItems: DnDStoryObj = {
   render: () => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
@@ -230,7 +236,7 @@ export const DroppableGridWithManyItems = {
   name: 'Droppable grid with many items'
 };
 
-export const VirtualizedListbox = {
+export const VirtualizedListbox: DnDStoryObj = {
   render: () => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
@@ -240,7 +246,7 @@ export const VirtualizedListbox = {
   name: 'Virtualized listbox'
 };
 
-export const MultipleCollectionDropTargets = {
+export const MultipleCollectionDropTargets: DnDStoryObj = {
   render: () => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
@@ -253,14 +259,14 @@ export const MultipleCollectionDropTargets = {
   name: 'Multiple collection drop targets'
 };
 
-export const Reorderable = () => <ReorderableGridExample />;
+export const Reorderable: DnDStory = () => <ReorderableGridExample />;
 
-export const DraggableDisabled = {
+export const DraggableDisabled: DnDStoryObj = {
   render: () => <Draggable isDisabled />,
   name: 'Draggable isDisabled'
 };
 
-export function Draggable({isDisabled = false}) {
+export let Draggable = ({isDisabled = false}: {isDisabled?: boolean}): JSX.Element => {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
@@ -298,9 +304,12 @@ export function Draggable({isDisabled = false}) {
       </div>
     </FocusRing>
   );
-}
+};
 
-export function Droppable({type, children, actionId = ''}: any) {
+export let DraggableStory: DnDStory = ({isDisabled = false}: {isDisabled?: boolean}) => <Draggable isDisabled={isDisabled} />;
+DraggableStory.storyName = 'Draggable';
+
+export let Droppable = ({type, children, actionId = ''}: any): JSX.Element => {
   let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
@@ -331,7 +340,10 @@ export function Droppable({type, children, actionId = ''}: any) {
       </div>
     </FocusRing>
   );
-}
+};
+
+export let DroppableStory: DnDStory = ({type, children, actionId = ''}: any) => <Droppable type={type} children={children} actionId={actionId} />;
+DroppableStory.storyName = 'Droppable';
 
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
@@ -373,7 +385,14 @@ function DraggableCollectionExample(props) {
   };
 
   return (
-    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd} onCut={onCut} isDisabled={props.isDisabled}>
+    <DraggableCollection
+      items={list.items}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      onDragEnd={onDragEnd}
+      onCut={onCut}
+      isDisabled={props.isDisabled}
+      {...props}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -385,7 +404,7 @@ function DraggableCollectionExample(props) {
 }
 
 function DraggableCollection(props) {
-  let {isDisabled} = props;
+  let {isDisabled, mode, offsetX, offsetY} = props;
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState<ItemValue>(props);
   let gridState = useGridState({
@@ -460,7 +479,7 @@ function DraggableCollection(props) {
           let selectedKeys = dragState.draggingKeys;
           let draggedKey = [...selectedKeys][0];
           let item = state.collection.getItem(draggedKey);
-          return (
+          let element = (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
@@ -471,6 +490,12 @@ function DraggableCollection(props) {
               }
             </div>
           );
+
+          if (mode === 'custom') {
+            return {element, x: offsetX, y: offsetY};
+          }
+
+          return element;
         }}
       </DragPreview>
     </div>
@@ -532,7 +557,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   );
 }
 
-export const DraggableEnabledDisabledControl = {
+export const DraggableEnabledDisabledControl: DnDStoryObj = {
   render: (args) => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample {...args} />
@@ -548,7 +573,7 @@ export const DraggableEnabledDisabledControl = {
   }
 };
 
-export const DroppableEnabledDisabledControl = {
+export const DroppableEnabledDisabledControl: DnDStoryObj = {
   render: (args) => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
@@ -561,5 +586,131 @@ export const DroppableEnabledDisabledControl = {
       control: 'boolean',
       defaultValue: true
     }
+  }
+};
+
+interface PreviewOffsetArgs {
+  /** Strategy for positioning the preview. */
+  mode: 'default' | 'custom',
+  /** X offset in pixels (only used when mode = custom). */
+  offsetX: number,
+  /** Y offset in pixels (only used when mode = custom). */
+  offsetY: number
+}
+
+function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.Element {
+  const preview = React.useRef(null);
+
+  const {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'preview offset demo'
+      }];
+    },
+    preview,
+    onDragStart: action('onDragStart'),
+    onDragEnd: action('onDragEnd')
+  });
+
+  const {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'preview offset demo'
+      }];
+    }
+  });
+
+  const ref = React.useRef<HTMLDivElement>(null);
+  const {buttonProps} = useButton({elementType: 'div'}, ref);
+
+  return (
+    <>
+      <div
+        ref={ref}
+        {...mergeProps(dragProps, buttonProps, clipboardProps)}
+        className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}
+        style={{cursor: 'grab'}}>
+        <ShowMenu size="XS" />
+        <span>Drag me</span>
+      </div>
+
+      {/* Custom drag preview */}
+      <DragPreview ref={preview}>
+        {() => {
+          const elem = (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview')}>
+              <ShowMenu size="XS" />
+              <span>Preview</span>
+            </div>
+          );
+
+          if (mode === 'custom') {
+            return {element: elem, x: offsetX, y: offsetY};
+          }
+
+          return elem;
+        }}
+      </DragPreview>
+    </>
+  );
+}
+
+export const PreviewOffset: DnDStoryObj = {
+  render: (args) => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableWithPreview {...args} />
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Preview offset',
+  argTypes: {
+    mode: {
+      control: 'select',
+      options: ['default', 'custom'],
+      defaultValue: 'default'
+    },
+    offsetX: {
+      control: 'number',
+      defaultValue: 20
+    },
+    offsetY: {
+      control: 'number',
+      defaultValue: 20
+    }
+  },
+  args: {
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
+  }
+};
+
+export const CollectionPreviewOffset: DnDStoryObj = {
+  render: (args) => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableCollectionExample {...args} />
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Collection preview offset',
+  argTypes: {
+    mode: {
+      control: 'select',
+      options: ['default', 'custom'],
+      defaultValue: 'default'
+    },
+    offsetX: {
+      control: 'number',
+      defaultValue: 20
+    },
+    offsetY: {
+      control: 'number',
+      defaultValue: 20
+    }
+  },
+  args: {
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
   }
 };

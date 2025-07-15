@@ -6,7 +6,7 @@ import {updatePropNameAndValue} from '../../shared/transforms';
  * Transforms Badge:
  * - Change variant="info" to variant="informative".
  */
-export default function transformBadge(path: NodePath<t.JSXElement>) {
+export default function transformBadge(path: NodePath<t.JSXElement>): void {
   // Change variant="info" to variant="informative"
   updatePropNameAndValue(path, {
     oldPropName: 'variant',
@@ -14,4 +14,4 @@ export default function transformBadge(path: NodePath<t.JSXElement>) {
     newPropName: 'variant',
     newPropValue: 'informative'
   });
-} 
+}

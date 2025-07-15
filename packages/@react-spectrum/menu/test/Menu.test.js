@@ -496,8 +496,10 @@ describe('Menu', function () {
       let secondItem = menuItems[4];
       let thirdItem = menuItems[1];
       await user.click(firstItem);
-      fireEvent.keyDown(secondItem, {key: ' ', code: 32, charCode: 32});
-      fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard(' ');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{Enter}');
       expect(firstItem).not.toHaveAttribute('aria-checked', 'true');
       expect(secondItem).not.toHaveAttribute('aria-checked', 'true');
       expect(thirdItem).not.toHaveAttribute('aria-checked', 'true');
@@ -813,12 +815,13 @@ describe('Menu', function () {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault();
+        let onClick = mockClickDefault({capture: true});
 
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.click(items[1]);
           fireEvent.keyUp(items[1], {key: 'Enter'});
         }
         expect(onAction).toHaveBeenCalledTimes(1);

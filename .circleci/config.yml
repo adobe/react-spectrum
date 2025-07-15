@@ -37,6 +37,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-2xlarge:
+    docker:
+      - image: cimg/node:22.13.1
+    resource_class: 2xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
     executor: rsp-large
@@ -325,7 +333,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -470,6 +478,21 @@ jobs:
           paths:
             - '*/docs/'
 
+  s2-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/s2-docs/'
+
   verdaccio:
     executor: rsp-xlarge
     steps:
@@ -493,7 +516,7 @@ jobs:
             - storage
 
   v-docs:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -874,6 +897,9 @@ workflows:
       - docs:
           requires:
             - install
+      - s2-docs:
+          requires:
+            - install
       - verdaccio:
           filters:
             branches:
@@ -928,6 +954,7 @@ workflows:
             - storybook
             - storybook-s2
             - docs
+            - s2-docs
       - deploy-verdaccio:
           requires:
             - v-docs

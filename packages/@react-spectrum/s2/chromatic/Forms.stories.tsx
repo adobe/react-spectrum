@@ -23,6 +23,7 @@ import {
   ContextualHelp,
   Divider,
   Form,
+  FormProps,
   Heading,
   Meter,
   NumberField,
@@ -41,11 +42,11 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useState} from 'react';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -56,9 +57,10 @@ const meta: Meta<typeof Form> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Form>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <Form {...args}>
       <TextField label="First Name" name="firstName" />
       <TextField label="Last Name" name="firstName" />
@@ -86,8 +88,8 @@ export const Example = {
   )
 };
 
-export const MixedForm = {
-  render: (args: any) => (
+export const MixedForm: Story = {
+  render: (args) => (
     <Form {...args}>
       <TextField label="First Name" name="firstName" />
       <TextField label="Last Name" name="firstName" />
@@ -112,7 +114,7 @@ export const MixedForm = {
   }
 };
 
-const CustomLabelsExampleRender = (args: any) => {
+const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
@@ -205,8 +207,8 @@ const CustomLabelsExampleRender = (args: any) => {
   );
 };
 
-export const CustomLabelsExample = {
-  render: (args: any) => <CustomLabelsExampleRender {...args} />,
+export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
+  render: (args) => <CustomLabelsExampleRender {...args} />,
   parameters: {
     docs: {
       disable: true

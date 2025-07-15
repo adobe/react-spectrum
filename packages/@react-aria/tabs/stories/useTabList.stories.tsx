@@ -11,8 +11,9 @@
  */
 
 import {Item} from '@react-stately/collections';
-import React from 'react';
-import {Tabs} from './example';
+import React, {JSX} from 'react';
+import {StoryObj} from '@storybook/react';
+import {TabProps, Tabs} from './example';
 
 const meta = {
   title: 'useTabList'
@@ -25,7 +26,7 @@ for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i, contents: 'Contents ' + i});
 }
 
-const Template = (props) => (
+const Template = (props: TabProps): JSX.Element => (
   <Tabs aria-label="example" items={lotsOfItems} {...props}>
     {(item) => (
       <Item key={item.name} title={item.name}>
@@ -35,11 +36,11 @@ const Template = (props) => (
   </Tabs>
 );
 
-export const ScrollTesting = {
-  render: Template
+export const ScrollTesting: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />
 };
 
-export const OnPressEndSelection = {
-  render: Template,
+export const OnPressEndSelection: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {shouldSelectOnPressUp: true}
 };

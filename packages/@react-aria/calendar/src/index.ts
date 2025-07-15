@@ -14,6 +14,7 @@ export {useCalendar} from './useCalendar';
 export {useRangeCalendar} from './useRangeCalendar';
 export {useCalendarGrid} from './useCalendarGrid';
 export {useCalendarCell} from './useCalendarCell';
+export {getEraFormat} from './utils';
 
 export type {AriaCalendarProps, AriaRangeCalendarProps, CalendarProps, DateValue, RangeCalendarProps} from '@react-types/calendar';
 export type {CalendarAria} from './useCalendarBase';

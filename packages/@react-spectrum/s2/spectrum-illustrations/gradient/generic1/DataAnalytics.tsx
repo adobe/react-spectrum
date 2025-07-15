@@ -13,10 +13,11 @@
 import DataAnalytics_L from 'illustration:./S2_fill_dataAnalytics_generic1_160.svg';
 import DataAnalytics_M from 'illustration:./S2_fill_dataAnalytics_generic1_96.svg';
 import DataAnalytics_S from 'illustration:./S2_fill_dataAnalytics_generic1_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function DataAnalytics(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function DataAnalytics(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

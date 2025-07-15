@@ -15,8 +15,9 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
 import {Heading} from '@react-spectrum/text';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 export default {
   title: 'DateRangePicker',
@@ -25,7 +26,9 @@ export default {
       locales: ['en-US', 'ar-EG', 'ja-JP', 'he-IL']
     }
   }
-};
+} as Meta<typeof DateRangePicker>;
+
+export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
 
 const focusParams = {
   chromaticProvider: {
@@ -73,11 +76,11 @@ const zoned = {
   end: parseZonedDateTime('2021-11-19T00:45-08:00[America/Los_Angeles]')
 };
 
-export const Placeholder = () => <DateRangePicker label="Date" placeholderValue={value.start} />;
-export const PlaceholderFocus = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+export const Placeholder: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} {...args} />;
+export const PlaceholderFocus: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus {...args} />;
 PlaceholderFocus.parameters = focusParams;
 
-export const PlaceholderFocusRTL = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+export const PlaceholderFocusRTL: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus {...args} />;
 PlaceholderFocusRTL.parameters = {
   chromaticProvider: {
     locales: ['he-IL'],
@@ -87,47 +90,47 @@ PlaceholderFocusRTL.parameters = {
   }
 };
 
-export const PlaceholderFocusExpress = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+export const PlaceholderFocusExpress: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus {...args} />;
 PlaceholderFocusExpress.parameters = {
   chromaticProvider: {
     express: true
   }
 };
 
-export const PlaceholderTime = () => <DateRangePicker label="Date" placeholderValue={dateTime.start} />;
-export const PlaceholderZoned = () => <DateRangePicker label="Date" placeholderValue={zoned.start} />;
-export const Value = () => <DateRangePicker label="Date" value={value} />;
-export const ValueTime = () => <DateRangePicker label="Date" value={dateTime} />;
-export const ValueZoned = () => <DateRangePicker label="Date" value={zoned} />;
-export const ValueFocus = () => <DateRangePicker label="Date" value={value} autoFocus />;
+export const PlaceholderTime: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={dateTime.start} {...args} />;
+export const PlaceholderZoned: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={zoned.start} {...args} />;
+export const Value: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} {...args} />;
+export const ValueTime: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={dateTime} {...args} />;
+export const ValueZoned: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={zoned} {...args} />;
+export const ValueFocus: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} autoFocus {...args} />;
 ValueFocus.parameters = focusParams;
 
-export const DisabledPlaceholder = () => <DateRangePicker label="Date" placeholderValue={value.start} isDisabled />;
-export const DisabledValue = () => <DateRangePicker label="Date" value={value} isDisabled />;
-export const ReadOnly = () => <DateRangePicker label="Date" value={value} isReadOnly />;
-export const QuietPlaceholder = () => <DateRangePicker label="Date" placeholderValue={value.start} isQuiet />;
-export const QuietValue = () => <DateRangePicker label="Date" value={value} isQuiet />;
-export const Invalid = () => <DateRangePicker label="Date" value={value} validationState="invalid" />;
-export const Unavailable = () => <DateRangePicker label="Date" value={value} isDateUnavailable={date => date.day <= 10} />;
-export const ErrorMessage = () => <DateRangePicker label="Date" value={value} validationState="invalid" errorMessage="Invalid selection" />;
-export const HelpText = () => <DateRangePicker label="Date" value={value} description="Enter a date" />;
-export const FormatHelpText = () => <DateRangePicker label="Date" value={value} showFormatHelpText />;
-export const LabelPositionSide = () => <DateRangePicker label="Date" value={value} labelPosition="side" />;
-export const LabelAlignEnd = () => <DateRangePicker label="Date" value={value} labelAlign="end" />;
-export const Required = () => <DateRangePicker label="Date" value={value} isRequired />;
-export const RequiredLabel = () => <DateRangePicker label="Date" value={value} isRequired necessityIndicator="label" />;
-export const Optional = () => <DateRangePicker label="Date" value={value} necessityIndicator="label" />;
-export const NoLabel = () => <DateRangePicker aria-label="Date" value={value} />;
-export const QuietNoLabel = () => <DateRangePicker aria-label="Date" isQuiet value={value} />;
-export const CustomWidth = () => <DateRangePicker label="Date" value={value} width={500} />;
-export const QuietCustomWidth = () => <DateRangePicker label="Date" value={value} width={500} isQuiet />;
-export const CustomWidthNoLabel = () => <DateRangePicker aria-label="Date" value={value} width={500} />;
-export const QuietCustomWidthNoLabel = () => <DateRangePicker aria-label="Date" value={value} width={500} isQuiet />;
-export const CustomWidthLabelPositionSide = () => <DateRangePicker label="Date" value={value} width={500} labelPosition="side" />;
-export const QuietCustomWidthLabelPositionSide = () => <DateRangePicker label="Date" value={value} width={500} labelPosition="side" isQuiet />;
-export const CustomWidthSmall = () => <DateRangePicker label="Date" value={zoned} width={50} />;
-export const CustomWidthSmallInvalid = () => <DateRangePicker label="Date" value={zoned} width={50} validationState="invalid" />;
-export const CustomWidthSmallNoLabel = () => <DateRangePicker aria-label="Date" value={zoned} width={50} />;
+export const DisabledPlaceholder: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} isDisabled {...args} />;
+export const DisabledValue: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isDisabled {...args} />;
+export const ReadOnly: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isReadOnly {...args} />;
+export const QuietPlaceholder: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} isQuiet {...args} />;
+export const QuietValue: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isQuiet {...args} />;
+export const Invalid: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} validationState="invalid" {...args} />;
+export const Unavailable: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isDateUnavailable={date => date.day <= 10} {...args} />;
+export const ErrorMessage: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} validationState="invalid" errorMessage="Invalid selection" {...args} />;
+export const HelpText: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} description="Enter a date" {...args} />;
+export const FormatHelpText: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} showFormatHelpText {...args} />;
+export const LabelPositionSide: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} labelPosition="side" {...args} />;
+export const LabelAlignEnd: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} labelAlign="end" {...args} />;
+export const Required: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isRequired {...args} />;
+export const RequiredLabel: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isRequired necessityIndicator="label" {...args} />;
+export const Optional: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} necessityIndicator="label" {...args} />;
+export const NoLabel: DateRangePickerStory = (args) => <DateRangePicker aria-label="Date" value={value} {...args} />;
+export const QuietNoLabel: DateRangePickerStory = (args) => <DateRangePicker aria-label="Date" isQuiet value={value} {...args} />;
+export const CustomWidth: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} width={500} {...args} />;
+export const QuietCustomWidth: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} width={500} isQuiet {...args} />;
+export const CustomWidthNoLabel: DateRangePickerStory = (args) => <DateRangePicker aria-label="Date" value={value} width={500} {...args} />;
+export const QuietCustomWidthNoLabel: DateRangePickerStory = (args) => <DateRangePicker aria-label="Date" value={value} width={500} isQuiet {...args} />;
+export const CustomWidthLabelPositionSide: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} width={500} labelPosition="side" {...args} />;
+export const QuietCustomWidthLabelPositionSide: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} width={500} labelPosition="side" isQuiet {...args} />;
+export const CustomWidthSmall: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={zoned} width={50} {...args} />;
+export const CustomWidthSmallInvalid: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={zoned} width={50} validationState="invalid" {...args} />;
+export const CustomWidthSmallNoLabel: DateRangePickerStory = (args) => <DateRangePicker aria-label="Date" value={zoned} width={50} {...args} />;
 
 let contextualHelp = (
   <ContextualHelp>
@@ -136,50 +139,50 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = () => <DateRangePicker label="Date" contextualHelp={contextualHelp} value={value} />;
-export const ContextualHelpSideLabel = () => <DateRangePicker label="Date" labelPosition="side" contextualHelp={contextualHelp} value={value} />;
+export const _ContextualHelp: DateRangePickerStory = (args) => <DateRangePicker label="Date" contextualHelp={contextualHelp} value={value} {...args} />;
+export const ContextualHelpSideLabel: DateRangePickerStory = (args) => <DateRangePicker label="Date" labelPosition="side" contextualHelp={contextualHelp} value={value} {...args} />;
 
-export const OpenPlaceholder = () => <DateRangePicker label="Date" placeholderValue={value.start} isOpen />;
+export const OpenPlaceholder: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} isOpen {...args} />;
 OpenPlaceholder.parameters = openParams;
 OpenPlaceholder.decorators = openDecorators;
 
-export const OpenPlaceholderRTL = () => <DateRangePicker label="Date" placeholderValue={value.start} isOpen />;
+export const OpenPlaceholderRTL: DateRangePickerStory = (args) => <DateRangePicker label="Date" placeholderValue={value.start} isOpen {...args} />;
 OpenPlaceholderRTL.parameters = openParamsRTL;
 OpenPlaceholderRTL.decorators = openDecorators;
 
-export const OpenValue = () => <DateRangePicker label="Date" value={value} isOpen />;
+export const OpenValue: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen {...args} />;
 OpenValue.parameters = openParams;
 OpenValue.decorators = openDecorators;
 
-export const OpenValueRTL = () => <DateRangePicker label="Date" value={value} isOpen />;
+export const OpenValueRTL: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen {...args} />;
 OpenValueRTL.parameters = openParamsRTL;
 OpenValueRTL.decorators = openDecorators;
 
-export const OpenTime = () => <DateRangePicker label="Date" value={dateTime} isOpen />;
+export const OpenTime: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={dateTime} isOpen {...args} />;
 OpenTime.parameters = openParams;
 OpenTime.decorators = openDecorators;
 
-export const OpenZoned = () => <DateRangePicker label="Date" value={zoned} isOpen />;
+export const OpenZoned: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={zoned} isOpen {...args} />;
 OpenZoned.parameters = openParams;
 OpenZoned.decorators = openDecorators;
 
-export const OpenInvalid = () => <DateRangePicker label="Date" value={value} isOpen validationState="invalid" />;
+export const OpenInvalid: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen validationState="invalid" {...args} />;
 OpenInvalid.parameters = openParams;
 OpenInvalid.decorators = openDecorators;
 
-export const OpenErrorMessage = () => <DateRangePicker label="Date" value={value} isOpen validationState="invalid" errorMessage="Invalid selection" />;
+export const OpenErrorMessage: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen validationState="invalid" errorMessage="Invalid selection" {...args} />;
 OpenErrorMessage.parameters = openParams;
 OpenErrorMessage.decorators = openDecorators;
 
-export const OpenInvalidTime = () => <DateRangePicker label="Date" value={zoned} isOpen validationState="invalid" />;
+export const OpenInvalidTime: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={zoned} isOpen validationState="invalid" {...args} />;
 OpenInvalidTime.parameters = openParams;
 OpenInvalidTime.decorators = openDecorators;
 
-export const OpenUnavailable = () => <DateRangePicker label="Date" value={value} isOpen isDateUnavailable={date => date.day <= 10} />;
+export const OpenUnavailable: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen isDateUnavailable={date => date.day <= 10} {...args} />;
 OpenUnavailable.parameters = openParams;
 OpenUnavailable.decorators = openDecorators;
 
-export const OpenExpress = () => <DateRangePicker label="Date" value={dateTime} isOpen />;
+export const OpenExpress: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={dateTime} isOpen {...args} />;
 OpenExpress.parameters = {
   chromaticProvider: {
     express: true,
@@ -188,7 +191,7 @@ OpenExpress.parameters = {
 };
 OpenExpress.decorators = openDecorators;
 
-export const OpenFocusLTRInteractions = () => <DateRangePicker label="Date" value={value} />;
+export const OpenFocusLTRInteractions: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} {...args} />;
 OpenFocusLTRInteractions.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
@@ -213,7 +216,7 @@ OpenFocusLTRInteractions.play = async ({canvasElement}) => {
   await userEvent.keyboard('[ArrowLeft]');
 };
 
-export const OpenFocusRTLInteractions = () => <DateRangePicker label="Date" value={value} />;
+export const OpenFocusRTLInteractions: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} {...args} />;
 OpenFocusRTLInteractions.parameters = {
   chromaticProvider: {
     locales: ['he-IL'],
@@ -236,11 +239,11 @@ OpenFocusRTLInteractions.play = async ({canvasElement}) => {
   await userEvent.keyboard('[ArrowRight]');
 };
 
-export const MultipleMonths = () => <DateRangePicker label="Date" value={value} isOpen maxVisibleMonths={3} />;
+export const MultipleMonths: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen maxVisibleMonths={3} {...args} />;
 MultipleMonths.parameters = openParams;
 MultipleMonths.decorators = [Story => <div style={{height: 550, width: 1000}}><Story /></div>];
 
-export const Tray = () => <DateRangePicker label="Date" value={value} isOpen />;
+export const Tray: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen {...args} />;
 Tray.parameters = {
   chromaticProvider: {
     colorSchemes: ['light'],
@@ -254,7 +257,7 @@ Tray.parameters = {
   }
 };
 
-export const TrayExpress = () => <DateRangePicker label="Date" value={value} isOpen />;
+export const TrayExpress: DateRangePickerStory = (args) => <DateRangePicker label="Date" value={value} isOpen {...args} />;
 TrayExpress.parameters = {
   chromaticProvider: {
     colorSchemes: ['light'],
