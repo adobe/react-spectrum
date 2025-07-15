@@ -61,8 +61,6 @@ const selectBoxStyles = style({
   alignItems: 'center',
   fontFamily: 'sans',
   font: 'ui',
-  
-  // Vertical orientation (default) - Fixed square dimensions
   width: {
     default: {
       size: {
@@ -74,18 +72,9 @@ const selectBoxStyles = style({
       }
     },
     orientation: {
-      horizontal: {
-        size: {
-          XS: 'auto',
-          S: 'auto',
-          M: 'auto',
-          L: 'auto',
-          XL: 'auto'
-        }
-      }
+      horizontal: 'auto'
     }
   },
-  
   height: {
     default: {
       size: {
@@ -97,30 +86,19 @@ const selectBoxStyles = style({
       }
     },
     orientation: {
-      horizontal: {
-        size: {
-          XS: 'auto',
-          S: 'auto',
-          M: 'auto',
-          L: 'auto',
-          XL: 'auto'
-        }
-      }
+      horizontal: 'auto'
     }
   },
-  
   minWidth: {
     orientation: {
       horizontal: 160
     }
   },
-  
   maxWidth: {
     orientation: {
       horizontal: 272
     }
   },
-
   padding: {
     size: {
       XS: 12,
@@ -130,9 +108,15 @@ const selectBoxStyles = style({
       XL: 28
     }
   },
-  
   borderRadius: 'lg',
-  backgroundColor: 'layer-2',
+  backgroundColor: {
+    default: 'layer-2',
+    isDisabled: 'layer-1',
+  },
+  color: {
+    isEmphasized: 'gray-900',
+    isDisabled: 'disabled'
+  },
   boxShadow: {
     default: 'emphasized',
     isHovered: 'elevated',
@@ -141,17 +125,13 @@ const selectBoxStyles = style({
   },
   position: 'relative',
   borderWidth: 2,
-  borderStyle: {
-    default: 'solid',
-    isSelected: 'solid'
-  },
+  borderStyle: 'solid',
   borderColor: {
+    // isHovered: 'gray-900',
+    // isSelected: 'gray-900',
     default: 'transparent',
-    isSelected: 'gray-900',
-    isFocusVisible: 'transparent'
   },
   transition: 'default',
-  
   gap: {
     orientation: {
       horizontal: 'text-to-visual'
@@ -186,7 +166,17 @@ const iconContainer = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexShrink: 0
+  size: {
+    XS: 16,
+    S: 20,
+    M: 24,
+    L: 28,
+    XL: 32
+  },
+  flexShrink: 0,
+  color: {
+    isDisabled: 'disabled'
+  }
 }, getAllowedOverrides());
 
 const textContainer = style({
@@ -198,7 +188,10 @@ const textContainer = style({
       horizontal: 'start'
     }
   },
-  gap: 'text-to-visual'
+  gap: 'text-to-visual',
+  color: {
+    isDisabled: 'disabled'
+  }
 }, getAllowedOverrides());
 
 const descriptionText = style({
@@ -209,7 +202,10 @@ const descriptionText = style({
     }
   },
   font: 'ui-sm',
-  color: 'gray-600',
+  color: {
+    default: 'gray-600',
+    isDisabled: 'disabled'
+  },
   lineHeight: 'body'
 }, getAllowedOverrides());
 
@@ -229,28 +225,20 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
   let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
   
-  let groupContext = useContext(SelectBoxContext);
   let {
     allowMultiSelect = false,
     size = 'M',
     orientation = 'vertical'
-  } = groupContext;
+  } = useContext(SelectBoxContext);
 
   const Selector = allowMultiSelect ? AriaCheckbox : AriaRadio;
-  
-  // Handle controlled selection
-  const handleSelectionChange = (selected: boolean) => {
-    if (onChange) {
-      onChange(selected);
-    }
-  };
   
   return (
     <Selector
       value={value}
       isDisabled={isDisabled}
       isSelected={isSelected}
-      onChange={handleSelectionChange}
+      onChange={() => onChange?.(isSelected ?? false)}
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
@@ -267,13 +255,13 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
 
         return (
           <>
-            {(renderProps.isSelected || renderProps.isHovered) && (
+            {(renderProps.isSelected || renderProps.isHovered || renderProps.isFocusVisible) && (
               <div className={checkboxContainer({...renderProps, size}, props.styles)}>
                 <Checkbox 
                   value={value}
                   isSelected={renderProps.isSelected}
                   isDisabled={isDisabled}
-                  size={size} />
+                  size={size === 'XS' ? 'S' : size} />
               </div>
             )}
             
@@ -304,12 +292,9 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
                 )}
                 <div className={textContainer({...renderProps, size, orientation}, props.styles)}>
                   {textElement}
-                  {/* Description is hidden in vertical orientation */}
                 </div>
               </>
             )}
-            
-            {/* Render any other children that don't have slots */}
             {otherChildren.length > 0 && otherChildren}
           </>
         );

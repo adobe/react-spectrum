@@ -56,15 +56,18 @@ export const Example: Story = {
       {...args}
       onSelectionChange={(v) => console.log('Selection changed:', v)}>
       <SelectBox value="select-box-label">
-        <Server slot="icon" />
+        <Server slot="icon" size={args.size === 'XS' || args.size === 'XL' ? undefined : args.size} />
+        <Text slot="description">Select Box Label</Text>
         <Text slot="text">Select Box Label</Text>
       </SelectBox>
       <SelectBox value="select-box-label2">
-        <Server slot="icon" />
+        <Server slot="icon" size={args.size === 'XS' || args.size === 'XL' ? undefined : args.size} />
+        <Text slot="description">Select Box Label</Text>
         <Text slot="text">Select Box Label</Text>
       </SelectBox>
       <SelectBox value="select-box-label3">
-        <Server slot="icon" />
+        <Server slot="icon" size={args.size === 'XS' || args.size === 'XL' ? undefined : args.size} />
+        <Text slot="description">Select Box Label</Text>
         <Text slot="text">Select Box Label</Text>
       </SelectBox>
     </SelectBoxGroup>
@@ -162,4 +165,41 @@ export const HorizontalOrientation: Story = {
     );
   },
   name: 'Horizontal orientation'
+};
+
+export const IndividualDisabled: Story = {
+  args: {
+    numColumns: 2,
+    label: 'Choose options (some disabled)',
+    selectionMode: 'multiple'
+  },
+  render: (args) => {
+    return (
+      <SelectBoxGroup
+        {...args}
+        onSelectionChange={(v) => action('onSelectionChange')(v)}>
+        <SelectBox value="option1">
+          <StarIcon slot="icon" />
+          <Text slot="text">Available Option</Text>
+          <Text slot="description">This option is enabled</Text>
+        </SelectBox>
+        <SelectBox value="option2" isDisabled>
+          <StarIcon slot="icon" />
+          <Text slot="text">Disabled Option</Text>
+          <Text slot="description">This option is disabled</Text>
+        </SelectBox>
+        <SelectBox value="option3">
+          <StarIcon slot="icon" />
+          <Text slot="text">Another Available</Text>
+          <Text slot="description">This option is also enabled</Text>
+        </SelectBox>
+        <SelectBox value="option4" isDisabled>
+          <StarIcon slot="icon" />
+          <Text slot="text">Another Disabled</Text>
+          <Text slot="description">This option is also disabled</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+    );
+  },
+  name: 'Individual disabled SelectBoxes'
 };

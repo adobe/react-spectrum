@@ -42,10 +42,14 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    */
   value: SelectBoxValueType,
   /**
+   * The default selected value.
+   */
+  defaultValue?: SelectBoxValueType,
+  /**
    * The size of the SelectBoxGroup.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   /**
    * The axis the SelectBox elements should align with.
    * @default 'vertical'
@@ -77,13 +81,11 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
-  value?: SelectBoxValueType,
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
   isEmphasized?: boolean
 }
 
-// Utility functions
 const unwrapValue = (value: SelectBoxValueType | undefined): string | undefined => {
   if (Array.isArray(value)) {
     return value[0];
@@ -121,92 +123,25 @@ const gridStyles = style({
 }, getAllowedOverrides());
 
 
-// Selector Group component
 interface SelectorGroupProps {
   allowMultiSelect: boolean,
   children: ReactNode,
-  style?: React.CSSProperties,
-  className?: string,
+  UNSAFE_className?: string,
+  UNSAFE_style?: React.CSSProperties,
+  styles?: StyleProps,
   onChange: (value: SelectBoxValueType) => void,
-  value: SelectBoxValueType,
+  value?: SelectBoxValueType,
+  defaultValue?: SelectBoxValueType,
   isRequired?: boolean,
   isDisabled?: boolean,
   label?: ReactNode
 }
 
-const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function SelectorGroupComponent({
-  allowMultiSelect,
-  children,
-  className,
-  onChange,
-  value,
-  style,
-  isRequired,
-  isDisabled,
-  label
-}, ref) {
-  const props = { 
-    isRequired,
-    isDisabled,
-    className,
-    style,
-    children,
-    onChange,
-    ref
-  };
-
-  return allowMultiSelect ? (
-    <AriaCheckboxGroup
-      {...props}
-      value={ensureArray(value)}
-      aria-label={label ? String(label) : undefined} />
-  ) : (
-    <AriaRadioGroup
-      {...props}
-      value={unwrapValue(value)}
-      aria-label={label ? String(label) : undefined} />
-  );
-});
-
 /**
  * SelectBox groups allow users to select one or more options from a list.
  * All possible options are exposed up front for users to compare.
- * 
- * SelectBoxGroup is a controlled component that requires a `value` prop and
- * `onSelectionChange` callback.
- * 
- * @example
- * ```tsx
- * // Single selection
- * function SingleSelectExample() {
- *   const [selected, setSelected] = React.useState('option1');
- *   return (
- *     <SelectBoxGroup
- *       label="Choose an option"
- *       value={selected}
- *       onSelectionChange={setSelected}>
- *       <SelectBox value="option1">Option 1</SelectBox>
- *       <SelectBox value="option2">Option 2</SelectBox>
- *     </SelectBoxGroup>
- *   );
- * }
- * 
- * // Multiple selection
- * function MultiSelectExample() {
- *   const [selected, setSelected] = React.useState(['option1']);
- *   return (
- *     <SelectBoxGroup
- *       label="Choose options"
- *       selectionMode="multiple"
- *       value={selected}
- *       onSelectionChange={setSelected}>
- *       <SelectBox value="option1">Option 1</SelectBox>
- *       <SelectBox value="option2">Option 2</SelectBox>
- *     </SelectBoxGroup>
- *   );
- * }
- * ```
  */
+
 export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(props: SelectBoxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
   
@@ -214,7 +149,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     label,
     children,
     onSelectionChange,
-    value,
+    defaultValue,
     selectionMode = 'single',
     size = 'M',
     orientation = 'vertical',
@@ -250,33 +185,72 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   const selectBoxContextValue = useMemo(
     () => ({
       allowMultiSelect,
-      value,
       size,
       orientation,
       isEmphasized
     }),
-    [allowMultiSelect, value, size, orientation, isEmphasized]
+    [allowMultiSelect, size, orientation, isEmphasized]
   );
 
   return (
     <SelectorGroup
       allowMultiSelect={allowMultiSelect}
-      value={value}
+      value={props.value}
+      defaultValue={defaultValue}
       onChange={onSelectionChange}
       isRequired={isRequired}
       isDisabled={isDisabled}
       label={label}
       ref={domRef}
-      className={gridStyles({gutterWidth, orientation}, props.styles)}
-      style={{
-        ...UNSAFE_style,
-        gridTemplateColumns: `repeat(${numColumns}, 1fr)`
-      }}>
-      <SelectBoxContext.Provider value={selectBoxContextValue}>
-        {getChildrenToRender().map((child) => {
-          return child as ReactElement;
-        })}
-      </SelectBoxContext.Provider>
+      UNSAFE_style={UNSAFE_style}>
+      <div
+        className={gridStyles({gutterWidth, orientation}, props.styles)}
+        style={{
+          gridTemplateColumns: `repeat(${numColumns}, 1fr)`
+        }}>
+        <SelectBoxContext.Provider value={selectBoxContextValue}>
+          {getChildrenToRender().map((child) => {
+            return child as ReactElement;
+          })}
+        </SelectBoxContext.Provider>
+      </div>
     </SelectorGroup>
+  );
+});
+
+const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function SelectorGroupComponent({
+  allowMultiSelect,
+  children,
+  UNSAFE_className,
+  onChange,
+  value,
+  defaultValue,
+  UNSAFE_style,
+  isRequired,
+  isDisabled,
+  label
+}, ref) {
+  const baseProps = { 
+    isRequired,
+    isDisabled,
+    UNSAFE_className,
+    UNSAFE_style,
+    children,
+    onChange,
+    ref
+  };
+
+  return allowMultiSelect ? (
+    <AriaCheckboxGroup
+      {...baseProps}
+      value={value ? ensureArray(value) : undefined}
+      defaultValue={defaultValue ? ensureArray(defaultValue) : undefined}
+      aria-label={label ? String(label) : undefined} />
+  ) : (
+    <AriaRadioGroup
+      {...baseProps}
+      value={value ? unwrapValue(value) : undefined}
+      defaultValue={defaultValue ? unwrapValue(defaultValue) : undefined}
+      aria-label={label ? String(label) : undefined} />
   );
 });
