@@ -215,6 +215,8 @@ class NumberParserImpl {
       }
     }
 
+    value = value.replace(/'/g, '’');
+
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
     // so allow space and non-breaking space as a group char as well
     if (this.options.locale === 'fr-FR' && this.symbols.group) {

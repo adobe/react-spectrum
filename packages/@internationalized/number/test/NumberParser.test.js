@@ -188,6 +188,12 @@ describe('NumberParser', function () {
       });
     });
 
+    it.only('should parse a swiss currency number', () => {
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+    });
+
     describe('round trips', function () {
       fc.configureGlobal({numRuns: 200});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
