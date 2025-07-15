@@ -32,6 +32,21 @@ describe('mergeRefs', () => {
     expect(ref1.current).toBe(ref2.current);
   });
 
+  it('should support additional properties on the refs', () => {
+    let ref1;
+    let ref2;
+
+    const TextField = (props) => {
+      ref1 = useRef(null);
+      ref1.foo = 'bar';
+
+      ref2 = mergeRefs(ref1, ref2);
+      return <input {...props} ref={ref2} />;
+    };
+    render(<TextField />);
+    expect(ref2.foo).toBe('bar');
+  });
+
   if (parseInt(React.version.split('.')[0], 10) >= 19) {
     it('merge Ref Cleanup', () => {
       const cleanUp = jest.fn();

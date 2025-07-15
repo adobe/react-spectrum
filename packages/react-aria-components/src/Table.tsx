@@ -348,7 +348,7 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
   );
 
   return (
-    <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
+    <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()} collectionRef={ref}>
       {collection => <TableInner props={props} forwardedRef={ref as any} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );

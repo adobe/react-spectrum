@@ -146,7 +146,8 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           'aria-labelledby': props['aria-labelledby']
         }]
       ]}>
-      <CollectionBuilder content={props.children}>
+      {/* @ts-expect-error */}
+      <CollectionBuilder content={props.children} collectionRef={ref}>
         {collection => (
           <CollapsingTabs
             {...props}

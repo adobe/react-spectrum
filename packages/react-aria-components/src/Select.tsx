@@ -94,7 +94,7 @@ export const Select = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sele
   ), [children, isDisabled, isInvalid, isRequired]);
 
   return (
-    <CollectionBuilder content={content}>
+    <CollectionBuilder content={content} collectionRef={ref}>
       {collection => <SelectInner props={props} collection={collection} selectRef={ref} />}
     </CollectionBuilder>
   );

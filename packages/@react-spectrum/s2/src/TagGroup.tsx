@@ -92,7 +92,8 @@ export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ta
   let {onRemove} = props;
   return (
     <InternalTagGroupContext.Provider value={{onRemove}}>
-      <CollectionBuilder content={<Collection {...props} />}>
+      {/* @ts-expect-error */}
+      <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
         {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
       </CollectionBuilder>
     </InternalTagGroupContext.Provider>

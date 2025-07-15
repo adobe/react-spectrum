@@ -38,7 +38,7 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
       {collection => (
         <ol
           ref={ref}

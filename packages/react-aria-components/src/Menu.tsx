@@ -169,7 +169,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
       {collection => <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );

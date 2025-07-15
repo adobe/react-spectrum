@@ -164,7 +164,7 @@ export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T
   [props, ref] = useContextProps(props, ref, TreeContext);
 
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
       {collection => <TreeInner props={props} collection={collection} treeRef={ref} />}
     </CollectionBuilder>
   );

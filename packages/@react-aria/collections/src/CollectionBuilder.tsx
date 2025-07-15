@@ -15,20 +15,37 @@ import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
 import {FocusableContext} from '@react-aria/interactions';
-import {forwardRefType, Node} from '@react-types/shared';
+import {forwardRefType, Node, RefObject} from '@react-types/shared';
 import {Hidden} from './Hidden';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, Ref, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
 const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
 
+export interface CollectionProps<T> extends CachedChildrenOptions<T> {}
+
+export interface CollectionChildren<C extends BaseCollection<object>> {
+  (collection: C): ReactNode
+}
+
+export interface CollectionRenderProps<C extends BaseCollection<object>> {
+  /** A hook that will be called before the collection builder to build the content. */
+  useCollectionContent?: (content: ReactNode) => ReactNode,
+  /** A hook that will be called by the collection builder to render the children. */
+  useCollectionChildren?: (children: CollectionChildren<C>) => CollectionChildren<C>
+  // TODO: Do we also want useCollection() to wrap createCollection()?
+}
+
+interface CollectionRef<C extends BaseCollection<object>, E extends Element> extends RefObject<E | null>, CollectionRenderProps<C> {}
+
 export interface CollectionBuilderProps<C extends BaseCollection<object>> {
   content: ReactNode,
-  children: (collection: C) => ReactNode,
-  createCollection?: () => C
+  children: CollectionChildren<C>,
+  createCollection?: () => C,
+  collectionRef?: CollectionRef<C, Element>
 }
 
 /**
@@ -37,13 +54,14 @@ export interface CollectionBuilderProps<C extends BaseCollection<object>> {
 export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>): ReactElement {
   // If a document was provided above us, we're already in a hidden tree. Just render the content.
   let doc = useContext(CollectionDocumentContext);
+  let content = props.collectionRef?.useCollectionContent?.(props.content) ?? props.content;
   if (doc) {
     // The React types prior to 18 did not allow returning ReactNode from components
     // even though the actual implementation since React 16 did.
     // We must return ReactElement so that TS does not complain that <CollectionBuilder>
     // is not a valid JSX element with React 16 and 17 types.
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-    return props.content as ReactElement;
+    return content as ReactElement;
   }
 
   // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
@@ -52,14 +70,15 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
   // This is fine. CollectionDocumentContext never changes after mounting.
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
+  let children = props.collectionRef?.useCollectionChildren?.(props.children) ?? props.children;
   return (
     <>
       <Hidden>
         <CollectionDocumentContext.Provider value={document}>
-          {props.content}
+          {content}
         </CollectionDocumentContext.Provider>
       </Hidden>
-      <CollectionInner render={props.children} collection={collection} />
+      <CollectionInner render={children} collection={collection} />
     </>
   );
 }
@@ -157,6 +176,12 @@ function useSSRCollectionNode<T extends Element>(Type: string, props: object, re
   return <Type ref={itemRef}>{children}</Type>;
 }
 
+export function useCollectionRef<C extends BaseCollection<object>, E extends Element>(props: CollectionRenderProps<C>, ref: Ref<E>): CollectionRef<C, E> {
+  let refObject = useObjectRef(ref) as CollectionRef<C, E>;
+
+  return Object.assign(refObject, props);
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
@@ -205,8 +230,6 @@ export function createBranchComponent<T extends object, P extends {children?: an
 function useCollectionChildren<T extends object>(options: CachedChildrenOptions<T>) {
   return useCachedChildren({...options, addIdAndValue: true});
 }
-
-export interface CollectionProps<T> extends CachedChildrenOptions<T> {}
 
 const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 
