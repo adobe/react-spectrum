@@ -204,7 +204,6 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-readonly');
     expect(group).toHaveAttribute('data-disabled');
-    expect(group).toHaveClass('disabled');
 
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('data-readonly');

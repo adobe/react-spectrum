@@ -42,6 +42,12 @@ export default {
     isInvalid: {
       control: 'boolean'
     },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']

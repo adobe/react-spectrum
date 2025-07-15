@@ -264,8 +264,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
     } else if (
-      validKeys.length === 0 || 
-      validKeys.length >= allKeys.length || 
+      validKeys.length === 0 ||
+      validKeys.length >= allKeys.length ||
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
     ) {
       // If the field was empty (no valid segments) or all segments are completed, commit the new value.
@@ -286,9 +286,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
-  let segments = useMemo(() => 
-    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly), 
-    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly]);
+  let segments = useMemo(() =>
+    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity),
+    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
@@ -427,13 +427,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 }
 
-function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly) : DateSegment[] {
+function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity) : DateSegment[] {
   let timeValue = ['hour', 'minute', 'second'];
   let segments = dateFormatter.formatToParts(dateValue);
   let processedSegments: DateSegment[] = [];
   for (let segment of segments) {
     let type = TYPE_MAPPING[segment.type] || segment.type;
-    let isEditable = !isReadOnly && EDITABLE_SEGMENTS[type];
+    let isEditable = EDITABLE_SEGMENTS[type];
     if (type === 'era' && calendar.getEras().length === 1) {
       isEditable = false;
     }
@@ -452,9 +452,9 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
 
     // There is an issue in RTL languages where time fields render (minute:hour) instead of (hour:minute).
     // To force an LTR direction on the time field since, we wrap the time segments in LRI (left-to-right) isolate unicode. See https://www.w3.org/International/questions/qa-bidi-unicode-controls.
-    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change. 
+    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change.
     if (type === 'hour') {
-      // This marks the start of the embedded direction change. 
+      // This marks the start of the embedded direction change.
       processedSegments.push({
         type: 'literal',
         text: '\u2066',
@@ -487,7 +487,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
         isEditable: false
       });
     } else {
-      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal. 
+      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal.
       processedSegments.push(dateSegment);
     }
   }
