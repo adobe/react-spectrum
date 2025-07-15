@@ -49,7 +49,12 @@ export const SelectBoxItemContext = createContext<ContextValue<Partial<SelectBox
 const selectBoxStyles = style({
   ...focusRing(),
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: {
+    default: 'column',
+    orientation: {
+      horizontal: 'row'
+    }
+  },
   lineHeight: 'title',
   justifyContent: 'center',
   flexShrink: 0,
@@ -145,7 +150,67 @@ const selectBoxStyles = style({
     isSelected: 'gray-900',
     isFocusVisible: 'transparent'
   },
-  transition: 'default'
+  transition: 'default',
+  
+  gap: {
+    orientation: {
+      horizontal: 'text-to-visual'
+    }
+  }
+}, getAllowedOverrides());
+
+const contentContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  justifyContent: 'center',
+  textAlign: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  flex: {
+    orientation: {
+      horizontal: 1
+    }
+  }
+}, getAllowedOverrides());
+
+const iconContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0
+}, getAllowedOverrides());
+
+const textContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  gap: 'text-to-visual'
+}, getAllowedOverrides());
+
+const descriptionText = style({
+  display: {
+    default: 'none',
+    orientation: {
+      horizontal: 'block'
+    }
+  },
+  font: 'ui-sm',
+  color: 'gray-600',
+  lineHeight: 'body'
 }, getAllowedOverrides());
 
 const checkboxContainer = style({
@@ -190,20 +255,65 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       inputRef={inputRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + selectBoxStyles({...renderProps, size, orientation}, props.styles)}>
-      {renderProps => (
-        <>
-          {(renderProps.isSelected || renderProps.isHovered) && (
-            <div className={checkboxContainer({...renderProps, size}, props.styles)}>
-              <Checkbox 
-                value={value}
-                isSelected={renderProps.isSelected}
-                isDisabled={isDisabled}
-                size={size} />
-            </div>
-          )}
-          {children}
-        </>
-      )}
+      {renderProps => {
+        // Separate icon and text content from children
+        const childrenArray = React.Children.toArray(children);
+        const iconElement = childrenArray.find((child: any) => child?.props?.slot === 'icon');
+        const textElement = childrenArray.find((child: any) => child?.props?.slot === 'text');
+        const descriptionElement = childrenArray.find((child: any) => child?.props?.slot === 'description');
+        const otherChildren = childrenArray.filter((child: any) => 
+          !['icon', 'text', 'description'].includes(child?.props?.slot)
+        );
+
+        return (
+          <>
+            {(renderProps.isSelected || renderProps.isHovered) && (
+              <div className={checkboxContainer({...renderProps, size}, props.styles)}>
+                <Checkbox 
+                  value={value}
+                  isSelected={renderProps.isSelected}
+                  isDisabled={isDisabled}
+                  size={size} />
+              </div>
+            )}
+            
+            {orientation === 'horizontal' ? (
+              <>
+                {iconElement && (
+                  <div className={iconContainer({...renderProps, size, orientation}, props.styles)}>
+                    {iconElement}
+                  </div>
+                )}
+                <div className={contentContainer({...renderProps, size, orientation}, props.styles)}>
+                  <div className={textContainer({...renderProps, size, orientation}, props.styles)}>
+                    {textElement}
+                    {descriptionElement && (
+                      <div className={descriptionText({...renderProps, size, orientation}, props.styles)}>
+                        {descriptionElement}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {iconElement && (
+                  <div className={iconContainer({...renderProps, size, orientation}, props.styles)}>
+                    {iconElement}
+                  </div>
+                )}
+                <div className={textContainer({...renderProps, size, orientation}, props.styles)}>
+                  {textElement}
+                  {/* Description is hidden in vertical orientation */}
+                </div>
+              </>
+            )}
+            
+            {/* Render any other children that don't have slots */}
+            {otherChildren.length > 0 && otherChildren}
+          </>
+        );
+      }}
     </Selector>
   );
 });

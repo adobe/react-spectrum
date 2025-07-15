@@ -16,7 +16,7 @@ import {
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useMemo, useState} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useMemo, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -40,11 +40,7 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
   /**
    * The current selected value (controlled).
    */
-  value?: SelectBoxValueType,
-  /**
-   * The default selected value.
-   */
-  defaultValue?: SelectBoxValueType,
+  value: SelectBoxValueType,
   /**
    * The size of the SelectBoxGroup.
    * @default 'M'
@@ -132,8 +128,7 @@ interface SelectorGroupProps {
   style?: React.CSSProperties,
   className?: string,
   onChange: (value: SelectBoxValueType) => void,
-  value?: SelectBoxValueType,
-  defaultValue?: SelectBoxValueType,
+  value: SelectBoxValueType,
   isRequired?: boolean,
   isDisabled?: boolean,
   label?: ReactNode
@@ -146,7 +141,6 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
   onChange,
   value,
   style,
-  defaultValue,
   isRequired,
   isDisabled,
   label
@@ -165,13 +159,11 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
     <AriaCheckboxGroup
       {...props}
       value={ensureArray(value)}
-      defaultValue={ensureArray(defaultValue)}
       aria-label={label ? String(label) : undefined} />
   ) : (
     <AriaRadioGroup
       {...props}
       value={unwrapValue(value)}
-      defaultValue={unwrapValue(defaultValue)}
       aria-label={label ? String(label) : undefined} />
   );
 });
@@ -179,6 +171,41 @@ const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function Se
 /**
  * SelectBox groups allow users to select one or more options from a list.
  * All possible options are exposed up front for users to compare.
+ * 
+ * SelectBoxGroup is a controlled component that requires a `value` prop and
+ * `onSelectionChange` callback.
+ * 
+ * @example
+ * ```tsx
+ * // Single selection
+ * function SingleSelectExample() {
+ *   const [selected, setSelected] = React.useState('option1');
+ *   return (
+ *     <SelectBoxGroup
+ *       label="Choose an option"
+ *       value={selected}
+ *       onSelectionChange={setSelected}>
+ *       <SelectBox value="option1">Option 1</SelectBox>
+ *       <SelectBox value="option2">Option 2</SelectBox>
+ *     </SelectBoxGroup>
+ *   );
+ * }
+ * 
+ * // Multiple selection
+ * function MultiSelectExample() {
+ *   const [selected, setSelected] = React.useState(['option1']);
+ *   return (
+ *     <SelectBoxGroup
+ *       label="Choose options"
+ *       selectionMode="multiple"
+ *       value={selected}
+ *       onSelectionChange={setSelected}>
+ *       <SelectBox value="option1">Option 1</SelectBox>
+ *       <SelectBox value="option2">Option 2</SelectBox>
+ *     </SelectBoxGroup>
+ *   );
+ * }
+ * ```
  */
 export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(props: SelectBoxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
@@ -187,7 +214,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     label,
     children,
     onSelectionChange,
-    defaultValue,
+    value,
     selectionMode = 'single',
     size = 'M',
     orientation = 'vertical',
@@ -199,7 +226,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     UNSAFE_style
   } = props;
 
-  const [value, setValue] = useState<SelectBoxValueType | undefined>(defaultValue);
   const allowMultiSelect = selectionMode === 'multiple';
   
   const domRef = useDOMRef(ref);
@@ -220,12 +246,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     return childrenToRender;
   };
 
-  useEffect(() => {
-    if (value !== undefined) {
-      onSelectionChange(value);
-    }
-  }, [onSelectionChange, value]);
-
   // Context value
   const selectBoxContextValue = useMemo(
     () => ({
@@ -242,8 +262,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     <SelectorGroup
       allowMultiSelect={allowMultiSelect}
       value={value}
-      defaultValue={defaultValue}
-      onChange={setValue}
+      onChange={onSelectionChange}
       isRequired={isRequired}
       isDisabled={isDisabled}
       label={label}

@@ -39,6 +39,7 @@ function DisabledSelectBox() {
     <SelectBoxGroup
       selectionMode="single"
       onSelectionChange={() => {}}
+      value=""
       isDisabled
       label="Disabled select test">
       <SelectBox value="option1">Option 1</SelectBox>
@@ -86,7 +87,7 @@ describe('SelectBox', () => {
   describe('Props and configuration', () => {
     it('supports different sizes', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} size="L" label="Size test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" size="L" label="Size test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -95,7 +96,7 @@ describe('SelectBox', () => {
 
     it('supports horizontal orientation', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} orientation="horizontal" label="Orientation test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" orientation="horizontal" label="Orientation test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -104,7 +105,7 @@ describe('SelectBox', () => {
 
     it('supports custom number of columns', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} numColumns={3} label="Columns test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" numColumns={3} label="Columns test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -113,7 +114,7 @@ describe('SelectBox', () => {
 
     it('supports labels with aria-label', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Choose an option">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="Choose an option">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -123,7 +124,7 @@ describe('SelectBox', () => {
 
     it('supports required state', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} isRequired label="Required test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" isRequired label="Required test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -132,10 +133,10 @@ describe('SelectBox', () => {
     });
   });
 
-  describe('Controlled and uncontrolled behavior', () => {
-    it('handles default value', () => {
+  describe('Controlled behavior', () => {
+    it('handles initial value selection', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} defaultValue="option1" label="Default value test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="option1" label="Initial value test">
           <SelectBox value="option1">Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
         </SelectBoxGroup>
@@ -146,13 +147,13 @@ describe('SelectBox', () => {
       expect(option1).toBeChecked();
     });
 
-    it('handles multiple selection with default values', () => {
+    it('handles multiple selection with initial values', () => {
       render(
         <SelectBoxGroup 
           selectionMode="multiple" 
           onSelectionChange={() => {}}
-          defaultValue={['option1', 'option2']}
-          label="Multiple default test">
+          value={['option1', 'option2']}
+          label="Multiple initial test">
           <SelectBox value="option1">Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
           <SelectBox value="option3">Option 3</SelectBox>
@@ -170,10 +171,142 @@ describe('SelectBox', () => {
     });
   });
 
+  describe('Controlled values', () => {
+    it('handles controlled single selection', async () => {
+      const ControlledSingleSelect = () => {
+        const [value, setValue] = React.useState('option1');
+        return (
+          <SelectBoxGroup
+            selectionMode="single"
+            onSelectionChange={(val) => setValue(val as string)}
+            value={value}
+            label="Controlled single select">
+            <SelectBox value="option1">Option 1</SelectBox>
+            <SelectBox value="option2">Option 2</SelectBox>
+            <SelectBox value="option3">Option 3</SelectBox>
+          </SelectBoxGroup>
+        );
+      };
+
+      render(<ControlledSingleSelect />);
+      const radios = screen.getAllByRole('radio');
+      const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
+      const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
+      
+      expect(option1).toBeChecked();
+      expect(option2).not.toBeChecked();
+      
+      await userEvent.click(option2);
+      expect(option2).toBeChecked();
+      expect(option1).not.toBeChecked();
+    });
+
+    it('handles controlled multiple selection', async () => {
+      const ControlledMultiSelect = () => {
+        const [value, setValue] = React.useState(['option1']);
+        return (
+          <SelectBoxGroup
+            selectionMode="multiple"
+            onSelectionChange={(val) => setValue(val as string[])}
+            value={value}
+            label="Controlled multi select">
+            <SelectBox value="option1">Option 1</SelectBox>
+            <SelectBox value="option2">Option 2</SelectBox>
+            <SelectBox value="option3">Option 3</SelectBox>
+          </SelectBoxGroup>
+        );
+      };
+
+      render(<ControlledMultiSelect />);
+      const checkboxes = screen.getAllByRole('checkbox');
+      const option1 = checkboxes.find(cb => cb.getAttribute('value') === 'option1')!;
+      const option2 = checkboxes.find(cb => cb.getAttribute('value') === 'option2')!;
+      
+      expect(option1).toBeChecked();
+      expect(option2).not.toBeChecked();
+      
+      await userEvent.click(option2);
+      expect(option1).toBeChecked();
+      expect(option2).toBeChecked();
+    });
+
+         it('controlled value works as expected', () => {
+       render(
+         <SelectBoxGroup
+           selectionMode="single"
+           onSelectionChange={() => {}}
+           value="option2"
+           label="Controlled test">
+           <SelectBox value="option1">Option 1</SelectBox>
+           <SelectBox value="option2">Option 2</SelectBox>
+         </SelectBoxGroup>
+       );
+
+       const radios = screen.getAllByRole('radio');
+       const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
+       const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
+       
+       expect(option1).not.toBeChecked();
+       expect(option2).toBeChecked();
+     });
+
+    it('calls onSelectionChange when controlled value changes', async () => {
+      const onSelectionChange = jest.fn();
+      const ControlledWithCallback = () => {
+        const [value, setValue] = React.useState('option1');
+        return (
+          <SelectBoxGroup
+            selectionMode="single"
+            onSelectionChange={(val) => {
+              setValue(val as string);
+              onSelectionChange(val);
+            }}
+            value={value}
+            label="Controlled callback test">
+            <SelectBox value="option1">Option 1</SelectBox>
+            <SelectBox value="option2">Option 2</SelectBox>
+          </SelectBoxGroup>
+        );
+      };
+
+      render(<ControlledWithCallback />);
+      const radios = screen.getAllByRole('radio');
+      const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
+      
+      await userEvent.click(option2);
+      expect(onSelectionChange).toHaveBeenCalledWith('option2');
+    });
+
+    it('handles external controlled value changes', () => {
+      const ControlledExternal = ({externalValue}: {externalValue: string}) => (
+        <SelectBoxGroup
+          selectionMode="single"
+          onSelectionChange={() => {}}
+          value={externalValue}
+          label="External controlled test">
+          <SelectBox value="option1">Option 1</SelectBox>
+          <SelectBox value="option2">Option 2</SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const {rerender} = render(<ControlledExternal externalValue="option1" />);
+      const radios = screen.getAllByRole('radio');
+      const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
+      const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
+      
+      expect(option1).toBeChecked();
+      expect(option2).not.toBeChecked();
+      
+      rerender(<ControlledExternal externalValue="option2" />);
+      expect(option1).not.toBeChecked();
+      expect(option2).toBeChecked();
+    });
+  });
+
   describe('Individual SelectBox behavior', () => {
     it('shows checkbox indicator when hovered', async () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Hover test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="Hover test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -189,7 +322,12 @@ describe('SelectBox', () => {
 
     it('handles disabled individual items', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Individual disabled test">
+        <SelectBoxGroup
+          selectionMode="single"
+          onSelectionChange={() => {}}
+          value="option2"
+          label="Individual disabled test"
+        >
           <SelectBox value="option1" isDisabled>Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
         </SelectBoxGroup>
@@ -215,7 +353,7 @@ describe('SelectBox', () => {
 
     it('validates minimum children', () => {
       render(
-        <SelectBoxGroup onSelectionChange={() => {}} label="Min children test">
+        <SelectBoxGroup onSelectionChange={() => {}} value="" label="Min children test">
           {[]}
         </SelectBoxGroup>
       );
@@ -233,7 +371,7 @@ describe('SelectBox', () => {
       ));
       
       render(
-        <SelectBoxGroup onSelectionChange={() => {}} label="Max children test">
+        <SelectBoxGroup onSelectionChange={() => {}} value="" label="Max children test">
           {manyChildren}
         </SelectBoxGroup>
       );
@@ -249,7 +387,7 @@ describe('SelectBox', () => {
   describe('Accessibility', () => {
     it('has proper ARIA roles', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="ARIA test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="ARIA test">
           <SelectBox value="option1">Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
           <SelectBox value="option3">Option 3</SelectBox>
@@ -261,7 +399,7 @@ describe('SelectBox', () => {
 
     it('has proper ARIA roles for multiple selection', () => {
       render(
-        <SelectBoxGroup selectionMode="multiple" onSelectionChange={() => {}} label="ARIA multi test">
+        <SelectBoxGroup selectionMode="multiple" onSelectionChange={() => {}} value={[]} label="ARIA multi test">
           <SelectBox value="option1">Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
           <SelectBox value="option3">Option 3</SelectBox>
@@ -273,7 +411,7 @@ describe('SelectBox', () => {
 
     it('associates labels correctly', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Choose option">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="Choose option">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -285,7 +423,7 @@ describe('SelectBox', () => {
   describe('Edge cases', () => {
     it('handles empty value', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Empty value test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="Empty value test">
           <SelectBox value="">Empty</SelectBox>
         </SelectBoxGroup>
       );
@@ -296,7 +434,7 @@ describe('SelectBox', () => {
 
     it('handles complex children', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} label="Complex children test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" label="Complex children test">
           <SelectBox value="option1">
             <div>
               <h3>Title</h3>
@@ -312,7 +450,7 @@ describe('SelectBox', () => {
 
     it('handles different gutter widths', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} gutterWidth="compact" label="Gutter test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" gutterWidth="compact" label="Gutter test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
@@ -321,7 +459,7 @@ describe('SelectBox', () => {
 
     it('handles emphasized style', () => {
       render(
-        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} isEmphasized label="Emphasized test">
+        <SelectBoxGroup selectionMode="single" onSelectionChange={() => {}} value="" isEmphasized label="Emphasized test">
           <SelectBox value="option1">Option 1</SelectBox>
         </SelectBoxGroup>
       );
