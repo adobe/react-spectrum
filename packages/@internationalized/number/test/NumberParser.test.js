@@ -188,7 +188,7 @@ describe('NumberParser', function () {
       });
     });
 
-    it.only('should parse a swiss currency number', () => {
+    it('should parse a swiss currency number', () => {
       expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')).toBe(1000);
       expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
       expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
