@@ -55,7 +55,10 @@ interface AriaTabListBase extends AriaLabelingProps {
 
 export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
 
-export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
+export interface AriaTabPanelProps extends Omit<DOMProps, 'id'>, AriaLabelingProps {
+  /** The unique id of the tab. */
+  id?: Key
+}
 
 export interface SpectrumTabsProps<T> extends AriaTabListBase, Omit<SingleSelection, 'onSelectionChange'>, DOMProps, StyleProps {
   /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
@@ -78,7 +81,12 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, Omit<SingleSelect
 
 export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
   /** The tab items to display. Item keys should match the key of the corresponding `<Item>` within the `<TabPanels>` element. */
-  children: CollectionChildren<T>
+  children: CollectionChildren<T>,
+  /**
+   * When `true`, tab labels will wrap if they exceed the TabList's width. Only supported in vertical orientation with `regular` density. For proper wrapping, set a `minWidth` on TabList.
+   * @default false
+   */
+  wrap?: boolean
 }
 
 export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {

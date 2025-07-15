@@ -22,10 +22,10 @@ import {
 } from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {Slider} from 'tailwind-starter/Slider';
 
-export function Styles() {
+export function Styles(): ReactNode {
   return (
     <AnimatedTabs
       tabs={[

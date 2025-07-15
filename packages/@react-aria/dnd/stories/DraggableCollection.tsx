@@ -17,7 +17,7 @@ import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
 import {useDraggableCollection, useDraggableItem} from '..';
@@ -32,7 +32,7 @@ interface ItemValue {
   text: string
 }
 
-export function DraggableCollectionExample(props) {
+export function DraggableCollectionExample(props: any): JSX.Element {
   let list = useListData({
     initialItems: [
       {id: 'foo', type: 'folder', text: 'Foo'},

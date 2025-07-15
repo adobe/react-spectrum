@@ -139,7 +139,9 @@ describe('Switch', () => {
   });
 
   it('should support press state', async () => {
-    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Switch>);
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-pressed');
@@ -152,6 +154,31 @@ describe('Switch', () => {
     await user.pointer({target: s, keys: '[/MouseLeft]'});
     expect(s).not.toHaveAttribute('data-pressed');
     expect(s).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press state with keyboard', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Switch>);
+    let s = getByRole('switch').closest('label');
+
+    expect(s).not.toHaveAttribute('data-pressed');
+    expect(s).not.toHaveClass('pressed');
+
+    await user.tab();
+    await user.keyboard('[Space>]');
+    expect(s).toHaveAttribute('data-pressed', 'true');
+    expect(s).toHaveClass('pressed');
+
+    await user.keyboard('[/Space]');
+    expect(s).not.toHaveAttribute('data-pressed');
+    expect(s).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -228,5 +255,11 @@ describe('Switch', () => {
     );
     expect(inputRef.current).toBe(getByRole('switch'));
     expect(contextInputRef.current).toBe(getByRole('switch'));
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<Switch form="test">Test</Switch>);
+    let input = getByRole('switch');
+    expect(input).toHaveAttribute('form', 'test');
   });
 });

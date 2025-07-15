@@ -20,9 +20,9 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 
 const meta: Meta<SpectrumPickerProps<object>> = {
@@ -38,8 +38,9 @@ const meta: Meta<SpectrumPickerProps<object>> = {
 
 export default meta;
 
+export type PickerStory = StoryObj<SpectrumPickerProps<object>>;
 
-const Template = (args: SpectrumPickerProps<object>) => (
+const Template = (args: SpectrumPickerProps<object>): JSX.Element => (
   <Picker {...args}>
     <Section title="Animals">
       <Item key="Aardvark">Aardvark</Item>
@@ -54,7 +55,7 @@ const Template = (args: SpectrumPickerProps<object>) => (
   </Picker>
 );
 
-const ComplexItemsTemplate = (args: SpectrumPickerProps<object>) => (
+const ComplexItemsTemplate = (args: SpectrumPickerProps<object>): JSX.Element => (
   <Picker {...args}>
     <Section title="Section 1">
       <Item textValue="Copy">
@@ -91,33 +92,33 @@ const ComplexItemsTemplate = (args: SpectrumPickerProps<object>) => (
     </Section>
   </Picker>
 );
-export const Default = {
-  render: Template,
+export const Default: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {label: 'Pick your favorite', isOpen: true}
 };
 
-export const Disabled = {
-  render: Template,
+export const Disabled: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, isDisabled: true}
 };
 
-export const LabelAlignEnd = {
-  render: Template,
+export const LabelAlignEnd: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, labelAlign: 'end'}
 };
 
-export const LabelPositionSide = {
-  render: Template,
+export const LabelPositionSide: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const ValidationStateInvalid = {
-  render: Template,
+export const ValidationStateInvalid: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, isInvalid: true}
 };
 
-export const ComplexItems = {
-  render: ComplexItemsTemplate,
+export const ComplexItems: PickerStory = {
+  render: (args) => <ComplexItemsTemplate {...args} />,
   args: {...Default.args},
   parameters: {
     chromaticProvider: {
@@ -126,8 +127,8 @@ export const ComplexItems = {
   }
 };
 
-export const ComplexItemsExpress = {
-  render: ComplexItemsTemplate,
+export const ComplexItemsExpress: PickerStory = {
+  render: (args) => <ComplexItemsTemplate {...args} />,
   args: {...Default.args},
   parameters: {
     chromaticProvider: {
@@ -146,12 +147,12 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = {
-  render: Template,
+export const _ContextualHelp: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, contextualHelp}
 };
 
-export const ContextualHelpSideLabel = {
-  render: Template,
+export const ContextualHelpSideLabel: PickerStory = {
+  render: (args) => <Template {...args} />,
   args: {...Default.args, contextualHelp, labelPosition: 'side'}
 };

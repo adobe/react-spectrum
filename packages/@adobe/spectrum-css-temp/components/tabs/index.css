@@ -91,12 +91,11 @@ governing permissions and limitations under the License.
   &::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 0;
+    bottom: 0;
 
     box-sizing: border-box;
 
-    block-size: var(--spectrum-tabs-focus-ring-height);
-    margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
     inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
     inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
     border: var(--spectrum-tabs-focus-ring-size) solid transparent;
@@ -162,6 +161,13 @@ governing permissions and limitations under the License.
     /* Target anything since React likes to add lots of happy <div>s around all things */
     & + *:not(.spectrum-Tabs-selectionIndicator) {
       margin-inline-start: var(--spectrum-tabs-item-gap);
+    }
+
+    &::before {
+      top: 50%;
+      bottom: unset;
+      block-size: var(--spectrum-tabs-focus-ring-height);
+      margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
     }
   }
 
@@ -234,8 +240,20 @@ governing permissions and limitations under the License.
       /* padding is included in click area of tab items, so only need to offset by the size of the focus ring's border */
       inset-inline-start: calc(var(--spectrum-tabs-focus-ring-size) * -1);
       inset-inline-end: calc(var(--spectrum-tabs-focus-ring-size) * -1);
-      margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2));
     }
+  }
+
+  /*
+    Allow tab labels to wrap when TabList component has minWidth set.
+  */
+  &.spectrum-Tabs--verticalWrap:not(.spectrum-Tabs--compact) .spectrum-Tabs-item {
+    display: flex;
+    align-items: center;
+    white-space: normal;
+    line-height: normal;
+    word-break: break-word;
+    block-size: auto;
+    min-height: var(--spectrum-tabs-vertical-item-height);
   }
 
   &.spectrum-Tabs--compact {

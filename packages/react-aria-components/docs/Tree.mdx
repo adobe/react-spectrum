@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -22,6 +23,7 @@ import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
@@ -56,22 +58,23 @@ import {
   Button,
   Collection
 } from 'react-aria-components';
+import {Info} from 'lucide-react';
 
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']} selectionMode="multiple" defaultSelectedKeys={['photos']}>
   <TreeItem id="documents" textValue="Documents">
     <MyTreeItemContent>
       Documents
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="project" textValue="Project">
       <MyTreeItemContent>
         Project
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
       <TreeItem id="report" textValue="Weekly Report">
         <MyTreeItemContent>
           Weekly Report
-          <Button aria-label="Info">ⓘ</Button>
+          <Button aria-label="Info"><Info size={20} /></Button>
         </MyTreeItemContent>
       </TreeItem>
     </TreeItem>
@@ -79,18 +82,18 @@ import {
   <TreeItem id="photos" textValue="Photos">
     <MyTreeItemContent>
       Photos
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="one" textValue="Image 1">
       <MyTreeItemContent>
         Image 1
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
     <TreeItem id="two" textValue="Image 2">
       <MyTreeItemContent>
         Image 2
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
   </TreeItem>
@@ -134,7 +137,7 @@ import {
     gap: 0.571rem;
     min-height: 28px;
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
-    --padding: 8px;
+    --padding: 16px;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -162,6 +165,12 @@ import {
         stroke: currentColor;
         stroke-width: 3px;
       }
+    }
+
+    .react-aria-Button[slot=drag] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     &[data-has-child-items] .react-aria-Button[slot=chevron] {
@@ -259,6 +268,7 @@ HTML lists are meant for static content, rather than hierarchies with rich inter
 * **Interactive children** – Tree items may include interactive elements such as buttons, menus, etc.
 * **Actions** – Items support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Keyboard navigation** – Tree items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – Tree supports drag and drop to reorder, move, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
 * **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large lists by rendering only the visible items.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
 * **Accessible** – Follows the [ARIA treegrid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
@@ -279,6 +289,7 @@ import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-comp
     <TreeItemContent>
       <Button slot="chevron" />
       <Checkbox slot="selection" />
+      <Button slot="drag" />
     </TreeItemContent>
     <TreeItem>
       {/* ... */}
@@ -305,6 +316,13 @@ import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-comp
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
 </ExampleCard>
 
 </section>
@@ -349,12 +367,14 @@ If you will use a Tree in multiple places in your app, you can wrap all of the p
 ```tsx example export=true render=false
 import type {TreeItemContentProps, TreeItemContentRenderProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 function MyTreeItemContent(props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <TreeItemContent>
-      {({hasChildItems, selectionBehavior, selectionMode}: TreeItemContentRenderProps) => (
+      {({hasChildItems, selectionBehavior, selectionMode, allowsDragging}: TreeItemContentRenderProps) => (
         <>
+          {allowsDragging && <Button slot="drag"><GripVertical size={18} /></Button>}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
           <Button slot="chevron">
             <svg viewBox="0 0 24 24">
@@ -417,20 +437,22 @@ import type {TreeProps} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
 
 let items = [
-  {id: 1, title: 'Documents', children: [
-    {id: 2, title: 'Project', children: [
-      {id: 3, title: 'Weekly Report', children: []}
+  {id: '1', title: 'Documents', type: 'directory', children: [
+    {id: '2', title: 'Project', type: 'directory', children: [
+      {id: '3', title: 'Weekly Report', type: 'file', children: []},
+      {id: '4', title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: 4, title: 'Photos', children: [
-    {id: 5, title: 'Image 1', children: []},
-    {id: 6, title: 'Image 2', children: []}
+  {id: '5', title: 'Photos', type: 'directory', children: [
+    {id: '6', title: 'Image 1', type: 'file', children: []},
+    {id: '7', title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 
 interface FileType {
-  id: number,
+  id: string,
   title: string,
+  type: 'directory' | 'file',
   children: FileType[]
 }
 
@@ -727,6 +749,134 @@ This accepts a list of item ids that are disabled. An item is considered disable
 <PokemonEvolutionTree selectionMode="multiple" disabledKeys={[3]} />
 ```
 
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<TreeLoadMoreItem>` element at the end of the tree or an arbitrary Tree row's last item.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface StarWarsCharacter {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+interface Pokemon {
+  name: string
+}
+
+function AsyncSortTable() {
+  let starWarsList = useAsyncList<StarWarsCharacter>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let pokemonList = useAsyncList<Pokemon>({
+    async load({signal, cursor, filterText}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Tree
+      aria-label="async loading tree"
+      style={{ height: '300px' }}>
+      <MyTreeItem id="pokemon" title="Pokemon">
+        {/*- begin highlight -*/}
+        <Collection items={pokemonList.items}>
+          {(item: Pokemon) => (
+            <MyTreeItem id={item.name} title={item.name} />
+          )}
+        </Collection>
+        <MyTreeLoader isLoading={pokemonList.isLoading} onLoadMore={pokemonList.loadMore} />
+        {/*- end highlight -*/}
+      </MyTreeItem>
+      <MyTreeItem id="starwars" title="Star Wars">
+        {/*- begin highlight -*/}
+        <Collection items={starWarsList.items}>
+          {(item: StarWarsCharacter) => (
+            <MyTreeItem id={item.name} title={item.name} />
+          )}
+        </Collection>
+        <MyTreeLoader isLoading={starWarsList.isLoading} onLoadMore={starWarsList.loadMore} />
+        {/*- end highlight -*/}
+      </MyTreeItem>
+    </Tree>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" />TreeLoader</summary>
+
+```tsx example export=true render=false
+import {TreeLoadMoreItem} from 'react-aria-components';
+
+export function MyTreeLoader(props) {
+  return (
+    <TreeLoadMoreItem
+      {...props}>
+      {({level}) => {
+        return (
+          <MyProgressCircle
+            aria-label="Loading more..."
+            isIndeterminate />
+        );
+      }}
+    </TreeLoadMoreItem>
+  );
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="100%" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `Tree` will display if there are no items.
@@ -753,6 +903,1061 @@ Use the `renderEmptyState` prop to customize what the `Tree` will display if the
 
 </details>
 
+## Drag and drop <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or move items within the tree hierarchy.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable tree, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items.
+
+Items with children can be expanded or collapsed during keyboard drag and drop mode by using the <Keyboard>ArrowRight</Keyboard> and <Keyboard>ArrowLeft</Keyboard> keys, or the <Keyboard>Option</Keyboard> (<Keyboard>Alt</Keyboard> on Windows) + <Keyboard>Enter</Keyboard> keys. Screen reader users can expand and collapse items with children by navigating to and activating a visually hidden button that gets announced.
+
+Draggable tree items must include a focusable drag handle using a `<Button slot="drag">`. This enables keyboard and screen reader users to initiate drag and drop. The `MyTreeItemContent` component defined in the [reusable wrappers](#reusable-wrappers) section above can be extended to include this automatically when the tree allows dragging.
+
+See the [drag and drop introduction](dnd.html) to learn more.
+
+### Moving between levels
+
+The `onMove` event handler allows reordering items within a level, as well as moving items to a different level. It supports dropping both on and between items. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useTreeData](../react-stately/useTreeData.html) from React Stately to manage the tree data. Note that `useTreeData` is a convenience hook, not a requirement. You can manage your state however you wish.
+
+```tsx example
+function Example() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': tree.getItem(key).value.title
+    })),
+    ///- begin highlight -///
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        // Move items to become children of the target
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <Tree
+      aria-label="Tree with hierarchical drag and drop"
+      selectionMode="multiple"
+      items={tree.items}
+      dragAndDropHooks={dragAndDropHooks}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+### Reordering within a level
+
+The `onReorder` event handler allows reordering items within the same level. Unlike `onMove` it does not allow moving items to a different level.
+
+```tsx example
+import {useTreeData} from '@react-stately/data';
+import {useDragAndDrop, Button} from 'react-aria-components';
+
+function Example() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': tree.getItem(key).value.title
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <Tree
+      aria-label="Reorderable tree"
+      selectionMode="multiple"
+      items={tree.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TreeItem {
+  &[data-allows-dragging] {
+    padding-left: 4px;
+  }
+
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+
+  &[data-drop-target] {
+    outline: 2px solid var(--highlight-background);
+    background: var(--highlight-overlay);
+  }
+
+  [slot=drag] {
+    all: unset;
+    width: 15px;
+    text-align: center;
+
+    &[data-focus-visible] {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+
+.react-aria-Tree {
+  &[data-selection-mode=multiple] {
+    --checkbox-width: 28px;
+  }
+
+  &[data-allows-dragging] {
+    --drag-button-width: 23px;
+  }
+
+  .react-aria-DropIndicator {
+    &[data-drop-target] {
+      outline: 1px solid var(--highlight-background);
+      margin-left: calc(8px + var(--checkbox-width, 0px) + var(--drag-button-width, 0px) + 26px + (var(--tree-item-level) - 1) * 16px);
+    }
+  }
+}
+```
+
+</details>
+
+### Custom drag preview
+
+By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered by implementing the `renderDragPreview` function, passed to `useDragAndDrop`. This receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items.
+
+This example renders a custom drag preview which shows the number of items being dragged.
+
+```tsx example
+function Example() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': tree.getItem(key).value.title
+    })),
+    ///- begin highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <Tree
+      aria-label="Tree with custom drag preview"
+      selectionMode="multiple"
+      items={tree.items}
+      dragAndDropHooks={dragAndDropHooks}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.drag-preview {
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  border-radius: 4px;
+
+  .badge {
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
+
+### Drag data
+
+Data for draggable items can be provided in multiple formats at once. This allows drop targets to choose data in a format that they understand. For example, you could serialize a complex object as JSON in a custom format for use within your own application, and also provide plain text and/or rich HTML fallbacks that can be used when a user drops data in an external application (e.g. an email message).
+
+This can be done by returning multiple keys for an item from the `getItems` function. Types can either be a standard [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) for interoperability with external applications, or a custom string for use within your own app.
+
+This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+
+```tsx example export=true
+function DraggableTree() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = tree.getItem(key).value;
+        return {
+          'text/plain': `${item.title}`,
+          'text/html': `<strong>${item.title}</strong>`,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+  });
+
+  return (
+    <Tree
+      aria-label="Draggable tree"
+      selectionMode="multiple"
+      items={tree.items}
+      dragAndDropHooks={dragAndDropHooks}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableTree />
+  {/* see below */}
+  <DroppableTree />
+</div>
+```
+
+### Dropping on the collection
+
+Dropping on the Tree as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the Tree, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+interface DroppableItem {
+  id: string | number;
+  title: string;
+  children?: DroppableItem[];
+}
+
+function Example() {
+  let [items, setItems] = React.useState<any[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTree />
+      <Tree
+        aria-label="Drop target tree"
+        items={items}
+        dragAndDropHooks={dragAndDropHooks}
+        renderEmptyState={() => 'Drop items here'}
+      >
+        {function renderItem(item: DroppableItem) {
+          return (
+            <MyTreeItem title={item.title}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tree[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay);
+}
+```
+
+</details>
+
+### Dropping on items
+
+Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example export=true
+const droppableItems = [
+  {id: '8', title: 'Videos', type: 'directory', children: [
+    {id: '9', title: 'Movie.mp4', type: 'file'}
+  ]},
+  // ...
+  ///- begin collapse -///
+  {id: '10', title: 'Music', type: 'directory', children: [
+    {id: '11', title: 'Song.mp3', type: 'file'},
+    {id: '12', title: 'Album', type: 'directory', children: [
+      {id: '13', title: 'Track1.mp3', type: 'file'}
+    ]}
+  ]}
+  ///- end collapse -///
+];
+
+function DroppableTreeExample() {
+  let tree = useTreeData({
+    initialItems: droppableItems
+  });
+
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    async onItemDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => {
+            let parsed = JSON.parse(await item.getText('custom-app-type'));
+            return serializeItem(parsed);
+          })
+      );
+
+      tree.insert(e.target.key, 0, ...items);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTree />
+      <Tree
+        aria-label="Tree with item drop targets"
+        items={tree.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.title}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
+    </div>
+  );
+}
+```
+
+### Dropping between items
+
+Dropping between items can be enabled using the `onInsert` event. Tree renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+function Example() {
+  let tree = useTreeData({
+    initialItems: droppableItems
+  });
+
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin highlight -///
+    async onInsert(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => {
+            let parsed = JSON.parse(await item.getText('custom-app-type'));
+            return serializeItem(parsed);
+          })
+      );
+
+      if (e.target.dropPosition === 'before') {
+        tree.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        tree.insertAfter(e.target.key, ...items);
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTree />
+      <Tree
+        aria-label="Tree with insertion"
+        items={tree.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.title}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
+    </div>
+  );
+}
+```
+
+### Drop data
+
+`Tree` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+#### Text
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
+
+```tsx example export=true
+import {isTextDropItem} from 'react-aria-components';
+
+interface DroppableItem {
+  id: string | number;
+  title: string;
+  children?: DroppableItem[];
+}
+
+function DroppableTree() {
+  let [items, setItems] = React.useState<any[]>([]);
+
+  let serializeItem = (nodeItem) => ({
+    ...nodeItem,
+    children: nodeItem.children.map(serializeItem),
+    // Assign a unique ID to avoid duplicates when the same item is dropped multiple times.
+    id: Math.random().toString(36).slice(2)
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['custom-app-type'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => {
+            let parsed = JSON.parse(await item.getText('custom-app-type'));
+            return serializeItem(parsed);
+          })
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <Tree
+      aria-label="Droppable tree"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}
+    >
+      {function renderItem(item: DroppableItem) {
+        return (
+          <MyTreeItem title={item.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableTree />
+  <DroppableTree />
+</div>
+```
+
+#### Files
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them in a tree structure by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the tree is empty, you can drop on the whole collection, and otherwise items can be inserted.
+
+```tsx example
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string,
+  type: string,
+  lastModified: number
+}
+
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['image/jpeg', 'image/png'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => {
+          let file = await item.getFile();
+          return {
+            id: Math.random(),
+            url: URL.createObjectURL(file),
+            name: item.name,
+            type: file.type,
+            lastModified: file.lastModified
+          };
+        })
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <Tree
+      aria-label="Droppable tree"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop images here'}
+    >
+      {(item) => (
+        <TreeItem textValue={item.name}>
+          <TreeItemContent>
+            <img src={item.url} style={{width: 20, height: 20, marginRight: 8}} />
+            {item.name}
+          </TreeItemContent>
+        </TreeItem>
+      )}
+    </Tree>
+  );
+}
+```
+
+#### Directories
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the tree. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+
+```tsx example
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
+
+interface DirItem {
+  name: string,
+  kind: string,
+  type: string,
+  children?: DirItem[]
+}
+
+function Example() {
+  let [files, setFiles] = React.useState<DirItem[]>([]);
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
+    async onRootDrop(e) {
+      // Read entries in directory and update state with relevant info.
+      let getFiles = async (dir) => {
+        let files = [];
+        for await (let entry of dir.getEntries()) {
+          files.push({
+            id: Math.random().toString(36).slice(2),
+            name: entry.name,
+            kind: entry.kind,
+            children: entry.kind === 'directory'
+              ? await getFiles(entry)
+              : []
+          });
+        }
+        return files;
+      };
+
+      let dir = e.items.find(isDirectoryDropItem)!;
+      setFiles(await getFiles(dir));
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <Tree
+      aria-label="Droppable tree"
+      items={files}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop directory here'}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={`${item.kind === 'directory' ? '📁' : '📄'} ${item.name}`}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+### Drop operations
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+
+#### onDragEnd
+
+The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
+
+This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
+```tsx example
+function Example() {
+  let tree = useTreeData({
+    initialItems: items
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = tree.getItem(key).value;
+        return {
+          'text/plain': item.title,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    onDragEnd(e) {
+      if (e.dropOperation === 'move') {
+        tree.remove(...e.keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.title}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
+      <DroppableTree />
+    </div>
+  );
+}
+```
+
+#### getAllowedDropOperations
+
+The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
+
+```tsx example
+function Example() {
+  ///- begin collapse -///
+  let tree = useTreeData({
+    initialItems: items
+  });
+  ///- end collapse -///
+  // ...
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = tree.getItem(key).value;
+        return {
+          'text/plain': item.title,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    getAllowedDropOperations: () => ['copy']
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <Tree aria-label="Draggable tree" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
+        {function renderItem(item) {
+          return (
+            <MyTreeItem title={item.value.title}>
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+            </MyTreeItem>
+          )
+        }}
+      </Tree>
+      <DroppableTree />
+    </div>
+  );
+}
+```
+
+#### getDropOperation
+
+The `getDropOperation` function passed to `useDragAndDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return one of the drop operations in `allowedOperations`, or a specific drop operation if only that drop operation is supported. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+///- end collapse -///
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    acceptedDragTypes: ['image/png'],
+    async onRootDrop(e) {
+      ///- begin collapse -///
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+      ///- end collapse -///
+      // ...
+    }
+  });
+
+  ///- begin collapse -///
+  return (
+    <Tree aria-label="Droppable tree" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
+      {item => (
+        <TreeItem textValue={item.name}>
+          <TreeItemContent>
+            <div className="image-item">
+              <img src={item.url} />
+              <span>{item.name}</span>
+            </div>
+          </TreeItemContent>
+        </TreeItem>
+      )}
+    </Tree>
+  );
+  ///- end collapse -///
+  // See "Files" example above...
+}
+```
+
+#### Drop events
+
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onItemDrop = async (e) => {
+  let data = JSON.parse(await e.items[0].getText('my-app-file'));
+  /*- begin highlight -*/
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+  /*- end highlight -*/
+};
+```
+
+### Drag between trees
+
+This example puts together many of the concepts described above, allowing users to drag items between trees bidirectionally. It also supports moving items within the same tree hierarchy. When a tree is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  title: string,
+  type: string,
+  children?: FileItem[]
+}
+
+interface DndTreeProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndTree(props: DndTreeProps) {
+  let tree = useTreeData({
+    initialItems: props.initialItems,
+    getKey: item => item.id,
+    getChildren: item => item.children || []
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = tree.getItem(key);
+        let serializeItem = (nodeItem) => ({
+          ...nodeItem.value,
+          children: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+        });
+
+        return {
+          'custom-app-type': JSON.stringify(serializeItem(item)),
+          'text/plain': item.value.title
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other trees.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      if (e.target.dropPosition === 'before') {
+        tree.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        tree.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      tree.insert(null, 0, ...processedItems);
+    },
+
+    // Handle moving items within the same tree or to different levels.
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    },
+
+    // Remove the items from the source tree on drop
+    // if they were moved to a different tree.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        tree.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <Tree
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      items={tree.items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}
+    >
+      {function renderItem(item) {
+        return (
+          <MyTreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </MyTreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DndTree
+    initialItems={items}
+    aria-label="First Tree"
+  />
+  <DndTree
+    initialItems={droppableItems}
+    aria-label="Second Tree"
+  />
+</div>
+```
 
 ## Props
 
@@ -767,6 +1972,17 @@ Use the `renderEmptyState` prop to customize what the `Tree` will display if the
 ### TreeItemContent
 
 <PropTable component={docs.exports.TreeItemContent} links={docs.links} />
+
+### TreeLoadMoreItem
+
+A `<TreeLoadMoreItem>` defines the load more spinner within a `<Tree>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the tree or tree row that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.TreeLoadMoreItem} links={docs.links} />
+
+</details>
 
 ## Styling
 
@@ -808,12 +2024,14 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <TreeItem>
-  {({selectionMode}) => (
     <TreeItemContent>
-      {selectionMode !== 'none' && <Checkbox />}
-      Item
+      {({selectionMode}) => (
+        <>
+          {selectionMode !== 'none' && <Checkbox />}
+          Item
+        </>
+      )}
     </TreeItemContent>
-  )}
 </TreeItem>
 ```
 

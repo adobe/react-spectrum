@@ -16,7 +16,7 @@ import AlignLeft from '../s2wf-icons/S2_Icon_AlignLeft_20_N.svg';
 import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
 import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {SegmentedControl, SegmentedControlItem, Text} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -29,9 +29,10 @@ const meta: Meta<typeof SegmentedControl> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof SegmentedControl>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <SegmentedControl {...args}>
       <SegmentedControlItem id="day">Day</SegmentedControlItem>
       <SegmentedControlItem id="week">Week</SegmentedControlItem>
@@ -44,8 +45,8 @@ export const Example = {
   }
 };
 
-export const WithIcons = {
-  render: (args: any) => (
+export const WithIcons: Story = {
+  render: (args) => (
     <SegmentedControl {...args}>
       <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
       <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
@@ -57,8 +58,8 @@ export const WithIcons = {
   }
 };
 
-export const OnlyIcons = {
-  render: (args: any) => (
+export const OnlyIcons: Story = {
+  render: (args) => (
     <SegmentedControl {...args}>
       <SegmentedControlItem id="align bottom"><AlignBottom /></SegmentedControlItem>
       <SegmentedControlItem id="align center"><AlignCenter /></SegmentedControlItem>
@@ -70,8 +71,8 @@ export const OnlyIcons = {
   }
 };
 
-export const CustomWidthJustified = {
-  render: (args: any) => (
+export const CustomWidthJustified: Story = {
+  render: (args) => (
     <SegmentedControl {...args} styles={style({width: 400})}>
       <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
       <SegmentedControlItem id="specs">Specs</SegmentedControlItem>

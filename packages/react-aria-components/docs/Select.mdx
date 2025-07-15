@@ -51,12 +51,13 @@ type: component
 
 ```tsx example
 import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import {ChevronDown} from 'lucide-react';
 
 <Select>
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   <Popover>
     <ListBox>
@@ -85,6 +86,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
 
 .react-aria-Select {
   color: var(--text-color);
+  position: relative;
+  max-width: 250px;
+  width: fit-content;
 
   .react-aria-Button {
     box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
@@ -93,7 +97,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     display: flex;
     align-items: center;
-    max-width: 250px;
+    width: 100%;
 
     &[data-focus-visible] {
       outline: 2px solid var(--focus-ring-color);
@@ -102,6 +106,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 
   .react-aria-SelectValue {
+    flex: 1 0 auto;
+    text-align: start;
+
     &[data-placeholder] {
       font-style: italic;
       color: var(--text-color-placeholder);
@@ -109,7 +116,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 
   span[aria-hidden] {
-    width: 1.5rem;
+    width: 1.429rem;
+    height: 1.429rem;
     line-height: 1.375rem;
     margin-left: 1rem;
     padding: 1px;
@@ -118,6 +126,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     forced-color-adjust: none;
     border-radius: 4px;
     font-size: 0.857rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 }
 
@@ -321,7 +333,7 @@ export function MySelect<T extends object>({label, description, errorMessage, ch
       <Label>{label}</Label>
       <Button>
         <SelectValue />
-        <span aria-hidden="true">▼</span>
+        <span aria-hidden="true"><ChevronDown size={16} /></span>
       </Button>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -620,10 +632,11 @@ import {Text} from 'react-aria-components';
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-of data from a server. You may additionally want to display a spinner to indicate the loading
-state to the user.
+of data from a server. Use the [renderEmptyState](../react-aria/ListBox.html#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a [`<ListBoxLoadMoreItem>`](../react-aria/ListBox.html#listboxloadmoreitem) element at the end of the list.
 
 ```tsx example
+import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -632,26 +645,76 @@ interface Character {
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({signal, cursor, filterText}) {
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
         {signal}
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
 
   return (
-    <MySelect label="Pick a Pokemon" items={list.items}>
-      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    <MySelect label="Pick a Pokemon">
+      {/*- begin highlight -*/}
+      <Collection items={list.items}>
+        {(item) => (
+          <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <MyProgressCircle isIndeterminate aria-label="Loading more..." />
+      </ListBoxLoadMoreItem>
+      {/*- end highlight -*/}
     </MySelect>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxLoadingIndicator {
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+  display: flex;
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
 
 ## Disabled
 
@@ -782,7 +845,7 @@ The `description` slot can be used to associate additional help text with a Sele
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   {/*- begin highlight -*/}
   <Text slot="description">Please select an animal.</Text>
@@ -849,7 +912,7 @@ Select passes the rendered children of the selected item in the render props of 
       }}
     </SelectValue>
     {/*- end highlight -*/}
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   <Popover>
     <ListBox>
@@ -1062,7 +1125,7 @@ A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector,
 
 <StateTable properties={docs.exports.ListBoxItemRenderProps.properties} />
 
-Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
@@ -1206,7 +1269,7 @@ function SelectClearButton() {
   <Label>Favorite Animal</Label>
   <Button>
     <SelectValue />
-    <span aria-hidden="true">▼</span>
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
   </Button>
   {/*- begin highlight -*/}
   <SelectClearButton />
@@ -1271,3 +1334,27 @@ it('Select can select an option via keyboard', async function () {
 ```
 
 <ClassAPI links={selectUtil.links} class={selectUtil.exports.SelectTester} />
+
+## Gotchas
+
+`Select` requires a `position: relative` either on itself or on a close parent. This is because
+the `Popover` component uses a hidden input to manage native form functionality. The hidden input
+is absolutely positioned and can spill out unexpectedly if the parent is not positioned relative
+causing unintended scroll bars to appear.
+
+Note: you do not need to set the style inline, you can use any CSS method to do it.
+
+```tsx render=false
+<Select style={{position: 'relative'}}>
+  <Label>Favorite Animal</Label>
+  <Button>
+    <SelectValue />
+    <span aria-hidden="true"><ChevronDown size={16} /></span>
+  </Button>
+  <Popover>
+    <ListBox>
+      ...
+    </ListBox>
+  </Popover>
+</Select>
+```

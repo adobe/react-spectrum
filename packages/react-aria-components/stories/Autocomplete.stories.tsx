@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
+import {Meta, StoryObj} from '@storybook/react';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -19,7 +20,8 @@ import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Autocomplete',
+  component: Autocomplete,
   args: {
     onAction: action('onAction'),
     selectionMode: 'multiple',
@@ -45,7 +47,11 @@ export default {
       options: ['clearSelection', 'none']
     }
   }
-};
+} as Meta<typeof Autocomplete>;
+
+export type AutocompleteStory = StoryObj<typeof Autocomplete>;
+export type MenuStory = StoryObj<typeof Menu>;
+export type ListBoxStory = StoryObj<typeof ListBox>;
 
 let StaticMenu = (props) => {
   return (
@@ -112,7 +118,7 @@ function AutocompleteWrapper(props) {
   );
 }
 
-export const AutocompleteExample = {
+export const AutocompleteExample: AutocompleteStory = {
   render: (args) => {
     return (
       <AutocompleteWrapper>
@@ -130,7 +136,7 @@ export const AutocompleteExample = {
   name: 'Autocomplete complex static with textfield'
 };
 
-export const AutocompleteSearchfield = {
+export const AutocompleteSearchfield: AutocompleteStory = {
   render: (args) => {
     return (
       <AutocompleteWrapper defaultInputValue="Ba">
@@ -288,7 +294,7 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export const AutocompleteMenuDynamic = {
+export const AutocompleteMenuDynamic: AutocompleteStory = {
   render: (args) => {
     return (
       <>
@@ -312,7 +318,7 @@ export const AutocompleteMenuDynamic = {
   name: 'Autocomplete, dynamic menu'
 };
 
-export const AutocompleteOnActionOnMenuItems = {
+export const AutocompleteOnActionOnMenuItems: AutocompleteStory = {
   render: (args) => {
     return (
       <AutocompleteWrapper>
@@ -341,7 +347,7 @@ interface AutocompleteItem {
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
-export const AutocompleteDisabledKeys = {
+export const AutocompleteDisabledKeys: AutocompleteStory = {
   render: (args) => {
     return (
       <AutocompleteWrapper>
@@ -361,7 +367,7 @@ export const AutocompleteDisabledKeys = {
   name: 'Autocomplete, disabled key'
 };
 
-const AsyncExample = (args) => {
+const AsyncExample = (args: any): React.ReactElement => {
   let list = useAsyncList<AutocompleteItem>({
     async load({filterText}) {
       let json = await new Promise(resolve => {
@@ -412,7 +418,7 @@ const AsyncExample = (args) => {
   );
 };
 
-export const AutocompleteAsyncLoadingExample = {
+export const AutocompleteAsyncLoadingExample: StoryObj<typeof AsyncExample> = {
   render: (args) => {
     return <AsyncExample {...args} />;
   },
@@ -444,14 +450,14 @@ const CaseSensitiveFilter = (args) => {
   );
 };
 
-export const AutocompleteCaseSensitive = {
+export const AutocompleteCaseSensitive: AutocompleteStory = {
   render: (args) => {
     return <CaseSensitiveFilter {...args} />;
   },
   name: 'Autocomplete, case sensitive filter'
 };
 
-export const AutocompleteWithListbox = {
+export const AutocompleteWithListbox: AutocompleteStory = {
   render: (args) => {
     return (
       <DialogTrigger>
@@ -528,7 +534,7 @@ function VirtualizedListBox(props) {
   );
 }
 
-export const AutocompleteWithVirtualizedListbox = {
+export const AutocompleteWithVirtualizedListbox: AutocompleteStory = {
   render: (args) => {
     return (
       <DialogTrigger>
@@ -614,7 +620,7 @@ function ShellExample() {
   );
 }
 
-export const AutocompleteInPopover = {
+export const AutocompleteInPopover: MenuStory = {
   render: () => {
     return (
       <MenuTrigger>
@@ -659,7 +665,7 @@ export const AutocompleteInPopover = {
   }
 };
 
-export const AutocompleteInPopoverDialogTrigger = {
+export const AutocompleteInPopoverDialogTrigger: MenuStory = {
   render: () => {
     return (
       <DialogTrigger>
@@ -770,7 +776,7 @@ const MyMenu2 = () => {
   );
 };
 
-export function AutocompleteWithExtraButtons() {
+export function AutocompleteWithExtraButtons(): React.ReactElement {
   return (
     <div>
       <input />
@@ -786,7 +792,7 @@ export function AutocompleteWithExtraButtons() {
 // TODO: note that Space is used to select an item in a multiselect menu but that is also reserved for the
 // autocomplete input field. Should we add logic to allow Space to select menu items when focus is in the Menu
 // or is that a rare/unlikely use case for menus in general?
-export const AutocompleteMenuInPopoverDialogTrigger = {
+export const AutocompleteMenuInPopoverDialogTrigger: MenuStory = {
   render: (args) => {
     return (
       <DialogTrigger>
@@ -830,8 +836,8 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
 
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
-export const AutocompleteSelect = () => (
-  <Select style={{marginBottom: 40}}>
+export const AutocompleteSelect = (): React.ReactElement => (
+  <Select style={{marginBottom: 40, position: 'relative'}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />

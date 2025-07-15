@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Dialog} from '../';
+import {Meta, StoryFn} from '@storybook/react';
 import {renderAlert} from './AlertDialog.stories';
 import {renderTriggerProps, singleParagraph} from './Dialog.stories';
 
@@ -18,9 +20,11 @@ export default {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true}
   }
-};
+} as Meta<typeof Dialog>;
 
-export const _Destructive = () => renderAlert({
+export type DialogExpressStory = StoryFn<typeof Dialog>;
+
+export const _Destructive: DialogExpressStory = () => renderAlert({
   variant: 'destructive',
   title: 'Warning Destructive',
   children: singleParagraph(),
@@ -32,7 +36,7 @@ _Destructive.story = {
   name: 'destructive'
 };
 
-export const _Confirmation = () => renderAlert({
+export const _Confirmation: DialogExpressStory = () => renderAlert({
   variant: 'confirmation',
   title: 'Confirmation Required',
   children: singleParagraph(),
@@ -44,7 +48,7 @@ _Confirmation.story = {
   name: 'confirmation'
 };
 
-export const _Information = () => renderAlert({
+export const _Information: DialogExpressStory = () => renderAlert({
   variant: 'information',
   title: 'Informative Alert',
   children: singleParagraph(),
@@ -56,7 +60,7 @@ _Information.story = {
   name: 'information'
 };
 
-export const _Error = () => renderAlert({
+export const _Error: DialogExpressStory = () => renderAlert({
   variant: 'error',
   title: 'Error: Danger Will Robinson',
   children: singleParagraph(),
@@ -68,7 +72,7 @@ _Error.story = {
   name: 'error'
 };
 
-export const _Warning = () => renderAlert({
+export const _Warning: DialogExpressStory = () => renderAlert({
   variant: 'warning',
   title: 'This is a warning',
   children: singleParagraph(),
@@ -80,7 +84,7 @@ _Warning.story = {
   name: 'warning'
 };
 
-export const _Tray = () => renderTriggerProps({type: 'tray'});
+export const _Tray: DialogExpressStory = () => renderTriggerProps({type: 'tray'});
 
 _Tray.story = {
   name: 'tray',
@@ -90,7 +94,7 @@ _Tray.story = {
   }
 };
 
-export const _Popover = () => renderTriggerProps({type: 'popover'});
+export const _Popover: DialogExpressStory = () => renderTriggerProps({type: 'popover'});
 
 _Popover.story = {
   name: 'popover',

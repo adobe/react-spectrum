@@ -11,7 +11,7 @@
  */
 
 import {ColorSwatch} from '../src/ColorSwatch';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSwatch> = {
@@ -24,16 +24,20 @@ const meta: Meta<typeof ColorSwatch> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorSwatch>;
 
-export const Example = (args: any) => (
-  <ColorSwatch {...args} />
-);
-
-Example.args = {
-  color: 'rgb(255, 0, 0)'
+export const Example: Story = {
+  render: (args) => <ColorSwatch {...args} />,
+  args: {
+    color: 'rgb(255, 0, 0)'
+  }
 };
 
-export const NoValue = (args: any) => <ColorSwatch {...args} />;
+export const NoValue: Story = {
+  render: (args) => <ColorSwatch {...args} />
+};
 
-export const CustomWidth = (args: any) => <ColorSwatch {...args} styles={style({width: 96})} />;
-CustomWidth.args = Example.args;
+export const CustomWidth: Story = {
+  render: (args) => <ColorSwatch {...args} styles={style({width: 96})} />,
+  args: Example.args
+};

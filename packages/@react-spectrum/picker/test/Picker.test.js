@@ -583,9 +583,9 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
     });
 
-    it('tabs to the next element after the trigger and closes the menu', async function () {
+    it('does not shift focus when tabbing', async function () {
       let onOpenChange = jest.fn();
-      let {getByRole, getByTestId} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <input data-testid="before-input" />
           <Picker label="Test" onOpenChange={onOpenChange}>
@@ -611,51 +611,10 @@ describe('Picker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       act(() => jest.runAllTimers());
 
-      expect(listbox).not.toBeInTheDocument();
-      expect(picker).toHaveAttribute('aria-expanded', 'false');
-      expect(picker).not.toHaveAttribute('aria-controls');
-      expect(onOpenChange).toBeCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
-
-      expect(document.activeElement).toBe(getByTestId('after-input'));
-    });
-
-    it('shift tabs to the previous element before the trigger and closes the menu', async function () {
-      let onOpenChange = jest.fn();
-      let {getByRole, getByTestId} = render(
-        <Provider theme={theme}>
-          <input data-testid="before-input" />
-          <Picker label="Test" onOpenChange={onOpenChange}>
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Picker>
-          <input data-testid="after-input" />
-        </Provider>
-      );
-
-      let picker = getByRole('button');
-      await user.click(picker);
-      act(() => jest.runAllTimers());
-
-      let listbox = getByRole('listbox');
-      expect(listbox).toBeVisible();
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(listbox).toBeInTheDocument();
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
-
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
-      act(() => jest.runAllTimers());
-
-      expect(listbox).not.toBeInTheDocument();
-      expect(picker).toHaveAttribute('aria-expanded', 'false');
-      expect(picker).not.toHaveAttribute('aria-controls');
-      expect(onOpenChange).toBeCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
-
-      expect(document.activeElement).toBe(getByTestId('before-input'));
+      expect(document.activeElement).toBe(listbox);
     });
 
     it('should have a hidden dismiss button for screen readers', async function () {
@@ -1715,6 +1674,7 @@ describe('Picker', function () {
       expect(options.length).toBe(60);
       options.forEach((option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name));
 
+      fireEvent.input(hiddenSelect, {target: {value: 'CA'}});
       fireEvent.change(hiddenSelect, {target: {value: 'CA'}});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('CA');
@@ -1930,58 +1890,6 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(beforeBtn);
     });
 
-    it('calls onBlur and onFocus for the open Picker', async function () {
-      let {getByRole, getByTestId} = render(
-        <Provider theme={theme}>
-          <button data-testid="before" />
-          <Picker data-testid="picker" label="Test" {...focusSpies} autoFocus>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="">None</Item>
-          </Picker>
-          <button data-testid="after" />
-        </Provider>
-      );
-      let beforeBtn = getByTestId('before');
-      let afterBtn = getByTestId('after');
-      let picker = getByTestId('picker');
-
-      fireEvent.keyDown(picker, {key: 'ArrowDown'});
-      fireEvent.keyUp(picker, {key: 'ArrowDown'});
-      act(() => jest.runAllTimers());
-
-      let listbox = getByRole('listbox');
-      expect(listbox).toBeVisible();
-      let items = within(listbox).getAllByRole('option');
-      expect(document.activeElement).toBe(items[0]);
-
-      await user.tab();
-      act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(afterBtn);
-      expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
-
-      await user.tab({shift: true});
-      expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
-      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
-      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
-      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
-
-      fireEvent.keyDown(picker, {key: 'ArrowDown'});
-      fireEvent.keyUp(picker, {key: 'ArrowDown'});
-      act(() => jest.runAllTimers());
-      listbox = getByRole('listbox');
-      items = within(listbox).getAllByRole('option');
-      expect(document.activeElement).toBe(items[0]);
-
-      await user.tab({shift: true});
-      act(() => jest.runAllTimers());
-      expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
-      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
-
-      expect(document.activeElement).toBe(beforeBtn);
-    });
-
     it('does not call blur when an item is selected', function () {
       let otherButtonFocus = jest.fn();
       let {getByRole, getByTestId} = render(
@@ -2107,6 +2015,54 @@ describe('Picker', function () {
       await user.click(button);
       expect(input).toHaveValue('one');
     });
+
+
+    it('should support form prop', () => {
+      render(
+        <Provider theme={theme}>
+          <Picker label="Test" name="picker" form="test">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let input = document.querySelector('[name=picker]');
+      expect(input).toHaveAttribute('form', 'test');
+    });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultSelectedKey when submitting form action', async () => {
+        function Test() {        
+          const [value, formAction] = React.useActionState(() => 'two', 'one');
+          
+          return (
+            <Provider theme={theme}>
+              <form action={formAction}>
+                <Picker data-testid="picker" name="picker" label="Test" defaultSelectedKey={value}>
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+                <input type="submit" data-testid="submit" />
+              </form>
+            </Provider>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let picker = getByTestId('picker');
+        let input = document.querySelector('[name=picker]');
+        expect(picker).toHaveTextContent('One');
+        expect(input).toHaveValue('one');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(picker).toHaveTextContent('Two');
+        expect(input).toHaveValue('two');
+      });
+    }
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {

@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, FocusStrategy} from '@react-types/shared';
+import {CollectionStateBase, FocusStrategy, Key} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useMemo, useState} from 'react';
+import {useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface SelectState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
+  /** The default selected key. */
+  readonly defaultSelectedKey: Key | null,
+
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -62,22 +65,23 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
   });
 
   let [isFocused, setFocused] = useState(false);
-  let isEmpty = useMemo(() => listState.collection.size === 0 || (listState.collection.size === 1 && listState.collection.getItem(listState.collection.getFirstKey()!)?.type === 'loader'), [listState.collection]);
+  let [initialSelectedKey] = useState(listState.selectedKey);
 
   return {
     ...validationState,
     ...listState,
     ...triggerState,
+    defaultSelectedKey: props.defaultSelectedKey ?? initialSelectedKey,
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (!isEmpty) {
+      if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
     toggle(focusStrategy: FocusStrategy | null = null) {
-      if (!isEmpty) {
+      if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
       }

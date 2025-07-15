@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
@@ -19,7 +19,7 @@ import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
 
-export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
+export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export interface TabsRenderProps {
   /**
@@ -29,7 +29,7 @@ export interface TabsRenderProps {
   orientation: Orientation
 }
 
-export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'> {}
+export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'>, GlobalDOMAttributes<HTMLDivElement> {}
 
 export interface TabListRenderProps {
   /**
@@ -43,7 +43,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the tab. */
   id?: Key,
   /** Whether the tab is disabled. */
@@ -83,7 +83,7 @@ export interface TabRenderProps {
   isDisabled: boolean
 }
 
-export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps> {
+export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * Whether to mount the tab panel in the DOM even when it is not currently selected.
    * Inactive tab panels are inert and cannot be interacted with. They must be styled appropriately so this is clear to the user visually.
@@ -162,11 +162,11 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
     values
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...filterDOMProps(props as any)}
-      {...focusProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, focusProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-focused={isFocused || undefined}
@@ -222,15 +222,13 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
     <div
-      {...DOMProps}
-      {...tabListProps}
+      {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
-      {...renderProps}
       data-orientation={orientation || undefined}>
       <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
     </div>
@@ -268,10 +266,13 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   });
 
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <ElementType
-      {...mergeProps(tabProps, focusProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}
@@ -290,6 +291,8 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
 export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {id, ...otherProps} = props;
   let {tabPanelProps} = useTabPanel(props, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
@@ -300,7 +303,8 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
     values: {
       isFocused,
       isFocusVisible,
-      isInert: !isSelected,
+      // @ts-ignore - compatibility with React < 19
+      isInert: inertValue(!isSelected),
       state
     }
   });
@@ -309,7 +313,7 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
     return null;
   }
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(otherProps, {global: true});
   delete DOMProps.id;
 
   let domProps = isSelected
@@ -323,7 +327,7 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
-      inert={inertValue(!isSelected)}
+      inert={inertValue(!isSelected || props.inert)}
       data-inert={!isSelected ? 'true' : undefined}>
       <Provider
         values={[

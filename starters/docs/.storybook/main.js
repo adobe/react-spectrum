@@ -26,10 +26,10 @@ const excludedProps = new Set([
 const config = {
   stories: ["../stories/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-onboarding"),
+    getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-interactions"),
+    getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
   ],
   framework: {
     name: getAbsolutePath("@storybook/react-webpack5"),

@@ -144,4 +144,10 @@ describe('ColorWheel', () => {
     expect(wrapper).toHaveAttribute('data-disabled', 'true');
     expect(wrapper).toHaveClass('disabled');
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = renderColorWheel({form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });

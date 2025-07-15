@@ -42,6 +42,8 @@ export interface DateSegment {
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue | null,
+  /** The default field value. */
+  defaultValue: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
@@ -118,9 +120,13 @@ const PAGE_STEP = {
   second: 15
 };
 
-// Node seems to convert everything to lowercase...
 const TYPE_MAPPING = {
-  dayperiod: 'dayPeriod'
+  // Node seems to convert everything to lowercase...
+  dayperiod: 'dayPeriod',
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts#named_years
+  relatedYear: 'year',
+  yearName: 'literal', // not editable
+  unknown: 'literal'
 };
 
 export interface DateFieldStateOptions<T extends DateValue = DateValue> extends DatePickerProps<T> {
@@ -176,6 +182,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     props.onChange
   );
 
+  let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -207,7 +214,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let allSegments: Partial<typeof EDITABLE_SEGMENTS> = useMemo(() =>
     dateFormatter.formatToParts(new Date())
       .filter(seg => EDITABLE_SEGMENTS[seg.type])
-      .reduce((p, seg) => (p[seg.type] = true, p), {})
+      .reduce((p, seg) => (p[TYPE_MAPPING[seg.type] || seg.type] = true, p), {})
   , [dateFormatter]);
 
   let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
@@ -256,7 +263,18 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
-    } else if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
+    } else if (
+      validKeys.length === 0 || 
+      validKeys.length >= allKeys.length || 
+      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
+    ) {
+      // If the field was empty (no valid segments) or all segments are completed, commit the new value.
+      // When committing from an empty state, mark every segment as valid so value is committed.
+      if (validKeys.length === 0) {
+        validSegments = {...allSegments};
+        setValidSegments(validSegments);
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
@@ -323,6 +341,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   return {
     ...validation,
     value: calendarValue,
+    defaultValue: props.defaultValue ?? initialValue,
     dateValue,
     calendar,
     setValue,
@@ -413,18 +432,19 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
   let segments = dateFormatter.formatToParts(dateValue);
   let processedSegments: DateSegment[] = [];
   for (let segment of segments) {
-    let isEditable = !isReadOnly && EDITABLE_SEGMENTS[segment.type];
-    if (segment.type === 'era' && calendar.getEras().length === 1) {
+    let type = TYPE_MAPPING[segment.type] || segment.type;
+    let isEditable = !isReadOnly && EDITABLE_SEGMENTS[type];
+    if (type === 'era' && calendar.getEras().length === 1) {
       isEditable = false;
     }
 
-    let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
-    let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
+    let isPlaceholder = EDITABLE_SEGMENTS[type] && !validSegments[type];
+    let placeholder = EDITABLE_SEGMENTS[type] ? getPlaceholder(type, segment.value, locale) : null;
 
     let dateSegment = {
-      type: TYPE_MAPPING[segment.type] || segment.type,
+      type,
       text: isPlaceholder ? placeholder : segment.value,
-      ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
+      ...getSegmentLimits(displayValue, type, resolvedOptions),
       isPlaceholder,
       placeholder,
       isEditable
@@ -433,7 +453,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
     // There is an issue in RTL languages where time fields render (minute:hour) instead of (hour:minute).
     // To force an LTR direction on the time field since, we wrap the time segments in LRI (left-to-right) isolate unicode. See https://www.w3.org/International/questions/qa-bidi-unicode-controls.
     // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change. 
-    if (segment.type === 'hour') {
+    if (type === 'hour') {
       // This marks the start of the embedded direction change. 
       processedSegments.push({
         type: 'literal',
@@ -445,7 +465,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
       });
       processedSegments.push(dateSegment);
       // This marks the end of the embedded direction change in the case that the granularity it set to "hour".
-      if (segment.type === granularity) {
+      if (type === granularity) {
         processedSegments.push({
           type: 'literal',
           text: '\u2069',
@@ -455,7 +475,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
           isEditable: false
         });
       }
-    } else if (timeValue.includes(segment.type) && segment.type === granularity) {
+    } else if (timeValue.includes(type) && type === granularity) {
       processedSegments.push(dateSegment);
       // This marks the end of the embedded direction change.
       processedSegments.push({

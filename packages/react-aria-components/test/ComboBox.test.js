@@ -340,4 +340,48 @@ describe('ComboBox', () => {
 
     expect(comboboxTester.options()).toHaveLength(7);
   });
+
+  it('should clear contexts inside popover', async () => {
+    let tree = render(
+      <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover data-testid="popover">
+          <Label>Hello</Label>
+          <Button>Yo</Button>
+          <Input />
+          <Text>hi</Text>
+          <ListBox>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+            <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: tree.container});
+
+    await selectTester.open();
+
+    let popover = await tree.getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('for');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let input = popover.querySelector('.react-aria-Input');
+    expect(input).not.toHaveAttribute('role');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<TestComboBox form="test" />);
+    let input = getByRole('combobox');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });
