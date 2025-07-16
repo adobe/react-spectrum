@@ -15,13 +15,6 @@ let props = {isQuiet: true};
 </div>"
 `;
 
-exports[`Renames variants 1`] = `
-"// import {Button} from '@adobe/react-spectrum';
-
-<div>
-</div>"
-`;
-
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { TimeField } from "@react-spectrum/s2";
   let validationState = 'invalid';

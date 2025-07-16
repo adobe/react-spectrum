@@ -1,13 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Does nothing 1`] = `
-"import { DatePicker } from "@react-spectrum/s2";
-
-<div>
-  <DatePicker label="Event date" />
-</div>"
-`;
-
 exports[`Removes isQuiet 1`] = `
 "import { DatePicker } from "@react-spectrum/s2";
 let isQuiet = true;
