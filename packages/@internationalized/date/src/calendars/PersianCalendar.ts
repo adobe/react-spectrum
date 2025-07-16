@@ -80,6 +80,10 @@ export class PersianCalendar implements Calendar {
     return isLeapYear ? 30 : 29;
   }
 
+  getMaxDays(): number {
+    return 31
+  }
+
   getEras(): string[] {
     return ['AP'];
   }

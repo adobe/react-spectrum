@@ -115,7 +115,7 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
 
 function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
-  date.day = Math.max(1, Math.min(31, date.day));
+  date.day = Math.max(1, Math.min(date.calendar.getMaxDays(), date.day));
 }
 
 export function constrain(date: Mutable<AnyCalendarDate>): void {
@@ -284,7 +284,7 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
       break;
     case 'day':
-      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getMaxDays(), options?.round);
       break;
     default:
       throw new Error('Unsupported field ' + field);
