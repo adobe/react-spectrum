@@ -2042,6 +2042,19 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', formatter.format(21));
   });
 
+  it('should maintain original parser and formatted when restoring a previous value', async () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
+    expect(textField).toHaveAttribute('value', '10');
+
+    userEvent.tab();
+    userEvent.clear(textField);
+    await user.keyboard(',123');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '0.123');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(0.123);
+  });
+
   describe('beforeinput', () => {
     let getTargetRanges = InputEvent.prototype.getTargetRanges;
     beforeEach(() => {
@@ -2314,7 +2327,7 @@ describe('NumberField', function () {
     it('resets to defaultValue when submitting form action', async () => {
       function Test() {
         const [value, formAction] = React.useActionState(() => 33, 22);
-        
+
         return (
           <Provider theme={theme}>
             <form action={formAction}>

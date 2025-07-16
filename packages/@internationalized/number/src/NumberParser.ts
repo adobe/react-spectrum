@@ -19,6 +19,7 @@ interface Symbols {
   group?: string,
   literals: RegExp,
   numeral: RegExp,
+  numerals: string[],
   index: (v: string) => string
 }
 
@@ -197,6 +198,7 @@ class NumberParserImpl {
     // Remove literals and whitespace, which are allowed anywhere in the string
     value = value.replace(this.symbols.literals, '');
 
+
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
     if (this.symbols.minusSign) {
@@ -207,12 +209,16 @@ class NumberParserImpl {
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
       if (this.symbols.decimal) {
-        value = value.replace(',', this.symbols.decimal);
-        value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
+        value = replaceAll(value, ',', this.symbols.decimal);
+        value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
       }
       if (this.symbols.group) {
         value = replaceAll(value, '.', this.symbols.group);
       }
+    }
+
+    if (this.symbols.group && value.includes("'")) {
+      value = replaceAll(value, "'", this.symbols.group);
     }
 
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
@@ -220,6 +226,41 @@ class NumberParserImpl {
     if (this.options.locale === 'fr-FR' && this.symbols.group) {
       value = replaceAll(value, ' ', this.symbols.group);
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
+    }
+
+    if (this.symbols.decimal
+      && this.symbols.group
+      && [...value.matchAll(new RegExp(escapeRegex(this.symbols.decimal), 'g'))].length > 1
+      && [...value.matchAll(new RegExp(escapeRegex(this.symbols.group), 'g'))].length <= 1) {
+      value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
+    }
+
+    let decimalIndex = value.indexOf(this.symbols.decimal!);
+    let groupIndex = value.indexOf(this.symbols.group!);
+    if (this.symbols.decimal && this.symbols.group && decimalIndex > -1 && groupIndex > -1 && decimalIndex < groupIndex) {
+      value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
+    }
+
+    // in the value, for any non-digits and not the plus/minus sign,
+    // if there is only one of that character and its index in the string is 0 or it's only preceeded by this locale's "0" character,
+    // then we know it's a decimal character and we can replace it with the decimal character for the locale we're currently trying
+    let temp = value;
+    if (this.symbols.minusSign) {
+      temp = replaceAll(temp, this.symbols.minusSign, '');
+      temp = replaceAll(temp, '\u2212', '');
+    }
+    if (this.symbols.plusSign) {
+      temp = replaceAll(temp, this.symbols.plusSign, '');
+    }
+    temp = replaceAll(temp, new RegExp(`^${escapeRegex(this.symbols.numerals[0])}+`, 'g'), '');
+    let nonDigits = new Set(replaceAll(temp, this.symbols.numeral, '').split(''));
+    if (temp.length > 0 && nonDigits.has(temp[0])) {
+      let count = temp.match(new RegExp(escapeRegex(temp[0]), 'g'))?.length ?? 0;
+      // Only swap if there's exactly one group separator and it's at the beginning (after removing signs and leading zeros)
+      // AND there are no other decimal separators in the string
+      if (count === 1 && temp[0] === this.symbols.group && !value.includes(this.symbols.decimal!)) {
+        value = swapCharacters(value, temp[0], this.symbols.decimal!);
+      }
     }
 
     return value;
@@ -305,9 +346,10 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let pluralPartsLiterals = pluralParts.flatMap(p => p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value)));
   let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort((a, b) => b.length - a.length);
 
+  // Match both whitespace and formatting characters
   let literals = sortedLiterals.length === 0 ?
-      new RegExp('[\\p{White_Space}]', 'gu') :
-      new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
+      new RegExp('\\p{White_Space}|\\p{Cf}', 'gu') :
+      new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();
@@ -315,7 +357,15 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));
 
-  return {minusSign, plusSign, decimal, group, literals, numeral, index};
+  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index};
+}
+
+function swapCharacters(str: string, char1: string, char2: string) {
+  const tempChar = '_TEMP_';
+  let result = str.replaceAll(char1, tempChar);
+  result = result.replaceAll(char2, char1);
+  result = result.replaceAll(tempChar, char2);
+  return result;
 }
 
 function replaceAll(str: string, find: string | RegExp, replace: string) {
