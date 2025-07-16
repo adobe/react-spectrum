@@ -10,16 +10,19 @@
  */
 
 import {
-  CheckboxGroup as AriaCheckboxGroup,
-  RadioGroup as AriaRadioGroup,
-  ContextValue
+  GridList,
+  GridListItem,
+  ContextValue,
+  Text
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps, Key, Selection} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useMemo, useState} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useMemo, useId, useEffect, useRef} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {useControlledState} from '@react-stately/utils';
+import {SelectBoxRenderPropsContext} from './SelectBox';
 
 export type SelectBoxValueType = string | string[];
 
@@ -40,7 +43,7 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
   /**
    * The current selected value (controlled).
    */
-  value: SelectBoxValueType,
+  value?: SelectBoxValueType,
   /**
    * The default selected value.
    */
@@ -76,31 +79,56 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
   /**
    * Whether the SelectBoxGroup is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * The name of the form field.
+   */
+  name?: string,
+  /**
+   * The error message to display when validation fails.
+   */
+  errorMessage?: ReactNode,
+  /**
+   * Whether the SelectBoxGroup is in an invalid state.
+   */
+  isInvalid?: boolean
 }
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  isDisabled?: boolean,
+  selectedKeys?: Selection,
+  onSelectionChange?: (keys: Selection) => void
 }
 
-const unwrapValue = (value: SelectBoxValueType | undefined): string | undefined => {
-  if (Array.isArray(value)) {
-    return value[0];
+const convertValueToSelection = (value: SelectBoxValueType | undefined, selectionMode: 'single' | 'multiple'): Selection => {
+  if (value === undefined) {
+    return selectionMode === 'multiple' ? new Set() : new Set();
   }
-  return value;
+  
+  if (Array.isArray(value)) {
+    return new Set(value);
+  }
+  
+  return selectionMode === 'multiple' ? new Set([value]) : new Set([value]);
 };
 
-const ensureArray = (value: SelectBoxValueType | undefined): string[] => {
-  if (value === undefined) {
-    return [];
+const convertSelectionToValue = (selection: Selection, selectionMode: 'single' | 'multiple'): SelectBoxValueType => {
+  // Handle 'all' selection
+  if (selection === 'all') {
+    return selectionMode === 'multiple' ? [] : '';
   }
-  if (Array.isArray(value)) {
-    return value;
+  
+  const keys = Array.from(selection).map(key => String(key));
+  
+  if (selectionMode === 'multiple') {
+    return keys;
   }
-  return [value];
+  
+  return keys[0] || '';
 };
 
 export const SelectBoxContext = createContext<SelectBoxContextValue>({
@@ -119,29 +147,77 @@ const gridStyles = style({
       compact: 8,
       spacious: 24
     }
+  },
+  // Override default GridList styles to work with our grid layout
+  '&[role="grid"]': {
+    display: 'grid'
   }
 }, getAllowedOverrides());
 
+const containerStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8
+}, getAllowedOverrides());
 
-interface SelectorGroupProps {
-  allowMultiSelect: boolean,
-  children: ReactNode,
-  UNSAFE_className?: string,
-  UNSAFE_style?: React.CSSProperties,
-  styles?: StyleProps,
-  onChange: (value: SelectBoxValueType) => void,
-  value?: SelectBoxValueType,
-  defaultValue?: SelectBoxValueType,
+const errorMessageStyles = style({
+  color: 'negative',
+  font: 'ui-sm'
+}, getAllowedOverrides());
+
+interface FormIntegrationProps {
+  name?: string,
+  value: SelectBoxValueType,
   isRequired?: boolean,
-  isDisabled?: boolean,
-  label?: ReactNode
+  isInvalid?: boolean
+}
+
+// Hidden form inputs for form integration
+function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationProps) {
+  if (!name) return null;
+
+  if (Array.isArray(value)) {
+    return (
+      <>
+        {value.map((val, index) => (
+          <input
+            key={index}
+            type="hidden"
+            name={name}
+            value={val}
+            required={isRequired && index === 0}
+            aria-invalid={isInvalid}
+          />
+        ))}
+        {value.length === 0 && isRequired && (
+          <input
+            type="hidden"
+            name={name}
+            value=""
+            required
+            aria-invalid={isInvalid}
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <input
+      type="hidden"
+      name={name}
+      value={value || ''}
+      required={isRequired}
+      aria-invalid={isInvalid}
+    />
+  );
 }
 
 /**
  * SelectBox groups allow users to select one or more options from a list.
  * All possible options are exposed up front for users to compare.
+ * Built with GridList for automatic grid-based keyboard navigation.
  */
-
 export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(props: SelectBoxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
   
@@ -158,99 +234,190 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     gutterWidth = 'default',
     isRequired = false,
     isDisabled = false,
+    name,
+    errorMessage,
+    isInvalid = false,
     UNSAFE_style
   } = props;
 
-  const allowMultiSelect = selectionMode === 'multiple';
-  
   const domRef = useDOMRef(ref);
+  const gridId = useId();
+  const errorId = useId();
 
-  const getChildrenToRender = () => {
-    const childrenToRender = React.Children.toArray(children).filter((x) => x);
-    try {
-      const childrenLength = childrenToRender.length;
-      if (childrenLength <= 0) {
-        throw new Error('Invalid content. SelectBox must have at least a title.');
-      }
-      if (childrenLength > 9) {
-        throw new Error('Invalid content. SelectBox cannot have more than 9 children.');
-      }
-    } catch (e) {
-      console.error(e);
+  // Convert between our API and GridList selection API
+  const [selectedKeys, setSelectedKeys] = useControlledState(
+    props.value !== undefined ? convertValueToSelection(props.value, selectionMode) : undefined,
+    convertValueToSelection(defaultValue, selectionMode),
+    (selection) => {
+      const value = convertSelectionToValue(selection, selectionMode);
+
+      onSelectionChange(value);
     }
-    return childrenToRender;
-  };
-
-  // Context value
-  const selectBoxContextValue = useMemo(
-    () => ({
-      allowMultiSelect,
-      size,
-      orientation,
-      isEmphasized
-    }),
-    [allowMultiSelect, size, orientation, isEmphasized]
   );
 
+
+
+  // Handle validation
+  const validationErrors = useMemo(() => {
+    const errors: string[] = [];
+    
+    const selectionSize = selectedKeys === 'all' ? 1 : selectedKeys.size;
+    if (isRequired && selectionSize === 0) {
+      errors.push('Selection is required');
+    }
+    
+    return errors;
+  }, [isRequired, selectedKeys]);
+
+  const hasValidationErrors = isInvalid || validationErrors.length > 0;
+
+  // Extract SelectBox children and convert to GridListItems
+  const childrenArray = React.Children.toArray(children).filter((x) => x);
+  
+  // Build disabled keys set for individual disabled items
+  const disabledKeys = useMemo(() => {
+    if (isDisabled) {
+      return 'all'; // Entire group is disabled
+    }
+    
+    const disabled = new Set<string>();
+    childrenArray.forEach((child, index) => {
+      if (React.isValidElement(child)) {
+        const childElement = child as ReactElement<{value?: string, isDisabled?: boolean}>;
+        const childValue = childElement.props?.value || String(index);
+        if (childElement.props?.isDisabled) {
+          disabled.add(childValue);
+        }
+      }
+    });
+    
+    return disabled.size > 0 ? disabled : undefined;
+  }, [isDisabled, childrenArray]);
+  
+  // Validate children count
+  useEffect(() => {
+    if (childrenArray.length <= 0) {
+      console.error('Invalid content. SelectBox must have at least one item.');
+    }
+    if (childrenArray.length > 9) {
+      console.error('Invalid content. SelectBox cannot have more than 9 children.');
+    }
+  }, [childrenArray.length]);
+
+  // Context value for child SelectBox components
+  const selectBoxContextValue = useMemo(
+    () => {
+      const contextValue = {
+        allowMultiSelect: selectionMode === 'multiple',
+        size,
+        orientation,
+        isEmphasized,
+        isDisabled,
+        selectedKeys,
+        onSelectionChange: setSelectedKeys
+      };
+      return contextValue;
+    },
+    [selectionMode, size, orientation, isEmphasized, isDisabled, selectedKeys, setSelectedKeys]
+  );
+
+  const currentValue = convertSelectionToValue(selectedKeys, selectionMode);
+
   return (
-    <SelectorGroup
-      allowMultiSelect={allowMultiSelect}
-      value={props.value}
-      defaultValue={defaultValue}
-      onChange={onSelectionChange}
-      isRequired={isRequired}
-      isDisabled={isDisabled}
-      label={label}
-      ref={domRef}
-      UNSAFE_style={UNSAFE_style}>
-      <div
+    <div
+      className={containerStyles(null, props.styles)}
+      style={UNSAFE_style}
+      ref={domRef}>
+      
+      {/* Form integration */}
+      <FormIntegration
+        name={name}
+        value={currentValue}
+        isRequired={isRequired}
+        isInvalid={hasValidationErrors}
+      />
+      
+      {/* Label */}
+      {label && (
+        <Text slot="label" id={`${gridId}-label`}>
+          {label}
+          {isRequired && <span aria-label="required"> *</span>}
+        </Text>
+      )}
+      
+      {/* Grid List with automatic grid navigation */}
+      <GridList
+        layout="grid"
+        selectionMode={selectionMode}
+        selectedKeys={selectedKeys}
+        onSelectionChange={isDisabled ? () => {} : setSelectedKeys}
+        disabledKeys={disabledKeys}
+        aria-labelledby={label ? `${gridId}-label` : undefined}
+        aria-describedby={hasValidationErrors && errorMessage ? errorId : undefined}
+        aria-invalid={hasValidationErrors}
+        aria-required={isRequired}
         className={gridStyles({gutterWidth, orientation}, props.styles)}
         style={{
           gridTemplateColumns: `repeat(${numColumns}, 1fr)`
         }}>
-        <SelectBoxContext.Provider value={selectBoxContextValue}>
-          {getChildrenToRender().map((child) => {
-            return child as ReactElement;
-          })}
-        </SelectBoxContext.Provider>
-      </div>
-    </SelectorGroup>
-  );
-});
-
-const SelectorGroup = forwardRef<HTMLDivElement, SelectorGroupProps>(function SelectorGroupComponent({
-  allowMultiSelect,
-  children,
-  UNSAFE_className,
-  onChange,
-  value,
-  defaultValue,
-  UNSAFE_style,
-  isRequired,
-  isDisabled,
-  label
-}, ref) {
-  const baseProps = { 
-    isRequired,
-    isDisabled,
-    UNSAFE_className,
-    UNSAFE_style,
-    children,
-    onChange,
-    ref
-  };
-
-  return allowMultiSelect ? (
-    <AriaCheckboxGroup
-      {...baseProps}
-      value={value ? ensureArray(value) : undefined}
-      defaultValue={defaultValue ? ensureArray(defaultValue) : undefined}
-      aria-label={label ? String(label) : undefined} />
-  ) : (
-    <AriaRadioGroup
-      {...baseProps}
-      value={value ? unwrapValue(value) : undefined}
-      defaultValue={defaultValue ? unwrapValue(defaultValue) : undefined}
-      aria-label={label ? String(label) : undefined} />
+        
+        {childrenArray.map((child, index) => {
+          if (!React.isValidElement(child)) return null;
+          
+          const childElement = child as ReactElement<{value?: string}>;
+          const childValue = childElement.props?.value || String(index);
+          
+          // Extract text content for accessibility
+          const getTextValue = (element: ReactElement): string => {
+            const elementProps = (element as any).props;
+            const children = React.Children.toArray(elementProps.children) as ReactElement[];
+            const textSlot = children.find((child: any) => 
+              React.isValidElement(child) && (child as any).props?.slot === 'text'
+            );
+            
+            if (React.isValidElement(textSlot)) {
+              return String((textSlot as any).props.children || '');
+            }
+            
+            // Fallback to any text content
+            const textContent = children
+              .filter((child: any) => typeof child === 'string')
+              .join(' ');
+            
+            return textContent || childValue;
+          };
+          
+          const textValue = getTextValue(childElement);
+          
+          // Convert SelectBox to GridListItem with render props
+          return (
+            <GridListItem key={childValue} id={childValue} textValue={textValue} className={style({outlineStyle: 'none'})}>
+              {(renderProps) => (
+                <SelectBoxContext.Provider value={selectBoxContextValue}>
+                  <SelectBoxRenderPropsContext.Provider 
+                    value={{
+                      isHovered: renderProps.isHovered,
+                      isFocusVisible: renderProps.isFocusVisible,
+                      isPressed: renderProps.isPressed
+                    }}>
+                    {child}
+                  </SelectBoxRenderPropsContext.Provider>
+                </SelectBoxContext.Provider>
+              )}
+            </GridListItem>
+          );
+        })}
+      </GridList>
+      
+      {/* Error message */}
+      {hasValidationErrors && errorMessage && (
+        <Text
+          slot="errorMessage"
+          id={errorId}
+          className={errorMessageStyles(null, props.styles)}>
+          {errorMessage}
+        </Text>
+      )}
+    </div>
   );
 });

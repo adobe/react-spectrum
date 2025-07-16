@@ -230,25 +230,25 @@ describe('SelectBox', () => {
       expect(option2).toBeChecked();
     });
 
-         it('controlled value works as expected', () => {
-       render(
-         <SelectBoxGroup
-           selectionMode="single"
-           onSelectionChange={() => {}}
-           value="option2"
-           label="Controlled test">
-           <SelectBox value="option1">Option 1</SelectBox>
-           <SelectBox value="option2">Option 2</SelectBox>
-         </SelectBoxGroup>
-       );
+    it('controlled value works as expected', () => {
+      render(
+        <SelectBoxGroup
+          selectionMode="single"
+          onSelectionChange={() => {}}
+          value="option2"
+          label="Controlled test">
+          <SelectBox value="option1">Option 1</SelectBox>
+          <SelectBox value="option2">Option 2</SelectBox>
+        </SelectBoxGroup>
+      );
 
-       const radios = screen.getAllByRole('radio');
-       const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
-       const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
-       
-       expect(option1).not.toBeChecked();
-       expect(option2).toBeChecked();
-     });
+      const radios = screen.getAllByRole('radio');
+      const option1 = radios.find(radio => radio.getAttribute('value') === 'option1')!;
+      const option2 = radios.find(radio => radio.getAttribute('value') === 'option2')!;
+      
+      expect(option1).not.toBeChecked();
+      expect(option2).toBeChecked();
+    });
 
     it('calls onSelectionChange when controlled value changes', async () => {
       const onSelectionChange = jest.fn();
@@ -326,8 +326,7 @@ describe('SelectBox', () => {
           selectionMode="single"
           onSelectionChange={() => {}}
           value="option2"
-          label="Individual disabled test"
-        >
+          label="Individual disabled test">
           <SelectBox value="option1" isDisabled>Option 1</SelectBox>
           <SelectBox value="option2">Option 2</SelectBox>
         </SelectBoxGroup>
