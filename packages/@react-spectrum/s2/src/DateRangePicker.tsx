@@ -150,7 +150,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 isDateUnavailable={isDateUnavailable}
                 pageBehavior={pageBehavior} />
               {showTimeField && (
-                <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
+                <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
                   <TimeField
                     styles={timeField}
                     label={stringFormatter.format('datepicker.startTime')}
