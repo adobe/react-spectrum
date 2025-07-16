@@ -2046,8 +2046,8 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
     expect(textField).toHaveAttribute('value', '10');
 
-    userEvent.tab();
-    userEvent.clear(textField);
+    await user.tab();
+    await user.clear(textField);
     await user.keyboard(',123');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '0.123');
