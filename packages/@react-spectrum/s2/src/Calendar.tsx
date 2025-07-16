@@ -312,7 +312,8 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 display: 'flex',
                 flexDirection: 'row',
                 gap: 24,
-                width: 'full'
+                width: 'full',
+                alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
                 <CalendarGrid months={i} key={i} />
@@ -454,18 +455,17 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
   let isFirstWeek = weekIndex === 0;
   let isFirstChild = dayIndex === 0;
   let isLastChild = dayIndex === 6;
-  let isNextDaySelected = state.isSelected(props.date.add({days: 1}));
   return (
     <AriaCalendarCell
       date={props.date}
       className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek})}>
-      {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} isNextDaySelected={isNextDaySelected} isLastChild={isLastChild} renderProps={renderProps} />}
+      {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} renderProps={renderProps} />}
     </AriaCalendarCell>
   );
 };
 
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isNextDaySelected: boolean, isLastChild: boolean, isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
-  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection, isNextDaySelected, isLastChild} = props;
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
+  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
   let {getDatesInWeek} = state;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected} = renderProps!;
@@ -484,13 +484,14 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isNextD
     selectionSpan = dayIndex;
   }
 
+  let prevDay = date.subtract({days: 1});
+  let nextDay = date.add({days: 1});
   let isBackgroundStyleApplied = (
     isSelected
-    && (isLastChild || !isNextDaySelected)
     && isRangeSelection
-    && (state.isSelected(date.subtract({days: 1}))
-      || state.isSelected(date.add({days: 1}))
-    ));
+    && (state.isSelected(prevDay)
+      || (nextDay.month === date.month && state.isSelected(nextDay)))
+    );
 
   return (
     <div

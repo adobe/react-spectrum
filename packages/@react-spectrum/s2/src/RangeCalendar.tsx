@@ -95,7 +95,8 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 display: 'flex',
                 flexDirection: 'row',
                 gap: 24,
-                width: 'full'
+                width: 'full',
+                alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
                 <CalendarGrid months={i} key={i} />
@@ -103,7 +104,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
             </div>
             {isInvalid && (
               <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
-                {errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 2})}
+                {errorMessage || stringFormatter.format('calendar.invalidSelection', {selectedCount: 2})}
               </Text>
             )}
           </>

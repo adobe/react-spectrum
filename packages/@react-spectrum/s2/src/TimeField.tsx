@@ -21,13 +21,13 @@ import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
-import {forwardRefType, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface TimeFieldProps<T extends TimeValue> extends
-  Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style'>,
+  Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {

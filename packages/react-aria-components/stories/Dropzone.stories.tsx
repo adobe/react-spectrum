@@ -17,6 +17,7 @@ import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-ari
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Dropzone',

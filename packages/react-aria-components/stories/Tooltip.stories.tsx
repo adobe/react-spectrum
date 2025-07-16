@@ -13,6 +13,7 @@
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Tooltip',

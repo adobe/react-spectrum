@@ -18,6 +18,7 @@ import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Autocomplete',

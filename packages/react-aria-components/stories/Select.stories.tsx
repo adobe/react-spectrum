@@ -17,6 +17,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Select',

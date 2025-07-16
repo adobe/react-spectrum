@@ -19,6 +19,7 @@ import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
 import {TableLoadMoreItem} from '../src/Table';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Table',

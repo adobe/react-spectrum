@@ -14,6 +14,7 @@ import {Button, Content, ContextualHelp, DatePicker, Footer, Form, Heading, Link
 import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
+import {parseDate, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof DatePicker> = {
@@ -55,6 +56,13 @@ type Story = StoryObj<typeof DatePicker>;
 export const Example: Story = {
   args: {
     label: 'Birthday'
+  }
+};
+
+export const Zoned: Story = {
+  args: {
+    label: 'Birthday',
+    defaultValue: toZoned(parseDate('2020-02-03'), 'America/New_York')
   }
 };
 

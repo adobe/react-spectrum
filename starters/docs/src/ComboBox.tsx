@@ -35,7 +35,7 @@ export function ComboBox<T extends object>(
         </div>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover hideArrow noPadding>
+        <Popover hideArrow>
           <ListBox>
             {children}
           </ListBox>

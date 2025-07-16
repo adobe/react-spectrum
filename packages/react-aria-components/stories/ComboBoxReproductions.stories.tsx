@@ -14,6 +14,7 @@ import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'rea
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './combobox-reproductions.css';
+import './styles.css';
 
 
 export default {
