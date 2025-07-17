@@ -1400,10 +1400,13 @@ export const Test = {
 function SWTable() {
   const [film, setFilm] = useState(undefined);
 
+  interface Item {
+    id: string,
+    title: string
+  }
 
-  let list = useAsyncList({
+  let list = useAsyncList<Item>({
     async load({signal, cursor}) {
-      console.log('load', cursor, film);
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
@@ -1411,7 +1414,7 @@ function SWTable() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search&film=${film}`, {signal});
       let json = await res.json();
-      items = json.results.map((element, index) => ({title: element.name}));
+      items = json.results.map((element) => ({title: element.name}));
 
       return {
         items: items,
