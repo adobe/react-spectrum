@@ -21,13 +21,17 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
+  GridListSection,
   GridListItem,
   GridListItemProps,
   Heading,
+  Header,
   ListLayout,
   Modal,
   ModalOverlay,
   Popover,
+  Separator,
   Size,
   Tag,
   TagGroup,
@@ -118,6 +122,98 @@ GridListExample.story = {
     }
   }
 };
+
+
+export const GridListSectionExample = (args) => (
+  <GridList
+    {...args}
+    className={styles.menu}
+    layout="grid"
+    aria-label="test gridlist"
+    style={{
+      width: 400,
+      height: 400,
+    }}>
+    <GridListSection>
+      <GridListHeader>Section 1</GridListHeader>
+      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    <GridListSection>
+      <GridListHeader>Section 2</GridListHeader>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    <GridListSection>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+  </GridList>
+);
+
+export function VirtualizedGridListSection() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 100; i++) {
+      const l = (s * 5) + i + 10;
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+
+  // let list = useListData({
+  //   initialItems: sections
+  // });
+
+  // let {dragAndDropHooks} = useDragAndDrop({
+  //   getItems: (keys) => {
+  //     return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+  //   },
+  //   onReorder(e) {
+  //     if (e.target.dropPosition === 'before') {
+  //       list.moveBefore(e.target.key, e.keys);
+  //     } else if (e.target.dropPosition === 'after') {
+  //       list.moveAfter(e.target.key, e.keys);
+  //     }
+  //   },
+  //   renderDropIndicator(target) {
+  //     return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+  //   }
+  // });
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        // selectionMode="multiple"
+        // dragAndDropHooks={dragAndDropHooks}
+        style={{height: 400}}
+        aria-label="virtualized with grid section"
+        items={sections}>
+          {section => (
+            <GridListSection>
+              <Header>{section.name}</Header>
+              <Collection items={section.children}>
+                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+              </Collection>
+            </GridListSection>
+          )}
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+
 
 const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   return (

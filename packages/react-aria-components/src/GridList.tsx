@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent, createBranchComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionContext, SectionProps} from './Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
@@ -23,6 +23,7 @@ import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
+import {HeaderContext} from './Header';
 
 export interface GridListRenderProps {
   /**
@@ -246,7 +247,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
           values={[
             [ListStateContext, state],
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-            [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
+            [DropIndicatorContext, {render: GridListDropIndicatorWrapper}],
+            [SectionContext, {name: 'GridListSection', render: GridListSectionInner}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
           <CollectionRoot
@@ -557,3 +559,56 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
     </>
   );
 });
+
+export interface GridListSectionProps<T> extends SectionProps<T> {}
+
+function GridListSectionInner<T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-GridListSection') {
+  let state = useContext(ListStateContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let [headingRef, heading] = useSlot();
+  let {headingProps, rowProps, rowGroupProps} = useGridListSection({
+    heading,
+    'aria-label': props['aria-label'] ?? undefined
+  });
+  let renderProps = useRenderProps({
+    defaultClassName: className,
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
+
+  return (
+    <section
+      {...filterDOMProps(props as any)}
+      {...rowGroupProps}
+      {...renderProps}
+      ref={ref}>
+      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={section}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} 
+          />
+      </HeaderContext.Provider>
+    </section>
+  );
+}
+
+// not sure if we want to export a whole different component for the header...but need to add a div around the header with role row for accessibility
+export const GridListHeader = /*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
+  [props, ref] = useContextProps(props, ref, HeaderContext);
+  return (
+    <div role="row">
+      <header className="react-aria-Header" {...props} ref={ref}>
+        {props.children}
+      </header>
+    </div>
+  );
+});
+
+
+/**
+ * A GridListSection represents a section within a GridList.
+ */
+export const GridListSection = /*#__PURE__*/ createBranchComponent('section', GridListSectionInner);
