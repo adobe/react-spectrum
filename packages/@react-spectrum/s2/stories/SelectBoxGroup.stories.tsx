@@ -15,57 +15,57 @@
  * from Adobe.
  **************************************************************************/
 
-import type { Meta, StoryObj } from "@storybook/react";
-import { SelectBox, SelectBoxGroup, Text, createIcon } from "../src";
-import { action } from "@storybook/addon-actions";
-import React from "react";
-import Server from "../spectrum-illustrations/linear/Server";
-import AlertNotice from "../spectrum-illustrations/linear/AlertNotice";
-import Paperairplane from "../spectrum-illustrations/linear/Paperairplane";
-import StarSVG from "../s2wf-icons/S2_Icon_Star_20_N.svg";
-import StarFilledSVG from "../s2wf-icons/S2_Icon_StarFilled_20_N.svg";
+import {action} from '@storybook/addon-actions';
+import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
+import {createIcon, SelectBox, SelectBoxGroup, Text} from '../src';
+import type {Meta, StoryObj} from '@storybook/react';
+import Paperairplane from '../spectrum-illustrations/linear/Paperairplane';
+import React from 'react';
+import Server from '../spectrum-illustrations/linear/Server';
+import StarFilledSVG from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
+import StarSVG from '../s2wf-icons/S2_Icon_Star_20_N.svg';
 
 const StarIcon = createIcon(StarSVG);
 const StarFilledIcon = createIcon(StarFilledSVG);
 
 const meta: Meta<typeof SelectBoxGroup> = {
-  title: "SelectBoxGroup (Collection)",
+  title: 'SelectBoxGroup (Collection)',
   component: SelectBoxGroup,
   parameters: {
-    layout: "centered",
+    layout: 'centered'
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     selectionMode: {
-      control: "select",
-      options: ["single", "multiple"],
+      control: 'select',
+      options: ['single', 'multiple']
     },
     size: {
-      control: "select",
-      options: ["XS", "S", "M", "L", "XL"],
+      control: 'select',
+      options: ['XS', 'S', 'M', 'L', 'XL']
     },
     orientation: {
-      control: "select",
-      options: ["vertical", "horizontal"],
+      control: 'select',
+      options: ['vertical', 'horizontal']
     },
     numColumns: {
-      control: { type: "number", min: 1, max: 4 },
+      control: {type: 'number', min: 1, max: 4}
     },
     gutterWidth: {
-      control: "select",
-      options: ["compact", "default", "spacious"],
-    },
+      control: 'select',
+      options: ['compact', 'default', 'spacious']
+    }
   },
   args: {
-    selectionMode: "single",
-    size: "M",
-    orientation: "vertical",
+    selectionMode: 'single',
+    size: 'M',
+    orientation: 'vertical',
     numColumns: 2,
-    gutterWidth: "default",
+    gutterWidth: 'default',
     isRequired: false,
     isDisabled: false,
-    isEmphasized: false,
-  },
+    isEmphasized: false
+  }
 };
 
 export default meta;
@@ -74,10 +74,10 @@ type Story = StoryObj<typeof meta>;
 // Basic Stories
 export const Default: Story = {
   args: {
-    label: "Choose your cloud service",
+    label: 'Choose your cloud service'
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="aws">
         <Server slot="icon" />
         <Text slot="text">Amazon Web Services</Text>
@@ -99,18 +99,18 @@ export const Default: Story = {
         <Text slot="description">Database-focused cloud</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
 export const MultipleSelection: Story = {
   args: {
-    selectionMode: "multiple",
-    label: "Select your preferred services",
-    defaultValue: ["aws", "gcp"],
-    necessityIndicator: "icon",
+    selectionMode: 'multiple',
+    label: 'Select your preferred services',
+    defaultValue: ['aws', 'gcp'],
+    necessityIndicator: 'icon'
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="aws">
         <Server slot="icon" />
         <Text slot="text">Amazon Web Services</Text>
@@ -128,23 +128,23 @@ export const MultipleSelection: Story = {
         <Text slot="text">Oracle Cloud</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
 // Grid Navigation Testing
 export const GridNavigation: Story = {
   args: {
-    label: "Test Grid Navigation (Use Arrow Keys)",
-    numColumns: 3,
+    label: 'Test Grid Navigation (Use Arrow Keys)',
+    numColumns: 3
   },
   render: (args) => (
-    <div style={{ maxWidth: 600 }}>
-      <p style={{ marginBottom: 16, fontSize: 14, color: "#666" }}>
-        Focus any item and use arrow keys to navigate:
-        <br />• ↑↓ moves vertically (same column)
-        <br />• ←→ moves horizontally (same row)
+    <div style={{maxWidth: 600}}>
+      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
+        Focus any item (best done by clicking to the left of the group and hitting the tab key) and use arrow keys to navigate:
+        {/* <br />• ↑↓ moves vertically (same column)
+        <br />• ←→ moves horizontally (same row) */}
       </p>
-      <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
         <SelectBox value="1">
           <Text slot="text">Item 1</Text>
         </SelectBox>
@@ -165,25 +165,24 @@ export const GridNavigation: Story = {
         </SelectBox>
       </SelectBoxGroup>
     </div>
-  ),
+  )
 };
 
 // Form Integration
 export const FormIntegration: Story = {
   args: {
-    label: "Select your option",
-    name: "user_preference",
-    isRequired: true,
+    label: 'Select your option',
+    name: 'user_preference',
+    isRequired: true
   },
   render: (args) => (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        action("Form submitted")(Object.fromEntries(formData));
-      }}
-    >
-      <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+        action('Form submitted')(Object.fromEntries(formData));
+      }}>
+      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
         <SelectBox value="option1">
           <Text slot="text">Option 1</Text>
         </SelectBox>
@@ -194,22 +193,22 @@ export const FormIntegration: Story = {
           <Text slot="text">Option 3</Text>
         </SelectBox>
       </SelectBoxGroup>
-      <button type="submit" style={{ marginTop: 16 }}>
+      <button type="submit" style={{marginTop: 16}}>
         Submit Form
       </button>
     </form>
-  ),
+  )
 };
 
 export const FormValidation: Story = {
   args: {
-    label: "Required Selection",
+    label: 'Required Selection',
     isRequired: true,
-    errorMessage: "Please select at least one option",
-    isInvalid: true,
+    errorMessage: 'Please select at least one option',
+    isInvalid: true
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="option1">
         <Text slot="text">Option 1</Text>
       </SelectBox>
@@ -217,20 +216,19 @@ export const FormValidation: Story = {
         <Text slot="text">Option 2</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
 // Size Variations
 export const SizeVariations: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-      {(["XS", "S", "M", "L", "XL"] as const).map((size) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
+      {(['XS', 'S', 'M', 'L', 'XL'] as const).map((size) => (
         <SelectBoxGroup
           key={size}
           size={size}
           label={`Size ${size}`}
-          onSelectionChange={action(`onSelectionChange-${size}`)}
-        >
+          onSelectionChange={action(`onSelectionChange-${size}`)}>
           <SelectBox value="option1">
             <Server slot="icon" />
             <Text slot="text">Option 1</Text>
@@ -242,18 +240,18 @@ export const SizeVariations: Story = {
         </SelectBoxGroup>
       ))}
     </div>
-  ),
+  )
 };
 
 // Horizontal Orientation
 export const HorizontalOrientation: Story = {
   args: {
-    orientation: "horizontal",
-    label: "Favorite cities",
-    numColumns: 1,
+    orientation: 'horizontal',
+    label: 'Favorite cities',
+    numColumns: 1
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="paris">
         <Text slot="text">Paris</Text>
         <Text slot="description">France</Text>
@@ -267,35 +265,37 @@ export const HorizontalOrientation: Story = {
         <Text slot="description">Japan</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
 // Disabled States
 export const DisabledGroup: Story = {
   args: {
-    label: "Disabled Group",
+    label: 'Disabled Group',
     isDisabled: true,
-    defaultValue: "option1",
+    defaultValue: 'option1'
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="option1">
-        <Text slot="text">Option 1</Text>
+        <Server slot="icon" />
+        <Text slot="text">Selected then Disabled</Text>
       </SelectBox>
       <SelectBox value="option2">
-        <Text slot="text">Option 2</Text>
+        <AlertNotice slot="icon" />
+        <Text slot="text">Disabled</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
 export const IndividualDisabled: Story = {
   args: {
-    label: "Some items disabled",
-    defaultValue: "option2",
+    label: 'Some items disabled',
+    defaultValue: 'option2'
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="option1" isDisabled>
         <Text slot="text">Option 1 (Disabled)</Text>
       </SelectBox>
@@ -309,95 +309,93 @@ export const IndividualDisabled: Story = {
         <Text slot="text">Option 4</Text>
       </SelectBox>
     </SelectBoxGroup>
-  ),
+  )
 };
 
-// Controlled Mode
-export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = React.useState("option2");
+// Controlled Mode - Convert to proper component to use React hooks
+function ControlledStory() {
+  const [value, setValue] = React.useState('option2');
 
-    return (
-      <div>
-        <p>Current value: {value}</p>
-        <SelectBoxGroup
-          label="Controlled SelectBoxGroup"
-          value={value}
-          onSelectionChange={(val) => setValue(val as string)}
-        >
-          <SelectBox value="option1">
-            <Text slot="text">Option 1</Text>
-          </SelectBox>
-          <SelectBox value="option2">
-            <Text slot="text">Option 2</Text>
-          </SelectBox>
-          <SelectBox value="option3">
-            <Text slot="text">Option 3</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-        <button
-          onClick={() => setValue("option1")}
-          style={{ marginTop: 16, marginRight: 8 }}
-        >
-          Set to Option 1
-        </button>
-        <button onClick={() => setValue("option3")}>Set to Option 3</button>
-      </div>
-    );
-  },
-};
-
-// Dynamic Icons
-export const DynamicIcons: Story = {
-  args: {
-    label: "Rate these items",
-  },
-  render: (args) => {
-    const [selectedValues, setSelectedValues] = React.useState<Set<string>>(
-      new Set(),
-    );
-
-    return (
+  return (
+    <div>
+      <p>Current value: {value}</p>
       <SelectBoxGroup
-        {...args}
-        selectionMode="multiple"
-        onSelectionChange={(val) => {
-          const values = Array.isArray(val) ? val : [val];
-          setSelectedValues(new Set(values));
-          action("onSelectionChange")(val);
-        }}
-      >
-        {["item1", "item2", "item3", "item4"].map((value) => (
-          <SelectBox key={value} value={value}>
-            {selectedValues.has(value) ? (
-              <StarFilledIcon slot="icon" />
-            ) : (
-              <StarIcon slot="icon" />
-            )}
-            <Text slot="text">Item {value.slice(-1)}</Text>
-          </SelectBox>
-        ))}
+        label="Controlled SelectBoxGroup"
+        value={value}
+        onSelectionChange={(val) => setValue(val as string)}>
+        <SelectBox value="option1">
+          <Text slot="text">Option 1</Text>
+        </SelectBox>
+        <SelectBox value="option2">
+          <Text slot="text">Option 2</Text>
+        </SelectBox>
+        <SelectBox value="option3">
+          <Text slot="text">Option 3</Text>
+        </SelectBox>
       </SelectBoxGroup>
-    );
-  },
+      <button
+        onClick={() => setValue('option1')}
+        style={{marginTop: 16, marginRight: 8}}>
+        Set to Option 1
+      </button>
+      <button onClick={() => setValue('option3')}>Set to Option 3</button>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledStory />
+};
+
+// Dynamic Icons - Convert to proper component to use React hooks
+function DynamicIconsStory() {
+  const [selectedValues, setSelectedValues] = React.useState<Set<string>>(
+    new Set()
+  );
+
+  return (
+    <SelectBoxGroup
+      label="Rate these items"
+      selectionMode="multiple"
+      onSelectionChange={(val) => {
+        const values = Array.isArray(val) ? val : [val];
+        setSelectedValues(new Set(values));
+        action('onSelectionChange')(val);
+      }}>
+      {['item1', 'item2', 'item3', 'item4'].map((value) => (
+        <SelectBox key={value} value={value}>
+          {selectedValues.has(value) ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <StarIcon slot="icon" />
+          )}
+          <Text slot="text">Item {value.slice(-1)}</Text>
+        </SelectBox>
+      ))}
+    </SelectBoxGroup>
+  );
+}
+
+export const DynamicIcons: Story = {
+  render: () => <DynamicIconsStory />
 };
 
 // Multiple Columns
 export const MultipleColumns: Story = {
   args: {
-    label: "Choose options",
+    label: 'Choose options',
     numColumns: 4,
-    gutterWidth: "spacious",
+    gutterWidth: 'spacious'
   },
   render: (args) => (
-    <div style={{ maxWidth: 800 }}>
-      <SelectBoxGroup {...args} onSelectionChange={action("onSelectionChange")}>
-        {Array.from({ length: 8 }, (_, i) => (
+    <div style={{maxWidth: 800}}>
+      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
+        {Array.from({length: 8}, (_, i) => (
           <SelectBox key={i} value={`option${i + 1}`}>
             <Text slot="text">Option {i + 1}</Text>
           </SelectBox>
         ))}
       </SelectBoxGroup>
     </div>
-  ),
+  )
 };

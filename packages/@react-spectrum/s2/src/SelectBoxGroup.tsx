@@ -10,19 +10,19 @@
  */
 
 import {
+  ContextValue,
   GridList,
   GridListItem,
-  ContextValue,
   Text
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps, Key, Selection} from '@react-types/shared';
+import {DOMRef, DOMRefValue, HelpTextProps, Orientation, Selection, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useMemo, useId, useEffect, useRef} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useId, useMemo} from 'react';
+import {SelectBoxRenderPropsContext} from './SelectBox';
 import {style} from '../style' with {type: 'macro'};
+import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {useControlledState} from '@react-stately/utils';
-import {SelectBoxRenderPropsContext} from './SelectBox';
 
 export type SelectBoxValueType = string | string[];
 
@@ -117,7 +117,6 @@ const convertValueToSelection = (value: SelectBoxValueType | undefined, selectio
 };
 
 const convertSelectionToValue = (selection: Selection, selectionMode: 'single' | 'multiple'): SelectBoxValueType => {
-  // Handle 'all' selection
   if (selection === 'all') {
     return selectionMode === 'multiple' ? [] : '';
   }
@@ -148,7 +147,6 @@ const gridStyles = style({
       spacious: 24
     }
   },
-  // Override default GridList styles to work with our grid layout
   '&[role="grid"]': {
     display: 'grid'
   }
@@ -172,9 +170,10 @@ interface FormIntegrationProps {
   isInvalid?: boolean
 }
 
-// Hidden form inputs for form integration
 function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationProps) {
-  if (!name) return null;
+  if (!name) {
+    return null;
+  }
 
   if (Array.isArray(value)) {
     return (
@@ -186,8 +185,7 @@ function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationPr
             name={name}
             value={val}
             required={isRequired && index === 0}
-            aria-invalid={isInvalid}
-          />
+            aria-invalid={isInvalid} />
         ))}
         {value.length === 0 && isRequired && (
           <input
@@ -195,8 +193,7 @@ function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationPr
             name={name}
             value=""
             required
-            aria-invalid={isInvalid}
-          />
+            aria-invalid={isInvalid} />
         )}
       </>
     );
@@ -208,8 +205,7 @@ function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationPr
       name={name}
       value={value || ''}
       required={isRequired}
-      aria-invalid={isInvalid}
-    />
+      aria-invalid={isInvalid} />
   );
 }
 
@@ -244,7 +240,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   const gridId = useId();
   const errorId = useId();
 
-  // Convert between our API and GridList selection API
   const [selectedKeys, setSelectedKeys] = useControlledState(
     props.value !== undefined ? convertValueToSelection(props.value, selectionMode) : undefined,
     convertValueToSelection(defaultValue, selectionMode),
@@ -256,8 +251,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   );
 
 
-
-  // Handle validation
   const validationErrors = useMemo(() => {
     const errors: string[] = [];
     
@@ -271,13 +264,11 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
 
   const hasValidationErrors = isInvalid || validationErrors.length > 0;
 
-  // Extract SelectBox children and convert to GridListItems
   const childrenArray = React.Children.toArray(children).filter((x) => x);
   
-  // Build disabled keys set for individual disabled items
   const disabledKeys = useMemo(() => {
     if (isDisabled) {
-      return 'all'; // Entire group is disabled
+      return 'all';
     }
     
     const disabled = new Set<string>();
@@ -294,7 +285,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     return disabled.size > 0 ? disabled : undefined;
   }, [isDisabled, childrenArray]);
   
-  // Validate children count
   useEffect(() => {
     if (childrenArray.length <= 0) {
       console.error('Invalid content. SelectBox must have at least one item.');
@@ -304,7 +294,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     }
   }, [childrenArray.length]);
 
-  // Context value for child SelectBox components
   const selectBoxContextValue = useMemo(
     () => {
       const contextValue = {
@@ -329,15 +318,12 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       style={UNSAFE_style}
       ref={domRef}>
       
-      {/* Form integration */}
       <FormIntegration
         name={name}
         value={currentValue}
         isRequired={isRequired}
-        isInvalid={hasValidationErrors}
-      />
+        isInvalid={hasValidationErrors} />
       
-      {/* Label */}
       {label && (
         <Text slot="label" id={`${gridId}-label`}>
           {label}
@@ -345,7 +331,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         </Text>
       )}
       
-      {/* Grid List with automatic grid navigation */}
       <GridList
         layout="grid"
         selectionMode={selectionMode}
@@ -362,12 +347,11 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         }}>
         
         {childrenArray.map((child, index) => {
-          if (!React.isValidElement(child)) return null;
+          if (!React.isValidElement(child)) {return null;}
           
           const childElement = child as ReactElement<{value?: string}>;
           const childValue = childElement.props?.value || String(index);
           
-          // Extract text content for accessibility
           const getTextValue = (element: ReactElement): string => {
             const elementProps = (element as any).props;
             const children = React.Children.toArray(elementProps.children) as ReactElement[];
@@ -379,7 +363,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
               return String((textSlot as any).props.children || '');
             }
             
-            // Fallback to any text content
             const textContent = children
               .filter((child: any) => typeof child === 'string')
               .join(' ');
@@ -389,7 +372,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
           
           const textValue = getTextValue(childElement);
           
-          // Convert SelectBox to GridListItem with render props
           return (
             <GridListItem key={childValue} id={childValue} textValue={textValue} className={style({outlineStyle: 'none'})}>
               {(renderProps) => (
@@ -409,7 +391,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         })}
       </GridList>
       
-      {/* Error message */}
       {hasValidationErrors && errorMessage && (
         <Text
           slot="errorMessage"

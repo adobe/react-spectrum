@@ -10,11 +10,11 @@
  */
 
 import {Checkbox} from './Checkbox';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, style, lightDark} from '../style' with {type: 'macro'};
+import {FocusableRef} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {SelectBoxContext} from './SelectBoxGroup';
+import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -35,7 +35,6 @@ export interface SelectBoxProps extends StyleProps {
 
 export const SelectBoxItemContext = createContext<any>(null);
 
-// Simple basic styling with proper dark mode support
 const selectBoxStyles = style({
   display: 'flex',
   flexDirection: {
@@ -99,8 +98,8 @@ const selectBoxStyles = style({
   borderRadius: 'lg',
   backgroundColor: {
     default: 'layer-2',
-    isDisabled: 'layer-1',
-    isSelected: 'layer-2'
+    isSelected: 'layer-2',
+    isDisabled: 'layer-1'
   },
   color: {
     isEmphasized: 'gray-900',
@@ -110,18 +109,18 @@ const selectBoxStyles = style({
     default: 'emphasized',
     isHovered: 'elevated',
     isSelected: 'elevated',
-    forcedColors: 'none'
+    forcedColors: 'none',
+    isDisabled: 'emphasized'
   },
   outlineStyle: 'none',
   position: 'relative',
   borderWidth: 2,
   borderStyle: 'solid',
   borderColor: {
-    // default: 'transparent',
-    // isSelected: lightDark('accent-900', 'accent-700')
     default: 'transparent',
     isSelected: 'gray-900',
-    isFocusVisible: 'blue-900'
+    isFocusVisible: 'blue-900',
+    isDisabled: 'transparent'
   },
   transition: 'default',
   gap: {
@@ -132,7 +131,7 @@ const selectBoxStyles = style({
   cursor: {
     default: 'pointer',
     isDisabled: 'default'
-  },
+  }
 }, getAllowedOverrides());
 
 const contentContainer = style({
@@ -172,6 +171,9 @@ const iconContainer = style({
   flexShrink: 0,
   color: {
     isDisabled: 'disabled'
+  },
+  opacity: {
+    isDisabled: 0.4
   }
 }, getAllowedOverrides());
 
@@ -211,11 +213,10 @@ const checkboxContainer = style({
   left: 16
 }, getAllowedOverrides());
 
-// Context for passing GridListItem render props down to SelectBox
 const SelectBoxRenderPropsContext = createContext<{
-  isHovered?: boolean;
-  isFocusVisible?: boolean;
-  isPressed?: boolean;
+  isHovered?: boolean,
+  isFocusVisible?: boolean,
+  isPressed?: boolean
 }>({});
 
 /**
@@ -224,29 +225,23 @@ const SelectBoxRenderPropsContext = createContext<{
  */
 export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: SelectBoxProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxItemContext);
-  let {children, value, isDisabled: individualDisabled = false, UNSAFE_className = '', UNSAFE_style} = props;
+  let {children, value, isDisabled: individualDisabled = false, UNSAFE_style} = props;
   let divRef = useRef<HTMLDivElement | null>(null);
   let domRef = useFocusableRef(ref, divRef);
   
   let contextValue = useContext(SelectBoxContext);
   let {
-    size = 'M',  // Match SelectBoxGroup default
+    size = 'M',
     orientation = 'vertical',
     selectedKeys,
     isDisabled: groupDisabled = false
   } = contextValue;
 
-  // Access GridListItem render props from context
   let renderProps = useContext(SelectBoxRenderPropsContext);
 
-  // Merge individual and group disabled states
   const isDisabled = individualDisabled || groupDisabled;
-
-  // Determine if this item is selected based on the parent's selectedKeys
   const isSelected = selectedKeys === 'all' || (selectedKeys && selectedKeys.has(value));
-
-  // Show checkbox when selected, disabled, or hovered
-  const showCheckbox = isSelected || isDisabled || renderProps.isHovered;
+  const showCheckbox = isSelected || (!isDisabled && renderProps.isHovered);
   
   return (
     <div
@@ -261,7 +256,6 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       }, props.styles)}
       style={UNSAFE_style}>
       
-      {/* Show selection indicator */}
       {showCheckbox && (
         <div className={checkboxContainer(null, props.styles)}>
           <div style={{pointerEvents: 'none'}}>
@@ -269,29 +263,22 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
               isSelected={isSelected}
               isDisabled={isDisabled}
               size={size === 'XS' ? 'S' : size}
-              isReadOnly
-              />
+              isReadOnly />
           </div>
         </div>
       )}
-      
-      {/* Content layout */}
       {orientation === 'horizontal' ? (
         <>
-          {/* Icon */}
           {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
             <div className={iconContainer({size, orientation, isDisabled}, props.styles)}>
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
             </div>
           )}
           
-          {/* Content container for horizontal layout */}
           <div className={contentContainer({size, orientation}, props.styles)}>
             <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-              {/* Text */}
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
               
-              {/* Description */}
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description') && (
                 <div className={descriptionText({size, orientation, isDisabled}, props.styles)}>
                   {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description')}
@@ -302,21 +289,18 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
         </>
       ) : (
         <>
-          {/* Icon */}
           {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
             <div className={iconContainer({size, orientation, isDisabled}, props.styles)}>
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
             </div>
           )}
           
-          {/* Text container for vertical layout */}
           <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
             {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
           </div>
         </>
       )}
       
-      {/* Other children */}
       {React.Children.toArray(children).filter((child: any) => 
         !['icon', 'text', 'description'].includes(child?.props?.slot)
       )}
@@ -324,5 +308,4 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
   );
 });
 
-// Export the context for use in SelectBoxGroup
 export {SelectBoxRenderPropsContext};
