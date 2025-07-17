@@ -195,8 +195,24 @@ class NumberParserImpl {
   }
 
   sanitize(value: string) {
-    // Remove literals and whitespace, which are allowed anywhere in the string
-    value = value.replace(this.symbols.literals, '');
+    // Do our best to preserve the number and its possible group and decimal symbols, this includes the sign as well
+    let preservedInsideNumber = value.match(new RegExp(`([${this.symbols.numerals.join('')}].*[${this.symbols.numerals.join('')}])`));
+    if (preservedInsideNumber) {
+      // If we found a number, replace literals everywhere except inside the number
+      let beforeNumber = value.substring(0, preservedInsideNumber.index!);
+      let afterNumber = value.substring(preservedInsideNumber.index! + preservedInsideNumber[0].length);
+      let insideNumber = preservedInsideNumber[0];
+
+      // Replace literals in the parts outside the number
+      beforeNumber = beforeNumber.replace(this.symbols.literals, '');
+      afterNumber = afterNumber.replace(this.symbols.literals, '');
+
+      // Reconstruct the value with literals removed from outside the number
+      value = beforeNumber + insideNumber + afterNumber;
+    } else {
+      // If no number found, replace literals everywhere
+      value = value.replace(this.symbols.literals, '');
+    }
 
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
@@ -217,6 +233,7 @@ class NumberParserImpl {
       }
     }
 
+    // Some locales, such as swiss when using currency, use a single quote as a group character
     if (this.symbols.group && value.includes("'")) {
       value = replaceAll(value, "'", this.symbols.group);
     }
@@ -228,6 +245,7 @@ class NumberParserImpl {
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
 
+    // If there are multiple decimal separators and only one group separator, swap them
     if (this.symbols.decimal
       && this.symbols.group
       && [...value.matchAll(new RegExp(escapeRegex(this.symbols.decimal), 'g'))].length > 1
@@ -235,6 +253,7 @@ class NumberParserImpl {
       value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
     }
 
+    // If the decimal separator is before the group separator, swap them
     let decimalIndex = value.indexOf(this.symbols.decimal!);
     let groupIndex = value.indexOf(this.symbols.group!);
     if (this.symbols.decimal && this.symbols.group && decimalIndex > -1 && groupIndex > -1 && decimalIndex < groupIndex) {
@@ -242,7 +261,7 @@ class NumberParserImpl {
     }
 
     // in the value, for any non-digits and not the plus/minus sign,
-    // if there is only one of that character and its index in the string is 0 or it's only preceeded by this locale's "0" character,
+    // if there is only one of that character and its index in the string is 0 or it's only preceeded by this numbering system's "0" character,
     // then we know it's a decimal character and we can replace it with the decimal character for the locale we're currently trying
     let temp = value;
     if (this.symbols.minusSign) {
@@ -260,6 +279,38 @@ class NumberParserImpl {
       // AND there are no other decimal separators in the string
       if (count === 1 && temp[0] === this.symbols.group && !value.includes(this.symbols.decimal!)) {
         value = swapCharacters(value, temp[0], this.symbols.decimal!);
+      }
+    }
+
+    // This is to fuzzy match group and decimal symbols from a different formatting, we can only do it if there are 2 non-digits, otherwise it's too ambiguous
+    let areOnlyGroupAndDecimalSymbols = [...nonDigits].every(char => allPossibleGroupAndDecimalSymbols.has(char));
+    let oneSymbolNotMatching = (
+      nonDigits.size === 2
+      && this.symbols.group
+      && this.symbols.decimal
+      && (!nonDigits.has(this.symbols.group!) || !nonDigits.has(this.symbols.decimal!))
+    );
+    let bothSymbolsNotMatching = (
+      nonDigits.size === 2
+      && this.symbols.group
+      && this.symbols.decimal
+      && !nonDigits.has(this.symbols.group!) && !nonDigits.has(this.symbols.decimal!)
+    );
+    if (areOnlyGroupAndDecimalSymbols && (oneSymbolNotMatching || bothSymbolsNotMatching)) {
+      // Try to determine which of the nonDigits is the group and which is the decimal
+      // Whichever of the nonDigits is first in the string is the group.
+      // If there are more than one of a nonDigit, then that one is the group.
+      let [firstChar, secondChar] = [...nonDigits];
+      if (value.indexOf(firstChar) < value.indexOf(secondChar)) {
+        value = replaceAll(value, firstChar, '__GROUP__');
+        value = replaceAll(value, secondChar, '__DECIMAL__');
+        value = replaceAll(value, '__GROUP__', this.symbols.group!);
+        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
+      } else {
+        value = replaceAll(value, secondChar, '__GROUP__');
+        value = replaceAll(value, firstChar, '__DECIMAL__');
+        value = replaceAll(value, '__GROUP__', this.symbols.group!);
+        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
       }
     }
 
@@ -301,6 +352,9 @@ class NumberParserImpl {
 }
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
+
+// This list is a best guess at the moment
+const allPossibleGroupAndDecimalSymbols = new Set(['.', ',', ' ', String.fromCharCode(1548), '\u00A0', "'"]);
 
 // This list is derived from https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html#comparison and includes
 // all unique numbers which we need to check in order to determine all the plural forms for a given locale.
