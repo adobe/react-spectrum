@@ -175,7 +175,7 @@ const iconContainer = style({
   opacity: {
     isDisabled: 0.4
   }
-}, getAllowedOverrides());
+});
 
 const textContainer = style({
   display: 'flex',
@@ -205,13 +205,13 @@ const descriptionText = style({
     isDisabled: 'disabled'
   },
   lineHeight: 'body'
-}, getAllowedOverrides());
+});
 
 const checkboxContainer = style({
   position: 'absolute',
   top: 16,
   left: 16
-}, getAllowedOverrides());
+});
 
 const SelectBoxRenderPropsContext = createContext<{
   isHovered?: boolean,
@@ -257,7 +257,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       style={UNSAFE_style}>
       
       {showCheckbox && (
-        <div className={checkboxContainer(null, props.styles)}>
+        <div className={checkboxContainer}>
           <div style={{pointerEvents: 'none'}}>
             <Checkbox 
               isSelected={isSelected}
@@ -270,7 +270,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       {orientation === 'horizontal' ? (
         <>
           {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
-            <div className={iconContainer({size, orientation, isDisabled}, props.styles)}>
+            <div className={iconContainer({size, orientation, isDisabled})}>
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
             </div>
           )}
@@ -280,7 +280,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
               
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description') && (
-                <div className={descriptionText({size, orientation, isDisabled}, props.styles)}>
+                <div className={descriptionText({size, orientation, isDisabled})}>
                   {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description')}
                 </div>
               )}
@@ -290,12 +290,12 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       ) : (
         <>
           {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
-            <div className={iconContainer({size, orientation, isDisabled}, props.styles)}>
+            <div className={iconContainer({size, orientation, isDisabled})}>
               {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
             </div>
           )}
           
-          <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+          <div className={textContainer({size, orientation, isDisabled})}>
             {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
           </div>
         </>

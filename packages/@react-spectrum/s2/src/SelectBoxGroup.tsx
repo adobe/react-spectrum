@@ -59,10 +59,6 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    */
   orientation?: Orientation,
   /**
-   * Whether the SelectBoxGroup should be displayed with an emphasized style.
-   */
-  isEmphasized?: boolean,
-  /**
    * Number of columns to display the SelectBox elements in.
    * @default 2
    */
@@ -98,7 +94,6 @@ interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
-  isEmphasized?: boolean,
   isDisabled?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
@@ -225,7 +220,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     selectionMode = 'single',
     size = 'M',
     orientation = 'vertical',
-    isEmphasized,
     numColumns = 2,
     gutterWidth = 'default',
     isRequired = false,
@@ -300,14 +294,13 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         allowMultiSelect: selectionMode === 'multiple',
         size,
         orientation,
-        isEmphasized,
         isDisabled,
         selectedKeys,
         onSelectionChange: setSelectedKeys
       };
       return contextValue;
     },
-    [selectionMode, size, orientation, isEmphasized, isDisabled, selectedKeys, setSelectedKeys]
+    [selectionMode, size, orientation, isDisabled, selectedKeys, setSelectedKeys]
   );
 
   const currentValue = convertSelectionToValue(selectedKeys, selectionMode);

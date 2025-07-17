@@ -692,7 +692,6 @@ describe('SelectBoxGroup', () => {
           selectionMode="single" 
           onSelectionChange={() => {}} 
           value="" 
-          isEmphasized 
           label="Emphasized test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>

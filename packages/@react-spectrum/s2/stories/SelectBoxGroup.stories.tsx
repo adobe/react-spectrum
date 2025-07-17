@@ -64,7 +64,6 @@ const meta: Meta<typeof SelectBoxGroup> = {
     gutterWidth: 'default',
     isRequired: false,
     isDisabled: false,
-    isEmphasized: false
   }
 };
 
