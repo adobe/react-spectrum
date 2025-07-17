@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent, RefObject} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, useEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
@@ -245,7 +245,8 @@ export function useDrag(options: DragOptions): DragResult {
     return () => {
       // Check that the dragged element has actually unmounted from the DOM and not a React Strict Mode false positive.
       // https://github.com/facebook/react/issues/29585
-      if (isDraggingRef.current && !isDraggingRef.current.isConnected) {
+      // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
+      if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)) {
         if (typeof state.options.onDragEnd === 'function') {
           let event: DragEndEvent = {
             type: 'dragend',
