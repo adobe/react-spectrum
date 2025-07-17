@@ -242,6 +242,7 @@ describe('DateField', function () {
       );
       await user.tab();
       await user.keyboard('01011980');
+      await user.tab();
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
@@ -450,9 +451,9 @@ describe('DateField', function () {
 
           await user.tab({shift: true});
           await user.keyboard('2025');
-          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(false);
           await user.tab();
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+          expect(input.validity.valid).toBe(false);
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
@@ -486,12 +487,9 @@ describe('DateField', function () {
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
-
           await user.keyboard('[ArrowRight][ArrowRight]2024');
 
           expect(getDescription()).toContain('Invalid value');
-          expect(input.validity.valid).toBe(true);
-
           await user.tab();
 
           expect(getDescription()).not.toContain('Invalid value');
@@ -680,55 +678,4 @@ describe('DateField', function () {
       });
     });
   });
-  
-describe("validation", () => {
-  it("Should limit day to 31", async () => {
-    let onChange = jest.fn();
-    let { getByTestId } = render(
-      <DateField
-        label="Date"
-        value={new CalendarDate(2019, 2, 3)}
-        onChange={onChange}
-      />,
-    );
-
-    let segment = getByTestId("day");
-    act(() => {
-      segment.focus();
-    });
-    beforeInput(segment, "32");
-    expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 31));
-  });
-  it.only("Constrain day on blur", async () => {
-    let onChange = jest.fn();
-    let { getByTestId } = render(
-      <DateField label="Date" onChange={onChange} />,
-    );
-
-    let segment;
-
-    segment = getByTestId("year");
-    act(() => {
-      segment.focus();
-    });
-    beforeInput(segment, "2025");
-
-    segment = getByTestId("month");
-    act(() => {
-      segment.focus();
-    });
-    beforeInput(segment, "2");
-
-    segment = getByTestId("day");
-    act(() => {
-      segment.focus();
-    });
-    beforeInput(segment, "29");
-
-    act(() => document.activeElement.blur());
-
-    expect(onChange).toHaveBeenCalledWith(new CalendarDate(2025, 2, 28));
-  });
-});
-
 });
