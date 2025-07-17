@@ -18,7 +18,8 @@ interface SearchMenuProps {
   currentPage: Page,
   toggleShowSearchMenu: () => void,
   closeSearchMenu: () => void,
-  isSearchOpen: boolean
+  isSearchOpen: boolean,
+  overlayId: string
 }
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
@@ -124,7 +125,7 @@ const getCurrentLibrary = (currentPage: Page) => {
 };
 
 export default function SearchMenu(props: SearchMenuProps) {
-  let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen} = props;
+  let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen, overlayId} = props;
   
   const currentLibrary = getCurrentLibrary(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(currentLibrary);
@@ -302,7 +303,7 @@ export default function SearchMenu(props: SearchMenuProps) {
       })}>
       <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
-        <Dialog className={style({height: 'full'})}>
+        <Dialog id={overlayId} className={style({height: 'full'})}>
           <Tabs
             aria-label="Libraries"
             keyboardActivation="manual"
