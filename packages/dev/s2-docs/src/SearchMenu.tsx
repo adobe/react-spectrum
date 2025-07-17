@@ -24,14 +24,17 @@ interface SearchMenuProps {
 
 interface FakeSearchFieldButtonProps extends Omit<ButtonProps, 'children' | 'className'> {
   onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => void,
-  isSearchOpen: boolean
+  isSearchOpen: boolean,
+  overlayId: string
 }
 
-function FakeSearchFieldButton({onPress, onKeyDown, isSearchOpen, ...props}: FakeSearchFieldButtonProps) {
+function FakeSearchFieldButton({onPress, onKeyDown, isSearchOpen, overlayId, ...props}: FakeSearchFieldButtonProps) {
   return (
     <Button
       {...props}
       aria-label="Open search and menu"
+      aria-expanded={isSearchOpen}
+      aria-controls={isSearchOpen ? overlayId : undefined}
       onPress={onPress}
       onKeyDown={onKeyDown}
       className={({isHovered, isFocusVisible}) => style({
@@ -301,7 +304,7 @@ export default function SearchMenu(props: SearchMenuProps) {
         alignItems: 'center',
         gap: 16
       })}>
-      <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} />
+      <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} overlayId={overlayId} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
         <Dialog id={overlayId} className={style({height: 'full'})}>
           <Tabs
