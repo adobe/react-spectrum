@@ -11,12 +11,29 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, TableViewProps, Text} from '../src';
+import {
+  ActionButton,
+  ActionButtonGroup,
+  Cell,
+  Column,
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  MenuItem,
+  MenuSection,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView,
+  TableViewProps,
+  Text
+} from '../src';
 import {categorizeArgTypes} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement, useState} from 'react';
+import {ReactElement, useEffect, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
@@ -1372,3 +1389,59 @@ const ResizableTable = () => {
     }
   }
 };
+
+
+export const Test = {
+  render: () => {
+    return <SWTable />;
+  }
+};
+
+function SWTable() {
+  const [film, setFilm] = useState(undefined);
+
+
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      console.log('load', cursor, film);
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+      let items = [];
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search&film=${film}`, {signal});
+      let json = await res.json();
+      items = json.results.map((element, index) => ({title: element.name}));
+
+      return {
+        items: items,
+        cursor: json.next
+      };
+    }
+  });
+
+  useEffect(() => {
+    list.reload();
+  }, [film]);
+
+  return (
+    <div>
+      <ActionButtonGroup aria-label="group">
+        <ActionButton onPress={() => setFilm(undefined)}>All</ActionButton>
+        <ActionButton onPress={() => setFilm('https://swapi.py4e.com/api/films/1/')}>A New Hope</ActionButton>
+      </ActionButtonGroup>
+      <TableView aria-label="Characters" loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({height: 200, width: 400})}>
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {
+            item => (<Row id={item.title}>
+              <Cell>{item.title}</Cell>
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </div>
+  );
+}
