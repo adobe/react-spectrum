@@ -278,7 +278,15 @@ class NumberParserImpl {
       // Only swap if there's exactly one group separator and it's at the beginning (after removing signs and leading zeros)
       // AND there are no other decimal separators in the string
       if (count === 1 && temp[0] === this.symbols.group && !value.includes(this.symbols.decimal!)) {
-        value = swapCharacters(value, temp[0], this.symbols.decimal!);
+        if (this.options.minimumIntegerDigits > 0) {
+          let index = value.indexOf(temp[0]);
+
+          // Check the ambiguous case where the user is typing 0,001 for 1 because
+          // the minimum integer causes a bunch of leading zeros.
+          if (index < this.options.minimumIntegerDigits) {
+            value = swapCharacters(value, temp[0], this.symbols.decimal!);
+          }
+        }
       }
     }
 

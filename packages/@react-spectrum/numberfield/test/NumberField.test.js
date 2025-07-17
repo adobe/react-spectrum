@@ -2042,7 +2042,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', formatter.format(21));
   });
 
-  it('should maintain original parser and formatted when restoring a previous value', async () => {
+  it('should maintain original parser and formatting when restoring a previous value', async () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
     expect(textField).toHaveAttribute('value', '10');
 
