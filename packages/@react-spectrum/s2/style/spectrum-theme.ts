@@ -795,7 +795,8 @@ export const style = createTheme({
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
-    wordBreak: ['normal', 'break-all', 'keep-all'] as const, // also overflowWrap??
+    wordBreak: ['normal', 'break-all', 'keep-all'] as const,
+    overflowWrap: ['normal', 'anywhere', 'break-word'] as const,
     boxDecorationBreak: ['slice', 'clone'] as const,
 
     // effects
