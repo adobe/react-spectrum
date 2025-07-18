@@ -81,12 +81,7 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, Omit<SingleSelect
 
 export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
   /** The tab items to display. Item keys should match the key of the corresponding `<Item>` within the `<TabPanels>` element. */
-  children: CollectionChildren<T>,
-  /**
-   * When `true`, tab labels will wrap if they exceed the TabList's width. Only supported in vertical orientation with `regular` density. For proper wrapping, set a `minWidth` on TabList.
-   * @default false
-   */
-  wrap?: boolean
+  children: CollectionChildren<T>
 }
 
 export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {

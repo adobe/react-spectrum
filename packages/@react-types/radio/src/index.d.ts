@@ -30,7 +30,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string|null, string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps, FocusEvents {
+export interface RadioGroupProps extends ValueBase<string|null, string>, InputBase, Pick<InputDOMProps, 'name'>, Validation<string | null>, LabelableProps, HelpTextProps, FocusEvents {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
@@ -55,7 +55,7 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaRadioGroupProps extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
   /**
    * The Radio(s) contained within the RadioGroup.
