@@ -200,7 +200,7 @@ describe('NumberParser', function () {
     });
 
     describe('round trips', function () {
-      fc.configureGlobal({numRuns: 200});
+      fc.configureGlobal({numRuns: 2000});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported
       const localesArb = fc.constantFrom(...locales);
@@ -318,7 +318,7 @@ describe('NumberParser', function () {
         const formattedOnce = formatter.format(2.220446049250313e-16);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
-      it('should handle currency', () => {
+      it('should handle currency small numbers', () => {
         let locale = 'ar-AE-u-nu-latn';
         let options = {
           style: 'currency',
@@ -329,7 +329,7 @@ describe('NumberParser', function () {
         const formattedOnce = formatter.format(2.220446049250313e-16);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
-      it('should handle hanidec', () => {
+      it('should handle hanidec small numbers', () => {
         let locale = 'ar-AE-u-nu-hanidec';
         let options = {
           style: 'decimal'
@@ -339,7 +339,7 @@ describe('NumberParser', function () {
         const formattedOnce = formatter.format(2.220446049250313e-16);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
-      it('should handle beng', () => {
+      it('should handle beng with minimum integer digits', () => {
         let locale = 'ar-AE-u-nu-beng';
         let options = {
           style: 'decimal',
@@ -349,6 +349,20 @@ describe('NumberParser', function () {
         const formatter = new Intl.NumberFormat(locale, options);
         const parser = new NumberParser(locale, options);
         const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle percent with minimum integer digits', () => {
+        let locale = 'ar-AE-u-nu-latn';
+        let options = {
+          style: 'percent',
+          minimumIntegerDigits: 4,
+          minimumFractionDigits: 9,
+          maximumSignificantDigits: 1,
+          maximumFractionDigits: undefined
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(0.0095);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
     });
