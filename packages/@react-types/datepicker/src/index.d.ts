@@ -82,7 +82,7 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
    */
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
-export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
+export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, InputDOMProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {
@@ -106,13 +106,7 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePick
   /**
    * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string,
-  /**
-   * The `<form>` element to associate the input with.
-   * The value of this attribute must be the id of a `<form>` in the same document.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
-   */
-  form?: string
+  endName?: string
 }
 
 export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {}
@@ -143,7 +137,7 @@ interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldB
   shouldFlip?: boolean,
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the 
+   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the
    * `createCalendar` function from `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar

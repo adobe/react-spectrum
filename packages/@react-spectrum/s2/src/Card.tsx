@@ -36,7 +36,7 @@ interface CardRenderProps {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
