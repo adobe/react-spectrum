@@ -435,13 +435,22 @@ describe('DateField', function () {
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][Tab][ArrowUp][Tab]');
+          await user.keyboard('[Tab][Tab][ArrowUp]');
+          
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
+          expect(input.validity.valid).toBe(false);
+
+          await user.tab();
 
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
           expect(input.validity.valid).toBe(true);
 
           await user.tab({shift: true});
           await user.keyboard('2025');
+
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
+          expect(input.validity.valid).toBe(true);
+
           await user.tab();
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(input.validity.valid).toBe(false);
@@ -450,7 +459,11 @@ describe('DateField', function () {
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][Tab][ArrowDown][Tab]');
+          await user.keyboard('[Tab][Tab][ArrowDown]');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+          expect(input.validity.valid).toBe(false);
+          await user.tab();
+
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
           expect(input.validity.valid).toBe(true);
         });
