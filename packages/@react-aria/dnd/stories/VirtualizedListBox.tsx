@@ -170,8 +170,10 @@ React.forwardRef(function (props: any, ref) {
   let focusedKey = dropState.target?.type === 'item' ? dropState.target.key : state.selectionManager.focusedKey;
   let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
+  const context = useMemo(() => ({state, dropState}), [dropState, state]);
+
   return (
-    <Context.Provider value={{state, dropState}}>
+    <Context.Provider value={context}>
       <Virtualizer
         {...mergeProps(collectionProps, listBoxProps)}
         ref={domRef}

@@ -11,7 +11,7 @@
  */
 
 import {ModalContext, useSlottedContext} from 'react-aria-components';
-import React, {ReactElement, ReactNode, useState} from 'react';
+import React, {ReactElement, ReactNode, useMemo, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
 export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
@@ -47,14 +47,17 @@ export function DialogContainer(props: DialogContainerProps): ReactNode {
     setLastChild(child);
   }
 
-  let onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      onDismiss();
+  const context = useMemo(() => ({
+    isOpen: !!child,
+    onOpenChange(isOpen: boolean) {
+      if (!isOpen) {
+        onDismiss();
+      }
     }
-  };
+  }), [child, onDismiss]);
 
   return (
-    <ModalContext.Provider value={{isOpen: !!child, onOpenChange}}>
+    <ModalContext.Provider value={context}>
       {lastChild}
     </ModalContext.Provider>
   );

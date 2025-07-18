@@ -81,8 +81,12 @@ export function VisualExampleClient({component, name, importSource, controls, ch
     }
   }, []);
 
+  const context = useMemo(() => ({
+    component, name, importSource, controls, props, setProps
+  }), [component, controls, importSource, name, props]);
+
   return (
-    <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
+    <Context.Provider value={context}>
       <div hidden ref={ref} />
       {children}
     </Context.Provider>
@@ -127,7 +131,7 @@ interface CodeOutputProps {
 export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   let {name, importSource, props, controls} = useContext(Context);
   let searchParams = new URLSearchParams();
-  
+
   let exampleType = useContext(ExampleSwitcherContext);
   if (exampleType) {
     searchParams.set('exampleType', String(exampleType));
@@ -135,8 +139,8 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 
   for (let prop in props) {
     if (
-      props[prop] != null && 
-      controls[prop] != null && 
+      props[prop] != null &&
+      controls[prop] != null &&
       (controls[prop].default == null || props[prop] !== controls[prop].default)
     ) {
       searchParams.set(prop, JSON.stringify(props[prop]));
@@ -214,7 +218,7 @@ function renderChildren(children) {
       let badge = renderElement('NotificationBadge', {value: 12});
       result = <>{result}{result ? '\n  ' : null}{badge}</>;
     }
-    
+
     return result;
   } else if (children?.text) {
     return children.text;
@@ -307,13 +311,13 @@ function renderImports(name: string, importSource: string, props: Props) {
   if (components.length > 1 || props.children?.icon) {
     components.push('Text');
   }
-  
+
   imports.push(renderImport(components.join(', '), importSource));
 
   if (props.children?.icon && !props.children?.avatar) {
     imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));
   }
-  
+
   imports.push('\n\n');
   return imports;
 }
@@ -390,7 +394,7 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
   if (isPicker || length > 18) {
     return (
-      <Picker 
+      <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
         selectedKey={value == null && control.optional && !control.default ? '__none' : value}
@@ -613,14 +617,14 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
         )}
         {(control.slots.avatar || control.slots.badge) &&
           <ToggleButtonGroup density="compact" isJustified>
-            {control.slots.avatar && 
+            {control.slots.avatar &&
               <ToggleButton
                 isSelected={objectValue?.avatar ?? false}
                 onChange={avatar => onChange({...objectValue, avatar})}>
                 Avatar
               </ToggleButton>
             }
-            {control.slots.badge && 
+            {control.slots.badge &&
               <ToggleButton
                 isSelected={objectValue?.badge ?? false}
                 onChange={badge => onChange({...objectValue, badge})}>
@@ -755,7 +759,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
   let updateLocale = locale => {
     let calendar, numberingSystem;
     if (extension === 'calendar') {
-      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]; 
+      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0];
     } else if (extension === 'numberingSystem') {
       numberingSystem = new Intl.NumberFormat(locale).resolvedOptions().numberingSystem;
       if (numberingSystem === 'arabext') {
@@ -889,7 +893,7 @@ function ColorSpaceControl({control, value}) {
           if (props.channel) {
             props.channel = getColorChannels(colorSpace)[0];
           }
-          
+
           delete props.xChannel;
           delete props.yChannel;
           return props;

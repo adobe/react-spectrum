@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, JSX, ReactNode, useContext} from 'react';
+import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 
 export interface PortalProviderProps {
   /** Should return the element where we should portal to. Can clear the context by passing null. */
@@ -29,8 +29,13 @@ export const PortalContext: React.Context<PortalProviderContextValue> = createCo
 export function UNSAFE_PortalProvider(props: PortalProviderProps): JSX.Element {
   let {getContainer} = props;
   let {getContainer: ctxGetContainer} = useUNSAFE_PortalContext();
+
+  const context = useMemo(() => ({
+    getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer
+  }), [ctxGetContainer, getContainer]);
+
   return (
-    <PortalContext.Provider value={{getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer}}>
+    <PortalContext.Provider value={context}>
       {props.children}
     </PortalContext.Provider>
   );

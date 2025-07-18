@@ -24,7 +24,7 @@ import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
@@ -73,27 +73,40 @@ export const Provider = React.forwardRef(function Provider(props: ProviderProps,
     ...otherProps
   } = props;
 
-  // select only the props with values so undefined props don't overwrite prevContext values
-  let currentProps = {
-    version,
-    theme,
-    breakpoints,
-    colorScheme,
-    scale,
-    isQuiet,
-    isEmphasized,
-    isDisabled,
-    isRequired,
-    isReadOnly,
-    validationState
-  };
-
   let matchedBreakpoints = useMatchedBreakpoints(breakpoints!);
-  let filteredProps = {};
-  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
   // Merge options with parent provider
-  let context = Object.assign({}, prevContext, filteredProps);
+  let context = useMemo(() => {
+    // select only the props with values so undefined props don't overwrite prevContext values
+    let currentProps = {
+      version,
+      theme,
+      breakpoints,
+      colorScheme,
+      scale,
+      isQuiet,
+      isEmphasized,
+      isDisabled,
+      isRequired,
+      isReadOnly,
+      validationState
+    };
+    let filteredProps = {};
+    Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
+    return Object.assign({}, prevContext, filteredProps);
+  }, [
+    breakpoints,
+    colorScheme,
+    isDisabled,
+    isEmphasized,
+    isQuiet,
+    isReadOnly,
+    isRequired,
+    prevContext,
+    scale,
+    theme,
+    validationState
+  ]);
 
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;

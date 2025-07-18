@@ -16,7 +16,7 @@ import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {Popover} from '@react-spectrum/overlays';
-import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
+import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
@@ -158,9 +158,13 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     );
   }
 
+  const context = useMemo(() => ({
+    isUnavailable, triggerRef, ...submenuTriggerProps
+  }), [isUnavailable, submenuTriggerProps]);
+
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...submenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={context}>{trigger}</SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
         {submenuTriggerState.isOpen && overlay}
       </SlotProvider>

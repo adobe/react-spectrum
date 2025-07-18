@@ -14,7 +14,7 @@ import {ContextValue, DisclosureGroup, DisclosureGroupProps, SlotProps} from 're
 import {DisclosureContext} from './Disclosure';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
-import React, {createContext, forwardRef} from 'react';
+import React, {createContext, forwardRef, useMemo} from 'react';
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -58,8 +58,13 @@ export const Accordion = forwardRef(function Accordion(props: AccordionProps, re
     density = 'regular',
     isQuiet
   } = props;
+
+  const context = useMemo(() => ({
+    size, isQuiet, density
+  }), [density, isQuiet, size]);
+
   return (
-    <DisclosureContext.Provider value={{size, isQuiet, density}}>
+    <DisclosureContext.Provider value={context}>
       <DisclosureGroup
         {...props}
         ref={domRef}

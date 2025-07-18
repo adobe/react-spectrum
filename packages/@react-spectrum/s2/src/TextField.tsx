@@ -138,6 +138,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
         <FieldGroup size={props.size} styles={fieldGroupCss}>
           <InputContext.Consumer>
             {ctx => (
+              // eslint-disable-next-line react/jsx-no-constructed-context-values
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
                 {children}
               </InputContext.Provider>

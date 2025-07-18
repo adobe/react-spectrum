@@ -14,7 +14,7 @@ import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
+import React, {Fragment, JSX, ReactElement, useEffect, useMemo, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {useIsMobileDevice} from '@react-spectrum/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -57,7 +57,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let onExiting = () => isExiting.current = true;
   let onExited = () => isExiting.current = false;
 
-   
+
   useEffect(() => {
     return () => {
       if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray' && process.env.NODE_ENV !== 'production') {
@@ -184,12 +184,12 @@ interface SpectrumDialogTriggerBase {
 }
 
 function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
-  let context = {
+  let context = useMemo(() => ({
     type,
     onClose: state.close,
     isDismissable,
     ...dialogProps
-  };
+  }), [dialogProps, isDismissable, state.close, type]);
 
   return (
     <Fragment>

@@ -437,28 +437,46 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     mergedProps.tabIndex = undefined;
   }
 
+  const context = useMemo(() => ({
+    state,
+    dragState,
+    dropState,
+    dragAndDropHooks,
+    isTableDraggable,
+    isTableDroppable,
+    layout,
+    onResizeStart,
+    onResize: props.onResize,
+    onResizeEnd,
+    headerRowHovered,
+    isInResizeMode,
+    setIsInResizeMode,
+    isEmpty,
+    onFocusedResizer,
+    headerMenuOpen,
+    setHeaderMenuOpen,
+    renderEmptyState: props.renderEmptyState
+  }), [
+    dragAndDropHooks,
+    dragState,
+    dropState,
+    headerMenuOpen,
+    headerRowHovered,
+    isEmpty,
+    isInResizeMode,
+    isTableDraggable,
+    isTableDroppable,
+    layout,
+    onResizeEnd,
+    onResizeStart,
+    props.onResize,
+    props.renderEmptyState,
+    state
+  ]);
+
   return (
     <TableContext.Provider
-      value={{
-        state,
-        dragState,
-        dropState,
-        dragAndDropHooks,
-        isTableDraggable,
-        isTableDroppable,
-        layout,
-        onResizeStart,
-        onResize: props.onResize,
-        onResizeEnd,
-        headerRowHovered,
-        isInResizeMode,
-        setIsInResizeMode,
-        isEmpty,
-        onFocusedResizer,
-        headerMenuOpen,
-        setHeaderMenuOpen,
-        renderEmptyState: props.renderEmptyState
-      }}>
+      value={context}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1213,8 +1231,12 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: Gr
 
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  const context = useMemo(() => ({
+    dragButtonProps, dragButtonRef, isFocusVisibleWithin
+  }), [dragButtonProps, isFocusVisibleWithin]);
+
   return (
-    <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
+    <TableRowContext.Provider value={context}>
       {isTableDroppable && isFirstRow &&
         <InsertionIndicator
           rowProps={props}

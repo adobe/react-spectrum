@@ -577,9 +577,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   }
   let scale = useScale();
 
+  const context = useMemo(() => ({size}), [size]);
+
   return (
     <>
-      <InternalComboboxContext.Provider value={{size}}>
+      <InternalComboboxContext.Provider value={context}>
         <FieldLabel
           isDisabled={isDisabled}
           isRequired={isRequired}
@@ -606,6 +608,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
+              // eslint-disable-next-line react/jsx-no-constructed-context-values
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
                 <Input aria-describedby={spinnerId} />
               </InputContext.Provider>

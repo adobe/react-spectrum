@@ -17,7 +17,7 @@ import {Checkbox} from './Checkbox';
 import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
-import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps, inertValue} from '@react-aria/utils';
@@ -413,6 +413,16 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
+  const context = useMemo(() => ({
+    size,
+    isQuiet,
+    isCheckboxSelection: false,
+    isHovered: false,
+    isFocusVisible: false,
+    isSelected: false,
+    isPressed: false
+  }), [isQuiet, size]);
+
   let ElementType = useContext(InternalCardViewContext);
   if (ElementType === 'div' || isSkeleton) {
     return (
@@ -424,7 +434,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         ref={domRef}
         className={UNSAFE_className + card({size, density, variant, isCardView: ElementType !== 'div'}, styles)}
         style={UNSAFE_style}>
-        <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isHovered: false, isFocusVisible: false, isSelected: false, isPressed: false}}>
+        <InternalCardContext.Provider value={context}>
           {children}
         </InternalCardContext.Provider>
       </div>
@@ -442,6 +452,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
         <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle', isHovered, isFocusVisible, isSelected, isPressed}}>
           {/* Selection indicator and checkbox move inside the preview for quiet cards */}
           {!isQuiet && <SelectionIndicator />}
@@ -546,10 +557,11 @@ const collectionImage = style({
 
 export const CollectionCardPreview = forwardRef(function CollectionCardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size} = useContext(InternalCardContext)!;
+  const context = useMemo(() => ({styles: collectionImage}), []);
   return (
     <CardPreview {...props} ref={ref}>
       <div className={collection({size})}>
-        <ImageContext.Provider value={{styles: collectionImage}}>
+        <ImageContext.Provider value={context}>
           {props.children}
         </ImageContext.Provider>
       </div>

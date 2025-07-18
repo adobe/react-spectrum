@@ -17,7 +17,7 @@ import {filterDOMProps, useEnterAnimation, useExitAnimation, useLayoutEffect} fr
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
@@ -162,6 +162,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  const context = useMemo(() => ({...arrowProps, placement, ref: arrowRef}), [arrowProps, placement]);
+
   return (
     <div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
@@ -170,7 +172,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
-      <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
+      <OverlayArrowContext.Provider value={context}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
     </div>

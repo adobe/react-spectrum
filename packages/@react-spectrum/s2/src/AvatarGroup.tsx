@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useMemo} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -77,8 +77,12 @@ export const AvatarGroup = forwardRef(function AvatarGroup(props: AvatarGroupPro
     labelElementType: 'span'
   });
 
+  const context = useMemo(() => ({
+    styles: avatar, size, isOverBackground: true
+  }), [size]);
+
   return (
-    <AvatarContext.Provider value={{styles: avatar, size, isOverBackground: true}}>
+    <AvatarContext.Provider value={context}>
       <div
         ref={domRef}
         {...filterDOMProps(otherProps)}

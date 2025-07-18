@@ -12,7 +12,7 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {JSX, ReactElement, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useMemo, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -74,21 +74,23 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     onClose: () => state.close(true)
   });
 
+  const context = useMemo(() => ({
+    state,
+    placement,
+    ref: overlayRef,
+    UNSAFE_style: overlayProps.style,
+    arrowProps,
+    arrowRef: arrowRef,
+    ...tooltipProps
+  }), [arrowProps, overlayProps.style, placement, state, tooltipProps]);
+
   return (
     <FocusableProvider
       {...triggerProps}
       ref={tooltipTriggerRef}>
       {trigger}
       <TooltipContext.Provider
-        value={{
-          state,
-          placement,
-          ref: overlayRef,
-          UNSAFE_style: overlayProps.style,
-          arrowProps,
-          arrowRef: arrowRef,
-          ...tooltipProps
-        }}>
+        value={context}>
         <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
           {tooltip}
         </Overlay>

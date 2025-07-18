@@ -13,7 +13,7 @@
 import {ContextValue, DOMProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
 import {GlobalDOMAttributes} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
 export interface FormProps extends SharedFormProps, DOMProps, GlobalDOMAttributes<HTMLFormElement> {
@@ -35,10 +35,12 @@ export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement
 export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
+  const formContext = useMemo(() => ({...props, validationBehavior}), [props, validationBehavior]);
+  const validationContext = useMemo(() => (validationErrors ?? {}), [validationErrors]);
   return (
     <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
-      <FormContext.Provider value={{...props, validationBehavior}}>
-        <FormValidationContext.Provider value={validationErrors ?? {}}>
+      <FormContext.Provider value={formContext}>
+        <FormValidationContext.Provider value={validationContext}>
           {children}
         </FormValidationContext.Provider>
       </FormContext.Provider>

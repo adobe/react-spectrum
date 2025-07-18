@@ -207,6 +207,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   }, [renderProps.children, clearContexts]);
 
   let style = {...popoverProps.style, ...renderProps.style};
+  const context = useMemo(() => ({...arrowProps, placement, ref: arrowRef}), [arrowProps, placement]);
   let overlay = (
     <div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
@@ -224,7 +225,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
-      <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
+      <OverlayArrowContext.Provider value={context}>
         {children}
       </OverlayArrowContext.Provider>
       <DismissButton onDismiss={state.close} />

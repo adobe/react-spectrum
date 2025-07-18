@@ -29,7 +29,7 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
+import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useMemo, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
@@ -103,8 +103,10 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
   let domRef = useDOMRef(ref);
   let selectionBehavior = selectionStyle === 'highlight' ? 'replace' : 'toggle';
 
+  const context = useMemo(() => ({renderer}), [renderer]);
+
   return (
-    <TreeRendererContext.Provider value={{renderer}}>
+    <TreeRendererContext.Provider value={context}>
       <Tree {...props} {...styleProps} className={renderProps => (UNSAFE_className ?? '') + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>

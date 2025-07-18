@@ -61,9 +61,11 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
     CollectionBranch
   }), [layout]);
 
+  const context = useMemo(() => ({layout, layoutOptions}), [layout, layoutOptions]);
+
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions}}>
+      <LayoutContext.Provider value={context}>
         {children}
       </LayoutContext.Provider>
     </CollectionRendererContext.Provider>

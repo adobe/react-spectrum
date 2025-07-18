@@ -12,7 +12,7 @@
 
 import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, Color, ContextValue, SlotProps} from 'react-aria-components';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
-import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useMemo} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
 import {focusRing, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -55,6 +55,8 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
   } = props;
   let domRef = useDOMRef(ref);
 
+  const context = useMemo(() => ({useWrapper, size, rounding}), [rounding, size]);
+
   return (
     <AriaColorSwatchPicker
       {...otherProps}
@@ -70,7 +72,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
           }
         }
       }, getAllowedOverrides())({density}, props.styles)}>
-      <InternalColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
+      <InternalColorSwatchContext.Provider value={context}>
         {props.children}
       </InternalColorSwatchContext.Provider>
     </AriaColorSwatchPicker>

@@ -14,7 +14,7 @@ import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {RadioContext} from './context';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -39,6 +39,8 @@ export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRa
   let state = useRadioGroupState(props);
   let {radioGroupProps, ...otherProps} = useRadioGroup(props, state);
 
+  const context = useMemo(() => ({isEmphasized, state}), [isEmphasized, state]);
+
   return (
     <Field
       {...props}
@@ -58,10 +60,7 @@ export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRa
           )
         }>
         <RadioContext.Provider
-          value={{
-            isEmphasized,
-            state
-          }}>
+          value={context}>
           {children}
         </RadioContext.Provider>
       </div>

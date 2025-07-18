@@ -15,7 +15,7 @@ import {Button, DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, Dis
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import React, {createContext, forwardRef} from 'react';
+import React, {createContext, forwardRef, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -34,8 +34,13 @@ export const Accordion = /*#__PURE__*/(forwardRef as forwardRefType)(function Ac
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
+
+  const context = useMemo(() => ({
+    isQuiet: props.isQuiet || false}
+  ), [props.isQuiet]);
+
   return (
-    <InternalAccordionContext.Provider value={{isQuiet: props.isQuiet || false}}>
+    <InternalAccordionContext.Provider value={context}>
       <DisclosureGroup
         {...props}
         {...styleProps}
@@ -89,7 +94,7 @@ export const DisclosurePanel = /*#__PURE__*/(forwardRef as forwardRefType)(funct
     <RACDisclosurePanel
       ref={domRef}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'role'>}
-      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)} 
+      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)}
       {...props}>
       {props.children}
     </RACDisclosurePanel>

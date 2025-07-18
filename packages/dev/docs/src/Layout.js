@@ -28,7 +28,7 @@ import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import path from 'path';
-import React from 'react';
+import React, {useMemo} from 'react';
 import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {SlotProvider} from '@react-spectrum/utils';
@@ -515,6 +515,7 @@ function Footer() {
 export const PageContext = React.createContext();
 export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  const context = useMemo(() => ({pages, currentPage}), [currentPage, pages]);
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
@@ -524,7 +525,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
-                <PageContext.Provider value={{pages, currentPage}}>
+                <PageContext.Provider value={context}>
                   <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
                     {children}
                   </SlotProvider>
@@ -609,6 +610,7 @@ export function Time({date}) {
 
 export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  const context = useMemo(() => ({pages, currentPage}), [currentPage, pages]);
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
@@ -617,7 +619,7 @@ export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, c
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
-                <PageContext.Provider value={{pages, currentPage}}>
+                <PageContext.Provider value={context}>
                   <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
                     <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(currentPage.name)})}>
                       <div style={{display: 'flex', alignItems: 'center'}}>

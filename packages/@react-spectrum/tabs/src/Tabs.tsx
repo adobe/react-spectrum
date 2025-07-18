@@ -25,6 +25,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -118,24 +119,38 @@ export const Tabs = React.forwardRef(function Tabs<T extends object>(props: Spec
 
   useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
 
-  let tabPanelProps: HTMLAttributes<HTMLElement> = {
-    'aria-labelledby': undefined
-  };
-
-  // When the tabs are collapsed, the tabPanel should be labelled by the Picker button element.
   let collapsibleTabListId = useId();
-  if (collapsed && orientation !== 'vertical') {
-    tabPanelProps['aria-labelledby'] = collapsibleTabListId;
-  }
+
+  const context = useMemo(() => {
+    let tabPanelProps: HTMLAttributes<HTMLElement> = {
+      'aria-labelledby': undefined
+    };
+
+    // When the tabs are collapsed, the tabPanel should be labelled by the Picker button element.
+    if (collapsed && orientation !== 'vertical') {
+      tabPanelProps['aria-labelledby'] = collapsibleTabListId;
+    }
+
+    return {
+      tabProps: {...props, orientation, density},
+      tabState: {tabListState, setTabListState, selectedTab, collapsed},
+      refs: {tablistRef, wrapperRef},
+      tabPanelProps,
+      tabLineState: tabPositions
+    };
+  }, [
+    collapsed,
+    collapsibleTabListId,
+    density,
+    orientation,
+    props,
+    selectedTab,
+    tabListState,
+    tabPositions
+  ]);
+
   return (
-    <TabContext.Provider
-      value={{
-        tabProps: {...props, orientation, density},
-        tabState: {tabListState, setTabListState, selectedTab, collapsed},
-        refs: {tablistRef, wrapperRef},
-        tabPanelProps,
-        tabLineState: tabPositions
-      }}>
+    <TabContext.Provider value={context}>
       <div
         {...filterDOMProps(otherProps)}
         {...styleProps}

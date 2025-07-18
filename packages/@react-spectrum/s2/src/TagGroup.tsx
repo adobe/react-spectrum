@@ -90,8 +90,11 @@ export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ta
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
+
+  const context = useMemo(() => ({onRemove}), [onRemove]);
+
   return (
-    <InternalTagGroupContext.Provider value={{onRemove}}>
+    <InternalTagGroupContext.Provider value={context}>
       <CollectionBuilder content={<Collection {...props} />}>
         {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
       </CollectionBuilder>
@@ -259,6 +262,8 @@ function TagGroupInner<T>({
     );
   }
 
+  const context = useMemo(() => ({...formContext, size}), [formContext, size]);
+
   return (
     <AriaTagGroup
       {...otherProps}
@@ -291,7 +296,7 @@ function TagGroupInner<T>({
           },
           position: 'relative'
         })({isEmpty})}>
-        <FormContext.Provider value={{...formContext, size}}>
+        <FormContext.Provider value={context}>
           <Provider
             values={[
               [RACTextContext, undefined],

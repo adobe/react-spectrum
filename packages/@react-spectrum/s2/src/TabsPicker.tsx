@@ -48,7 +48,7 @@ import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -314,6 +314,16 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';
+  const iconContext = useMemo(() => ({
+    slots: {
+      icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({})}), styles: icon}
+    }
+  }), []);
+  const textContext = useMemo(() => ({
+    slots: {
+      [DEFAULT_SLOT]: {styles: label({size})}
+    }
+  }), []);
   return (
     <ListBoxItem
       {...props}
@@ -326,16 +336,10 @@ export function PickerItem(props: PickerItemProps): ReactNode {
         return (
           <DefaultProvider
             context={IconContext}
-            value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({})}), styles: icon}
-            }}}>
+            value={iconContext}>
             <DefaultProvider
               context={TextContext}
-              value={{
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({size})}
-                }
-              }}>
+              value={textContext}>
               {!isLink && <CheckmarkIcon size={size} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </DefaultProvider>

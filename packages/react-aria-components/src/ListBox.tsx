@@ -291,11 +291,13 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
+  const context = useMemo(() => ({...headingProps, ref: headingRef}), [headingProps, headingRef]);
+
   return (
     <section
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
-      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+      <HeaderContext.Provider value={context}>
         <CollectionBranch
           collection={state.collection}
           parent={section}

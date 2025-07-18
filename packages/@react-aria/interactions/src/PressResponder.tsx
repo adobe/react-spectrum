@@ -26,7 +26,7 @@ React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<F
   let isRegistered = useRef(false);
   let prevContext = useContext(PressResponderContext);
   ref = useObjectRef(ref || prevContext?.ref);
-  let context = mergeProps(prevContext || {}, {
+  let context = useMemo(() => mergeProps(prevContext || {}, {
     ...props,
     ref,
     register() {
@@ -35,7 +35,7 @@ React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<F
         prevContext.register();
       }
     }
-  });
+  }), [prevContext, props, ref]);
 
   useSyncRef(prevContext, ref);
 

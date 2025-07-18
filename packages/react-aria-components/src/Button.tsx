@@ -31,7 +31,7 @@ import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, useEffect, useMemo, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -137,6 +137,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.onClick;
 
+  const context = useMemo(() => ({id: progressId}), [progressId]);
+
   return (
     <button
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
@@ -154,7 +156,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <ProgressBarContext.Provider value={{id: progressId}}>
+      <ProgressBarContext.Provider value={context}>
         {renderProps.children}
       </ProgressBarContext.Provider>
     </button>

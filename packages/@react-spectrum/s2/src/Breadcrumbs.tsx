@@ -361,8 +361,13 @@ let CollapseContext = createContext<{
 } | null>(null);
 
 function CollapsingCollection({children, containerRef, onAction}) {
+
+  const context = useMemo(() => ({
+    containerRef, onAction
+  }), [containerRef, onAction]);
+
   return (
-    <CollapseContext.Provider value={{containerRef, onAction}}>
+    <CollapseContext.Provider value={context}>
       <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </CollectionRendererContext.Provider>

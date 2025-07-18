@@ -22,7 +22,7 @@ import {
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
+import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useMemo, useState} from 'react';
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -198,16 +198,18 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
     ...triggerProps
   } = props;
 
+  const context = useMemo(() => ({
+    containerPadding: containerPadding,
+    crossOffset: crossOffset,
+    offset: offset,
+    placement: placement,
+    shouldFlip: shouldFlip
+  }), [containerPadding, crossOffset, offset, placement, shouldFlip]);
+
   return (
     <AriaTooltipTrigger {...triggerProps}>
       <InternalTooltipTriggerContext.Provider
-        value={{
-          containerPadding: containerPadding,
-          crossOffset: crossOffset,
-          offset: offset,
-          placement: placement,
-          shouldFlip: shouldFlip
-        }}>
+        value={context}>
         {props.children}
       </InternalTooltipTriggerContext.Provider>
     </AriaTooltipTrigger>

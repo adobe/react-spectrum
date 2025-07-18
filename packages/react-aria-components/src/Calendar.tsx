@@ -30,7 +30,7 @@ import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, us
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -381,8 +381,12 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  const context = useMemo(() => ({
+    headerProps, weekDays, startDate, weeksInMonth
+  }), [headerProps, startDate, weekDays, weeksInMonth]);
+
   return (
-    <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, weeksInMonth}}>
+    <InternalCalendarGridContext.Provider value={context}>
       <table
         {...mergeProps(DOMProps, gridProps)}
         ref={ref}

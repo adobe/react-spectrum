@@ -34,7 +34,7 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
@@ -356,8 +356,10 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     initialPlacement = 'end top' as Placement;
   }
 
+  const context = useMemo(() => ({size, isSubmenu: true, hideLinkOutIcon}), [hideLinkOutIcon, size]);
+
   let content = (
-    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
+    <InternalMenuContext.Provider value={context}>
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
@@ -564,13 +566,15 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     }, {once: true, capture: true});
   };
 
+  const context = useMemo(() => ({
+    align: props.align,
+    direction: props.direction,
+    shouldFlip: props.shouldFlip
+  }), [props.align, props.direction, props.shouldFlip]);
+
   return (
     <InternalMenuTriggerContext.Provider
-      value={{
-        align: props.align,
-        direction: props.direction,
-        shouldFlip: props.shouldFlip
-      }}>
+      value={context}>
       <AriaMenuTrigger {...props}>
         <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
           {props.children}

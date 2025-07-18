@@ -12,7 +12,7 @@
 
 import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
-import React, {JSX, ReactElement, useState} from 'react';
+import React, {JSX, ReactElement, useMemo, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -50,11 +50,11 @@ export function DialogContainer(props: SpectrumDialogContainerProps): JSX.Elemen
     setLastChild(child);
   }
 
-  let context = {
+  let context = useMemo(() => ({
     type,
     onClose: onDismiss,
     isDismissable
-  };
+  }), [isDismissable, onDismiss, type]);
 
   let state = useOverlayTriggerState({
     isOpen: !!child,

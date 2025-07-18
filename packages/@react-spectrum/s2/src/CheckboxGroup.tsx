@@ -16,7 +16,7 @@ import {
   ContextValue
 } from 'react-aria-components';
 import {CheckboxContext} from './Checkbox';
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
@@ -75,6 +75,12 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
   } = props;
   let domRef = useDOMRef(ref);
 
+  const context = useMemo(() => ({
+    ...formContext, size, isRequired: undefined
+  }), [formContext, size]);
+
+  const checkboxContext = useMemo(() => ({isEmphasized}), [isEmphasized]);
+
   return (
     <AriaCheckboxGroup
       {...groupProps}
@@ -120,8 +126,8 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
             columnGap: 16,
             flexWrap: 'wrap'
           })({orientation})}>
-          <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
-            <CheckboxContext.Provider value={{isEmphasized}}>
+          <FormContext.Provider value={context}>
+            <CheckboxContext.Provider value={checkboxContext}>
               {children}
             </CheckboxContext.Provider>
           </FormContext.Provider>

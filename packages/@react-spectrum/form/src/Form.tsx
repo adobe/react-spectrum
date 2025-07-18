@@ -15,7 +15,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormValidationContext} from '@react-stately/form';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
-import React, {useContext} from 'react';
+import React, {useContext, useMemo} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
@@ -68,12 +68,14 @@ export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
-  let ctx = {
+  let ctx = useMemo(() => ({
     labelPosition,
     labelAlign,
     necessityIndicator,
     validationBehavior
-  };
+  }), [labelAlign, labelPosition, necessityIndicator, validationBehavior]);
+
+  const validationContext = useMemo(() => validationErrors || {}, [validationErrors]);
 
   return (
     <form
@@ -100,7 +102,7 @@ export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref
           isReadOnly={isReadOnly}
           isRequired={isRequired}
           validationState={validationState}>
-          <FormValidationContext.Provider value={validationErrors || {}}>
+          <FormValidationContext.Provider value={validationContext}>
             {children}
           </FormValidationContext.Provider>
         </Provider>

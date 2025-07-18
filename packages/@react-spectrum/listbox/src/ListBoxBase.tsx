@@ -106,8 +106,15 @@ export const ListBoxBase = React.forwardRef(function ListBoxBase<T extends objec
   let focusedKey = state.selectionManager.focusedKey;
   let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
+  const context = useMemo(() => ({
+    state,
+    renderEmptyState,
+    shouldFocusOnHover,
+    shouldUseVirtualFocus
+  }), [renderEmptyState, shouldFocusOnHover, shouldUseVirtualFocus, state]);
+
   return (
-    <ListBoxContext.Provider value={{state, renderEmptyState, shouldFocusOnHover, shouldUseVirtualFocus}}>
+    <ListBoxContext.Provider value={context}>
       <FocusScope>
         <Virtualizer
           {...styleProps}

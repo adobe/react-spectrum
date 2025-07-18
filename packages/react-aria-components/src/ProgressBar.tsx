@@ -16,7 +16,7 @@ import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, u
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -76,9 +76,11 @@ export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarPro
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  const context = useMemo(() => ({...labelProps, ref: labelRef, elementType: 'span'}), [labelProps, labelRef]);
+
   return (
     <div {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
-      <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
+      <LabelContext.Provider value={context}>
         {renderProps.children}
       </LabelContext.Provider>
     </div>
