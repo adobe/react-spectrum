@@ -31,7 +31,7 @@ import {
   RangeCalendarStateContext,
   Text
 } from 'react-aria-components';
-import {AriaCalendarGridProps, getEraFormat} from '@react-aria/calendar';
+import {AriaCalendarGridProps} from '@react-aria/calendar';
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   CalendarDate,
@@ -363,11 +363,10 @@ export const CalendarHeading = (): ReactElement => {
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let {visibleRange, timeZone} = calendarStateContext ?? rangeCalendarStateContext ?? {};
-  let era: any = getEraFormat(visibleRange?.start) || getEraFormat(visibleRange?.end);
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era,
+    era: (visibleRange?.start.era ?? visibleRange?.end.era) as 'long' | 'short' | 'narrow' | undefined,
     calendar: visibleRange?.start.calendar.identifier,
     timeZone
   });

@@ -246,7 +246,7 @@ governing permissions and limitations under the License.
   /*
     Allow tab labels to wrap when TabList component has minWidth set.
   */
-  &.spectrum-Tabs--verticalWrap:not(.spectrum-Tabs--compact) .spectrum-Tabs-item {
+  &:not(.spectrum-Tabs--compact) .spectrum-Tabs-item {
     display: flex;
     align-items: center;
     white-space: normal;
