@@ -51,7 +51,6 @@ const selectBoxStyles = style({
   width: {
     default: {
       size: {
-        XS: 100,
         S: 128,
         M: 136,
         L: 160,
@@ -65,7 +64,6 @@ const selectBoxStyles = style({
   height: {
     default: {
       size: {
-        XS: 100,
         S: 128,
         M: 136,
         L: 160,
@@ -88,7 +86,6 @@ const selectBoxStyles = style({
   },
   padding: {
     size: {
-      XS: 12,
       S: 16,
       M: 20,
       L: 24,
@@ -207,11 +204,6 @@ const descriptionText = style({
   lineHeight: 'body'
 });
 
-const checkboxContainer = style({
-  position: 'absolute',
-  top: 16,
-  left: 16
-});
 
 const SelectBoxRenderPropsContext = createContext<{
   isHovered?: boolean,
@@ -257,14 +249,17 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       style={UNSAFE_style}>
       
       {showCheckbox && (
-        <div className={checkboxContainer}>
-          <div style={{pointerEvents: 'none'}}>
-            <Checkbox 
-              isSelected={isSelected}
-              isDisabled={isDisabled}
-              size={size === 'XS' ? 'S' : size}
-              isReadOnly />
-          </div>
+        <div 
+          className={style({
+            position: 'absolute',
+            top: 16,
+            left: 16
+          })}>
+          <Checkbox 
+            isSelected={isSelected}
+            isDisabled={isDisabled}
+            size={size}
+            isReadOnly />
         </div>
       )}
       {orientation === 'horizontal' ? (

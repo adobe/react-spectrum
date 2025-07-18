@@ -1,8 +1,8 @@
+import {act, render, screen, waitFor} from '@testing-library/react';
+import {Button, Text} from '../src';
 import React from 'react';
-import {render, screen, waitFor, act} from '@testing-library/react';
 import {SelectBox} from '../src/SelectBox';
 import {SelectBoxGroup} from '../src/SelectBoxGroup';
-import {Text} from '../src';
 import userEvent from '@testing-library/user-event';
 
 function SingleSelectBox() {
@@ -250,11 +250,9 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-      const grid = screen.getByRole('grid', {name: 'Required test required'});
+      const grid = screen.getByRole('grid', {name: 'Required test'});
       expect(grid).toBeInTheDocument();
-      
       expect(screen.getByText('Required test')).toBeInTheDocument();
-      expect(screen.getByText('*')).toBeInTheDocument();
     });
 
     it('supports error message and validation', () => {
@@ -421,6 +419,46 @@ describe('SelectBoxGroup', () => {
       const hiddenInput = container.querySelector('input[type="hidden"][name="test-field"]');
       expect(hiddenInput).toBeInTheDocument();
       expect(hiddenInput).toHaveValue('option1');
+    });
+
+    it('works with form submission using S2 Button', async () => {
+      const onSubmit = jest.fn();
+      render(
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            const values = formData.getAll('preferences');
+            onSubmit(values);
+          }}>
+          <SelectBoxGroup
+            selectionMode="multiple"
+            onSelectionChange={() => {}}
+            value={['option1', 'option3']}
+            name="preferences"
+            label="User Preferences">
+            <SelectBox value="option1">
+              <Text slot="text">Newsletter</Text>
+            </SelectBox>
+            <SelectBox value="option2">
+              <Text slot="text">Marketing</Text>
+            </SelectBox>
+            <SelectBox value="option3">
+              <Text slot="text">Updates</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+          <Button type="submit" variant="accent">
+            Submit Preferences
+          </Button>
+        </form>
+      );
+
+      const submitButton = screen.getByRole('button', {name: 'Submit Preferences'});
+      expect(submitButton).toBeInTheDocument();
+
+      await userEvent.click(submitButton);
+      
+      expect(onSubmit).toHaveBeenCalledWith(['option1', 'option3']);
     });
   });
 

@@ -17,10 +17,10 @@
 
 import {action} from '@storybook/addon-actions';
 import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
-import {createIcon, SelectBox, SelectBoxGroup, Text} from '../src';
+import {Button, createIcon, SelectBox, SelectBoxGroup, Text} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paperairplane from '../spectrum-illustrations/linear/Paperairplane';
-import React from 'react';
+import React, {useState} from 'react';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilledSVG from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
 import StarSVG from '../s2wf-icons/S2_Icon_Star_20_N.svg';
@@ -29,7 +29,7 @@ const StarIcon = createIcon(StarSVG);
 const StarFilledIcon = createIcon(StarFilledSVG);
 
 const meta: Meta<typeof SelectBoxGroup> = {
-  title: 'SelectBoxGroup (Collection)',
+  title: 'SelectBoxGroup',
   component: SelectBoxGroup,
   parameters: {
     layout: 'centered'
@@ -42,7 +42,7 @@ const meta: Meta<typeof SelectBoxGroup> = {
     },
     size: {
       control: 'select',
-      options: ['XS', 'S', 'M', 'L', 'XL']
+      options: ['S', 'M', 'L', 'XL']
     },
     orientation: {
       control: 'select',
@@ -63,7 +63,7 @@ const meta: Meta<typeof SelectBoxGroup> = {
     numColumns: 2,
     gutterWidth: 'default',
     isRequired: false,
-    isDisabled: false,
+    isDisabled: false
   }
 };
 
@@ -133,15 +133,13 @@ export const MultipleSelection: Story = {
 // Grid Navigation Testing
 export const GridNavigation: Story = {
   args: {
-    label: 'Test Grid Navigation (Use Arrow Keys)',
+    label: 'Test Grid Navigation',
     numColumns: 3
   },
   render: (args) => (
     <div style={{maxWidth: 600}}>
       <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
-        Focus any item (best done by clicking to the left of the group and hitting the tab key) and use arrow keys to navigate:
-        {/* <br />• ↑↓ moves vertically (same column)
-        <br />• ←→ moves horizontally (same row) */}
+        Focus any item (best done by clicking to the side of the group and hitting the tab key) and using arrow keys to navigate:
       </p>
       <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
         <SelectBox value="1">
@@ -164,38 +162,6 @@ export const GridNavigation: Story = {
         </SelectBox>
       </SelectBoxGroup>
     </div>
-  )
-};
-
-// Form Integration
-export const FormIntegration: Story = {
-  args: {
-    label: 'Select your option',
-    name: 'user_preference',
-    isRequired: true
-  },
-  render: (args) => (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        action('Form submitted')(Object.fromEntries(formData));
-      }}>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="option1">
-          <Text slot="text">Option 1</Text>
-        </SelectBox>
-        <SelectBox value="option2">
-          <Text slot="text">Option 2</Text>
-        </SelectBox>
-        <SelectBox value="option3">
-          <Text slot="text">Option 3</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-      <button type="submit" style={{marginTop: 16}}>
-        Submit Form
-      </button>
-    </form>
   )
 };
 
@@ -222,7 +188,7 @@ export const FormValidation: Story = {
 export const SizeVariations: Story = {
   render: () => (
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
-      {(['XS', 'S', 'M', 'L', 'XL'] as const).map((size) => (
+      {(['S', 'M', 'L', 'XL'] as const).map((size) => (
         <SelectBoxGroup
           key={size}
           size={size}
@@ -311,9 +277,8 @@ export const IndividualDisabled: Story = {
   )
 };
 
-// Controlled Mode - Convert to proper component to use React hooks
 function ControlledStory() {
-  const [value, setValue] = React.useState('option2');
+  const [value, setValue] = useState('option2');
 
   return (
     <div>
@@ -346,9 +311,8 @@ export const Controlled: Story = {
   render: () => <ControlledStory />
 };
 
-// Dynamic Icons - Convert to proper component to use React hooks
 function DynamicIconsStory() {
-  const [selectedValues, setSelectedValues] = React.useState<Set<string>>(
+  const [selectedValues, setSelectedValues] = useState<Set<string>>(
     new Set()
   );
 
@@ -379,7 +343,6 @@ export const DynamicIcons: Story = {
   render: () => <DynamicIconsStory />
 };
 
-// Multiple Columns
 export const MultipleColumns: Story = {
   args: {
     label: 'Choose options',
@@ -397,4 +360,56 @@ export const MultipleColumns: Story = {
       </SelectBoxGroup>
     </div>
   )
+};
+
+function FormSubmissionExample() {
+  const [selectedValues, setSelectedValues] = useState<string[]>(['newsletter']);
+  const [submittedData, setSubmittedData] = useState<string[] | null>(null);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const preferences = formData.getAll('preferences') as string[];
+    setSubmittedData(preferences);
+    action('form-submitted')(preferences);
+  };
+
+  return (
+    <div style={{maxWidth: 400}}>
+      <form onSubmit={handleSubmit}>
+        <SelectBoxGroup
+          selectionMode="multiple"
+          value={selectedValues}
+          onSelectionChange={(val) => setSelectedValues(val as string[])}
+          name="preferences"
+          label="Email Preferences"
+          isRequired>
+          <SelectBox value="newsletter">
+            <Text slot="text">Newsletter</Text>
+          </SelectBox>
+          <SelectBox value="marketing">
+            <Text slot="text">Marketing Updates</Text>
+          </SelectBox>
+          <SelectBox value="product">
+            <Text slot="text">Product News</Text>
+          </SelectBox>
+          <SelectBox value="security">
+            <Text slot="text">Security Alerts</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+        
+        <Button type="submit" variant="accent" >
+          Save Preferences
+        </Button>
+      </form>
+      
+      {submittedData && (
+        <Text>Submitted: {submittedData.join(', ')}</Text>
+      )}
+    </div>
+  );
+}
+
+export const FormSubmission: Story = {
+  render: () => <FormSubmissionExample />
 };

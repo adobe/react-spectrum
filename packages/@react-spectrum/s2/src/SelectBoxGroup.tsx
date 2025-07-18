@@ -16,6 +16,7 @@ import {
   Text
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, Selection, SpectrumLabelableProps} from '@react-types/shared';
+import {FieldLabel} from './Field';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useId, useMemo} from 'react';
 import {SelectBoxRenderPropsContext} from './SelectBox';
@@ -52,7 +53,7 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    * The size of the SelectBoxGroup.
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The axis the SelectBox elements should align with.
    * @default 'vertical'
@@ -87,12 +88,16 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
   /**
    * Whether the SelectBoxGroup is in an invalid state.
    */
-  isInvalid?: boolean
+  isInvalid?: boolean,
+  /**
+   * Contextual help text for the SelectBoxGroup.
+   */
+  contextualHelp?: ReactNode
 }
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
   isDisabled?: boolean,
   selectedKeys?: Selection,
@@ -214,6 +219,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   
   let {
     label,
+    contextualHelp,
     children,
     onSelectionChange,
     defaultValue,
@@ -318,10 +324,12 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         isInvalid={hasValidationErrors} />
       
       {label && (
-        <Text slot="label" id={`${gridId}-label`}>
+        <FieldLabel
+          id={`${gridId}-label`}
+          isRequired={isRequired}
+          contextualHelp={contextualHelp}>
           {label}
-          {isRequired && <span aria-label="required"> *</span>}
-        </Text>
+        </FieldLabel>
       )}
       
       <GridList
