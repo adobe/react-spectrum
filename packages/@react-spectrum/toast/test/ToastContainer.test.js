@@ -85,13 +85,18 @@ describe('Toast Provider and Container', function () {
     const domProps = {
       'data-testid': testid
     };
-    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} />);
+    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} actionLabel="Update" />);
     let button = getByRole('button');
 
     expect(queryByTestId(testid)).toBeNull();
     await user.click(button);
     expect(getByTestId(testid)).not.toBeNull();
     expect(queryByText(/Show Default Toast/)).not.toBeNull();
+    let secondaryButton = getByTestId("rsp-Toast-secondaryButton")
+    expect(secondaryButton).toBeDefined();
+    let closeButton = getByTestId("rsp-Toast-closeButton")
+    expect(closeButton).toBeDefined();
+
   });
 
   it('should label icon by variant', async () => {
