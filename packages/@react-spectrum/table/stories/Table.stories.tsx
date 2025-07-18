@@ -2271,7 +2271,7 @@ export const Test = {
 };
 
 function SWTable() {
-  const [film, setFilm] = useState(undefined);
+  const [film, setFilm] = useState<undefined | string>(undefined);
 
   interface Item {
     id: string,
