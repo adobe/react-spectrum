@@ -69,6 +69,8 @@ export interface DateFieldState extends FormValidationState {
   isReadOnly: boolean,
   /** Whether the field is required. */
   isRequired: boolean,
+  /** Whether the field is changed. */
+  isValueChanged: boolean
   /** Increments the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
   increment(type: SegmentType): void,
   /** Decrements the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
@@ -166,6 +168,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
   const isValueConfirmed = useRef(false)
+  const [isValueChanged, setIsValueChanged] = useState(false)
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && !(granularity in v)) {
@@ -244,6 +247,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setPlaceholderDate(value)
     previousValue.current = value
     isValueConfirmed.current = true
+    setIsValueChanged(false)
   }
 
 
@@ -255,6 +259,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
     previousValue.current = value
     isValueConfirmed.current = true
+    setIsValueChanged(false)
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let displayValue = placeholderDate;
@@ -325,6 +330,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     isValueConfirmed.current = false
+    setIsValueChanged(true)
     if (!validSegments[type]) {
       markValid(type);
       let validKeys = Object.keys(validSegments);
@@ -333,7 +339,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         setValue(displayValue);
       }
     } else {
-      setValue(addSegment(displayValue, type, amount, resolvedOptions));
+      updatePlaceholder(addSegment(displayValue, type, amount, resolvedOptions));
     }
   };
 
@@ -369,6 +375,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     isDisabled,
     isReadOnly,
     isRequired,
+    isValueChanged,
     increment(part) {
       adjustSegment(part, 1);
     },
@@ -383,6 +390,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     },
     setSegment(part, v: string | number) {
       isValueConfirmed.current = false
+      setIsValueChanged(true)
       markValid(part);
       updatePlaceholder(setSegment(displayValue, part, v, resolvedOptions));
     },

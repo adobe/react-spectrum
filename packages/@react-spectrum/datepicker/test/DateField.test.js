@@ -20,12 +20,6 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
-function beforeInput(target, key) {
-  // JSDOM doesn't support the beforeinput event
-  let e = new InputEvent('beforeinput', {cancelable: true, data: key, inputType: 'insertText'});
-  fireEvent(target, e);
-}
-
 function render(el) {
   if (el.type === Provider) {
     return render_(el);
@@ -376,6 +370,7 @@ describe('DateField', function () {
       expect(input).toHaveAttribute('name', 'date');
       await user.tab();
       await user.keyboard('{ArrowUp}');
+      await user.keyboard('[Tab][Tab][Tab]');
       expect(getDescription()).toBe('Selected Date: March 3, 2020');
       expect(input).toHaveValue('2020-03-03');
 
@@ -402,7 +397,7 @@ describe('DateField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {getByTestId('form').checkValidity();});630
 
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
@@ -440,14 +435,10 @@ describe('DateField', function () {
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][Tab][ArrowUp]');
-
-          expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
-          expect(input.validity.valid).toBe(true);
-
-          await user.tab();
+          await user.keyboard('[Tab][Tab][ArrowUp][Tab]');
 
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
+          expect(input.validity.valid).toBe(true);
 
           await user.tab({shift: true});
           await user.keyboard('2025');
@@ -459,12 +450,9 @@ describe('DateField', function () {
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][Tab][ArrowDown]');
-          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(true);
-          await user.tab();
-
+          await user.keyboard('[Tab][Tab][ArrowDown][Tab]');
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
+          expect(input.validity.valid).toBe(true);
         });
 
         it('supports validate function', async () => {
@@ -609,10 +597,12 @@ describe('DateField', function () {
           await user.keyboard('232023');
 
           expect(group).toHaveAttribute('aria-describedby');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
 
           await user.tab();
           expect(getDescription()).not.toContain('Constraints not satisfied');
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
         });
       });
 
@@ -630,13 +620,13 @@ describe('DateField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
-          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp][Tab]');
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
-          await user.keyboard('[ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp][Tab]');
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowDown][Tab]');
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
         });
 
@@ -654,7 +644,7 @@ describe('DateField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
 
-          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
           expect(getDescription()).not.toContain('Invalid value');
         });
 
