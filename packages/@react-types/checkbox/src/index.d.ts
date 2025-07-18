@@ -82,7 +82,7 @@ export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isS
   value: string
 }
 
-export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
+export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'>, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
