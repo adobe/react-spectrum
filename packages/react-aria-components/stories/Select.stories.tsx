@@ -33,7 +33,7 @@ export default {
 export type SelectStory = StoryFn<typeof Select>;
 
 export const SelectExample: SelectStory = () => (
-  <Select data-testid="select-example" id="select-example-id" style={{position: 'relative'}}>
+  <Select data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -54,7 +54,7 @@ export const SelectExample: SelectStory = () => (
 );
 
 export const SelectRenderProps: SelectStory = () => (
-  <Select data-testid="select-render-props" style={{position: 'relative'}}>
+  <Select data-testid="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -144,7 +144,7 @@ const usStateOptions = [
 ];
 
 export const SelectManyItems: SelectStory = () => (
-  <Select style={{position: 'relative'}}>
+  <Select>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -162,7 +162,7 @@ export const SelectManyItems: SelectStory = () => (
 );
 
 export const VirtualizedSelect: SelectStory = () => (
-  <Select style={{position: 'relative'}}>
+  <Select>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -215,9 +215,9 @@ function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JS
   });
 
   return (
-    <Select style={{position: 'relative'}}>
+    <Select>
       <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
-      <Button style={{position: 'relative'}}>
+      <Button>
         <SelectValue />
         {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
         <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
@@ -312,3 +312,103 @@ export const RequiredSelectWithManyItems = (props) => (
     <Button type="submit">Submit</Button>
   </form>
 );
+
+export const SelectScrollBug = () => {
+  return (
+    <div style={{display: 'flex', flexDirection: 'row', height: '100vh'}}>
+      <div style={{flex: 3}}>
+        Scrolling here should do nothing.
+      </div>
+
+      <div style={{flex: 1, overflowY: 'auto'}}>
+        Scrolling here should scroll the right side.
+        <br />
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        <Select>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+            <span aria-hidden="true">▼</span>
+          </Button>
+          <Popover>
+            <ListBox>
+              <MyListBoxItem>Cat</MyListBoxItem>
+              <MyListBoxItem>Dog</MyListBoxItem>
+              <MyListBoxItem>Kangaroo</MyListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      </div>
+    </div>
+  );
+};
