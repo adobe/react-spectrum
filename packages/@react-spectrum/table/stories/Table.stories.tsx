@@ -33,7 +33,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {JSX, useCallback, useEffect, useState} from 'react';
+import React, {JSX, useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -2262,61 +2262,3 @@ export const AsyncLoadOverflowWrapReproStory: TableStory = {
 };
 
 export {Performance} from './Performance';
-
-
-export const Test = {
-  render: () => {
-    return <SWTable />;
-  }
-};
-
-function SWTable() {
-  const [film, setFilm] = useState(undefined);
-
-  interface Item {
-    id: string,
-    title: string
-  }
-
-  let list = useAsyncList<Item>({
-    async load({signal, cursor}) {
-      console.log('load', cursor, film);
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
-      }
-      let items = [];
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search&film=${film}`, {signal});
-      let json = await res.json();
-      items = json.results.map((element) => ({title: element.name}));
-
-      return {
-        items: items,
-        cursor: json.next
-      };
-    }
-  });
-
-  useEffect(() => {
-    list.reload();
-  }, [film]);
-
-  return (
-    <div>
-      <ActionButton onPress={() => setFilm(undefined)}>All</ActionButton>
-      <ActionButton onPress={() => setFilm('https://swapi.py4e.com/api/films/1/')}>A New Hope</ActionButton>
-      <TableView aria-label="Characters"  height={200} width={400}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-        </TableHeader>
-        <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
-          {
-            item => (<Row key={item.title}>
-              <Cell>{item.title}</Cell>
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    </div>
-  );
-}
