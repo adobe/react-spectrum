@@ -363,10 +363,11 @@ export const CalendarHeading = (): ReactElement => {
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let {visibleRange, timeZone} = calendarStateContext ?? rangeCalendarStateContext ?? {};
+  let currentMonth = visibleRange?.start ?? visibleRange?.end;
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: (visibleRange?.start.era ?? visibleRange?.end.era) as 'long' | 'short' | 'narrow' | undefined,
+    era: currentMonth && currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
     calendar: visibleRange?.start.calendar.identifier,
     timeZone
   });
