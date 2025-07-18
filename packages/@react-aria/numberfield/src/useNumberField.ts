@@ -90,8 +90,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     commitValidation
   } = state;
 
-  console.log(numberValue, inputValue)
-
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
 
   let inputId = useId(id);

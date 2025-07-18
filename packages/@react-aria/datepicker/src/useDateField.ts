@@ -81,10 +81,10 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     },
     onBlurWithin: (e) => {
       state.confirmPlaceholder();
-      props.onBlur?.(e);
-       if (state.isValueChanged) {
+      if (state.isValueChanged) {
         state.commitValidation();
       };
+      props.onBlur?.(e);
     },
     onFocusWithinChange: props.onFocusChange
   });

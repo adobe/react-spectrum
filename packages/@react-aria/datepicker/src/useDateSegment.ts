@@ -275,8 +275,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     selection?.collapse(ref.current);
   };
 
-
-
   let documentRef = useRef(typeof document !== 'undefined' ? document : null);
   useEvent(documentRef, 'selectionchange', () => {
     // Enforce that the selection is collapsed when inside a date segment.

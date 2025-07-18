@@ -397,7 +397,7 @@ describe('DateField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});630
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
