@@ -2,5 +2,6 @@
   "clear": "Vymazať",
   "invalid": "(neplatné)",
   "loading": "Načítava sa...",
-  "noResults": "Žiadne výsledky"
+  "noResults": "Žiadne výsledky",
+  "valid": "(platné)"
 }

@@ -2,5 +2,6 @@
   "clear": "クリア",
   "invalid": "(無効)",
   "loading": "読み込み中...",
-  "noResults": "結果なし"
+  "noResults": "結果なし",
+  "valid": "(valid)"
 }
