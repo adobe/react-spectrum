@@ -370,7 +370,7 @@ describe('DateField', function () {
       expect(input).toHaveAttribute('name', 'date');
       await user.tab();
       await user.keyboard('{ArrowUp}');
-      await user.keyboard('[Tab][Tab][Tab]');
+      await user.tab({shift: true});
       expect(getDescription()).toBe('Selected Date: March 3, 2020');
       expect(input).toHaveValue('2020-03-03');
 
@@ -491,6 +491,8 @@ describe('DateField', function () {
           await user.keyboard('[ArrowRight][ArrowRight]2024');
 
           expect(getDescription()).toContain('Invalid value');
+          expect(input.validity.valid).toBe(false);
+          
           await user.tab();
 
           expect(getDescription()).not.toContain('Invalid value');
