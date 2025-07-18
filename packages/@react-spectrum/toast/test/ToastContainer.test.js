@@ -92,9 +92,9 @@ describe('Toast Provider and Container', function () {
     await user.click(button);
     expect(getByTestId(testid)).not.toBeNull();
     expect(queryByText(/Show Default Toast/)).not.toBeNull();
-    let secondaryButton = getByTestId("rsp-Toast-secondaryButton")
+    let secondaryButton = getByTestId('rsp-Toast-secondaryButton');
     expect(secondaryButton).toBeDefined();
-    let closeButton = getByTestId("rsp-Toast-closeButton")
+    let closeButton = getByTestId('rsp-Toast-closeButton');
     expect(closeButton).toBeDefined();
 
   });
