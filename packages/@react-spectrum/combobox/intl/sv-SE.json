@@ -2,5 +2,6 @@
   "clear": "Rensa",
   "invalid": "(ogiltigt)",
   "loading": "Läser in...",
-  "noResults": "Inga resultat"
+  "noResults": "Inga resultat",
+  "valid": "(valid)"
 }

@@ -2,5 +2,6 @@
   "clear": "Tøm",
   "invalid": "(ugyldig)",
   "loading": "Laster inn ...",
-  "noResults": "Ingen resultater"
+  "noResults": "Ingen resultater",
+  "valid": "(valid)"
 }
