@@ -69,4 +69,4 @@ export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLa
 }
 
 export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps, PressEvents {}
-export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}
+export interface SpectrumRadioProps extends Omit<AriaRadioProps, 'onClick'>, StyleProps {}

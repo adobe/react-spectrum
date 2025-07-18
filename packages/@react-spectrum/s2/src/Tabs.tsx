@@ -59,7 +59,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
