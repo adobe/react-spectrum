@@ -51,6 +51,7 @@ export const ToggleButton = React.forwardRef(function ToggleButton(props: Spectr
       <button
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
+        type="button"
         ref={domRef}
         className={
           classNames(
