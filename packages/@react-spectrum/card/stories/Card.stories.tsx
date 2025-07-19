@@ -20,7 +20,7 @@ import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, StoryObj} from '@storybook/react';
-import React, {Dispatch, SetStateAction, useState} from 'react';
+import React, {Dispatch, SetStateAction, useMemo, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
 import {usePress} from '@react-aria/interactions';
 import {useProvider} from '@react-spectrum/provider';
@@ -401,9 +401,10 @@ let SelectableCard = (props: SpectrumCardProps) => {
       isSelected: () => !prev.selectionManager.isSelected()
     }
   }))});
+  const context = useMemo(() => ({state}), [state]);
   return (
     <div style={{width: '208px'}} {...pressProps}>
-      <CardViewContext.Provider value={{state}}>
+      <CardViewContext.Provider value={context}>
         <CardBase {...props} />
       </CardViewContext.Provider>
     </div>

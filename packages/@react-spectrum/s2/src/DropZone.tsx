@@ -108,6 +108,7 @@ export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZo
       className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)}>
       {renderProps => (
         <>
+          {/* eslint-disable-next-line react/jsx-no-constructed-context-values */}
           <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size}}>
             {props.children}
           </IllustratedMessageContext.Provider>

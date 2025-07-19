@@ -109,8 +109,13 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
   let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
+
+  const context = useMemo(() => ({
+    state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState
+  }), [cardOrientation, cardViewLayout, isQuiet, renderEmptyState, state]);
+
   return (
-    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState}}>
+    <CardViewContext.Provider value={context}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

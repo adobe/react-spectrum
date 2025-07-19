@@ -211,6 +211,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   })({size, isStepperHidden: hideStepper})}>
                   <InputContext.Consumer>
                     {ctx => (
+                      // eslint-disable-next-line react/jsx-no-constructed-context-values
                       <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
                         <Input />
                       </InputContext.Provider>

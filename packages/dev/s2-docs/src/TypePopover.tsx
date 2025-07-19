@@ -2,7 +2,7 @@
 
 import {Breadcrumb, Breadcrumbs, DialogTrigger, Popover} from '@react-spectrum/s2';
 import {ColorLink} from './Link';
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+import React, {createContext, ReactNode, useContext, useMemo, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface TypeLinkContextValue {
@@ -18,18 +18,21 @@ export function TypePopover({name, children}: {name: string, children: ReactNode
   let [breadcrumbs, setBreadcrumbs] = useState([{id: 0, name, children}]);
   let ctx = useContext(TypeLinkContext);
 
+  const context = useMemo(() => ({
+    push(name: string, children: ReactNode) {
+      setBreadcrumbs(breadcrumbs => [...breadcrumbs, {id: breadcrumbs.length, name, children}]);
+    }
+  }), []);
+
   // If already inside a parent TypeLink, push onto the stack within the same popover.
   if (ctx) {
     return (
       <ColorLink onPress={() => ctx.push(name, children)}>{name}</ColorLink>
     );
   }
-  
+
   // Otherwise render the root popover with breadcrumbs for the stack of visited links.
   let cur = breadcrumbs.at(-1)!;
-  let push = (name: string, children: ReactNode) => {
-    setBreadcrumbs(breadcrumbs => [...breadcrumbs, {id: breadcrumbs.length, name, children}]);
-  };
 
   return (
     <DialogTrigger>
@@ -42,7 +45,7 @@ export function TypePopover({name, children}: {name: string, children: ReactNode
             styles={style({marginBottom: 16})}>
             {breadcrumbs.map(item => <Breadcrumb key={item.id} id={item.id}>{item.name}</Breadcrumb>)}
           </Breadcrumbs>
-          <TypeLinkContext.Provider value={{push}}>
+          <TypeLinkContext.Provider value={context}>
             {cur.children}
           </TypeLinkContext.Provider>
         </div>

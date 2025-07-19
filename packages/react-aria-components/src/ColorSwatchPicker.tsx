@@ -88,6 +88,8 @@ export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(p
     return v;
   };
 
+  const context = useMemo(() => ({color}), [color]);
+
   return (
     <ListBoxItem
       {...props}
@@ -97,7 +99,7 @@ export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(p
       className={wrap(props.className || 'react-aria-ColorSwatchPickerItem')}
       style={wrap(props.style)}>
       {composeRenderProps(wrap(props.children), children => (
-        <ColorSwatchContext.Provider value={{color}}>
+        <ColorSwatchContext.Provider value={context}>
           {children}
         </ColorSwatchContext.Provider>
       ))}

@@ -155,9 +155,14 @@ function ImageCoordinatorRoot(props: ImageCoordinatorProps) {
   }, [loadStartTime, loadedAll, timeout]);
 
   let revealAll = loadedAll || timedOut;
+
+  const context = useMemo(() => ({
+    revealAll, register, unregister, load
+  }), [load, register, revealAll, unregister]);
+
   return useMemo(() => (
-    <group.Provider value={{revealAll, register, unregister, load}}>
+    <group.Provider value={context}>
       {children}
     </group.Provider>
-  ), [group, children, revealAll, register, unregister, load]);
+  ), [children, context, group]);
 }

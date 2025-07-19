@@ -1,4 +1,4 @@
-import React, {ReactNode, useContext, useEffect, useState} from 'react';
+import React, {ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 interface Breakpoints {
@@ -25,9 +25,10 @@ export function BreakpointProvider(props: BreakpointProviderProps): ReactNode {
     children,
     matchedBreakpoints
   } = props;
+  const context = useMemo(() => ({matchedBreakpoints}), [matchedBreakpoints]);
   return (
     <Context.Provider
-      value={{matchedBreakpoints}} >
+      value={context} >
       {children}
     </Context.Provider>
   );

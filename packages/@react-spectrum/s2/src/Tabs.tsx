@@ -667,6 +667,8 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   let menuId = useId();
   let valueId = useId();
 
+  const hideContext = useMemo(() => ({showTabs: false, menuId, valueId}), [menuId, valueId]);
+
   let contents: ReactNode;
   if (showItems) {
     contents = (
@@ -686,19 +688,21 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
           onSelectionChange={onSelectionChange}
           aria-label={props['aria-label']}
           aria-describedby={props['aria-labelledby']} />
-        <CollapseContext.Provider value={{showTabs: false, menuId, valueId}}>
+        <CollapseContext.Provider value={hideContext}>
           {props.children}
         </CollapseContext.Provider>
       </>
     );
   }
 
+  const showContext = useMemo(() => ({showTabs: true, menuId, valueId}), [menuId, valueId]);
+
   return (
     <div style={props.UNSAFE_style} className={(props.UNSAFE_className || '') + tabs({orientation}, props.styles)} ref={containerRef}>
       <div className={tablist({orientation, labelBehavior, density})}>
         <HiddenTabs items={children} density={density} listRef={listRef} />
       </div>
-      <CollapseContext.Provider value={{showTabs: true, menuId, valueId}}>
+      <CollapseContext.Provider value={showContext}>
         {contents}
       </CollapseContext.Provider>
     </div>
