@@ -12,7 +12,7 @@
 
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, useMemo} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RefObject} from '@react-types/shared';
@@ -116,7 +116,12 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormValidation({validationBehavior}, state, ref);
 
   return {
-    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
+    labelProps: mergeProps(
+      labelProps,
+      useMemo(() => ({
+        onClick: e => e.preventDefault(),
+        onMouseDown: e => e.preventDefault()
+      }), [])),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
