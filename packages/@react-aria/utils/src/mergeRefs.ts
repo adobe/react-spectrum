@@ -20,7 +20,7 @@ export function mergeRefs<T>(...refs: Array<Ref<T> | MutableRefObject<T> | null 
     return refs[0];
   }
 
-  return (value: T | null) => {
+  let callbackRef = (value: T | null) => {
     let hasCleanup = false;
 
     const cleanups = refs.map(ref => {
@@ -41,6 +41,8 @@ export function mergeRefs<T>(...refs: Array<Ref<T> | MutableRefObject<T> | null 
       };
     }
   };
+
+  return Object.assign(callbackRef, ...refs.filter(Boolean));
 }
 
 function setRef<T>(ref: Ref<T> | MutableRefObject<T> | null | undefined, value: T) {

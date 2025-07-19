@@ -100,7 +100,7 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   }
 
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
       {collection => <StandaloneListBox props={props} listBoxRef={ref} collection={collection} />}
     </CollectionBuilder>
   );
