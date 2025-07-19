@@ -57,6 +57,7 @@ React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
 interface ScrollViewAria {
+  isScrolling: boolean,
   scrollViewProps: HTMLAttributes<HTMLElement>,
   contentProps: HTMLAttributes<HTMLElement>
 }
@@ -84,6 +85,16 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
+
+  let onScrollTimeout = useCallback(() => {
+    state.isScrolling = false;
+    setScrolling(false);
+    state.scrollTimeout = null;
+
+    window.dispatchEvent(new Event('tk.connect-observer'));
+    onScrollEnd?.();
+  }, [state, onScrollEnd]);
+
   let onScroll = useCallback((e) => {
     if (e.target !== e.currentTarget) {
       return;
@@ -117,30 +128,21 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // keep track of the current timeout time and only reschedule
       // the timer when it is getting close.
       let now = Date.now();
-      if (state.scrollEndTime <= now + 50) {
+      if (!('onscrollend' in window) && state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
         if (state.scrollTimeout != null) {
           clearTimeout(state.scrollTimeout);
         }
 
-        state.scrollTimeout = setTimeout(() => {
-          state.isScrolling = false;
-          setScrolling(false);
-          state.scrollTimeout = null;
-
-          window.dispatchEvent(new Event('tk.connect-observer'));
-          if (onScrollEnd) {
-            onScrollEnd();
-          }
-        }, 300);
+        state.scrollTimeout = setTimeout(onScrollTimeout, 300);
       }
     });
-  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollTimeout]);
 
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
-
+  useEvent(ref, 'scrollend', onScrollTimeout);
 
   useEffect(() => {
     return () => {
@@ -265,6 +267,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   };
 
   return {
+    isScrolling,
     scrollViewProps: {
       ...otherProps,
       style
