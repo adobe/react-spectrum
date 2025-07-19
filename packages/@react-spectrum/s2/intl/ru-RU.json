@@ -1,11 +1,13 @@
 {
   "actionbar.actions": "Действия",
-  "actionbar.actionsAvailable": "Возможно выполнение действий.",
+  "actionbar.actionsAvailable": "Действия доступны.",
   "actionbar.clearSelection": "Очистить выбор",
   "actionbar.selected": "Выбрано: {count}",
   "actionbar.selectedAll": "Выбрано все",
+  "breadcrumbs.more": "Дополнительные элементы",
   "button.pending": "в ожидании",
   "calendar.invalidSelection": "Выбранные {selectedCount, plural, one {дата} other {даты}} недоступны.",
+  "combobox.noResults": "Результаты отсутствуют",
   "contextualhelp.help": "Справка",
   "contextualhelp.info": "Информация",
   "datepicker.endTime": "Время окончания",
@@ -21,6 +23,8 @@
   "label.(optional)": "(дополнительно)",
   "label.(required)": "(обязательно)",
   "menu.moreActions": "Дополнительные действия",
+  "notificationbadge.indicatorOnly": "Новая активность",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Выбрать…",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
@@ -33,11 +37,7 @@
   "tag.hideButtonLabel": "Показать меньше",
   "tag.noTags": "Нет",
   "tag.showAllButtonLabel": "Показать все ({tagCount, number})",
-  "breadcrumbs.more": "Дополнительные элементы",
-  "combobox.noResults": "Результаты отсутствуют",
-  "notificationbadge.indicatorOnly": "Новая активность",
-  "notificationbadge.plus": "{notifications}+",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Очистить все",
+  "toast.collapse": "Свернуть",
+  "toast.showAll": "Показать все"
 }

@@ -2,5 +2,6 @@
   "clear": "נקי",
   "invalid": "(לא חוקי)",
   "loading": "טוען...",
-  "noResults": "אין תוצאות"
+  "noResults": "אין תוצאות",
+  "valid": "(תָקֵף)"
 }

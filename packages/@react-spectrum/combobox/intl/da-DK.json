@@ -2,5 +2,6 @@
   "clear": "Ryd",
   "invalid": "(ugyldig)",
   "loading": "Indlæser ...",
-  "noResults": "Ingen resultater"
+  "noResults": "Ingen resultater",
+  "valid": "(gyldig)"
 }
