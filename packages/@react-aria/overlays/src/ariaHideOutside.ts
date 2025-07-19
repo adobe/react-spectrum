@@ -143,13 +143,6 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
       if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
-        for (let node of change.removedNodes) {
-          if (node instanceof Element) {
-            visibleNodes.delete(node);
-            hiddenNodes.delete(node);
-          }
-        }
-
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&
