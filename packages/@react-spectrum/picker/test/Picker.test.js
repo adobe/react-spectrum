@@ -1169,7 +1169,7 @@ describe('Picker', function () {
     it('supports controlled selection', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <Picker label="Test" selectedKey="two" onSelectionChange={onSelectionChange}>
+          <Picker label="Test" selectedKey="two" name="test" onSelectionChange={onSelectionChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -1178,7 +1178,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
+      let input = document.querySelector('select[name=test]');
       expect(picker).toHaveTextContent('Two');
+      expect(input).toHaveValue('two');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1208,6 +1210,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
+      expect(input).toHaveValue('two');
     });
 
     it('supports default selection', async function () {
@@ -2016,7 +2019,6 @@ describe('Picker', function () {
       expect(input).toHaveValue('one');
     });
 
-
     it('should support form prop', () => {
       render(
         <Provider theme={theme}>
@@ -2063,6 +2065,31 @@ describe('Picker', function () {
         expect(input).toHaveValue('two');
       });
     }
+
+    it('onChange event bubbles to form', async function () {
+      let onChange = jest.fn();
+      let {getByTestId, getByRole} = render(
+        <Provider theme={theme}>
+          <form onChange={onChange}>
+            <Picker name="picker" data-testid="picker" label="Test">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </form>
+        </Provider>
+      );
+      let picker = getByTestId('picker');
+      await user.click(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      await user.click(items[1]);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange.mock.lastCall[0].target.value).toBe('two');
+    });
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {

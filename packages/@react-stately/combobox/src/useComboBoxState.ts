@@ -17,10 +17,10 @@ import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useControlledState} from '@react-stately/utils';
+import {useControlledState, useStateEvent} from '@react-stately/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
+export interface ComboBoxState<T> extends Omit<SelectState<T>, 'onSelectionChange'>, FormValidationState{
   /** The current value of the combo box input. */
   inputValue: string,
   /** The default value of the combo box input. */
@@ -36,7 +36,9 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Resets the input value to the previously selected item's text if any and closes the menu.  */
-  revert(): void
+  revert(): void,
+  /** Registers a function that is called when the input value changes. */
+  onInputChange(fn: (value: string) => void): () => void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -61,7 +63,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     menuTrigger = 'input',
     allowsEmptyCollection = false,
     allowsCustomValue,
-    shouldCloseOnBlur = true
+    shouldCloseOnBlur = true,
+    onInputChange
   } = props;
 
   let [showAllItems, setShowAllItems] = useState(false);
@@ -93,10 +96,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     items: props.items ?? props.defaultItems
   });
 
+  let [subscribe, emitInputChange] = useStateEvent<[string]>();
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
     getDefaultInputValue(props.defaultInputValue, selectedKey, collection) || '',
-    props.onInputChange
+    useCallback(value => {
+      emitInputChange(value);
+      onInputChange?.(value);
+    }, [onInputChange, emitInputChange])
   );
   let [initialSelectedKey] = useState(selectedKey);
   let [initialValue] = useState(inputValue);
@@ -342,7 +349,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
 
       if (inputValue !== valueOnFocus.current) {
-        validation.commitValidation();
+        // validation.commitValidation();
       }
     }
 
@@ -383,7 +390,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     defaultInputValue: getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ?? initialValue,
     setInputValue,
     commit,
-    revert
+    revert,
+    onInputChange: subscribe
   };
 }
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {clamp, snapValueToStep, useControlledState, useStateEvent} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 import {useCallback, useMemo, useRef, useState} from 'react';
@@ -146,7 +146,12 @@ export interface SliderState {
   readonly orientation: Orientation,
 
   /** Whether the slider is disabled. */
-  readonly isDisabled: boolean
+  readonly isDisabled: boolean,
+
+  /** Registers a function that is called when a thumb value changes. */
+  onChange(fn: (index: number, value: number) => void): () => void,
+  /** Registers a function that is called when a thumb value ends dragging. */
+  onChangeEnd(fn: (index: number, value: number) => void): () => void
 }
 
 const DEFAULT_MIN_VALUE = 0;
@@ -188,6 +193,8 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
   let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value, restrictValues]);
   let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue])!, [props.defaultValue, minValue, restrictValues]);
+  let [subscribeOnChange, emitOnChange] = useStateEvent<[number, number]>();
+  let [subscribeOnChangeEnd, emitOnChangeEnd] = useStateEvent<[number, number]>();
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
@@ -244,6 +251,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     value = snapValueToStep(value, thisMin, thisMax, step);
     let newValues = replaceIndex(valuesRef.current, index, value);
     setValues(newValues);
+    emitOnChange(index, value);
   }
 
   function updateDragging(index: number, dragging: boolean) {
@@ -257,6 +265,9 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     const wasDragging = isDraggingsRef.current[index];
     isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
     setDraggings(isDraggingsRef.current);
+    if (wasDragging) {
+      emitOnChangeEnd(index, valuesRef.current[index]);
+    }
 
     // Call onChangeEnd if no handles are dragging.
     if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
@@ -315,7 +326,9 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     step,
     pageSize,
     orientation,
-    isDisabled
+    isDisabled,
+    onChange: subscribeOnChange,
+    onChangeEnd: subscribeOnChangeEnd
   };
 }
 

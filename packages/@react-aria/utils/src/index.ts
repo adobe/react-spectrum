@@ -51,5 +51,6 @@ export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
+export {useInputEvent} from './useInputEvent';
 
 export type {LoadMoreSentinelProps} from './useLoadMoreSentinel';

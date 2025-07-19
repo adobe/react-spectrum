@@ -14,7 +14,7 @@ import {FocusableElement, RefObject} from '@react-types/shared';
 import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
-import {useFormReset} from '@react-aria/utils';
+import {useFormReset, useInputEvent} from '@react-aria/utils';
 import {useFormValidation} from '@react-aria/form';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -89,8 +89,14 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
     focus: () => triggerRef.current?.focus()
   }, state, props.selectRef);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement> | React.FormEvent<HTMLSelectElement>) => state.setSelectedKey(e.currentTarget.value), [state.setSelectedKey]);
+  useInputEvent(props.selectRef!, state.onSelectionChange);
+
+  let setSelectedKey = state.setSelectedKey;
+  let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement> | React.FormEvent<HTMLSelectElement>) => {
+    if (!e.nativeEvent['__reactAriaIgnore']) {
+      setSelectedKey(e.currentTarget.value);
+    }
+  }, [setSelectedKey]);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers

@@ -8237,6 +8237,7 @@ __metadata:
     "@react-stately/form": "npm:^3.1.5"
     "@react-stately/list": "npm:^3.12.3"
     "@react-stately/overlays": "npm:^3.6.17"
+    "@react-stately/utils": "npm:^3.10.7"
     "@react-types/select": "npm:^3.9.13"
     "@react-types/shared": "npm:^3.30.0"
     "@swc/helpers": "npm:^0.5.0"

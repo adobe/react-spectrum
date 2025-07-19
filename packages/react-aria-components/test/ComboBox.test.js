@@ -259,13 +259,12 @@ describe('ComboBox', () => {
     });
     await user.keyboard('C');
 
-    let options = comboboxTester.options();
-    await user.click(options[0]);
-
     expect(combobox).toHaveAttribute('aria-describedby');
     expect(combobox.validity.valid).toBe(true);
 
-    await user.tab();
+    let options = comboboxTester.options();
+    await user.click(options[0]);
+
     expect(combobox).not.toHaveAttribute('aria-describedby');
     expect(combobox).not.toHaveAttribute('data-invalid');
   });
@@ -383,5 +382,35 @@ describe('ComboBox', () => {
     let {getByRole} = render(<TestComboBox form="test" />);
     let input = getByRole('combobox');
     expect(input).toHaveAttribute('form', 'test');
+  });
+
+  it('should emit onChange event when selecting an item', async () => {
+    let onChange = jest.fn();
+    let onInput = jest.fn();
+    let onChangeNative = jest.fn();
+    let ref = React.createRef();
+
+    render(
+      <form onInput={onInput} onChange={onChange} ref={ref}>
+        <TestComboBox name="test" defaultInputValue="" />
+      </form>
+    );
+
+    ref.current.addEventListener('change', onChangeNative);
+
+    await user.tab();
+    await user.keyboard('Ca');
+    
+    expect(onInput).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChangeNative).toHaveBeenCalledTimes(0);
+
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onInput).toHaveBeenCalledTimes(3);
+    expect(onChange).toHaveBeenCalledTimes(3);
+    expect(onChangeNative).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.lastCall[0].target.value).toBe('Cat');
   });
 });
