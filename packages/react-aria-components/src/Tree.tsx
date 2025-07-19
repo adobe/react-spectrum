@@ -404,7 +404,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               collection={state.collection}
               persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
               scrollRef={ref}
-              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
           </Provider>
           {emptyState}
         </div>
