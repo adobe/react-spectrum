@@ -91,7 +91,8 @@ let providerStyles = style({
       'layer-1': '--s2-container-bg',
       'layer-2': '--s2-container-bg'
     }
-  }
+  },
+  isolation: 'isolate'
 });
 
 function ProviderInner(props: ProviderProps) {

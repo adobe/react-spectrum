@@ -28,7 +28,7 @@ interface ContentProps extends UnsafeStyles, SlotProps {
 }
 
 interface HeadingProps extends Omit<ContentProps, 'children'> {
-  children?: ReactNode,
+  children: ReactNode,
   level?: number
 }
 
