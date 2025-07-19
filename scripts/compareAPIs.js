@@ -274,7 +274,7 @@ function getDiff(pair) {
       } else {
         result = [...result, ...hunk.lines.map(line => {
           if (line.startsWith('+')) {
-            return chalk.whiteBright.bgGreen(line);
+            return chalk.whiteBright.bgRgb(0, 60, 0)(line);
           } else if (line.startsWith('-')) {
             return chalk.whiteBright.bgRed(line);
           }
