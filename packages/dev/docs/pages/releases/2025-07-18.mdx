@@ -26,7 +26,6 @@ date: 2025-07-18
 * Date
   * Add `autocomplete` prop to RAC DateField and DatePicker - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7773)
 * Drag and Drop
-  * Pass `keys` and `draggedKey` as arguments to `renderDropIndicator` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8459)
   * Allow custom drag preview offset - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8445)
 * Forms
   * Add support for automatic reset after React 19 form actions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8444)
@@ -50,6 +49,8 @@ date: 2025-07-18
 
 * CardView
   * Fix A11y warning on CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8496)
+* Drag and Drop
+  * Fix React 19 StrictMode drag and drop bug - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8562)
 * Date/Time:
   * Disallow focus of calendar cells outside the month - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/8129)
   * Fix `setValue` to work when DateField is empty - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8417)
@@ -88,6 +89,7 @@ date: 2025-07-18
   * Fix `createLeafComponent` ref typing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8507)
   * Add permission element to focusable elements list - [@gabrielchl](https://github.com/gabrielchl) - [PR](https://github.com/adobe/react-spectrum/pull/8356)
   * Minimize unnecessary global events in `useHover` - [@qmhc](https://github.com/qmhc) - [PR](https://github.com/adobe/react-spectrum/pull/8483)
+  * Do not dispatch `loadMore` if hook is still in loading state  - [@jluyau](https://github.com/jluyau) = [PR](https://github.com/adobe/react-spectrum/pull/8571)
 
 ## Docs
 
