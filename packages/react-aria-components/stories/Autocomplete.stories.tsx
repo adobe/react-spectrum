@@ -18,6 +18,7 @@ import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Autocomplete',
@@ -837,7 +838,7 @@ export const AutocompleteMenuInPopoverDialogTrigger: MenuStory = {
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
 export const AutocompleteSelect = (): React.ReactElement => (
-  <Select style={{marginBottom: 40, position: 'relative'}}>
+  <Select style={{marginBottom: 40}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />

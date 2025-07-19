@@ -13,6 +13,7 @@
 import {Link} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Link',

@@ -18,6 +18,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
+import './styles.css';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {

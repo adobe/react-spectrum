@@ -15,6 +15,7 @@ import {Meta, StoryFn} from '@storybook/react';
 import {Orientation} from 'react-aria';
 import React, {useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Tabs',

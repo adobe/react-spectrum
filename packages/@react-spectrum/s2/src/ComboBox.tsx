@@ -359,7 +359,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 

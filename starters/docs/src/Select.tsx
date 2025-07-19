@@ -38,7 +38,7 @@ export function Select<T extends object>(
         </Button>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover noPadding hideArrow>
+        <Popover hideArrow>
           <ListBox items={items}>
             {children}
           </ListBox>
