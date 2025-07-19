@@ -71,6 +71,8 @@ export {RadioGroup, RadioGroupContext} from './RadioGroup';
 export {RangeCalendar, RangeCalendarContext} from './RangeCalendar';
 export {RangeSlider, RangeSliderContext} from './RangeSlider';
 export {SearchField, SearchFieldContext} from './SearchField';
+export {SelectBox} from './SelectBox';
+export {SelectBoxGroup} from './SelectBoxGroup';
 export {SegmentedControl, SegmentedControlItem, SegmentedControlContext} from './SegmentedControl';
 export {Slider, SliderContext} from './Slider';
 export {Skeleton, useIsSkeleton} from './Skeleton';
