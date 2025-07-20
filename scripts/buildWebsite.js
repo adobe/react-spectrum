@@ -53,7 +53,7 @@ async function build() {
           name.startsWith('postcss') ||
           name === 'sharp' ||
           name === 'recast' ||
-          name === 'framer-motion' ||
+          name === 'motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
           name === '@tailwindcss/postcss' ||
@@ -82,7 +82,7 @@ async function build() {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
       build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package',
-      createRssFeed: "node scripts/createFeed.mjs"
+      createRssFeed: 'node scripts/createFeed.mjs'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css'],
     '@parcel/resolver-default': {
@@ -174,8 +174,8 @@ async function build() {
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
-  fs.copySync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'))
-  fs.copySync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'))
+  fs.copySync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'));
+  fs.copySync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'));
   fs.removeSync(dir);
 }
 
