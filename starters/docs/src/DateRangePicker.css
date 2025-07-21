@@ -69,4 +69,5 @@
 
 .react-aria-Popover[data-trigger=DateRangePicker] {
   max-width: unset;
+  padding: 15px;
 }

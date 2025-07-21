@@ -924,7 +924,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
@@ -982,7 +982,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       <CollectionBranch
         collection={collection}
         parent={collection.body}
-        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
     </TBody>
   );

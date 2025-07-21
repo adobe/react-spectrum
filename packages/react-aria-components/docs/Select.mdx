@@ -86,7 +86,6 @@ import {ChevronDown} from 'lucide-react';
 
 .react-aria-Select {
   color: var(--text-color);
-  position: relative;
   max-width: 250px;
   width: fit-content;
 
@@ -1334,27 +1333,3 @@ it('Select can select an option via keyboard', async function () {
 ```
 
 <ClassAPI links={selectUtil.links} class={selectUtil.exports.SelectTester} />
-
-## Gotchas
-
-`Select` requires a `position: relative` either on itself or on a close parent. This is because
-the `Popover` component uses a hidden input to manage native form functionality. The hidden input
-is absolutely positioned and can spill out unexpectedly if the parent is not positioned relative
-causing unintended scroll bars to appear.
-
-Note: you do not need to set the style inline, you can use any CSS method to do it.
-
-```tsx render=false
-<Select style={{position: 'relative'}}>
-  <Label>Favorite Animal</Label>
-  <Button>
-    <SelectValue />
-    <span aria-hidden="true"><ChevronDown size={16} /></span>
-  </Button>
-  <Popover>
-    <ListBox>
-      ...
-    </ListBox>
-  </Popover>
-</Select>
-```

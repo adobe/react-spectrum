@@ -13,6 +13,7 @@
 import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/NumberField',

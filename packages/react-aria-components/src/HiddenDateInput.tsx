@@ -50,7 +50,14 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
     isDisabled,
     name
   } = props;
-  let {visuallyHiddenProps} = useVisuallyHidden();
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      // Prevent page scrolling.
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }
+  });
 
   let inputStep = 60;
   if (state.granularity === 'second') {

@@ -13,6 +13,7 @@
 import {Breadcrumb, Breadcrumbs, Link} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Breadcrumbs',
