@@ -70,7 +70,8 @@ const calendarStyles = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-  width: 'fit'
+  width: 'fit',
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const headerStyles = style({
