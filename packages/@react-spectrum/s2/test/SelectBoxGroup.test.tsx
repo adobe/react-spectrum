@@ -1,7 +1,6 @@
 import {act, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
-import {Button, Text} from '../src';
+import {Button, SelectBox, SelectBoxGroup, Text} from '../src';
 import React from 'react';
-import {SelectBox, SelectBoxGroup} from '../src';
 import userEvent from '@testing-library/user-event';
 
 function SingleSelectBox() {
