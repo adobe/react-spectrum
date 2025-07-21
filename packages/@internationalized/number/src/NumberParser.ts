@@ -279,24 +279,6 @@ class NumberParserImpl {
     }
     temp = replaceAll(temp, new RegExp(`^${escapeRegex(this.symbols.numerals[0])}+`, 'g'), '');
     let nonDigits = new Set(replaceAll(temp, this.symbols.numeral, '').split(''));
-    if (temp.length > 0 && nonDigits.has(temp[0])) {
-      let count = temp.match(new RegExp(escapeRegex(temp[0]), 'g'))?.length ?? 0;
-      // Only swap if there's exactly one group separator and it's at the beginning (after removing signs and leading zeros)
-      // AND there are no other decimal separators in the string
-      if (count === 1 && temp[0] === this.symbols.group && !value.includes(this.symbols.decimal!)) {
-        if (this.options.minimumIntegerDigits > 1) {
-          let index = value.indexOf(temp[0]);
-
-          // Check the ambiguous case where the user is typing 0,001 for 1 because
-          // the minimum integer causes a bunch of leading zeros.
-          if (index > this.options.minimumIntegerDigits) {
-            value = swapCharacters(value, temp[0], this.symbols.decimal!);
-          }
-        } else {
-          value = swapCharacters(value, temp[0], this.symbols.decimal!);
-        }
-      }
-    }
 
     // This is to fuzzy match group and decimal symbols from a different formatting, we can only do it if there are 2 non-digits, otherwise it's too ambiguous
     let areOnlyGroupAndDecimalSymbols = [...nonDigits].every(char => allPossibleGroupAndDecimalSymbols.has(char));
@@ -341,11 +323,6 @@ class NumberParserImpl {
       value = value.slice(this.symbols.minusSign.length);
     } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
-    }
-
-    // Numbers cannot start with a group separator
-    if (this.symbols.group && value.startsWith(this.symbols.group)) {
-      return false;
     }
 
     // Numbers that can't have any decimal values fail if a decimal character is typed

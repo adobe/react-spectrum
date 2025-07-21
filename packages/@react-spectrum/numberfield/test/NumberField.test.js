@@ -2050,9 +2050,9 @@ describe('NumberField', function () {
     await user.clear(textField);
     await user.keyboard(',123');
     act(() => {textField.blur();});
-    expect(textField).toHaveAttribute('value', '0.123');
+    expect(textField).toHaveAttribute('value', '123');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(0.123);
+    expect(onChangeSpy).toHaveBeenCalledWith(123);
   });
 
   describe('beforeinput', () => {
