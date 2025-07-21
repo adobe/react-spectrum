@@ -11,78 +11,84 @@ import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description:
+description: Happy summer! This release adds support for async loading and infinite scrolling, improves form integration and drag and drop interactions, and adds support for additional DOM events and attributes.
 
 date: 2025-07-22
 ---
 
 # July 22, 2025 Release
 
+Happy summer! This release adds support for async loading and infinite scrolling, improves form integration and drag and drop interactions, and adds support for additional DOM events and attributes.
+
+The new LoadMoreItem components supported in [ListBox](../react-aria/ListBox.html#asynchronous-loading), [GridList](../react-aria/GridList.html#asynchronous-loading), [Table](../react-aria/Table.html#asynchronous-loading), and [Tree](../react-aria/Tree.html#asynchronous-loading) enables infinite scrolling. These trigger loading of additional pages of items, and display a loading spinner. Multiple LoadMoreItems can be rendered within a collection too, enabling loading multiple levels of a tree, or sections of data from different APIs.
+
+We've also opened up the React Aria Components API to pass through more DOM events and attributes. This improves integration with other libraries, for example making it possible to use another library's menu with a React Aria button.
+
+As always, thanks so much to everyone who contributed to this release!
 
 ## Enhancements
 
 * AlertDialog
-  * Allow `DOM` props on AlertDialog - [@snow893](https://github.com/snow893) - [PR](https://github.com/adobe/react-spectrum/pull/8370)
-* Date
-  * Add `autocomplete` prop to RAC DateField and DatePicker - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7773)
+  * Add default `data-testid` to Spectrum AlertDialog buttons - [@snow893](https://github.com/snow893) - [PR](https://github.com/adobe/react-spectrum/pull/8370)
 * Drag and Drop
-  * Allow custom drag preview offset - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8445)
+  * Add support for custom drag preview pointer offset - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8445)
 * Forms
+  * Add support for form autocomplete to React Aria DateField and DatePicker - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7773)
   * Add support for automatic reset after React 19 form actions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8444)
   * Support associating components with external forms - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8411)
-* Image:
-  * Pass `crossOrigin` prop in Image - [@mofojed](https://github.com/mofojed) - [PR](https://github.com/adobe/react-spectrum/pull/8532)
 * Select
-  * Support `hiddenSelectProps` in `useSelect` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8490)
-* Tag:
-  * Add escape key behavior to tags - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8399)
+  * Add `hiddenSelectProps` to `useSelect` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8490)
+* Tag
+  * Add `escapeKeyBehavior` prop to React Aria TagGroup - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8399)
 * TextField
-  * Provide `GroupContext` in TextField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8415)
-  * Add proper ARIA labeling to validation icon - [@razvanborsan](https://github.com/razvanborsan) - [PR](https://github.com/adobe/react-spectrum/pull/8429), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8435)
+  * Provide `GroupContext` in React Aria TextField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8415)
+  * Add proper ARIA labeling to Spectrum validation icon - [@razvanborsan](https://github.com/razvanborsan) - [PR](https://github.com/adobe/react-spectrum/pull/8429), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8435)
+* Toast
+  * Add default `data-testid` to Spectrum `Toast` buttons - [@snow893](https://github.com/snow893) - [PR](https://github.com/adobe/react-spectrum/pull/8408)
 * Tree
-  * Support multiple level loading and only count "items" for collection size - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8349)
+  * Support multi-level asynchronous loading - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8349)
 * Miscellaneous
   * Pass through more DOM events and attributes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8327), [PR](https://github.com/adobe/react-spectrum/pull/8525)
-  * Use inert in `ariaHideOutside` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8372), [PR](https://github.com/adobe/react-spectrum/pull/8560) - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8581)
+  * Use `inert` instead of `aria-hidden` in `ariaHideOutside` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8372), [PR](https://github.com/adobe/react-spectrum/pull/8560) - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8581)
+  * Pass `crossOrigin` prop in Spectrum Image - [@mofojed](https://github.com/mofojed) - [PR](https://github.com/adobe/react-spectrum/pull/8532)
 
 ## Fixes
 
 * CardView
-  * Fix A11y warning on CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8496)
+  * Fix A11y warning on Spectrum CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8496)
 * Drag and Drop
   * Fix React 19 StrictMode drag and drop bug - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8562)
-* Date/Time:
+* Date/Time
   * Disallow focus of calendar cells outside the month - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/8129)
   * Fix `setValue` to work when DateField is empty - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8417)
   * Ignore typing leading zeros in DateField segments - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8447), [PR](https://github.com/adobe/react-spectrum/pull/8549)
 * FileTrigger
   * `acceptedFileTypes` accepts a readonly array in FileTrigger - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8477)
 * ListView
-  * Fix Badge text color inside ListView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8449)
+  * Fix Badge text color inside Spectrum ListView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8449)
 * Menu
-  * Fix text alignment for Keyboard component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8486)
+  * Fix text alignment for Spectrum Keyboard component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8486)
 * Modals
   * Warn users of correct state usage for modals - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8495)
 * NumberField
-  * Support full width characters in NumberField e.g. Japanese IME - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8418)
+  * Support full width characters in NumberField (e.g. Japanese IME) - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8418)
   * Ensure NumberField validation displays correct errors in React 19 - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8491)
   * Round to correct precision when step uses exponential notation - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8290)
 * RadioGroup
-  * Fix RadioGroup navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8488)
+  * Fix `RadioGroup` keyboard navigation in `FocusScope` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8488)
 * Select/Picker
-  * Allow `selectedKey=null` to clear value in HiddenSelect - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8330)
-  * Fix keyboard selection in Select typeahead when options include spaces - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8497)
-  * Prevent form submission when required Select has more than 300 options and no selection - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8280)
+  * Allow `selectedKey={null}` to clear value in `HiddenSelect` - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8330)
+  * Fix `HiddenSelect` causing page scrolling - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8579)
+  * Fix keyboard selection in `Select` typeahead when options include spaces - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8497)
+  * Prevent form submission when required `Select` has more than 300 options - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8280)
 * Tabs
-  * Fix wrapping with vertical TabList - [@bsmiley1](https://github.com/bsmiley1) - [PR](https://github.com/adobe/react-spectrum/pull/8201)
-  * Match id type in Tab and TabPanel - [@kidonng](https://github.com/kidonng) - [PR](https://github.com/adobe/react-spectrum/pull/8423)
+  * Fix wrapping with vertical `TabList` - [@bsmiley1](https://github.com/bsmiley1) - [PR](https://github.com/adobe/react-spectrum/pull/8201)
+  * Match id type in `Tab` and `TabPanel` - [@kidonng](https://github.com/kidonng) - [PR](https://github.com/adobe/react-spectrum/pull/8423)
 * TableView
-  * Ensure the `renderEmptyState` in IllustratedMessage is properly displayed in TableView - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8416)
-  * Prevent TableView from jumping to the top during asynchronous load - [@obreitwi](https://github.com/obreitwi) - [PR](https://github.com/adobe/react-spectrum/pull/8133)
-* Toast
-  * Allow users to add `data-testid` to Toast - [@snow893](https://github.com/snow893) - [PR](https://github.com/adobe/react-spectrum/pull/8408)
+  * Ensure the `renderEmptyState` in Spectrum `IllustratedMessage` is properly displayed in `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8416)
+  * Prevent `TableView` from jumping to the top during asynchronous load - [@obreitwi](https://github.com/obreitwi) - [PR](https://github.com/adobe/react-spectrum/pull/8133)
 * Miscellaneous
-  * Include missing `page.css.map` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8414)
+  * Include missing `page.css.map` in published npm package - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8414)
   * Check user agent brands - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8458)
   * Fix `Rect` intersection check so that users don't need to provide Virtualizer mocks for tests - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8396)
   * Fix `createLeafComponent` ref typing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8507)
@@ -92,9 +98,9 @@ date: 2025-07-22
 
 ## Docs
 
-* Remove duplicate "color" in ColorWheelRenderProps comment - [@GuiEpi](https://github.com/GuiEpi) - [PR](https://github.com/adobe/react-spectrum/pull/8465)
-* Fix Calendar example - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8529)
-* Use `lucide-react` for RAC example's icons - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8516)
+* Remove duplicate "color" in `ColorWheelRenderProps` comment - [@GuiEpi](https://github.com/GuiEpi) - [PR](https://github.com/adobe/react-spectrum/pull/8465)
+* Fix `Calendar` example - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8529)
+* Use `lucide-react` for React Aria example's icons - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8516)
 * Fix TanStack Router example - [@brmzkw](https://github.com/brmzkw) - [PR](https://github.com/adobe/react-spectrum/pull/8404)
 * Fix checkbox in dark mode in the Tailwind Starter - [@tomer-yechiel](https://github.com/tomer-yechiel) - [PR](https://github.com/adobe/react-spectrum/pull/8379)
 
@@ -103,10 +109,9 @@ date: 2025-07-22
 * Autocomplete
   * Clear Autocomplete virtualFocus upon paste/undo/redo and other focus fixes - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8438)
 * Tree:
-  * Virtualized Tree DnD fixes - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8526), [PR](https://github.com/adobe/react-spectrum/pull/8550)
-  * Fix drop targets in virtualized tree - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8427)
-  * Moving a root item after itself does not move the item - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8436)
-  * Only normalize to `after` target if it is valid - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8563)
+  * Support virtualized Tree drag and drop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8526), [PR](https://github.com/adobe/react-spectrum/pull/8550), [PR](https://github.com/adobe/react-spectrum/pull/8427)
+  * Fix dragging a root item after itself - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8436)
+  * Fix reordering top-level items via drag and drop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8563)
 
 
 ## Released packages
