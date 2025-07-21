@@ -69,13 +69,13 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     Object.defineProperty(this, 'getKeyRightOf', {
       get() { return this.layout === 'stack' && this.getOrientation() === 'vertical' ? undefined : getKeyRightOf; },
       configurable: true,
-      enumerable: false
+      enumerable: true
     });
 
     Object.defineProperty(this, 'getKeyLeftOf', {
       get() { return this.layout === 'stack' && this.getOrientation() === 'vertical' ? undefined : getKeyLeftOf; },
       configurable: true,
-      enumerable: false
+      enumerable: true
     });
   }
 
