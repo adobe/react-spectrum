@@ -406,7 +406,9 @@ describe('ariaHideOutside', function () {
       let [count, setCount] = useState(0);
       let items = ['row1', 'row2', 'row3', 'row4', 'row5'];
       if (count === 1) {
-        items = ['row2', 'row3', 'row4', 'row5', 'row1'];
+        items = ['row2', 'row1', 'row3', 'row4', 'row5'];
+      } else if (count === 2) {
+        items = ['row2', 'row3', 'row1', 'row4', 'row5'];
       }
 
       return (
@@ -428,7 +430,9 @@ describe('ariaHideOutside', function () {
 
     act(() => button.click());
     await Promise.resolve();
+    act(() => button.click());
+    await Promise.resolve();
     revert();
-    expect(row).not.toHaveAttribute('aria-hidden', 'true');
+    expect(row.parentElement).not.toHaveAttribute('aria-hidden', 'true');
   });
 });
