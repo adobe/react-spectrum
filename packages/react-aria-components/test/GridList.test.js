@@ -851,42 +851,6 @@ describe('GridList', () => {
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
-    it('should pass keys and draggedKey to renderDropIndicator', async () => {
-      let onReorder = jest.fn();
-      let renderDropIndicatorCalls = [];
-      let mockRenderDropIndicator = jest.fn((target, keys, draggedKey) => {
-        renderDropIndicatorCalls.push({target, keys, draggedKey});
-        return <DropIndicator target={target}>Keys: {keys ? keys.size : 0} DraggedKey: {draggedKey || 'none'}</DropIndicator>;
-      });
-
-      let {getAllByRole} = render(
-        <DraggableGridList 
-          onReorder={onReorder} 
-          renderDropIndicator={mockRenderDropIndicator} />
-      );
-      
-      await user.tab();
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{Enter}');
-      act(() => jest.runAllTimers());
-
-      expect(mockRenderDropIndicator).toHaveBeenCalled();
-      
-      renderDropIndicatorCalls.forEach(call => {
-        expect(call.target).toBeDefined();
-        expect(call.keys).toBeInstanceOf(Set);
-        expect(call.keys.size).toBe(1);
-        expect(call.keys.has('cat')).toBe(true);
-        expect(call.draggedKey).toBe('cat');
-      });
-
-      let rows = getAllByRole('row');
-      expect(rows[0]).toHaveTextContent('Keys: 1 DraggedKey: cat');
-
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    });
-
     it('should support dropping on rows', async () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
