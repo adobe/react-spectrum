@@ -59,7 +59,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
@@ -275,7 +275,7 @@ const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}
   borderRadius: 'full'
 });
 
-const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide', orientation?: Orientation}>({
   ...focusRing(),
   display: 'flex',
   color: {
@@ -290,9 +290,23 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   borderRadius: 'sm',
   gap: 'text-to-visual',
   height: {
-    density: {
-      compact: 32,
-      regular: 48
+    orientation: {
+      horizontal: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
+    }
+  },
+  minHeight: {
+    orientation: {
+      vertical: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
     }
   },
   alignItems: 'center',
@@ -330,7 +344,7 @@ export function Tab(props: TabProps): ReactNode {
       originalProps={props}
       aria-labelledby={`${labelBehavior === 'hide' ? contentId : ''} ${ariaLabelledBy}`}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior, orientation}, props.styles)}>
       {({
           // @ts-ignore
           isMenu,

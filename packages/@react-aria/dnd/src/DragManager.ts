@@ -410,7 +410,7 @@ class DragSession {
       ...visibleDropTargets.flatMap(target => target.activateButtonRef?.current ? [target.element, target.activateButtonRef?.current] : [target.element])
     ], {shouldUseInert: true});
 
-    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
+    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden', 'inert']});
   }
 
   next(): void {
@@ -437,7 +437,7 @@ class DragSession {
     // If we've reached the end of the valid drop targets, cycle back to the original drag target.
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === this.validDropTargets.length - 1) {
-      if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+      if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) {
         this.setCurrentDropTarget(null);
         this.dragTarget.element.focus();
       } else {
@@ -472,7 +472,7 @@ class DragSession {
     // If we've reached the start of the valid drop targets, cycle back to the original drag target.
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === 0) {
-      if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+      if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) {
         this.setCurrentDropTarget(null);
         this.dragTarget.element.focus();
       } else {
@@ -579,7 +579,7 @@ class DragSession {
   cancel(): void {
     this.setCurrentDropTarget(null);
     this.end();
-    if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
+    if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) {
       this.dragTarget.element.focus();
     }
 
@@ -640,7 +640,7 @@ class DragSession {
 function findValidDropTargets(options: DragTarget) {
   let types = getTypes(options.items);
   return [...dropTargets.values()].filter(target => {
-    if (target.element.closest('[aria-hidden="true"]')) {
+    if (target.element.closest('[aria-hidden="true"], [inert]')) {
       return false;
     }
 

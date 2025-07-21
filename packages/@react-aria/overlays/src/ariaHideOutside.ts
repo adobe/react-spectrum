@@ -11,7 +11,6 @@
  */
 
 import {getOwnerWindow} from '@react-aria/utils';
-
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -72,6 +71,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
       // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
       if (
+        hiddenNodes.has(node) ||
         visibleNodes.has(node) ||
         (node.parentElement && hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
       ) {
@@ -136,20 +136,13 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
-      if (change.type !== 'childList' || change.addedNodes.length === 0) {
+      if (change.type !== 'childList') {
         continue;
       }
 
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
       if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
-        for (let node of change.removedNodes) {
-          if (node instanceof Element) {
-            visibleNodes.delete(node);
-            hiddenNodes.delete(node);
-          }
-        }
-
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&

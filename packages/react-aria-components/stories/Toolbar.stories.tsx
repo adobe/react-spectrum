@@ -12,15 +12,20 @@
 
 import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import {Orientation} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components/Toolbar'
-};
+  title: 'React Aria Components/Toolbar',
+  component: Toolbar
+} as Meta<typeof Toolbar>;
 
-export const ToolbarExample = {
+export type ToolbarStory = StoryObj<typeof Toolbar>;
+
+export const ToolbarExample: ToolbarStory = {
   args: {
     orientation: 'horizontal' as Orientation
   },
