@@ -290,6 +290,7 @@ governing permissions and limitations under the License.
 
   &.spectrum-Tabs--vertical {
     flex-grow: 0;
+    min-width: fit-content;
   }
 }
 
