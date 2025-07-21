@@ -106,7 +106,96 @@ export const CompactQuiet: TabsStoryProps = {
 };
 
 export const Vertical: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: (args) => (
+    <Tabs {...args} aria-label="Tab example" maxWidth={500}>
+      <TabList>
+        <Item key="val1">Tab 1</Item>
+        <Item key="val2">バナーおよびディスプレイ広告</Item>
+        <Item key="val3"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val4">Tab 4</Item>
+        <Item key="val5">Tab 5</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="val1">
+          <Heading>Tab Body 1</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val2">
+          <Heading>Tab Body 2</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val3">
+          <Heading>Tab Body 3</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val4">
+          <Heading>Tab Body 4</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val5">
+          <Heading>Tab Body 5</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+      </TabPanels>
+    </Tabs>
+  ),
+  args: {...Default.args, orientation: 'vertical'}
+};
+
+export const VerticalMaxWidth: TabsStoryProps = {
+  render: (args) => (
+    <Tabs {...args} aria-label="Tab example" maxWidth={500}>
+      <TabList width={120}>
+        <Item key="val1">Tab 1</Item>
+        <Item key="val2">バナーおよびディスプレイ広告</Item>
+        <Item key="val3"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val4">Tab 4</Item>
+        <Item key="val5">Tab 5</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="val1">
+          <Heading>Tab Body 1</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val2">
+          <Heading>Tab Body 2</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val3">
+          <Heading>Tab Body 3</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val4">
+          <Heading>Tab Body 4</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+        <Item key="val5">
+          <Heading>Tab Body 5</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          </Text>
+        </Item>
+      </TabPanels>
+    </Tabs>
+  ),
   args: {...Default.args, orientation: 'vertical'}
 };
 
