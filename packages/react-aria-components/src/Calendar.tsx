@@ -496,13 +496,15 @@ export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
   /** The date to render in the cell. */
-  date: CalendarDate
+  date: CalendarDate,
+  /** Optional function to provide a custom className for a given date. */
+  getDateClassName?: (date: CalendarDate) => string | undefined
 }
 
 /**
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, getDateClassName, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
@@ -561,9 +563,14 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let DOMProps = filterDOMProps(otherProps, {global: true});
 
+  let customClassName = getDateClassName ? getDateClassName(date) : undefined;
+
   return (
     <td {...cellProps} ref={ref}>
-      <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
+      <div
+        {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)}
+        ref={buttonRef}
+        className={customClassName ? `${renderProps.className ?? ''} ${customClassName}` : renderProps.className} />
     </td>
   );
 });

@@ -365,4 +365,39 @@ describe('Calendar', () => {
     await user.keyboard('[ArrowLeft][Enter]');
     expect(calendar.getByLabelText(/selected/)).toBe(day16);
   });
+
+  it('should set aria-current="date" on today’s cell', () => {
+    const today = new Date();
+    const day = today.getDate();
+    const {getAllByRole} = render(
+      <Calendar aria-label="Calendar" visibleDuration={{months: 1}}>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    );
+    const cells = getAllByRole('gridcell');
+    const todayCell = cells.find(cell => {
+      const btn = cell.querySelector('div,span');
+      return btn && btn.textContent === String(day);
+    });
+    expect(todayCell).toHaveAttribute('aria-current', 'date');
+  });
+
+  it('should apply custom class on cell from getDateClassName', () => {
+    const specialDay = 15;
+    const {getAllByRole} = render(
+      <Calendar aria-label="Calendar" visibleDuration={{months: 1}}>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} getDateClassName={d => d.day === specialDay ? 'holiday' : undefined} />}
+        </CalendarGrid>
+      </Calendar>
+    );
+    const cells = getAllByRole('gridcell');
+    const specialCell = cells.find(cell => {
+      const btn = cell.querySelector('div,span');
+      return btn && btn.textContent === String(specialDay);
+    });
+    expect(specialCell.querySelector('div,span').className).toMatch(/holiday/);
+  });
 });
