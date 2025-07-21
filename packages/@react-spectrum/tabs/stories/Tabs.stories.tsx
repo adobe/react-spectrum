@@ -57,7 +57,7 @@ OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
-export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({maxWidth: 90, wrap: true});
+export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({wrap: true});
 
 OrientationVerticalWrap.story = {
   name: 'orientation: vertical, wrap: true'
@@ -758,7 +758,7 @@ function renderWithVerticalWrap(props = {}) {
       <TabList {...props}>
         <Item key="val1">User Profile Settings</Item>
         <Item key="val2">バナーおよびディスプレイ広告</Item>
-        <Item key="val3"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val3">Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>
