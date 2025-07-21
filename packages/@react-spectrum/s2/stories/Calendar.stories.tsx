@@ -71,14 +71,6 @@ export const MinValue: Story = {
   }
 };
 
-export const CustomCellClassName = {
-  args: {
-    'aria-label': 'Calendar with Custom class of cell',
-    getDateClassName: (date) => date.day === 15 ? 'holiday' : undefined
-  },
-  name: 'Highlight 15th as Holiday with Custom Class'
-};
-
 function ControlledFocus(props: CalendarProps<DateValue>): ReactElement {
   const defaultFocusedDate = props.focusedValue ?? new CalendarDate(2019, 6, 5);
   let [focusedDate, setFocusedDate] = useState(defaultFocusedDate);

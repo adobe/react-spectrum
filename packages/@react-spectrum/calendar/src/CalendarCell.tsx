@@ -24,12 +24,10 @@ import {useLocale} from '@react-aria/i18n';
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
   currentMonth: CalendarDate,
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
-  /** Optional function to provide a custom className for a given date. */
-  getDateClassName?: (date: CalendarDate) => string | undefined
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
-export function CalendarCell({state, currentMonth, firstDayOfWeek, getDateClassName, ...props}: CalendarCellProps): JSX.Element {
+export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: CalendarCellProps): JSX.Element {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
@@ -56,7 +54,6 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, getDateClassN
   let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
-  let customClassName = getDateClassName ? getDateClassName(props.date) : undefined;
 
   return (
     <td
@@ -82,7 +79,7 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, getDateClassN
           'is-hovered': isHovered,
           'is-pressed': isPressed && !state.isReadOnly,
           'is-invalid': isInvalid
-        }, customClassName)}>
+        })}>
         <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
           <span>{formattedDate}</span>
         </span>

@@ -108,23 +108,3 @@ export const RangeCalendarExample: CalendarStory = {
   )
 };
 
-export const CalendarWithCustomCellClass: CalendarStory = {
-  render: () => (
-    <Calendar style={{width: 220}}>
-      <style>
-        {'.holiday { background: #6f46ed; color: #fff; }'}
-      </style>
-      <div style={{display: 'flex', alignItems: 'center'}}>
-        <Button slot="previous">&lt;</Button>
-        <Heading style={{flex: 1, textAlign: 'center'}} />
-        <Button slot="next">&gt;</Button>
-      </div>
-      <CalendarGrid style={{width: '100%'}}>
-        {date => (<CalendarCell
-          date={date}
-          getDateClassName={d => d.day === 15 ? 'holiday' : undefined} />
-        )}
-      </CalendarGrid>  
-    </Calendar>
-  )
-};

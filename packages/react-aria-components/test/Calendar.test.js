@@ -384,20 +384,4 @@ describe('Calendar', () => {
     expect(todayCell).toHaveAttribute('aria-current', 'date');
   });
 
-  it('should apply custom class on cell from getDateClassName', () => {
-    const specialDay = 15;
-    const {getAllByRole} = render(
-      <Calendar aria-label="Calendar" visibleDuration={{months: 1}}>
-        <CalendarGrid>
-          {date => <CalendarCell date={date} getDateClassName={d => d.day === specialDay ? 'holiday' : undefined} />}
-        </CalendarGrid>
-      </Calendar>
-    );
-    const cells = getAllByRole('gridcell');
-    const specialCell = cells.find(cell => {
-      const btn = cell.querySelector('div,span');
-      return btn && btn.textContent === String(specialDay);
-    });
-    expect(specialCell.querySelector('div,span').className).toMatch(/holiday/);
-  });
 });
