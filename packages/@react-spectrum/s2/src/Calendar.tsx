@@ -174,6 +174,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-100',
+    isPressed: 'gray-100',
     isDisabled: 'transparent',
     isToday: {
       default: baseColor('gray-300'),
