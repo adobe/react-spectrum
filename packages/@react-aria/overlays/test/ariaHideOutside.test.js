@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ariaHideOutside} from '../src';
-import React from 'react';
-import {render, waitFor} from '@react-spectrum/test-utils-internal';
+import React, {useState} from 'react';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {
@@ -354,10 +354,13 @@ describe('ariaHideOutside', function () {
   });
 
   it('should hide everything except the provided element [row]', function () {
-    let {getAllByRole} = render(
+    let {getAllByRole, getByTestId} = render(
       <div role="grid">
         <div role="row">
-          <div role="gridcell">Cell 1</div>
+          <div role="gridcell">
+            <span data-testid="test-span">
+              Cell 1
+            </span></div>
         </div>
         <div role="row">
           <div role="gridcell">Cell 2</div>
@@ -367,6 +370,7 @@ describe('ariaHideOutside', function () {
 
     let cells = getAllByRole('gridcell');
     let rows = getAllByRole('row');
+    let span = getByTestId('test-span');
 
     let revert = ariaHideOutside([rows[1]]);
 
@@ -374,6 +378,7 @@ describe('ariaHideOutside', function () {
     // for https://bugs.webkit.org/show_bug.cgi?id=222623
     expect(rows[0]).toHaveAttribute('aria-hidden', 'true');
     expect(cells[0]).toHaveAttribute('aria-hidden', 'true');
+    expect(span).not.toHaveAttribute('aria-hidden');
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
 
@@ -383,5 +388,47 @@ describe('ariaHideOutside', function () {
     expect(cells[0]).not.toHaveAttribute('aria-hidden', 'true');
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(span).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('should unhide after item reorder', async function () {
+    function Item(props) {
+      return (
+        <div role="presentation">
+          <div data-testid={props.testid} role="row">
+            <div role="gridcell" />
+          </div>
+        </div>
+      );
+    }
+
+    function Test() {
+      let [count, setCount] = useState(0);
+      let items = ['row1', 'row2', 'row3', 'row4', 'row5'];
+      if (count === 1) {
+        items = ['row2', 'row3', 'row4', 'row5', 'row1'];
+      }
+
+      return (
+        <>
+          <button onClick={() => setCount((old) => old + 1)}>press</button>
+          {items.map((item) => <Item testid={item} key={item} />)}
+        </>
+
+      );
+    }
+
+    let {getByRole, getByTestId} = render(
+      <Test />
+    );
+
+    let button = getByRole('button');
+    let row = getByTestId('row1');
+    let revert = ariaHideOutside([button]);
+
+    act(() => button.click());
+    await Promise.resolve();
+    revert();
+    expect(row).not.toHaveAttribute('aria-hidden', 'true');
   });
 });

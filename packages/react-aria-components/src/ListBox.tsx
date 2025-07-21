@@ -17,7 +17,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -205,7 +205,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
@@ -261,7 +261,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             collection={collection}
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -274,7 +274,7 @@ export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -299,7 +299,7 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
         <CollectionBranch
           collection={state.collection}
           parent={section}
-          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       </HeaderContext.Provider>
     </section>
   );
@@ -472,7 +472,7 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -483,9 +483,8 @@ export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps,
   isLoading?: boolean
 }
 
-export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
   let sentinelRef = useRef<HTMLDivElement>(null);
@@ -495,7 +494,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
     sentinelRef,
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
   let renderProps = useRenderProps({
     ...otherProps,
     id: undefined,
@@ -507,12 +506,10 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
   let optionProps = {
     // For Android talkback
     tabIndex: -1
+    // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // item count
   };
-
-  if (isVirtualized) {
-    optionProps['aria-posinset'] = item.index + 1;
-    optionProps['aria-setsize'] = state.collection.size;
-  }
 
   return (
     <>
@@ -528,7 +525,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
           role="option"
-          ref={ref}>
+          ref={ref as ForwardedRef<HTMLDivElement>}>
           {renderProps.children}
         </div>
       )}

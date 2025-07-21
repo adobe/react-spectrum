@@ -28,8 +28,8 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import React, {useState} from 'react';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1114,42 +1114,6 @@ describe('ListBox', () => {
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
-    it('should pass keys and draggedKey to renderDropIndicator', () => {
-      let onReorder = jest.fn();
-      let renderDropIndicatorCalls = [];
-      let mockRenderDropIndicator = jest.fn((target, keys, draggedKey) => {
-        renderDropIndicatorCalls.push({target, keys, draggedKey});
-        return <DropIndicator target={target}>Test Keys: {keys ? keys.size : 0} DraggedKey: {draggedKey || 'none'}</DropIndicator>;
-      });
-
-      let {getAllByRole} = render(
-        <DraggableListBox 
-          onReorder={onReorder} 
-          renderDropIndicator={mockRenderDropIndicator} />
-      );
-      
-      let option = getAllByRole('option')[0];
-      fireEvent.keyDown(option, {key: 'Enter'});
-      fireEvent.keyUp(option, {key: 'Enter'});
-      act(() => jest.runAllTimers());
-
-      expect(mockRenderDropIndicator).toHaveBeenCalled();
-      
-      renderDropIndicatorCalls.forEach(call => {
-        expect(call.target).toBeDefined();
-        expect(call.keys).toBeInstanceOf(Set);
-        expect(call.keys.size).toBe(1);
-        expect(call.keys.has('cat')).toBe(true);
-        expect(call.draggedKey).toBe('cat');
-      });
-
-      let options = getAllByRole('option');
-      expect(options[0]).toHaveTextContent('Test Keys: 1 DraggedKey: cat');
-      
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    });
-
     it('should support dropping on options', () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
@@ -1602,9 +1566,9 @@ describe('ListBox', () => {
               <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
             )}
           </Collection>
-          <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_ListBoxLoadingSentinel>
+          </ListBoxLoadMoreItem>
         </ListBox>
       );
     };
@@ -1719,9 +1683,9 @@ describe('ListBox', () => {
                   <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
                 )}
               </Collection>
-              <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_ListBoxLoadingSentinel>
+              </ListBoxLoadMoreItem>
             </ListBox>
           </Virtualizer>
         );
@@ -1734,8 +1698,8 @@ describe('ListBox', () => {
         expect(options).toHaveLength(8);
         let loaderRow = options[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-posinset', '51');
-        expect(loaderRow).toHaveAttribute('aria-setSize', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-posinset');
+        expect(loaderRow).not.toHaveAttribute('aria-setSize');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250

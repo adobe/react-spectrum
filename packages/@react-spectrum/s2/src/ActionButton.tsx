@@ -17,7 +17,7 @@ import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
@@ -53,7 +53,7 @@ interface ActionGroupItemStyleProps {
   isJustified?: boolean
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending' | 'onClick'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children: ReactNode
 }
@@ -67,7 +67,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   ...focusRing(),
   ...staticColor(),
   ...controlStyle,
-  display: 'grid',
   justifyContent: 'center',
   flexShrink: {
     default: 1,
@@ -80,21 +79,9 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     isJustified: 0
   },
   fontWeight: 'medium',
-  width: 'fit',
   userSelect: 'none',
   transition: 'default',
   forcedColorAdjust: 'none',
-  position: 'relative',
-  gridTemplateAreas: {
-    default: ['icon text'],
-    [iconOnly]: ['icon'],
-    [textOnly]: ['text']
-  },
-  gridTemplateColumns: {
-    default: ['auto', 'auto'],
-    [iconOnly]: ['auto'],
-    [textOnly]: ['auto']
-  },
   backgroundColor: {
     default: {
       ...baseColor('gray-100'),
@@ -236,7 +223,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgePosition': {
     type: 'width',
     value: {
-      default: '--iconWidth',
+      default: 'calc(self(paddingStart) + var(--iconWidth))',
+      [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
   },
@@ -301,10 +289,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({truncate: true, gridArea: 'text'})}],
+          [TextContext, {styles: style({order: 1, truncate: true})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin'})
+            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }],
           [AvatarContext, {
             size: avatarSize[size],
@@ -313,14 +301,15 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 default: '--iconMargin',
                 ':last-child': 0
               },
-              gridArea: 'icon'
+              flexShrink: 0,
+              order: 0
             })
           }],
           [NotificationBadgeContext, {
             staticColor: staticColor,
             size: props.size === 'XS' ? undefined : props.size,
             isDisabled: props.isDisabled,
-            styles: style({position: 'absolute', top: '--badgeTop',  marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc(var(--iconMargin) * 2 + (self(height) * -1)/4)', gridColumnStart: 1, insetStart: '--badgePosition'})
+            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

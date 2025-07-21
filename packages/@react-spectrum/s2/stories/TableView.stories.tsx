@@ -11,7 +11,23 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, MenuItem, MenuSection, Row, TableBody, TableHeader, TableView, TableViewProps, Text} from '../src';
+import {
+  ActionButton,
+  Cell,
+  Column,
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  MenuItem,
+  MenuSection,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView,
+  TableViewProps,
+  Text
+} from '../src';
 import {categorizeArgTypes} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';

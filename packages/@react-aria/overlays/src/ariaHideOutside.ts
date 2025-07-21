@@ -10,6 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from '@react-aria/utils';
+const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
+
+interface AriaHideOutsideOptions {
+  root?: Element,
+  shouldUseInert?: boolean
+}
+
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
@@ -29,9 +37,27 @@ let observerStack: Array<ObserverWrapper> = [];
  * @param root - Nothing will be hidden above this element.
  * @returns - A function to restore all hidden elements.
  */
-export function ariaHideOutside(targets: Element[], root: Element = document.body) {
+export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
+  let windowObj = getOwnerWindow(targets?.[0]);
+  let opts = options instanceof windowObj.Element ? {root: options} : options;
+  let root = opts?.root ?? document.body;
+  let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+
+  let getHidden = (element: Element) => {
+    return shouldUseInert && element instanceof windowObj.HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
+  };
+
+  let setHidden = (element: Element, hidden: boolean) => {
+    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
+      element.inert = hidden;
+    } else if (hidden) {
+      element.setAttribute('aria-hidden', 'true');
+    } else {
+      element.removeAttribute('aria-hidden');
+    }
+  };
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -45,6 +71,7 @@ export function ariaHideOutside(targets: Element[], root: Element = document.bod
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
       // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
       if (
+        hiddenNodes.has(node) ||
         visibleNodes.has(node) ||
         (node.parentElement && hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
       ) {
@@ -87,12 +114,12 @@ export function ariaHideOutside(targets: Element[], root: Element = document.bod
 
     // If already aria-hidden, and the ref count is zero, then this element
     // was already hidden and there's nothing for us to do.
-    if (node.getAttribute('aria-hidden') === 'true' && refCount === 0) {
+    if (getHidden(node) && refCount === 0) {
       return;
     }
 
     if (refCount === 0) {
-      node.setAttribute('aria-hidden', 'true');
+      setHidden(node, true);
     }
 
     hiddenNodes.add(node);
@@ -109,7 +136,7 @@ export function ariaHideOutside(targets: Element[], root: Element = document.bod
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
-      if (change.type !== 'childList' || change.addedNodes.length === 0) {
+      if (change.type !== 'childList') {
         continue;
       }
 
@@ -161,7 +188,7 @@ export function ariaHideOutside(targets: Element[], root: Element = document.bod
         continue;
       }
       if (count === 1) {
-        node.removeAttribute('aria-hidden');
+        setHidden(node, false);
         refCountMap.delete(node);
       } else {
         refCountMap.set(node, count - 1);

@@ -32,9 +32,9 @@ import {
   Virtualizer
 } from '../';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -851,42 +851,6 @@ describe('GridList', () => {
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
-    it('should pass keys and draggedKey to renderDropIndicator', async () => {
-      let onReorder = jest.fn();
-      let renderDropIndicatorCalls = [];
-      let mockRenderDropIndicator = jest.fn((target, keys, draggedKey) => {
-        renderDropIndicatorCalls.push({target, keys, draggedKey});
-        return <DropIndicator target={target}>Keys: {keys ? keys.size : 0} DraggedKey: {draggedKey || 'none'}</DropIndicator>;
-      });
-
-      let {getAllByRole} = render(
-        <DraggableGridList 
-          onReorder={onReorder} 
-          renderDropIndicator={mockRenderDropIndicator} />
-      );
-      
-      await user.tab();
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{Enter}');
-      act(() => jest.runAllTimers());
-
-      expect(mockRenderDropIndicator).toHaveBeenCalled();
-      
-      renderDropIndicatorCalls.forEach(call => {
-        expect(call.target).toBeDefined();
-        expect(call.keys).toBeInstanceOf(Set);
-        expect(call.keys.size).toBe(1);
-        expect(call.keys.has('cat')).toBe(true);
-        expect(call.draggedKey).toBe('cat');
-      });
-
-      let rows = getAllByRole('row');
-      expect(rows[0]).toHaveTextContent('Keys: 1 DraggedKey: cat');
-
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    });
-
     it('should support dropping on rows', async () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
@@ -1135,9 +1099,9 @@ describe('GridList', () => {
               <GridListItem id={item.name}>{item.name}</GridListItem>
             )}
           </Collection>
-          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_GridListLoadingSentinel>
+          </GridListLoadMoreItem>
         </GridList>
       );
     };
@@ -1247,9 +1211,9 @@ describe('GridList', () => {
                   <GridListItem id={item.name}>{item.name}</GridListItem>
                 )}
               </Collection>
-              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+              <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_GridListLoadingSentinel>
+              </GridListLoadMoreItem>
             </GridList>
           </Virtualizer>
         );
@@ -1263,7 +1227,7 @@ describe('GridList', () => {
         expect(rows).toHaveLength(8);
         let loaderRow = rows[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -1338,7 +1302,7 @@ describe('GridList', () => {
         rows = gridListTester.rows;
         expect(rows).toHaveLength(8);
         loaderRow = rows[7];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 7) {
             continue;

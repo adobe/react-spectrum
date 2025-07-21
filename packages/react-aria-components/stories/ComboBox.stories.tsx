@@ -10,18 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {Button, Collection, ComboBox, ComboBoxProps, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React, {useMemo, useState} from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX, useMemo, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components/ComboBox'
-};
+  title: 'React Aria Components/ComboBox',
+  component: ComboBox
+} as Meta<typeof ComboBox>;
 
-export const ComboBoxExample = () => (
+export type ComboBoxStory = StoryFn<typeof ComboBox>;
+export type ComboBoxStoryObj = StoryObj<typeof ComboBox>;
+
+export const ComboBoxExample: ComboBoxStory = () => (
   <ComboBox name="combo-box-example" data-testid="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
@@ -49,7 +55,7 @@ interface ComboBoxItem {
 }
 
 let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
-export const ComboBoxRenderPropsStatic = () => (
+export const ComboBoxRenderPropsStatic: ComboBoxStory = () => (
   <ComboBox data-testid="combo-box-render-props-static">
     {({isOpen}) => (
       <>
@@ -72,7 +78,7 @@ export const ComboBoxRenderPropsStatic = () => (
   </ComboBox>
 );
 
-export const ComboBoxRenderPropsDefaultItems = () => (
+export const ComboBoxRenderPropsDefaultItems: ComboBoxStory = () => (
   <ComboBox defaultItems={items}>
     {({isOpen}) => (
       <>
@@ -93,7 +99,7 @@ export const ComboBoxRenderPropsDefaultItems = () => (
   </ComboBox>
 );
 
-export const ComboBoxRenderPropsItems = {
+export const ComboBoxRenderPropsItems: ComboBoxStoryObj = {
   render: () => (
     <ComboBox items={items}>
       {({isOpen}) => (
@@ -121,7 +127,7 @@ export const ComboBoxRenderPropsItems = {
   }
 };
 
-export const ComboBoxRenderPropsListBoxDynamic = () => (
+export const ComboBoxRenderPropsListBoxDynamic: ComboBoxStory = () => (
   <ComboBox>
     {({isOpen}) => (
       <>
@@ -142,7 +148,7 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
   </ComboBox>
 );
 
-export const ComboBoxAsyncLoadingExample = () => {
+export const ComboBoxAsyncLoadingExample: ComboBoxStory = () => {
   let list = useAsyncList<ComboBoxItem>({
     async load({filterText}) {
       let json = await new Promise(resolve => {
@@ -185,7 +191,7 @@ export const ComboBoxAsyncLoadingExample = () => {
   );
 };
 
-export const ComboBoxImeExample = () => (
+export const ComboBoxImeExample: ComboBoxStory = () => (
   <ComboBox>
     <Label style={{display: 'block'}}>IME Test</Label>
     <div style={{display: 'flex'}}>
@@ -211,7 +217,7 @@ export const ComboBoxImeExample = () => (
 
 let manyItems = [...Array(10000)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
-export const VirtualizedComboBox = () => {
+const VirtualizedComboBoxRender = (args: ComboBoxProps<any> & {isLoading: boolean}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const {contains} = useFilter({sensitivity: 'base'});
   const filteredItems = useMemo(() => {
@@ -230,12 +236,22 @@ export const VirtualizedComboBox = () => {
       <Popover>
         <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
           <ListBox className={styles.menu}>
-            {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            <Collection items={filteredItems}>
+              {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={args.isLoading} />
           </ListBox>
         </Virtualizer>
       </Popover>
     </ComboBox>
   );
+};
+
+export const VirtualizedComboBox: StoryObj<typeof VirtualizedComboBoxRender> = {
+  render: (args) => <VirtualizedComboBoxRender {...args} />,
+  args: {
+    isLoading: false
+  }
 };
 
 let renderEmptyState = () => {
@@ -253,14 +269,14 @@ interface Character {
   birth_year: number
 }
 
-export const AsyncVirtualizedDynamicCombobox = (args) => {
+const AsyncVirtualizedDynamicComboboxRender = (props: {delay: number}): JSX.Element => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -297,7 +313,8 @@ export const AsyncVirtualizedDynamicCombobox = (args) => {
   );
 };
 
-AsyncVirtualizedDynamicCombobox.story = {
+export const AsyncVirtualizedDynamicCombobox: StoryObj<typeof AsyncVirtualizedDynamicComboboxRender> = {
+  render: (args) => <AsyncVirtualizedDynamicComboboxRender {...args} />,
   args: {
     delay: 50
   }
@@ -305,8 +322,10 @@ AsyncVirtualizedDynamicCombobox.story = {
 
 const MyListBoxLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+    <ListBoxLoadMoreItem
+      style={{height: 30, width: '100%'}}
+      {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 };

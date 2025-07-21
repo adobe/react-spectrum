@@ -5723,7 +5723,6 @@ __metadata:
     "@react-aria/interactions": "npm:^3.25.3"
     "@react-aria/selection": "npm:^3.24.3"
     "@react-aria/utils": "npm:^3.29.1"
-    "@react-stately/collections": "npm:^3.12.5"
     "@react-stately/list": "npm:^3.12.3"
     "@react-stately/tree": "npm:^3.9.0"
     "@react-types/shared": "npm:^3.30.0"
@@ -7448,8 +7447,10 @@ __metadata:
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.10.0"
+    "@internationalized/date": "npm:^3.8.2"
     "@internationalized/number": "npm:^3.6.3"
     "@parcel/macros": "npm:^2.15.4"
+    "@react-aria/calendar": "npm:^3.8.3"
     "@react-aria/collections": "npm:3.0.0-rc.3"
     "@react-aria/focus": "npm:^3.20.5"
     "@react-aria/i18n": "npm:^3.12.10"

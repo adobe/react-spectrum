@@ -50,7 +50,7 @@ interface DragHooks {
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
-  renderDragPreview?: (items: DragItem[]) => JSX.Element,
+  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
   isVirtualDragging?: () => boolean
 }
 
@@ -59,7 +59,7 @@ interface DropHooks {
   useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableCollectionResult,
   useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableItemResult,
   useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
-  renderDropIndicator?: (target: DropTarget, keys?: Set<Key>, draggedKey?: Key) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
@@ -81,13 +81,13 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
    */
-  renderDragPreview?: (items: DragItem[]) => JSX.Element,
+  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
   /**
    * A function that renders a drop indicator element between two items in a collection.
    * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
-  renderDropIndicator?: (target: DropTarget, keys?: Set<Key>, draggedKey?: Key) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate,
   /** Whether the drag and drop events should be disabled. */
