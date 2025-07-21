@@ -1,4 +1,4 @@
-import {act, render, screen, waitFor} from '@testing-library/react';
+import {act, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {Button, Text} from '../src';
 import React from 'react';
 import {SelectBox} from '../src/SelectBox';
