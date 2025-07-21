@@ -73,7 +73,6 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   return (
     <button
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
-      type="button"
       ref={ref}
       slot={props.slot || undefined}
       data-focused={isFocused || undefined}
