@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
+import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
@@ -69,5 +69,25 @@ export const NumberFieldControlledExample = {
   },
   render: (args) => (
     <NumberFieldControlled {...args} />
+  )
+};
+
+export const ArabicNumberFieldExample = {
+  args: {
+    defaultValue: 0,
+    formatOptions: {style: 'unit', unit: 'day', unitDisplay: 'long'}
+  },
+  render: (args) => (
+    <I18nProvider locale="ar-AE">
+      <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
+        <Label>Test</Label>
+        <Group style={{display: 'flex'}}>
+          <Button slot="decrement">-</Button>
+          <Input />
+          <Button slot="increment">+</Button>
+        </Group>
+        <FieldError />
+      </NumberField>
+    </I18nProvider>
   )
 };

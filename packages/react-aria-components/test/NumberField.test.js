@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -225,5 +225,31 @@ describe('NumberField', () => {
     await user.paste('1.000');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  it('should support arabic singular and dual counts', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <NumberField defaultValue={0} onChange={onChange} formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
+          <Label>Test</Label>
+          <Group style={{display: 'flex'}}>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(onChange).toHaveBeenLastCalledWith(1);
+    expect(input).toHaveValue('يوم');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveValue('يومان');
+    expect(onChange).toHaveBeenLastCalledWith(2);
   });
 });
