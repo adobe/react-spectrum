@@ -107,4 +107,3 @@ export const RangeCalendarExample: CalendarStory = {
     </RangeCalendar>
   )
 };
-

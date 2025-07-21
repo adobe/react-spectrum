@@ -561,7 +561,6 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let DOMProps = filterDOMProps(otherProps, {global: true});
 
-
   return (
     <td {...cellProps} ref={ref}>
       <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
