@@ -57,7 +57,8 @@ import {
   useMotionTemplate,
   useMotionValue,
   useTransform,
-  useMotionValueEvent
+  useMotionValueEvent,
+  cubicBezier
 } from 'motion/react';
 import {
   Dialog,
@@ -81,7 +82,7 @@ const inertiaTransition = {
 
 const staticTransition = {
   duration: 0.5,
-  ease: 'cubic-bezier(0.32, 0.72, 0, 1)'
+  ease: cubicBezier(0.32, 0.72, 0, 1)
 };
 
 const SHEET_MARGIN = 34;
