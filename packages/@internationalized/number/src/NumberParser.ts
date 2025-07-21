@@ -20,7 +20,8 @@ interface Symbols {
   literals: RegExp,
   numeral: RegExp,
   numerals: string[],
-  index: (v: string) => string
+  index: (v: string) => string,
+  noNumeralUnits: Array<{unit: string, value: number}>
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
@@ -195,6 +196,11 @@ class NumberParserImpl {
   }
 
   sanitize(value: string) {
+    // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
+    // return the known value for that case.
+    if (this.symbols.noNumeralUnits.length > 0 && this.symbols.noNumeralUnits.find(obj => obj.unit === value)) {
+      return this.symbols.noNumeralUnits.find(obj => obj.unit === value)!.value.toString();
+    }
     // Do our best to preserve the number and its possible group and decimal symbols, this includes the sign as well
     let preservedInsideNumber = value.match(new RegExp(`([${this.symbols.numerals.join('')}].*[${this.symbols.numerals.join('')}])`));
     if (preservedInsideNumber) {
@@ -387,6 +393,14 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let allParts = symbolFormatter.formatToParts(-10000.111);
   let posAllParts = symbolFormatter.formatToParts(10000.111);
   let pluralParts = pluralNumbers.map(n => symbolFormatter.formatToParts(n));
+  // if the plural parts include a unit but no integer or fraction, then we need to add the unit to the special set
+  let noNumeralUnits = pluralParts.map((p, i) => {
+    let unit = p.find(p => p.type === 'unit');
+    if (unit && !p.some(p => p.type === 'integer' || p.type === 'fraction')) {
+      return {unit: unit.value, value: pluralNumbers[i]};
+    }
+    return null;
+  }).filter(p => !!p);
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
@@ -421,7 +435,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));
 
-  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index};
+  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index, noNumeralUnits};
 }
 
 function swapCharacters(str: string, char1: string, char2: string) {

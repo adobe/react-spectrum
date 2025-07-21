@@ -199,6 +199,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
     });
 
+    it('should parse arabic singular and dual counts', () => {
+      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يومان')).toBe(2);
+      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يوم')).toBe(1);
+    });
+
     describe('round trips', function () {
       fc.configureGlobal({numRuns: 2000});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
