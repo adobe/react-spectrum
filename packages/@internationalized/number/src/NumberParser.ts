@@ -268,7 +268,8 @@ class NumberParserImpl {
 
     // in the value, for any non-digits and not the plus/minus sign,
     // if there is only one of that character and its index in the string is 0 or it's only preceeded by this numbering system's "0" character,
-    // then we know it's a decimal character and we can replace it with the decimal character for the locale we're currently trying
+    // then we could try to guess that it's a decimal character and replace it, but it's too ambiguous, a user may be deleting 1,024 -> ,024 and
+    // we don't want to change 24 into .024
     let temp = value;
     if (this.symbols.minusSign) {
       temp = replaceAll(temp, this.symbols.minusSign, '');
