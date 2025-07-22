@@ -73,13 +73,14 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           gap: {
             default: 0,
             lg: 12
-          }
+          },
+          overflow: 'hidden'
         })}>
         <Header pages={pages} currentPage={currentPage} />
         <MobileHeader
           toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
           nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
-        <div className={style({display: 'flex', gap: 32, width: 'full'})}>
+        <div className={style({display: 'flex', width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}

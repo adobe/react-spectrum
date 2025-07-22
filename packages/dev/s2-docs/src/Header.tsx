@@ -83,6 +83,7 @@ export default function Header(props: PageProps) {
           className={style({
             width: 'full', 
             display: 'grid',
+            // @eslint-disable-next-line
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center'
           })}>
