@@ -203,8 +203,10 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     UNSAFE_className = '',
     UNSAFE_style,
     styles,
+    loadingState,
     onLoadMore,
     items,
+    renderEmptyState,
     ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
@@ -244,9 +246,11 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderer;
   let cardLoadingSentinel = (
     <GridListLoadMoreItem
+      isLoading={isLoading}
       onLoadMore={onLoadMore} />
   );
 
@@ -276,6 +280,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              renderEmptyState={!isLoading ? renderEmptyState : undefined}
               items={items}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
