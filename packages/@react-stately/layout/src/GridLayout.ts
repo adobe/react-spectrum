@@ -122,9 +122,11 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
 
     let collection = this.virtualizer!.collection;
     // Make sure to set rows to 0 if we performing a first time load or are rendering the empty state so that Virtualizer
-    // won't try to render its body
-    let isEmptyOrLoading = collection?.size === 0;
-    let rows = isEmptyOrLoading ? 0 : Math.ceil(collection.size / numColumns);
+    // won't try to render its body. If we detect a skeleton as the first item, then we want to render the skeleton items in place of
+    // the renderEmptyState.
+    let isSkeletonLoading = collection.getItem(collection.getFirstKey()!)?.type === 'skeleton';
+    let isEmptyOrLoading = collection?.size === 0 && !isSkeletonLoading;
+    let rows = isEmptyOrLoading ? 0 : Math.ceil(isSkeletonLoading ? 1 : collection.size / numColumns);
     let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
