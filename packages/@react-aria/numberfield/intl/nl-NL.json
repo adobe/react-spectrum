@@ -1,5 +1,7 @@
 {
   "decrease": "{fieldLabel} verlagen",
   "increase": "{fieldLabel} verhogen",
-  "numberField": "Getalveld"
+  "numberField": "Getalveld",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }

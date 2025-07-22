@@ -1,5 +1,7 @@
 {
   "decrease": "הקטן {fieldLabel}",
   "increase": "הגדל {fieldLabel}",
-  "numberField": "שדה מספר"
+  "numberField": "שדה מספר",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }

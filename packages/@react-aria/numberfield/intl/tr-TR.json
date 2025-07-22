@@ -1,5 +1,7 @@
 {
   "decrease": "{fieldLabel} azalt",
   "increase": "{fieldLabel} arttır",
-  "numberField": "Sayı alanı"
+  "numberField": "Sayı alanı",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }

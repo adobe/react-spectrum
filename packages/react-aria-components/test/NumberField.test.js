@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -182,5 +184,32 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support pasting', async () => {
+    let {getByRole} = render(<TestNumberField />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.paste('1024');
+    expect(input).toHaveValue('1,024');
+    expect(announce).toHaveBeenCalledWith('Pasted value: 1,024', 'polite');
+  });
+
+  it('should support pasting into a format', async () => {
+    let {getByRole} = render(<TestNumberField formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.paste('1,024');
+    expect(input).toHaveValue('$1,024.00');
+    expect(announce).toHaveBeenCalledWith('Pasted value: $1,024.00', 'polite');
+  });
+
+  it('should tell users if their paste failed', async () => {
+    let {getByRole} = render(<TestNumberField />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.paste('$1.00 024 5.6');
+    expect(input).toHaveValue('');
+    expect(announce).toHaveBeenCalledWith('Could not understand value: $1.00 024 5.6, try another format perhaps', 'polite');
   });
 });
