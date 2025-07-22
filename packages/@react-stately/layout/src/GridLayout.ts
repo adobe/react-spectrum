@@ -120,13 +120,21 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
     this.gap = new Size(horizontalSpacing, minSpace.height);
 
+    // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
+    // so that an additional row is added for the skeletons.
     let collection = this.virtualizer!.collection;
-    // Make sure to set rows to 0 if we performing a first time load or are rendering the empty state so that Virtualizer
-    // won't try to render its body. If we detect a skeleton as the first item, then we want to render the skeleton items in place of
-    // the renderEmptyState.
-    let isSkeletonLoading = collection.getItem(collection.getFirstKey()!)?.type === 'skeleton';
-    let isEmptyOrLoading = collection?.size === 0 && !isSkeletonLoading;
-    let rows = isEmptyOrLoading ? 0 : Math.ceil(isSkeletonLoading ? 1 : collection.size / numColumns);
+    let collectionSize = collection.size;
+    let lastKey = collection.getLastKey();
+    for (let i = 0; i < 2 && lastKey != null; i++) {
+      let item = collection.getItem(lastKey);
+      if (item?.type === 'skeleton') {
+        collectionSize++;
+        break;
+      }
+      lastKey = collection.getKeyBefore(lastKey);
+    }
+    
+    let rows = Math.ceil(collectionSize / numColumns);
     let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
