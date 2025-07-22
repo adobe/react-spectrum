@@ -259,7 +259,8 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
             isSelected={isSelected}
             isDisabled={isDisabled}
             size={size}
-            isReadOnly />
+            isReadOnly
+            excludeFromTabOrder />
         </div>
       )}
       {orientation === 'horizontal' ? (

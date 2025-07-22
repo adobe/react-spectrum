@@ -18,11 +18,12 @@ import {
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, Selection, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useId, useMemo} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useMemo} from 'react';
 import {SelectBoxRenderPropsContext} from './SelectBox';
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useId} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export type SelectBoxValueType = string | string[];
@@ -325,7 +326,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       
       {label && (
         <FieldLabel
-          id={`${gridId}-label`}
+          id={gridId}
           isRequired={isRequired}
           contextualHelp={contextualHelp}>
           {label}
@@ -338,7 +339,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         selectedKeys={selectedKeys}
         onSelectionChange={isDisabled ? () => {} : setSelectedKeys}
         disabledKeys={disabledKeys}
-        aria-labelledby={label ? `${gridId}-label` : undefined}
+        aria-labelledby={label ? gridId : undefined}
         aria-describedby={hasValidationErrors && errorMessage ? errorId : undefined}
         aria-invalid={hasValidationErrors}
         aria-required={isRequired}
