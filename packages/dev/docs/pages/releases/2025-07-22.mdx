@@ -20,7 +20,7 @@ date: 2025-07-22
 
 Happy summer! This release adds support for async loading and infinite scrolling, improves form integration and drag and drop interactions, and adds support for additional DOM events and attributes.
 
-The new LoadMoreItem components supported in [ListBox](../react-aria/ListBox.html#asynchronous-loading), [GridList](../react-aria/GridList.html#asynchronous-loading), [Table](../react-aria/Table.html#asynchronous-loading), and [Tree](../react-aria/Tree.html#asynchronous-loading) enables infinite scrolling. These trigger loading of additional pages of items and display a loading spinner. Multiple LoadMoreItems can be rendered within a collection too, enabling loading multiple levels of a tree, or sections of data from different APIs.
+The new LoadMoreItem components supported in [ListBox](../react-aria/ListBox.html#asynchronous-loading), [GridList](../react-aria/GridList.html#asynchronous-loading), [Table](../react-aria/Table.html#asynchronous-loading), and [Tree](../react-aria/Tree.html#asynchronous-loading) enables infinite scrolling. These trigger the loading of additional pages of items and display a loading spinner. Multiple LoadMoreItems can be rendered within a collection too, enabling loading multiple levels of a tree or sections of data from different APIs.
 
 We've also opened up the React Aria Components API to pass through more DOM events and attributes. This improves integration with other libraries, for example making it possible to use another library's menu with a React Aria button.
 
@@ -82,6 +82,7 @@ As always, thanks so much to everyone who contributed to this release!
   * Fix keyboard selection in `Select` typeahead when options include spaces - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8497)
   * Prevent form submission when required `Select` has more than 300 options - [@lucasweng](https://github.com/lucasweng) - [PR](https://github.com/adobe/react-spectrum/pull/8280)
 * Tabs
+   * Fix wrapping with vertical `TabList` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8602)
   * Match id type in `Tab` and `TabPanel` - [@kidonng](https://github.com/kidonng) - [PR](https://github.com/adobe/react-spectrum/pull/8423)
 * TableView
   * Ensure the `renderEmptyState` in Spectrum `IllustratedMessage` is properly displayed in `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8416)
