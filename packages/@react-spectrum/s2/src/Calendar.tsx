@@ -70,7 +70,8 @@ const calendarStyles = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-  width: 'fit'
+  width: 'fit',
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const headerStyles = style({
@@ -173,6 +174,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-100',
+    isPressed: 'gray-100',
     isDisabled: 'transparent',
     isToday: {
       default: baseColor('gray-300'),
