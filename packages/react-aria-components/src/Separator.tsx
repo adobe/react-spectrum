@@ -13,11 +13,11 @@
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {GlobalDOMAttributes, Key} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {}
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
@@ -50,10 +50,11 @@ export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, functi
     orientation
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <Element
-      {...filterDOMProps(props)}
-      {...separatorProps}
+      {...mergeProps(DOMProps, separatorProps)}
       style={style}
       className={className ?? 'react-aria-Separator'}
       ref={ref}

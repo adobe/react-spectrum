@@ -218,7 +218,7 @@ describe('DateField', () => {
 
   it('should support form value', () => {
     render(
-      <DateField name="birthday" value={new CalendarDate(2020, 2, 3)}>
+      <DateField name="birthday" form="test" value={new CalendarDate(2020, 2, 3)}>
         <Label>Birth date</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -227,6 +227,7 @@ describe('DateField', () => {
     );
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -409,5 +410,47 @@ describe('DateField', () => {
     expect(yearsSegment).toHaveTextContent('1111');
     await user.keyboard('002222');
     expect(yearsSegment).toHaveTextContent('2222');
+  });
+
+  it('should support autofill', async() => {
+    let {getByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let hiddenDateInput = document.querySelector('input[type=date]');
+    await user.type(hiddenDateInput, '2000-05-30');
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('5/30/2000');
+  });
+
+  it('should reset to placeholders when deleting a partially filled DateField', async () => {
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segements = getAllByRole('spinbutton');
+    let monthSegment = segements[0];
+    expect(monthSegment).toHaveTextContent('mm');
+    await user.click(monthSegment);
+    expect(monthSegment).toHaveFocus();
+    await user.keyboard('11');
+    expect(monthSegment).toHaveTextContent('11');
+
+    await user.click(monthSegment);
+    await user.keyboard('{backspace}');
+    await user.keyboard('{backspace}');
+    expect(monthSegment).toHaveTextContent('mm');
+    expect(segements[1]).toHaveTextContent('dd');
+    expect(segements[2]).toHaveTextContent('yyyy');
   });
 });

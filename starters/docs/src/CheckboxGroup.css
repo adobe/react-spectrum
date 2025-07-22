@@ -1,0 +1,12 @@
+@import "./theme.css";
+
+.react-aria-CheckboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.499625rem;
+  color: var(--text-color);
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}

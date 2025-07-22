@@ -11,14 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button, DateField, DateInput, DateSegment, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import clsx from 'clsx';
-import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/DateField',
   argTypes: {
     onChange: {
       table: {
@@ -48,10 +50,16 @@ export default {
   },
   args: {
     onChange: action('OnChange')
-  }
-};
+  },
+  component: DateField
+} as Meta<typeof DateField>;
 
-export const DateFieldExample = (props) => (
+export type DateFieldStory = StoryFn<Omit<typeof DateField, 'minValue' | 'maxValue'> & {
+  minValue?: number,
+  maxValue?: number
+}>;
+
+export const DateFieldExample: DateFieldStory = (props) => (
   <DateField
     {...props}
     minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
@@ -64,4 +72,31 @@ export const DateFieldExample = (props) => (
     </DateInput>
     <FieldError style={{display: 'block'}} />
   </DateField>
+);
+
+export const DateFieldAutoFill = (props) => (
+  <Form
+    onSubmit={e => {
+      action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+      e.preventDefault();
+    }}>
+    <TextField>
+      <Label>Name</Label>
+      <Input name="name" type="text" id="name" autoComplete="name" />
+    </TextField>
+    <DateField
+      {...props}
+      name="bday"
+      autoComplete="bday"
+      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')
+    }
+      data-testid="date-field-example">
+      <Label style={{display: 'block'}}>Date</Label>
+      <DateInput className={styles.field} data-testid2="date-input">
+        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      </DateInput>
+      <FieldError style={{display: 'block'}} />
+    </DateField>
+    <Button type="submit">Submit</Button>
+  </Form>
 );

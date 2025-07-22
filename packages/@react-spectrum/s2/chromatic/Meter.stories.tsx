@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../src/Meter';
 import {StaticColorDecorator} from '../stories/utils';
 
@@ -24,9 +24,10 @@ const meta: Meta<typeof Meter> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Meter>;
 
-export const Example = {
-  render: (args: any) => <Meter {...args} />,
+export const Example: Story = {
+  render: (args) => <Meter {...args} />,
   args: {
     label: 'Storage space',
     value: 80,

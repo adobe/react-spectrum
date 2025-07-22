@@ -13,35 +13,103 @@
 import {
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
-  Button,
-  CalendarCell,
-  CalendarGrid,
+  ContextValue,
   DateValue,
-  Heading,
   Text
 } from 'react-aria-components';
-import {ReactNode} from 'react';
+import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
+import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
+import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {Header} from './';
+import {helpTextStyles} from './Field';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {style} from '../style' with {type: 'macro'};
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface RangeCalendarProps<T extends DateValue>
-  extends AriaRangeCalendarProps<T> {
-  errorMessage?: string
+  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | keyof GlobalDOMAttributes>,
+  StyleProps {
+  /**
+   * The error message to display when the calendar is invalid.
+   */
+  errorMessage?: ReactNode,
+  /**
+   * The number of months to display at once.
+   * @default 1
+   */
+  visibleMonths?: number
 }
 
-export function RangeCalendar<T extends DateValue>(
-  {errorMessage, ...props}: RangeCalendarProps<T>
-): ReactNode {
+export const RangeCalendarContext = createContext<ContextValue<Partial<RangeCalendarProps<any>>, HTMLDivElement>>(null);
+
+
+const calendarStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 24,
+  width: 'fit'
+}, getAllowedOverrides());
+
+const headerStyles = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: 'full'
+});
+
+export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, RangeCalendarContext);
+  let {
+    visibleMonths = 1,
+    errorMessage,
+    UNSAFE_style,
+    UNSAFE_className,
+    styles,
+    ...otherProps
+  } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
   return (
-    <AriaRangeCalendar {...props}>
-      <header>
-        <Button slot="previous">◀</Button>
-        <Heading />
-        <Button slot="next">▶</Button>
-      </header>
-      <CalendarGrid>
-        {(date) => <CalendarCell date={date} />}
-      </CalendarGrid>
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    <AriaRangeCalendar
+      {...otherProps}
+      ref={ref}
+      visibleDuration={{months: visibleMonths}}
+      style={UNSAFE_style}
+      className={(UNSAFE_className || '') + calendarStyles(null, styles)}>
+      {({isInvalid, isDisabled}) => {
+        return (
+          <>
+            <Header styles={headerStyles}>
+              <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
+              <CalendarHeading />
+              <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
+            </Header>
+            <div
+              className={style({
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 24,
+                width: 'full',
+                alignItems: 'start'
+              })}>
+              {Array.from({length: visibleMonths}).map((_, i) => (
+                <CalendarGrid months={i} key={i} />
+              ))}
+            </div>
+            {isInvalid && (
+              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
+                {errorMessage || stringFormatter.format('calendar.invalidSelection', {selectedCount: 2})}
+              </Text>
+            )}
+          </>
+        );
+      }}
     </AriaRangeCalendar>
   );
-}
+});

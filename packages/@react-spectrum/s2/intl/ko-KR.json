@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "모두 선택됨",
   "breadcrumbs.more": "기타 항목",
   "button.pending": "보류 중",
+  "calendar.invalidSelection": "선택한 {selectedCount, plural, one {일자를} other {일자를}} 사용할 수 없습니다.",
   "combobox.noResults": "결과 없음",
   "contextualhelp.help": "도움말",
   "contextualhelp.info": "정보",
+  "datepicker.endTime": "종료 시간",
+  "datepicker.startTime": "시작 시간",
+  "datepicker.time": "시간",
   "dialog.alert": "경고",
   "dialog.dismiss": "무시",
   "dropzone.replaceMessage": "파일을 드롭하여 바꾸기",
@@ -30,10 +34,10 @@
   "table.sortAscending": "오름차순 정렬",
   "table.sortDescending": "내림차순 정렬",
   "tag.actions": "액션",
-  "tag.hideButtonLabel": "간단히 표시",
+  "tag.hideButtonLabel": "간략히 보기",
   "tag.noTags": "없음",
   "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "모두 지우기",
+  "toast.collapse": "접기",
+  "toast.showAll": "모두 표시"
 }

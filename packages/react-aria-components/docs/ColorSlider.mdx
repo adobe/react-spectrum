@@ -70,10 +70,14 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-a
 
   .react-aria-Label {
     grid-area: label;
+    color: var(--text-color);
   }
 
   .react-aria-SliderOutput {
     grid-area: output;
+    width: 4ch;
+    text-align: end;
+    color: var(--text-color);
   }
 
   .react-aria-SliderTrack {
@@ -190,7 +194,7 @@ export function MyColorSlider({label, ...props}: MyColorSliderProps) {
     <ColorSlider {...props}>
       <Label>{label}</Label>
       <SliderOutput />
-      <SliderTrack 
+      <SliderTrack
         style={({defaultStyle}) => ({
           background: `${defaultStyle.background},
             repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`

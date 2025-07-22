@@ -48,7 +48,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'childr
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode
 }

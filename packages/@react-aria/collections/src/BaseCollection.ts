@@ -88,9 +88,10 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
+  private itemCount: number = 0;
 
   get size(): number {
-    return this.keyMap.size;
+    return this.itemCount;
   }
 
   getKeys(): IterableIterator<Key> {
@@ -193,6 +194,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     collection.keyMap = new Map(this.keyMap);
     collection.firstKey = this.firstKey;
     collection.lastKey = this.lastKey;
+    collection.itemCount = this.itemCount;
     return collection;
   }
 
@@ -201,12 +203,21 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       throw new Error('Cannot add a node to a frozen collection');
     }
 
+    if (node.type === 'item' && this.keyMap.get(node.key) == null) {
+      this.itemCount++;
+    }
+
     this.keyMap.set(node.key, node);
   }
 
   removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
+    }
+
+    let node = this.keyMap.get(key);
+    if (node != null && node.type === 'item') {
+      this.itemCount--;
     }
 
     this.keyMap.delete(key);

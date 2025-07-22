@@ -11,7 +11,7 @@
  */
 
 import {Breadcrumbs, Item} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta<typeof Breadcrumbs> = {
@@ -21,8 +21,9 @@ const meta: Meta<typeof Breadcrumbs> = {
 
 export default meta;
 
+export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
 
-export const Default = {
+export const Default: BreadcrumbsStory = {
   args: {
     children: [
       <Item key="Folder 1">The quick brown fox jumps over</Item>,
@@ -36,19 +37,19 @@ export const Default = {
   }
 };
 
-export const IsMultiline = {
+export const IsMultiline: BreadcrumbsStory = {
   args: {...Default.args, isMultiline: true}
 };
 
-export const SizeS = {
+export const SizeS: BreadcrumbsStory = {
   args: {...Default.args, size: 'S'}
 };
 
-export const SizeM = {
+export const SizeM: BreadcrumbsStory = {
   args: {...Default.args, size: 'M'}
 };
 
-export const Truncated = {
+export const Truncated: BreadcrumbsStory = {
   decorators: [
     (Story) => (
       <div style={{width: '100px'}}>
@@ -59,6 +60,6 @@ export const Truncated = {
   args: {...Default.args}
 };
 
-export const ShowRoot = {
+export const ShowRoot: BreadcrumbsStory = {
   args: {...Default.args, showRoot: true}
 };

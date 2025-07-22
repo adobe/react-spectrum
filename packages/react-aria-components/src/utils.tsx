@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -61,11 +61,6 @@ export interface StyleProps {
 export interface DOMProps extends StyleProps, SharedDOMProps {
   /** The children of the component. */
   children?: ReactNode
-}
-
-export interface ScrollableProps<T extends Element> {
-  /** Handler that is called when a user scrolls. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event). */
-  onScroll?: (e: UIEvent<T>) => void
 }
 
 type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
@@ -185,7 +180,7 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E> | undefined, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, ...contextProps} = ctx as any;

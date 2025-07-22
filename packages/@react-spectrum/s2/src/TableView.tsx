@@ -38,8 +38,8 @@ import {
   RowRenderProps,
   TableBodyRenderProps,
   TableLayout,
+  TableLoadMoreItem,
   TableRenderProps,
-  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -48,7 +48,7 @@ import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, U
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -109,7 +109,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -196,11 +196,10 @@ export class S2TableLayout<T> extends TableLayout<T> {
     if (!header) {
       return [];
     }
-    let {children, layoutInfo} = body;
+    let {layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    // TODO: we may want to adjust RAC layouts to do something simlar? Current users of RAC table will probably run into something similar
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
@@ -219,7 +218,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
@@ -227,11 +226,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
   // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
-    let {children, layoutInfo} = layoutNode;
+    let {layoutInfo} = layoutNode;
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
@@ -373,7 +372,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -390,13 +389,13 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingSentinel>
+    </TableLoadMoreItem>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
@@ -507,7 +506,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends RACColumnProps {
+export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -863,7 +862,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -1119,7 +1118,7 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
 
 /**
  * A row within a `<Table>`.

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Switch} from '../src';
 
@@ -27,11 +27,12 @@ const meta: Meta<typeof Switch> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Switch>;
 
-export const Example = {
-  render: (args: any) => <Switch {...args}>Wi-Fi</Switch>
+export const Example: Story = {
+  render: (args) => <Switch {...args}>Wi-Fi</Switch>
 };
 
-export const LongLabel = {
-  render: (args: any) => (<Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>)
+export const LongLabel: Story = {
+  render: (args) => (<Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>)
 };
