@@ -24,8 +24,8 @@ import {
   useMemo,
   useState
 } from 'react';
-// @ts-ignore
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
