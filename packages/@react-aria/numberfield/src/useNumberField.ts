@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
-import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   type ClipboardEvent,
   type ClipboardEventHandler,
@@ -25,6 +25,7 @@ import {
   useState
 } from 'react';
 // @ts-ignore
+import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
@@ -35,7 +36,6 @@ import {
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
-import { announce } from '@react-aria/live-announcer';
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
