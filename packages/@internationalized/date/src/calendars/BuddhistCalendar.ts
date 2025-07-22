@@ -49,6 +49,7 @@ export class BuddhistCalendar extends GregorianCalendar {
   getDaysInMonth(date: AnyCalendarDate): number {
     return super.getDaysInMonth(toGregorian(date));
   }
+  
   balanceDate(): void {}
 }
 

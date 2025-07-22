@@ -167,7 +167,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let v: DateValue | null = props.value || props.defaultValue || props.placeholderValue || null;
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
-  const isValueConfirmed = useRef(false)
+  const isValueConfirmed = useRef(props.value || props.defaultValue ? true : false)
   const [isValueChanged, setIsValueChanged] = useState(false)
 
   // props.granularity must actually exist in the value if one is provided.
@@ -262,7 +262,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setIsValueChanged(false)
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let displayValue = placeholderDate;
+  let displayValue = isValueConfirmed.current && value ? value:  placeholderDate ;
   let setValue = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
@@ -302,7 +302,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       return;
     }
     setPlaceholderDate(newValue);
-    clearedSegment.current = null;
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
