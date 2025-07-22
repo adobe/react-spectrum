@@ -24,7 +24,7 @@ export {FocusRing, FocusScope, useFocusManager, useFocusRing} from '@react-aria/
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress, useFocusable, Pressable, Focusable} from '@react-aria/interactions';
 export {useField, useLabel} from '@react-aria/label';
-export {useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
+export {useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox} from '@react-aria/gridlist';
 export {useLandmark} from '@react-aria/landmark';
 export {useLink} from '@react-aria/link';
 export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
