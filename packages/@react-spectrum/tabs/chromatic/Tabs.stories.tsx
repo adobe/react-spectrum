@@ -110,8 +110,8 @@ export const Vertical: TabsStoryProps = {
     <Tabs {...args} aria-label="Tab example" maxWidth={500}>
       <TabList>
         <Item key="val1">Tab 1</Item>
-        <Item key="val2">バナーおよびディスプレイ広告</Item>
-        <Item key="val3"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
+        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>
@@ -157,8 +157,8 @@ export const VerticalMaxWidth: TabsStoryProps = {
     <Tabs {...args} aria-label="Tab example" maxWidth={500}>
       <TabList width={120}>
         <Item key="val1">Tab 1</Item>
-        <Item key="val2">バナーおよびディスプレイ広告</Item>
-        <Item key="val3"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
+        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>

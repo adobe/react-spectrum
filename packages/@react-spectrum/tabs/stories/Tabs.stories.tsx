@@ -57,7 +57,7 @@ OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
-export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({wrap: true});
+export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({maxWidth: 90, wrap: true});
 
 OrientationVerticalWrap.story = {
   name: 'orientation: vertical, wrap: true'
@@ -757,8 +757,8 @@ function renderWithVerticalWrap(props = {}) {
       onSelectionChange={action('onSelectionChange')}>
       <TabList {...props}>
         <Item key="val1">User Profile Settings</Item>
-        <Item key="val2">バナーおよびディスプレイ広告</Item>
-        <Item key="val3">Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</Item>
+        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
+        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>

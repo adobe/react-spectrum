@@ -63,8 +63,8 @@ export const Vertical: Story = {
     <Tabs {...args} styles={style({width: 450, height: 256})} aria-label="History of Ancient Rome">
       <TabList>
         <Tab id="FoR">User Profile Settings</Tab>
-        <Tab id="MaR">バナーおよびディスプレイ広告</Tab>
-        <Tab id="Emp"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Tab>
+        <Tab id="MaR"><span lang="ja">バナーおよびディスプレイ広告</span></Tab>
+        <Tab id="Emp"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Tab>
       </TabList>
       <TabPanel id="FoR">
         <div className={style({overflow: 'auto', height: 'full'})}>
@@ -94,8 +94,8 @@ export const VerticalMaxWidth: Story = {
     <Tabs {...args} styles={style({width: 450, height: 256})} aria-label="History of Ancient Rome">
       <TabList styles={style({width: 120})}>
         <Tab id="FoR">User Profile Settings</Tab>
-        <Tab id="MaR">バナーおよびディスプレイ広告</Tab>
-        <Tab id="Emp"><span style={{wordBreak: 'break-word'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Tab>
+        <Tab id="MaR"><span lang="ja">バナーおよびディスプレイ広告</span></Tab>
+        <Tab id="Emp"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Tab>
       </TabList>
       <TabPanel id="FoR">
         <div className={style({overflow: 'auto', height: 'full'})}>
