@@ -206,7 +206,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
           }
         }
       } else {
-        state.setInputValue('');
         announce(stringFormatter.format('couldNotParseValue', {value: pastedText}), 'polite');
       }
     }
