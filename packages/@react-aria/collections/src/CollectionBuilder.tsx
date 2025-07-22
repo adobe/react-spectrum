@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseCollection} from './BaseCollection';
+import {BaseCollection, CollectionNode} from './BaseCollection';
 import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
 import {FocusableContext} from '@react-aria/interactions';
-import {forwardRefType, Node} from '@react-types/shared';
+import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
@@ -127,24 +127,29 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
 
 const SSRContext = createContext<BaseNode<any> | null>(null);
 
-// TODO: make this any for now, but should be a node class
-function useSSRCollectionNode<T extends Element>(Type: any, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
-// function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
+export type CollectionNodeClass<T> = {
+  new (key: Key): CollectionNode<T>,
+  readonly type: string
+};
+
+// TODO: discuss the former Type arg, renamed to CollectionNodeClass
+function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T>, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>) => ReactElement) {
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
   // Therefore we can create elements in our collection document during render so that they are in the
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback((element: ElementNode<any> | null) => {
-    // TODO: now we get the proper node class aka TreeNode
-    element?.setProps(props, ref, rendered, render, Type);
-  }, [props, ref, rendered, render, Type]);
+    // TODO: check setProps api
+    element?.setProps(props, ref, rendered, render, CollectionNodeClass);
+  }, [props, ref, rendered, render, CollectionNodeClass]);
   let parentNode = useContext(SSRContext);
   if (parentNode) {
     // Guard against double rendering in strict mode.
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
-      element = parentNode.ownerDocument.createElement(Type);
+      // TODO: check this, maybe should just pass the CollectionNodeClass as a whole?
+      element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
       element.setProps(props, ref, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
@@ -156,15 +161,16 @@ function useSSRCollectionNode<T extends Element>(Type: any, props: object, ref: 
       : null;
   }
 
+  // console.log('type', CollectionNodeClass, CollectionNodeClass.type)
   // @ts-ignore
-  // TODO: make div for now, may not actually matter
-  return <div ref={itemRef}>{children}</div>;
+  // TODO: could just make this a div perhaps, but keep it in line with how it used to work
+  return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 
-// TODO: changed all of these to be any, but should be node class type
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<P extends object, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
+// TODO: check the signature of the CollectionNodeClass here and other places (aka useSSRCollectionNode and branchCompoennt). If I use the generic it complains. Perhaps it should be unknown? Or maybe the definitions in Listbox and stuff shouldn't use a generic?
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
@@ -177,7 +183,7 @@ export function createLeafComponent<P extends object, E extends Element>(type: a
     }
 
     return useSSRCollectionNode(
-      type,
+      CollectionNodeClass,
       props,
       ref,
       'children' in props ? props.children : null,
@@ -195,12 +201,12 @@ export function createLeafComponent<P extends object, E extends Element>(type: a
   return Result;
 }
 
-// TODO: changed all of these to be any, but should be node class type
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: any, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
+// TODO: check the signature of this too
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
-    return useSSRCollectionNode(type, props, ref, null, children, node => <Component node={node} />) ?? <></>;
+    return useSSRCollectionNode(CollectionNodeClass, props, ref, null, children, node => <Component node={node} />) ?? <></>;
   });
   // @ts-ignore
   Result.displayName = render.name;

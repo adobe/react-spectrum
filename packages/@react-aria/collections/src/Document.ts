@@ -11,6 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
+import {CollectionNodeClass} from './CollectionBuilder';
 import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
 import {Node} from '@react-types/shared';
 
@@ -267,10 +268,6 @@ export class ElementNode<T> extends BaseNode<T> {
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
     this.node = null;
-    // TODO: move this line to setProps
-    // if ()
-    // TODO: this is called by Document, seems like we need it?
-    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
   }
 
   get index(): number {
@@ -327,22 +324,20 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement, type?: any): void {
+  // TODO
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement, CollectionNodeClass?: CollectionNodeClass<any>): void {
     let node = this.getMutableNode();
     let {value, textValue, id, ...props} = obj;
 
 
-    // if called for first time, aka this.node is undef, call
-    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`); but make new TreeNode instead of COllectionNode
+    // TODO: Flow here is that if this called for first time, aka this.node is undef, call
+    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`); but make new TreeNode/MenuNode/etc instead of CollectionNode
     // Caveat is this assumes we don't need a node before setProps is called on it
-    // TODO: will get rid of type function check here when we migrate everything to use the class
-    if (node == null && typeof type === 'function') {
-      node = new type(`react-aria-${++this.ownerDocument.nodeId}`);
+    if (node == null && CollectionNodeClass) {
+      node = new CollectionNodeClass(`react-aria-${++this.ownerDocument.nodeId}`);
       this.node = node;
-      // node.key = id;
-      // console.log('making node', node.type, node)
     }
-    // console.log('setting props', props, node, node.props)
+
     props.ref = ref;
     node.props = props;
     node.rendered = rendered;
@@ -353,7 +348,6 @@ export class ElementNode<T> extends BaseNode<T> {
       // TODO: still need to use this.hasSetProps so this can run twice (?) instead of setting node.key above
       // If we set node.key = id and change this to if (this.node), setting refs fails. If we just check (this.node here), it will fail if the user provides an id
       if (this.hasSetProps) {
-      // if (this.node) {
         throw new Error('Cannot change the id of an item');
       }
       node.key = id;

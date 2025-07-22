@@ -279,10 +279,13 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   onAction?: () => void
 }
 
+// TODO: add filter funct to this
 class GridListNode extends CollectionNode<any> {
+  static readonly type = 'item';
   constructor(key: Key) {
-    super('item', key);
+    super(GridListNode.type, key);
   }
+
 }
 
 /**
@@ -519,14 +522,17 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-// TODO: can probably reuse ListBox's loaderNode
-class GridLoaderNode extends CollectionNode<any> {
+// TODO: can probably reuse ListBox's loaderNode, but might keep separate
+// add filter logic
+class GridListLoaderNode extends CollectionNode<any> {
+  static readonly type = 'loader';
+
   constructor(key: Key) {
-    super('loader', key);
+    super(GridListLoaderNode.type, key);
   }
 }
 
-export const GridListLoadMoreItem = createLeafComponent(GridLoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+export const GridListLoadMoreItem = createLeafComponent(GridListLoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

@@ -107,9 +107,11 @@ export interface SubmenuTriggerProps {
 
 const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
-class SubMenuTriggerNode<T> extends CollectionNode<T> {
+class SubmenuTriggerNode<T> extends CollectionNode<T> {
+  static readonly type = 'submenutrigger';
+
   constructor(key: Key) {
-    super('submenutrigger', key);
+    super(SubmenuTriggerNode.type, key);
   }
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
@@ -130,7 +132,7 @@ class SubMenuTriggerNode<T> extends CollectionNode<T> {
  *
  * @version alpha
  */
-export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubMenuTriggerNode, (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubmenuTriggerNode, (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -203,7 +205,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
-  let filteredCollection = useMemo(() => filter ? collection.UNSTABLE_filter(filter) : collection, [collection, filter]);
+  let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
     collection: filteredCollection as ICollection<Node<object>>,
@@ -337,10 +339,13 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   );
 }
 
-// todo can probably reuse the SectionNode from ListBox?
-class SectionNode<T> extends CollectionNode<T> {
+// TODO: can probably reuse the SectionNode from ListBox? Do this last in case there is something different in the implementation? Or maybe keep them unique in case
+// down the line we need to differentiate the two?
+class MenuSectionNode<T> extends CollectionNode<T> {
+  static readonly type = 'section';
+
   constructor(key: Key) {
-    super('section', key);
+    super(MenuSectionNode.type, key);
   }
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
@@ -361,7 +366,7 @@ class SectionNode<T> extends CollectionNode<T> {
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent(SectionNode, MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent(MenuSectionNode, MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -395,10 +400,13 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
-// TODO maybe this needs to a separate node type?
+// TODO maybe this needs to be a separate node type? Or maybe it should just reuse the ItemNode from ListBox (reuse later if need be)
+// There is probably some merit to separating it like we already do for ListBoxItem/MenuItem/etc
 class MenuItemNode<T> extends CollectionNode<T> {
+  static readonly type = 'item';
+
   constructor(key: Key) {
-    super('item', key);
+    super(MenuItemNode.type, key);
   }
 
   filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {

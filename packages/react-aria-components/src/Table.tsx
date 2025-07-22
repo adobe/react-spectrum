@@ -547,8 +547,10 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
 // TODO: will this have any logic? Maybe for ones like this where we aren't adding the filter function just yet we could
 // keep it as returning the string instead of the class in createBranchComponent
 class TableHeaderNode extends CollectionNode<any> {
+  static readonly type = 'header';
+
   constructor(key: Key) {
-    super('tableheader', key);
+    super(TableHeaderNode.type, key);
   }
 }
 
@@ -691,16 +693,18 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAt
 
 
 // TODO does this need to be separate or should ItemNode be generic enough that it can take an arbitrary "type"?
-class ColumnNode extends CollectionNode<any> {
+class TableColumnNode extends CollectionNode<any> {
+  static readonly type = 'column';
+
   constructor(key: Key) {
-    super('column', key);
+    super(TableColumnNode.type, key);
   }
 }
 
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent(ColumnNode, (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
+export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -935,8 +939,10 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
 
 // TODO: do we need this
 class TableBodyNode extends CollectionNode<any> {
+  static readonly type = 'header';
+
   constructor(key: Key) {
-    super('tablebody', key);
+    super(TableBodyNode.type, key);
   }
 }
 
@@ -1043,8 +1049,10 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
 
 // TODO: maybe can reuse the item node, but probably will have different filter logic here so splitting out for now
 class TableRowNode extends CollectionNode<any> {
+  static readonly type = 'item';
+
   constructor(key: Key) {
-    super('item', key);
+    super(TableRowNode.type, key);
   }
 }
 
@@ -1233,16 +1241,18 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
 }
 
 // TODO: Also perhaps can just be ItemNode?
-class CellNode extends CollectionNode<any> {
+class TableCellNode extends CollectionNode<any> {
+  static readonly type = 'cell';
+
   constructor(key: Key) {
-    super('cell', key);
+    super(TableCellNode.type, key);
   }
 }
 
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent(CellNode, (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
+export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
@@ -1398,13 +1408,15 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
 }
 
 // TODO: can reuse this most likely
-class LoaderNode extends CollectionNode<any> {
+class TableLoaderNode extends CollectionNode<any> {
+  static readonly type = 'loader';
+
   constructor(key: Key) {
-    super('loader', key);
+    super(TableLoaderNode.type, key);
   }
 }
 
-export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
+export const TableLoadMoreItem = createLeafComponent(TableLoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

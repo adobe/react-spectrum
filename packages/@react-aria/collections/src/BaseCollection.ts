@@ -233,7 +233,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  UNSTABLE_filter(filterFn: (textValue: string) => boolean): BaseCollection<T> {
+  filter(filterFn: (textValue: string) => boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
     let [firstKey, lastKey] = filterChildren(this, newCollection, this.firstKey, filterFn);
     newCollection.firstKey = firstKey;

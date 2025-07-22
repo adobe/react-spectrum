@@ -18,8 +18,10 @@ import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
 class HeaderNode extends CollectionNode<any> {
+  static readonly type = 'header';
+
   constructor(key: Key) {
-    super('header', key);
+    super(HeaderNode.type, key);
   }
 
   filter(): CollectionNode<any> {

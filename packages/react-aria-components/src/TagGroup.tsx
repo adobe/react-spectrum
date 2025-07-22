@@ -196,8 +196,10 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
 
 // TODO probably can reuse item node
 class TagItemNode extends CollectionNode<any> {
+  static readonly type = 'content';
+
   constructor(key: Key) {
-    super('item', key);
+    super(TagItemNode.type, key);
   }
 }
 

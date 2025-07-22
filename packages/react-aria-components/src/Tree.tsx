@@ -448,13 +448,15 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-class ContentNode extends CollectionNode<any> {
+class TreeContentNode extends CollectionNode<any> {
+  static readonly type = 'content';
+
   constructor(key: Key) {
-    super('content', key);
+    super(TreeContentNode.type, key);
   }
 }
 
-export const TreeItemContent = /*#__PURE__*/ createLeafComponent(ContentNode, function TreeItemContent(props: TreeItemContentProps) {
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode, function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -491,8 +493,10 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 
 // TODO: also might be able to reuse the ItemNode
 class TreeItemNode extends CollectionNode<any> {
+  static readonly type = 'content';
+
   constructor(key: Key) {
-    super('item', key);
+    super(TreeItemNode.type, key);
   }
 }
 
@@ -733,13 +737,15 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
 }
 
 // TODO: can reuse this most likely
-class LoaderNode extends CollectionNode<any> {
+class TreeLoaderNode extends CollectionNode<any> {
+  static readonly type = 'content';
+
   constructor(key: Key) {
-    super('loader', key);
+    super(TreeLoaderNode.type, key);
   }
 }
 
-export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const TreeLoadMoreItem = createLeafComponent(TreeLoaderNode, function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

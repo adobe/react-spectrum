@@ -22,8 +22,10 @@ export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProp
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
 class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
   constructor(key: Key) {
-    super('separator', key);
+    super(SeparatorNode.type, key);
   }
 
   filter(_, newCollection: BaseCollection<any>): CollectionNode<any> | null {

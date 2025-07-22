@@ -306,11 +306,12 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
 }
 
 
-// todo make a class here
+// TODO: reuse
+export class ListBoxSectionNode<T> extends CollectionNode<T> {
+  static readonly type = 'section';
 
-class SectionNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
-    super('section', key);
+    super(ListBoxSectionNode.type, key);
   }
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
@@ -331,7 +332,7 @@ class SectionNode<T> extends CollectionNode<T> {
 /**
  * A ListBoxSection represents a section within a ListBox.
  */
-export const ListBoxSection = /*#__PURE__*/ createBranchComponent(SectionNode, ListBoxSectionInner);
+export const ListBoxSection = /*#__PURE__*/ createBranchComponent(ListBoxSectionNode, ListBoxSectionInner);
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
@@ -353,12 +354,12 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   onAction?: () => void
 }
 
+// TODO: reusue
+class ListBoxItemNode<T> extends CollectionNode<T> {
+  static readonly type = 'item';
 
-// TODO create item type here
-
-class ItemNode<T> extends CollectionNode<T> {
   constructor(key: Key) {
-    super('item', key);
+    super(ListBoxItemNode.type, key);
   }
 
   filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
@@ -373,7 +374,7 @@ class ItemNode<T> extends CollectionNode<T> {
 /**
  * A ListBoxItem represents an individual option in a ListBox.
  */
-export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ListBoxItemNode, function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -511,9 +512,11 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 }
 
 // TODO: can reuse this most likely
-class LoaderNode extends CollectionNode<any> {
+class ListBoxLoaderNode extends CollectionNode<any> {
+  static readonly type = 'loader';
+
   constructor(key: Key) {
-    super('loader', key);
+    super(ListBoxLoaderNode.type, key);
   }
 
   filter(): CollectionNode<any> | null {
@@ -534,7 +537,7 @@ export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'c
   isLoading?: boolean
 }
 
-export const ListBoxLoadMoreItem = createLeafComponent(LoaderNode, function ListBoxLoadingIndicator(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+export const ListBoxLoadMoreItem = createLeafComponent(ListBoxLoaderNode, function ListBoxLoadingIndicator(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 

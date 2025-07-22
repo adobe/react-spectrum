@@ -237,8 +237,10 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 
 // TODO probably can reuse ItemNode
 class TabItemNode extends CollectionNode<any> {
+  static readonly type = 'item';
+
   constructor(key: Key) {
-    super('item', key);
+    super(TabItemNode.type, key);
   }
 }
 

@@ -3,8 +3,10 @@ import React from 'react';
 import {render} from '@testing-library/react';
 
 class ItemNode extends CollectionNode {
+  static type = 'item';
+
   constructor(key) {
-    super('item', key);
+    super(ItemNode.type, key);
   }
 }
 
