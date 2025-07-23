@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Calendar, CalendarProps} from '../src';
+import {ActionButton, Button, ButtonGroup, Calendar, CalendarProps, Content, Dialog, DialogTrigger, Header, Heading} from '../src';
 import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
 import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
@@ -96,6 +96,36 @@ function CustomCalendar(props: CalendarProps<DateValue>): ReactElement {
 
 export const Custom454Example: Story = {
   render: (args) => <CustomCalendar {...args} />,
+  args: {
+    'aria-label': 'Birthday'
+  }
+};
+
+function ExampleRender(props: CalendarProps<DateValue>): ReactElement {
+  return (
+    <DialogTrigger>
+      <Button variant="primary">Open dialog</Button>
+      <Dialog>
+        {({close}) => (
+          <>
+            <Heading slot="title">Dialog title</Heading>
+            <Header>Header</Header>
+            <Content>
+              <Calendar {...props} />
+            </Content>
+            <ButtonGroup>
+              <Button onPress={close} variant="secondary">Cancel</Button>
+              <Button onPress={close} variant="accent">Save</Button>
+            </ButtonGroup>
+          </>
+        )}
+      </Dialog>
+    </DialogTrigger>
+  );
+};
+
+export const TestStory: Story = {
+  render: (args) => <ExampleRender {...args} />,
   args: {
     'aria-label': 'Birthday'
   }
