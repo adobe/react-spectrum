@@ -15,9 +15,9 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 /**
  * Provides state management for controlled and uncontrolled values.
  *
- * @param value The controlled value. Pass `undefined` to make the component uncontrolled.
- * @param defaultValue The initial value when uncontrolled.
- * @param onChange Callback fired whenever the value changes.
+ * @param value - The controlled value. Pass `undefined` to make the component uncontrolled.
+ * @param defaultValue - The initial value when uncontrolled.
+ * @param onChange - Callback fired whenever the value changes.
  */
 export function useControlledState<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: T, ...args: any[]) => void];
 export function useControlledState<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C, ...args: any[]) => void): [T, (value: T, ...args: any[]) => void];
