@@ -53,6 +53,7 @@
     "@react-stately/toggle": "^3.9.0",
     "@react-stately/tooltip": "^3.5.6",
     "@react-stately/tree": "^3.9.1",
+    "@react-stately/utils": "^3.10.8",
     "@react-types/shared": "^3.31.0"
   },
   "peerDependencies": {

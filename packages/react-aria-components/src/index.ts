@@ -83,6 +83,7 @@ export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem
 export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTABLE_ToastQueue} from 'react-stately';
 export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';
+export {useControlledState} from '@react-stately/utils';
 
 export type {AutocompleteProps} from './Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
