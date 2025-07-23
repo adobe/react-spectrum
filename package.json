@@ -187,6 +187,7 @@
     "postcss": "^8.4.24",
     "postcss-custom-properties": "^13.2.0",
     "postcss-import": "^15.1.0",
+    "prettier": "^3.6.2",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
     "react": "^19.1.0",
