@@ -493,7 +493,7 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 
 // TODO: also might be able to reuse the ItemNode
 class TreeItemNode extends CollectionNode<any> {
-  static readonly type = 'content';
+  static readonly type = 'item';
 
   constructor(key: Key) {
     super(TreeItemNode.type, key);
@@ -738,7 +738,7 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
 
 // TODO: can reuse this most likely
 class TreeLoaderNode extends CollectionNode<any> {
-  static readonly type = 'content';
+  static readonly type = 'loader';
 
   constructor(key: Key) {
     super(TreeLoaderNode.type, key);

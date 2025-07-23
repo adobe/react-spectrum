@@ -547,7 +547,7 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
 // TODO: will this have any logic? Maybe for ones like this where we aren't adding the filter function just yet we could
 // keep it as returning the string instead of the class in createBranchComponent
 class TableHeaderNode extends CollectionNode<any> {
-  static readonly type = 'header';
+  static readonly type = 'tableheader';
 
   constructor(key: Key) {
     super(TableHeaderNode.type, key);
@@ -939,7 +939,7 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
 
 // TODO: do we need this
 class TableBodyNode extends CollectionNode<any> {
-  static readonly type = 'header';
+  static readonly type = 'tablebody';
 
   constructor(key: Key) {
     super(TableBodyNode.type, key);
