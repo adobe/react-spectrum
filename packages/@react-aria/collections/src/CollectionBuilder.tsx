@@ -37,6 +37,7 @@ export interface CollectionRenderProps<C extends BaseCollection<object>> {
   /** A hook that will be called by the collection builder to render the children. */
   useCollectionChildren?: (children: CollectionChildren<C>) => CollectionChildren<C>
   // TODO: Do we also want useCollection() to wrap createCollection()?
+  // TODO: Do we also want useCollectionDocument() to wrap doc retrieval?
 }
 
 interface CollectionRef<C extends BaseCollection<object>, E extends Element> extends RefObject<E | null>, CollectionRenderProps<C> {}
