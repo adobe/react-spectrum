@@ -2700,7 +2700,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@internationalized/number@npm:^3.6.3, @internationalized/number@npm:^3.6.4, @internationalized/number@workspace:packages/@internationalized/number":
+"@internationalized/number@npm:^3.6.4, @internationalized/number@workspace:packages/@internationalized/number":
   version: 0.0.0-use.local
   resolution: "@internationalized/number@workspace:packages/@internationalized/number"
   dependencies:
@@ -5509,23 +5509,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/collections@npm:3.0.0-rc.3":
-  version: 3.0.0-rc.3
-  resolution: "@react-aria/collections@npm:3.0.0-rc.3"
-  dependencies:
-    "@react-aria/interactions": "npm:^3.25.3"
-    "@react-aria/ssr": "npm:^3.9.9"
-    "@react-aria/utils": "npm:^3.29.1"
-    "@react-types/shared": "npm:^3.30.0"
-    "@swc/helpers": "npm:^0.5.0"
-    use-sync-external-store: "npm:^1.4.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  checksum: 10c0/dab24b5f5735916a109baa3809118c9941a1417e1ade79bcf087c6fed190e5302b3745f25d79007cbe5534deaeb254227fc150c070042ec6fe5559f1ce835ddd
-  languageName: node
-  linkType: hard
-
 "@react-aria/collections@npm:3.0.0-rc.4, @react-aria/collections@workspace:packages/@react-aria/collections":
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
@@ -5677,7 +5660,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/focus@npm:^3.20.4, @react-aria/focus@npm:^3.20.5, @react-aria/focus@npm:^3.21.0, @react-aria/focus@workspace:packages/@react-aria/focus":
+"@react-aria/focus@npm:^3.20.4, @react-aria/focus@npm:^3.21.0, @react-aria/focus@workspace:packages/@react-aria/focus":
   version: 0.0.0-use.local
   resolution: "@react-aria/focus@workspace:packages/@react-aria/focus"
   dependencies:
@@ -5768,7 +5751,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.3, @react-aria/interactions@npm:^3.25.4, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.4, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
@@ -5844,7 +5827,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/live-announcer@npm:^3.4.3, @react-aria/live-announcer@npm:^3.4.4, @react-aria/live-announcer@workspace:packages/@react-aria/live-announcer":
+"@react-aria/live-announcer@npm:^3.4.4, @react-aria/live-announcer@workspace:packages/@react-aria/live-announcer":
   version: 0.0.0-use.local
   resolution: "@react-aria/live-announcer@workspace:packages/@react-aria/live-announcer"
   dependencies:
@@ -6090,7 +6073,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/ssr@npm:^3.0.0, @react-aria/ssr@npm:^3.9.10, @react-aria/ssr@npm:^3.9.9, @react-aria/ssr@workspace:packages/@react-aria/ssr":
+"@react-aria/ssr@npm:^3.0.0, @react-aria/ssr@npm:^3.9.10, @react-aria/ssr@workspace:packages/@react-aria/ssr":
   version: 0.0.0-use.local
   resolution: "@react-aria/ssr@workspace:packages/@react-aria/ssr"
   dependencies:
@@ -6309,7 +6292,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.29.1, @react-aria/utils@npm:^3.30.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.30.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
@@ -7403,7 +7386,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.1"
     "@react-aria/utils": "npm:^3.29.0"
-    "@react-spectrum/s2": "npm:^0.9.0"
+    "@react-spectrum/s2": "npm:^0.10.0"
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-types/shared": "npm:^3.30.0"
     "@react-types/textfield": "npm:^3.12.3"
@@ -7497,37 +7480,6 @@ __metadata:
     react-dom: ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
-
-"@react-spectrum/s2@npm:^0.9.0":
-  version: 0.9.2
-  resolution: "@react-spectrum/s2@npm:0.9.2"
-  dependencies:
-    "@internationalized/number": "npm:^3.6.3"
-    "@react-aria/collections": "npm:3.0.0-rc.3"
-    "@react-aria/focus": "npm:^3.20.5"
-    "@react-aria/i18n": "npm:^3.12.10"
-    "@react-aria/interactions": "npm:^3.25.3"
-    "@react-aria/live-announcer": "npm:^3.4.3"
-    "@react-aria/utils": "npm:^3.29.1"
-    "@react-spectrum/utils": "npm:^3.12.6"
-    "@react-stately/layout": "npm:^4.3.1"
-    "@react-stately/utils": "npm:^3.10.7"
-    "@react-types/dialog": "npm:^3.5.19"
-    "@react-types/grid": "npm:^3.3.3"
-    "@react-types/provider": "npm:^3.8.10"
-    "@react-types/shared": "npm:^3.30.0"
-    "@react-types/table": "npm:^3.13.1"
-    "@react-types/textfield": "npm:^3.12.3"
-    csstype: "npm:^3.0.2"
-    react-aria: "npm:^3.41.1"
-    react-aria-components: "npm:^1.10.1"
-    react-stately: "npm:^3.39.0"
-  peerDependencies:
-    react: ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^18.0.0 || ^19.0.0-rc.1
-  checksum: 10c0/9bdc53afb5515be08cf70cf88536247cdf3eee374d6a66fb882bdc3fb4c959d34374267995ad28f3f3e1c56f8069c52922af6e955f23d8d8fdf50ac53f88aacd
-  languageName: node
-  linkType: hard
 
 "@react-spectrum/searchfield@npm:^3.8.19, @react-spectrum/searchfield@workspace:packages/@react-spectrum/searchfield":
   version: 0.0.0-use.local
@@ -8181,7 +8133,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/layout@npm:^4.3.1, @react-stately/layout@npm:^4.4.0, @react-stately/layout@workspace:packages/@react-stately/layout":
+"@react-stately/layout@npm:^4.4.0, @react-stately/layout@workspace:packages/@react-stately/layout":
   version: 0.0.0-use.local
   resolution: "@react-stately/layout@workspace:packages/@react-stately/layout"
   dependencies:
@@ -8413,7 +8365,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/utils@npm:^3.10.7, @react-stately/utils@npm:^3.10.8, @react-stately/utils@workspace:packages/@react-stately/utils":
+"@react-stately/utils@npm:^3.10.8, @react-stately/utils@workspace:packages/@react-stately/utils":
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
@@ -8598,7 +8550,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/dialog@npm:^3.5.19, @react-types/dialog@npm:^3.5.20, @react-types/dialog@workspace:packages/@react-types/dialog":
+"@react-types/dialog@npm:^3.5.20, @react-types/dialog@workspace:packages/@react-types/dialog":
   version: 0.0.0-use.local
   resolution: "@react-types/dialog@workspace:packages/@react-types/dialog"
   dependencies:
@@ -8629,7 +8581,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/grid@npm:^3.3.3, @react-types/grid@npm:^3.3.4, @react-types/grid@workspace:packages/@react-types/grid":
+"@react-types/grid@npm:^3.3.4, @react-types/grid@workspace:packages/@react-types/grid":
   version: 0.0.0-use.local
   resolution: "@react-types/grid@workspace:packages/@react-types/grid"
   dependencies:
@@ -8763,7 +8715,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/provider@npm:^3.8.10, @react-types/provider@npm:^3.8.11, @react-types/provider@workspace:packages/@react-types/provider":
+"@react-types/provider@npm:^3.8.11, @react-types/provider@workspace:packages/@react-types/provider":
   version: 0.0.0-use.local
   resolution: "@react-types/provider@workspace:packages/@react-types/provider"
   dependencies:
@@ -8854,7 +8806,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/table@npm:^3.13.1, @react-types/table@npm:^3.13.2, @react-types/table@workspace:packages/@react-types/table":
+"@react-types/table@npm:^3.13.2, @react-types/table@workspace:packages/@react-types/table":
   version: 0.0.0-use.local
   resolution: "@react-types/table@workspace:packages/@react-types/table"
   dependencies:
@@ -25554,6 +25506,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:^3.6.2":
+  version: 3.6.2
+  resolution: "prettier@npm:3.6.2"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
+  languageName: node
+  linkType: hard
+
 "pretty-format@npm:^27.0.2":
   version: 27.4.2
   resolution: "pretty-format@npm:27.4.2"
@@ -25943,7 +25904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:^1.10.1, react-aria-components@npm:^1.11.0, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
+"react-aria-components@npm:^1.11.0, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
   version: 0.0.0-use.local
   resolution: "react-aria-components@workspace:packages/react-aria-components"
   dependencies:
@@ -25982,7 +25943,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-aria@npm:^3.40.0, react-aria@npm:^3.41.1, react-aria@npm:^3.42.0, react-aria@workspace:packages/react-aria":
+"react-aria@npm:^3.40.0, react-aria@npm:^3.42.0, react-aria@workspace:packages/react-aria":
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
@@ -26276,6 +26237,7 @@ __metadata:
     postcss: "npm:^8.4.24"
     postcss-custom-properties: "npm:^13.2.0"
     postcss-import: "npm:^15.1.0"
+    prettier: "npm:^3.6.2"
     prop-types: "npm:^15.6.0"
     raf: "npm:^3.4.0"
     react: "npm:^19.1.0"
@@ -26306,7 +26268,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-stately@npm:^3.38.0, react-stately@npm:^3.39.0, react-stately@npm:^3.40.0, react-stately@workspace:packages/react-stately":
+"react-stately@npm:^3.38.0, react-stately@npm:^3.40.0, react-stately@workspace:packages/react-stately":
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
