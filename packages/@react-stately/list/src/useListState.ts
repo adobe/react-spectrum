@@ -90,6 +90,7 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   useEffect(() => {
     if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
       const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
+      const startIndex = typeof startItem?.index === 'number' ? startItem.index : 0;
       const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
         key => {
           const itemNode = cachedCollection.current!.getItem(key);
@@ -106,8 +107,8 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
       let index = Math.min(
         (
           diff > 1 ?
-          Math.max((startItem?.index ?? 0) - diff + 1, 0) :
-          startItem?.index ?? 0
+          Math.max(startIndex - diff + 1, 0) :
+          startIndex
         ),
         (itemNodes?.length ?? 0) - 1);
       let newNode: Node<T> | null = null;
@@ -123,8 +124,8 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
         // Otherwise, find previous, not disabled item.
         } else {
           isReverseSearching = true;
-          if (index > (startItem?.index ?? 0)) {
-            index = (startItem?.index ?? 0);
+          if (index > startIndex) {
+            index = startIndex;
           }
           index--;
         }
