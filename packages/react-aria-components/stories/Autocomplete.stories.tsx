@@ -11,15 +11,19 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, Link, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TagGroup, TagList, Text, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
+import {MyCheckbox} from './Table.stories';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import {MyListBoxLoaderIndicator, renderEmptyState} from './ListBox.stories';
+import {MyTag} from './TagGroup.stories';
 import React from 'react';
 import styles from '../example/index.css';
+import {TreeExampleStaticRender} from './Tree.stories';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 import './styles.css';
+import {MyGridListItem} from './GridList.stories';
 
 export default {
   title: 'React Aria Components/Autocomplete',
@@ -938,4 +942,145 @@ AutocompleteWithAsyncListBox.story = {
   args: {
     delay: 50
   }
+};
+
+// TODO: I'm skipping Breadcrumbs, Tabs for now, not sure it makes sense to filter that via Autocomplete
+// Filtering the Taggroup might make sense
+
+export const AutocompleteWithGridList = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <GridList
+          className={styles.menu}
+          style={{height: 200}}
+          aria-label="test gridlist">
+          <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+        </GridList>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTable = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <Table aria-label="Files" selectionMode="multiple" style={{height: 300, width: 300}}>
+          <TableHeader>
+            <Column>
+              <MyCheckbox slot="selection" />
+            </Column>
+            <Column isRowHeader>Name</Column>
+            <Column>Type</Column>
+            <Column>Date Modified</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
+              <Cell>Games</Cell>
+              <Cell>File folder</Cell>
+              <Cell>6/7/2020</Cell>
+            </Row>
+            <Row>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
+              <Cell>Program Files</Cell>
+              <Cell>File folder</Cell>
+              <Cell>4/7/2021</Cell>
+            </Row>
+            <Row>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
+              <Cell>bootmgr</Cell>
+              <Cell>System file</Cell>
+              <Cell>11/20/2010</Cell>
+            </Row>
+            <Row>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
+              <Cell>log.txt</Cell>
+              <Cell>Text Document</Cell>
+              <Cell>1/18/2016</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTagGroup = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <TagGroup>
+          <Label>Categories</Label>
+          <TagList style={{display: 'flex', gap: 4}}>
+            <MyTag href="https://nytimes.com">News</MyTag>
+            <MyTag>Travel</MyTag>
+            <MyTag>Gaming</MyTag>
+            <TooltipTrigger>
+              <MyTag>Shopping</MyTag>
+              <Tooltip
+                offset={5}
+                style={{
+                  background: 'Canvas',
+                  color: 'CanvasText',
+                  border: '1px solid gray',
+                  padding: 5,
+                  borderRadius: 4
+                }}>
+                <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                  <svg width="8" height="8" style={{display: 'block'}}>
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                  </svg>
+                </OverlayArrow>
+                I am a tooltip
+              </Tooltip>
+            </TooltipTrigger>
+          </TagList>
+        </TagGroup>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTree = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <TreeExampleStaticRender />
+      </div>
+    </AutocompleteWrapper>
+  );
 };
