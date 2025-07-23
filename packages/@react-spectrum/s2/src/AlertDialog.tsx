@@ -129,7 +129,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 onPress={() => chain(close(), onCancel())}
                 variant="secondary"
                 fillStyle="outline"
-                autoFocus={autoFocusButton === 'cancel'}>
+                autoFocus={autoFocusButton === 'cancel'}
+                data-testid="rsp-AlertDialog-cancelButton">
                 {cancelLabel}
               </Button>
             }
@@ -139,7 +140,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 variant="secondary"
                 isDisabled={isSecondaryActionDisabled}
                 fillStyle="outline"
-                autoFocus={autoFocusButton === 'secondary'}>
+                autoFocus={autoFocusButton === 'secondary'}
+                data-testid="rsp-AlertDialog-secondaryButton">
                 {secondaryActionLabel}
               </Button>
             }
@@ -147,7 +149,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               variant={buttonVariant as 'primary' | 'accent' | 'negative'}
               isDisabled={isPrimaryActionDisabled}
               autoFocus={autoFocusButton === 'primary'}
-              onPress={() => chain(close(), onPrimaryAction())}>
+              onPress={() => chain(close(), onPrimaryAction())}
+              data-testid="rsp-AlertDialog-confirmButton">
               {primaryActionLabel}
             </Button>
           </ButtonGroup>

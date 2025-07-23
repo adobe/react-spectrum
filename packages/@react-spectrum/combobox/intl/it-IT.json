@@ -2,5 +2,6 @@
   "clear": "Cancella",
   "invalid": "(non valido)",
   "loading": "Caricamento in corso...",
-  "noResults": "Nessun risultato"
+  "noResults": "Nessun risultato",
+  "valid": "(valido)"
 }

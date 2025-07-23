@@ -252,7 +252,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             collection={collection}
             scrollRef={ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}

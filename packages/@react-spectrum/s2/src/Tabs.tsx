@@ -59,7 +59,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
@@ -195,8 +195,7 @@ const tablist = style({
       vertical: 12
     }
   },
-  flexShrink: 0,
-  flexBasis: '0%'
+  minWidth: 'min'
 });
 
 export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
@@ -220,7 +219,14 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
+      className={
+        (props.UNSAFE_className || '') +
+        style({
+          position: 'relative',
+          flexGrow: 0,
+          flexShrink: 0,
+          minWidth: 'min'
+        }, getAllowedOverrides())(null, props.styles)}>
       <RACTabList
         {...props}
         aria-label={ariaLabel}
@@ -447,9 +453,7 @@ const tabPanel = style({
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  flexBasis: '0%',
-  minHeight: 0,
-  minWidth: 0
+  minHeight: 0
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {

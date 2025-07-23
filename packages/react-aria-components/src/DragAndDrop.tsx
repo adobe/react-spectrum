@@ -47,23 +47,17 @@ export const DropIndicator = forwardRef(function DropIndicator(props: DropIndica
 
 type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined
 
-export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState, dragState?: DraggableCollectionState): RenderDropIndicatorRetValue {
+export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
   let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
   let fn = useCallback((target: ItemDropTarget) => {
     // Only show drop indicators when virtual dragging or this is the current drop target.
     if (isVirtualDragging || dropState?.isDropTarget(target)) {
-      if (renderDropIndicator) {
-        let keys = dragState?.draggingKeys ?? undefined;
-        let draggedKey = dragState?.draggedKey ?? undefined;
-        return renderDropIndicator(target, keys, draggedKey);
-      } else {
-        return <DropIndicator target={target} />;
-      }
+      return renderDropIndicator ? renderDropIndicator(target) : <DropIndicator target={target} />;
     }
     // We invalidate whenever the target changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dropState?.target, isVirtualDragging, renderDropIndicator, dragState?.draggingKeys, dragState?.draggedKey]);
+  }, [dropState?.target, isVirtualDragging, renderDropIndicator]);
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;
 }
 
