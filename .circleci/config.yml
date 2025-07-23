@@ -532,6 +532,15 @@ jobs:
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
+      - run:
+          name: build docs off verdaccio retry
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+          when: on_fail
+
       - persist_to_workspace:
           root: verdaccio_dist
           paths:
