@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
