@@ -957,17 +957,17 @@ export const AutocompleteWithGridList = () => {
         </TextField>
         <GridList
           className={styles.menu}
-          style={{height: 200}}
+          style={{height: 200, width: 200}}
           aria-label="test gridlist">
-          <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
         </GridList>
       </div>
     </AutocompleteWrapper>
