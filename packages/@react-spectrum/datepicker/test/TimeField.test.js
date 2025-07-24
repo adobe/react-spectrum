@@ -287,6 +287,7 @@ describe('TimeField', function () {
       expect(input).toHaveAttribute('name', 'time');
       fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
       fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      await user.keyboard('[Tab][Tab][Tab][Tab]');
       expect(getDescription()).toBe('Selected Time: 9:30 AM');
       expect(input).toHaveValue('09:30:00');
 
@@ -354,27 +355,30 @@ describe('TimeField', function () {
           await user.keyboard('[ArrowUp]');
 
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).not.toBe(true);
 
           await user.tab({shift: true});
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
+          expect(input.validity.valid).toBe(true);
 
           await user.tab();
           await user.keyboard('6[Tab][ArrowUp]');
           expect(getDescription()).not.toContain('Value must be 5:00 AM or earlier.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
           await user.tab();
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
+          expect(input.validity.valid).toBe(false);
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
           await user.keyboard('[ArrowDown]');
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
           act(() => document.activeElement.blur());
 
           expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier.');
+          expect(input.validity.valid).toBe(true);
         });
 
         it('supports validate function', async () => {
@@ -401,7 +405,7 @@ describe('TimeField', function () {
           await user.keyboard('10');
 
           expect(getDescription()).toContain('Invalid value');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
 
           act(() => document.activeElement.blur());
 
@@ -495,7 +499,7 @@ describe('TimeField', function () {
 
       describe('validationBehavior=aria', () => {
         it('supports minValue and maxValue', async () => {
-          let {getByRole} = render(
+          let {getByRole, getByLabelText} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
                 <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} />
@@ -507,13 +511,13 @@ describe('TimeField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
 
-          await user.keyboard('[Tab][ArrowUp]');
+          await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later');
 
-          await user.keyboard('6[Tab][ArrowUp]');
+          await user.keyboard('[Tab]6[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier');
 
-          await user.keyboard('[Tab][Tab][ArrowDown]');
+          await user.keyboard('[Tab][ArrowDown][Tab][Tab]');
           expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier');
         });
 
@@ -531,7 +535,7 @@ describe('TimeField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
 
-          await user.keyboard('[Tab]10');
+          await user.keyboard('[Tab]10[Tab][Tab]');
           expect(getDescription()).not.toContain('Invalid value');
         });
 
