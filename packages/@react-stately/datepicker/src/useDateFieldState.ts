@@ -196,7 +196,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => createPlaceholderDate(value || props.placeholderValue, granularity, calendar, defaultTimeZone)
   );
 
-
   let val = calendarValue || placeholderDate;
   let showEra = calendar.identifier === 'gregory' && val.era === 'BC';
   let formatOpts = useMemo(() => ({
@@ -241,7 +240,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
-  if (value !== previousValue.current && value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
+  if (value !== previousValue.current && value && Object.keys(validSegments).length <= Object.keys(allSegments).length) {
     validSegments = {...allSegments};
     setValidSegments(validSegments);
     setPlaceholderDate(value)
