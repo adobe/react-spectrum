@@ -312,4 +312,18 @@ describe('Tooltip', () => {
     let tooltip = getByRole('tooltip');
     expect(tooltip).toBeInTheDocument();
   });
+
+  it('should not override child properties', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Button excludeFromTabOrder>
+          Check my tabindex
+        </Button>
+        <Tooltip>hello world</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('tabindex', '-1');
+  });
 });
