@@ -114,7 +114,7 @@ AutoFocus.story = {
   name: 'autoFocus'
 };
 
-export const ValidationStateInvalid: DateRangePickerStory = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 3)}});
+export const ValidationStateInvalid: DateRangePickerStory = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
 
 ValidationStateInvalid.story = {
   name: 'validationState: invalid'
@@ -304,4 +304,10 @@ function CustomExample(props) {
   );
 };
 
-export const DefaultErrorMessage: DateRangePickerStory = () => render({defaultValue: {start: parseAbsoluteToLocal('2023-12-01T05:42:14.702226Z'), end: parseAbsoluteToLocal('2025-12-01T05:42:14.702226Z')}, label: 'Report Date', labelPosition: 'side', minValue: parseAbsoluteToLocal('2024-01-01T05:42:14.702226Z'), maxValue: parseAbsoluteToLocal(new Date().toISOString()), hideTimeZone: true, granularity: 'hour'});
+export const DefaultErrorMessage: DateRangePickerStory = () => render({
+  defaultValue: {start: parseAbsoluteToLocal('2023-12-01T05:42:14.702226Z'), end: parseAbsoluteToLocal('2025-12-01T05:42:14.702226Z')}, 
+  label: 'Report Date', labelPosition: 'side', minValue: parseAbsoluteToLocal('2024-01-01T05:42:14.702226Z'), 
+  maxValue: parseAbsoluteToLocal(new Date().toISOString()), 
+  hideTimeZone: true, 
+  granularity: 'hour'
+});
