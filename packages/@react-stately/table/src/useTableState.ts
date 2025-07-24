@@ -26,11 +26,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor | null,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
-  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  isKeyboardNavigationDisabled: boolean,
-  /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  setKeyboardNavigationDisabled: (val: boolean) => void
+  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -67,7 +63,6 @@ const OPPOSITE_SORT_DIRECTION = {
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
-  let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
   let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
   let context = useMemo(() => ({
@@ -83,20 +78,17 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({
+  let gridState = useGridState({
     ...props,
     collection,
     disabledBehavior: props.disabledBehavior || 'selection'
   });
 
   return {
+    ...gridState,
     collection,
-    disabledKeys,
-    selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor ?? null,
-    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
-    setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange?.({
         column: columnKey,

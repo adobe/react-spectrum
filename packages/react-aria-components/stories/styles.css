@@ -210,10 +210,28 @@
   border-collapse: collapse;
 }
 
+:global(.react-aria-Column) {
+  text-align: start;
+}
+
 :global(.react-aria-Cell) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  & input {
+    font: inherit;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+}
+
+:global(.react-aria-Row) {
+  &[aria-selected=true] {
+    background: blue;
+    color: white;
+  }
 }
 
 :global(.react-aria-ColumnResizer) {
