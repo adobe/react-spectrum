@@ -268,29 +268,17 @@ export default function App() {
 }
 ```
 
-### TanStack Router
+## TanStack Router
 
-To use [TanStack Router](https://tanstack.com/router) with React Aria, render React Aria's `RouterProvider` inside your root route. Use `router.navigate` in the `navigate` prop, and `router.buildLocation` in the `useHref` prop. You can also configure TypeScript to get autocomplete for the `href` prop by declaring the `RouterConfig` type using the types provided by TanStack Router.
+To use [TanStack Router](https://tanstack.com/router) with React Aria, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Aria component as a link. `RouterProvider` is not needed.
 
 ```tsx
-import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
-import {RouterProvider} from 'react-aria-components';
+// src/Link.tsx
+import {createLink} from '@tanstack/react-router';
+import {Link as ReactAriaLink, MenuItem} from 'react-aria-components';
 
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    href: ToOptions;
-    routerOptions: Omit<NavigateOptions, keyof ToOptions>;
-  }
-}
-
-function RootRoute() {
-  let router = useRouter();
-  return (
-    <RouterProvider 
-      navigate={(href, opts) => router.navigate({...href, ...opts})}
-      useHref={href => router.buildLocation(href).href}>
-      {/* ...*/}
-    </RouterProvider>
-  );
-}
+export const Link = createLink(ReactAriaLink);
+export const MenuItemLink = createLink(MenuItem);
 ```
+
+In you app, use these components instead of importing directly from `react-aria-components`.
