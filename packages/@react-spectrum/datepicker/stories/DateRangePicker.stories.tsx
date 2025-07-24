@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, parseAbsoluteToLocal, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@react-types/datepicker';
@@ -114,7 +114,7 @@ AutoFocus.story = {
   name: 'autoFocus'
 };
 
-export const ValidationStateInvalid: DateRangePickerStory = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const ValidationStateInvalid: DateRangePickerStory = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 3)}});
 
 ValidationStateInvalid.story = {
   name: 'validationState: invalid'
@@ -303,3 +303,5 @@ function CustomExample(props) {
     </Flex>
   );
 };
+
+export const DefaultErrorMessage: DateRangePickerStory = () => render({defaultValue: {start: parseAbsoluteToLocal("2023-12-01T05:42:14.702226Z"), end: parseAbsoluteToLocal("2025-12-01T05:42:14.702226Z")}, label: "Report Date", labelPosition: "side", minValue: parseAbsoluteToLocal("2024-01-01T05:42:14.702226Z"), maxValue: parseAbsoluteToLocal(new Date().toISOString()), hideTimeZone: true, granularity: "hour"});
