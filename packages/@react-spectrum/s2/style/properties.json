@@ -166,7 +166,8 @@
     "touchAction": "__X",
     "translate": "__Y",
     "wordBreak": "__Z",
-    "--fs": "__0"
+    "overflowWrap": "__0",
+    "--fs": "__1"
   },
   "values": {
     "--iconPrimary": {
@@ -2156,6 +2157,11 @@
       "break-all": "a",
       "keep-all": "b",
       "normal": "c"
+    },
+    "overflowWrap": {
+      "normal": "a",
+      "anywhere": "b",
+      "break-word": "c"
     },
     "--fs": {
       "pow(1.125, -2)": "a",

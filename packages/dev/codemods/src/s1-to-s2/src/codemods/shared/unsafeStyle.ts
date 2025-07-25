@@ -365,6 +365,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'whiteSpace':
     case 'textWrap':
     case 'wordBreak':
+    case 'overflowWrap':
     case 'boxDecorationBreak':
     case 'forcedColorAdjust':
     case 'backgroundPosition':
