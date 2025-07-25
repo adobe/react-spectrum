@@ -144,7 +144,7 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-export function TreeExampleStaticRender(props: TreeProps<T>) {
+export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
   return (
     <Tree className={styles.tree} {...props} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
