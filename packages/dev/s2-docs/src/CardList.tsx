@@ -177,6 +177,14 @@ const linkCardStyles = style({
   ...focusRing()
 });
 
+const illustrationStyles = style({
+  width: 'full',
+  aspectRatio: '3/2',
+  objectFit: 'cover',
+  userSelect: 'none',
+  pointerEvents: 'none'
+});
+
 export function CardList({selectedLibrary, pages}: CardListProps) {
   let sectionsData = useMemo(() => {
     if (!pages || !Array.isArray(pages)) {
@@ -276,7 +284,10 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
                     size="S">
                     {IllustrationComponent && (
                       <CardPreview>
-                        <IllustrationComponent aria-hidden="true" />
+                        <IllustrationComponent
+                          aria-hidden="true"
+                          // @ts-ignore
+                          className={illustrationStyles} />
                       </CardPreview>
                     )}
                     <Content>
