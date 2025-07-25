@@ -19,11 +19,11 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let onSelectionChange = jest.fn();
@@ -695,6 +695,211 @@ describe('Tree', () => {
       expect(onScroll).toHaveBeenCalled();
     });
 
+    describe('highlight selection', () => {
+      // Required for proper touch detection
+      installPointerEvent();
+      describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+        it('should perform selection for highlight mode with single selection', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'single', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'single');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called twice because initial focus will select the first keyboard focused row
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row1);
+
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
+          expect(treeTester.selectedRows).toHaveLength(0);
+        });
+
+        it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1', 'Projects']));
+            expect(treeTester.selectedRows).toHaveLength(3);
+            expect(treeTester.selectedRows[1]).toBe(row1);
+            expect(treeTester.selectedRows[2]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1', 'Projects']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          }
+
+          // With modifier key, you should be able to deselect on press of the same row
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+        });
+
+        it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called multiple times since selection changes on option focus as we arrow down to the target option
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1});
+          if (type !== 'touch') {
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'false');
+            expect(row2).not.toHaveAttribute('data-selected');
+            if (type === 'keyboard') {
+              expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            } else {
+              expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            }
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+
+            // pressing without modifier keys won't deselect the row
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            if (type === 'keyboard') {
+              expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            } else {
+              expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            }
+            expect(treeTester.selectedRows).toHaveLength(1);
+          } else {
+            // touch always behaves as toggle
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'true');
+            expect(row2).toHaveAttribute('data-selected', 'true');
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'false');
+            expect(row1).not.toHaveAttribute('data-selected');
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+        });
+      });
+    });
+
     describe('links', function () {
       describe.each(['mouse', 'keyboard'])('%s', (type) => {
         let trigger = async (item, key = 'Enter') => {
@@ -1235,8 +1440,8 @@ describe('Tree', () => {
 
       let row = treeTester.rows[0];
       expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(row).not.toHaveAttribute('aria-posinset');
+      expect(row).not.toHaveAttribute('aria-setsize');
       let gridCell = treeTester.cells({element: row})[0];
       expect(gridCell).toHaveTextContent('No resultsNo results found.');
 

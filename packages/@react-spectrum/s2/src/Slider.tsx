@@ -23,7 +23,7 @@ import {clamp} from '@react-aria/utils';
 import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {FieldLabel} from './Field';
-import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
@@ -32,7 +32,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
+export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation' | keyof GlobalDOMAttributes>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
   /**
    * The size of the Slider.
@@ -390,6 +390,9 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
@@ -426,7 +429,7 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
             <>
               <div className={upperTrack({isDisabled, trackStyle})} />
               <div style={{width: `${Math.abs(fillWidth) * 100}%`, [cssDirection]: `${offset * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
-              <SliderThumb  className={thumbContainer} index={0} name={props.name} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
+              <SliderThumb  className={thumbContainer} index={0} name={props.name} form={props.form} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>
                     <div

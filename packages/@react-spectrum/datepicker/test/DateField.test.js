@@ -235,7 +235,11 @@ describe('DateField', function () {
           errorMessage="Date unavailable." />
       );
       await user.tab();
-      await user.keyboard('01011980');
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1');
+      await user.keyboard('[ArrowRight]');
+      await user.keyboard('1980');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
@@ -245,7 +249,7 @@ describe('DateField', function () {
           <DateField label="Date" showFormatHelpText />
         </Provider>
       );
-  
+
       let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
       let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
       expect(segmentTypes).toEqual(['year', 'month', 'day']);
@@ -377,6 +381,29 @@ describe('DateField', function () {
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
       expect(input).toHaveValue('2020-02-03');
     });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {
+          const [value, formAction] = React.useActionState(() => new CalendarDate(2025, 2, 3), new CalendarDate(2020, 2, 3));
+          
+          return (
+            <form action={formAction}>
+              <DateField label="Value" name="date" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let input = document.querySelector('input[name=date]');
+        expect(input).toHaveValue('2020-02-03');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('2025-02-03');
+      });
+    }
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {

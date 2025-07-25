@@ -1,0 +1,16 @@
+@import "./theme.css";
+
+.react-aria-TimeField {
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}

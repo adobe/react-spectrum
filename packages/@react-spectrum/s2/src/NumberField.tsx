@@ -19,7 +19,6 @@ import {
   ButtonRenderProps,
   ContextValue,
   InputContext,
-  Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
@@ -30,7 +29,7 @@ import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
@@ -38,7 +37,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
-  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style'>,
+  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -177,6 +176,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
 
   return (
     <AriaNumberField
+      ref={domRef}
       isRequired={isRequired}
       {...numberFieldProps}
       style={UNSAFE_style}
@@ -200,9 +200,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   {label}
                 </FieldLabel>
                 <FieldGroup
-                  role="presentation"
-                  isDisabled={isDisabled}
-                  isInvalid={isInvalid}
                   size={size}
                   styles={style({
                     ...fieldInput(),
@@ -245,7 +242,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                     </StepButton>
                   </div>}
                 </FieldGroup>
-                {descriptionMessage && <Text slot="description">{descriptionMessage}</Text>}
                 <HelpText
                   size={size}
                   isDisabled={isDisabled}

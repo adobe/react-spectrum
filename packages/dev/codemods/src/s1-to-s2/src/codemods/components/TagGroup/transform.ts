@@ -10,7 +10,7 @@ import * as t from '@babel/types';
  * - Update Item to be Tag.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
-export default function transformTagGroup(path: NodePath<t.JSXElement>) {
+export default function transformTagGroup(path: NodePath<t.JSXElement>): void {
   // Rename actionLabel to groupActionLabel
   updatePropName(path, {oldPropName: 'actionLabel', newPropName: 'groupActionLabel'});
 
@@ -27,4 +27,4 @@ export default function transformTagGroup(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-} 
+}

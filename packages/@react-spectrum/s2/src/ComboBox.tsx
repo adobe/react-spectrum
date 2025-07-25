@@ -24,15 +24,15 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   ListStateContext,
   Provider,
   SectionProps,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -76,12 +76,12 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
-  Pick<ListBoxProps<T>, 'items'>,
+  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
   Pick<AsyncLoadable, 'onLoadMore'>  {
     /** The contents of the collection. */
@@ -359,7 +359,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -409,7 +409,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
@@ -542,7 +542,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 
   let renderer;
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       // Only show the spinner in the list when loading more
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
@@ -553,13 +553,13 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function') {
     renderer = (
       <>
-        <Collection items={items ?? defaultItems}>
+        <Collection items={items ?? defaultItems} dependencies={props.dependencies}>
           {children}
         </Collection>
         {listBoxLoadingCircle}
@@ -681,6 +681,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
               }}>
               <ListBox
+                dependencies={props.dependencies}
                 renderEmptyState={() => (
                   <span className={emptyStateText({size})}>
                     {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}

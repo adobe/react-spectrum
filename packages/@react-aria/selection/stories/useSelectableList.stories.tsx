@@ -14,7 +14,8 @@ import {CollectionBase, Node} from '@react-types/shared';
 import {Item} from '@react-spectrum/actiongroup';
 import {List} from './List';
 import {ListState, useListState} from '@react-stately/list';
-import * as React from 'react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {JSX} from 'react';
 import {Section} from '@react-spectrum/menu';
 import styles from './styles.css';
 import {useSelectableItem, useSelectableList} from '../src';
@@ -22,7 +23,7 @@ import {useSelectableItem, useSelectableList} from '../src';
 function SelectableList(props: CollectionBase<any> & {
   isSubUlRelativelyPositioned: boolean,
   isUlRelativelyPositioned: boolean
-}) {
+}): JSX.Element {
   const state = useListState(props);
   const listRef = React.useRef<HTMLUListElement>(null);
   const {listProps} = useSelectableList({
@@ -136,9 +137,11 @@ export default {
       }
     }
   }
-};
+} as Meta;
 
-export const StaticUlStaticSubUl = () => (
+export type SelectableListStory = StoryFn<typeof SelectableList>;
+
+export const StaticUlStaticSubUl: SelectableListStory = () => (
   <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
     {options}
   </SelectableList>
@@ -149,7 +152,7 @@ StaticUlStaticSubUl.story = {
   parameters: {description: {data: 'Built to test if focusing an element scrolls into view.'}}
 };
 
-export const StaticUlRelativeSubUl = () => (
+export const StaticUlRelativeSubUl: SelectableListStory = () => (
   <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
     {options}
   </SelectableList>
@@ -159,7 +162,7 @@ StaticUlRelativeSubUl.story = {
   name: 'Static ul, relative sub ul'
 };
 
-export const RelativeUlStaticSubUl = () => (
+export const RelativeUlStaticSubUl: SelectableListStory = () => (
   <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned>
     {options}
   </SelectableList>
@@ -169,7 +172,7 @@ RelativeUlStaticSubUl.story = {
   name: 'Relative ul, static sub ul'
 };
 
-export const RelativeUlRelativeSubUl = () => (
+export const RelativeUlRelativeSubUl: SelectableListStory = () => (
   <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
     {options}
   </SelectableList>
@@ -179,7 +182,7 @@ RelativeUlRelativeSubUl.story = {
   name: 'Relative ul, relative sub ul'
 };
 
-export const SingleSelectAllowEmptySelectOnFocus = () => (
+export const SingleSelectAllowEmptySelectOnFocus: SelectableListStory = () => (
   <List selectionMode="single">
     <Item>Paco de Lucia</Item>
     <Item>Vicente Amigo</Item>
@@ -191,7 +194,7 @@ SingleSelectAllowEmptySelectOnFocus.story = {
   name: 'single select, allow empty, select on focus'
 };
 
-export const SingleSelectDisallowEmptySelectionSelectOnFocus = () => (
+export const SingleSelectDisallowEmptySelectionSelectOnFocus: SelectableListStory = () => (
   <List selectionMode="single" disallowEmptySelection>
     <Item>Paco de Lucia</Item>
     <Item>Vicente Amigo</Item>
@@ -203,7 +206,7 @@ SingleSelectDisallowEmptySelectionSelectOnFocus.story = {
   name: 'single select, disallow empty selection, select on focus'
 };
 
-export const MultiSelectReplaceOnPressSelectOnFocus = () => (
+export const MultiSelectReplaceOnPressSelectOnFocus: SelectableListStory = () => (
   <List selectionMode="multiple" selectionBehavior="replace">
     <Item>Paco de Lucia</Item>
     <Item>Vicente Amigo</Item>
@@ -215,7 +218,7 @@ MultiSelectReplaceOnPressSelectOnFocus.story = {
   name: 'multi select, replace on press, select on focus'
 };
 
-export const MultiSelectAllowEmptySelectOnFocus = () => (
+export const MultiSelectAllowEmptySelectOnFocus: SelectableListStory = () => (
   <List selectionMode="multiple">
     <Item>Paco de Lucia</Item>
     <Item>Vicente Amigo</Item>
@@ -227,7 +230,7 @@ MultiSelectAllowEmptySelectOnFocus.story = {
   name: 'multi select, allow empty, select on focus'
 };
 
-export const MultiSelectDisallowEmptySelectOnFocus = () => (
+export const MultiSelectDisallowEmptySelectOnFocus: SelectableListStory = () => (
   <List selectionMode="multiple" disallowEmptySelection>
     <Item>Paco de Lucia</Item>
     <Item>Vicente Amigo</Item>

@@ -21,40 +21,48 @@ import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section, SubmenuTrigger}
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
+import {SpectrumMenuProps, SpectrumMenuTriggerProps, ToggleButton} from '@adobe/react-spectrum';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
-import {ToggleButton} from '@adobe/react-spectrum';
 
 export default {
   ...defaultConfig,
-  title: 'MenuTrigger/Submenu'
+  title: 'MenuTrigger/Submenu',
+  excludeStories: ['SubmenuStaticRender', 'SubmenuDynamicRender', 'ComplexRender', 'TabBehaviorRender']
+} as Meta<typeof MenuTrigger>;
+
+export const SubmenuStaticRender = (args: Omit<SpectrumMenuProps<unknown>, 'children'> & {
+  menuTriggerProps?: Omit<SpectrumMenuTriggerProps, 'children'>,
+  submenu1Props?: Omit<SpectrumMenuProps<unknown>, 'children'>,
+  submenu2Props?: Omit<SpectrumMenuProps<unknown>, 'children'>
+}): JSX.Element => {
+  return renderMenuTrigger(
+    <Menu onAction={action('lvl 1 menu onAction')} {...args}>
+      <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+      <SubmenuTrigger>
+        <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+        <Menu onAction={action('lvl 2 menu onAction')} {...args.submenu1Props}>
+          <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
+          <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
+          <SubmenuTrigger>
+            <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
+            <Menu onAction={action('lvl 3 menu onAction')} {...args.submenu2Props}>
+              <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
+              <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
+              <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </SubmenuTrigger>
+      <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+    </Menu>
+  , args.menuTriggerProps);
 };
 
-export const SubmenuStatic = {
-  render: (args) => (
-    renderMenuTrigger(
-      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
-        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-        <SubmenuTrigger>
-          <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-          <Menu onAction={action('lvl 2 menu onAction')} {...args.submenu1Props}>
-            <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-            <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-            <SubmenuTrigger>
-              <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-              <Menu onAction={action('lvl 3 menu onAction')} {...args.submenu2Props}>
-                <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
-                <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
-                <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
-              </Menu>
-            </SubmenuTrigger>
-          </Menu>
-        </SubmenuTrigger>
-        <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
-      </Menu>
-    , args.menuTriggerProps)
-  ),
+export const SubmenuStatic: StoryObj<typeof SubmenuStaticRender> = {
+  render: (args) => <SubmenuStaticRender {...args} />,
   name: 'static submenu items'
 };
 
@@ -105,18 +113,20 @@ let dynamicRenderFunc = (item) => {
   }
 };
 
-export const SubmenuDynamic = {
-  render: (args) => (
-    renderMenuTrigger(
-      <Menu items={dynamicSubmenu} onAction={action('onAction')} {...args}>
-        {(item) => dynamicRenderFunc(item)}
-      </Menu>
-    )
-  ),
+export const SubmenuDynamicRender = (args: Omit<SpectrumMenuProps<unknown>, 'children'>): JSX.Element => {
+  return renderMenuTrigger(
+    <Menu items={dynamicSubmenu} onAction={action('onAction')} {...args}>
+      {(item) => dynamicRenderFunc(item)}
+    </Menu>
+  );
+};
+
+export const SubmenuDynamic: StoryObj<typeof SubmenuDynamicRender> = {
+  render: (args) => <SubmenuDynamicRender {...args} />,
   name: 'dynamic submenu items'
 };
 
-export const SubmenuManyItems = {
+export const SubmenuManyItems: StoryObj<SpectrumMenuProps<unknown>> = {
   render: (args) => (
     renderMenuTrigger(
       <Menu items={manyItemsSubmenu} onAction={action('onAction')} {...args}>
@@ -127,7 +137,7 @@ export const SubmenuManyItems = {
   name: 'dynamic submenu with many items'
 };
 
-export const SubmenuStaticSections = {
+export const SubmenuStaticSections: StoryObj<SpectrumMenuProps<unknown>> = {
   render: () => (
     renderMenuTrigger(
       <Menu onAction={action('onAction')}>
@@ -258,7 +268,7 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export const SubmenuDynamicSections = {
+export const SubmenuDynamicSections: StoryObj<SpectrumMenuProps<unknown>> = {
   render: () => (
     renderMenuTrigger(
       <Menu items={dynamicSubmenuSections} onAction={action('onAction')}>
@@ -289,7 +299,7 @@ let submenuNoSection = [
   ]}
 ];
 
-export const MainSectionsSubNoSections = {
+export const MainSectionsSubNoSections: StoryObj<SpectrumMenuProps<unknown>> = {
   render: () => (
     renderMenuTrigger(
       <Menu items={submenuNoSection} onAction={action('onAction')}>
@@ -324,7 +334,7 @@ let submenuSections = [
   {name: 'Lvl 1 Item 3'}
 ];
 
-export const MainNoSectionsSubSections = {
+export const MainNoSectionsSubSections: StoryObj<SpectrumMenuProps<unknown>> = {
   render: () => (
     renderMenuTrigger(
       <Menu items={submenuSections} onAction={action('onAction')}>
@@ -357,7 +367,7 @@ let mixedSectionsAndNonSections = [
   {name: 'Lvl 1 Item 3'}
 ];
 
-export const MixedSections = {
+export const MixedSections: StoryObj<SpectrumMenuProps<unknown>> = {
   render: () => (
     renderMenuTrigger(
       <Menu items={mixedSectionsAndNonSections} onAction={action('onAction')}>
@@ -401,18 +411,20 @@ let complex = [
   ]}
 ];
 
-export const Complex = {
-  render: () => (
-    renderMenuTrigger(
-      <Menu items={complex} onAction={action('onAction')}>
-        {(item) => dynamicRenderFuncSections(item)}
-      </Menu>
-    )
-  ),
+export const ComplexRender = (args: Omit<SpectrumMenuProps<unknown>, 'children'>): JSX.Element => {
+  return renderMenuTrigger(
+    <Menu items={complex} onAction={action('onAction')} {...args}>
+      {(item: any) => dynamicRenderFuncSections(item)}
+    </Menu>
+  );
+};
+
+export const Complex: StoryObj<typeof ComplexRender> = {
+  render: (args) => <ComplexRender {...args} />,
   name: 'complex'
 };
 
-export const SubmenuActions = {
+export const SubmenuActions: StoryObj<SpectrumMenuProps<unknown>> = {
   render: (args) => renderMenuTrigger(
     <Menu onAction={action('onAction lvl 1 menu')} onClose={action('onClose lvl 1 menu')} {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
@@ -438,7 +450,7 @@ export const SubmenuActions = {
   parameters: {description: {data: 'Each menu has its own onAction and onClose that are triggered only if its direct menu option was acted upon.'}}
 };
 
-export const SubmenuSelection = {
+export const SubmenuSelection: StoryObj<SpectrumMenuProps<unknown>> = {
   render: (args) => renderMenuTrigger(
     <Menu onSelectionChange={action('onSelectionChange lvl 1 menu')} selectionMode="multiple" defaultSelectedKeys="all" {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
@@ -464,7 +476,7 @@ export const SubmenuSelection = {
   parameters: {description: {data: 'Lvl 1 and Lvl 3 menus have multiple selection, Lvl 2 menu has single selection'}}
 };
 
-export const DisabledSubmenuTrigger = {
+export const DisabledSubmenuTrigger: StoryObj<SpectrumMenuProps<unknown>> = {
   render: (args) => renderMenuTrigger(
     <Menu onSelectionChange={action('onSelectionChange lvl 1 menu')} selectionMode="multiple" {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
@@ -490,7 +502,11 @@ export const DisabledSubmenuTrigger = {
   parameters: {description: {data: 'Lvl 2 submenu trigger is disabled'}}
 };
 
-export const NoKeysProvided = {
+export const NoKeysProvided: StoryObj<Omit<SpectrumMenuProps<unknown>, 'children'> & {
+  menuTriggerProps?: Omit<SpectrumMenuTriggerProps, 'children'>,
+  submenu1Props?: Omit<SpectrumMenuProps<unknown>, 'children'>,
+  submenu2Props?: Omit<SpectrumMenuProps<unknown>, 'children'>
+}> = {
   render: (args) => (
     renderMenuTrigger(
       <Menu onAction={action('lvl 1 menu onAction')} {...args}>
@@ -518,12 +534,12 @@ export const NoKeysProvided = {
   parameters: {description: {data: 'No keys are provided so they should be autogenerated. It should allow for duplicated menu item keys across each submenu level, reflected in onAction'}}
 };
 
-export const ConditionalSubmenu = {
+export const ConditionalSubmenu: StoryObj<SpectrumMenuTriggerProps> = {
   render: (args) => <ConditionalSubmenuExample {...args} />,
   name: 'conditional submenu'
 };
 
-function ConditionalSubmenuExample(props) {
+function ConditionalSubmenuExample(props: Omit<SpectrumMenuTriggerProps, 'children'>): JSX.Element {
   let [disabled, setDisabled] = React.useState(false);
 
   return (
@@ -562,7 +578,10 @@ function ConditionalSubmenuExample(props) {
   );
 }
 
-export const UnavailableWithSubmenu = {
+export const UnavailableWithSubmenu: StoryObj<Omit<SpectrumMenuProps<unknown>, 'children'> & {
+  submenu1Props?: Omit<SpectrumMenuProps<unknown>, 'children'>,
+  submenu2Props?: Omit<SpectrumMenuProps<unknown>, 'children'>
+}> = {
   render: (args) => (
     renderMenuTrigger(
       <Menu onAction={action('lvl 1 menu onAction')} {...args}>
@@ -609,8 +628,8 @@ export const UnavailableWithSubmenu = {
   name: 'with unavailable menu item'
 };
 
-export const TabBehaviorStory = {
-  render: () => (
+export const TabBehaviorRender = (args: Omit<SpectrumMenuProps<unknown>, 'children'>): JSX.Element => {
+  return (
     <>
       <input data-testid="inputleft" />
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
@@ -618,14 +637,18 @@ export const TabBehaviorStory = {
           <ActionButton>
             Menu Button
           </ActionButton>
-          <Menu items={dynamicSubmenu} onAction={action('onAction')}>
+          <Menu items={dynamicSubmenu} onAction={action('onAction')} {...args}>
             {(item) => dynamicRenderFunc(item)}
           </Menu>
         </MenuTrigger>
       </div>
       <input data-testid="inputright" />
     </>
-  ),
+  );
+};
+
+export const TabBehavior: StoryObj<typeof TabBehaviorRender> = {
+  render: (args) => <TabBehaviorRender {...args} />,
   name: 'tab behavior',
   parameters: {description: {data: 'Test tabbing and shift tabbing from within a submenu'}}
 };

@@ -23,15 +23,15 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   Provider,
   SectionProps,
   SelectValue,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -92,12 +92,12 @@ export interface PickerStyleProps {
 }
 
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
-  Pick<ListBoxProps<T>, 'items'>,
+  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
   Pick<AsyncLoadable, 'onLoadMore'> {
     /** The contents of the collection. */
@@ -308,18 +308,18 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   let spinnerId = useSlotId([showButtonSpinner]);
 
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       className={loadingWrapperStyles}
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}>
       <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function' && items) {
     renderer = (
       <>
-        <Collection items={items}>
+        <Collection items={items} dependencies={props.dependencies}>
           {children}
         </Collection>
         {listBoxLoadingCircle}
@@ -425,6 +425,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     }]
                   ]}>
                   <ListBox
+                    dependencies={props.dependencies}
                     items={items}
                     className={listbox({size})}>
                     {renderer}
@@ -552,7 +553,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   );
 });
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -610,7 +611,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
+export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

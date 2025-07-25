@@ -16,14 +16,14 @@ let descriptions = [
   'Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen'
 ];
 
-export function getImage(index: number) {
+export function getImage(index: number): string {
   return images[index % images.length].src;
 }
 
-export function getImageFullData(index: number) {
+export function getImageFullData(index: number): {width: number, height: number, src: string} {
   return images[index % images.length];
 }
 
-export function getDescription(index: number) {
+export function getDescription(index: number): string {
   return descriptions[index % descriptions.length];
 }

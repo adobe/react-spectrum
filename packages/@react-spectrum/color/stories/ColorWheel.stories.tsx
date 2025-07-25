@@ -13,16 +13,16 @@
 import {action} from 'storybook/actions';
 import {ColorSwatch, ColorWheel} from '../';
 import {Flex, useLocale} from '@adobe/react-spectrum';
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
+import {SpectrumColorWheelProps} from '@react-types/color';
 
 export type ColorWheelStory = StoryObj<typeof ColorWheel>;
 
 export default {
   title: 'ColorWheel',
   component: ColorWheel,
-  excludeStories: ['ControlledHSL'],
   args: {
     onChange: action('onChange'),
     onChangeEnd: action('onChangeEnd')
@@ -55,14 +55,14 @@ export const Default: ColorWheelStory = {
 export const Controlled: ColorWheelStory = {
   render: (args) => (
     <Flex gap={'size-500'} direction="row" alignItems="center">
-      <ControlledHSL {...args} />
+      <ControlledHSLRender {...args} />
     </Flex>
   )
 };
 
-export function ControlledHSL(props) {
+export const ControlledHSLRender = (props: SpectrumColorWheelProps): JSX.Element => {
   let {locale} = useLocale();
-  let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));
+  let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
   let onChangeEnd = (color) => {
     props.onChangeEnd && props.onChangeEnd(color);
     setColor(color);
@@ -78,4 +78,6 @@ export function ControlledHSL(props) {
       <div>{color.getColorName(locale)}</div>
     </div>
   );
-}
+};
+
+export const ControlledHSL: StoryFn<typeof ColorWheel> = (props) => <ControlledHSLRender {...props} />;

@@ -16,9 +16,9 @@ import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
@@ -62,7 +62,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
@@ -133,6 +133,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     menuProps,
     descriptionProps,
     errorMessageProps,
+    hiddenSelectProps,
     ...validation
   } = useSelect({
     ...removeDataAttributes(props),
@@ -169,7 +170,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     defaultClassName: 'react-aria-Select'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   let scrollRef = useRef(null);
@@ -203,9 +204,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...DOMProps}
-        {...renderProps}
-        {...focusProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focused={state.isFocused || undefined}
@@ -213,14 +212,12 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      <HiddenSelect
-        autoComplete={props.autoComplete}
-        state={state}
-        triggerRef={buttonRef}
-        label={label}
-        name={props.name}
-        isDisabled={props.isDisabled} />
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        <HiddenSelect
+          {...hiddenSelectProps}
+          autoComplete={props.autoComplete} />
+      </div>
     </Provider>
   );
 }
@@ -281,7 +278,7 @@ export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
 
   return (
     <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={!selectedItem || undefined}>

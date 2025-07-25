@@ -25,7 +25,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section, SpectrumPickerProps} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React,  {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
 import {userEvent, within} from 'storybook/test';
 
@@ -449,7 +449,7 @@ export const Quiet: PickerStory = {
   )
 };
 
-function DefaultPicker(props: SpectrumPickerProps<object>) {
+function DefaultPicker(props: SpectrumPickerProps<object>): JSX.Element {
   return (
     <Picker {...props}>
       <Item key="Short">Short</Item>
@@ -459,7 +459,7 @@ function DefaultPicker(props: SpectrumPickerProps<object>) {
   );
 }
 
-function ComplexItemsPicker(props: SpectrumPickerProps<object>) {
+function ComplexItemsPicker(props: SpectrumPickerProps<object>): JSX.Element {
   return (
     <Picker {...props}>
       <Section title="Section 1">
@@ -495,7 +495,7 @@ function ComplexItemsPicker(props: SpectrumPickerProps<object>) {
   );
 }
 
-function AsyncLoadingExample(props) {
+function AsyncLoadingExample(props: SpectrumPickerProps<object>): JSX.Element {
   interface Pokemon {
     name: string,
     url: string
@@ -521,7 +521,7 @@ function AsyncLoadingExample(props) {
   );
 }
 
-function ResizePicker(props) {
+function ResizePicker(props: SpectrumPickerProps<object>): JSX.Element {
   const [state, setState] = useState(true);
 
   return (

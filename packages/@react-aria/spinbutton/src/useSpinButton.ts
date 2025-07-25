@@ -59,13 +59,13 @@ export function useSpinButton(
 
   const clearAsync = () => clearTimeout(_async.current);
 
-   
+
   useEffect(() => {
     return () => clearAsync();
   }, []);
 
   let onKeyDown = (e) => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly || e.nativeEvent.isComposing) {
       return;
     }
 

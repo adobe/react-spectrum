@@ -26,7 +26,7 @@ const meta: Meta<typeof Tooltip> = {
 
 export default meta;
 
-export const Default = {
+export const Default: StoryObj<typeof Tooltip> = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -35,7 +35,7 @@ export const Default = {
   }
 } as StoryObj;
 
-export const WithLongLabel = {
+export const WithLongLabel: StoryObj<typeof Tooltip> = {
   ...LongLabel,
-  play: async (context) => await Default.play!(context)
+  play: Default.play
 } as StoryObj;

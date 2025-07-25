@@ -7,7 +7,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Item, ListView} from '../';
 import {items} from './ListView.stories';
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Text} from '@react-spectrum/text';
 
@@ -105,7 +105,7 @@ export const DisableFolderSelection: ListViewStory = {
   name: 'disable folders selection'
 };
 
-export const Links = (args) => {
+export const Links: StoryFn<typeof ListView> = (args) => {
   return (
     <ListView aria-label="ListView with links" width="250px" height={400} onSelectionChange={action('onSelectionChange')} {...args}>
       <Item key="https://adobe.com/" href="https://adobe.com/">Adobe</Item>

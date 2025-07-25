@@ -16,6 +16,7 @@ import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {DOMAttributes, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {FocusEvent, useMemo} from 'react';
+import {HiddenSelectProps} from './HiddenSelect';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -48,17 +49,21 @@ export interface SelectAria<T> extends ValidationResult {
   descriptionProps: DOMAttributes,
 
   /** Props for the select's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes,
+
+  /** Props for the hidden select element. */
+  hiddenSelectProps: HiddenSelectProps<T>
 }
 
 interface SelectData {
   isDisabled?: boolean,
   isRequired?: boolean,
   name?: string,
+  form?: string,
   validationBehavior?: 'aria' | 'native'
 }
 
-export const selectData = new WeakMap<SelectState<any>, SelectData>();
+export const selectData: WeakMap<SelectState<any>, SelectData> = new WeakMap<SelectState<any>, SelectData>();
 
 /**
  * Provides the behavior and accessibility implementation for a select component.
@@ -72,6 +77,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     isDisabled,
     isRequired,
     name,
+    form,
     validationBehavior = 'aria'
   } = props;
 
@@ -142,6 +148,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     isDisabled,
     isRequired,
     name,
+    form,
     validationBehavior
   });
 
@@ -232,6 +239,14 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     errorMessageProps,
     isInvalid,
     validationErrors,
-    validationDetails
+    validationDetails,
+    hiddenSelectProps: {
+      isDisabled,
+      name,
+      label: props.label,
+      state,
+      triggerRef: ref,
+      form
+    }
   };
 }

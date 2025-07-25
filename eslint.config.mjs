@@ -52,13 +52,15 @@ export default [{
         "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
         "examples/**/*",
         "starters/**/*",
+        "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
         "packages/@react-spectrum/s2/spectrum-illustrations",
         "packages/dev/parcel-config-storybook/*",
         "packages/dev/parcel-resolver-storybook/*",
         "packages/dev/parcel-transformer-storybook/*",
         "packages/dev/storybook-builder-parcel/*",
-        "packages/dev/storybook-react-parcel/*"
+        "packages/dev/storybook-react-parcel/*",
+        "packages/dev/s2-docs/pages/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
@@ -497,7 +499,7 @@ export default [{
         }],
     },
 }, {
-    files: ["packages/@react-spectrum/s2/**"],
+    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,

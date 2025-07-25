@@ -23,6 +23,9 @@ const meta: Meta<typeof Accordion> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    children: {table: {disable: true}}
+  },
   tags: ['autodocs'],
   title: 'Accordion'
 };

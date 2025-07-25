@@ -11,19 +11,26 @@
  */
 
 import {action} from 'storybook/actions';
-import React, {useEffect, useRef} from 'react';
+import React, {JSX, useEffect, useRef} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useInteractOutside, usePress} from '../';
 
 export default {
   title: 'useInteractOutside'
 };
 
-export const OutsideBody = () => <Demo />;
-OutsideBody.decorators = [(Story) => <BodyStyler><Story /></BodyStyler>];
+export type DemoStory = StoryObj<typeof Demo>;
 
-export const ClickingButtonShouldFireOnInteractOutside = () => <App />;
+export const OutsideBody: DemoStory = {
+  render: () => <Demo />,
+  decorators: [(Story) => <BodyStyler><Story /></BodyStyler>]
+};
 
-function Demo() {
+export const ClickingButtonShouldFireOnInteractOutside: DemoStory = {
+  render: () => <App />
+};
+
+function Demo(): JSX.Element {
   let ref = useRef(null);
   let onInteractOutside = action('outside');
   useInteractOutside({ref, onInteractOutside});

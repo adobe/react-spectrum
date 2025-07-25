@@ -14,14 +14,15 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
-import {Dialog, DialogTrigger, SpectrumDialogProps} from '../';
+import {Dialog, DialogTrigger, SpectrumDialogProps, SpectrumDialogTriggerProps} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
+import {Meta, StoryFn} from '@storybook/react';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {JSX} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 
 export default {
@@ -30,143 +31,147 @@ export default {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}
   },
   excludeStories: ['singleParagraph', 'renderTriggerProps']
-};
+} as Meta<typeof Dialog>;
 
-export const Default = () => render({});
+export type DialogStory = StoryFn<typeof Dialog>;
+
+export const Default: DialogStory = () => render({});
 
 Default.story = {
   name: 'default'
 };
 
-export const IsDismissable = () => render({isDismissable: true});
+export const IsDismissable: DialogStory = () => render({isDismissable: true});
 
 IsDismissable.story = {
   name: 'isDismissable'
 };
 
-export const LongContent = () => renderLongContent({});
+export const LongContent: DialogStory = () => renderLongContent({});
 
 LongContent.story = {
   name: 'long content'
 };
 
-export const LongContentMobileViewport = () => renderLongContent({});
+export const LongContentMobileViewport: DialogStory = () => renderLongContent({});
 
 LongContentMobileViewport.story = {
   name: 'long content, mobile viewport',
   parameters: {chromatic: {viewports: [320]}}
 };
 
-export const WithHero = () => renderHero({});
+export const WithHero: DialogStory = () => renderHero({});
 
 WithHero.story = {
   name: 'with hero'
 };
 
-export const WithHeroIsDimissable = () => renderHero({isDismissable: true});
+export const WithHeroIsDimissable: DialogStory = () => renderHero({isDismissable: true});
 
 WithHeroIsDimissable.story = {
   name: 'with hero, isDimissable'
 };
 
-export const WithFooter = () => renderFooter({});
+export const WithFooter: DialogStory = () => renderFooter({});
 
 WithFooter.story = {
   name: 'with footer'
 };
 
-export const Small = () => render({size: 'S'});
+export const Small: DialogStory = () => render({size: 'S'});
 
 Small.story = {
   name: 'small'
 };
 
-export const Medium = () => render({size: 'M'});
+export const Medium: DialogStory = () => render({size: 'M'});
 
 Medium.story = {
   name: 'medium'
 };
 
-export const Large = () => render({size: 'L'});
+export const Large: DialogStory = () => render({size: 'L'});
 
 Large.story = {
   name: 'large'
 };
 
-export const _Form = () => renderWithForm({});
+export const _Form: DialogStory = () => renderWithForm({});
 
 _Form.story = {
   name: 'form'
 };
 
-export const FullscreenTakeoverForm = () => renderWithForm({type: 'fullscreenTakeover'});
+export const FullscreenTakeoverForm: DialogStory = () => renderWithForm({type: 'fullscreenTakeover'});
 
 FullscreenTakeoverForm.story = {
   name: 'fullscreenTakeover form'
 };
 
-export const FullscreenTakeoverFormMobileViewport = () => renderWithForm({type: 'fullscreenTakeover'});
+export const FullscreenTakeoverFormMobileViewport: DialogStory = () => renderWithForm({type: 'fullscreenTakeover'});
 
 FullscreenTakeoverFormMobileViewport.story = {
   name: 'fullscreenTakeover form, mobile viewport',
   parameters: {chromatic: {viewports: [320]}}
 };
 
-export const ThreeButtons = () => renderWithThreeButtons({});
+export const ThreeButtons: DialogStory = () => renderWithThreeButtons({});
 
 ThreeButtons.story = {
   name: 'three buttons'
 };
 
-export const ThreeButtonsVerticalOrientation = () => renderWithThreeButtonsVertical({});
+export const ThreeButtonsVerticalOrientation: DialogStory = () => renderWithThreeButtonsVertical({});
 
 ThreeButtonsVerticalOrientation.story = {
   name: 'three buttons, vertical orientation'
 };
 
-export const ThreeButtonsFooter = () => renderWithThreeButtons({showFooter: true});
+export const ThreeButtonsFooter: DialogStory = () => renderWithThreeButtons({showFooter: true});
 
 ThreeButtonsFooter.story = {
   name: 'three buttons, footer'
 };
 
-export const ThreeButtonsFooterExtraLabel = () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'});
+export const ThreeButtonsFooterExtraLabel: DialogStory = () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'});
 
 ThreeButtonsFooterExtraLabel.story = {
   name: 'three buttons, footer, extraLabel'
 };
 
-export const ClearedContent = () => renderWithDividerInContent({});
+export const ClearedContent: DialogStory = () => renderWithDividerInContent({});
 
 ClearedContent.story = {
   name: 'cleared content'
 };
 
-export const ExtraLongFooter = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'});
+export const ExtraLongFooter: DialogStory = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'});
 
 ExtraLongFooter.story = {
   name: 'extra long footer'
 };
 
-export const ShowHeaderLongerHeadingAndHeader = () => renderWithOptions({showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
+export const ShowHeaderLongerHeadingAndHeader: DialogStory = () => renderWithOptions({showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
 
 ShowHeaderLongerHeadingAndHeader.story = {
   name: 'showHeader, longer heading and header'
 };
 
-export const ExtraLongFooterLongerHeadingAndHeader = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', extraHeadering: ' This is extra text for long heading that wraps to make sure it fills the width'});
+export const ExtraLongFooterLongerHeadingAndHeader: DialogStory = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', extraHeadering: ' This is extra text for long heading that wraps to make sure it fills the width'});
 
 ExtraLongFooterLongerHeadingAndHeader.story = {
   name: 'extra long footer, longer heading and header'
 };
 
-export const ExtraLongFooterShowHeaderLongerHeadingAndHeader = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
+export const ExtraLongFooterShowHeaderLongerHeadingAndHeader: DialogStory = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
 
 ExtraLongFooterShowHeaderLongerHeadingAndHeader.story = {
   name: 'extra long footer, showHeader, longer heading and header'
 };
 
-export const Tray = () => renderTriggerProps({type: 'tray'});
+export type DialogTriggerStory = StoryFn<typeof DialogTrigger>;
+
+export const Tray: DialogStory = () => renderTriggerProps({type: 'tray'});
 
 Tray.story = {
   name: 'tray',
@@ -176,7 +181,7 @@ Tray.story = {
   }
 };
 
-export const Popover = () => renderTriggerProps({type: 'popover'});
+export const Popover: DialogStory = () => renderTriggerProps({type: 'popover'});
 
 Popover.story = {
   name: 'popover',
@@ -186,7 +191,7 @@ Popover.story = {
   }
 };
 
-export const PopoverCrossOffset50 = () => renderTriggerProps({type: 'popover', crossOffset: 50});
+export const PopoverCrossOffset50: DialogStory = () => renderTriggerProps({type: 'popover', crossOffset: 50});
 
 PopoverCrossOffset50.story = {
   name: 'popover: crossOffset50',
@@ -196,7 +201,7 @@ PopoverCrossOffset50.story = {
   }
 };
 
-export const PopoverCrossOffset200 = () => renderTriggerProps({type: 'popover', crossOffset: 200});
+export const PopoverCrossOffset200: DialogStory = () => renderTriggerProps({type: 'popover', crossOffset: 200});
 
 PopoverCrossOffset200.story = {
   name: 'popover: crossOffset200',
@@ -206,7 +211,7 @@ PopoverCrossOffset200.story = {
   }
 };
 
-export const PopoverCrossOffset1000 = () => renderTriggerProps({type: 'popover', crossOffset: 1000});
+export const PopoverCrossOffset1000: DialogStory = () => renderTriggerProps({type: 'popover', crossOffset: 1000});
 
 PopoverCrossOffset1000.story = {
   name: 'popover: crossOffset1000',
@@ -216,7 +221,7 @@ PopoverCrossOffset1000.story = {
   }
 };
 
-export const PopoverContainerPadding = () => renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'});
+export const PopoverContainerPadding: DialogStory = () => renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'});
 
 PopoverContainerPadding.story = {
   name: 'popover: containerPadding',
@@ -226,7 +231,7 @@ PopoverContainerPadding.story = {
   }
 };
 
-export const MobileTypeFullscreenTakeoverModal = () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'});
+export const MobileTypeFullscreenTakeoverModal: DialogStory = () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'});
 
 MobileTypeFullscreenTakeoverModal.story = {
   name: 'mobileType fullscreenTakeover, modal',
@@ -236,7 +241,7 @@ MobileTypeFullscreenTakeoverModal.story = {
   }
 };
 
-export const MobileTypeModalPopover = () => renderTriggerProps({type: 'popover', mobileType: 'modal'});
+export const MobileTypeModalPopover: DialogStory = () => renderTriggerProps({type: 'popover', mobileType: 'modal'});
 
 MobileTypeModalPopover.story = {
   name: 'mobileType: modal, popover',
@@ -246,7 +251,7 @@ MobileTypeModalPopover.story = {
   }
 };
 
-export const MobileTypeTrayPopover = () => renderTriggerProps({type: 'popover', mobileType: 'tray'});
+export const MobileTypeTrayPopover: DialogStory = () => renderTriggerProps({type: 'popover', mobileType: 'tray'});
 
 MobileTypeTrayPopover.story = {
   name: 'mobileType: tray, popover',
@@ -284,7 +289,12 @@ function render(props: RenderProps) {
   );
 }
 
-export function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}) {
+interface RenderTriggerProps extends Omit<SpectrumDialogTriggerProps, 'children'> {
+  width?: string,
+  isDismissable?: boolean
+}
+
+export function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}: RenderTriggerProps): JSX.Element {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} defaultOpen {...triggerProps}>
@@ -397,8 +407,8 @@ function renderWithForm({width = 'auto', ...props}) {
     </div>
   );
 }
-export let singleParagraph = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
-let fiveParagraphs = () => (
+export let singleParagraph = (): JSX.Element => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
+let fiveParagraphs = (): JSX.Element => (
   <React.Fragment>
     <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>
     <Text>Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus. In fermentum posuere urna nec tincidunt praesent semper. Suspendisse in est ante in. Egestas diam in arcu cursus euismod quis viverra nibh cras. Aliquam sem fringilla ut morbi tincidunt augue interdum. Lacus sed turpis tincidunt id aliquet risus feugiat. Praesent semper feugiat nibh sed pulvinar proin. In massa tempor nec feugiat nisl pretium fusce id velit. Non nisi est sit amet facilisis. Mi in nulla posuere sollicitudin aliquam ultrices. Morbi leo urna molestie at elementum. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Risus quis varius quam quisque id. Platea dictumst quisque sagittis purus. Etiam non quam lacus suspendisse faucibus interdum posuere. Semper feugiat nibh sed pulvinar proin gravida hendrerit lectus.</Text>

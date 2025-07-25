@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
-import {Example as CardViewExample} from './CardView.stories';
+import {ExampleRender as CardViewExample} from './CardView.stories';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
@@ -22,6 +22,9 @@ const meta: Meta<typeof ActionBar> = {
   component: ActionBar,
   parameters: {
     layout: 'centered'
+  },
+  argTypes: {
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'ActionBar'

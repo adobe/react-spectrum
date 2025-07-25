@@ -12,13 +12,18 @@
 
 import {action} from 'storybook/actions';
 import {Button, FileTrigger, Link} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/FileTrigger',
+  component: FileTrigger
+} as Meta<typeof FileTrigger>;
 
-export const FileTriggerButton = (props) => (
+export type FileTriggerStory = StoryFn<typeof FileTrigger>;
+
+export const FileTriggerButton: FileTriggerStory = (props) => (
   <FileTrigger
     onSelect={action('onSelect')}
     data-testid="filetrigger-example"
@@ -27,7 +32,7 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
-export const FileTriggerDirectories = (props) => {
+export const FileTriggerDirectories: FileTriggerStory = (props) => {
   let [files, setFiles] = React.useState<string[]>([]);
 
   return (
@@ -52,7 +57,7 @@ export const FileTriggerDirectories = (props) => {
   );
 };
 
-export const FileTriggerLinkAllowsMultiple = (props) => (
+export const FileTriggerLinkAllowsMultiple: FileTriggerStory = (props) => (
   <FileTrigger
     {...props}
     onSelect={action('onSelect')}

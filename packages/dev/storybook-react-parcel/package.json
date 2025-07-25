@@ -1,19 +1,20 @@
 {
   "name": "storybook-react-parcel",
   "version": "0.0.1",
+  "private": true,
   "main": "preset.js",
   "dependencies": {
     "@storybook/react": "^9.0.4",
-    "storybook-builder-parcel": "^0.0.1"
+    "storybook-builder-parcel": ">=0.0.1"
   },
   "devDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "storybook": "^9.0.4"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "storybook": "^9.0.4"
   },
   "scripts": {

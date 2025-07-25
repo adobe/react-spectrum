@@ -388,17 +388,6 @@ describe('usePress', function () {
           pressed: true
         },
         {
-          type: 'pressup',
-          target: el.parentElement,
-          pointerType: 'mouse',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false,
-          altKey: false,
-          x: 0,
-          y: 0
-        },
-        {
           type: 'pressend',
           target: el.parentElement,
           pointerType: 'mouse',

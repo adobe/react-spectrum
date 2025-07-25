@@ -23,7 +23,7 @@ import {
   TagGroup,
   Text
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
 
@@ -40,7 +40,11 @@ const meta: Meta<typeof TagGroup<any>> = {
     onRemove: {
       control: {type: 'boolean'}
     },
-    onSelectionChange: {table: {category: 'Events'}}
+    onSelectionChange: {table: {category: 'Events'}},
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'TagGroup'
@@ -48,8 +52,10 @@ const meta: Meta<typeof TagGroup<any>> = {
 
 export default meta;
 
-export let Example = {
-  render: (args: any) => {
+type Story = StoryObj<typeof TagGroup>;
+
+export const Example: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -101,8 +107,8 @@ let items: Array<ITagItem> = [
   {name: 'Vanilla', id: 'vanilla'},
   {name: 'Coffee', id: 'coffee'}
 ];
-export let Dynamic = {
-  render: (args: any) => {
+export const Dynamic: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -125,8 +131,8 @@ export let Dynamic = {
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
-export let Disabled = {
-  render: (args: any) => {
+export const Disabled: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -166,8 +172,8 @@ function renderEmptyState() {
     </span>
   );
 }
-export let Empty = {
-  render: (args: any) => {
+export const Empty: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -181,8 +187,8 @@ export let Empty = {
     label: 'Ice cream flavor'
   }
 };
-export let DefaultEmpty = {
-  render: (args: any) => {
+export const DefaultEmpty: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -197,8 +203,8 @@ export let DefaultEmpty = {
   }
 };
 
-export let Links = {
-  render: (args: any) => {
+export const Links: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -217,8 +223,8 @@ export let Links = {
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => {
+export const ContextualHelpExample: Story = {
+  render: (args) => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');

@@ -15,7 +15,7 @@ import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateCon
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -51,12 +51,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
@@ -116,13 +116,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
             default: lightDark('accent-900', 'accent-700'),
             isHovered: lightDark('accent-1000', 'accent-600'),
             isPressed: lightDark('accent-1000', 'accent-600'),
-            isFocused: lightDark('accent-1000', 'accent-600')
+            isFocusVisible: lightDark('accent-1000', 'accent-600')
           },
           negative: {
             default: lightDark('negative-900', 'negative-700'),
             isHovered: lightDark('negative-1000', 'negative-600'),
             isPressed: lightDark('negative-1000', 'negative-600'),
-            isFocused: lightDark('negative-1000', 'negative-600')
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
           },
           premium: 'gray-100',
           genai: 'gray-100'
@@ -347,7 +347,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({

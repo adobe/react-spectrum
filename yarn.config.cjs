@@ -23,7 +23,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods') {
+        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
@@ -186,6 +186,7 @@ function enforceCSS({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (!name.startsWith('@react-spectrum/docs')
+      && !name.startsWith('@react-spectrum/s2-docs')
       && !name.startsWith('@react-spectrum/test-utils')
       && name.startsWith('@react-spectrum')
       && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
@@ -207,6 +208,7 @@ function isPublishing(workspace) {
     && !name.includes('@react-aria/example-theme')
     && !name.includes('@react-spectrum/style-macro-s1')
     && !name.includes('@react-spectrum/docs')
+    && !name.includes('@react-spectrum/s2-docs')
     && !name.includes('parcel')
     && !name.includes('@adobe/spectrum-css-temp')
     && !name.includes('css-module-types')

@@ -1,6 +1,7 @@
 import {action} from 'storybook/actions';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
-import React from 'react';
+import React, {JSX} from 'react';
+import {StoryFn} from '@storybook/react';
 import {StoryMultiSlider, StoryThumb} from './StoryMultiSlider';
 import {StoryRangeSlider} from './StoryRangeSlider';
 import {StorySlider} from './StorySlider';
@@ -9,10 +10,12 @@ let message = 'Your browser may not support this set of format options.';
 
 export default {
   title: 'Slider (hooks)',
-  decorators: [(story) => <ErrorBoundary message={message}>{story()}</ErrorBoundary>]
+  decorators: [(story: any): JSX.Element => <ErrorBoundary message={message}>{story()}</ErrorBoundary>] as const
 };
 
-export const Single = () => (
+export type SliderStory = StoryFn<typeof StorySlider>;
+
+export const Single: SliderStory = () => (
   <StorySlider
     label="Size"
     onChange={action('onChange')}
@@ -24,7 +27,7 @@ Single.story = {
   name: 'single'
 };
 
-export const SingleWithBigSteps = () => (
+export const SingleWithBigSteps: SliderStory = () => (
   <StorySlider
     label="Size"
     onChange={action('onChange')}
@@ -37,7 +40,7 @@ SingleWithBigSteps.story = {
   name: 'single with big steps'
 };
 
-export const SingleWithOrigin = () => (
+export const SingleWithOrigin: SliderStory = () => (
   <StorySlider
     label="Exposure"
     origin={0}
@@ -53,7 +56,7 @@ SingleWithOrigin.story = {
   name: 'single with origin'
 };
 
-export const SingleWithAriaLabel = () => (
+export const SingleWithAriaLabel: SliderStory = () => (
   <StorySlider
     aria-label="Size"
     onChange={action('onChange')}
@@ -65,7 +68,7 @@ SingleWithAriaLabel.story = {
   name: 'single with aria label'
 };
 
-export const Range = () => (
+export const Range: SliderStory = () => (
   <StoryRangeSlider
     label="Temperature"
     defaultValue={[25, 75]}
@@ -85,7 +88,7 @@ Range.story = {
   name: 'range'
 };
 
-export const RangeWithAriaLabel = () => (
+export const RangeWithAriaLabel: SliderStory = () => (
   <StoryRangeSlider
     aria-label="Temperature"
     defaultValue={[25, 75]}
@@ -105,7 +108,7 @@ RangeWithAriaLabel.story = {
   name: 'range with aria-label'
 };
 
-export const _3Thumbs = () => (
+export const _3Thumbs: SliderStory = () => (
   <StoryMultiSlider
     label="Three thumbs"
     onChange={action('onChange')}
@@ -121,7 +124,7 @@ _3Thumbs.story = {
   name: '3 thumbs'
 };
 
-export const _3ThumbsWithDisabled = () => (
+export const _3ThumbsWithDisabled: SliderStory = () => (
   <StoryMultiSlider
     label="Three thumbs"
     onChange={action('onChange')}
@@ -137,7 +140,7 @@ _3ThumbsWithDisabled.story = {
   name: '3 thumbs with disabled'
 };
 
-export const _8ThumbsWithDisabled = () => (
+export const _8ThumbsWithDisabled: SliderStory = () => (
   <StoryMultiSlider
     label="9 thumbs - 5 disabled"
     onChange={action('onChange')}
@@ -159,7 +162,7 @@ _8ThumbsWithDisabled.story = {
   name: '8 thumbs with disabled'
 };
 
-export const _3ThumbsWithAriaLabel = () => (
+export const _3ThumbsWithAriaLabel: SliderStory = () => (
   <StoryMultiSlider
     aria-label="Three thumbs"
     onChange={action('onChange')}

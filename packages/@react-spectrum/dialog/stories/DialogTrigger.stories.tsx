@@ -23,10 +23,11 @@ import {Flex, Grid} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Meta, StoryFn} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {TranslateDialog} from './../chromatic/DialogLanguages.stories';
+import {TranslateDialogRender} from './../chromatic/DialogLanguages.stories';
 
 export default {
   title: 'DialogTrigger',
@@ -43,7 +44,9 @@ export default {
       }
     },
     placement: {
-      type: 'select',
+      control: {
+        type: 'select'
+      },
       defaultValue: 'top',
       options: [
         'bottom',
@@ -92,80 +95,82 @@ export default {
       }
     }
   }
-};
+} as Meta<typeof DialogTrigger>;
 
-export const Default = (args) => render(args);
+export type DialogTriggerStory = StoryFn<typeof DialogTrigger>;
+
+export const Default: DialogTriggerStory = (args) => render(args);
 
 Default.story = {
   name: 'default'
 };
 
-export const TypePopover = (args) => renderPopover({type: 'popover', ...args});
+export const TypePopover: DialogTriggerStory = (args) => renderPopover({type: 'popover', ...args});
 
 TypePopover.story = {
   name: 'type: popover'
 };
 
-export const TypeModal = (args) => render({type: 'modal', ...args});
+export const TypeModal: DialogTriggerStory = (args) => render({type: 'modal', ...args});
 
 TypeModal.story = {
   name: 'type: modal'
 };
 
-export const TypeModalIsDismissable = (args) =>
+export const TypeModalIsDismissable: DialogTriggerStory = (args) =>
   render({type: 'modal', isDismissable: true, ...args});
 
 TypeModalIsDismissable.story = {
   name: 'type: modal isDismissable'
 };
 
-export const TypeFullscreen = (args) => render({type: 'fullscreen', ...args});
+export const TypeFullscreen: DialogTriggerStory = (args) => render({type: 'fullscreen', ...args});
 
 TypeFullscreen.story = {
   name: 'type: fullscreen'
 };
 
-export const TypeFullscreenTakeover = (args) => render({type: 'fullscreenTakeover', ...args});
+export const TypeFullscreenTakeover: DialogTriggerStory = (args) => render({type: 'fullscreenTakeover', ...args});
 
 TypeFullscreenTakeover.story = {
   name: 'type: fullscreenTakeover'
 };
 
-export const TypeTray = (args) => renderPopover({type: 'tray', ...args});
+export const TypeTray: DialogTriggerStory = (args) => renderPopover({type: 'tray', ...args});
 
 TypeTray.story = {
   name: 'type: tray'
 };
 
-export const MobileTypeFullscreen = (args) =>
+export const MobileTypeFullscreen: DialogTriggerStory = (args) =>
   render({type: 'modal', mobileType: 'fullscreen', ...args});
 
 MobileTypeFullscreen.story = {
   name: 'mobileType: fullscreen'
 };
 
-export const MobileTypeFullscreenTakeover = (args) =>
+export const MobileTypeFullscreenTakeover: DialogTriggerStory = (args) =>
   render({type: 'modal', mobileType: 'fullscreenTakeover', ...args});
 
 MobileTypeFullscreenTakeover.story = {
   name: 'mobileType: fullscreenTakeover'
 };
 
-export const PopoverWithMobileTypeModal = (args) =>
+export const PopoverWithMobileTypeModal: DialogTriggerStory = (args) =>
   renderPopover({type: 'popover', mobileType: 'modal', ...args});
 
 PopoverWithMobileTypeModal.story = {
   name: 'popover with mobileType: modal'
 };
 
-export const PopoverWithMobileTypeTray = (args) =>
+export const PopoverWithMobileTypeTray: DialogTriggerStory = (args) =>
   renderPopover({type: 'popover', mobileType: 'tray', ...args});
 
 PopoverWithMobileTypeTray.story = {
   name: 'popover with mobileType: tray'
 };
 
-export const NestedModals = () => (
+export const NestedModals: DialogTriggerStory = () => (
   <div style={{paddingTop: 100}}>
     <input aria-label="test input" />
     <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
@@ -195,7 +200,7 @@ NestedModals.story = {
   name: 'nested modals'
 };
 
-export const NestedModalsFullscreentakeover = () => (
+export const NestedModalsFullscreentakeover: DialogTriggerStory = () => (
   <DialogTrigger type="fullscreenTakeover">
     <ActionButton>Trigger</ActionButton>
     {(close) => (
@@ -231,7 +236,7 @@ NestedModalsFullscreentakeover.story = {
   name: 'nested modals, fullscreentakeover'
 };
 
-export const WithMenuTrigger = () => (
+export const WithMenuTrigger: DialogTriggerStory = () => (
   <DialogTrigger type="popover">
     <ActionButton>Trigger</ActionButton>
     <Dialog>
@@ -254,7 +259,7 @@ WithMenuTrigger.story = {
   name: 'with menu trigger'
 };
 
-export const NestedPopovers = () => (
+export const NestedPopovers: DialogTriggerStory = () => (
   <div style={{paddingTop: 100}}>
     <DialogTrigger type="popover">
       <ActionButton>Trigger</ActionButton>
@@ -278,7 +283,7 @@ NestedPopovers.story = {
   name: 'nested popovers'
 };
 
-export const PopoverInsideScrollView = () => (
+export const PopoverInsideScrollView: DialogTriggerStory = () => (
   <div style={{height: 100, display: 'flex'}}>
     <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
       <div style={{height: 200}}>
@@ -310,14 +315,14 @@ PopoverInsideScrollView.story = {
   }
 };
 
-export const ShouldFlipWithWidth = (args) =>
+export const ShouldFlipWithWidth: DialogTriggerStory = (args) =>
   renderPopover({type: 'popover', width: 'calc(100vh - 100px)', ...args});
 
 ShouldFlipWithWidth.story = {
   name: 'shouldFlip with width'
 };
 
-export const CloseFunctionWithButtonPopover = () => (
+export const CloseFunctionWithButtonPopover: DialogTriggerStory = () => (
   <div style={{display: 'flex', margin: '100px 0'}}>
     <DialogTrigger type="popover" onOpenChange={action('open change')}>
       <ActionButton>Trigger</ActionButton>
@@ -351,19 +356,19 @@ CloseFunctionWithButtonPopover.story = {
   name: 'Close function with button: popover'
 };
 
-export const TargetRef = (args) => <TriggerWithRef type="popover" {...args} />;
+export const TargetRef: DialogTriggerStory = (args) => <TriggerWithRef type="popover" {...args} />;
 
 TargetRef.story = {
   name: 'targetRef'
 };
 
-export const _AlertDialog = (args) => renderAlert(args);
+export const _AlertDialog: DialogTriggerStory = (args) => renderAlert(args);
 
 _AlertDialog.story = {
   name: 'alert dialog'
 };
 
-export const CrossoffsetExamples = () => (
+export const CrossoffsetExamples: DialogTriggerStory = () => (
   <Flex gap="size-200" alignSelf="center">
     <Flex gap="size-200" direction="column" alignItems="start">
       <span>Left Top</span>
@@ -417,13 +422,13 @@ CrossoffsetExamples.story = {
   name: 'crossoffset examples'
 };
 
-export const TriggerVisibleThroughUnderlay = (args) => renderTriggerNotCentered(args);
+export const TriggerVisibleThroughUnderlay: DialogTriggerStory = (args) => renderTriggerNotCentered(args);
 
 TriggerVisibleThroughUnderlay.story = {
   name: 'trigger visible through underlay'
 };
 
-export const _2Popovers = () => (
+export const _2Popovers: DialogTriggerStory = () => (
   <Flex gap="size-200">
     <DialogTrigger type="popover">
       <ActionButton>Trigger</ActionButton>
@@ -447,13 +452,13 @@ _2Popovers.story = {
   name: '2 popovers'
 };
 
-export const _AdjustableDialog = () => <AdjustableDialog />;
+export const _AdjustableDialog: DialogTriggerStory = () => <AdjustableDialog />;
 
 _AdjustableDialog.story = {
   name: 'adjustable dialog'
 };
 
-export const WithTooltip = () => (
+export const WithTooltip: DialogTriggerStory = () => (
   <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
     <DialogTrigger isDismissable>
       <ActionButton>Trigger</ActionButton>
@@ -476,7 +481,7 @@ WithTooltip.story = {
   name: 'with tooltip inside'
 };
 
-export const WithTooltipTrigger = () => (
+export const WithTooltipTrigger: DialogTriggerStory = () => (
   <Flex direction="row" gap={10}>
     <DialogTrigger>
       <ActionButton>DialogTrigger only</ActionButton>
@@ -528,14 +533,14 @@ function CustomDialog({close}) {
   );
 }
 
-export const WithTranslations = () => <TranslateDialog />;
+export const WithTranslations: DialogTriggerStory = () => <TranslateDialogRender />;
 
 WithTranslations.story = {
   name: 'with translations',
   parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
 
-export const TriggersOnEdges = () => (
+export const TriggersOnEdges: DialogTriggerStory = () => (
   <View width="100%" overflow="auto">
     <Grid
       areas={[

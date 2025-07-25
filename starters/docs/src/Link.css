@@ -1,0 +1,32 @@
+@import "./theme.css";
+
+.react-aria-Link {
+  color: var(--link-color);
+  font-size: 18px;
+  transition: all 200ms;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+
+  &[data-hovered] {
+    text-decoration-style: wavy;
+  }
+
+  &[data-pressed] {
+    color: var(--link-color-pressed);
+  }
+
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: -3px -6px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
+  }
+
+  &[data-disabled] {
+    cursor: default;
+    color: var(--text-color-disabled);
+  }
+}

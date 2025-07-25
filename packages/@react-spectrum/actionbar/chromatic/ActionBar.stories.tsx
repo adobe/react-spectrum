@@ -13,12 +13,15 @@
 import {Example, Example2} from '../stories/Example';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {StoryFn} from '@storybook/react';
 
 export default {
   title: 'ActionBar'
 };
 
-export const Default = () => (
+export type ActionBarStory = StoryFn<typeof Example>;
+
+export const Default: ActionBarStory = () => (
   <Flex gap="size-250">
     <Example />
     <Example defaultSelectedKeys={new Set(['Foo 1'])} />
@@ -29,13 +32,13 @@ Default.story = {
   name: 'default'
 };
 
-export const IsEmphasized = () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />;
+export const IsEmphasized: ActionBarStory = () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />;
 
 IsEmphasized.story = {
   name: 'isEmphasized'
 };
 
-export const LargeWidth = () => (
+export const LargeWidth: ActionBarStory = () => (
   <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
 );
 
@@ -43,7 +46,7 @@ LargeWidth.story = {
   name: 'large width'
 };
 
-export const CollapsedIcons = () => (
+export const CollapsedIcons: ActionBarStory = () => (
   <Example isEmphasized tableWidth={500} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
 );
 
@@ -51,6 +54,6 @@ CollapsedIcons.story = {
   name: 'collapsed icons'
 };
 
-export const CollapseRounding = () => (
+export const CollapseRounding: ActionBarStory = () => (
   <Example2 tableWidth={800} defaultSelectedKeys={new Set(['Foo 1'])} />
 );

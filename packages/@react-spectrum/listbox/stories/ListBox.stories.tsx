@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {ActionGroup, AlertDialog, Avatar, Button, DialogContainer, Flex, Text} from '@adobe/react-spectrum';
+import {ActionGroup, AlertDialog, Avatar, Button, DialogContainer, Flex, SpectrumListBoxProps, Text} from '@adobe/react-spectrum';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -24,8 +24,9 @@ import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
 import {Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React, {useRef, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
 import {TranslateListBox} from './../chromatic/ListBoxLanguages.stories';
 import {useAsyncList, useTreeData} from '@react-stately/data';
 
@@ -104,7 +105,9 @@ for (let i = 0; i < 50; i++) {
 export default {
   title: 'ListBox',
   excludeStories: ['FocusExample']
-};
+} as Meta<typeof ListBox>;
+
+type ListBoxStory = StoryObj<typeof ListBox>;
 
 function StoryDecorator(props) {
   return (
@@ -124,7 +127,7 @@ function StoryDecorator(props) {
   );
 }
 
-export const DefaultListBox = {
+export const DefaultListBox: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={flatOptions}>
       {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -138,7 +141,7 @@ export const DefaultListBox = {
   name: 'Default ListBox'
 };
 
-export const ListBoxWSections = {
+export const ListBoxWSections: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
       {(item) => (
@@ -156,7 +159,7 @@ export const ListBoxWSections = {
   name: 'ListBox w/ sections'
 };
 
-export const ListBoxWManySectionsAndSelection = {
+export const ListBoxWManySectionsAndSelection: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -179,7 +182,7 @@ export const ListBoxWManySectionsAndSelection = {
   name: 'ListBox w/ many sections and selection'
 };
 
-export const ListBoxWSectionsAndFalsyIds = {
+export const ListBoxWSectionsAndFalsyIds: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -202,7 +205,7 @@ export const ListBoxWSectionsAndFalsyIds = {
   name: 'ListBox w/ sections and falsy ids'
 };
 
-export const ListBoxWSectionsAndNoTitle = {
+export const ListBoxWSectionsAndNoTitle: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
       {(item) => (
@@ -220,7 +223,7 @@ export const ListBoxWSectionsAndNoTitle = {
   name: 'ListBox w/ sections and no title'
 };
 
-export const Static = {
+export const Static: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label">
       <Item>One</Item>
@@ -235,7 +238,7 @@ export const Static = {
   )]
 };
 
-export const StaticWithSectionsAndSelection = {
+export const StaticWithSectionsAndSelection: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple">
       <Section title="Section 1">
@@ -258,7 +261,7 @@ export const StaticWithSectionsAndSelection = {
   name: 'Static with sections and selection'
 };
 
-export const StaticWithSectionsAndNoTitle = {
+export const StaticWithSectionsAndNoTitle: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label">
       <Section aria-label="Section 1">
@@ -281,7 +284,7 @@ export const StaticWithSectionsAndNoTitle = {
   name: 'Static with sections and no title'
 };
 
-export const WithDefaultSelectedOption = {
+export const WithDefaultSelectedOption: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -305,7 +308,7 @@ export const WithDefaultSelectedOption = {
   name: 'with default selected option'
 };
 
-export const SingleSelectionWithDefaultSelectedOption = {
+export const SingleSelectionWithDefaultSelectedOption: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -325,7 +328,7 @@ export const SingleSelectionWithDefaultSelectedOption = {
   name: 'single selection with default selected option'
 };
 
-export const StaticWithDefaultSelectedOptions = {
+export const StaticWithDefaultSelectedOptions: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -354,7 +357,7 @@ export const StaticWithDefaultSelectedOptions = {
   name: 'static with default selected options'
 };
 
-export const WithSelectedOptionsControlled = {
+export const WithSelectedOptionsControlled: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -378,7 +381,7 @@ export const WithSelectedOptionsControlled = {
   name: 'with selected options (controlled)'
 };
 
-export const StaticWithSelectedOptionsControlled = {
+export const StaticWithSelectedOptionsControlled: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -407,7 +410,7 @@ export const StaticWithSelectedOptionsControlled = {
   name: 'static with selected options (controlled)'
 };
 
-export const WithDisabledOptions = {
+export const WithDisabledOptions: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -429,7 +432,7 @@ export const WithDisabledOptions = {
   name: 'with disabled options'
 };
 
-export const StaticWithDisabledOptions = {
+export const StaticWithDisabledOptions: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" disabledKeys={['3', '5']}>
       <Section title="Section 1">
@@ -453,7 +456,7 @@ export const StaticWithDisabledOptions = {
   name: 'static with disabled options'
 };
 
-export const MultipleSelection = {
+export const MultipleSelection: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -478,7 +481,7 @@ export const MultipleSelection = {
   name: 'Multiple selection'
 };
 
-export const MultipleSelectionStatic = {
+export const MultipleSelectionStatic: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -507,7 +510,7 @@ export const MultipleSelectionStatic = {
   name: 'Multiple selection, static'
 };
 
-export const NoSelectionAllowed = {
+export const NoSelectionAllowed: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
       {(item) => (
@@ -525,7 +528,7 @@ export const NoSelectionAllowed = {
   name: 'No selection allowed'
 };
 
-export const NoSelectionAllowedStatic = {
+export const NoSelectionAllowedStatic: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label">
       <Section title="Section 1">
@@ -548,7 +551,7 @@ export const NoSelectionAllowedStatic = {
   name: 'No selection allowed, static'
 };
 
-export const ListBoxWithAutoFocusTrue = {
+export const ListBoxWithAutoFocusTrue: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={withSection} autoFocus>
       {(item) => (
@@ -566,7 +569,7 @@ export const ListBoxWithAutoFocusTrue = {
   name: 'ListBox with autoFocus=true'
 };
 
-export const ListBoxWithAutoFocusComplex = {
+export const ListBoxWithAutoFocusComplex: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -590,7 +593,7 @@ export const ListBoxWithAutoFocusComplex = {
   name: 'ListBox with autoFocus=true, selectionMode=single, default selected key (uncontrolled)'
 };
 
-export const ListBoxWithAutoFocusFirst = {
+export const ListBoxWithAutoFocusFirst: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -614,7 +617,7 @@ export const ListBoxWithAutoFocusFirst = {
   name: 'ListBox with autoFocus="first"'
 };
 
-export const ListBoxWithAutoFocusLast = {
+export const ListBoxWithAutoFocusLast: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -638,7 +641,7 @@ export const ListBoxWithAutoFocusLast = {
   name: 'ListBox with autoFocus="last"'
 };
 
-export const ListBoxWithKeyboardSelectionWrapping = {
+export const ListBoxWithKeyboardSelectionWrapping: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -662,7 +665,7 @@ export const ListBoxWithKeyboardSelectionWrapping = {
   name: 'ListBox with keyboard selection wrapping'
 };
 
-export const WithSemanticElementsStatic = {
+export const WithSemanticElementsStatic: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -711,7 +714,7 @@ export const WithSemanticElementsStatic = {
   name: 'with semantic elements (static)'
 };
 
-export const WithSemanticElementsGenerativeMultipleSelection = {
+export const WithSemanticElementsGenerativeMultipleSelection: ListBoxStory = {
   render: () => (
     <ListBox
       flexGrow={1}
@@ -734,7 +737,7 @@ export const WithSemanticElementsGenerativeMultipleSelection = {
   name: 'with semantic elements (generative), multiple selection'
 };
 
-export const IsLoading = {
+export const IsLoading: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={[] as any[]} isLoading>
       {(item) => <Item>{item.name}</Item>}
@@ -748,7 +751,7 @@ export const IsLoading = {
   name: 'isLoading'
 };
 
-export const IsLoadingMore = {
+export const IsLoadingMore: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" items={flatOptions} isLoading>
       {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -762,7 +765,7 @@ export const IsLoadingMore = {
   name: 'isLoading more'
 };
 
-export const AsyncLoading = {
+export const AsyncLoading: ListBoxStory = {
   render: () => (
     <AsyncLoadingExample />
   ),
@@ -774,7 +777,7 @@ export const AsyncLoading = {
   name: 'async loading'
 };
 
-export const AsyncLoadingResizable = {
+export const AsyncLoadingResizable: ListBoxStory = {
   render: () => (
     <div style={{display: 'flex', height: '200px', flexGrow: 1, minWidth: '200px', padding: '10px', resize: 'both', overflow: 'auto'}}>
       <AsyncLoadingExample />
@@ -791,21 +794,21 @@ export const AsyncLoadingResizable = {
   name: 'async loading, resizable'
 };
 
-export const ListboxContainers = {
+export const ListboxContainers: ListBoxStory = {
   render: () => <App />,
-  decorators: null,
+  decorators: undefined,
   name: 'listbox containers'
 };
 
-export const RestoreFocusExample = {
+export const RestoreFocusExample: ListBoxStory = {
   render: (args) => <FocusExample {...args} />,
-  decorators: null,
+  decorators: undefined,
   name: 'restore focus after deleting selected items'
 };
 
-export const WithTranslations = {
+export const WithTranslations: ListBoxStory = {
   render: () => <TranslateListBox />,
-  decorators: null,
+  decorators: undefined,
   name: 'with translations',
   parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
@@ -935,7 +938,7 @@ function App() {
   );
 }
 
-export function FocusExample(args = {}) {
+export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {}): JSX.Element => {
   let tree = useTreeData({
     initialItems: withSection,
     getKey: (item) => item.name,
@@ -973,7 +976,7 @@ export function FocusExample(args = {}) {
                 {...args}>
                 {item => item?.children?.length ? (
                   <Section key={item.value.name} items={item.children} title={item.value.name}>
-                    {item => <Item key={item.value.name}>{item.value.name}</Item>}
+                    {(item: any) => <Item key={item.value.name}>{item.value.name}</Item>}
                   </Section>
                 ) : null}
               </ListBox>
@@ -994,9 +997,9 @@ export function FocusExample(args = {}) {
       </Flex>
     </FocusScope>
   );
-}
+};
 
-export const Links = (args) => {
+export const Links: StoryFn<typeof ListBox> = (args: Omit<SpectrumListBoxProps<any>, 'children'>) => {
   return (
     <ListBox aria-label="ListBox with links" width="250px" height={400} onSelectionChange={action('onSelectionChange')} {...args}>
       <Item key="https://adobe.com/" href="https://adobe.com/">Adobe</Item>
@@ -1027,7 +1030,7 @@ Links.story = {
   }
 };
 
-export const WithAvatars = {
+export const WithAvatars: ListBoxStory = {
   render: () => (
     <ListBox aria-label="Listbox with avatars" width="350px">
       <Item textValue="Person 1">
@@ -1056,7 +1059,7 @@ interface ItemValue {
   items?: Array<ItemValue> | null
 }
 
-export function WithTreeData() {
+export let WithTreeData: StoryFn<typeof ListBox> = () => {
   let tree = useTreeData<ItemValue>({
     initialItems: [
       {
@@ -1114,4 +1117,4 @@ export function WithTreeData() {
       )}
     </ListBox>
   );
-}
+};

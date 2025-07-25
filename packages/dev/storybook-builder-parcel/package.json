@@ -1,6 +1,7 @@
 {
   "name": "storybook-builder-parcel",
   "version": "0.0.1",
+  "private": true,
   "main": "preset.js",
   "dependencies": {
     "@parcel/core": "^2.13.1",
