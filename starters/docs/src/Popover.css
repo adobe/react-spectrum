@@ -12,6 +12,8 @@
   outline: none;
   max-width: 250px;
   transition: transform 200ms, opacity 200ms;
+  font-family: system-ui;
+  font-size: 0.875rem;
 
   .react-aria-OverlayArrow svg {
     display: block;
