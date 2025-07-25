@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AddressBar, FileTab, Scrollable, Window} from './components';
-import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'framer-motion';
+import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'motion/react';
 import {
   Button,
   Collection,
