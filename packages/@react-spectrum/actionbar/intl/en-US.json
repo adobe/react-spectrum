@@ -3,6 +3,5 @@
   "selected": "{count, plural, =0 {None selected} other {# selected}}",
   "selectedAll": "All selected",
   "actions": "Actions",
-  "actionsAvailable": "Actions available.",
-  "newString": "New string"
+  "actionsAvailable": "Actions available."
 }
