@@ -272,7 +272,7 @@ export default function App() {
 
 ## TanStack Router
 
-To use [TanStack Router](https://tanstack.com/router) with React Spectrum, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Spectrum component as a link. `RouterProvider` is not needed.
+To use [TanStack Router](https://tanstack.com/router) with React Spectrum v3.43.0 or later, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Spectrum component as a link. `RouterProvider` is not needed.
 
 ```tsx
 // src/Link.tsx
@@ -283,4 +283,4 @@ export const Link = createLink(SpectrumLink);
 export const ItemLink = createLink(Item);
 ```
 
-In you app, use these components instead of importing directly from `@adobe/react-spectrum`.
+In your app, use these components instead of importing directly from `@adobe/react-spectrum`.

@@ -270,7 +270,7 @@ export default function App() {
 
 ## TanStack Router
 
-To use [TanStack Router](https://tanstack.com/router) with React Aria, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Aria component as a link. `RouterProvider` is not needed.
+To use [TanStack Router](https://tanstack.com/router) with React Aria Components v1.11.0 or later, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Aria component as a link. `RouterProvider` is not needed.
 
 ```tsx
 // src/Link.tsx
@@ -281,4 +281,4 @@ export const Link = createLink(ReactAriaLink);
 export const MenuItemLink = createLink(MenuItem);
 ```
 
-In you app, use these components instead of importing directly from `react-aria-components`.
+In your app, use these components instead of importing directly from `react-aria-components`.
