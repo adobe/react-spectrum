@@ -21,13 +21,15 @@ export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProp
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-class SeparatorNode extends CollectionNode<any> {
+export class SeparatorNode extends CollectionNode<any> {
   static readonly type = 'separator';
 
   constructor(key: Key) {
     super(SeparatorNode.type, key);
   }
 
+  // TODO: resolve this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   filter(_, newCollection: BaseCollection<any>): CollectionNode<any> | null {
     if (newCollection.getItem(this.prevKey!)) {
       return this.clone();

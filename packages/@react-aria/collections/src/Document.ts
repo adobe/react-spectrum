@@ -457,13 +457,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     let collection = this.getMutableCollection();
-    if (!collection.getItem(element.node.key)) {
+    if (!collection.getItem(element.node!.key)) {
       for (let child of element) {
         this.addNode(child);
       }
     }
 
-    collection.addNode(element.node);
+    collection.addNode(element.node!);
   }
 
   private removeNode(node: ElementNode<T>): void {
@@ -472,7 +472,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     let collection = this.getMutableCollection();
-    collection.removeNode(node.node.key);
+    collection.removeNode(node.node!.key);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -518,7 +518,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     // Finally, update the collection.
     if (this.nextCollection) {
-      this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
+      this.nextCollection.commit(this.firstVisibleChild?.node!.key ?? null, this.lastVisibleChild?.node!.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
         this.nextCollection = null;

@@ -30,6 +30,7 @@ import {
   ListStateContext,
   Provider,
   SectionProps,
+  SeparatorNode,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
@@ -699,7 +700,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   );
 });
 
-export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+export const Divider = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
   let listState = useContext(ListStateContext)!;
 
   let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);
