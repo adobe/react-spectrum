@@ -12,9 +12,10 @@ export default Layout;
 
 import docs from 'docs:@react-aria/autocomplete';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
+import i18nDocs from 'docs:@react-aria/i18n';
 import packageData from '@react-aria/autocomplete/package.json';
 import statelyDocs from 'docs:@react-stately/autocomplete';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Pickers
@@ -31,11 +32,6 @@ preRelease: beta
   componentNames={['useAutocomplete']}
   />
 
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This hook is in <strong>beta</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
-
 ## API
 
 <FunctionAPI function={docs.exports.useAutocomplete} links={docs.links} />
@@ -44,6 +40,13 @@ preRelease: beta
 
 Autocomplete can be implemented using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this has limited functionality and behaves differently across browsers.
 `useAutocomplete` helps achieve accessible text input and collection that can be styled as needed.
+
+`useAutocomplete` can be used to build UI patterns such as command palettes, searchable menus, and filterable selects.
+
+* **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
+* **Keyboard navigation** – an Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
+* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for any [collections](../react-aria/collections.html).
+
 
 ## Anatomy
 
@@ -58,6 +61,129 @@ to filter the collection. `useAutocomplete` handles exposing the correct ARIA at
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useAutocompleteState} /> hook from `@react-stately/autocomplete`.
 The state object should be passed as an option to `useAutocomplete`.
+
+
+## Example
+
+This example uses [React Aria Components](../react-aria/components.html) and shows how, if you need to build your own `Autocomplete` component, you can integrate it with existing React Aria Components.
+This `Autocomplete` uses a [SearchField](./SearchField.html) as the input and controls a [ListBox](./ListBox.html).
+See those docs for examples of what they can do or how to customize them. This `Autocomplete` renders no dom, so see those components for styling as well.
+
+```tsx example
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {useAutocompleteState} from '@react-stately/autocomplete';
+import {useRef} from 'react';
+import {
+  Label,
+  Text,
+  InputContext,
+  Input,
+  Provider,
+  SearchFieldContext,
+  SearchField,
+  ListBox,
+  ListBoxItem,
+  useFilter,
+  UNSTABLE_InternalAutocompleteContext
+} from 'react-aria-components'
+
+interface AutocompleteProps extends AriaAutocompleteProps {}
+
+function Autocomplete(props: AutocompleteProps) {
+  let {contains} = useFilter({ sensitivity: 'base' });
+  let state = useAutocompleteState(props);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let collectionRef = useRef<HTMLElement>(null);
+  let {
+    textFieldProps,
+    collectionProps,
+    collectionRef: mergedCollectionRef,
+    filter: filterFn
+  } = useAutocomplete({
+    ...props,
+    filter: contains,
+    inputRef,
+    collectionRef
+  }, state);
+
+  return (
+    <Provider
+      values={[
+        [SearchFieldContext, textFieldProps],
+        [InputContext, {ref: inputRef}],
+        [UNSTABLE_InternalAutocompleteContext, {
+          filter: filterFn,
+          collectionProps,
+          collectionRef: mergedCollectionRef
+        }]
+      ]}>
+      {props.children}
+    </Provider>
+  );
+};
+
+<div className="autocomplete">
+  <Autocomplete>
+    <SearchField>
+      <Label>Favorite animal</Label>
+      <Input />
+      <Text slot="description">Please select a pet below.</Text>
+    </SearchField>
+    <ListBox selectionMode="single" aria-label="Possible pets">
+      <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      <ListBoxItem id="snake">Snake</ListBoxItem>
+    </ListBox>
+  </Autocomplete>
+</div>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import '../../../react-aria-components/docs/Checkbox.mdx' layer(checkbox);
+@import '../../../react-aria-components/docs/SearchField.mdx' layer(searchfield);
+@import '../../../react-aria-components/docs/ListBox.mdx' layer(listbox);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 180px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
+
+  .react-aria-SearchField {
+    width: 100%;
+  }
+
+  .react-aria-ListBox {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .react-aria-Label {
+    margin-bottom: .5em;
+  }
+}
+```
+
+</details>
+
+## Styled examples
+
+See [Autocomplete examples](https://react-spectrum.adobe.com/react-aria/Autocomplete.html#examples) for a sense of the things that you can build with the `useAutocomplete` hook.
+
 
 ## Internationalization
 
