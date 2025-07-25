@@ -3,7 +3,7 @@ const {
   loadPreviewOrConfigFile,
   normalizeStories,
   stripAbsNodeModulesPath,
-} = require("@storybook/core-common");
+} = require("storybook/internal/common");
 const {relativePath} = require('@parcel/utils');
 
 module.exports.generatePreviewModern = async function generatePreviewModern(

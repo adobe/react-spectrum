@@ -193,7 +193,7 @@
     "sharp": "^0.33.5",
     "sinon": "^7.3.1",
     "storybook": "^9.0.4",
-    "storybook-dark-mode": "^4.0.2",
+    "storybook-dark-mode2": "^5.4.0",
     "storybook-react-parcel": "workspace:^",
     "tailwind-variants": "patch:tailwind-variants@npm%3A0.3.1#~/.yarn/patches/tailwind-variants-npm-0.3.1-48888516de.patch",
     "tailwindcss": "^4.0.0",

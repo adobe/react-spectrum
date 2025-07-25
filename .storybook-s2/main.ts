@@ -22,7 +22,7 @@ const config: StorybookConfig = {
   addons: [
     './custom-addons/provider/register',
     // "@storybook/addon-styling-webpack",
-    "storybook-dark-mode",
+    "storybook-dark-mode2",
     "@storybook/addon-a11y",
   ],
   framework: {

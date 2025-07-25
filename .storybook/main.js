@@ -9,7 +9,7 @@ module.exports = {
   addons: [
     "storybook/actions",
     "@storybook/addon-a11y",
-    "storybook-dark-mode",
+    "storybook-dark-mode2",
     './custom-addons/provider/register.js',
     './custom-addons/descriptions/register.js',
     './custom-addons/theme/register.js',

@@ -20,7 +20,7 @@
     "react-aria-components": "latest",
     "react-dom": "^19.1.0",
     "storybook": "^9.0.4",
-    "storybook-dark-mode": "^4.0.2",
+    "storybook-dark-mode2": "^5.4.0",
     "typescript": "5.3.3"
   },
   "resolutions": {
