@@ -94,11 +94,11 @@ The date format is automatically determined based on the user's locale. `DatePic
 
 ```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'firstDayOfWeek', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
 "use client";
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 
 <DatePicker
-  defaultValue={now(getLocalTimeZone())}
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')}
   /* PROPS */ />
 ```
 
@@ -109,11 +109,11 @@ By default, `DatePicker` displays the value using the calendar system for the us
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
 import {I18nProvider} from 'react-aria-components';
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 
 <I18nProvider/* PROPS */>
-  <DatePicker defaultValue={now(getLocalTimeZone())} />
+  <DatePicker defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
 </I18nProvider>
 ```
 

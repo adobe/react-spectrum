@@ -88,11 +88,11 @@ The date format is automatically determined based on the user's locale. `DateFie
 
 ```tsx render docs={docs.exports.DateField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
 "use client";
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DateField} from 'vanilla-starter/DateField';
 
 <DateField
-  defaultValue={now(getLocalTimeZone())}
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')}
   /* PROPS */ />
 ```
 
@@ -103,11 +103,11 @@ By default, `DateField` displays the value using the calendar system for the use
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
 import {I18nProvider} from 'react-aria-components';
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DateField} from 'vanilla-starter/DateField';
 
 <I18nProvider/* PROPS */>
-  <DateField defaultValue={now(getLocalTimeZone())} />
+  <DateField defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
 </I18nProvider>
 ```
 
