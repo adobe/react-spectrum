@@ -47,9 +47,7 @@ export const Accordion = /*#__PURE__*/(forwardRef as forwardRefType)(function Ac
   );
 });
 
-export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>,
-  AriaLabelingProps,
-  StyleProps {
+export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>, AriaLabelingProps, StyleProps {
   /** Whether the Disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
@@ -91,7 +89,7 @@ export const DisclosurePanel = /*#__PURE__*/(forwardRef as forwardRefType)(funct
     <RACDisclosurePanel
       ref={domRef}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'role'>}
-      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)}
+      className={classNames(styles, 'spectrum-Accordion-itemContent', styleProps.className)} 
       {...props}>
       {props.children}
     </RACDisclosurePanel>
