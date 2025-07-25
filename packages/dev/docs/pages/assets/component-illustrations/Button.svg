@@ -7,5 +7,5 @@
     <rect width="72" height="32" rx="16" stroke="none"/>
     <rect x="0.5" y="0.5" width="71" height="31" rx="15.5" fill="none"/>
   </g>
-  <text id="Text" transform="translate(22 20)" fill="white" font-size="14" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="0">Save</tspan></text>
+  <text id="Text" transform="translate(22 20)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Save</tspan></text>
 </svg>

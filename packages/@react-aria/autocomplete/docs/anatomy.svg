@@ -13,13 +13,13 @@
   </defs>
   <g id="Custom_Size_1" data-name="Custom Size 1" clip-path="url(#clip-Custom_Size_1)">
     <g id="Search_autocomplete" data-name="Search autocomplete" transform="translate(10 42)">
-      <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">Label</tspan></text>
+      <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">Label</tspan></text>
       <g id="Text_Area" data-name="Text Area" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <rect width="176" height="32" rx="4" stroke="none"/>
         <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
       </g>
-      <text id="Text" transform="translate(29 44)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Op</tspan></text>
-      <text id="Label-2" data-name="Label" transform="translate(-6 -21)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Label</tspan></text>
+      <text id="Text" transform="translate(29 44)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Op</tspan></text>
+      <text id="Label-2" data-name="Label" transform="translate(-6 -21)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">Label</tspan></text>
     </g>
     <g id="Group_156024" data-name="Group 156024" transform="translate(16 73)">
       <rect id="Canvas" width="18" height="18" fill="var(--anatomy-gray-700)" opacity="0"/>
@@ -37,19 +37,19 @@
         </g>
       </g>
       <rect id="Menu_Item" data-name="Menu Item" width="70.984" height="32" transform="translate(12 4)" fill="rgba(255,0,0,0)"/>
-      <text id="Option_1" data-name="Option 1" transform="translate(12 24)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Option 1</tspan></text>
+      <text id="Option_1" data-name="Option 1" transform="translate(12 24)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Option 1</tspan></text>
       <rect id="Menu_Item-2" data-name="Menu Item" width="73.281" height="32" transform="translate(12 36)" fill="rgba(255,0,0,0)"/>
-      <text id="Option_3" data-name="Option 3" transform="translate(12 56)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Option 3</tspan></text>
+      <text id="Option_3" data-name="Option 3" transform="translate(12 56)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Option 3</tspan></text>
       <rect id="Menu_Item-3" data-name="Menu Item" width="73.281" height="32" transform="translate(12 68)" fill="rgba(255,0,0,0)"/>
-      <text id="Option_3-2" data-name="Option 3" transform="translate(12 88)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Option 3</tspan></text>
+      <text id="Option_3-2" data-name="Option 3" transform="translate(12 88)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Option 3</tspan></text>
     </g>
     <g id="Search_autocomplete-2" data-name="Search autocomplete" transform="translate(230 42)">
-      <text id="Label-3" data-name="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">Label</tspan></text>
+      <text id="Label-3" data-name="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">Label</tspan></text>
       <g id="Text_Area-2" data-name="Text Area" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <rect width="176" height="32" rx="4" stroke="none"/>
         <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
       </g>
-      <text id="Text-2" data-name="Text" transform="translate(29 44)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Op</tspan></text>
+      <text id="Text-2" data-name="Text" transform="translate(29 44)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Op</tspan></text>
     </g>
     <g id="Group_156025" data-name="Group 156025" transform="translate(236 73)">
       <rect id="Canvas-2" data-name="Canvas" width="18" height="18" fill="var(--anatomy-gray-700)" opacity="0"/>
@@ -68,7 +68,7 @@
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
-    <text id="Label-4" data-name="Label" transform="translate(89 46)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Input</tspan></text>
+    <text id="Label-4" data-name="Label" transform="translate(89 46)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">Input</tspan></text>
     <g id="Group_156027" data-name="Group 156027" transform="translate(33 -3)">
       <line id="Line_3-2" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       <g id="Ellipse_1-2" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
@@ -76,7 +76,7 @@
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
-    <text id="Label-5" data-name="Label" transform="translate(172 127)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-12.108" y="0">Clear</tspan><tspan x="-15.456" y="15">Button</tspan></text>
+    <text id="Label-5" data-name="Label" transform="translate(172 127)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-12.108" y="0">Clear</tspan><tspan x="-15.456" y="15">Button</tspan></text>
     <g id="Group_156028" data-name="Group 156028" transform="translate(238 166.5) rotate(180)">
       <line id="Line_3-3" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       <g id="Ellipse_1-3" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
@@ -84,7 +84,7 @@
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
-    <text id="Label-6" data-name="Label" transform="translate(26 127.25)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-15.744" y="0">Search</tspan><tspan x="-9.726" y="15">Icon</tspan></text>
+    <text id="Label-6" data-name="Label" transform="translate(26 127.25)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-15.744" y="0">Search</tspan><tspan x="-9.726" y="15">Icon</tspan></text>
     <g id="Group_156029" data-name="Group 156029" transform="translate(92 166.75) rotate(180)">
       <line id="Line_3-4" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       <g id="Ellipse_1-4" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
@@ -92,7 +92,7 @@
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
-    <text id="Label-7" data-name="Label" transform="translate(370 241)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-17.976" y="0">List box</tspan></text>
+    <text id="Label-7" data-name="Label" transform="translate(370 241)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-17.976" y="0">List box</tspan></text>
     <g id="Group_156030" data-name="Group 156030" transform="translate(436 280.5) rotate(180)">
       <line id="Line_3-5" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       <g id="Ellipse_1-5" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
