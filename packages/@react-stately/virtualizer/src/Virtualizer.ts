@@ -191,7 +191,7 @@ export class Virtualizer<T extends object, V> {
     if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
       rect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
     } else {
-      rect = this._overscanManager.getOverscannedRect(this.layout.getOrientation!()!);
+      rect = this._overscanManager.getOverscannedRect();
     }
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
