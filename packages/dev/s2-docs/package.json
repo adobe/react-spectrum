@@ -6,7 +6,7 @@
     "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
     "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
     "generate:og": "node scripts/generateOGImages.mjs",
-    "generate:md": "node scripts/generateMd.mjs"
+    "generate:md": "node scripts/generateMarkdownDocs.mjs"
   },
   "targets": {
     "react-static": {
