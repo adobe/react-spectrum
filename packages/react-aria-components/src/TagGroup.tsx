@@ -18,10 +18,11 @@ import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderPro
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {ListState, Node, useListState} from 'react-stately';
+import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -74,15 +75,18 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
+  let {filter} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   let tagListRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
-  let state = useListState({
+  let tagGroupState = useListState({
     ...props,
     children: undefined,
     collection
   });
+
+  let filteredState = UNSTABLE_useFilteredListState(tagGroupState, filter);
 
   // Prevent DOM props from going to two places.
   let domProps = filterDOMProps(props, {global: true});
@@ -96,7 +100,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
     ...props,
     ...domPropOverrides,
     label
-  }, state, tagListRef);
+  }, filteredState, tagListRef);
 
   return (
     <div
@@ -109,7 +113,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
           [TagListContext, {...gridProps, ref: tagListRef}],
-          [ListStateContext, state],
+          [ListStateContext, filteredState],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -200,6 +204,14 @@ class TagItemNode extends CollectionNode<any> {
 
   constructor(key: Key) {
     super(TagItemNode.type, key);
+  }
+
+  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
+    if (filterFn(this.textValue)) {
+      return this.clone();
+    }
+
+    return null;
   }
 }
 

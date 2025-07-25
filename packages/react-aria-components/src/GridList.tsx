@@ -542,6 +542,10 @@ class GridListLoaderNode extends CollectionNode<any> {
   constructor(key: Key) {
     super(GridListLoaderNode.type, key);
   }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
+  }
 }
 
 export const GridListLoadMoreItem = createLeafComponent(GridListLoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
