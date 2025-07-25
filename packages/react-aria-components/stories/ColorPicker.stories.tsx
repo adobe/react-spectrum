@@ -10,28 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ColorSwatchPicker, ColorSwatchPickerItem, Dialog, DialogTrigger, Input, Label, Popover} from '../src';
-import {ColorAreaExample} from './ColorArea.stories';
+import {Button, ColorSpace, ColorSwatchPicker, ColorSwatchPickerItem, Dialog, DialogTrigger, getColorChannels, Input, Label, Popover} from '../src';
+import {ColorAreaExampleRender} from './ColorArea.stories';
 import {ColorField} from '../src/ColorField';
 import {ColorPicker} from '../src/ColorPicker';
-import {ColorSliderExample} from './ColorSlider.stories';
-import {ColorSpace} from '@react-types/color';
-import {ColorSwatchExample} from './ColorSwatch.stories';
-import {getColorChannels} from '@react-stately/color';
+import {ColorSliderExampleRender} from './ColorSlider.stories';
+import {ColorSwatchExampleRender} from './ColorSwatch.stories';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/ColorPicker',
+  component: ColorPicker
+} as Meta<typeof ColorPicker>;
 
-export const ColorPickerExample = (args) => {
+export type ColorPickerStory = StoryObj<typeof ColorPicker>;
+
+function ColorPickerExampleRender(args) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
   return (
     <ColorPicker {...args} defaultValue="rgb(255, 0, 0)">
       <ColorPickerTrigger>
-        <ColorAreaExample colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
-        <ColorSliderExample colorSpace="hsb" channel="hue" />
-        <ColorSliderExample channel="alpha" />
+        <ColorAreaExampleRender colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+        <ColorSliderExampleRender colorSpace="hsb" channel="hue" />
+        <ColorSliderExampleRender channel="alpha" />
         <label>
           {'Format: '}
           <select value={format} onChange={e => setFormat(e.target.value as ColorSpace | 'hex')}>
@@ -71,7 +74,7 @@ export const ColorPickerExample = (args) => {
                 position: 'relative'
               })}>
               {({isSelected}) => (<>
-                <ColorSwatchExample />
+                <ColorSwatchExampleRender />
                 {isSelected && (
                   <div
                     style={{
@@ -90,9 +93,13 @@ export const ColorPickerExample = (args) => {
       </ColorPickerTrigger>
     </ColorPicker>
   );
+}
+
+export const ColorPickerExample: ColorPickerStory = {
+  render: (args) => <ColorPickerExampleRender {...args} />
 };
 
-export const ColorPickerSliders = (args) => {
+function ColorPickerSlidersRender(args) {
   let [colorSpace, setColorSpace] = useState<ColorSpace>('rgb');
   return (
     <ColorPicker {...args} defaultValue="rgb(255, 0, 0)">
@@ -106,19 +113,23 @@ export const ColorPickerSliders = (args) => {
               <option>hsb</option>
             </select>
           </label>
-          {color.toFormat(colorSpace).getColorChannels().map(c => <ColorSliderExample key={c} colorSpace={colorSpace} channel={c} />)}
-          <ColorSliderExample channel="alpha" />
+          {color.toFormat(colorSpace).getColorChannels().map(c => <ColorSliderExampleRender key={c} colorSpace={colorSpace} channel={c} />)}
+          <ColorSliderExampleRender channel="alpha" />
         </ColorPickerTrigger>
       )}
     </ColorPicker>
   );
+}
+
+export const ColorPickerSliders: ColorPickerStory = {
+  render: (args) => <ColorPickerSlidersRender {...args} />
 };
 
 function ColorPickerTrigger({children}) {
   return (
     <DialogTrigger>
       <Button style={{background: 'none', border: 'none', padding: 0}}>
-        <ColorSwatchExample aria-label="Color picker" />
+        <ColorSwatchExampleRender aria-label="Color picker" />
       </Button>
       <Popover
         placement="bottom start"

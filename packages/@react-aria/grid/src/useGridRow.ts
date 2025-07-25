@@ -52,14 +52,14 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {actions} = gridMap.get(state)!;
+  let {actions, shouldSelectOnPressUp: gridShouldSelectOnPressUp} = gridMap.get(state)!;
   let onRowAction = actions.onRowAction ? () => actions.onRowAction?.(node.key) : onAction;
   let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
     isVirtualized,
-    shouldSelectOnPressUp,
+    shouldSelectOnPressUp: gridShouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onRowAction || node?.props?.onAction ? chain(node?.props?.onAction, onRowAction) : undefined,
     isDisabled: state.collection.size === 0
   });

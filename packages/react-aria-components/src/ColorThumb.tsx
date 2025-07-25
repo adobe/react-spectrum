@@ -1,11 +1,9 @@
-import {Color} from '@react-types/color';
+import {Color} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
-import {HoverEvents, RefObject} from '@react-types/shared';
-import {mergeProps} from 'react-aria';
+import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
+import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
-import {useFocusRing} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
 
 interface ColorState {
   getDisplayColor(): Color,
@@ -56,7 +54,7 @@ export interface ColorThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps> {}
+export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {}
 
 /**
  * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.
@@ -83,7 +81,7 @@ export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps,
     }
   });
 
-  let DOMProps = filterDOMProps(props as any);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (

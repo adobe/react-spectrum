@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, FocusStrategy} from '@react-types/shared';
+import {CollectionStateBase, FocusStrategy, Key} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
@@ -20,6 +20,9 @@ import {useState} from 'react';
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface SelectState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
+  /** The default selected key. */
+  readonly defaultSelectedKey: Key | null,
+
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -62,11 +65,13 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
   });
 
   let [isFocused, setFocused] = useState(false);
+  let [initialSelectedKey] = useState(listState.selectedKey);
 
   return {
     ...validationState,
     ...listState,
     ...triggerState,
+    defaultSelectedKey: props.defaultSelectedKey ?? initialSelectedKey,
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.

@@ -57,8 +57,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     preventFocusOnPress,
     // @ts-ignore - undocumented
     allowFocusWhenDisabled,
-    // @ts-ignore
-    onClick: deprecatedOnClick,
+    onClick,
     href,
     target,
     rel,
@@ -68,7 +67,15 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   if (elementType === 'button') {
     additionalProps = {
       type,
-      disabled: isDisabled
+      disabled: isDisabled,
+      form: props.form,
+      formAction: props.formAction,
+      formEncType: props.formEncType,
+      formMethod: props.formMethod,
+      formNoValidate: props.formNoValidate,
+      formTarget: props.formTarget,
+      name: props.name,
+      value: props.value
     };
   } else {
     additionalProps = {
@@ -88,6 +95,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     onPressChange,
     onPress,
     onPressUp,
+    onClick,
     isDisabled,
     preventFocusOnPress,
     ref
@@ -106,13 +114,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      'aria-current': props['aria-current'],
-      onClick: (e) => {
-        if (deprecatedOnClick) {
-          deprecatedOnClick(e);
-          console.warn('onClick is deprecated, please use onPress');
-        }
-      }
+      'aria-current': props['aria-current']
     })
   };
 }

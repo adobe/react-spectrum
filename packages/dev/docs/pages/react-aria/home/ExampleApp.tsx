@@ -23,7 +23,7 @@ import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
 import {Menu, MenuItem} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
-import plants from './plants';
+import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
 import React, {ReactElement, UIEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchField} from 'tailwind-starter/SearchField';
@@ -34,8 +34,6 @@ import {Tooltip} from 'tailwind-starter/Tooltip';
 import {tv} from 'tailwind-variants';
 import {useCollator, useFilter, VisuallyHidden} from 'react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
-
-type Plant = typeof plants[0] & {isFavorite: boolean};
 
 const allColumns: ColumnProps[] = [
   {id: 'favorite', children: <VisuallyHidden>Favorite</VisuallyHidden>, width: 40, minWidth: 40},
@@ -48,13 +46,13 @@ const allColumns: ColumnProps[] = [
 
 let hideOnScroll = document.getElementById('hideOnScroll');
 
-export function ExampleApp() {
+export function ExampleApp(): React.ReactNode {
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'common_name',
     direction: 'ascending'
   });
 
-  let [allItems, setAllItems] = useState(() => plants.map(p => ({...p, isFavorite: false})));
+  let [allItems, setAllItems] = useState<Plant[]>(() => plants.map(p => ({...p, isFavorite: false})));
   let [search, setSearch] = useState('');
   let [favorite, setFavorite] = useState(false);
   let [cycles, setCycles] = useState<Selection>(new Set());
@@ -190,16 +188,16 @@ export function ExampleApp() {
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
-                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
+                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles} escapeKeyBehavior="none">
                   <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 shrink-0" /> Annual</Tag>
                   <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 shrink-0" /> Perennial</Tag>
                 </TagGroup>
-                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
+                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight} escapeKeyBehavior="none">
                   <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
                   <Tag id="part sun" color="yellow" textValue="Part Sun">{sunIcons['part sun']} Part Sun</Tag>
                   <Tag id="part shade" color="yellow" textValue="Part Shade">{sunIcons['part shade']} Part Shade</Tag>
                 </TagGroup>
-                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering}>
+                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering} escapeKeyBehavior="none">
                   <Tag id="Frequent" color="blue" textValue="Frequent">{wateringIcons['Frequent']} Frequent</Tag>
                   <Tag id="Average" color="blue" textValue="Average">{wateringIcons['Average']} Average</Tag>
                   <Tag id="Minimum" color="blue" textValue="Minimum">{wateringIcons['Minimum']} Minimum</Tag>

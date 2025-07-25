@@ -13,9 +13,10 @@
 import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
+import {useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -87,7 +88,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps
   } = props;
 
-  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger' || otherProps['trigger'] === 'SubDialogTrigger';
+  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger';
 
   let {overlayProps, underlayProps} = useOverlay(
     {
@@ -106,19 +107,19 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: isNonModal ? state.close : null
+    onClose: isNonModal && !isSubmenu ? state.close : null
   });
 
   usePreventScroll({
     isDisabled: isNonModal || !state.isOpen
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (state.isOpen && popoverRef.current) {
       if (isNonModal) {
         return keepVisible(groupRef?.current ?? popoverRef.current);
       } else {
-        return ariaHideOutside([groupRef?.current ?? popoverRef.current]);
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
       }
     }
   }, [isNonModal, state.isOpen, popoverRef, groupRef]);

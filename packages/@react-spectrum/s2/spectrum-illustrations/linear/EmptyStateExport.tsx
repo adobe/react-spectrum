@@ -13,10 +13,11 @@
 import EmptyStateExport_L from 'illustration:./S2_lin_emptyStateExport_160.svg';
 import EmptyStateExport_M from 'illustration:./S2_lin_emptyStateExport_96.svg';
 import EmptyStateExport_S from 'illustration:./S2_lin_emptyStateExport_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function EmptyStateExport(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function EmptyStateExport(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

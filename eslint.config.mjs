@@ -52,8 +52,15 @@ export default [{
         "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
         "examples/**/*",
         "starters/**/*",
+        "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
-        "packages/@react-spectrum/s2/spectrum-illustrations"
+        "packages/@react-spectrum/s2/spectrum-illustrations",
+        "packages/dev/parcel-config-storybook/*",
+        "packages/dev/parcel-resolver-storybook/*",
+        "packages/dev/parcel-transformer-storybook/*",
+        "packages/dev/storybook-builder-parcel/*",
+        "packages/dev/storybook-react-parcel/*",
+        "packages/dev/s2-docs/pages/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
@@ -312,6 +319,7 @@ export default [{
                 "@spectrum-icons/ui",
                 "@spectrum-icons/workflow",
                 "@spectrum-icons/illustrations",
+                "@react-spectrum/s2/icons"
             ],
         }],
 
@@ -398,7 +406,7 @@ export default [{
         "rsp-rules/no-getByRole-toThrow": ERROR,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
-        "jsdoc/require-jsdoc": OFF,
+        "jsdoc/require-jsdoc": OFF
     },
 
     languageOptions: {
@@ -439,6 +447,29 @@ export default [{
     },
 }, {
     files: [
+        "packages/**/*.ts",
+        "packages/**/*.tsx"
+    ],
+
+    rules: {
+        "@typescript-eslint/explicit-module-boundary-types": ERROR,
+    },
+}, {
+    files: [
+        "**/dev/**",
+        "**/test/**",
+        "**/stories/**",
+        "**/docs/**",
+        "**/chromatic/**",
+        "**/chromatic-fc/**",
+        "**/__tests__/**"
+    ],
+
+    rules: {
+        "@typescript-eslint/explicit-module-boundary-types": OFF,
+    },
+}, {
+    files: [
         "packages/@react-aria/focus/src/**/*.ts",
         "packages/@react-aria/focus/src/**/*.tsx",
     ],
@@ -468,7 +499,7 @@ export default [{
         }],
     },
 }, {
-    files: ["packages/@react-spectrum/s2/**"],
+    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,

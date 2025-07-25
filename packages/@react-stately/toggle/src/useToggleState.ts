@@ -12,12 +12,16 @@
 
 import {ToggleStateOptions} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
 export type {ToggleStateOptions};
 
 export interface ToggleState {
   /** Whether the toggle is selected. */
   readonly isSelected: boolean,
+
+  /** Whether the toggle is selected by default. */
+  readonly defaultSelected: boolean,
 
   /** Updates selection state. */
   setSelected(isSelected: boolean): void,
@@ -35,6 +39,7 @@ export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
   // have to provide an empty function so useControlledState doesn't throw a fit
   // can't use useControlledState's prop calling because we need the event object from the change
   let [isSelected, setSelected] = useControlledState(props.isSelected, props.defaultSelected || false, props.onChange);
+  let [initialValue] = useState(isSelected);
 
   function updateSelected(value) {
     if (!isReadOnly) {
@@ -50,6 +55,7 @@ export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
 
   return {
     isSelected,
+    defaultSelected: props.defaultSelected ?? initialValue,
     setSelected: updateSelected,
     toggle: toggleState
   };

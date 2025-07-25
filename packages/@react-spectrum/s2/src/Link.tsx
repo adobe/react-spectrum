@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, style} from '../style' with {type: 'macro'};
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -34,7 +34,7 @@ interface LinkStyleProps {
   isQuiet?: boolean
 }
 
-export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, LinkStyleProps {
+export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, LinkStyleProps {
   children: ReactNode
 }
 
@@ -49,8 +49,8 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isSt
   },
   color: {
     variant: {
-      primary: 'accent',
-      secondary: 'neutral' // TODO: should there be an option to inherit from the paragraph? What about hover states?
+      primary: baseColor('accent'),
+      secondary: baseColor('neutral') // TODO: should there be an option to inherit from the paragraph? What about hover states?
     },
     isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'LinkText'

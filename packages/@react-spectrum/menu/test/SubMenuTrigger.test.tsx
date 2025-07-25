@@ -11,20 +11,12 @@
  */
 
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
-import {composeStories} from '@storybook/react';
+import {ComplexRender as Complex, SubmenuDynamicRender as SubmenuDynamic, SubmenuStaticRender as SubmenuStatic, TabBehaviorRender as TabBehaviorStory} from '../stories/Submenu.stories';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import type {Scale} from '@react-types/provider';
-import * as stories from '../stories/Submenu.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
-let {
-  SubmenuStatic,
-  SubmenuDynamic,
-  Complex,
-  TabBehaviorStory
-} = composeStories(stories);
 
 let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
   let tree = renderComponent(
@@ -443,7 +435,7 @@ describe('Submenu', function () {
       expect(document.activeElement).toBe(submenuTrigger2);
     });
 
-    it('should shift focus to the prev/next element adjacent to the menu trigger when pressing Tab', async function () {
+    it('should contain focus when pressing Tab', async function () {
       async function openSubMenus() {
         await user.keyboard('[ArrowDown]');
         act(() => {jest.runAllTimers();});
@@ -468,30 +460,18 @@ describe('Submenu', function () {
       }
 
       let tree = render(<TabBehaviorStory />);
-      let inputleft = tree.getByTestId('inputleft');
-      let inputright = tree.getByTestId('inputright');
-      let triggerButton = tree.getByRole('button');
       await user.tab();
       await user.tab();
       await openSubMenus();
 
-      // Tab should close all menus and move focus to the next input relative to the original menu trigger
+
+      // Tab do nothing.
       await user.tab();
+      let activeElement = document.activeElement;
       act(() => {jest.runAllTimers();});
       let menus = tree.queryAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(0);
-      expect(document.activeElement).toBe(inputright);
-
-      await user.tab({shift: true});
-      expect(document.activeElement).toBe(triggerButton);
-      await openSubMenus();
-
-      // Shift + Tab should close all menus and move focus to the prev input relative to the original menu trigger
-      await user.tab({shift: true});
-      act(() => {jest.runAllTimers();});
-      menus = tree.queryAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(0);
-      expect(document.activeElement).toBe(inputleft);
+      expect(menus).toHaveLength(3);
+      expect(document.activeElement).toBe(activeElement);
     });
   });
 
@@ -698,6 +678,7 @@ describe('Submenu', function () {
 
       // Hit enter on the menu's submenu trigger
       await user.keyboard('[Enter]');
+      act(() => jest.runAllTimers());
       expect(onSelectionChange).not.toHaveBeenCalled();
       let menus = tree.getAllByRole('menu', {hidden: true});
       let submenu1Items = within(menus[1]).getAllByRole('menuitemradio');

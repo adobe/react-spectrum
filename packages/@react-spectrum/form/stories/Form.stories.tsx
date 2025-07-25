@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, parseDate, parseDateTime, parseTime} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
@@ -23,12 +23,12 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
-import {Form} from '../';
-import {FormTranslatedText} from './../chromatic/FormLanguages.stories';
+import {Form, SpectrumFormProps} from '../';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Key, ValidationState} from '@react-types/shared';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useEffect, useState} from 'react';
@@ -39,79 +39,98 @@ import {StatusLight} from '@react-spectrum/statuslight';
 import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import {TranslateForm} from './../chromatic/FormLanguages.stories';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
 
 export default {
   title: 'Form',
+  component: Form,
   providerSwitcher: {status: 'positive'}
+} as Meta<typeof Form>;
+
+export type FormStory = StoryObj<typeof Form>;
+
+export const Default: FormStory = {
+  render: () => <Render />
 };
 
-export const Default = () => render({});
-export const LabelPositionSide = () => render({labelPosition: 'side'});
-
-LabelPositionSide.story = {
+export const LabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    labelPosition: 'side'
+  },
   name: 'labelPosition: side'
 };
 
-export const CustomWidth = () => render({width: 400});
-
-CustomWidth.story = {
+export const CustomWidth: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400
+  },
   name: 'custom width'
 };
 
-export const CustomWidthLabelPositionSide = () => render({width: 400, labelPosition: 'side'});
-
-CustomWidthLabelPositionSide.story = {
+export const CustomWidthLabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelPosition: 'side'
+  },
   name: 'custom width, labelPosition: side'
 };
 
-export const LabelAlignEnd = () => render({width: 400, labelAlign: 'end'});
-
-LabelAlignEnd.story = {
+export const LabelAlignEnd: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelAlign: 'end'
+  },
   name: 'labelAlign: end'
 };
 
-export const LabelPositionSideLabelAlignEnd = () =>
-  render({width: 400, labelPosition: 'side', labelAlign: 'end'});
-
-LabelPositionSideLabelAlignEnd.story = {
+export const LabelPositionSideLabelAlignEnd: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    width: 400,
+    labelPosition: 'side',
+    labelAlign: 'end'
+  },
   name: 'labelPosition: side, labelAlign: end'
 };
 
-export const FieldsNextToEachOther = () => (
-  <Form>
-    <Flex>
-      <TextField
-        label="First Name"
-        marginEnd="size-100"
-        flex={1}
-        description="Please enter your first name." />
-      <TextField label="Last Name" flex={1} description="Please enter your last name." />
-    </Flex>
-    <TextField label="Street Address" description="Please include apartment or suite number." />
-    <Flex>
-      <TextField
-        label="City"
-        marginEnd="size-100"
-        flex={1}
-        description="Please enter the city you live in." />
-      <Picker label="State" items={states} marginEnd="size-100" flex={1}>
-        {(item) => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
-    </Flex>
-  </Form>
-);
-
-FieldsNextToEachOther.story = {
+export const FieldsNextToEachOther: FormStory = {
+  render: (args) => (
+    <Form {...args}>
+      <Flex>
+        <TextField
+          label="First Name"
+          marginEnd="size-100"
+          flex={1}
+          description="Please enter your first name." />
+        <TextField label="Last Name" flex={1} description="Please enter your last name." />
+      </Flex>
+      <TextField label="Street Address" description="Please include apartment or suite number." />
+      <Flex>
+        <TextField
+          label="City"
+          marginEnd="size-100"
+          flex={1}
+          description="Please enter the city you live in." />
+        <Picker label="State" items={states} marginEnd="size-100" flex={1}>
+          {(item) => <Item key={item.abbr}>{item.name}</Item>}
+        </Picker>
+        <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
+      </Flex>
+    </Form>
+  ),
   name: 'fields next to each other'
 };
 
-export const FieldsWithAutoCompleteProperty = () => {
+const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
   const [checked, setChecked] = useState(true);
   return (
-    <Form>
+    <Form {...props}>
       <Well role="group" aria-labelledby="billing-legend">
         <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>
           Billing address
@@ -286,149 +305,168 @@ export const FieldsWithAutoCompleteProperty = () => {
     </Form>
   );
 };
-
-FieldsWithAutoCompleteProperty.story = {
+export const FieldsWithAutoCompleteProperty: FormStory = {
+  render: (args) => <FieldsWithAutoCompletePropertyRender {...args} />,
   name: 'fields with autoComplete property'
 };
 
-export const IsRequiredTrue = () => render({isRequired: true});
-
-IsRequiredTrue.story = {
+export const IsRequiredTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true
+  },
   name: 'isRequired: true'
 };
 
-export const IsRequiredTrueNecessityIndicatorLabel = () =>
-  render({isRequired: true, necessityIndicator: 'label'});
-
-IsRequiredTrueNecessityIndicatorLabel.story = {
+export const IsRequiredTrueNecessityIndicatorLabel: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true,
+    necessityIndicator: 'label'
+  },
   name: 'isRequired: true, necessityIndicator: label'
 };
 
-export const IsRequiredFalseNecessityIndicatorLabel = () =>
-  render({isRequired: false, necessityIndicator: 'label'});
-
-IsRequiredFalseNecessityIndicatorLabel.story = {
+export const IsRequiredFalseNecessityIndicatorLabel: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: false,
+    necessityIndicator: 'label'
+  },
   name: 'isRequired: false, necessityIndicator: label'
 };
 
-export const IsDisabled = () => render({isDisabled: true});
-
-IsDisabled.story = {
+export const IsDisabled: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isDisabled: true
+  },
   name: 'isDisabled'
 };
 
-export const IsQuiet = () => render({isQuiet: true});
-
-IsQuiet.story = {
+export const IsQuiet: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isQuiet: true
+  },
   name: 'isQuiet'
 };
 
-export const IsQuietLabelPositionSide = () => render({isQuiet: true, labelPosition: 'side'});
-
-IsQuietLabelPositionSide.story = {
+export const IsQuietLabelPositionSide: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isQuiet: true,
+    labelPosition: 'side'
+  },
   name: 'isQuiet, labelPosition: side'
 };
 
-export const IsEmphasized = () => render({isEmphasized: true});
-
-IsEmphasized.story = {
+export const IsEmphasized: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isEmphasized: true
+  },
   name: 'isEmphasized'
 };
 
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
-
-ValidationStateInvalid.story = {
+export const ValidationStateInvalid: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'invalid'
+  },
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid = () => render({validationState: 'valid'});
-
-ValidationStateValid.story = {
+export const ValidationStateValid: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'valid'
+  },
   name: 'validationState: valid'
 };
 
-export const ValidationStateInvalidIsQuietTrue = () =>
-  render({validationState: 'invalid', isQuiet: true});
-
-ValidationStateInvalidIsQuietTrue.story = {
+export const ValidationStateInvalidIsQuietTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'invalid',
+    isQuiet: true
+  },
   name: 'validationState: invalid, isQuiet: true'
 };
 
-export const ValidationStateValidIsQuietTrue = () =>
-  render({validationState: 'valid', isQuiet: true});
-
-ValidationStateValidIsQuietTrue.story = {
+export const ValidationStateValidIsQuietTrue: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    validationState: 'valid',
+    isQuiet: true
+  },
   name: 'validationState: valid, isQuiet: true'
 };
 
-export const FormWithReset = () => <FormWithControls />;
-
-FormWithReset.story = {
+export const FormWithReset: FormStory = {
+  render: () => <FormWithControls />,
   name: 'form with reset'
 };
 
-
-export const _FormWithSubmit = () => <FormWithSubmit />;
-
-_FormWithSubmit.story = {
+export const _FormWithSubmit: FormStory = {
+  render: () => <FormWithSubmit />,
   name: 'form with submit'
 };
 
-export const FormWithNumberfieldAndLocaleArAe = () => (
-  <Flex gap="size-100">
-    <NumberField label="Outside form" description="Hello" />
-    <Form>
-      <NumberField label="Inside form" />
-    </Form>
-    <Form>
-      <TextField label="First Name" />
-    </Form>
-    <Form>
-      <TextField label="First Name" />
-      <NumberField label="Inside form" />
-    </Form>
-  </Flex>
-);
-
-FormWithNumberfieldAndLocaleArAe.story = {
+export const FormWithNumberfieldAndLocaleArAe: FormStory = {
+  render: () => (
+    <Flex gap="size-100">
+      <NumberField label="Outside form" description="Hello" />
+      <Form>
+        <NumberField label="Inside form" />
+      </Form>
+      <Form>
+        <TextField label="First Name" />
+      </Form>
+      <Form>
+        <TextField label="First Name" />
+        <NumberField label="Inside form" />
+      </Form>
+    </Flex>
+  ),
   name: 'form with numberfield and locale=ar-AE'
 };
 
-export const WithTranslations = () => <FormTranslatedText />;
-
-WithTranslations.story = {
+export const WithTranslations: FormStory = {
+  render: () => <TranslateForm />,
   name: 'with translations',
   parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
 
-function render(props: any = {}) {
+function Render(props: any = {}) {
+  let formData = props.formData || new FormData();
   return (
     <Form {...props}>
-      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
+      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null} defaultValue={formData.getAll('pets')}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <ComboBox label="More Animals" name="combobox">
+      <ComboBox label="More Animals" name="combobox" defaultInputValue={formData.get('combobox')}>
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <SearchAutocomplete label="Search Animals" name="searchAutocomplete">
+      <SearchAutocomplete label="Search Animals" name="searchAutocomplete" defaultInputValue={formData.get('searchAutocomplete')}>
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
-      <NumberField label="Years lived there" name="years" />
-      <Picker label="State" items={states} name="state">
+      <NumberField label="Years lived there" name="years" defaultValue={formData.get('years') ? Number(formData.get('years')) : undefined} />
+      <Picker label="State" items={states} name="state" defaultSelectedKey={formData.get('state')}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries} name="country">
+      <Picker label="Country" items={countries} name="country" defaultSelectedKey={formData.get('country')}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
+      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color." defaultSelectedKey={formData.get('color')}>
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -436,24 +474,25 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+      <RadioGroup label="Favorite pet" name="favorite-pet-group" defaultValue={formData.get('favorite-pet-group')}>
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <SearchField label="Search" name="search" />
-      <Switch name="switch">Low power mode</Switch>
-      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <SearchField label="Search" name="search" defaultValue={formData.get('search')} />
+      <Switch name="switch" defaultSelected={formData.get('switch') === 'on'}>Low power mode</Switch>
+      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." defaultValue={formData.get('comments')} />
       <TextField
         label="City"
         name="city"
+        defaultValue={formData.get('city')}
         contextualHelp={(
           <ContextualHelp>
             <Heading>What is a segment?</Heading>
             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
           </ContextualHelp>
         )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" defaultValue={formData.get('zip')} />
       <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
@@ -462,12 +501,12 @@ function render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
-      <ColorField label="Color" name="color" />
-      <DateField label="Date" granularity="minute" name="date" />
-      <TimeField label="Time" name="time" />
-      <DatePicker label="Date picker" name="datePicker" />
-      <DateRangePicker label="Date range" startName="startDate" endName="endDate" />
-      <TextField type="email" label="Email" name="email" />
+      <ColorField label="Color" name="color" defaultValue={formData.get('color')} />
+      <DateField label="Date" granularity="minute" name="date" defaultValue={formData.get('date') ? parseDateTime(formData.get('date')) : null} />
+      <TimeField label="Time" name="time" defaultValue={formData.get('time') ? parseTime(formData.get('time')) : null} />
+      <DatePicker label="Date picker" name="datePicker" defaultValue={formData.get('datePicker') ? parseDate(formData.get('datePicker')) : null} />
+      <DateRangePicker label="Date range" startName="startDate" endName="endDate" defaultValue={formData.get('startDate') && formData.get('endDate') ? {start: parseDate(formData.get('startDate')), end: parseDate(formData.get('endDate'))} : null} />
+      <TextField type="email" label="Email" name="email" defaultValue={formData.get('email')} />
       {props.showSubmit && (
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
@@ -482,7 +521,7 @@ function FormWithControls(props: any = {}) {
   let [firstName, setFirstName] = useState('hello');
   let [isHunter, setIsHunter] = useState(true);
   let [favoritePet, setFavoritePet] = useState('cats');
-  let [favoriteColor, setFavoriteColor] = useState('green' as Key);
+  let [favoriteColor, setFavoriteColor] = useState<Key | null>('green');
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
   let [birthday, setBirthday] = useState<CalendarDate | null>(new CalendarDate(1732, 2, 22));
   let [money, setMoney] = useState(50);
@@ -709,21 +748,22 @@ function FormWithSubmit() {
   );
 }
 
-export const NativeValidation = () => render({
-  isRequired: true,
-  validationBehavior: 'native',
-  showSubmit: true,
-  onSubmit: (e) => {
-    e.preventDefault();
-    action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
-  }
-});
-
-NativeValidation.story = {
+export const NativeValidation: FormStory = {
+  render: (args) => <Render {...args} />,
+  args: {
+    isRequired: true,
+    validationBehavior: 'native',
+    // @ts-ignore
+    showSubmit: true,
+    onSubmit: (e) => {
+      e.preventDefault();
+      action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+    }
+  },
   parameters: {description: {data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'}}
 };
 
-export function ServerValidation() {
+const ServerValidationRender = () => {
   let [serverErrors, setServerErrors] = useState<any>({});
   let onSubmit = async (e) => {
     e.preventDefault();
@@ -734,19 +774,22 @@ export function ServerValidation() {
     setServerErrors(errors);
   };
 
-  return render({
-    validationBehavior: 'native',
-    onSubmit,
-    validationErrors: serverErrors,
-    showSubmit: true
-  });
-}
+  return (
+    <Render
+      validationBehavior="native"
+      onSubmit={onSubmit}
+      validationErrors={serverErrors}
+      // @ts-ignore
+      showSubmit />
+  );
+};
 
-ServerValidation.story = {
+export const ServerValidation: FormStory = {
+  render: () => <ServerValidationRender />,
   parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
 };
 
-export let NumberFieldFormSubmit = {
+export const NumberFieldFormSubmit: FormStory = {
   render: () => {
     return (
       <Form
@@ -759,4 +802,39 @@ export let NumberFieldFormSubmit = {
     );
   },
   parameters: {description: {data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'}}
+};
+
+interface State {
+  formData: FormData,
+  errors: Record<string, string>
+}
+
+function FormActionExample() {
+  const action = (previousState: State, formData: FormData): State => {
+    let errors = {};
+    for (let key of formData.keys()) {
+      errors[key] = 'Some error for ' + key;
+    }
+    return {
+      formData,
+      errors
+    };
+  };
+
+  const [{errors, formData}, formAction] = React.useActionState(action, {
+    errors: {},
+    formData: new FormData()
+  });
+  
+  return (
+    <Render
+      action={formAction}
+      validationErrors={errors}
+      showSubmit
+      formData={formData} />
+  );
+}
+
+export const FormAction: FormStory = {
+  render: () => <FormActionExample />
 };

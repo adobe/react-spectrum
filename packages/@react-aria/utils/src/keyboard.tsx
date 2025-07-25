@@ -18,7 +18,7 @@ interface Event {
   metaKey: boolean
 }
 
-export function isCtrlKeyPressed(e: Event) {
+export function isCtrlKeyPressed(e: Event): boolean {
   if (isMac()) {
     return e.metaKey;
   }

@@ -128,12 +128,15 @@ export interface TableContextValue<T> {
 }
 
 export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
-export function useTableContext() {
+export function useTableContext(): TableContextValue<unknown> {
   return useContext(TableContext)!;
 }
 
 export const VirtualizerContext = React.createContext<{width: number, key: Key | null} | null>(null);
-export function useVirtualizerContext() {
+export function useVirtualizerContext(): {
+  width: number,
+  key: Key | null
+} | null {
   return useContext(VirtualizerContext);
 }
 
@@ -158,6 +161,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let dragHooksProvided = useRef(isTableDraggable);
   let dropHooksProvided = useRef(isTableDroppable);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== isTableDraggable) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -748,7 +754,7 @@ function TableColumnHeader(props) {
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let columnProps = column.props as SpectrumColumnProps<unknown>;
   useEffect(() => {
-    if (column.hasChildNodes && columnProps.allowsResizing) {
+    if (column.hasChildNodes && columnProps.allowsResizing && process.env.NODE_ENV !== 'production') {
       console.warn(`Column key: ${column.key}. Columns with child columns don't allow resizing.`);
     }
   }, [column.hasChildNodes, column.key, columnProps.allowsResizing]);
@@ -1044,6 +1050,7 @@ function TableSelectAllCell({column}) {
         }
         <Checkbox
           {...checkboxProps}
+          data-testid="selectAll"
           isEmphasized
           UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
@@ -1128,7 +1135,7 @@ interface TableRowContextValue {
 
 
 const TableRowContext = React.createContext<TableRowContextValue | null>(null);
-export function useTableRowContext() {
+export function useTableRowContext(): TableRowContextValue {
   return useContext(TableRowContext)!;
 }
 

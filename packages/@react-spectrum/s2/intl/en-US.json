@@ -5,8 +5,12 @@
   "actionbar.actions": "Actions",
   "actionbar.actionsAvailable": "Actions available.",
   "button.pending": "pending",
+  "calendar.invalidSelection": "Selected {selectedCount, plural, one {date} other {dates}} unavailable.",
   "contextualhelp.info": "Information",
   "contextualhelp.help": "Help",
+  "datepicker.time": "Time",
+  "datepicker.startTime": "Start time",
+  "datepicker.endTime": "End time",
   "dialog.dismiss": "Dismiss",
   "dialog.alert": "Alert",
   "dropzone.replaceMessage": "Drop file to replace",
@@ -29,5 +33,11 @@
   "tag.hideButtonLabel": "Show less",
   "tag.actions": "Actions",
   "tag.noTags": "None",
-  "breadcrumbs.more": "More items"
+  "combobox.noResults": "No results",
+  "notificationbadge.plus": "{notifications}+",
+  "notificationbadge.indicatorOnly": "New activity",
+  "breadcrumbs.more": "More items",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

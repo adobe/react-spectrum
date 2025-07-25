@@ -26,7 +26,7 @@ import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMemo} from 'react';
+import {useMemo, useRef} from 'react';
 
 export interface DatePickerAria extends ValidationResult {
   /** Props for the date picker's visible label element, if any. */
@@ -77,12 +77,26 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let domProps = filterDOMProps(props);
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
+  let isFocused = useRef(false);
   let {focusWithinProps} = useFocusWithin({
     ...props,
     isDisabled: state.isOpen,
-    onBlurWithin: props.onBlur,
-    onFocusWithin: props.onFocus,
-    onFocusWithinChange: props.onFocusChange
+    onBlurWithin: e => {
+      // Ignore when focus moves into the popover.
+      let dialog = document.getElementById(dialogId);
+      if (!dialog?.contains(e.relatedTarget)) {
+        isFocused.current = false;
+        props.onBlur?.(e);
+        props.onFocusChange?.(false);
+      }
+    },
+    onFocusWithin: e => {
+      if (!isFocused.current) {
+        isFocused.current = true;
+        props.onFocus?.(e);
+        props.onFocusChange?.(true);
+      }
+    }
   });
 
   return {
@@ -122,6 +136,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
+      defaultValue: state.defaultValue,
       onChange: state.setValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
@@ -135,7 +150,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       // DatePicker owns the validation state for the date field.
       [privateValidationStateProp]: state,
       autoFocus: props.autoFocus,
-      name: props.name
+      name: props.name,
+      form: props.form
     },
     descriptionProps,
     errorMessageProps,

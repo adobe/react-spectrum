@@ -114,9 +114,9 @@ import {Button} from 'your-component-library';
 function RangeCalendar(props) {
   let {locale} = useLocale();
   let state = useRangeCalendarState({
+    createCalendar,
     ...props,
-    locale,
-    createCalendar
+    locale
   });
 
   let ref = React.useRef(null);
@@ -145,14 +145,9 @@ The `state.getDatesInWeek` function returns the dates in each week of the month.
 
 ```tsx example render=false export=true
 import {useCalendarGrid} from '@react-aria/calendar';
-import {getWeeksInMonth} from '@internationalized/date';
 
 function CalendarGrid({state, ...props}) {
-  let {locale} = useLocale();
-  let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
-
-  // Get the number of weeks in the month so we can render the proper number of rows.
-  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale, props.firstDayOfWeek);
+  let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
     <table {...gridProps}>
@@ -383,6 +378,71 @@ function Example() {
       <p>End date: {range?.end.toString()}</p>
     </I18nProvider>
   );
+}
+```
+
+### Custom calendar systems
+
+`RangeCalendar` also supports custom calendar systems that implement custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar.
+
+The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+
+```tsx import
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
+```
+
+```tsx example
+import {GregorianCalendar} from '@internationalized/date';
+
+function Example() {
+  return <RangeCalendar firstDayOfWeek="sun" createCalendar={() => new Custom454()} />;
+}
+
+class Custom454 extends GregorianCalendar {
+  // See @internationalized/date docs linked above...
+  ///- begin collapse -///
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+ ///- end collapse -///
 }
 ```
 

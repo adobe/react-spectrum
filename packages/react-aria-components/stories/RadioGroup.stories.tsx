@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
+import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/RadioGroup',
+  component: RadioGroup
+} as Meta<typeof RadioGroup>;
 
-export const RadioGroupExample = () => {
+export type RadioGroupStory = StoryFn<typeof RadioGroup>;
+
+export const RadioGroupExample: RadioGroupStory = () => {
   return (
     <RadioGroup
       data-testid="radio-group-example"
@@ -31,9 +36,9 @@ export const RadioGroupExample = () => {
   );
 };
 
-export const RadioGroupControlledExample = () => {
+export const RadioGroupControlledExample: RadioGroupStory = () => {
   let [selected, setSelected] = useState<string|null>(null);
-  
+
   return (
     <RadioGroup
       data-testid="radio-group-example"
@@ -48,7 +53,7 @@ export const RadioGroupControlledExample = () => {
   );
 };
 
-export const RadioGroupInDialogExample = () => {
+export const RadioGroupInDialogExample: RadioGroupStory = () => {
   return (
     <DialogTrigger>
       <Button>Open dialog</Button>
@@ -79,20 +84,79 @@ export const RadioGroupInDialogExample = () => {
               position: 'relative'
             }}>
             {({close}) => (
-              <>
-                <div>
-                  <RadioGroupExample />
+              <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+                <div style={{display: 'flex', flexDirection: 'row', gap: 20}}>
+                  <div>
+                    <RadioGroup
+                      data-testid="radio-group-example"
+                      className={styles.radiogroup}>
+                      <Label>Favorite pet</Label>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                    </RadioGroup>
+                  </div>
+                  <Form>
+                    <RadioGroup
+                      className={styles.radiogroup}
+                      data-testid="radio-group-example-2"
+                      isRequired>
+                      <Label>Second Favorite pet</Label>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Button>About dogs</Button>
+                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Button>About cats</Button>
+                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Button>About dragons</Button>
+                      <FieldError className={styles.errorMessage} />
+                    </RadioGroup>
+                  </Form>
+                  <Form>
+                    <RadioGroup
+                      className={styles.radiogroup}
+                      data-testid="radio-group-example-3"
+                      defaultValue="dragon"
+                      isRequired>
+                      <Label>Third Favorite pet</Label>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Button>About dogs</Button>
+                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Button>About cats</Button>
+                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Button>About dragons</Button>
+                      <FieldError className={styles.errorMessage} />
+                    </RadioGroup>
+                  </Form>
                 </div>
                 <div>
                   <Button onPress={close} style={{marginTop: 10}}>
                     Close
                   </Button>
                 </div>
-              </>
+              </div>
             )}
           </Dialog>
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
+  );
+};
+
+export const RadioGroupSubmitExample: RadioGroupStory = () => {
+  return (
+    <Form>
+      <RadioGroup
+        className={styles.radiogroup}
+        data-testid="radio-group-example"
+        isRequired>
+        <Label>Favorite pet</Label>
+        <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+        <Radio className={styles.radio} value="cats">Cat</Radio>
+        <Radio className={styles.radio} value="dragon">Dragon</Radio>
+        <FieldError className={styles.errorMessage} />
+      </RadioGroup>
+      <Button type="submit">Submit</Button>
+      <Button type="reset">Reset</Button>
+    </Form>
   );
 };

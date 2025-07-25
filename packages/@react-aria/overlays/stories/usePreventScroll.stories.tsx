@@ -11,14 +11,17 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import {usePreventScroll} from '../src';
 
 export default {
   title: 'usePreventScroll'
 };
 
-export const Default = {
+export type AppStory = StoryObj<typeof App>;
+
+export const Default: AppStory = {
   render: () => <App />,
   name: 'default',
   parameters: {
@@ -28,7 +31,7 @@ export const Default = {
   }
 };
 
-function App() {
+function App(): JSX.Element {
   const [preventScroll, setPreventScroll] = useState(false);
   usePreventScroll({isDisabled: !preventScroll});
 

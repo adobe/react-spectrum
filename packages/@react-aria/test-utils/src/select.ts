@@ -37,23 +37,29 @@ export class SelectTester {
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(root).queryByRole('button');
-    if (triggerButton == null) {
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton;
+    if (buttons.length === 0) {
       triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
+    } else {
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
-    this._trigger = triggerButton;
+
+    this._trigger = triggerButton ?? root;
   }
   /**
    * Set the interaction type used by the select tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
   /**
    * Opens the select. Defaults to using the interaction type set on the select tester.
    */
-  async open(opts: SelectOpenOpts = {}) {
+  async open(opts: SelectOpenOpts = {}): Promise<void> {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -89,7 +95,7 @@ export class SelectTester {
   /**
    * Closes the select.
    */
-  async close() {
+  async close(): Promise<void> {
     let listbox = this.listbox;
     if (listbox) {
       act(() => listbox.focus());
@@ -155,7 +161,7 @@ export class SelectTester {
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: SelectTriggerOptionOpts) {
+  async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
     let {
       option,
       interactionType = this._interactionType
@@ -183,7 +189,7 @@ export class SelectTester {
           return;
         }
 
-        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});

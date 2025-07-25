@@ -10,62 +10,66 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
-export default {
-  title: 'React Aria Components'
-};
-
-export const TagGroupExample = (props: TagGroupProps) => (
-  <TagGroup {...props}>
-    <Label>Categories</Label>
-    <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag href="https://nytimes.com">News</MyTag>
-      <MyTag>Travel</MyTag>
-      <MyTag>Gaming</MyTag>
-      <TooltipTrigger>
-        <MyTag>Shopping</MyTag>
-        <Tooltip
-          offset={5}
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 5,
-            borderRadius: 4
-          }}>
-          <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-            <svg width="8" height="8" style={{display: 'block'}}>
-              <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-            </svg>
-          </OverlayArrow>
-          I am a tooltip
-        </Tooltip>
-      </TooltipTrigger>
-    </TagList>
-  </TagGroup>
-);
-
-TagGroupExample.args = {
-  selectionMode: 'none',
-  selectionBehavior: 'toggle'
-};
-
-TagGroupExample.argTypes = {
-  selectionMode: {
-    control: {
-      type: 'inline-radio',
-      options: ['none', 'single', 'multiple']
-    }
+const meta: Meta<typeof TagGroup> = {
+  title: 'React Aria Components/TagGroup',
+  component: TagGroup,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
   },
-  selectionBehavior: {
-    control: {
-      type: 'inline-radio',
+  argTypes: {
+    selectionMode: {
+      control: 'inline-radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'inline-radio',
       options: ['toggle', 'replace']
     }
   }
 };
+
+export default meta;
+type Story = StoryObj<typeof TagGroup>;
+
+export const TagGroupExample: Story = {
+  render: (props: TagGroupProps) => (
+    <TagGroup {...props}>
+      <Label>Categories</Label>
+      <TagList style={{display: 'flex', gap: 4}}>
+        <MyTag href="https://nytimes.com">News</MyTag>
+        <MyTag>Travel</MyTag>
+        <MyTag>Gaming</MyTag>
+        <TooltipTrigger>
+          <MyTag>Shopping</MyTag>
+          <Tooltip
+            offset={5}
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              padding: 5,
+              borderRadius: 4
+            }}>
+            <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+              <svg width="8" height="8" style={{display: 'block'}}>
+                <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+              </svg>
+            </OverlayArrow>
+            I am a tooltip
+          </Tooltip>
+        </TooltipTrigger>
+      </TagList>
+    </TagGroup>
+  )
+};
+
 
 function MyTag(props: TagProps) {
   return (
@@ -74,3 +78,36 @@ function MyTag(props: TagProps) {
       style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
   );
 }
+
+
+export const TagGroupExampleWithRemove: Story = {
+  render: (props: TagGroupProps) => (
+    <TagGroup {...props} onRemove={action('onRemove')}>
+      <Label>Categories</Label>
+      <TagList style={{display: 'flex', gap: 4}}>
+        <MyTag>Marsupial<Button slot="remove">X</Button></MyTag>
+        <MyTag>Animal<Button slot="remove">X</Button></MyTag>
+        <MyTag>Mammal<Button slot="remove">X</Button></MyTag>
+        <TooltipTrigger>
+          <MyTag>Chordate<Button slot="remove">X</Button></MyTag>
+          <Tooltip
+            offset={5}
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              padding: 5,
+              borderRadius: 4
+            }}>
+            <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+              <svg width="8" height="8" style={{display: 'block'}}>
+                <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+              </svg>
+            </OverlayArrow>
+            I am a tooltip
+          </Tooltip>
+        </TooltipTrigger>
+      </TagList>
+    </TagGroup>
+  )
+};

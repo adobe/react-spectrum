@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`variants 1`] = `
-"/*! tailwindcss v4.0.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */
 .group-hover\\:bg-red {
   &:is(:where(.group):where([data-rac])[data-hovered] *) {
     background-color: var(--color-red);
@@ -250,6 +250,11 @@ exports[`variants 1`] = `
     background-color: var(--color-red);
   }
 }
+.has-child-items\\:bg-red {
+  &[data-has-child-items] {
+    background-color: var(--color-red);
+  }
+}
 .expanded\\:bg-red {
   &:where([data-rac])[data-expanded] {
     background-color: var(--color-red);
@@ -328,7 +333,7 @@ exports[`variants 1`] = `
     background-color: var(--color-red);
   }
 }
-:root {
+:root, :host {
   --color-red: red
 ;
 }
@@ -336,7 +341,7 @@ exports[`variants 1`] = `
 `;
 
 exports[`variants with prefix 1`] = `
-"/*! tailwindcss v4.0.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */
 .group-rac-hover\\/custom-name\\:bg-red {
   &:is(:where(.group\\/custom-name)[data-hovered] *) {
     background-color: var(--color-red);
@@ -469,6 +474,11 @@ exports[`variants with prefix 1`] = `
 }
 .rac-has-submenu\\:bg-red {
   &[data-has-submenu] {
+    background-color: var(--color-red);
+  }
+}
+.rac-has-child-items\\:bg-red {
+  &[data-has-child-items] {
     background-color: var(--color-red);
   }
 }
@@ -607,7 +617,7 @@ exports[`variants with prefix 1`] = `
     background-color: var(--color-red);
   }
 }
-:root {
+:root, :host {
   --color-red: red
 ;
 }

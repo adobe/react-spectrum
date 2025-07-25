@@ -1,6 +1,8 @@
-import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
-import {Color} from '@react-types/color';
+import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
+import {Color} from 'react-stately';
 import {ContextValue, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ColorSwatchRenderProps {
@@ -8,7 +10,7 @@ export interface ColorSwatchRenderProps {
   color: Color
 }
 
-export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps {}
+export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
 
@@ -26,11 +28,12 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
       color
     }
   });
+
+  let DOMProps = filterDOMProps(props, {global: true});
   
   return (
     <div
-      {...colorSwatchProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, colorSwatchProps, renderProps)}
       slot={props.slot || undefined}
       ref={ref} />
   );

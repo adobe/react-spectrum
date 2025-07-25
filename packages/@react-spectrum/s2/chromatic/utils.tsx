@@ -12,7 +12,7 @@
 
 import {generatePowerset} from '@react-spectrum/story-utils';
 
-export function shortName(key, value) {
+export function shortName(key: string, value: any): string {
   let returnVal = '';
   switch (key) {
     case 'defaultSelected':
@@ -76,7 +76,7 @@ export function shortName(key, value) {
   return returnVal;
 }
 
-export function generateComboChunks(opts: {states: Array<object>, exclude?: (merged: any) => boolean, numChunks: number}) {
+export function generateComboChunks(opts: {states: Array<object>, exclude?: (merged: any) => boolean, numChunks: number}): any[] {
   let {states, exclude, numChunks} = opts;
   let combos = generatePowerset(states, exclude);
   let chunks: any[] = [];

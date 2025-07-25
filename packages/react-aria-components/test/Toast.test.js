@@ -12,7 +12,8 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Text, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion} from 'react-aria-components';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function Example(options) {
@@ -171,7 +172,7 @@ describe('Toast', () => {
     expect(button).toHaveFocus();
   });
 
-  it('should move focus to remaining toast when a toast exits and there are more', async () => {
+  it('should restore focus when removing with the mouse', async () => {
     let {getAllByRole, getByRole, queryByRole} = render(<Example />);
     let button = getByRole('button');
 
@@ -182,11 +183,39 @@ describe('Toast', () => {
     let closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
 
+    expect(document.activeElement).toBe(button);
+
+    toast = getAllByRole('alertdialog')[0];
+    closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+
+    expect(queryByRole('alertdialog')).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should move focus to remaining toast when a toast exits and there are more', async () => {
+    let {getAllByRole, getByRole, queryByRole} = render(<Example />);
+    let button = getByRole('button');
+
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
+
+    let toast = getAllByRole('alertdialog')[0];
+    let closeButton = within(toast).getByRole('button');
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
+
     toast = getByRole('alertdialog');
     expect(document.activeElement).toBe(toast);
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(queryByRole('alertdialog')).toBeNull();
     expect(document.activeElement).toBe(button);
@@ -196,19 +225,26 @@ describe('Toast', () => {
     let {getAllByRole, getByRole, queryByRole} = render(<Example />);
     let button = getByRole('button');
 
-    await user.click(button);
-    await user.click(button);
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
 
-    let toast = getAllByRole('alertdialog')[1];
+    let toast = getAllByRole('alertdialog')[0];
     let closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     toast = getByRole('alertdialog');
     expect(document.activeElement).toBe(toast);
     expect(toast).toHaveAttribute('data-focused', 'true');
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(queryByRole('alertdialog')).toBeNull();
     expect(document.activeElement).toBe(button);
@@ -286,5 +322,46 @@ describe('Toast', () => {
 
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Toasts');
+  });
+
+  it('should render the toast region in the portal container provided by PortalProvider', async () => {
+    let queue = new ToastQueue();
+
+    function LocalToast() {
+      return (
+        <>
+          <ToastRegion queue={queue}>
+            {({toast}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{toast.content}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion>
+
+          <Button onPress={() => queue.add('Toast')}>Add toast</Button>
+        </>
+      );
+    }
+    function App() {
+      let container = useRef(null);
+      return (
+        <>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <LocalToast container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    let {getByRole, getByTestId} = render(<App />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    expect(within(getByTestId('custom-container')).getByRole('alertdialog')).toBeInTheDocument();
   });
 });

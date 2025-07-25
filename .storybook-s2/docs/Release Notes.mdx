@@ -4,6 +4,122 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.10.0
+
+### Font update
+
+This release introduces a new font for Spectrum 2: Adobe Clean Spectrum VF. This is an evolution of the previous Adobe Clean, with slightly updated metrics allowing for better vertical centering. Along with this update, the S2 Provider component now automatically handles loading the fonts needed for the user's language. The new font does not affect previous versions of React Spectrum.
+
+If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [updated docs](?path=/docs/intro--docs#setting-up-your-app) for details.
+
+### New Components
+
+* [Calendar](?path=/docs/calendar--docs)
+* [RangeCalendar](?path=/docs/rangecalendar--docs)
+* [DateField](?path=/docs/datefield--docs)
+* [DatePicker](?path=/docs/datepicker--docs)
+* [DateRangePicker](?path=/docs/daterangepicker--docs)
+* [TimeField](?path=/docs/timefield--docs)
+
+### Updates
+
+* [CardView](?path=/docs/cardview--docs): Fix ActionBar from not scrolling
+* [ActionButton](?path=/docs/actionbutton--docs): Fix avatar-only ActionButtons to have square dimensions
+* [Tabs](?path=/docs/tabs--docs): Improve selection indicator animation, fix collasped tabs
+* [ProgressCircle](?path=/docs/progresscircle--docs): Add track outline in High Contrast Mode
+* [Switch](?path=/docs/switch--docs): Fix the toggle in RTL locales
+* [TreeView](?path=/docs/treeview--docs): Support async loading
+
+## v0.9.1
+
+### Updates
+* [Button](?path=/docs/button--docs): Fix focus visible styles from being applied on standard focus
+* [ContextualHelp](?path=/docs/contextualhelp--docs): Update width to match Spectrum designs
+* [Tabs](?path=/docs/tabs--docs): Update selection indicator when tab text changes
+* [TagGroup](?path=/docs/taggroup--docs): Fix focus visible styles from being applied on standard focus
+
+## v0.9.0
+
+### Updates
+
+* [Combobox](?path=/docs/combobox--docs): Support for virtualization and async loading
+* [Dialog](?path=/docs/dialog--docs): Update sizes
+* [Picker](?path=/docs/picker--docs): Support for virtualization and async loading
+* [Popover](?path=/docs/popover--docs): Add `triggerRef` prop
+* [TableView](?path=/docs/tableview--docs): Support custom menus in columns
+* Apply `position: relative` to Radio and Checkbox to prevent layout jumps
+
+### UNSAFE_className Typescript Error
+
+Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component’s own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
+
+We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html) with the [S2 style macro](https://react-spectrum.adobe.com/s2/index.html?path=/docs/style-macro--docs) to create custom components. [Safe style properties](https://react-spectrum.adobe.com/s2/index.html?path=/docs/intro--docs#styling) can be passed to the `styles` prop of an S2 component.
+
+
+### Style macro updates
+
+We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between versions. While we work to stabilize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version.
+
+We also made some changes to the available style macro values.
+
+* Reduced the default spacing scale so it only goes up to 96px. Other values can be used via the `space()` macro
+* Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
+* Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
+* Used rems and touch scaling for icon sizes, and added t-shirt size prop
+* Added support for percentages and [viewport relative units](https://www.w3.org/TR/css-values-4/#viewport-relative-lengths) (e.g. vw)
+* Added support for arbitrary [aspect ratio values](https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio)
+* Added support for `calc` and other [math functions](https://www.w3.org/TR/css-values-4/#math)
+* Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like `inherit`
+* Colors no longer include default hover/press/focus states (e.g. `backgroundColor: 'accent'`). Use the `baseColor` macro instead.
+* The `control` value has been removed from `fontSize`, `borderRadius`, `width`, `height`, and other sizing properties. Use explicit values for each t-shirt size instead.
+* Fixed spelling of `disc` in `listStyleType` (was `dist`)
+
+## v0.8.0
+
+### New Components
+
+* [NotificationBadge](?path=/docs/actionbutton--docs#notification-badges)
+* [Toast](?path=/docs/toast--docs) (alpha)
+
+### Updates
+
+* Pass DOM Props to ButtonGroup
+* Prevent Dividers from growing or shrinking in a flex container by default
+* Export Autocomplete
+* Export SortDescriptor type
+
+### Disclosure Design updates
+Spectrum has updated the S disclosure design. As a result, all other sizes (M, L, XL) now map to one size smaller than before. See [PR](https://github.com/adobe/react-spectrum/pull/8006) for details.
+
+## v0.7.0
+
+### New Components
+
+* [TreeView](?path=/docs/treeview--docs)
+
+### Updates
+
+* [Badge](?path=/docs/badge--docs): Add `overflowMode` prop, fix icon alignment, update typo from `variant="charteuse"` to `variant="chartreuse"`
+* [CardView](?path=/docs/cardview--docs): Fix styling when using `renderActionBar`
+* Image: Add `fetchPriority` prop
+* [Menu](?path=/docs/menu--docs): Fix menu item's focus rings from exceeding popover boundaries
+* [Tabs](?path=/docs/tabs--docs): Add collapse behavior
+* Remove `all: revert-layer` from style macro generated CSS to fix Safari issues
+* Remove references to CSS `flex` shorthand. Please use `flexGrow`, `flexBasis`, and `flexShrink` instead.
+
+### Codemods
+
+* Update S2 icon migration map
+* Handle margin/padding shorthands in style props codemod
+
+### Important CSS update
+
+In this release, we have made significant changes to the way our Style Macro generates CSS in order to fix issues with Safari. The Style Macro uses [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers) to avoid CSS specificity and ordering issues. However, this means global CSS declared outside a `@layer`, such as CSS resets, will take precedence over S2's CSS. To avoid this, we previously used [all: revert-layer](https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer). Unfortunately, due to numerous bugs in Safari 18, this caused rendering issues in our components.
+
+To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See [the docs](?path=/docs/intro--docs#css-resets) for more information.
+
+**If you are using a version older than React Spectrum v3 on the same page, you must update to the latest version.** See the Adobe internal documentation for more details.
+
 ## v0.6.0
 
 ### New Components

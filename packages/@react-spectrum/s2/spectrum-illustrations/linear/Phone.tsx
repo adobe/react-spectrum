@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {IconProps, IllustrationContext} from '../../src/Icon';
 import Phone_L from 'illustration:./S2_lin_phone_160.svg';
 import Phone_M from 'illustration:./S2_lin_phone_96.svg';
 import Phone_S from 'illustration:./S2_lin_phone_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Phone(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Phone(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

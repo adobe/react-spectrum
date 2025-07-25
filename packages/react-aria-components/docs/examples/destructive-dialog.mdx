@@ -38,7 +38,7 @@ import './tailwind.global.css';
 
 ```tsx example standalone
 import {DialogTrigger, Button, ModalOverlay, Modal, Dialog, Heading} from 'react-aria-components';
-import AlertIcon from '@spectrum-icons/workflow/Alert';
+import {AlertTriangle} from 'lucide-react';
 
 function ModalExample() {
   return (
@@ -58,7 +58,7 @@ function ModalExample() {
             <Dialog role="alertdialog" className="outline-hidden relative">
               {({ close }) => (<>
                 <Heading slot="title" className="text-xxl font-semibold leading-6 my-0 text-slate-700">Delete folder</Heading>
-                <div className="w-6 h-6 text-red-500 absolute right-0 top-0 stroke-2"><AlertIcon size="M" /></div>
+                <div className="w-6 h-6 text-red-500 absolute right-0 top-0 stroke-2"><AlertTriangle className="w-6 h-6" /></div>
                 <p className="mt-3 text-slate-500">
                   Are you sure you want to delete "Documents"? All contents will be permanently destroyed.
                 </p>

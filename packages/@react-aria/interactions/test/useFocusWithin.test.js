@@ -11,7 +11,7 @@
  */
 
 import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
-import React from 'react';
+import React, {useState} from 'react';
 import {useFocusWithin} from '../';
 
 function Example(props) {
@@ -155,5 +155,43 @@ describe('useFocusWithin', function () {
     tree.rerender(<Example disabled onFocusWithin={onFocus} onBlurWithin={onBlur} />);
     // MutationObserver is async
     await waitFor(() => expect(onBlur).toHaveBeenCalled());
+  });
+
+  it('should fire onBlur when focus occurs outside', async function () {
+    function Test(props) {
+      let {focusWithinProps} = useFocusWithin(props);
+      return <div {...focusWithinProps} data-testid="test">{props.children}</div>;
+    }
+
+    function Inner() {
+      let [show, setShow] = useState(true);
+      return show ? <button onClick={() => setShow(false)}>hide</button> : null;
+    }
+
+    let events = [];
+    let addEvent = (e) => events.push({type: e.type, target: e.target});
+    let tree = render(
+      <>
+        <Test
+          onFocusWithin={addEvent}
+          onBlurWithin={addEvent}
+          onFocusWithinChange={isFocused => events.push({type: 'focuschange', isFocused})}>
+          <Inner />
+        </Test>
+        <input data-testid="outer" />
+      </>
+    );
+
+    let el = tree.getByRole('button');
+    act(() => el.focus());
+    act(() => el.click());
+    act(() => tree.getByTestId('outer').focus());
+
+    expect(events).toEqual([
+      {type: 'focus', target: el},
+      {type: 'focuschange', isFocused: true},
+      {type: 'blur', target: tree.getByTestId('test')},
+      {type: 'focuschange', isFocused: false}
+    ]);
   });
 });

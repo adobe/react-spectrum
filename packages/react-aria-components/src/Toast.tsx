@@ -10,22 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from '@react-aria/toast';
+import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
-import {forwardRefType} from '@react-types/shared';
-import {mergeProps, useFocusRing} from 'react-aria';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
-import {useObjectRef} from '@react-aria/utils';
+import {useIsSSR} from '@react-aria/ssr';
+import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
-const ToastStateContext = createContext<ToastState<any> | null>(null);
+export const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
   visibleToasts: QueuedToast<T>[],
+  /**
+   * Whether the toast region is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
   /**
    * Whether the toast region is currently focused.
    * @selector [data-focused]
@@ -38,57 +44,89 @@ export interface ToastRegionRenderProps<T> {
   isFocusVisible: boolean
 }
 
-export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>> {
+export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
   /** The queue of toasts to display. */
   queue: ToastQueue<T>,
-  /** A function to render each toast. */
-  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
+  /** A function to render each toast, or children containing a `<ToastList>`. */
+  children: ReactNode | ((renderProps: {toast: QueuedToast<T>}) => ReactElement)
 }
 
 /**
  * A ToastRegion displays one or more toast notifications.
  */
 export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  let isSSR = useIsSSR();
   let state = useToastQueue(props.queue);
   let objectRef = useObjectRef(ref);
   let {regionProps} = useToastRegion(props, state, objectRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
     ...props,
     children: undefined,
     defaultClassName: 'react-aria-ToastRegion',
     values: {
       visibleToasts: state.visibleToasts,
+      isHovered,
       isFocused,
       isFocusVisible
     }
   });
 
+  let {direction} = useLocale();
+  let portalContainer;
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!isSSR) {
+    portalContainer = document.body;
+    if (getContainer) {
+      portalContainer = getContainer();
+    }
+  }
+
+  let DOMProps = filterDOMProps(props, {global: true});
+
   let region = (
     <ToastStateContext.Provider value={state}>
       <div
-        {...renderProps}
-        {...mergeProps(regionProps, focusProps)}
+        {...mergeProps(DOMProps, renderProps, regionProps, focusProps, hoverProps)}
+        dir={direction}
         ref={objectRef}
+        data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
-        {typeof props.children === 'function' ? <ToastList {...props} style={{display: 'contents'}} /> : props.children}
+        {typeof props.children === 'function' ? <ToastList {...props} className={undefined} style={{display: 'contents'}}>{props.children}</ToastList> : props.children}
       </div>
     </ToastStateContext.Provider>
   );
 
-  return state.visibleToasts.length > 0 && typeof document !== 'undefined'
-    ? createPortal(region, document.body)
+  return state.visibleToasts.length > 0 && portalContainer
+    ? createPortal(region, portalContainer)
     : null;
 });
 
-// TODO: possibly export this so additional children can be added to the region, outside the list.
-const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children'> {
+  /** A function to render each toast. */
+  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
+}
+
+export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
+  let {hoverProps, isHovered} = useHover({});
+  let renderProps = useRenderProps({
+    ...props,
+    children: undefined,
+    defaultClassName: 'react-aria-ToastList',
+    values: {
+      visibleToasts: state.visibleToasts,
+      isFocused: false,
+      isFocusVisible: false,
+      isHovered
+    }
+  });
+
   return (
-    // @ts-ignore
-    <ol ref={ref} style={props.style} className={props.className}>
+    <ol {...hoverProps} {...renderProps} ref={ref}>
       {state.visibleToasts.map((toast) => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}
@@ -115,7 +153,7 @@ export interface ToastRenderProps<T> {
   isFocusVisible: boolean
 }
 
-export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>> {}
+export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {}
 
 /**
  * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
@@ -140,10 +178,11 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
     }
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...renderProps}
-      {...mergeProps(toastProps, focusProps)}
+      {...mergeProps(DOMProps, renderProps, toastProps, focusProps)}
       ref={objectRef}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>

@@ -10,6 +10,7 @@ const attributes = {
     'allows-sorting',
     'allows-dragging',
     'has-submenu',
+    'has-child-items',
 
     // States
     'open',

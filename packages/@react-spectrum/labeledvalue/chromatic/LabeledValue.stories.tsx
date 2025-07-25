@@ -11,19 +11,19 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
 import {LabeledValue} from '..';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-type LabeledValueStory = ComponentStoryObj<typeof LabeledValue>;
+type LabeledValueStory = StoryObj<typeof LabeledValue>;
 
 export default {
   title: 'LabeledValue',
   component: LabeledValue
-} as ComponentMeta<typeof LabeledValue>;
+} as Meta<typeof LabeledValue>;
 
 export let Default: LabeledValueStory = {
   args: {label: 'Test', value: 'This is some sample text'},

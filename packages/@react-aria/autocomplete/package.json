@@ -1,12 +1,16 @@
 {
   "name": "@react-aria/autocomplete",
-  "version": "3.0.0-alpha.37",
+  "version": "3.0.0-beta.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -22,19 +26,19 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/combobox": "^3.11.1",
-    "@react-aria/focus": "^3.19.1",
-    "@react-aria/i18n": "^3.12.5",
-    "@react-aria/interactions": "^3.23.0",
-    "@react-aria/listbox": "^3.14.0",
-    "@react-aria/searchfield": "^3.8.0",
-    "@react-aria/textfield": "^3.16.0",
-    "@react-aria/utils": "^3.27.0",
-    "@react-stately/autocomplete": "3.0.0-alpha.0",
-    "@react-stately/combobox": "^3.10.2",
-    "@react-types/autocomplete": "3.0.0-alpha.28",
-    "@react-types/button": "^3.10.2",
-    "@react-types/shared": "^3.27.0",
+    "@react-aria/combobox": "^3.13.0",
+    "@react-aria/focus": "^3.21.0",
+    "@react-aria/i18n": "^3.12.11",
+    "@react-aria/interactions": "^3.25.4",
+    "@react-aria/listbox": "^3.14.7",
+    "@react-aria/searchfield": "^3.8.7",
+    "@react-aria/textfield": "^3.18.0",
+    "@react-aria/utils": "^3.30.0",
+    "@react-stately/autocomplete": "3.0.0-beta.3",
+    "@react-stately/combobox": "^3.11.0",
+    "@react-types/autocomplete": "3.0.0-alpha.33",
+    "@react-types/button": "^3.13.0",
+    "@react-types/shared": "^3.31.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

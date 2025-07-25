@@ -183,7 +183,7 @@ export interface Collection<T> extends Iterable<T> {
   getTextValue?(key: Key): string,
 
   /** Filters the collection using the given function. */
-  filter?(filterFn: (nodeValue: string) => boolean): Collection<T>
+  UNSTABLE_filter?(filterFn: (nodeValue: string) => boolean): Collection<T>
 }
 
 export interface Node<T> {

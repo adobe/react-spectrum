@@ -364,9 +364,9 @@ describe('useClipboard', () => {
       expect(await onPaste.mock.calls[0][0][1].getText('text/plain')).toBe('item 2');
     });
 
-    it('should show the type of the clipboard event if cutting', async () => {
+    it('should show the action type of the clipboard event if cutting', async () => {
       let getItems = (details) => [{
-        [details.type]: 'test data'
+        [details.action]: 'test data'
       }];
 
       let onCut = jest.fn();
@@ -382,9 +382,9 @@ describe('useClipboard', () => {
       expect(onCut).toHaveBeenCalledTimes(1);
     });
 
-    it('should show the type of the clipboard event if copying', async () => {
+    it('should show the action type of the clipboard event if copying', async () => {
       let getItems = (details) => [{
-        [details.type]: 'test data'
+        [details.action]: 'test data'
       }];
 
       let onCopy = jest.fn();

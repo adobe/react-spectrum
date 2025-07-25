@@ -79,16 +79,17 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
+  private itemCount: number = 0;
 
-  get size() {
-    return this.keyMap.size;
+  get size(): number {
+    return this.itemCount;
   }
 
-  getKeys() {
+  getKeys(): IterableIterator<Key> {
     return this.keyMap.keys();
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): IterableIterator<Node<T>> {
     let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
     while (node) {
       yield node;
@@ -110,7 +111,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     };
   }
 
-  getKeyBefore(key: Key) {
+  getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -129,7 +130,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return node.parentKey;
   }
 
-  getKeyAfter(key: Key) {
+  getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -154,11 +155,11 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return this.firstKey;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
     while (node?.lastChildKey != null) {
       node = this.keyMap.get(node.lastChildKey);
@@ -184,26 +185,36 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     collection.keyMap = new Map(this.keyMap);
     collection.firstKey = this.firstKey;
     collection.lastKey = this.lastKey;
+    collection.itemCount = this.itemCount;
     return collection;
   }
 
-  addNode(node: CollectionNode<T>) {
+  addNode(node: CollectionNode<T>): void {
     if (this.frozen) {
       throw new Error('Cannot add a node to a frozen collection');
+    }
+
+    if (node.type === 'item' && this.keyMap.get(node.key) == null) {
+      this.itemCount++;
     }
 
     this.keyMap.set(node.key, node);
   }
 
-  removeNode(key: Key) {
+  removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
+    }
+
+    let node = this.keyMap.get(key);
+    if (node != null && node.type === 'item') {
+      this.itemCount--;
     }
 
     this.keyMap.delete(key);
   }
 
-  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false) {
+  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false): void {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }
@@ -217,7 +228,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
   // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
   // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
-  filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
+  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
     // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
     // for updating the next/prevKey for every non-filtered node.

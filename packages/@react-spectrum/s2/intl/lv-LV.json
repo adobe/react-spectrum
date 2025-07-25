@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Notīrīt atlasi",
   "actionbar.selected": "{count, plural, =0 {Nav atlasīts nekas} other {Atlasīts(-i): #}}",
   "actionbar.selectedAll": "Atlasīts viss",
+  "breadcrumbs.more": "Vairāk vienumu",
   "button.pending": "gaida",
+  "calendar.invalidSelection": "Atlasītais(-ie) {selectedCount, plural, one {date} other {dates}} nav pieejams(-i).",
+  "combobox.noResults": "Nav rezultātu",
   "contextualhelp.help": "Palīdzība",
   "contextualhelp.info": "Informācija",
+  "datepicker.endTime": "Beigu laiks",
+  "datepicker.startTime": "Sākuma laiks",
+  "datepicker.time": "Laiks",
   "dialog.alert": "Brīdinājums",
   "dialog.dismiss": "Nerādīt",
   "dropzone.replaceMessage": "Lai aizstātu, nometiet failu",
@@ -17,6 +23,8 @@
   "label.(optional)": "(neobligāti)",
   "label.(required)": "(obligāti)",
   "menu.moreActions": "Citas darbības",
+  "notificationbadge.indicatorOnly": "Jauna aktivitāte",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Izvēlēties…",
   "slider.maximum": "Maksimālā vērtība",
   "slider.minimum": "Minimālā vērtība",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Rādīt mazāk",
   "tag.noTags": "Nav",
   "tag.showAllButtonLabel": "Rādīt visu ({tagCount, number})",
-  "breadcrumbs.more": "Vairāk vienumu"
+  "toast.clearAll": "Notīrīt visu",
+  "toast.collapse": "Sakļaut",
+  "toast.showAll": "Rādīt visu"
 }

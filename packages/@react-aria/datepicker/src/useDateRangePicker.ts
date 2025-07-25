@@ -109,12 +109,26 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let domProps = filterDOMProps(props);
 
+  let isFocused = useRef(false);
   let {focusWithinProps} = useFocusWithin({
     ...props,
     isDisabled: state.isOpen,
-    onBlurWithin: props.onBlur,
-    onFocusWithin: props.onFocus,
-    onFocusWithinChange: props.onFocusChange
+    onBlurWithin: e => {
+      // Ignore when focus moves into the popover.
+      let dialog = document.getElementById(dialogId);
+      if (!dialog?.contains(e.relatedTarget)) {
+        isFocused.current = false;
+        props.onBlur?.(e);
+        props.onFocusChange?.(false);
+      }
+    },
+    onFocusWithin: e => {
+      if (!isFocused.current) {
+        isFocused.current = true;
+        props.onFocus?.(e);
+        props.onFocusChange?.(true);
+      }
+    }
   });
 
   let startFieldValidation = useRef(DEFAULT_VALIDATION_RESULT);
@@ -169,9 +183,11 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...startFieldProps,
       ...commonFieldProps,
       value: state.value?.start ?? null,
+      defaultValue: state.defaultValue?.start,
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
       name: props.startName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -187,8 +203,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end ?? null,
+      defaultValue: state.defaultValue?.end,
       onChange: end => state.setDateTime('end', end),
       name: props.endName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,

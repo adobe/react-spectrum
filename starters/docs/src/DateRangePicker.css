@@ -1,0 +1,73 @@
+@import "./theme.css";
+
+.react-aria-DateRangePicker {
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: clip;
+    position: relative;
+    padding: 4px 4px 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--field-background);
+    white-space: nowrap;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
+    &[data-focus-within] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  .field-Button {
+    margin-left: auto;
+  }
+
+  [slot=start] + span {
+    padding: 0 4px;
+  }
+
+  [slot=end] {
+    margin-right: 1.75rem;
+    flex: 1;
+  }
+
+  .react-aria-DateInput {
+    width: unset;
+    min-width: unset;
+    padding: unset;
+    border: unset;
+    outline: unset;
+  }
+
+  &[data-invalid] {
+    [slot=end]:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+      margin-left: 1.3125rem;
+      margin-right: -1.3125rem;
+    }
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  max-width: unset;
+  padding: 15px;
+}
