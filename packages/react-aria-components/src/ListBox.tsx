@@ -268,7 +268,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             collection={collection}
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -281,7 +281,7 @@ export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -306,7 +306,7 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
         <CollectionBranch
           collection={state.collection}
           parent={section}
-          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       </HeaderContext.Provider>
     </section>
   );
@@ -490,7 +490,7 @@ export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'c
   isLoading?: boolean
 }
 
-export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBoxLoadingIndicator(props: ListBoxLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
@@ -532,7 +532,7 @@ export const ListBoxLoadMoreItem = createLeafComponent('loader', function ListBo
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
           role="option"
-          ref={ref}>
+          ref={ref as ForwardedRef<HTMLDivElement>}>
           {renderProps.children}
         </div>
       )}

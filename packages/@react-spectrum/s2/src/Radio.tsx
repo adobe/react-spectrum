@@ -24,7 +24,7 @@ import {forwardRef, ReactNode, useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
-export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The label for the element.
    */

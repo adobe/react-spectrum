@@ -925,7 +925,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
@@ -983,7 +983,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       <CollectionBranch
         collection={collection}
         parent={collection.body}
-        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
     </TBody>
   );
@@ -1360,7 +1360,7 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
   isLoading?: boolean
 }
 
-export const TableLoadMoreItem = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const TableLoadMoreItem = createLeafComponent('loader', function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -1412,7 +1412,7 @@ export const TableLoadMoreItem = createLeafComponent('loader', function TableLoa
           {...mergeProps(filterDOMProps(props, {global: true}), rowProps)}
           {...renderProps}
           role="row"
-          ref={ref as any}>
+          ref={ref as ForwardedRef<HTMLTableRowElement>}>
           <TD role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
           </TD>

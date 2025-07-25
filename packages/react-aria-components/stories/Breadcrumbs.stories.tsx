@@ -11,26 +11,32 @@
  */
 
 import {Breadcrumb, Breadcrumbs, Link} from 'react-aria-components';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Breadcrumbs',
   component: Breadcrumbs
-};
+} as Meta<typeof Breadcrumbs>;
 
-export const BreadcrumbsExample = (args: any) => (
-  <Breadcrumbs {...args}>
-    <Breadcrumb>
-      <Link href="/">Home</Link>
-    </Breadcrumb>
-    <Breadcrumb>
-      <Link href="/react-aria">React Aria</Link>
-    </Breadcrumb>
-    <Breadcrumb>
-      <Link href="/react-aria">Breadcrumbs</Link>
-    </Breadcrumb>
-  </Breadcrumbs>
-);
+export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
+
+export const BreadcrumbsExample: BreadcrumbsStory = {
+  render: (args: any) => (
+    <Breadcrumbs {...args}>
+      <Breadcrumb>
+        <Link href="/">Home</Link>
+      </Breadcrumb>
+      <Breadcrumb>
+        <Link href="/react-aria">React Aria</Link>
+      </Breadcrumb>
+      <Breadcrumb>
+        <Link href="/react-aria">Breadcrumbs</Link>
+      </Breadcrumb>
+    </Breadcrumbs>
+  )
+};
 
 interface ItemValue {
   id: string,
@@ -42,12 +48,14 @@ let items: Array<ItemValue> = [
   {id: 'Breadcrumbs', url: '/react-aria/breadcrumbs'}
 ];
 
-export const DynamicBreadcrumbsExample = (args: any) => (
-  <Breadcrumbs {...args} items={items}>
-    {(item: ItemValue) => (
-      <Breadcrumb>
-        <Link href={item.url}>{item.id}</Link>
-      </Breadcrumb>
-    )}
-  </Breadcrumbs>
-);
+export const DynamicBreadcrumbsExample: BreadcrumbsStory = {
+  render: (args: any) => (
+    <Breadcrumbs {...args} items={items}>
+      {(item: ItemValue) => (
+        <Breadcrumb>
+          <Link href={item.url}>{item.id}</Link>
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  )
+};

@@ -4,6 +4,32 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.10.0
+
+### Font update
+
+This release introduces a new font for Spectrum 2: Adobe Clean Spectrum VF. This is an evolution of the previous Adobe Clean, with slightly updated metrics allowing for better vertical centering. Along with this update, the S2 Provider component now automatically handles loading the fonts needed for the user's language. The new font does not affect previous versions of React Spectrum.
+
+If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [updated docs](?path=/docs/intro--docs#setting-up-your-app) for details.
+
+### New Components
+
+* [Calendar](?path=/docs/calendar--docs)
+* [RangeCalendar](?path=/docs/rangecalendar--docs)
+* [DateField](?path=/docs/datefield--docs)
+* [DatePicker](?path=/docs/datepicker--docs)
+* [DateRangePicker](?path=/docs/daterangepicker--docs)
+* [TimeField](?path=/docs/timefield--docs)
+
+### Updates
+
+* [CardView](?path=/docs/cardview--docs): Fix ActionBar from not scrolling
+* [ActionButton](?path=/docs/actionbutton--docs): Fix avatar-only ActionButtons to have square dimensions
+* [Tabs](?path=/docs/tabs--docs): Improve selection indicator animation, fix collasped tabs
+* [ProgressCircle](?path=/docs/progresscircle--docs): Add track outline in High Contrast Mode
+* [Switch](?path=/docs/switch--docs): Fix the toggle in RTL locales
+* [TreeView](?path=/docs/treeview--docs): Support async loading
+
 ## v0.9.1
 
 ### Updates

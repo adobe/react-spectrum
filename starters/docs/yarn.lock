@@ -3718,7 +3718,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^2.0.0":
+"clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
@@ -6424,6 +6424,7 @@ __metadata:
     "@storybook/test": "npm:^8.6.14"
     "@types/react": "npm:^18.3.0"
     "@types/react-dom": "npm:^18.3.0"
+    clsx: "npm:^2.1.1"
     lightningcss-loader: "npm:^2.1.0"
     lucide-react: "npm:^0.292.0"
     prop-types: "npm:^15.8.1"

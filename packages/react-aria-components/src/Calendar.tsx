@@ -387,6 +387,7 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
         {...mergeProps(DOMProps, gridProps)}
         ref={ref}
         style={props.style}
+        cellPadding={0}
         className={props.className ?? 'react-aria-CalendarGrid'}>
         {typeof props.children !== 'function'
           ? props.children
@@ -507,7 +508,6 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let isOutsideMonth = !isSameMonth(currentMonth, date);
-  // TODO: check api with team, this seemed useful though
   let istoday = isToday(date, state.timeZone);
 
   let buttonRef = useRef<HTMLDivElement>(null);

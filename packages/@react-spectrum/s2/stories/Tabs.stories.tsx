@@ -40,12 +40,13 @@ export default meta;
 type Story = StoryObj<typeof Tabs>;
 
 const tabs = style({width: 'full', height: 'full'});
+const tabList = style({maxWidth: {orientation: {vertical: 150}}});
 
 export const Example: Story = {
   render: (args) => (
     <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
       <Tabs {...args} styles={tabs} aria-label="History of Ancient Rome">
-        <TabList>
+        <TabList styles={tabList({orientation: args.orientation})}>
           <Tab id="FoR">Founding of Rome</Tab>
           <Tab id="MaR">Monarchy and Republic</Tab>
           <Tab id="Emp">Empire</Tab>

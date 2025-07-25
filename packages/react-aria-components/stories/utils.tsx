@@ -1,6 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {Header, ListBoxItem, ListBoxItemProps, MenuItem, MenuItemProps, ProgressBar} from 'react-aria-components';
-import React, {HTMLAttributes} from 'react';
+import React, {HTMLAttributes, JSX} from 'react';
 import styles from '../example/index.css';
 
 export const MyHeader = (props: HTMLAttributes<HTMLElement>) => {
@@ -21,7 +21,7 @@ export const MyListBoxItem = (props: ListBoxItemProps) => {
   );
 };
 
-export const MyMenuItem = (props: MenuItemProps) => {
+export const MyMenuItem = (props: MenuItemProps): JSX.Element => {
   return (
     <MenuItem
       {...props}
@@ -34,7 +34,7 @@ export const MyMenuItem = (props: MenuItemProps) => {
   );
 };
 
-export const LoadingSpinner = ({style = {}}) => {
+export const LoadingSpinner = ({style = {}}: {style?: React.CSSProperties}): JSX.Element => {
   return (
     <ProgressBar
       aria-label="loading"

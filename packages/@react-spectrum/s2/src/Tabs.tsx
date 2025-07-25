@@ -59,7 +59,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
@@ -195,8 +195,7 @@ const tablist = style({
       vertical: 12
     }
   },
-  flexShrink: 0,
-  flexBasis: '0%'
+  minWidth: 'min'
 });
 
 export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
@@ -220,7 +219,14 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
+      className={
+        (props.UNSAFE_className || '') +
+        style({
+          position: 'relative',
+          flexGrow: 0,
+          flexShrink: 0,
+          minWidth: 'min'
+        }, getAllowedOverrides())(null, props.styles)}>
       <RACTabList
         {...props}
         aria-label={ariaLabel}
@@ -275,7 +281,7 @@ const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}
   borderRadius: 'full'
 });
 
-const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide', orientation?: Orientation}>({
   ...focusRing(),
   display: 'flex',
   color: {
@@ -290,9 +296,23 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   borderRadius: 'sm',
   gap: 'text-to-visual',
   height: {
-    density: {
-      compact: 32,
-      regular: 48
+    orientation: {
+      horizontal: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
+    }
+  },
+  minHeight: {
+    orientation: {
+      vertical: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
     }
   },
   alignItems: 'center',
@@ -330,7 +350,7 @@ export function Tab(props: TabProps): ReactNode {
       originalProps={props}
       aria-labelledby={`${labelBehavior === 'hide' ? contentId : ''} ${ariaLabelledBy}`}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior, orientation}, props.styles)}>
       {({
           // @ts-ignore
           isMenu,
@@ -433,9 +453,7 @@ const tabPanel = style({
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  flexBasis: '0%',
-  minHeight: 0,
-  minWidth: 0
+  minHeight: 0
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {
