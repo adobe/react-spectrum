@@ -60,11 +60,10 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
 
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
-        
-        const component = {
+
+        const component: IExampleItem = {
           id: name,
           name: title,
-          description: `${title} documentation`,
           href: page.url
         };
 
@@ -135,7 +134,6 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
                   </CardPreview>
                   <Content>
                     <Text slot="title">{item.name}</Text>
-                    {item.description && <Text slot="description">{item.description}</Text>}
                   </Content>
                 </Card>
               </Link>

@@ -7,7 +7,11 @@ import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
+// @ts-ignore
+import reactAriaDocs from 'docs:react-aria-components';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
+// @ts-ignore
+import reactSpectrumDocs from 'docs:@react-spectrum/s2';
 import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
@@ -194,13 +198,30 @@ export default function SearchMenu(props: SearchMenuProps) {
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
-        
+        let lib: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
+        if (page.url.includes('react-aria')) {
+          lib = 'react-aria';
+        } else if (page.url.includes('internationalized')) {
+          lib = 'internationalized';
+        }
+
+        // get description from docs metadata
+        const componentKey = title.replace(/\s+/g, '');
+        let description: string | undefined = undefined;
+        if (lib === 'react-aria') {
+          // @ts-ignore
+          description = (reactAriaDocs as any)?.exports?.[componentKey]?.description;
+        } else if (lib === 'react-spectrum') {
+          // @ts-ignore
+          description = (reactSpectrumDocs as any)?.exports?.[componentKey]?.description;
+        }
+
         return {
           id: name,
           name: title,
           category: 'Components', // TODO
           href: page.url,
-          description: `${title} documentation` // TODO
+          description: description
         };
       });
 
