@@ -371,7 +371,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
   });
 
-  if (node.props.allowsEditing) {
+  if (node.props?.allowsEditing) {
     gridCellProps = isEditing ? {...gridCellProps, ...editModeProps} : mergeProps(gridCellProps, longPressProps, editModeProps);
   }
 
