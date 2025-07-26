@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../';
-import {LoadingSpinner, MyListBoxItem} from './utils';
+import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -343,7 +343,9 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: boolean, isLoading?: boolean}): JSX.Element {
+export function VirtualizedListBox(args) {
+  let heightProperty = args.orientation === 'horizontal' ? 'width' : 'height';
+  let widthProperty = args.orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
@@ -357,15 +359,16 @@ function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: 
   return (
     <Virtualizer
       layout={new ListLayout({
+        orientation: args.orientation,
         estimatedRowHeight: 25,
         estimatedHeadingHeight: 26,
         loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+      <ListBox orientation={args.orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
         <Collection items={sections}>
           {section => (
             <ListBoxSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <MyHeader style={{fontSize: '1.2em'}}>{section.name}</MyHeader>
               <Collection items={section.children}>
                 {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
               </Collection>
@@ -381,8 +384,15 @@ function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: 
 export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
   render: (args) => <VirtualizedListBoxRender {...args} />,
   args: {
+    orientation: 'vertical',
     variableHeight: false,
     isLoading: false
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
   }
 };
 
@@ -401,7 +411,7 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
   )
 };
 
-export let VirtualizedListBoxDnd: ListBoxStory = () => {
+export function VirtualizedListBoxDnd(args) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -432,13 +442,15 @@ export let VirtualizedListBoxDnd: ListBoxStory = () => {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          rowHeight: 25,
+          orientation: args.orientation,
+          rowHeight: args.orientation === 'horizontal' ? 45 : 25,
           gap: 8
         }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
+          orientation={args.orientation}
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={list.items}
@@ -448,6 +460,18 @@ export let VirtualizedListBoxDnd: ListBoxStory = () => {
       </Virtualizer>
     </div>
   );
+}
+
+VirtualizedListBoxDnd.story = {
+  args: {
+    orientation: 'vertical'
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
+  }
 };
 
 function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}: {minSize: number, maxSize: number, preserveAspectRatio: boolean}): JSX.Element {

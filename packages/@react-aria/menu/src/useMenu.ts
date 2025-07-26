@@ -62,6 +62,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     shouldFocusWrap,
+    orientation: 'vertical',
     linkBehavior: 'override'
   });
 
