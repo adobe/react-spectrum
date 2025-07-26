@@ -21,7 +21,7 @@ import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
-import React, {KeyboardEventHandler, ReactElement, ReactNode, RefObject, useContext, useEffect, useRef, useState} from 'react';
+import React, {KeyboardEventHandler, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {RootMenuTriggerState} from '@react-stately/menu';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -71,8 +71,17 @@ export const Menu = React.forwardRef(function Menu<T extends object>(props: Spec
     hasOpenSubmenu = nextMenuLevel != null;
   }
 
+  const context = useMemo(() => ({
+    popoverContainer,
+    trayContainerRef,
+    menu: domRef,
+    submenu: submenuRef,
+    rootMenuTriggerState,
+    state
+  }), [domRef, popoverContainer, rootMenuTriggerState, state]);
+
   return (
-    <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
+    <MenuStateContext.Provider value={context}>
       <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
       <FocusScope>
         <TrayHeaderWrapper

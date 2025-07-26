@@ -193,6 +193,7 @@ export default [{
         "react/display-name": OFF,
         "react/jsx-curly-spacing": [ERROR, "never"],
         "react/jsx-indent-props": [ERROR, ERROR],
+        "react/jsx-no-constructed-context-values": ERROR,
         "react/jsx-no-duplicate-props": ERROR,
         "react/jsx-no-literals": OFF,
         "react/jsx-no-undef": ERROR,

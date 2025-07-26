@@ -13,7 +13,7 @@ import {animate, useIntersectionObserver} from './utils';
 import {Button} from 'tailwind-starter/Button';
 import {ButtonContext, Key, TooltipTrigger} from 'react-aria-components';
 import {CogIcon, PencilIcon, ShareIcon} from 'lucide-react';
-import React, {ReactNode, useCallback, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {Tooltip} from 'tailwind-starter/Tooltip';
 
 export function MouseAnimation(): ReactNode {
@@ -132,6 +132,8 @@ export function MouseAnimation(): ReactNode {
     }
   };
 
+  const context = useMemo(() => ({isPressed}), [isPressed]);
+
   return (
     <div className="flex gap-2" ref={ref}>
       <svg
@@ -162,7 +164,7 @@ export function MouseAnimation(): ReactNode {
         <Tooltip>Share</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'settings'} onOpenChange={(o) => onOpenChange('settings', o)}>
-        <ButtonContext.Provider value={{isPressed}}>
+        <ButtonContext.Provider value={context}>
           <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
             <CogIcon aria-hidden className="inline w-5 h-5" />
           </Button>

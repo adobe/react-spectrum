@@ -72,8 +72,9 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(nul
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  const context = useMemo(() => ({items: props.items ?? props.defaultItems}), [props.defaultItems, props.items]);
   let content = useMemo(() => (
-    <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
+    <ListBoxContext.Provider value={context}>
       {typeof children === 'function'
         ? children({
           isOpen: false,
@@ -84,7 +85,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
         })
         : children}
     </ListBoxContext.Provider>
-  ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
+  ), [children, context, isDisabled, isInvalid, isRequired]);
 
   return (
     <CollectionBuilder content={content}>

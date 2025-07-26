@@ -15,7 +15,7 @@ import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
-import React, {type JSX, ReactElement, useRef} from 'react';
+import React, {type JSX, ReactElement, useMemo, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale} from '@react-aria/i18n';
@@ -47,28 +47,8 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     submenuRef: menuRef
   }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
-  let onBackButtonPress = () => {
-    submenuTriggerState.close();
-    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      parentMenuRef.current.focus();
-    }
-  };
 
   let {direction} = useLocale();
-  let mobileSubmenuKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'ArrowLeft':
-        if (direction === 'ltr') {
-          triggerRef.current?.focus();
-        }
-        break;
-      case 'ArrowRight':
-        if (direction === 'rtl') {
-          triggerRef.current?.focus();
-        }
-        break;
-    }
-  };
 
   let overlay;
 
@@ -104,7 +84,11 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     );
   }
 
-  let menuContext = {
+  const submenuContext = useMemo(() => ({
+    triggerRef, ...submenuTriggerProps
+  }), [submenuTriggerProps]);
+
+  let menuContext = useMemo(() => ({
     ...mergeProps(submenuProps, {
       ref: menuRef,
       UNSAFE_style: isMobile ? {
@@ -113,15 +97,33 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
       } : undefined,
       UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
       ...(isMobile && {
-        onBackButtonPress,
-        onKeyDown: mobileSubmenuKeyDown
+        onBackButtonPress() {
+          submenuTriggerState.close();
+          if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+            parentMenuRef.current.focus();
+          }
+        },
+        onKeyDown(e: KeyboardEvent) {
+          switch (e.key) {
+            case 'ArrowLeft':
+              if (direction === 'ltr') {
+                triggerRef.current?.focus();
+              }
+              break;
+            case 'ArrowRight':
+              if (direction === 'rtl') {
+                triggerRef.current?.focus();
+              }
+              break;
+          }
+        }
       })
     })
-  };
+  }), [direction, isMobile, menuRef, parentMenuRef, submenuProps, submenuTriggerState]);
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{triggerRef, ...submenuTriggerProps}}>{menuTrigger}</SubmenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={submenuContext}>{menuTrigger}</SubmenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>
