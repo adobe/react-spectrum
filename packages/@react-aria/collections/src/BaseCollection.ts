@@ -242,7 +242,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (textValue: string) => boolean): [Key | null, Key | null] {
+export function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (textValue: string) => boolean): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys
