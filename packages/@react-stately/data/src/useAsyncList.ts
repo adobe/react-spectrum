@@ -339,7 +339,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
+      if (data.state === 'loading' || data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
         return;
       }
 

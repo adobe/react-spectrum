@@ -24,7 +24,6 @@ import {
 } from '@react-aria/utils';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely, getInteractionModality} from '@react-aria/interactions';
-import {isElementVisible} from './isElementVisible';
 import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 export interface FocusScopeProps {
@@ -795,7 +794,6 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
         }
 
         if (filter(node as Element)
-          && isElementVisible(node as Element)
           && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))
         ) {

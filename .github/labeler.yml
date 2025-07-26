@@ -1,0 +1,3 @@
+needs translations:
+- changed-files:
+  - any-glob-to-any-file: ['**/intl/*.json']

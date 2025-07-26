@@ -1,0 +1,61 @@
+.react-aria-ColorSlider {
+  display: grid;
+  grid-template-areas: "label output"
+                       "track track";
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  width: 100%;
+  max-width: 300px;
+
+  .react-aria-Label {
+    grid-area: label;
+    color: var(--text-color);
+  }
+
+  .react-aria-SliderOutput {
+    grid-area: output;
+    width: 4ch;
+    text-align: end;
+    color: var(--text-color);
+  }
+
+  .react-aria-SliderTrack {
+    grid-area: track;
+    border-radius: 4px;
+  }
+
+  &[data-orientation=horizontal] {
+    .react-aria-SliderTrack {
+      height: 28px;
+    }
+
+    .react-aria-ColorThumb {
+      top: 50%;
+    }
+  }
+
+  &[data-orientation=vertical] {
+    height: 150px;
+    display: block;
+
+    .react-aria-Label,
+    .react-aria-SliderOutput {
+      display: none;
+    }
+
+    .react-aria-SliderTrack {
+      width: 28px;
+      height: 100%;
+    }
+
+    .react-aria-ColorThumb {
+      left: 50%;
+    }
+  }
+
+  &[data-disabled] {
+    .react-aria-SliderTrack {
+      background: gray !important;
+    }
+  }
+}

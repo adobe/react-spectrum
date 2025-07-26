@@ -252,7 +252,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             collection={collection}
             scrollRef={ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -513,7 +513,7 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-export const GridListLoadMoreItem = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const GridListLoadMoreItem = createLeafComponent('loader', function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

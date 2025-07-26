@@ -74,7 +74,14 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let data = selectData.get(state) || {};
   let {autoComplete, name = data.name, form = data.form, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
-  let {visuallyHiddenProps} = useVisuallyHidden();
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      // Prevent page scrolling.
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }
+  });
 
   useFormReset(props.selectRef, state.defaultSelectedKey, state.setSelectedKey);
   useFormValidation({

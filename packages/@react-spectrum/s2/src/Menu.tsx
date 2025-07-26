@@ -292,7 +292,6 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
-  fontWeight: 'light',
   textAlign: 'end',
   color: {
     default: 'gray-600',
@@ -443,7 +442,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>): React
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */

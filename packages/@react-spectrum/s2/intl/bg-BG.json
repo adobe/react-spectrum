@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "Всички избрани",
   "breadcrumbs.more": "Още елементи",
   "button.pending": "недовършено",
+  "calendar.invalidSelection": "{selectedCount, plural, one {Избраната дата не е налична} other {Избраните дати не са налични}}.",
   "combobox.noResults": "Няма резултати",
   "contextualhelp.help": "Помощ",
   "contextualhelp.info": "Информация",
+  "datepicker.endTime": "Краен час",
+  "datepicker.startTime": "Начален час",
+  "datepicker.time": "Време",
   "dialog.alert": "Сигнал",
   "dialog.dismiss": "Отхвърляне",
   "dropzone.replaceMessage": "Пуснете файл за замяна",
@@ -33,7 +37,7 @@
   "tag.hideButtonLabel": "Показване на по-малко",
   "tag.noTags": "Нито един",
   "tag.showAllButtonLabel": "Показване на всички ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Изчисти всички",
+  "toast.collapse": "Свиване",
+  "toast.showAll": "Покажи всички"
 }

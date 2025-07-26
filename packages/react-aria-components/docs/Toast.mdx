@@ -50,6 +50,7 @@ First, render a `ToastRegion` in the root of your app.
 
 ```tsx example hidden export=true
 import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {X} from 'lucide-react';
 
 // Define the type for your toast content.
 interface MyToastContent {
@@ -71,7 +72,7 @@ export function App() {
               <Text slot="title">{toast.content.title}</Text>
               <Text slot="description">{toast.content.description}</Text>
             </ToastContent>
-            <Button slot="close">x</Button>
+            <Button slot="close"><X size={16} /></Button>
           </Toast>
         )}
       </ToastRegion>
@@ -281,7 +282,7 @@ const queue = new ToastQueue<MyToastContent>({
         <Text slot="title">{toast.content.title}</Text>
         <Text slot="description">{toast.content.description}</Text>
       </ToastContent>
-      <Button slot="close">x</Button>
+      <Button slot="close"><X size={16} /></Button>
     </Toast>
   )}
 </ToastRegion>

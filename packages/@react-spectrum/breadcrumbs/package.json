@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/breadcrumbs",
-  "version": "3.9.19",
+  "version": "3.9.20",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,18 +40,18 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/breadcrumbs": "^3.5.26",
-    "@react-aria/focus": "^3.20.5",
-    "@react-aria/i18n": "^3.12.10",
-    "@react-aria/interactions": "^3.25.3",
-    "@react-aria/utils": "^3.29.1",
-    "@react-spectrum/button": "^3.16.16",
-    "@react-spectrum/menu": "^3.22.3",
-    "@react-spectrum/utils": "^3.12.6",
-    "@react-stately/collections": "^3.12.5",
-    "@react-types/breadcrumbs": "^3.7.14",
-    "@react-types/shared": "^3.30.0",
-    "@spectrum-icons/ui": "^3.6.17",
+    "@react-aria/breadcrumbs": "^3.5.27",
+    "@react-aria/focus": "^3.21.0",
+    "@react-aria/i18n": "^3.12.11",
+    "@react-aria/interactions": "^3.25.4",
+    "@react-aria/utils": "^3.30.0",
+    "@react-spectrum/button": "^3.17.0",
+    "@react-spectrum/menu": "^3.22.4",
+    "@react-spectrum/utils": "^3.12.7",
+    "@react-stately/collections": "^3.12.6",
+    "@react-types/breadcrumbs": "^3.7.15",
+    "@react-types/shared": "^3.31.0",
+    "@spectrum-icons/ui": "^3.6.18",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

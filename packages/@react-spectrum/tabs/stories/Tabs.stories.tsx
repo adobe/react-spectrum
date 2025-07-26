@@ -57,6 +57,12 @@ OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
+export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({maxWidth: 90, wrap: true});
+
+OrientationVerticalWrap.story = {
+  name: 'orientation: vertical, wrap: true'
+};
+
 export const DensityCompact: TabsStory = () => render({density: 'compact'});
 
 DensityCompact.story = {
@@ -653,6 +659,111 @@ function renderWithFalsyKey(props = {}) {
       </TabList>
       <TabPanels>
         <Item key="">
+          <Heading>Tab Body 1</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure
+            irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do
+            reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo
+            ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit
+            ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod
+            voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt
+            occaecat quis do. Consequat adipisicing irure Lorem commodo officia sint id. Velit sit
+            magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse
+            enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim
+            duis esse reprehenderit.
+          </Text>
+        </Item>
+        <Item key="val2">
+          <Heading>Tab Body 2</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure
+            irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do
+            reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo
+            ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit
+            ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod
+            voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt
+            occaecat quis do. Consequat adipisicing irure Lorem commodo officia sint id. Velit sit
+            magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse
+            enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim
+            duis esse reprehenderit.
+          </Text>
+        </Item>
+        <Item key="val3">
+          <Heading>Tab Body 3</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure
+            irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do
+            reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo
+            ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit
+            ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod
+            voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt
+            occaecat quis do. Consequat adipisicing irure Lorem commodo officia sint id. Velit sit
+            magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse
+            enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim
+            duis esse reprehenderit.
+          </Text>
+        </Item>
+        <Item key="val4">
+          <Heading>Tab Body 4</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure
+            irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do
+            reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo
+            ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit
+            ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod
+            voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt
+            occaecat quis do. Consequat adipisicing irure Lorem commodo officia sint id. Velit sit
+            magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse
+            enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim
+            duis esse reprehenderit.
+          </Text>
+        </Item>
+        <Item key="val5">
+          <Heading>Tab Body 5</Heading>
+          <Text>
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure
+            irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do
+            reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo
+            ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit
+            ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod
+            voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt
+            occaecat quis do. Consequat adipisicing irure Lorem commodo officia sint id. Velit sit
+            magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse
+            enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim
+            duis esse reprehenderit.
+          </Text>
+        </Item>
+      </TabPanels>
+    </Tabs>
+  );
+}
+
+function renderWithVerticalWrap(props = {}) {
+  return (
+    <Tabs
+      orientation="vertical"
+      aria-label="Tab example"
+      maxWidth={500}
+      onSelectionChange={action('onSelectionChange')}>
+      <TabList {...props}>
+        <Item key="val1">User Profile Settings</Item>
+        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
+        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val4">Tab 4</Item>
+        <Item key="val5">Tab 5</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="val1">
           <Heading>Tab Body 1</Heading>
           <Text>
             Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do

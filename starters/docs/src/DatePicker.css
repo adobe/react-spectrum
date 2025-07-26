@@ -1,0 +1,34 @@
+@import "./theme.css";
+
+.react-aria-DatePicker {
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+  }
+
+  .react-aria-DateInput {
+    padding: 4px 2.1875rem 4px 8px;
+  }
+
+  &[data-invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+
+.react-aria-Popover[data-trigger=DatePicker] {
+  max-width: unset;
+  padding: 15px;
+}

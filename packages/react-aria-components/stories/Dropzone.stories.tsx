@@ -14,14 +14,20 @@ import {action} from '@storybook/addon-actions';
 import {Button, DropZone, FileTrigger, Link, Text} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components/Dropzone'
-};
+  title: 'React Aria Components/Dropzone',
+  component: DropZone
+} as Meta<typeof DropZone>;
 
-export const DropzoneExampleWithFileTriggerLink = (props) => (
+export type DropzoneStory = StoryFn<typeof DropZone>;
+export type DropzoneStoryObj = StoryObj<typeof DropZone>;
+
+export const DropzoneExampleWithFileTriggerLink: DropzoneStory = (props) => (
   <div>
     <DropZone
       {...props}
@@ -38,7 +44,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithFileTriggerButton = (props) => (
+export const DropzoneExampleWithFileTriggerButton: DropzoneStory = (props) => (
   <div>
     <DropZone
       {...props}
@@ -53,7 +59,7 @@ export const DropzoneExampleWithFileTriggerButton = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
+export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = (props) => (
   <div>
     <Draggable />
     <DropZone
@@ -70,13 +76,12 @@ export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
   </div>
 );
 
-export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
+export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = (props) => (
   <div>
     <DropZone
       {...props}
       getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
@@ -87,13 +92,12 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
   </div>
 );
 
-export const DropZoneWithCaptureMobileOnly = (props) => (
+export const DropZoneWithCaptureMobileOnly: DropzoneStory = (props) => (
   <div>
     <DropZone
       {...props}
       getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
@@ -104,7 +108,7 @@ export const DropZoneWithCaptureMobileOnly = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithDraggableObject = (props) => (
+export const DropzoneExampleWithDraggableObject: DropzoneStory = (props) => (
   <div>
     <Draggable />
     <DropZone
@@ -120,7 +124,7 @@ export const DropzoneExampleWithDraggableObject = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithCopyableObject = (props) => (
+export const DropzoneExampleWithCopyableObject: DropzoneStory = (props) => (
   <div>
     <Copyable />
     <DropZone
@@ -163,7 +167,7 @@ const DropzoneWithRenderPropsExample = (props) => (
   </div>
 );
 
-export const DropzoneWithRenderProps = {
+export const DropzoneWithRenderProps: DropzoneStoryObj = {
   args: {
     isDisabled: false
   },
