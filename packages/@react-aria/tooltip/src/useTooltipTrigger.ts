@@ -139,9 +139,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
       'aria-describedby': state.isOpen ? tooltipId : undefined,
       ...mergeProps(focusableProps, hoverProps, {
         onPointerDown: onPressStart,
-        onKeyDown: onPressStart,
-        tabIndex: undefined
-      })
+        onKeyDown: onPressStart
+      }),
+      tabIndex: undefined
     },
     tooltipProps: {
       id: tooltipId
