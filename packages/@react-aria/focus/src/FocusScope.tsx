@@ -15,6 +15,7 @@ import {
   getActiveElement,
   getEventTarget,
   getOwnerDocument,
+  getOwnerWindow,
   isAndroid,
   isChrome,
   isFocusable,
@@ -371,7 +372,10 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
           focusedNode.current.focus();
-          (focusedNode.current as HTMLInputElement).select?.();
+
+          if (focusedNode.current instanceof getOwnerWindow(focusedNode.current).HTMLInputElement) {
+            focusedNode.current.select();
+          }
         } else if (activeScope && activeScope.current) {
           focusFirstInScope(activeScope.current);
         }
@@ -400,7 +404,9 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
           if (target && target.isConnected) {
             focusedNode.current = target;
             focusedNode.current?.focus();
-            (focusedNode.current as HTMLInputElement).select?.();
+            if (focusedNode.current instanceof getOwnerWindow(focusedNode.current).HTMLInputElement) {
+              focusedNode.current.select();
+            }
           } else if (activeScope.current) {
             focusFirstInScope(activeScope.current);
           }
@@ -488,7 +494,9 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   } else if (element != null) {
     try {
       element.focus();
-      (element as HTMLInputElement).select?.();
+      if (element instanceof getOwnerWindow(element).HTMLInputElement) {
+        element.select();
+      }
     } catch {
       // ignore
     }
