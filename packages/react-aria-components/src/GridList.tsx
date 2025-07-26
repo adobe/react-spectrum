@@ -90,7 +90,7 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
   [props, ref] = useContextProps(props, ref, GridListContext);
 
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} collectionRef={ref}>
       {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
     </CollectionBuilder>
   );

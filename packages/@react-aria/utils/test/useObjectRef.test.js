@@ -63,6 +63,17 @@ describe('useObjectRef', () => {
     expect(ref).toHaveBeenCalledTimes(1);
   });
 
+  it('should support additional properties on the ref', () => {
+    const TextField = React.forwardRef((props, forwardedRef) => {
+      const ref = useObjectRef(forwardedRef);
+      return <input {...props} ref={ref} />;
+    });
+
+    let ref = {current: null, foo: 'bar'};
+    render(<TextField ref={ref} />);
+    expect(ref.foo).toBe('bar');
+  });
+
   /**
    * This describe would completely fail if `useObjectRef` did not account
    * for order of execution and rendering, especially when other components

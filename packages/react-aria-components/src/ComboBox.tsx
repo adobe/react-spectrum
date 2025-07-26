@@ -87,7 +87,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
 
   return (
-    <CollectionBuilder content={content}>
+    <CollectionBuilder content={content} collectionRef={ref}>
       {collection => <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />}
     </CollectionBuilder>
   );

@@ -131,7 +131,7 @@ export const Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tabs(p
   ), [children, orientation]);
 
   return (
-    <CollectionBuilder content={children}>
+    <CollectionBuilder content={children} collectionRef={ref}>
       {collection => <TabsInner props={props} collection={collection} tabsRef={ref} />}
     </CollectionBuilder>
   );
