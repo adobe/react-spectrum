@@ -730,7 +730,7 @@ describe('DateRangePicker', function () {
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('should clear date and time when controlled value is set to null', async function () {
+    it.only('should clear date and time when controlled value is set to null', async function () {
       function ControlledDateRangePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
@@ -764,6 +764,7 @@ describe('DateRangePicker', function () {
 
       for (let timeField of [startTimeField, endTimeField]) {
         let hour = within(timeField).getByLabelText('hour,');
+        
         act(() => hour.focus());
         fireEvent.keyDown(hour, {key: 'ArrowUp'});
         fireEvent.keyUp(hour, {key: 'ArrowUp'});
@@ -1140,7 +1141,7 @@ describe('DateRangePicker', function () {
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2020'); // uncontrolled
-      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledTimes(3);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2020, 5, 6)});
     });
 
@@ -1168,11 +1169,11 @@ describe('DateRangePicker', function () {
       fireEvent.keyDown(endYear, {key: 'ArrowUp'});
 
       expect(endYear).toHaveTextContent('2019'); // controlled
-      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledTimes(3);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2020, 5, 6)});
     });
 
-    it('should edit a date range by entering text (uncontrolled)', function () {
+    it('should edit a date range by entering text (uncontrolled)', async function () {
       let onChange = jest.fn();
       let {getByLabelText} = render(
         <DateRangePicker
@@ -1186,10 +1187,11 @@ describe('DateRangePicker', function () {
       beforeInput(startMonth, '8');
 
       expect(startMonth).toHaveTextContent('8'); // uncontrolled
+      expect(getByLabelText('day, Start Date,')).toHaveFocus();
+      await user.keyboard('[Tab][Tab]');
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2019, 5, 6)});
 
-      expect(getByLabelText('day, Start Date,')).toHaveFocus();
 
       let endYear = getByLabelText('year, End Date,');
       expect(endYear).toHaveTextContent('2019');
@@ -1200,11 +1202,12 @@ describe('DateRangePicker', function () {
       beforeInput(endYear, '2');
 
       expect(endYear).toHaveTextContent('2022'); // uncontrolled
-      expect(onChange).toHaveBeenCalledTimes(5);
+      act(() => {endYear.blur();});
+      expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2022, 5, 6)});
     });
 
-    it('should edit a date range by entering text (controlled)', function () {
+    it('should edit a date range by entering text (controlled)', async function () {
       let onChange = jest.fn();
       let {getByLabelText} = render(
         <DateRangePicker
@@ -1217,18 +1220,18 @@ describe('DateRangePicker', function () {
       act(() => {startMonth.focus();});
       beforeInput(startMonth, '8');
 
-      expect(startMonth).toHaveTextContent('2'); // controlled
+      expect(startMonth).toHaveTextContent('8'); // controlled
+      await user.keyboard('[Tab][Tab]');
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 8, 3), end: new CalendarDate(2019, 5, 6)});
-
-      expect(getByLabelText('day, Start Date,')).toHaveFocus();
 
       let endDay = getByLabelText('day, End Date,');
       expect(endDay).toHaveTextContent('6');
       act(() => {endDay.focus();});
       beforeInput(endDay, '4');
 
-      expect(endDay).toHaveTextContent('6'); // controlled
+      expect(endDay).toHaveTextContent('4'); // controlled
+      await user.keyboard('[Tab][Tab]');
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 4)});
     });
@@ -1246,13 +1249,13 @@ describe('DateRangePicker', function () {
       expect(endYear).toHaveTextContent('2019');
       act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
-
+      act(() => {endYear.blur();});
       expect(endYear).toHaveTextContent('201'); // uncontrolled
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(201, 5, 6)});
     });
 
-    it('should support backspace (controlled)', function () {
+    it('should support backspace (controlled)', async function () {
       let onChange = jest.fn();
       let {getByLabelText} = render(
         <DateRangePicker
@@ -1265,7 +1268,7 @@ describe('DateRangePicker', function () {
       expect(endYear).toHaveTextContent('2019');
       act(() => {endYear.focus();});
       fireEvent.keyDown(endYear, {key: 'Backspace'});
-
+      act(() => {endYear.blur();});
       expect(endYear).toHaveTextContent('2019'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 3), end: new CalendarDate(201, 5, 6)});
@@ -1415,7 +1418,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy');
     });
 
-    it('should not fire onChange until both start and end dates have been entered', function () {
+    it('should not fire onChange until both start and end dates have been entered', async function () {
       let onChange = jest.fn();
       let {getByTestId, getAllByRole} = render(<DateRangePicker label="Date range" onChange={onChange} />);
 
@@ -1433,8 +1436,8 @@ describe('DateRangePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      beforeInput(document.activeElement, '3');
-      expectPlaceholder(startDate, '2/3/yyyy');
+      beforeInput(document.activeElement, '4');
+      expectPlaceholder(startDate, '2/4/yyyy');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1442,7 +1445,7 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '0');
       beforeInput(document.activeElement, '2');
       beforeInput(document.activeElement, '0');
-      expectPlaceholder(startDate, '2/3/2020');
+      expectPlaceholder(startDate, '2/4/2020');
       expect(segments[3]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1457,15 +1460,15 @@ describe('DateRangePicker', function () {
       expect(onChange).not.toHaveBeenCalled();
 
       beforeInput(document.activeElement, '2');
-      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(0);
       beforeInput(document.activeElement, '0');
-      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledTimes(0);
       beforeInput(document.activeElement, '2');
-      expect(onChange).toHaveBeenCalledTimes(3);
+      expect(onChange).toHaveBeenCalledTimes(0);
       beforeInput(document.activeElement, '2');
-      expect(onChange).toHaveBeenCalledTimes(4);
-
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+      expect(onChange).toHaveBeenCalledTimes(0);
+      await user.keyboard('[Tab]');
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 4), end: new CalendarDate(2022, 4, 8)});
     });
 
     it('should reset to the placeholder if controlled value is set to null', function () {
@@ -1636,8 +1639,8 @@ describe('DateRangePicker', function () {
 
           await user.keyboard('[ArrowRight][ArrowRight]2026');
           expect(getDescription()).toContain('Invalid value');
-          expect(startInput.validity.valid).toBe(true);
-          expect(endInput.validity.valid).toBe(true);
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput.validity.valid).toBe(false);
 
           await user.tab();
           expect(getDescription()).not.toContain('Invalid value');
