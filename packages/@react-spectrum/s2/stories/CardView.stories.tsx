@@ -44,7 +44,7 @@ const meta: Meta<typeof CardView> = {
   args: {
     onLoadMore: fn()
   },
-  excludeStories: ['ExampleRender']
+  excludeStories: ['ExampleRender', 'PhotoCard']
 };
 
 export default meta;
@@ -78,7 +78,7 @@ const avatarSize = {
   XL: 32
 } as const;
 
-function PhotoCard({item, layout}: {item: Item, layout: string}) {
+export function PhotoCard({item, layout}: {item: Item, layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
       {({size}) => (<>

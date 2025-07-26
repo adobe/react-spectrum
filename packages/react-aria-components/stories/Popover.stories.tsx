@@ -13,6 +13,7 @@
 import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useEffect, useRef, useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Popover',

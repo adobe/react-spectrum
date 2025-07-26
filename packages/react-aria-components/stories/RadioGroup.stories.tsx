@@ -14,6 +14,7 @@ import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOver
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/RadioGroup',

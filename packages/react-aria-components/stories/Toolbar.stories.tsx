@@ -16,6 +16,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {Orientation} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Toolbar',

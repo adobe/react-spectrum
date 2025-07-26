@@ -13,6 +13,7 @@
 import {ColorSwatch, ColorSwatchProps} from '../src/ColorSwatch';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorSwatch',

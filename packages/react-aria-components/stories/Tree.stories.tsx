@@ -19,6 +19,7 @@ import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Tree',

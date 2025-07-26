@@ -15,6 +15,7 @@ import {ColorSliderExampleRender} from './ColorSlider.stories';
 import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from 'react-stately';
 import React, {JSX, useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorArea',

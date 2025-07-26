@@ -18,6 +18,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
+import './styles.css';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
@@ -177,69 +178,6 @@ export const ListBoxDnd: AlbumListBoxStory = (props) => {
 };
 
 ListBoxDnd.story = {
-  args: {
-    layout: 'stack',
-    orientation: 'horizontal'
-  },
-  argTypes: {
-    layout: {
-      control: 'radio',
-      options: ['stack', 'grid']
-    },
-    orientation: {
-      control: 'radio',
-      options: ['horizontal', 'vertical']
-    }
-  }
-};
-
-export const ListBoxDndCustomDropIndicator: StoryFn<ListBoxProps<typeof albums[0]>> = (props) => {
-  let list = useListData({
-    initialItems: albums
-  });
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
-      }
-    },
-    renderDropIndicator(target, keys, draggedKey) {
-      return (
-        <DropIndicator target={target} style={({isDropTarget}) => ({width: '150px', height: '150px', background: isDropTarget ? 'blue' : 'transparent', color: 'white', display: isDropTarget ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'})}>
-          <div>
-            keys: {keys ? Array.from(keys).join(', ') : 'undefined'}
-          </div>
-          <div>
-            draggedKey: {draggedKey}
-          </div>
-        </DropIndicator>
-      );
-    }
-  });
-
-  return (
-    <ListBox
-      {...props}
-      aria-label="Albums"
-      items={list.items}
-      selectionMode="multiple"
-      dragAndDropHooks={dragAndDropHooks}>
-      {item => (
-        <ListBoxItem>
-          <img src={item.image} alt="" />
-          <Text slot="label">{item.title}</Text>
-          <Text slot="description">{item.artist}</Text>
-        </ListBoxItem>
-      )}
-    </ListBox>
-  );
-};
-
-ListBoxDndCustomDropIndicator.story = {
   args: {
     layout: 'stack',
     orientation: 'horizontal'

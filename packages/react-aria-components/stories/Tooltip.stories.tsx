@@ -13,6 +13,7 @@
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Tooltip',
@@ -331,4 +332,18 @@ export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoun
     }
   },
   render: (args) => <TooltipArrowBoundaryOffsetExampleRender {...args} />
+};
+
+export const TooltipContainerPaddingExample: StoryObj<typeof Tooltip> = {
+  render: (args) => (
+    <TooltipTrigger>
+      <Button style={{position: 'absolute', top: 0, left: 0}}>Tooltip trigger</Button>
+      <Tooltip {...args}>
+        I am a tooltip
+      </Tooltip>
+    </TooltipTrigger>
+  ),
+  args: {
+    containerPadding: 10
+  }
 };

@@ -44,8 +44,7 @@ const modalOverlayStyles = style({
   transitionDuration: {
     default: 250,
     isExiting: 130
-  },
-  zIndex: 9999
+  }
 });
 
 /**

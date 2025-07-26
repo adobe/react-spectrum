@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 const meta: Meta<typeof TagGroup> = {
   title: 'React Aria Components/TagGroup',
