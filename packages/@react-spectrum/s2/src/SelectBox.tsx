@@ -10,10 +10,11 @@
  */
 
 import {Checkbox} from './Checkbox';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {SelectBoxContext} from './SelectBoxGroup';
+import {ContextValue} from 'react-aria-components';
+import {SelectBoxContext, SelectBoxGroupContext} from './SelectBoxGroup';
 import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -33,7 +34,7 @@ export interface SelectBoxProps extends StyleProps {
   isDisabled?: boolean
 }
 
-export const SelectBoxItemContext = createContext<any>(null);
+export const SelectBoxSpectrumContext = createContext<ContextValue<Partial<SelectBoxProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const selectBoxStyles = style({
   display: 'flex',
@@ -185,7 +186,11 @@ const textContainer = style({
   },
   gap: 'text-to-visual',
   color: {
-    isDisabled: 'disabled'
+    default: 'neutral',
+    isDisabled: {
+      default: 'gray-600',
+      forcedColors: 'GrayText'
+    }
   }
 }, getAllowedOverrides());
 
@@ -216,14 +221,13 @@ const SelectBoxRenderPropsContext = createContext<{
  * Works as content within a GridListItem for automatic grid navigation.
  */
 export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: SelectBoxProps, ref: FocusableRef<HTMLDivElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, SelectBoxItemContext);
+  [props, ref] = useSpectrumContextProps(props, ref, SelectBoxSpectrumContext);
   let {children, value, isDisabled: individualDisabled = false, UNSAFE_style} = props;
   let divRef = useRef<HTMLDivElement | null>(null);
   let domRef = useFocusableRef(ref, divRef);
   
   let contextValue = useContext(SelectBoxContext);
   let {
-    size = 'M',
     orientation = 'vertical',
     selectedKeys,
     isDisabled: groupDisabled = false
@@ -231,9 +235,21 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
 
   let renderProps = useContext(SelectBoxRenderPropsContext);
 
+  const size = 'M'; //Only medium size is supported
   const isDisabled = individualDisabled || groupDisabled;
   const isSelected = selectedKeys === 'all' || (selectedKeys && selectedKeys.has(value));
   const showCheckbox = isSelected || (!isDisabled && renderProps.isHovered);
+  
+  const childrenArray = React.Children.toArray(children);
+  const iconSlot = childrenArray.find((child: any) => child?.props?.slot === 'icon');
+  const textSlot = childrenArray.find((child: any) => child?.props?.slot === 'text');
+  const descriptionSlot = childrenArray.find((child: any) => child?.props?.slot === 'description');
+  const otherChildren = childrenArray.filter((child: any) => 
+    !['icon', 'text', 'description'].includes(child?.props?.slot)
+  );
+
+  const hasIcon = !!iconSlot;
+  const hasDescription = !!descriptionSlot;
   
   return (
     <div
@@ -258,48 +274,80 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
           <Checkbox 
             isSelected={isSelected}
             isDisabled={isDisabled}
-            size={size}
             isReadOnly
-            excludeFromTabOrder />
+            excludeFromTabOrder
+            aria-label={isSelected ? 'Selected' : 'Select'} />
         </div>
       )}
+      
       {orientation === 'horizontal' ? (
+        // Horizontal layout with all combinations
         <>
-          {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
+          {hasIcon && (
             <div className={iconContainer({size, orientation, isDisabled})}>
-              {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
+              {iconSlot}
             </div>
           )}
           
-          <div className={contentContainer({size, orientation}, props.styles)}>
-            <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-              {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
-              
-              {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description') && (
-                <div className={descriptionText({size, orientation, isDisabled})}>
-                  {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'description')}
-                </div>
-              )}
+          {hasIcon || hasDescription ? (
+            // Standard horizontal layout with icon and/or description
+            <div className={contentContainer({size, orientation}, props.styles)}>
+              <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+                {textSlot}
+                
+                {hasDescription && (
+                  <div className={descriptionText({size, orientation, isDisabled})}>
+                    {descriptionSlot}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            // Text-only horizontal layout (optimized)
+            <div className={style({
+              display: 'flex',
+              alignItems: 'center', 
+              justifyContent: 'center',
+              flexGrow: 1,
+              textAlign: 'center',
+              paddingInline: 'edge-to-text'
+            })}>
+              <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+                {textSlot}
+              </div>
+            </div>
+          )}
         </>
       ) : (
+        // Vertical layout with icon and/or description
         <>
-          {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon') && (
+          {hasIcon && (
             <div className={iconContainer({size, orientation, isDisabled})}>
-              {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'icon')}
+              {iconSlot}
             </div>
           )}
           
           <div className={textContainer({size, orientation, isDisabled})}>
-            {React.Children.toArray(children).find((child: any) => child?.props?.slot === 'text')}
+            {textSlot}
           </div>
+          
+          {hasDescription && (
+            <div className={style({
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              marginTop: 'text-to-visual'
+            })}>
+              <div className={descriptionText({size, orientation, isDisabled})}>
+                {descriptionSlot}
+              </div>
+            </div>
+          )}
         </>
       )}
       
-      {React.Children.toArray(children).filter((child: any) => 
-        !['icon', 'text', 'description'].includes(child?.props?.slot)
-      )}
+      {otherChildren}
     </div>
   );
 });

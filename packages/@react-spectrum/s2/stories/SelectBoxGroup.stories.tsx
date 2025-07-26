@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilledSVG from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
 import StarSVG from '../s2wf-icons/S2_Icon_Star_20_N.svg';
+import type {Selection} from 'react-aria-components';
 
 const StarIcon = createIcon(StarSVG);
 const StarFilledIcon = createIcon(StarFilledSVG);
@@ -40,10 +41,6 @@ const meta: Meta<typeof SelectBoxGroup> = {
       control: 'select',
       options: ['single', 'multiple']
     },
-    size: {
-      control: 'select',
-      options: ['S', 'M', 'L', 'XL']
-    },
     orientation: {
       control: 'select',
       options: ['vertical', 'horizontal']
@@ -58,7 +55,6 @@ const meta: Meta<typeof SelectBoxGroup> = {
   },
   args: {
     selectionMode: 'single',
-    size: 'M',
     orientation: 'vertical',
     numColumns: 2,
     gutterWidth: 'default',
@@ -105,131 +101,64 @@ export const MultipleSelection: Story = {
   args: {
     selectionMode: 'multiple',
     label: 'Select your preferred services',
-    defaultValue: ['aws', 'gcp'],
-    necessityIndicator: 'icon'
+    defaultSelectedKeys: new Set(['aws', 'gcp']),
+    necessityIndicator: 'icon',
+    numColumns: 3,
+    gutterWidth: 'default'
   },
   render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="aws">
-        <Server slot="icon" />
-        <Text slot="text">Amazon Web Services</Text>
-      </SelectBox>
-      <SelectBox value="azure">
-        <AlertNotice slot="icon" />
-        <Text slot="text">Microsoft Azure</Text>
-      </SelectBox>
-      <SelectBox value="gcp">
-        <Paperairplane slot="icon" />
-        <Text slot="text">Google Cloud Platform</Text>
-      </SelectBox>
-      <SelectBox value="oracle">
-        <Server slot="icon" />
-        <Text slot="text">Oracle Cloud</Text>
-      </SelectBox>
-    </SelectBoxGroup>
-  )
-};
-
-// Grid Navigation Testing
-export const GridNavigation: Story = {
-  args: {
-    label: 'Test Grid Navigation',
-    numColumns: 3
-  },
-  render: (args) => (
-    <div style={{maxWidth: 600}}>
+    <div style={{maxWidth: 800}}>
       <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
-        Focus any item (best done by clicking to the side of the group and hitting the tab key) and using arrow keys to navigate:
+        Focus any item and use arrow keys for grid navigation:
       </p>
       <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="1">
-          <Text slot="text">Item 1</Text>
+        <SelectBox value="aws">
+          <Server slot="icon" />
+          <Text slot="text">Amazon Web Services</Text>
+          <Text slot="description">Reliable cloud infrastructure</Text>
         </SelectBox>
-        <SelectBox value="2">
-          <Text slot="text">Item 2</Text>
+        <SelectBox value="azure">
+          <AlertNotice slot="icon" />
+          <Text slot="text">Microsoft Azure</Text>
+          <Text slot="description">Enterprise cloud solutions</Text>
         </SelectBox>
-        <SelectBox value="3">
-          <Text slot="text">Item 3</Text>
+        <SelectBox value="gcp">
+          <Paperairplane slot="icon" />
+          <Text slot="text">Google Cloud Platform</Text>
+          <Text slot="description">Modern cloud services</Text>
         </SelectBox>
-        <SelectBox value="4">
-          <Text slot="text">Item 4</Text>
+        <SelectBox value="oracle">
+          <Server slot="icon" />
+          <Text slot="text">Oracle Cloud</Text>
+          <Text slot="description">Database-focused cloud</Text>
         </SelectBox>
-        <SelectBox value="5">
-          <Text slot="text">Item 5</Text>
+        <SelectBox value="ibm">
+          <Server slot="icon" />
+          <Text slot="text">IBM Cloud</Text>
+          <Text slot="description">Hybrid cloud solutions</Text>
         </SelectBox>
-        <SelectBox value="6">
-          <Text slot="text">Item 6</Text>
+        <SelectBox value="alibaba">
+          <Paperairplane slot="icon" />
+          <Text slot="text">Alibaba Cloud</Text>
+          <Text slot="description">Asia-focused services</Text>
+        </SelectBox>
+        <SelectBox value="digitalocean">
+          <Server slot="icon" />
+          <Text slot="text">DigitalOcean</Text>
+          <Text slot="description">Developer-friendly platform</Text>
+        </SelectBox>
+        <SelectBox value="linode">
+          <AlertNotice slot="icon" />
+          <Text slot="text">Linode</Text>
+          <Text slot="description">Simple cloud computing</Text>
+        </SelectBox>
+        <SelectBox value="vultr">
+          <Paperairplane slot="icon" />
+          <Text slot="text">Vultr</Text>
+          <Text slot="description">High performance cloud</Text>
         </SelectBox>
       </SelectBoxGroup>
     </div>
-  )
-};
-
-export const FormValidation: Story = {
-  args: {
-    label: 'Required Selection',
-    isRequired: true,
-    errorMessage: 'Please select at least one option',
-    isInvalid: true
-  },
-  render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="option1">
-        <Text slot="text">Option 1</Text>
-      </SelectBox>
-      <SelectBox value="option2">
-        <Text slot="text">Option 2</Text>
-      </SelectBox>
-    </SelectBoxGroup>
-  )
-};
-
-// Size Variations
-export const SizeVariations: Story = {
-  render: () => (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
-      {(['S', 'M', 'L', 'XL'] as const).map((size) => (
-        <SelectBoxGroup
-          key={size}
-          size={size}
-          label={`Size ${size}`}
-          onSelectionChange={action(`onSelectionChange-${size}`)}>
-          <SelectBox value="option1">
-            <Server slot="icon" />
-            <Text slot="text">Option 1</Text>
-          </SelectBox>
-          <SelectBox value="option2">
-            <AlertNotice slot="icon" />
-            <Text slot="text">Option 2</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      ))}
-    </div>
-  )
-};
-
-// Horizontal Orientation
-export const HorizontalOrientation: Story = {
-  args: {
-    orientation: 'horizontal',
-    label: 'Favorite cities',
-    numColumns: 1
-  },
-  render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="paris">
-        <Text slot="text">Paris</Text>
-        <Text slot="description">France</Text>
-      </SelectBox>
-      <SelectBox value="rome">
-        <Text slot="text">Rome</Text>
-        <Text slot="description">Italy</Text>
-      </SelectBox>
-      <SelectBox value="tokyo">
-        <Text slot="text">Tokyo</Text>
-        <Text slot="description">Japan</Text>
-      </SelectBox>
-    </SelectBoxGroup>
   )
 };
 
@@ -254,116 +183,131 @@ export const DisabledGroup: Story = {
   )
 };
 
-export const IndividualDisabled: Story = {
-  args: {
-    label: 'Some items disabled',
-    defaultValue: 'option2'
-  },
-  render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="option1" isDisabled>
-        <Text slot="text">Option 1 (Disabled)</Text>
-      </SelectBox>
-      <SelectBox value="option2">
-        <Text slot="text">Option 2</Text>
-      </SelectBox>
-      <SelectBox value="option3" isDisabled>
-        <Text slot="text">Option 3 (Disabled)</Text>
-      </SelectBox>
-      <SelectBox value="option4">
-        <Text slot="text">Option 4</Text>
-      </SelectBox>
-    </SelectBoxGroup>
-  )
-};
-
-function ControlledStory() {
-  const [value, setValue] = useState('option2');
+function InteractiveExamplesStory() {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['enabled1', 'starred2']));
 
   return (
-    <div>
-      <p>Current value: {value}</p>
+    <div style={{maxWidth: 800}}>
+      <h3 style={{marginBottom: 16, fontSize: 16}}>Interactive Features Combined</h3>
+      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
+        Current selection: {selectedKeys === 'all' ? 'All' : Array.from(selectedKeys).join(', ') || 'None'}
+      </p>
+      
       <SelectBoxGroup
-        label="Controlled SelectBoxGroup"
-        value={value}
-        onSelectionChange={(val) => setValue(val as string)}>
-        <SelectBox value="option1">
-          <Text slot="text">Option 1</Text>
-        </SelectBox>
-        <SelectBox value="option2">
-          <Text slot="text">Option 2</Text>
-        </SelectBox>
-        <SelectBox value="option3">
-          <Text slot="text">Option 3</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-      <button
-        onClick={() => setValue('option1')}
-        style={{marginTop: 16, marginRight: 8}}>
-        Set to Option 1
-      </button>
-      <button onClick={() => setValue('option3')}>Set to Option 3</button>
-    </div>
-  );
-}
-
-export const Controlled: Story = {
-  render: () => <ControlledStory />
-};
-
-function DynamicIconsStory() {
-  const [selectedValues, setSelectedValues] = useState<Set<string>>(
-    new Set()
-  );
-
-  return (
-    <SelectBoxGroup
-      label="Rate these items"
-      selectionMode="multiple"
-      onSelectionChange={(val) => {
-        const values = Array.isArray(val) ? val : [val];
-        setSelectedValues(new Set(values));
-        action('onSelectionChange')(val);
-      }}>
-      {['item1', 'item2', 'item3', 'item4'].map((value) => (
-        <SelectBox key={value} value={value}>
-          {selectedValues.has(value) ? (
+        label="Combined Interactive Features"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        numColumns={4}
+        gutterWidth="default"
+        onSelectionChange={(selection) => {
+          setSelectedKeys(selection);
+          action('onSelectionChange')(selection);
+        }}>
+        
+        {/* Enabled items with dynamic icons */}
+        <SelectBox value="enabled1">
+          {selectedKeys !== 'all' && selectedKeys.has('enabled1') ? (
             <StarFilledIcon slot="icon" />
           ) : (
             <StarIcon slot="icon" />
           )}
-          <Text slot="text">Item {value.slice(-1)}</Text>
+          <Text slot="text">Enabled Item 1</Text>
+          <Text slot="description">Status updates</Text>
         </SelectBox>
-      ))}
-    </SelectBoxGroup>
+        
+        <SelectBox value="enabled2">
+          {selectedKeys !== 'all' && selectedKeys.has('enabled2') ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <StarIcon slot="icon" />
+          )}
+          <Text slot="text">Enabled Item 2</Text>
+          <Text slot="description">Click to toggle</Text>
+        </SelectBox>
+        
+        {/* Disabled item */}
+        <SelectBox value="disabled1" isDisabled>
+          <AlertNotice slot="icon" />
+          <Text slot="text">Disabled Item</Text>
+          <Text slot="description">Cannot select</Text>
+        </SelectBox>
+        
+        <SelectBox value="starred1">
+          {selectedKeys !== 'all' && selectedKeys.has('starred1') ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <StarIcon slot="icon" />
+          )}
+          <Text slot="text">Starred Item 1</Text>
+          <Text slot="description">Click to star</Text>
+        </SelectBox>
+        
+        <SelectBox value="starred2">
+          {selectedKeys !== 'all' && selectedKeys.has('starred2') ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <StarIcon slot="icon" />
+          )}
+          <Text slot="text">Starred Item 2</Text>
+          <Text slot="description">Click to star</Text>
+        </SelectBox>
+        
+        {/* Another disabled item */}
+        <SelectBox value="disabled2" isDisabled>
+          <Server slot="icon" />
+          <Text slot="text">Disabled Service</Text>
+          <Text slot="description">Cannot select</Text>
+        </SelectBox>
+        
+        <SelectBox value="dynamic1">
+          {selectedKeys !== 'all' && selectedKeys.has('dynamic1') ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <Paperairplane slot="icon" />
+          )}
+          <Text slot="text">Dynamic Icon</Text>
+          <Text slot="description">Click to activate</Text>
+        </SelectBox>
+        
+        <SelectBox value="controllable">
+          {selectedKeys !== 'all' && selectedKeys.has('controllable') ? (
+            <StarFilledIcon slot="icon" />
+          ) : (
+            <StarIcon slot="icon" />
+          )}
+          <Text slot="text">Controllable</Text>
+          <Text slot="description">External control available</Text>
+        </SelectBox>
+        
+      </SelectBoxGroup>
+      
+      <div style={{marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+        <Button 
+          onPress={() => setSelectedKeys(new Set(['starred1', 'starred2', 'dynamic1']))}
+          variant="secondary">
+          Select Favorites
+        </Button>
+        <Button 
+          onPress={() => setSelectedKeys(new Set())}
+          variant="secondary">
+          Clear All
+        </Button>
+        <Button 
+          onPress={() => setSelectedKeys(new Set(['enabled1', 'enabled2', 'controllable']))}
+          variant="secondary">
+          Select Enabled Only
+        </Button>
+      </div>
+    </div>
   );
 }
 
-export const DynamicIcons: Story = {
-  render: () => <DynamicIconsStory />
+export const InteractiveExamples: Story = {
+  render: () => <InteractiveExamplesStory />
 };
 
-export const MultipleColumns: Story = {
-  args: {
-    label: 'Choose options',
-    numColumns: 4,
-    gutterWidth: 'spacious'
-  },
-  render: (args) => (
-    <div style={{maxWidth: 800}}>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        {Array.from({length: 8}, (_, i) => (
-          <SelectBox key={i} value={`option${i + 1}`}>
-            <Text slot="text">Option {i + 1}</Text>
-          </SelectBox>
-        ))}
-      </SelectBoxGroup>
-    </div>
-  )
-};
-
-function FormSubmissionExample() {
-  const [selectedValues, setSelectedValues] = useState<string[]>(['newsletter']);
+function FormAndLayoutStory() {
+  const [selectedPreferences, setSelectedPreferences] = useState<Selection>(new Set(['newsletter', 'security']));
   const [submittedData, setSubmittedData] = useState<string[] | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -375,41 +319,308 @@ function FormSubmissionExample() {
   };
 
   return (
-    <div style={{maxWidth: 400}}>
+    <div style={{maxWidth: 1000}}>
+      <h3 style={{marginBottom: 16, fontSize: 16}}>Form Integration with Multiple Columns</h3>
+      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
+        8-item grid with form integration demonstrating both layout and submission capabilities.
+      </p>
+      
       <form onSubmit={handleSubmit}>
         <SelectBoxGroup
           selectionMode="multiple"
-          value={selectedValues}
-          onSelectionChange={(val) => setSelectedValues(val as string[])}
+          selectedKeys={selectedPreferences}
+          onSelectionChange={(selection) => {
+            setSelectedPreferences(selection);
+            action('onSelectionChange')(selection);
+          }}
           name="preferences"
-          label="Email Preferences"
-          isRequired>
+          label="Communication Preferences (Required)"
+          isRequired
+          numColumns={4}
+          gutterWidth="spacious">
+          
           <SelectBox value="newsletter">
+            <AlertNotice slot="icon" />
             <Text slot="text">Newsletter</Text>
+            <Text slot="description">Weekly updates and news</Text>
           </SelectBox>
+          
           <SelectBox value="marketing">
-            <Text slot="text">Marketing Updates</Text>
+            <Paperairplane slot="icon" />
+            <Text slot="text">Marketing</Text>
+            <Text slot="description">Product promotions</Text>
           </SelectBox>
+          
           <SelectBox value="product">
+            <Server slot="icon" />
             <Text slot="text">Product News</Text>
+            <Text slot="description">Feature announcements</Text>
           </SelectBox>
+          
           <SelectBox value="security">
+            <AlertNotice slot="icon" />
             <Text slot="text">Security Alerts</Text>
+            <Text slot="description">Important updates</Text>
           </SelectBox>
+          
+          <SelectBox value="events">
+            <Paperairplane slot="icon" />
+            <Text slot="text">Events</Text>
+            <Text slot="description">Webinars & conferences</Text>
+          </SelectBox>
+          
+          <SelectBox value="surveys">
+            <Server slot="icon" />
+            <Text slot="text">Surveys</Text>
+            <Text slot="description">Help us improve</Text>
+          </SelectBox>
+          
+          <SelectBox value="community">
+            <AlertNotice slot="icon" />
+            <Text slot="text">Community</Text>
+            <Text slot="description">Forum notifications</Text>
+          </SelectBox>
+          
+          <SelectBox value="support">
+            <Server slot="icon" />
+            <Text slot="text">Support</Text>
+            <Text slot="description">Help & assistance</Text>
+          </SelectBox>
+          
         </SelectBoxGroup>
         
-        <Button type="submit" variant="accent" >
-          Save Preferences
-        </Button>
+        <div style={{marginTop: 24, display: 'flex', gap: 12, alignItems: 'center'}}>
+          <Button type="submit" variant="accent">
+            Save Preferences
+          </Button>
+          <Button 
+            type="button"
+            onPress={() => setSelectedPreferences(new Set(['newsletter', 'security']))}
+            variant="secondary">
+            Reset to Default
+          </Button>
+          <span style={{fontSize: 14, color: '#666'}}>
+            Selected: {selectedPreferences === 'all' ? 'All' : selectedPreferences.size} item{(selectedPreferences === 'all' || selectedPreferences.size !== 1) ? 's' : ''}
+          </span>
+        </div>
       </form>
       
       {submittedData && (
-        <Text>Submitted: {submittedData.join(', ')}</Text>
+        <div style={{marginTop: 20, padding: 16, backgroundColor: '#f0f8ff', borderRadius: 8, border: '1px solid #b3d9ff'}}>
+          <div><strong>Form Submitted Successfully!</strong></div>
+          <div style={{marginTop: 8}}>
+            Preferences: {submittedData.length > 0 ? submittedData.join(', ') : 'None selected'}
+          </div>
+          <div style={{marginTop: 4, fontSize: 12, color: '#666'}}>
+            Form data would be sent to server with name "preferences"
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-export const FormSubmission: Story = {
-  render: () => <FormSubmissionExample />
+export const FormAndLayout: Story = {
+  render: () => <FormAndLayoutStory />
+};
+
+export const AllSlotCombinations: Story = {
+  render: () => (
+    <div style={{maxWidth: 1200, padding: 20}}>
+      <h2 style={{marginBottom: 20, fontSize: 18, fontWeight: 'bold'}}>All Slot Combinations</h2>
+      
+      {/* Vertical Orientation */}
+      <div style={{marginBottom: 40}}>
+        <h3 style={{marginBottom: 16, fontSize: 16}}>Vertical Orientation</h3>
+        <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
+          
+          {/* Text Only */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Text Only</h4>
+            <SelectBoxGroup 
+              orientation="vertical" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="text-only">
+                <Text slot="text">Simple Text</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Icon + Text */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Icon + Text</h4>
+            <SelectBoxGroup 
+              orientation="vertical" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="icon-text">
+                <Server slot="icon" />
+                <Text slot="text">With Icon</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Text + Description */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Text + Description</h4>
+            <SelectBoxGroup 
+              orientation="vertical" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="text-desc">
+                <Text slot="text">Main Text</Text>
+                <Text slot="description">Additional description</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Icon + Text + Description */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Icon + Text + Description</h4>
+            <SelectBoxGroup 
+              orientation="vertical" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="all-vertical">
+                <AlertNotice slot="icon" />
+                <Text slot="text">Full Vertical</Text>
+                <Text slot="description">Complete description</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Horizontal Orientation */}
+      <div>
+        <h3 style={{marginBottom: 16, fontSize: 16}}>Horizontal Orientation</h3>
+        <div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
+          
+          {/* Text Only */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Text Only (Optimized)</h4>
+            <SelectBoxGroup 
+              orientation="horizontal" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="h-text-only">
+                <Text slot="text">Simple Horizontal Text</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Icon + Text */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Icon + Text</h4>
+            <SelectBoxGroup 
+              orientation="horizontal" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="h-icon-text">
+                <Paperairplane slot="icon" />
+                <Text slot="text">Horizontal with Icon</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Text + Description */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Text + Description</h4>
+            <SelectBoxGroup 
+              orientation="horizontal" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="h-text-desc">
+                <Text slot="text">Main Horizontal Text</Text>
+                <Text slot="description">Horizontal description text</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+          {/* Icon + Text + Description */}
+          <div>
+            <h4 style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Icon + Text + Description</h4>
+            <SelectBoxGroup 
+              orientation="horizontal" 
+              numColumns={1}
+              onSelectionChange={action('onSelectionChange')}>
+              <SelectBox value="h-all">
+                <Server slot="icon" />
+                <Text slot="text">Complete Horizontal</Text>
+                <Text slot="description">Full horizontal layout with all elements</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Comparison Grid */}
+      <div style={{marginTop: 40}}>
+        <h3 style={{marginBottom: 16, fontSize: 16}}>Side-by-Side Comparison</h3>
+        <SelectBoxGroup 
+          label="Mixed Layout Examples"
+          numColumns={4}
+          gutterWidth="spacious"
+          onSelectionChange={action('onSelectionChange')}>
+          
+          {/* Vertical examples */}
+          <SelectBox value="v1">
+            <Text slot="text">V: Text Only</Text>
+          </SelectBox>
+          
+          <SelectBox value="v2">
+            <StarIcon slot="icon" />
+            <Text slot="text">V: Icon + Text</Text>
+          </SelectBox>
+          
+          <SelectBox value="v3">
+            <Text slot="text">V: Text + Desc</Text>
+            <Text slot="description">Vertical description</Text>
+          </SelectBox>
+          
+          <SelectBox value="v4">
+            <AlertNotice slot="icon" />
+            <Text slot="text">V: All Elements</Text>
+            <Text slot="description">Complete vertical</Text>
+          </SelectBox>
+          
+        </SelectBoxGroup>
+
+        <div style={{marginTop: 20}}>
+          <SelectBoxGroup 
+            orientation="horizontal"
+            numColumns={2}
+            gutterWidth="spacious"
+            onSelectionChange={action('onSelectionChange')}>
+            
+            {/* Horizontal examples */}
+            <SelectBox value="h1">
+              <Text slot="text">H: Text Only</Text>
+            </SelectBox>
+            
+            <SelectBox value="h2">
+              <StarFilledIcon slot="icon" />
+              <Text slot="text">H: Icon + Text</Text>
+            </SelectBox>
+            
+            <SelectBox value="h3">
+              <Text slot="text">H: Text + Description</Text>
+              <Text slot="description">Horizontal description</Text>
+            </SelectBox>
+            
+            <SelectBox value="h4">
+              <Paperairplane slot="icon" />
+              <Text slot="text">H: All Elements</Text>
+              <Text slot="description">Complete horizontal layout</Text>
+            </SelectBox>
+            
+          </SelectBoxGroup>
+        </div>
+      </div>
+
+    </div>
+  )
 };

@@ -11,8 +11,8 @@
 
 import {
   ContextValue,
-  GridList,
-  GridListItem,
+  ListBox,
+  ListBoxItem,
   Text
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, HelpTextProps, Orientation, Selection, SpectrumLabelableProps} from '@react-types/shared';
@@ -26,8 +26,6 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useId} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export type SelectBoxValueType = string | string[];
-
 export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
@@ -36,25 +34,20 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
   /**
    * Handler that is called when the selection changes.
    */
-  onSelectionChange: (val: SelectBoxValueType) => void,
+  onSelectionChange?: (selection: Selection) => void,
   /**
    * The selection mode for the SelectBoxGroup.
    * @default 'single'
    */
   selectionMode?: 'single' | 'multiple',
   /**
-   * The current selected value (controlled).
+   * The currently selected keys in the collection (controlled).
    */
-  value?: SelectBoxValueType,
+  selectedKeys?: Selection,
   /**
-   * The default selected value.
+   * The initial selected keys in the collection (uncontrolled).
    */
-  defaultValue?: SelectBoxValueType,
-  /**
-   * The size of the SelectBoxGroup.
-   * @default 'M'
-   */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  defaultSelectedKeys?: Selection,
   /**
    * The axis the SelectBox elements should align with.
    * @default 'vertical'
@@ -98,41 +91,15 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
-  size?: 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
   isDisabled?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
 }
 
-const convertValueToSelection = (value: SelectBoxValueType | undefined, selectionMode: 'single' | 'multiple'): Selection => {
-  if (value === undefined) {
-    return selectionMode === 'multiple' ? new Set() : new Set();
-  }
-  
-  if (Array.isArray(value)) {
-    return new Set(value);
-  }
-  
-  return selectionMode === 'multiple' ? new Set([value]) : new Set([value]);
-};
 
-const convertSelectionToValue = (selection: Selection, selectionMode: 'single' | 'multiple'): SelectBoxValueType => {
-  if (selection === 'all') {
-    return selectionMode === 'multiple' ? [] : '';
-  }
-  
-  const keys = Array.from(selection).map(key => String(key));
-  
-  if (selectionMode === 'multiple') {
-    return keys;
-  }
-  
-  return keys[0] || '';
-};
 
 export const SelectBoxContext = createContext<SelectBoxContextValue>({
-  size: 'M',
   orientation: 'vertical'
 });
 
@@ -148,9 +115,6 @@ const gridStyles = style({
       spacious: 24
     }
   },
-  '&[role="grid"]': {
-    display: 'grid'
-  }
 }, getAllowedOverrides());
 
 const containerStyles = style({
@@ -166,54 +130,15 @@ const errorMessageStyles = style({
 
 interface FormIntegrationProps {
   name?: string,
-  value: SelectBoxValueType,
+  selectedKeys: Selection,
+  selectionMode: 'single' | 'multiple',
   isRequired?: boolean,
   isInvalid?: boolean
 }
-
-function FormIntegration({name, value, isRequired, isInvalid}: FormIntegrationProps) {
-  if (!name) {
-    return null;
-  }
-
-  if (Array.isArray(value)) {
-    return (
-      <>
-        {value.map((val, index) => (
-          <input
-            key={index}
-            type="hidden"
-            name={name}
-            value={val}
-            required={isRequired && index === 0}
-            aria-invalid={isInvalid} />
-        ))}
-        {value.length === 0 && isRequired && (
-          <input
-            type="hidden"
-            name={name}
-            value=""
-            required
-            aria-invalid={isInvalid} />
-        )}
-      </>
-    );
-  }
-
-  return (
-    <input
-      type="hidden"
-      name={name}
-      value={value || ''}
-      required={isRequired}
-      aria-invalid={isInvalid} />
-  );
-}
-
 /**
  * SelectBox groups allow users to select one or more options from a list.
  * All possible options are exposed up front for users to compare.
- * Built with GridList for automatic grid-based keyboard navigation.
+ * Built with ListBox for automatic grid-based keyboard navigation.
  */
 export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(props: SelectBoxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
@@ -223,9 +148,9 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     contextualHelp,
     children,
     onSelectionChange,
-    defaultValue,
+    selectedKeys: controlledSelectedKeys,
+    defaultSelectedKeys,
     selectionMode = 'single',
-    size = 'M',
     orientation = 'vertical',
     numColumns = 2,
     gutterWidth = 'default',
@@ -242,13 +167,9 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   const errorId = useId();
 
   const [selectedKeys, setSelectedKeys] = useControlledState(
-    props.value !== undefined ? convertValueToSelection(props.value, selectionMode) : undefined,
-    convertValueToSelection(defaultValue, selectionMode),
-    (selection) => {
-      const value = convertSelectionToValue(selection, selectionMode);
-
-      onSelectionChange(value);
-    }
+    controlledSelectedKeys,
+    defaultSelectedKeys || new Set(),
+    onSelectionChange
   );
 
 
@@ -264,7 +185,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   }, [isRequired, selectedKeys]);
 
   const hasValidationErrors = isInvalid || validationErrors.length > 0;
-
   const childrenArray = React.Children.toArray(children).filter((x) => x);
   
   const disabledKeys = useMemo(() => {
@@ -299,7 +219,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     () => {
       const contextValue = {
         allowMultiSelect: selectionMode === 'multiple',
-        size,
         orientation,
         isDisabled,
         selectedKeys,
@@ -307,10 +226,8 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       };
       return contextValue;
     },
-    [selectionMode, size, orientation, isDisabled, selectedKeys, setSelectedKeys]
+    [selectionMode, orientation, isDisabled, selectedKeys, setSelectedKeys]
   );
-
-  const currentValue = convertSelectionToValue(selectedKeys, selectionMode);
 
   return (
     <div
@@ -320,7 +237,8 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       
       <FormIntegration
         name={name}
-        value={currentValue}
+        selectedKeys={selectedKeys}
+        selectionMode={selectionMode}
         isRequired={isRequired}
         isInvalid={hasValidationErrors} />
       
@@ -333,7 +251,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         </FieldLabel>
       )}
       
-      <GridList
+      <ListBox
         layout="grid"
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
@@ -375,7 +293,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
           const textValue = getTextValue(childElement);
           
           return (
-            <GridListItem key={childValue} id={childValue} textValue={textValue} className={style({outlineStyle: 'none'})}>
+            <ListBoxItem key={childValue} id={childValue} textValue={textValue} className={style({outlineStyle: 'none'})}>
               {(renderProps) => (
                 <SelectBoxContext.Provider value={selectBoxContextValue}>
                   <SelectBoxRenderPropsContext.Provider 
@@ -388,10 +306,10 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
                   </SelectBoxRenderPropsContext.Provider>
                 </SelectBoxContext.Provider>
               )}
-            </GridListItem>
+            </ListBoxItem>
           );
         })}
-      </GridList>
+      </ListBox>
       
       {hasValidationErrors && errorMessage && (
         <Text
@@ -404,3 +322,45 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     </div>
   );
 });
+
+function FormIntegration({name, selectedKeys, selectionMode, isRequired, isInvalid}: FormIntegrationProps) {
+  if (!name) {
+    return null;
+  }
+
+  // Convert Selection to array of strings for form submission
+  const values = selectedKeys === 'all' ? [] : Array.from(selectedKeys).map(String);
+
+  if (selectionMode === 'multiple') {
+    return (
+      <>
+        {values.map((val, index) => (
+          <input
+            key={index}
+            type="hidden"
+            name={name}
+            value={val}
+            required={isRequired && index === 0}
+            aria-invalid={isInvalid} />
+        ))}
+        {values.length === 0 && isRequired && (
+          <input
+            type="hidden"
+            name={name}
+            value=""
+            required
+            aria-invalid={isInvalid} />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <input
+      type="hidden"
+      name={name}
+      value={values[0] || ''}
+      required={isRequired}
+      aria-invalid={isInvalid} />
+  );
+}
