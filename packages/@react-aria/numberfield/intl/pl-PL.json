@@ -1,5 +1,7 @@
 {
   "decrease": "Zmniejsz {fieldLabel}",
   "increase": "Zwiększ {fieldLabel}",
-  "numberField": "Pole numeru"
+  "numberField": "Pole numeru",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }
