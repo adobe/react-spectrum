@@ -19,9 +19,7 @@ const config = {
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
-    "@storybook/addon-essentials",
-    "@storybook/addon-links",
-    "@storybook/addon-interactions"
+    "@storybook/addon-onboarding"
   ],
   framework: {
     name: "@storybook/react-vite",

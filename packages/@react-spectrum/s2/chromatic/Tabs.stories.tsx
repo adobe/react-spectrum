@@ -17,7 +17,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {Text} from '@react-spectrum/s2';
-import {userEvent} from '@storybook/test';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
