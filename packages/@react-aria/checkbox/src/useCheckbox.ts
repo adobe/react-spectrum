@@ -83,6 +83,8 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
       labelProps,
       pressProps,
       useMemo(() => ({
+        // Prevent label from being focused when mouse down on it.
+        // Note, this does not prevent the input from being focused in the `click` event.
         onMouseDown: e => e.preventDefault()
       }), [])),
     inputProps: {

@@ -120,6 +120,9 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       labelProps,
       useMemo(() => ({
         onClick: e => e.preventDefault(),
+
+        // Prevent label from being focused when mouse down on it.
+        // Note, this does not prevent the input from being focused in the `click` event.
         onMouseDown: e => e.preventDefault()
       }), [])),
     inputProps: mergeProps(domProps, {
