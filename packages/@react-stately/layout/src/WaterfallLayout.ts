@@ -169,8 +169,9 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       newLayoutInfos.set(lastNode.key, layoutInfo);
     }
 
-    // Reset all columns to the maximum for the next section. If loading, set to 0 so virtualizer doesn't render its body since there aren't items to render
-    let isEmptyOrLoading = collection?.size === 0;
+    // Reset all columns to the maximum for the next section. If loading, set to 0 so virtualizer doesn't render its body since there aren't items to render,
+    // except if we are performing skeleton loading
+    let isEmptyOrLoading = collection?.size === 0 && collection.getItem(collection.getFirstKey()!)?.type !== 'skeleton';
     let maxHeight = isEmptyOrLoading ? 0 : Math.max(...columnHeights);
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;

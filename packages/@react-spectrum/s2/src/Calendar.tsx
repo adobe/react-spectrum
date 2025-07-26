@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, Heading, pressScale} from './';
+import {ActionButton, Header, HeaderContext, Heading, HeadingContext, pressScale} from './';
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
@@ -27,11 +27,12 @@ import {
   CalendarStateContext,
   ContextValue,
   DateValue,
+  Provider,
   RangeCalendarState,
   RangeCalendarStateContext,
   Text
 } from 'react-aria-components';
-import {AriaCalendarGridProps, getEraFormat} from '@react-aria/calendar';
+import {AriaCalendarGridProps} from '@react-aria/calendar';
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   CalendarDate,
@@ -70,7 +71,8 @@ const calendarStyles = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-  width: 'fit'
+  width: 'fit',
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const headerStyles = style({
@@ -173,6 +175,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-100',
+    isPressed: 'gray-100',
     isDisabled: 'transparent',
     isToday: {
       default: baseColor('gray-300'),
@@ -302,11 +305,17 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       {({isInvalid, isDisabled}) => {
         return (
           <>
-            <Header styles={headerStyles}>
-              <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-              <CalendarHeading />
-              <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-            </Header>
+            <Provider
+              values={[
+                [HeaderContext, null],
+                [HeadingContext, null]
+              ]}>
+              <Header styles={headerStyles}>
+                <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
+                <CalendarHeading />
+                <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
+              </Header>
+            </Provider>
             <div
               className={style({
                 display: 'flex',
@@ -363,11 +372,11 @@ export const CalendarHeading = (): ReactElement => {
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let {visibleRange, timeZone} = calendarStateContext ?? rangeCalendarStateContext ?? {};
-  let era: any = getEraFormat(visibleRange?.start) || getEraFormat(visibleRange?.end);
+  let currentMonth = visibleRange?.start ?? visibleRange?.end;
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era,
+    era: currentMonth && currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
     calendar: visibleRange?.start.calendar.identifier,
     timeZone
   });
