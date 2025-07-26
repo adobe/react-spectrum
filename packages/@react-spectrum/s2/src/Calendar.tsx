@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, Heading, pressScale} from './';
+import {ActionButton, Header, HeaderContext, Heading, HeadingContext, pressScale} from './';
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
@@ -27,6 +27,7 @@ import {
   CalendarStateContext,
   ContextValue,
   DateValue,
+  Provider,
   RangeCalendarState,
   RangeCalendarStateContext,
   Text
@@ -304,11 +305,17 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       {({isInvalid, isDisabled}) => {
         return (
           <>
-            <Header styles={headerStyles}>
-              <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-              <CalendarHeading />
-              <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-            </Header>
+            <Provider
+              values={[
+                [HeaderContext, null],
+                [HeadingContext, null]
+              ]}>
+              <Header styles={headerStyles}>
+                <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
+                <CalendarHeading />
+                <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
+              </Header>
+            </Provider>
             <div
               className={style({
                 display: 'flex',
