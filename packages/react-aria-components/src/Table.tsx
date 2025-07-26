@@ -1,12 +1,12 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, filterChildren, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -16,6 +16,11 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
+
+export type Mutable<T> = {
+  -readonly[P in keyof T]: T[P]
+}
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -160,6 +165,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
     collection.body = this.body;
+    // TODO clone updateColumns as well but it is private
     return collection;
   }
 
@@ -189,6 +195,20 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     return text.join(' ');
+  }
+
+  filter(filterFn: (textValue: string) => boolean): TableCollection<T> {
+    // TODO: ideally we wouldn't need to reimplement this but we need a TableCollection, not a BaseCollection
+    // Also need to handle the fact that a bunch of properites are private
+    let clone = this.clone() as Mutable<TableCollection<T>>;
+    // @ts-ignore
+    let [firstKey, lastKey] = filterChildren(this, clone, this.firstKey, filterFn);
+    // @ts-ignore
+    clone.firstKey = firstKey;
+    // @ts-ignore
+    clone.lastKey = lastKey;
+    // @ts-ignore
+    return clone;
   }
 }
 
@@ -363,23 +383,25 @@ interface TableInnerProps {
 
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
+  let {filter} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
-  let state = useTableState({
+  let tableState = useTableState({
     ...props,
     collection,
     children: undefined,
     UNSAFE_selectionState: selectionState
   });
 
+  let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
-  }, state, ref);
-  let selectionManager = state.selectionManager;
+  }, filteredState, ref);
+  let selectionManager = filteredState.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
@@ -405,7 +427,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
+      collection: filteredState.collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
@@ -419,12 +441,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
+      collection: filteredState.collection,
       selectionManager
     });
 
     let keyboardDelegate = new ListKeyboardDelegate({
-      collection,
+      collection: filteredState.collection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
       ref,
@@ -448,7 +470,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
-      state
+      state: filteredState
     }
   });
 
@@ -459,7 +481,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   if (tableContainerContext) {
     layoutState = tableContainerContext.useTableColumnResizeState({
       tableWidth: tableContainerContext.tableWidth
-    }, state);
+    }, filteredState);
     if (!isVirtualized) {
       style = {
         ...style,
@@ -475,7 +497,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   return (
     <Provider
       values={[
-        [TableStateContext, state],
+        [TableStateContext, filteredState],
         [TableColumnResizeStateContext, layoutState],
         [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
         [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
@@ -492,7 +514,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
           <CollectionRoot
-            collection={collection}
+            collection={filteredState.collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
         </ElementType>
@@ -544,11 +566,25 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
   dependencies?: ReadonlyArray<any>
 }
 
+// TODO: will this have any logic? Maybe for ones like this where we aren't adding the filter function just yet we could
+// keep it as returning the string instead of the class in createBranchComponent
+class TableHeaderNode extends CollectionNode<any> {
+  static readonly type = 'tableheader';
+
+  constructor(key: Key) {
+    super(TableHeaderNode.type, key);
+  }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
+  }
+}
+
 /**
  * A header within a `<Table>`, containing the table columns.
  */
 export const TableHeader =  /*#__PURE__*/ createBranchComponent(
-  'tableheader',
+  TableHeaderNode,
   <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
     let collection = useContext(TableStateContext)!.collection as TableCollection<unknown>;
     let headerRows = useCachedChildren({
@@ -681,10 +717,24 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAt
   maxWidth?: ColumnStaticSize | null
 }
 
+
+// TODO does this need to be separate or should ItemNode be generic enough that it can take an arbitrary "type"?
+class TableColumnNode extends CollectionNode<any> {
+  static readonly type = 'column';
+
+  constructor(key: Key) {
+    super(TableColumnNode.type, key);
+  }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
+  }
+}
+
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
+export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -916,10 +966,25 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
+
+// TODO: do we need this
+// These should probably be expecting TableCollection, will need to update others
+class TableBodyNode extends CollectionNode<any> {
+  static readonly type = 'tablebody';
+
+  constructor(key: Key) {
+    super(TableBodyNode.type, key);
+  }
+
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
+    return super.filter(collection, newCollection, filterFn);
+  }
+}
+
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
+export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
@@ -1017,11 +1082,33 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   id?: Key
 }
 
+// TODO: maybe can reuse the item node, but probably will have different filter logic here so splitting out for now
+class TableRowNode extends CollectionNode<any> {
+  static readonly type = 'item';
+
+  constructor(key: Key) {
+    super(TableRowNode.type, key);
+  }
+
+  // TODO: bug is that filtering retains all rows after before the last match
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
+    // todo walk children and if any match, just return whole thing?
+    let cells = collection.getChildren(this.key);
+    for (let cell of cells) {
+      if (filterFn(cell.textValue)) {
+        return this.clone();
+      }
+    }
+
+    return null;
+  }
+}
+
 /**
  * A row within a `<Table>`.
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
-  'item',
+  TableRowNode,
   <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>, item: GridNode<T>) => {
     let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
@@ -1201,10 +1288,23 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
   colSpan?: number
 }
 
+// TODO: Also perhaps can just be ItemNode?
+class TableCellNode extends CollectionNode<any> {
+  static readonly type = 'cell';
+
+  constructor(key: Key) {
+    super(TableCellNode.type, key);
+  }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
+  }
+}
+
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
+export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
   let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
@@ -1359,7 +1459,20 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
   isLoading?: boolean
 }
 
-export const TableLoadMoreItem = createLeafComponent('loader', function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
+// TODO: can reuse this most likely
+class TableLoaderNode extends CollectionNode<any> {
+  static readonly type = 'loader';
+
+  constructor(key: Key) {
+    super(TableLoaderNode.type, key);
+  }
+
+  filter(): CollectionNode<any> | null {
+    return this.clone();
+  }
+}
+
+export const TableLoadMoreItem = createLeafComponent(TableLoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

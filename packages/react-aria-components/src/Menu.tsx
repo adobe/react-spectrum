@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
@@ -107,12 +107,32 @@ export interface SubmenuTriggerProps {
 
 const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
+class SubmenuTriggerNode<T> extends CollectionNode<T> {
+  static readonly type = 'submenutrigger';
+
+  constructor(key: Key) {
+    super(SubmenuTriggerNode.type, key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    let triggerNode = collection.getItem(this.firstChildKey!);
+    if (triggerNode && filterFn(triggerNode.textValue)) {
+      // TODO: perhaps should call super.filter for correctness, but basically add the menu item child of the submenutrigger
+      // to the keymap so it renders
+      newCollection.addNode(triggerNode as CollectionNode<T>);
+      return this.clone();
+    }
+
+    return null;
+  }
+}
+
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
  *
  * @version alpha
  */
-export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigger', (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubmenuTriggerNode, (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -185,7 +205,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
-  let filteredCollection = useMemo(() => filter ? collection.UNSTABLE_filter(filter) : collection, [collection, filter]);
+  let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
     collection: filteredCollection as ICollection<Node<object>>,
@@ -319,10 +339,34 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   );
 }
 
+// TODO: can probably reuse the SectionNode from ListBox? Do this last in case there is something different in the implementation? Or maybe keep them unique in case
+// down the line we need to differentiate the two?
+class MenuSectionNode<T> extends CollectionNode<T> {
+  static readonly type = 'section';
+
+  constructor(key: Key) {
+    super(MenuSectionNode.type, key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    let filteredSection = super.filter(collection, newCollection, filterFn);
+    if (filteredSection) {
+      if (filteredSection.lastChildKey !== null) {
+        let lastChild = collection.getItem(filteredSection.lastChildKey);
+        if (lastChild && lastChild.type !== 'header') {
+          return filteredSection;
+        }
+      }
+    }
+
+    return null;
+  }
+}
+
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent(MenuSectionNode, MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -356,10 +400,28 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
+// TODO maybe this needs to be a separate node type? Or maybe it should just reuse the ItemNode from ListBox (reuse later if need be)
+// There is probably some merit to separating it like we already do for ListBoxItem/MenuItem/etc
+class MenuItemNode<T> extends CollectionNode<T> {
+  static readonly type = 'item';
+
+  constructor(key: Key) {
+    super(MenuItemNode.type, key);
+  }
+
+  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+    if (filterFn(this.textValue)) {
+      return this.clone();
+    }
+
+    return null;
+  }
+}
+
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const MenuItem = /*#__PURE__*/ createLeafComponent(MenuItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;

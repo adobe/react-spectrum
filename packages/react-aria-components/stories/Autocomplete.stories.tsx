@@ -11,14 +11,19 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
+import {MyCheckbox} from './Table.stories';
 import {MyListBoxItem, MyMenuItem} from './utils';
+import {MyListBoxLoaderIndicator, renderEmptyState} from './ListBox.stories';
+import {MyTag} from './TagGroup.stories';
 import React from 'react';
 import styles from '../example/index.css';
+import {TreeExampleStaticRender} from './Tree.stories';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 import './styles.css';
+import {MyGridListItem} from './GridList.stories';
 
 export default {
   title: 'React Aria Components/Autocomplete',
@@ -856,3 +861,234 @@ export const AutocompleteSelect = (): React.ReactElement => (
     </Popover>
   </Select>
 );
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+
+export const AutocompleteWithAsyncListBox = (args) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 50,
+            padding: 4,
+            loaderHeight: 30
+          }}>
+          <ListBox
+            {...args}
+            style={{
+              height: 400,
+              width: 100,
+              border: '1px solid gray',
+              background: 'lightgray',
+              overflow: 'auto',
+              padding: 'unset',
+              display: 'flex'
+            }}
+            aria-label="async virtualized listbox"
+            renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+            <Collection items={list.items}>
+              {(item: Character) => (
+                <MyListBoxItem
+                  style={{
+                    backgroundColor: 'lightgrey',
+                    border: '1px solid black',
+                    boxSizing: 'border-box',
+                    height: '100%',
+                    width: '100%'
+                  }}
+                  id={item.name}>
+                  {item.name}
+                </MyListBoxItem>
+              )}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+AutocompleteWithAsyncListBox.story = {
+  args: {
+    delay: 50
+  }
+};
+
+// TODO: I'm skipping Breadcrumbs, Tabs for now, not sure it makes sense to filter that via Autocomplete
+// Filtering the Taggroup might make sense
+// TODO make all of the below examples async loading as well?
+
+export const AutocompleteWithGridList = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <GridList
+          className={styles.menu}
+          style={{height: 200, width: 200}}
+          aria-label="test gridlist">
+          <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
+        </GridList>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTable = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <Virtualizer
+          layout={TableLayout}
+          layoutOptions={{
+            rowHeight: 25,
+            headingHeight: 25
+          }}>
+          <Table aria-label="Files" selectionMode="multiple" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+            <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+              <Column>
+                <MyCheckbox slot="selection" />
+              </Column>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+              <Column>Date Modified</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>6/7/2020</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+                <Cell>4/7/2021</Cell>
+              </Row>
+              <Row id="3">
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+                <Cell>11/20/2010</Cell>
+              </Row>
+              <Row id="4">
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>log.txt</Cell>
+                <Cell>Text Document</Cell>
+                <Cell>1/18/2016</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        </Virtualizer>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTagGroup = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <TagGroup>
+          <Label>Categories</Label>
+          <TagList style={{display: 'flex', gap: 4}}>
+            <MyTag href="https://nytimes.com">News</MyTag>
+            <MyTag>Travel</MyTag>
+            <MyTag>Gaming</MyTag>
+            <TooltipTrigger>
+              <MyTag>Shopping</MyTag>
+              <Tooltip
+                offset={5}
+                style={{
+                  background: 'Canvas',
+                  color: 'CanvasText',
+                  border: '1px solid gray',
+                  padding: 5,
+                  borderRadius: 4
+                }}>
+                <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                  <svg width="8" height="8" style={{display: 'block'}}>
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                  </svg>
+                </OverlayArrow>
+                I am a tooltip
+              </Tooltip>
+            </TooltipTrigger>
+          </TagList>
+        </TagGroup>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTree = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <TreeExampleStaticRender />
+      </div>
+    </AutocompleteWrapper>
+  );
+};

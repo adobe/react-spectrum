@@ -48,7 +48,8 @@ import './styles.css';
 
 export default {
   title: 'React Aria Components/GridList',
-  component: GridList
+  component: GridList,
+  excludeStories: ['MyGridListItem']
 } as Meta<typeof GridList>;
 
 export type GridListStory = StoryFn<typeof GridList>;
@@ -77,7 +78,7 @@ export const GridListExample: GridListStory = (args) => (
   </GridList>
 );
 
-const MyGridListItem = (props: GridListItemProps) => {
+export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}

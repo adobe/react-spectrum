@@ -11,17 +11,35 @@
  */
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from '@react-aria/collections';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {GlobalDOMAttributes} from '@react-types/shared';
+import {GlobalDOMAttributes, Key} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {}
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
+export class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
+  constructor(key: Key) {
+    super(SeparatorNode.type, key);
+  }
+
+  // TODO: resolve this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  filter(_, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+    if (newCollection.getItem(this.prevKey!)) {
+      return this.clone();
+    }
+
+    return null;
+  }
+}
+
+export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
   let {elementType, orientation, style, className, slot, ...otherProps} = props;
