@@ -33,11 +33,11 @@ export interface CollectionChildren<C extends BaseCollection<object>> {
 
 export interface CollectionRenderProps<C extends BaseCollection<object>> {
   /** A hook that will be called before the collection builder to build the content. */
-  useCollectionContent?: (content: ReactNode) => ReactNode,
+  useCollectionContent?: (content: ReactNode) => typeof content,
   /** A hook that will be called by the collection builder to render the children. */
-  useCollectionChildren?: (children: CollectionChildren<C>) => CollectionChildren<C>
-  // TODO: Do we also want useCollection() to wrap createCollection()?
-  // TODO: Do we also want useCollectionDocument() to wrap doc retrieval?
+  useCollectionChildren?: (children: CollectionChildren<C>) => typeof children,
+  /** A hook that will be called by the collection builder to retrieve the collection and document. */
+  useCollectionDocument?: (state: CollectionDocumentResult<any, BaseCollection<any>>) => typeof state
 }
 
 interface CollectionRef<C extends BaseCollection<object>, E extends Element> extends RefObject<E | null>, CollectionRenderProps<C> {}
@@ -55,7 +55,8 @@ export interface CollectionBuilderProps<C extends BaseCollection<object>> {
 export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>): ReactElement {
   // If a document was provided above us, we're already in a hidden tree. Just render the content.
   let doc = useContext(CollectionDocumentContext);
-  let content = props.collectionRef?.useCollectionContent?.(props.content) ?? props.content;
+  let ref = props.collectionRef ?? {} as CollectionRef<C, Element>;
+  let content = ref.useCollectionContent ? ref.useCollectionContent(props.content) : props.content;
   if (doc) {
     // The React types prior to 18 did not allow returning ReactNode from components
     // even though the actual implementation since React 16 did.
@@ -70,8 +71,9 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
 
   // This is fine. CollectionDocumentContext never changes after mounting.
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  let {collection, document} = useCollectionDocument(props.createCollection);
-  let children = props.collectionRef?.useCollectionChildren?.(props.children) ?? props.children;
+  let state = useCollectionDocument(props.createCollection);
+  let {collection, document} = ref.useCollectionDocument ? ref.useCollectionDocument(state) : state;
+  let children = ref.useCollectionChildren ? ref.useCollectionChildren(props.children) : props.children;
   return (
     <>
       <Hidden>
@@ -114,7 +116,7 @@ const useSyncExternalStore = typeof React['useSyncExternalStore'] === 'function'
   ? React['useSyncExternalStore']
   : useSyncExternalStoreFallback;
 
-function useCollectionDocument<T extends object, C extends BaseCollection<T>>(createCollection?: () => C): CollectionDocumentResult<T, C> {
+export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(createCollection?: () => C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
   let [document] = useState(() => new Document<T, C>(createCollection?.() || new BaseCollection() as C));

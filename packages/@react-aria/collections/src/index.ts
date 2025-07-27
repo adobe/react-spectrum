@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {CollectionBuilder, Collection, createLeafComponent, createBranchComponent, useCollectionRef} from './CollectionBuilder';
-export {createHideableComponent, useIsHidden} from './Hidden';
+export {CollectionBuilder, Collection, createLeafComponent, createBranchComponent, useCollectionRef, useCollectionDocument} from './CollectionBuilder';
+export {createHideableComponent, useIsHidden, Hidden} from './Hidden';
 export {useCachedChildren} from './useCachedChildren';
 export {BaseCollection, CollectionNode} from './BaseCollection';
 
