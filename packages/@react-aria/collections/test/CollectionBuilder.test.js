@@ -171,7 +171,7 @@ describe('CollectionBuilder', () => {
     };
 
     it('should support one-way synchronization of multiple collections', () => {
-      let Spy = jest.fn();
+      let Spy = jest.fn(() => null);
       
       // Synchronizer will force CollectionB to only be rendered with keys of CollectionA
       let {queryAllByTestId} = render(
@@ -193,7 +193,7 @@ describe('CollectionBuilder', () => {
     });
       
     it('should support two-way synchronization of multiple collections', () => {
-      let Spy = jest.fn();
+      let Spy = jest.fn(() => null);
       
       // TwoWaySynchronizer will force both collections to only be rendered with mutually shared keys
       let {queryAllByTestId} = render(
