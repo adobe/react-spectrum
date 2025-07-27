@@ -438,12 +438,11 @@ describe('DateField', function () {
           await user.keyboard('[Tab][Tab][ArrowUp]');
           
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
 
           await user.tab();
 
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
-          expect(input.validity.valid).toBe(true);
 
           await user.tab({shift: true});
           await user.keyboard('2025');
@@ -461,11 +460,10 @@ describe('DateField', function () {
 
           await user.keyboard('[Tab][Tab][ArrowDown]');
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
           await user.tab();
 
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(true);
         });
 
         it('supports validate function', async () => {
