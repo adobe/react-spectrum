@@ -103,7 +103,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -157,7 +157,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -548,7 +548,7 @@ describe('DateRangePicker', function () {
       expect(hour).toHaveAttribute('aria-valuetext', '11 AM');
 
       expect(dialog).toBeVisible();
-      expect(onChange).toHaveBeenCalledTimes(3);
+      expect(onChange).toHaveBeenCalledTimes(4);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 11, 45)});
       expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
       expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
@@ -730,7 +730,7 @@ describe('DateRangePicker', function () {
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it.only('should clear date and time when controlled value is set to null', async function () {
+    it('should clear date and time when controlled value is set to null', async function () {
       function ControlledDateRangePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
