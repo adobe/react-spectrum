@@ -333,25 +333,23 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     isValueConfirmed.current = false
     setIsValueChanged(true)
  
-
     if (!validSegments[type]) {
       markValid(type);
-       let validKeys = Object.keys(validSegments);
-       let allKeys = Object.keys(allSegments);
-       if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        const v = addSegment(displayValue, type, amount, resolvedOptions)
+      let validKeys = Object.keys(validSegments);
+      let allKeys = Object.keys(allSegments);
+      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
+        currentValue.current = displayValue
+        setValue(displayValue);
+      }else updatePlaceholder(displayValue)
+    } else {
+      let validKeys = Object.keys(validSegments);
+      let allKeys = Object.keys(allSegments);
+      const v = addSegment(displayValue, type, amount, resolvedOptions)
+      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
         currentValue.current = v
         setValue(v);
       }else {
-        updatePlaceholder(addSegment(displayValue, type, amount, resolvedOptions));
-      }
-    } else {
-         let validKeys = Object.keys(validSegments);
-    let allKeys = Object.keys(allSegments);
-      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        const v = addSegment(displayValue, type, amount, resolvedOptions)
-        currentValue.current = v
-        setValue(v);
+        updatePlaceholder(v)
       }
     }
   };
