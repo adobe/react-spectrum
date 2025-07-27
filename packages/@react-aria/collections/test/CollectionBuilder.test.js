@@ -107,8 +107,8 @@ describe('CollectionBuilder', () => {
     };
 
     let Synchronizer = ({spy: Spy, children}) => {
-      let useCollectionContent = React.useCallback(() => false, []);
-      let useCollectionChildren = React.useCallback(() => () => false, []);
+      let useCollectionContent = React.useCallback(() => null, []);
+      let useCollectionChildren = React.useCallback(() => () => null, []);
         
       let refA = useCollectionRef({useCollectionContent, useCollectionChildren}, React.useRef(null));
       let refB = useCollectionRef({useCollectionContent, useCollectionChildren}, React.useRef(null));
@@ -135,8 +135,8 @@ describe('CollectionBuilder', () => {
     };
   
     let TwoWaySynchronizer = ({spy: Spy, children}) => {
-      let useCollectionContent = React.useCallback(() => false, []);
-      let useCollectionChildren = React.useCallback(() => () => false, []);
+      let useCollectionContent = React.useCallback(() => null, []);
+      let useCollectionChildren = React.useCallback(() => () => null, []);
   
       let stateA = useCollectionDocument();
       let stateB = useCollectionDocument();
