@@ -27,7 +27,7 @@ export function RadioGroup(props: RadioGroupProps) {
 
 const styles = tv({
   extend: focusRing,
-  base: 'w-5 h-5 rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
+  base: 'w-5 h-5 box-border rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
   variants: {
     isSelected: {
       false: 'border-gray-400 dark:border-zinc-400 group-pressed:border-gray-500 dark:group-pressed:border-zinc-300',

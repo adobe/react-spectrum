@@ -14,7 +14,7 @@
       stroke="none" fill="rgba(73,110,194,0.42)" />
   </g>
   <g transform="translate(0 156)">
-    <text fill="var(--anatomy-gray-700, white)" font-size="13" font-family="Adobe-Clean" font-style="italic">
+    <text fill="var(--anatomy-gray-700, white)" font-size="13" font-family="var(--anatomy-font)" font-style="italic">
       <tspan x="0" y="0">Area</tspan>
     </text>
     <g transform="translate(28 -6)">
@@ -22,7 +22,7 @@
     </g>
   </g>
   <g transform="translate(372 73)">
-    <text fill="var(--anatomy-gray-700, white)" font-size="13" font-family="Adobe-Clean" font-style="italic">
+    <text fill="var(--anatomy-gray-700, white)" font-size="13" font-family="var(--anatomy-font)" font-style="italic">
       <tspan x="0" y="0">Thumb</tspan>
     </text>
     <g transform="translate(-372 -73)">

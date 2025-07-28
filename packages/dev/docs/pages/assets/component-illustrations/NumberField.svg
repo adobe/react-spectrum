@@ -2,13 +2,13 @@
   <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
   <g id="Label">
     <rect id="Placement_Area-2" data-name="Placement Area" width="39" height="24" fill="red" opacity="0"/>
-    <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Width</tspan></text>
+    <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Width</tspan></text>
   </g>
   <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
     <rect width="176" height="32" rx="4" stroke="none"/>
     <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
   </g>
-  <text id="Text-2" data-name="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">4 in</tspan></text>
+  <text id="Text-2" data-name="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">4 in</tspan></text>
   <g id="Group_151250" data-name="Group 151250" transform="translate(-346.559 -67.615)">
     <g id="rectangle-18" transform="translate(498.559 91.615)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
       <path d="M0,0H20a4,4,0,0,1,4,4V16.5a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" stroke="none"/>

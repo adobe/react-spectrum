@@ -97,6 +97,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             key={currentPage.url}
             style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
             className={style({
+              isolation: 'isolate',
               backgroundColor: 'base',
               padding: {
                 default: 12,
@@ -125,7 +126,8 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             <article
               className={style({
                 maxWidth: 768,
-                width: 'full'
+                width: 'full',
+                height: 'fit'
               })}>
               {React.cloneElement(children, {components})}
             </article>

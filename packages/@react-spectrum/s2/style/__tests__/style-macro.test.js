@@ -40,14 +40,14 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs1:first-child {
+  .Jbs11:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv1:first-child {
+    .Jbpv11:first-child {
       margin-top: 0.5rem;
     }
   }
@@ -55,7 +55,7 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs1 Jbpv1"');
+    expect(js).toMatchInlineSnapshot('" Jbs11 Jbpv11"');
   });
 
   it('should support self references', () => {
@@ -69,47 +69,47 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc1 {
+  ._kc11 {
     border-top-width: 2px;
   }
 
 
-  .hc1 {
+  .hc11 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc1 {
+  .mCPFGYc11 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc1 {
+  .lc11 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc1 {
+  .SMBFGYc11 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv1 {
+  .Rv11 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd1 {
+  .ZjUQgKd11 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc1 {
+  .-m_-mc11 {
     --m: 2px;
   }
 
 
-  .-S_-Sv1 {
+  .-S_-Sv11 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
@@ -117,7 +117,7 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc1 hc1 mCPFGYc1 lc1 SMBFGYc1 Rv1 ZjUQgKd1 -m_-mc1 -S_-Sv1"');
+    expect(js).toMatchInlineSnapshot('" _kc11 hc11 mCPFGYc11 lc11 SMBFGYc11 Rv11 ZjUQgKd11 -m_-mc11 -S_-Sv11"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +134,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw1 pg1"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb1 pHJ3AUd1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb1 pg1"');
+    expect(js()).toMatchInlineSnapshot('"  gw11 pg11"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb11 pHJ3AUd11"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb11 pg11"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +151,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B1 __Ya1"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D1 __Ya1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D1 __Ya1"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B11 __Ya11"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D11 __Ya11"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D11 __Ya11"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +168,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk1 Qk1 Sk1 Rk1"');
-    expect(overrides).toMatchInlineSnapshot('" Tm1 Qm1 Sm1 Rm1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm1 Qm1 Sm1 Rm1"');
+    expect(js()).toMatchInlineSnapshot('"  Tk11 Qk11 Sk11 Rk11"');
+    expect(overrides).toMatchInlineSnapshot('" Tm11 Qm11 Sm11 Rm11"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm11 Qm11 Sm11 Rm11"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -185,9 +185,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE1"');
-    expect(overrides).toMatchInlineSnapshot('" Nk1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk1 gE1"');
+    expect(js()).toMatchInlineSnapshot('"  gE11"');
+    expect(overrides).toMatchInlineSnapshot('" Nk11"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk11 gE11"');
   });
 
   it('should support runtime conditions', () => {
@@ -208,32 +208,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH1 {
+  .gH11 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF1 {
+  .gF11 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE1 {
+  .gE11 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt1 {
+  .pt11 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po1 {
+  .po11 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm1 {
+  .pm11 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -241,9 +241,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH1 pt1"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1 po1"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE1 pm1"');
+    expect(js({})).toMatchInlineSnapshot('"  gH11 pt11"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11 po11"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE11 pm11"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -262,32 +262,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH1 {
+  .gH11 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF1 {
+  .gF11 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h1 {
+  .g_h11 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g31 {
+  .g311 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH1"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h1"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g31"');
+    expect(js({})).toMatchInlineSnapshot('"  gH11"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h11"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g311"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -301,9 +301,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY1"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe1"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw1"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY11"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe11"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw11"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -321,14 +321,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb1 {
+    .plb11 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple1 {
+    .ple11 {
       color: HighlightText;
     }
   }
@@ -337,8 +337,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple1"');
+    expect(js({})).toMatchInlineSnapshot('"  plb11"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple11"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -346,27 +346,27 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th1 Qh1 Sh1 Rh1"');
+    expect(js).toMatchInlineSnapshot('" Th11 Qh11 Sh11 Rh11"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th1 {
+  .Th11 {
     padding-top: 24px;
   }
 
 
-  .Qh1 {
+  .Qh11 {
     padding-bottom: 24px;
   }
 
 
-  .Sh1 {
+  .Sh11 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh1 {
+  .Rh11 {
     padding-inline-end: 24px;
   }
 }
@@ -384,7 +384,7 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb1 {
+  .gpQzfVb11 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
@@ -405,7 +405,7 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE1 {
+  .-FUeYm-gE11 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }

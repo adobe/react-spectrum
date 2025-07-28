@@ -15,6 +15,7 @@ import {
   RangeCalendarProps as AriaRangeCalendarProps,
   ContextValue,
   DateValue,
+  Provider,
   Text
 } from 'react-aria-components';
 import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
@@ -23,7 +24,7 @@ import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Header} from './';
+import {Header, HeaderContext, HeadingContext} from './';
 import {helpTextStyles} from './Field';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -85,11 +86,17 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
       {({isInvalid, isDisabled}) => {
         return (
           <>
-            <Header styles={headerStyles}>
-              <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-              <CalendarHeading />
-              <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-            </Header>
+            <Provider
+              values={[
+                [HeaderContext, null],
+                [HeadingContext, null]
+              ]}>
+              <Header styles={headerStyles}>
+                <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
+                <CalendarHeading />
+                <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
+              </Header>
+            </Provider>
             <div
               className={style({
                 display: 'flex',

@@ -96,11 +96,11 @@ By default, `Calendar` displays the value using the calendar system for the user
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
 import {I18nProvider} from 'react-aria-components';
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseDate} from '@internationalized/date';
 import {Calendar} from 'vanilla-starter/Calendar';
 
 <I18nProvider/* PROPS */>
-  <Calendar defaultValue={now(getLocalTimeZone())} />
+  <Calendar defaultValue={parseDate('2025-02-03')} />
 </I18nProvider>
 ```
 

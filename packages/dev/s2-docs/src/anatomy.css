@@ -12,4 +12,5 @@
   --anatomy-gray-75: light-dark(#FDFDFE, #0e1525);
   --anatomy-gray-50: light-dark(#FFFFFF, #0c1220);
   --anatomy-radius: 16px;
+  --anatomy-font: adobe-clean-spectrum-vf;
 }
