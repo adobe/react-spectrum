@@ -1,5 +1,5 @@
 import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
-import type {PageProps} from '@parcel/rsc';
+import type {PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
 import './anatomy.css';
@@ -18,7 +18,7 @@ import {TypeLink} from './types';
 import {VisualExample} from './VisualExample';
 
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} id={anchorId(children)} className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id="top" className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
   h2: H2,
   h3: H3,
   h4: H4,
@@ -47,7 +47,7 @@ function anchorId(children) {
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   return (
-    <Provider elementType="html" locale="en" background="layer-1">
+    <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -166,9 +166,9 @@ function MobileToc({toc}) {
   );
 }
 
-function renderMobileToc(toc, seen = new Map()) {
+function renderMobileToc(toc: TocNode[], seen = new Map()) {
   return toc.map((c) => {
-    let href = '#' + anchorId(c.title);
+    let href = c.level === 1 ? '#top' : '#' + anchorId(c.title);
     if (seen.has(href)) {
       seen.set(href, seen.get(href) + 1);
       href += '-' + seen.get(href);

@@ -4,7 +4,7 @@ import {renderHTMLfromMarkdown, TInterface} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
-const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, whiteSpace: 'nowrap'});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface StateTableProps {
   properties: TInterface['properties'],
