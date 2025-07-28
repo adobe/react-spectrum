@@ -104,11 +104,13 @@ function Example() {
 
 ### Asynchronous loading
 
-This example uses the useAsyncList hook to handle asynchronous loading of data from a server.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<GridListLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
 ```tsx render
 "use client";
+import {Collection, GridListLoadMoreItem} from 'react-aria-components';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -116,25 +118,42 @@ interface Character {
 }
 
 function AsyncLoadingExample() {
-  /*- begin highlight -*/
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
-        {signal}
+        cursor || `https://swapi.py4e.com/api/people/?search=`,
+        { signal }
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
-  /*- end highlight -*/
 
   return (
-    <GridList aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <GridListItem id={item.name}>{item.name}</GridListItem>}
+    <GridList
+      aria-label="Star Wars Characters"
+      selectionMode="multiple"
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <Collection items={list.items}>
+        {(item) => <GridListItem id={item.name}>{item.name}</GridListItem>}
+      </Collection>
+      {/*- begin highlight -*/}
+      <GridListLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      </GridListLoadMoreItem>
+      {/*- end highlight -*/}
     </GridList>
   );
 }
@@ -271,3 +290,9 @@ function Example() {
 <PropTable component={docs.exports.GridListItem} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-GridListItem" properties={docs.exports.GridListItemRenderProps.properties} />
+
+### GridListLoadMoreItem
+
+<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-GridListLoadMoreItem" properties={docs.exports.GridListLoadMoreItemRenderProps.properties} /> */}

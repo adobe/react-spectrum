@@ -161,38 +161,51 @@ import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-component
 
 ### Asynchronous loading
 
-This example uses the useAsyncList hook to handle asynchronous loading
-of data from a server.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<ListBoxLoadMoreItem>` at the end of the list or section. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem} from 'react-aria-components';
-import {useAsyncList} from '@react-stately/data';
+import {ListBox, ListBoxItem, Collection, ListBoxLoadMoreItem} from 'react-aria-components';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string
 }
 
 function AsyncLoadingExample() {
-  /*- begin highlight -*/
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({signal, cursor}) {
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
-        {signal}
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        { signal }
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
-  /*- end highlight -*/
 
   return (
-    <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    <ListBox
+      aria-label="Pick a Pokemon"
+      selectionMode="single"
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <Collection items={list.items}>
+        {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </Collection>
+      {/*- begin highlight -*/}
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      </ListBoxLoadMoreItem>
+      {/*- end highlight -*/}
     </ListBox>
   );
 }
@@ -395,3 +408,9 @@ function Example() {
 <PropTable component={docs.exports.ListBoxSection} links={docs.links} showDescription />
 
 {/* <StateTable defaultClassName="react-aria-ListBoxSection" properties={docs.exports.ListBoxSectionRenderProps.properties} /> */}
+
+### ListBoxLoadMoreItem
+
+<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-ListBoxLoadMoreItem" properties={docs.exports.ListBoxLoadMoreItemRenderProps.properties} /> */}

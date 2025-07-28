@@ -46,13 +46,13 @@ export function Column(
 }
 
 export function TableHeader<T extends object>(
-  { columns, children }: TableHeaderProps<T>
+  { columns, children, ...otherProps }: TableHeaderProps<T>
 ) {
   let { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
 
   return (
     (
-      <AriaTableHeader>
+      <AriaTableHeader {...otherProps}>
         {/* Add extra columns for drag and drop and selection. */}
         {allowsDragging && <AriaColumn />}
         {selectionBehavior === 'toggle' && (

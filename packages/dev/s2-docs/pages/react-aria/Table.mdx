@@ -201,12 +201,13 @@ on external state (e.g. `columns` in this example).</Content>
 
 ### Asynchronous loading
 
-This example uses the `useAsyncList` hook to handle asynchronous loading of data from a server.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TableLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Collection, TableLoadMoreItem} from 'react-aria-components';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from 'react-stately';
 
 interface Character {
@@ -217,39 +218,72 @@ interface Character {
 }
 
 function AsyncSortTable() {
-  ///- begin highlight -///
   let list = useAsyncList<Character>({
-    async load({ signal }) {
-      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {
-        signal
-      });
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        { signal }
+      );
       let json = await res.json();
+
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
-  ///- end highlight -///
 
   return (
-    <Table aria-label="Star Wars characters">
-      <TableHeader>
-        <Column id="name" isRowHeader allowsSorting>Name</Column>
-        <Column id="height" allowsSorting>Height</Column>
-        <Column id="mass" allowsSorting>Mass</Column>
-        <Column id="birth_year" allowsSorting>Birth Year</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {(item) => (
-          <Row id={item.name}>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.height}</Cell>
-            <Cell>{item.mass}</Cell>
-            <Cell>{item.birth_year}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+    <div
+      style={{
+        height: 150,
+        overflow: 'auto',
+        border: '1px solid var(--border-color)',
+        borderRadius: 6
+      }}>
+      <Table
+        aria-label="Star Wars characters"
+        style={{tableLayout: 'fixed', width: '100%', border: 0}}>
+        <TableHeader
+          style={{
+            position: 'sticky',
+            top: 0,
+            background: 'var(--overlay-background)',
+            zIndex: 1
+          }}>
+          <Column id="name" isRowHeader allowsSorting>Name</Column>
+          <Column id="height" allowsSorting>Height</Column>
+          <Column id="mass" allowsSorting>Mass</Column>
+          <Column id="birth_year" allowsSorting>Birth Year</Column>
+        </TableHeader>
+        <TableBody
+          renderEmptyState={() => (
+            <ProgressCircle isIndeterminate aria-label="Loading..." />
+          )}>
+          <Collection items={list.items}>
+            {(item) => (
+              <Row id={item.name}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </Collection>
+          {/*- begin highlight -*/}
+          <TableLoadMoreItem
+            onLoadMore={list.loadMore}
+            isLoading={list.loadingState === 'loadingMore'}>
+            <ProgressCircle isIndeterminate aria-label="Loading more..." />
+          </TableLoadMoreItem>
+          {/*- end highlight -*/}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 ```
@@ -694,9 +728,14 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.ResizableTableContainer} links={docs.links} showDescription />
 
-
 ### ColumnResizer
 
 <PropTable component={docs.exports.ColumnResizer} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-ColumnResizer" properties={docs.exports.ColumnResizerRenderProps.properties} />
+
+### TableLoadMoreItem
+
+<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-TableLoadMoreItem" properties={docs.exports.TableLoadMoreItemRenderProps.properties} /> */}

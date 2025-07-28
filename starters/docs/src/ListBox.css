@@ -206,3 +206,11 @@
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
 }
+
+.react-aria-ListBoxLoadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+}

@@ -269,3 +269,8 @@
   object-fit: cover;
   display: block;
 }
+
+.react-aria-TableLoadingIndicator {
+  height: 24px;
+  position: relative;
+}
