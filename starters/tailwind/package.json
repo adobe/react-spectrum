@@ -3,7 +3,6 @@
     "@babel/preset-react": "^7.24.1",
     "@storybook/react": "^9.0.4",
     "@storybook/react-vite": "^9.0.4",
-    "@storybook/test": "^9.0.4",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
