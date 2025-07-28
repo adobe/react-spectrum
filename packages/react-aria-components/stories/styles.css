@@ -205,9 +205,14 @@
   outline: 1px solid slateblue;
 }
 
-
 :global(.react-aria-Table) {
   border-collapse: collapse;
+
+  &[data-drop-target] {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
+  }
 }
 
 :global(.react-aria-Cell) {
