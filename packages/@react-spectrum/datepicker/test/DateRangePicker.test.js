@@ -1490,7 +1490,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('forms', () => {
-    it.only('supports form reset', async () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
         return (

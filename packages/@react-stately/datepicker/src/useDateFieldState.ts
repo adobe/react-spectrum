@@ -70,7 +70,8 @@ export interface DateFieldState extends FormValidationState {
   /** Whether the field is required. */
   isRequired: boolean,
   /** Whether the field is changed. */
-  isValueChanged: boolean
+  shouldValidate: boolean,
+  setShouldValidate(value: boolean): void,
   /** Increments the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
   increment(type: SegmentType): void,
   /** Decrements the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
@@ -169,7 +170,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
   const isValueConfirmed = useRef(props.value || props.defaultValue ? true : false)
-  const [isValueChanged, setIsValueChanged] = useState(false)
+  const [shouldValidate, setShouldValidate] = useState(false)
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && !(granularity in v)) {
@@ -229,16 +230,16 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   // Reset placeholder when calendar changes
   let lastCalendar = useRef(calendar);
-  // useEffect(() => {
-  //   if (!isEqualCalendar(calendar, lastCalendar.current)) {
-  //     lastCalendar.current = calendar;
-  //     setPlaceholderDate(placeholder =>
-  //       Object.keys(validSegments).length > 0
-  //         ? toCalendar(placeholder, calendar)
-  //         : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
-  //     );
-  //   }
-  // }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
+  useEffect(() => {
+    if (!isEqualCalendar(calendar, lastCalendar.current)) {
+      lastCalendar.current = calendar;
+      setPlaceholderDate(placeholder =>
+        Object.keys(validSegments).length > 0
+          ? toCalendar(placeholder, calendar)
+          : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
+      );
+    }
+  }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
   if (value !== previousValue.current && value && Object.keys(validSegments).length <= Object.keys(allSegments).length) {
@@ -247,7 +248,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setPlaceholderDate(value)
     previousValue.current = value
     isValueConfirmed.current = true
-    setIsValueChanged(false)
   }
 
 
@@ -259,7 +259,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
     previousValue.current = value
     isValueConfirmed.current = true
-    setIsValueChanged(false)
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let displayValue = isValueConfirmed.current && value ? value:  placeholderDate ;
@@ -290,15 +289,17 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-      const day = Math.max(1, Math.min(newValue.calendar.getDaysInMonth(newValue), newValue.day));
-      const constrainedValue = setSegment(newValue, "day", day, resolvedOptions) 
-
-      const value = toCalendar(constrainedValue, v?.calendar || new GregorianCalendar());
+      const value = toCalendar(newValue, v?.calendar || new GregorianCalendar());
       setDate(value);
       previousValue.current = value
       setPlaceholderDate(value)
     }
 };
+
+  let constrainDate = (value: DateValue) => {
+      const day = Math.max(1, Math.min(value.calendar.getDaysInMonth(value), value.day));
+      return setSegment(value, "day", day, resolvedOptions) 
+  }
 
   let updatePlaceholder = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
@@ -333,7 +334,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     isValueConfirmed.current = false
-    setIsValueChanged(true)
+    setShouldValidate(true)
  
     if (!validSegments[type]) {
       markValid(type);
@@ -341,7 +342,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let allKeys = Object.keys(allSegments);
       if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
         currentValue.current = displayValue
-        setValue(displayValue);
+        setValue(constrainDate(displayValue))
       }else updatePlaceholder(displayValue)
     } else {
       let validKeys = Object.keys(validSegments);
@@ -349,7 +350,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       const v = addSegment(displayValue, type, amount, resolvedOptions)
       if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
         currentValue.current = v
-        setValue(v);
+        setValue(constrainDate(v))
       }else {
         updatePlaceholder(v)
       }
@@ -391,7 +392,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     isDisabled,
     isReadOnly,
     isRequired,
-    isValueChanged,
+    shouldValidate,
+    setShouldValidate,
     increment(part) {
       adjustSegment(part, 1);
     },
@@ -406,20 +408,20 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     },
     setSegment(part, v: string | number) {
       isValueConfirmed.current = false
-      setIsValueChanged(true)
+      setShouldValidate(true)
       markValid(part);
       updatePlaceholder(setSegment(displayValue, part, v, resolvedOptions));
     },
     incrementToMinMax(part, v: string | number)  {
     isValueConfirmed.current = false
-    setIsValueChanged(true)
+    setShouldValidate(true)
     markValid(part)
     let validKeys = Object.keys(validSegments);
     let allKeys = Object.keys(allSegments);
     const value = setSegment(displayValue, part, v, resolvedOptions)
     currentValue.current = value
     if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-      setValue(value);
+      setValue(constrainDate(value))
     }else {
       updatePlaceholder(value)
     }
@@ -435,7 +437,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
         validSegments = {...allSegments};
         setValidSegments(validSegments);
-        // setValue(currentValue.current.copy())
+        setValue(constrainDate(currentValue.current))
       }else {
         setDate(null)
         previousValue.current = null

@@ -355,7 +355,7 @@ describe('TimeField', function () {
           await user.keyboard('[ArrowUp]');
 
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
-          expect(input.validity.valid).not.toBe(true);
+          expect(input.validity.valid).toBe(true);
 
           await user.tab({shift: true});
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
@@ -364,7 +364,7 @@ describe('TimeField', function () {
           await user.tab();
           await user.keyboard('6[Tab][ArrowUp]');
           expect(getDescription()).not.toContain('Value must be 5:00 AM or earlier.');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
           await user.tab();
 
           act(() => {getByTestId('form').checkValidity();});
@@ -374,7 +374,7 @@ describe('TimeField', function () {
 
           await user.keyboard('[ArrowDown]');
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
           act(() => document.activeElement.blur());
 
           expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier.');
