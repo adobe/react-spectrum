@@ -85,7 +85,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             default: 0,
             lg: 12
           },
-          overflow: 'hidden'
+          overscrollBehavior: {
+            default: 'auto',
+            lg: 'none'
+          }
         })}>
         <Header pages={pages} currentPage={currentPage} />
         <MobileHeader
