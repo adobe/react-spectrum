@@ -72,17 +72,17 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    */
   isDisabled?: boolean,
   /**
-   * Whether to disable the selection checkbox for all SelectBoxes.
+   * Whether to hide the selection checkbox for all SelectBoxes.
    */
-  isCheckboxDisabled?: boolean,
+  isCheckboxHidden?: boolean,
   /**
-   * Whether to disable the label/text content for all SelectBoxes.
+   * Whether to hide the label/text content for all SelectBoxes.
    */
-  isLabelDisabled?: boolean,
+  isLabelHidden?: boolean,
   /**
-   * Whether to disable the illustration/icon for all SelectBoxes.
+   * Whether to hide the illustration/icon for all SelectBoxes.
    */
-  isIllustrationDisabled?: boolean,
+  isIllustrationHidden?: boolean,
   /**
    * The name of the form field.
    */
@@ -105,14 +105,14 @@ interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   orientation?: Orientation,
   isDisabled?: boolean,
-  isCheckboxDisabled?: boolean,
-  isLabelDisabled?: boolean,
-  isIllustrationDisabled?: boolean,
+  isCheckboxHidden?: boolean,
+  isLabelHidden?: boolean,
+  isIllustrationHidden?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
 }
 
-export const SelectBoxContext = createContext<SelectBoxContextValue>({ orientation: 'vertical' });
+export const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
 export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const gridStyles = style({
@@ -124,7 +124,7 @@ const gridStyles = style({
       compact: 8,
       spacious: 24
     }
-  },
+  }
 }, getAllowedOverrides());
 
 const containerStyles = style({
@@ -166,9 +166,9 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     gutterWidth = 'default',
     isRequired = false,
     isDisabled = false,
-    isCheckboxDisabled = false,
-    isLabelDisabled = false,
-    isIllustrationDisabled = false,
+    isCheckboxHidden = false,
+    isLabelHidden = false,
+    isIllustrationHidden = false,
     name,
     errorMessage,
     isInvalid = false,
@@ -234,15 +234,15 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         allowMultiSelect: selectionMode === 'multiple',
         orientation,
         isDisabled,
-        isCheckboxDisabled,
-        isLabelDisabled,
-        isIllustrationDisabled,
+        isCheckboxHidden,
+        isLabelHidden,
+        isIllustrationHidden,
         selectedKeys,
         onSelectionChange: setSelectedKeys
       };
       return contextValue;
     },
-    [selectionMode, orientation, isDisabled, isCheckboxDisabled, isLabelDisabled, isIllustrationDisabled, selectedKeys, setSelectedKeys]
+    [selectionMode, orientation, isDisabled, isCheckboxHidden, isLabelHidden, isIllustrationHidden, selectedKeys, setSelectedKeys]
   );
 
   return (

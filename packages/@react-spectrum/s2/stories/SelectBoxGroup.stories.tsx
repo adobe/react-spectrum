@@ -21,10 +21,10 @@ import {Button, createIcon, Heading, SelectBox, SelectBoxGroup, Text} from '../s
 import type {Meta, StoryObj} from '@storybook/react';
 import Paperairplane from '../spectrum-illustrations/linear/Paperairplane';
 import React, {useState} from 'react';
+import type {Selection} from 'react-aria-components';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilledSVG from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
 import StarSVG from '../s2wf-icons/S2_Icon_Star_20_N.svg';
-import type {Selection} from 'react-aria-components';
 
 const StarIcon = createIcon(StarSVG);
 const StarFilledIcon = createIcon(StarFilledSVG);
@@ -112,25 +112,25 @@ export const MultipleSelection: Story = {
       <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
         Focus any item and use arrow keys for grid navigation:
       </p>
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="aws">
-        <Server slot="icon" />
-        <Text slot="text">Amazon Web Services</Text>
+      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
+        <SelectBox value="aws">
+          <Server slot="icon" />
+          <Text slot="text">Amazon Web Services</Text>
           <Text slot="description">Reliable cloud infrastructure</Text>
-      </SelectBox>
-      <SelectBox value="azure">
-        <AlertNotice slot="icon" />
-        <Text slot="text">Microsoft Azure</Text>
+        </SelectBox>
+        <SelectBox value="azure">
+          <AlertNotice slot="icon" />
+          <Text slot="text">Microsoft Azure</Text>
           <Text slot="description">Enterprise cloud solutions</Text>
-      </SelectBox>
-      <SelectBox value="gcp">
-        <Paperairplane slot="icon" />
-        <Text slot="text">Google Cloud Platform</Text>
+        </SelectBox>
+        <SelectBox value="gcp">
+          <Paperairplane slot="icon" />
+          <Text slot="text">Google Cloud Platform</Text>
           <Text slot="description">Modern cloud services</Text>
-      </SelectBox>
-      <SelectBox value="oracle">
-        <Server slot="icon" />
-        <Text slot="text">Oracle Cloud</Text>
+        </SelectBox>
+        <SelectBox value="oracle">
+          <Server slot="icon" />
+          <Text slot="text">Oracle Cloud</Text>
           <Text slot="description">Database-focused cloud</Text>
         </SelectBox>
         <SelectBox value="ibm">
@@ -168,7 +168,7 @@ export const DisabledGroup: Story = {
   args: {
     label: 'Disabled Group',
     isDisabled: true,
-    defaultValue: 'option1'
+    defaultSelectedKeys: new Set(['option1'])
   },
   render: (args) => (
     <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
@@ -204,7 +204,6 @@ function InteractiveExamplesStory() {
           setSelectedKeys(selection);
           action('onSelectionChange')(selection);
         }}>
-        
         {/* Enabled items with dynamic icons */}
         <SelectBox value="enabled1">
           {selectedKeys !== 'all' && selectedKeys.has('enabled1') ? (
@@ -215,7 +214,6 @@ function InteractiveExamplesStory() {
           <Text slot="text">Enabled Item 1</Text>
           <Text slot="description">Status updates</Text>
         </SelectBox>
-        
         <SelectBox value="enabled2">
           {selectedKeys !== 'all' && selectedKeys.has('enabled2') ? (
             <StarFilledIcon slot="icon" />
@@ -225,14 +223,12 @@ function InteractiveExamplesStory() {
           <Text slot="text">Enabled Item 2</Text>
           <Text slot="description">Click to toggle</Text>
         </SelectBox>
-        
         {/* Disabled item */}
         <SelectBox value="disabled1" isDisabled>
           <AlertNotice slot="icon" />
           <Text slot="text">Disabled Item</Text>
           <Text slot="description">Cannot select</Text>
         </SelectBox>
-        
         <SelectBox value="starred1">
           {selectedKeys !== 'all' && selectedKeys.has('starred1') ? (
             <StarFilledIcon slot="icon" />
@@ -242,7 +238,6 @@ function InteractiveExamplesStory() {
           <Text slot="text">Starred Item 1</Text>
           <Text slot="description">Click to star</Text>
         </SelectBox>
-        
         <SelectBox value="starred2">
           {selectedKeys !== 'all' && selectedKeys.has('starred2') ? (
             <StarFilledIcon slot="icon" />
@@ -252,14 +247,11 @@ function InteractiveExamplesStory() {
           <Text slot="text">Starred Item 2</Text>
           <Text slot="description">Click to star</Text>
         </SelectBox>
-        
-        {/* Another disabled item */}
         <SelectBox value="disabled2" isDisabled>
           <Server slot="icon" />
           <Text slot="text">Disabled Service</Text>
           <Text slot="description">Cannot select</Text>
         </SelectBox>
-        
         <SelectBox value="dynamic1">
           {selectedKeys !== 'all' && selectedKeys.has('dynamic1') ? (
             <StarFilledIcon slot="icon" />
@@ -269,7 +261,6 @@ function InteractiveExamplesStory() {
           <Text slot="text">Dynamic Icon</Text>
           <Text slot="description">Click to activate</Text>
         </SelectBox>
-        
         <SelectBox value="controllable">
           {selectedKeys !== 'all' && selectedKeys.has('controllable') ? (
             <StarFilledIcon slot="icon" />
@@ -278,8 +269,7 @@ function InteractiveExamplesStory() {
           )}
           <Text slot="text">Controllable</Text>
           <Text slot="description">External control available</Text>
-          </SelectBox>
-        
+        </SelectBox>
       </SelectBoxGroup>
       
       <div style={{marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap'}}>
@@ -392,8 +382,8 @@ function FormAndLayoutStory() {
         
         <div style={{marginTop: 24, display: 'flex', gap: 12, alignItems: 'center'}}>
           <Button type="submit" variant="accent">
-          Save Preferences
-        </Button>
+            Save Preferences
+          </Button>
           <Button 
             type="button"
             onPress={() => setSelectedPreferences(new Set(['newsletter', 'security']))}
@@ -436,11 +426,11 @@ export const VisibilityControls: Story = {
         <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
           
           <div>
-            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Checkboxes (isCheckboxDisabled=true)</Heading>
+            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Checkboxes (isCheckboxHidden=true)</Heading>
             <SelectBoxGroup 
               label="No Checkboxes"
               selectionMode="multiple"
-              isCheckboxDisabled={true}
+              isCheckboxHidden
               numColumns={3}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="item1">
@@ -462,10 +452,10 @@ export const VisibilityControls: Story = {
           </div>
 
           <div>
-            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Labels (isLabelDisabled=true)</Heading>
+            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Labels (isLabelHidden=true)</Heading>
             <SelectBoxGroup 
               label="Icons Only"
-              isLabelDisabled={true}
+              isLabelHidden
               numColumns={3}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="item1">
@@ -487,10 +477,10 @@ export const VisibilityControls: Story = {
           </div>
 
           <div>
-            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Illustrations (isIllustrationDisabled=true)</Heading>
+            <Heading level={4} UNSAFE_style={{marginBottom: 8, fontSize: 14, color: '#666'}}>Hide Illustrations (isIllustrationHidden=true)</Heading>
             <SelectBoxGroup 
               label="Text Only"
-              isIllustrationDisabled={true}
+              isIllustrationHidden
               numColumns={3}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="item1">
@@ -522,31 +512,31 @@ export const VisibilityControls: Story = {
         </p>
         <SelectBoxGroup 
           label="Group Disabled, Individual Overrides"
-          isCheckboxDisabled={true}
-          isLabelDisabled={true}
-          isIllustrationDisabled={true}
+          isCheckboxHidden
+          isLabelHidden
+          isIllustrationHidden
           numColumns={4}
           onSelectionChange={action('onSelectionChange')}>
           
-          <SelectBox value="override1" isCheckboxDisabled={false} isLabelDisabled={false} isIllustrationDisabled={false}>
+          <SelectBox value="override1">
             <Server slot="icon" />
             <Text slot="text">All Visible</Text>
             <Text slot="description">Individual override</Text>
           </SelectBox>
           
-          <SelectBox value="override2" isLabelDisabled={false}>
+          <SelectBox value="override2">
             <AlertNotice slot="icon" />
             <Text slot="text">Label Only</Text>
             <Text slot="description">Text override</Text>
           </SelectBox>
           
-          <SelectBox value="override3" isIllustrationDisabled={false}>
+          <SelectBox value="override3">
             <Paperairplane slot="icon" />
             <Text slot="text">Icon Only</Text>
             <Text slot="description">Icon override</Text>
           </SelectBox>
           
-          <SelectBox value="override4" isCheckboxDisabled={false}>
+          <SelectBox value="override4">
             <Server slot="icon" />
             <Text slot="text">Checkbox Only</Text>
             <Text slot="description">Checkbox override</Text>
@@ -573,19 +563,19 @@ export const VisibilityControls: Story = {
             <Text slot="description">All elements</Text>
           </SelectBox>
           
-          <SelectBox value="no-checkbox" isCheckboxDisabled={true}>
+          <SelectBox value="no-checkbox" isCheckboxHidden>
             <AlertNotice slot="icon" />
             <Text slot="text">No Checkbox</Text>
             <Text slot="description">Hidden checkbox</Text>
           </SelectBox>
           
-          <SelectBox value="no-icon" isIllustrationDisabled={true}>
+          <SelectBox value="no-icon" isIllustrationHidden>
             <Paperairplane slot="icon" />
             <Text slot="text">No Icon</Text>
             <Text slot="description">Hidden icon</Text>
           </SelectBox>
           
-          <SelectBox value="no-text" isLabelDisabled={true}>
+          <SelectBox value="no-text" isLabelHidden>
             <Server slot="icon" />
             <Text slot="text">No Text</Text>
             <Text slot="description">Hidden text</Text>
