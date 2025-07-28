@@ -6,7 +6,6 @@
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
-    "@storybook/blocks": "^9.0.4",
     "@storybook/react": "^9.0.4",
     "@storybook/react-webpack5": "^9.0.4",
     "@storybook/test": "^8.6.14",
