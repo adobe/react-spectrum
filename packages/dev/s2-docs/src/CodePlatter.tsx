@@ -67,7 +67,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
 
   return (
     <div className={platterStyle}>
-      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', padding: 16, position: 'relative'})}>
+      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', padding: 16, position: 'relative', zIndex: 1})}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
