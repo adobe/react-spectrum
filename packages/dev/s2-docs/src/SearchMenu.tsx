@@ -356,7 +356,7 @@ export default function SearchMenu(props: SearchMenuProps) {
                       {tab.icon}
                     </div>
                     <div>
-                      <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({fontSize: 'heading-xs'})}>
+                      <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
                         {tab.label}
                       </span>
                       <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
