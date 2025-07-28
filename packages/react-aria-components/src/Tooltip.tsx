@@ -142,6 +142,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
     shouldFlip: props.shouldFlip,
+    containerPadding: props.containerPadding,
     onClose: () => state.close(true)
   });
 
