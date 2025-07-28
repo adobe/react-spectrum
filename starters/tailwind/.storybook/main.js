@@ -18,9 +18,7 @@ const config = {
     "../stories/**/*.mdx",
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
-  addons: [
-    "@storybook/addon-onboarding"
-  ],
+  addons: [],
   framework: {
     name: "@storybook/react-vite",
     options: {},
