@@ -81,9 +81,8 @@ export class CollectionNode<T> implements Node<T> {
 // TODO: naming, but essentially these nodes shouldn't be affected by filtering (BaseNode)?
 // Perhaps this filter logic should be in CollectionNode instead and the current logic of CollectionNode's filter should move to Table
 export class FilterLessNode<T> extends CollectionNode<T> {
-  // TODO: resolve this
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-unused-vars
-  filter(_, __, ___): FilterLessNode<T> | null {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): FilterLessNode<T> | null {
     return this.clone();
   }
 }
@@ -95,9 +94,7 @@ export class ItemNode<T> extends CollectionNode<T> {
     super(ItemNode.type, key);
   }
 
-  // TODO: resolve this
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  filter(_, __, filterFn: (node: Node<T>) => boolean): ItemNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): ItemNode<T> | null {
     if (filterFn(this)) {
       return this.clone();
     }

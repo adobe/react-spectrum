@@ -28,9 +28,7 @@ export class SeparatorNode extends CollectionNode<any> {
     super(SeparatorNode.type, key);
   }
 
-  // TODO: resolve this
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  filter(_, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
     if (newCollection.getItem(this.prevKey!)) {
       return this.clone();
     }

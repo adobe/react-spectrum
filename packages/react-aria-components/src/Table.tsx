@@ -197,7 +197,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     return text.join(' ');
   }
 
-  filter(filterFn: (textValue: string) => boolean): TableCollection<T> {
+  filter(filterFn: (node: Node<T>) => boolean): TableCollection<T> {
     let clone = this.clone();
     return super.filter(filterFn, clone) as TableCollection<T>;
 
