@@ -78,6 +78,56 @@ export class CollectionNode<T> implements Node<T> {
   }
 }
 
+// TODO: naming, but essentially these nodes shouldn't be affected by filtering (BaseNode)?
+// Perhaps this filter logic should be in CollectionNode instead and the current logic of CollectionNode's filter should move to Table
+export class FilterLessNode<T> extends CollectionNode<T> {
+  // TODO: resolve this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-unused-vars
+  filter(_, __, ___): FilterLessNode<T> | null {
+    return this.clone();
+  }
+}
+
+export class ItemNode<T> extends CollectionNode<T> {
+  static readonly type = 'item';
+
+  constructor(key: Key) {
+    super(ItemNode.type, key);
+  }
+
+  // TODO: resolve this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  filter(_, __, filterFn: (textValue: string) => boolean): ItemNode<T> | null {
+    if (filterFn(this.textValue)) {
+      return this.clone();
+    }
+
+    return null;
+  }
+}
+
+export class SectionNode<T> extends CollectionNode<T> {
+  static readonly type = 'section';
+
+  constructor(key: Key) {
+    super(SectionNode.type, key);
+  }
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): SectionNode<T> | null {
+    let filteredSection = super.filter(collection, newCollection, filterFn);
+    if (filteredSection) {
+      if (filteredSection.lastChildKey !== null) {
+        let lastChild = collection.getItem(filteredSection.lastChildKey);
+        if (lastChild && lastChild.type !== 'header') {
+          return filteredSection;
+        }
+      }
+    }
+
+    return null;
+  }
+}
+
 /**
  * An immutable Collection implementation. Updates are only allowed
  * when it is not marked as frozen. This can be subclassed to implement

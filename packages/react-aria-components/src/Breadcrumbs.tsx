@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
-import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -73,16 +73,11 @@ export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, Glo
   id?: Key
 }
 
-class BreadcrumbNode extends CollectionNode<any> {
+class BreadcrumbNode extends FilterLessNode<unknown> {
   static readonly type = 'item';
 
   constructor(key: Key) {
     super(BreadcrumbNode.type, key);
-  }
-
-  // For, don't support Breadcrumb filtering
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 

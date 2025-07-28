@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, FilterLessNode, ItemNode, SectionNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -305,27 +305,7 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
   );
 }
 
-export class ListBoxSectionNode<T> extends CollectionNode<T> {
-  static readonly type = 'section';
-
-  constructor(key: Key) {
-    super(ListBoxSectionNode.type, key);
-  }
-
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
-    let filteredSection = super.filter(collection, newCollection, filterFn);
-    if (filteredSection) {
-      if (filteredSection.lastChildKey !== null) {
-        let lastChild = collection.getItem(filteredSection.lastChildKey);
-        if (lastChild && lastChild.type !== 'header') {
-          return filteredSection;
-        }
-      }
-    }
-
-    return null;
-  }
-}
+export class ListBoxSectionNode<T> extends SectionNode<T> {}
 
 /**
  * A ListBoxSection represents a section within a ListBox.
@@ -352,21 +332,7 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   onAction?: () => void
 }
 
-class ListBoxItemNode<T> extends CollectionNode<T> {
-  static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(ListBoxItemNode.type, key);
-  }
-
-  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
-    if (filterFn(this.textValue)) {
-      return this.clone();
-    }
-
-    return null;
-  }
-}
+class ListBoxItemNode<T> extends ItemNode<T> {}
 
 /**
  * A ListBoxItem represents an individual option in a ListBox.
@@ -508,15 +474,11 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   );
 }
 
-class ListBoxLoaderNode extends CollectionNode<any> {
+class ListBoxLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
 
   constructor(key: Key) {
     super(ListBoxLoaderNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 

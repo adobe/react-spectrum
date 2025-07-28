@@ -1,5 +1,5 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterLessNode, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
@@ -558,17 +558,11 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
   dependencies?: ReadonlyArray<any>
 }
 
-// TODO: will this have any logic? Maybe for ones like this where we aren't adding the filter function just yet we could
-// keep it as returning the string instead of the class in createBranchComponent
-class TableHeaderNode extends CollectionNode<any> {
+class TableHeaderNode extends FilterLessNode<unknown> {
   static readonly type = 'tableheader';
 
   constructor(key: Key) {
     super(TableHeaderNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 
@@ -709,17 +703,11 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAt
   maxWidth?: ColumnStaticSize | null
 }
 
-
-// TODO does this need to be separate or should ItemNode be generic enough that it can take an arbitrary "type"?
-class TableColumnNode extends CollectionNode<any> {
+class TableColumnNode extends FilterLessNode<unknown> {
   static readonly type = 'column';
 
   constructor(key: Key) {
     super(TableColumnNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 
@@ -959,17 +947,11 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-// TODO: do we need this
-// These should probably be expecting TableCollection, will need to update others
 class TableBodyNode extends CollectionNode<any> {
   static readonly type = 'tablebody';
 
   constructor(key: Key) {
     super(TableBodyNode.type, key);
-  }
-
-  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
-    return super.filter(collection, newCollection, filterFn);
   }
 }
 
@@ -1074,17 +1056,14 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   id?: Key
 }
 
-// TODO: maybe can reuse the item node, but probably will have different filter logic here so splitting out for now
-class TableRowNode extends CollectionNode<any> {
+class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
   constructor(key: Key) {
     super(TableRowNode.type, key);
   }
 
-  // TODO: bug is that filtering retains all rows after before the last match
-  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
-    // todo walk children and if any match, just return whole thing?
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
       if (filterFn(cell.textValue)) {
@@ -1280,16 +1259,11 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
   colSpan?: number
 }
 
-// TODO: Also perhaps can just be ItemNode?
-class TableCellNode extends CollectionNode<any> {
+class TableCellNode extends FilterLessNode<unknown> {
   static readonly type = 'cell';
 
   constructor(key: Key) {
     super(TableCellNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 
@@ -1451,16 +1425,11 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
   isLoading?: boolean
 }
 
-// TODO: can reuse this most likely
-class TableLoaderNode extends CollectionNode<any> {
+class TableLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
 
   constructor(key: Key) {
     super(TableLoaderNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 

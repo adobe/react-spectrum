@@ -10,22 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, useContextProps} from './utils';
+import {createLeafComponent, FilterLessNode} from '@react-aria/collections';
 import {Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-class HeaderNode extends CollectionNode<any> {
+class HeaderNode extends FilterLessNode<unknown> {
   static readonly type = 'header';
 
   constructor(key: Key) {
     super(HeaderNode.type, key);
-  }
-
-  filter(): CollectionNode<any> {
-    return this.clone();
   }
 }
 

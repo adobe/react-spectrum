@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
@@ -339,29 +339,7 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   );
 }
 
-// TODO: can probably reuse the SectionNode from ListBox? Do this last in case there is something different in the implementation? Or maybe keep them unique in case
-// down the line we need to differentiate the two?
-class MenuSectionNode<T> extends CollectionNode<T> {
-  static readonly type = 'section';
-
-  constructor(key: Key) {
-    super(MenuSectionNode.type, key);
-  }
-
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
-    let filteredSection = super.filter(collection, newCollection, filterFn);
-    if (filteredSection) {
-      if (filteredSection.lastChildKey !== null) {
-        let lastChild = collection.getItem(filteredSection.lastChildKey);
-        if (lastChild && lastChild.type !== 'header') {
-          return filteredSection;
-        }
-      }
-    }
-
-    return null;
-  }
-}
+class MenuSectionNode<T> extends SectionNode<T> {}
 
 /**
  * A MenuSection represents a section within a Menu.
@@ -400,23 +378,7 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
-// TODO maybe this needs to be a separate node type? Or maybe it should just reuse the ItemNode from ListBox (reuse later if need be)
-// There is probably some merit to separating it like we already do for ListBoxItem/MenuItem/etc
-class MenuItemNode<T> extends CollectionNode<T> {
-  static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(MenuItemNode.type, key);
-  }
-
-  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
-    if (filterFn(this.textValue)) {
-      return this.clone();
-    }
-
-    return null;
-  }
-}
+class MenuItemNode<T> extends ItemNode<T> {}
 
 /**
  * A MenuItem represents an individual action in a Menu.

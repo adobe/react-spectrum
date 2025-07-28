@@ -12,7 +12,7 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -284,20 +284,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   onAction?: () => void
 }
 
-class GridListNode extends CollectionNode<any> {
-  static readonly type = 'item';
-  constructor(key: Key) {
-    super(GridListNode.type, key);
-  }
-
-  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
-    if (filterFn(this.textValue)) {
-      return this.clone();
-    }
-
-    return null;
-  }
-}
+class GridListNode<T> extends ItemNode<T> {}
 
 /**
  * A GridListItem represents an individual item in a GridList.
@@ -533,15 +520,12 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-class GridListLoaderNode extends CollectionNode<any> {
+// TODO: maybe make a general loader node
+class GridListLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
 
   constructor(key: Key) {
     super(GridListLoaderNode.type, key);
-  }
-
-  filter(): CollectionNode<any> | null {
-    return this.clone();
   }
 }
 

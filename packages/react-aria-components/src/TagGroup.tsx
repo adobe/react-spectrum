@@ -12,7 +12,7 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
@@ -198,22 +198,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
   isDisabled?: boolean
 }
 
-// TODO probably can reuse item node
-class TagItemNode extends CollectionNode<any> {
-  static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(TagItemNode.type, key);
-  }
-
-  filter(_, __, filterFn: (textValue: string) => boolean): CollectionNode<any> | null {
-    if (filterFn(this.textValue)) {
-      return this.clone();
-    }
-
-    return null;
-  }
-}
+class TagItemNode extends ItemNode<unknown> {}
 
 /**
  * A Tag is an individual item within a TagList.
