@@ -79,11 +79,11 @@ export function PropTable({component, links, showDescription}: PropTableProps) {
 interface GroupedPropTableProps {
   properties: TInterface['properties'],
   links: any,
-  propGroups: {[name: string]: (string | RegExp)[]},
+  propGroups?: {[name: string]: (string | RegExp)[]},
   defaultExpanded?: Set<string>
 }
 
-export function GroupedPropTable({properties, links, propGroups, defaultExpanded}: GroupedPropTableProps) {
+export function GroupedPropTable({properties, links, propGroups = GROUPS, defaultExpanded = DEFAULT_EXPANDED}: GroupedPropTableProps) {
   setLinks(links);
 
   let [props, groups] = groupProps(properties, propGroups);
