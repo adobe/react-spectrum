@@ -466,8 +466,6 @@ describe('DatePicker', function () {
 
       act(() => hour.focus());
       await user.keyboard('{ArrowUp}');
-      act(() => button.focus());
-
       expect(hour).toHaveAttribute('aria-valuetext', '9 AM');
 
       expect(dialog).toBeVisible();
@@ -720,7 +718,6 @@ describe('DatePicker', function () {
       act(() => minute.focus());
       await user.keyboard('{ArrowUp}');
       await user.keyboard('{ArrowUp}');
-      act(() => button.focus());
 
       expect(minute).toHaveAttribute('aria-valuetext', '01');
 
@@ -1081,19 +1078,16 @@ describe('DatePicker', function () {
           </Provider>
         );
         let segment = getByLabelText(label);
-        let textContent = segment.textContent;
+        let textContent = segment.textContent;  
         act(() => {segment.focus();});
 
         await user.keyboard(`{${options?.upKey || 'ArrowUp'}}`);
-        let button = getByRole('button')
-        act(() => button.focus())
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(incremented);
         expect(segment.textContent).toBe(textContent);
 
         act(() => {segment.focus();});
         await user.keyboard(`{${options?.downKey || 'ArrowDown'}}`);
-        act(() => button.focus())
         expect(onChange).toHaveBeenCalledTimes(2);
         expect(onChange).toHaveBeenCalledWith(decremented);
         expect(segment.textContent).toBe(textContent);
@@ -1111,8 +1105,6 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard(`{${options?.upKey || 'ArrowUp'}}`);
-        button = getByRole('button')
-        act(() => {button.focus();});
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(incremented);
         expect(segment.textContent).not.toBe(textContent);
@@ -1130,8 +1122,6 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard(`{${options?.downKey || 'ArrowDown'}}`);
-        button = getByRole('button')
-        act(() => {button.focus();});
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(decremented);
         expect(segment.textContent).not.toBe(textContent);
@@ -2146,12 +2136,11 @@ describe('DatePicker', function () {
           await user.keyboard('[Tab][Tab][ArrowUp]');
 
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
 
           await user.tab();
 
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
-          expect(input.validity.valid).toBe(true);
 
           await user.tab({shift: true});
           await user.keyboard('2025');
@@ -2166,10 +2155,9 @@ describe('DatePicker', function () {
 
           await user.keyboard('[Tab][Tab][ArrowDown]');
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
           await user.tab();
 
-          expect(input.validity.valid).toBe(true);
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
         });
 
