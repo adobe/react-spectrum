@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMProps, Node, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
@@ -56,7 +56,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (nodeTextValue: string) => boolean
+  filter?: (node: Node<unknown>) => boolean
 }
 
 /**
@@ -316,9 +316,9 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     'aria-label': stringFormatter.format('collectionLabel')
   });
 
-  let filterFn = useCallback((nodeTextValue: string) => {
+  let filterFn = useCallback((node: Node<unknown>) => {
     if (filter) {
-      return filter(nodeTextValue, state.inputValue);
+      return filter(node.textValue, state.inputValue);
     }
 
     return true;

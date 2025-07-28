@@ -1063,10 +1063,10 @@ class TableRowNode<T> extends CollectionNode<T> {
     super(TableRowNode.type, key);
   }
 
-  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>, filterFn: (textValue: string) => boolean): TableRowNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
-      if (filterFn(cell.textValue)) {
+      if (filterFn(cell)) {
         return this.clone();
       }
     }

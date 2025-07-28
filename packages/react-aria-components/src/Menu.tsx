@@ -114,9 +114,9 @@ class SubmenuTriggerNode<T> extends CollectionNode<T> {
     super(SubmenuTriggerNode.type, key);
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): CollectionNode<T> | null {
     let triggerNode = collection.getItem(this.firstChildKey!);
-    if (triggerNode && filterFn(triggerNode.textValue)) {
+    if (triggerNode && filterFn(triggerNode)) {
       // TODO: perhaps should call super.filter for correctness, but basically add the menu item child of the submenutrigger
       // to the keymap so it renders
       newCollection.addNode(triggerNode as CollectionNode<T>);

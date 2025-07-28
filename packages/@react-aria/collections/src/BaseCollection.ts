@@ -69,7 +69,7 @@ export class CollectionNode<T> implements Node<T> {
     return node;
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): CollectionNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): CollectionNode<T> | null {
     let [firstKey, lastKey] = filterChildren(collection, newCollection, this.firstChildKey, filterFn);
     let newNode: Mutable<CollectionNode<T>> = this.clone();
     newNode.firstChildKey = firstKey;
@@ -97,8 +97,8 @@ export class ItemNode<T> extends CollectionNode<T> {
 
   // TODO: resolve this
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  filter(_, __, filterFn: (textValue: string) => boolean): ItemNode<T> | null {
-    if (filterFn(this.textValue)) {
+  filter(_, __, filterFn: (node: Node<T>) => boolean): ItemNode<T> | null {
+    if (filterFn(this)) {
       return this.clone();
     }
 
@@ -113,7 +113,7 @@ export class SectionNode<T> extends CollectionNode<T> {
     super(SectionNode.type, key);
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string) => boolean): SectionNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): SectionNode<T> | null {
     let filteredSection = super.filter(collection, newCollection, filterFn);
     if (filteredSection) {
       if (filteredSection.lastChildKey !== null) {
@@ -283,7 +283,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  filter(filterFn: (textValue: string) => boolean, newCollection?: BaseCollection<T>): BaseCollection<T> {
+  filter(filterFn: (node: Node<T>) => boolean, newCollection?: BaseCollection<T>): BaseCollection<T> {
     if (newCollection == null) {
       newCollection = new BaseCollection<T>();
     }
@@ -295,7 +295,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (textValue: string) => boolean): [Key | null, Key | null] {
+function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (node: Node<T>) => boolean): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys

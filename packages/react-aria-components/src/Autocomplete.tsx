@@ -14,6 +14,7 @@ import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
@@ -22,7 +23,7 @@ import {TextFieldContext} from './TextField';
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filter?: (nodeTextValue: string) => boolean,
+  filter?: (node: Node<unknown>) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
