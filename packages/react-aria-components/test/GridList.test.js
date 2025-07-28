@@ -20,7 +20,9 @@ import {
   DropIndicator,
   GridList,
   GridListContext,
+  GridListHeader,
   GridListItem,
+  GridListSection,
   Label,
   ListLayout,
   Modal,
@@ -44,6 +46,23 @@ let TestGridList = ({listBoxProps, itemProps}) => (
     <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
   </GridList>
 );
+
+let TestGridListSections = ({listBoxProps, itemProps}) => (
+  <GridList aria-label="Test" {...listBoxProps}>
+    <GridListSection>
+      <GridListHeader>Favorite Animal</GridListHeader>
+      <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
+    </GridListSection>
+    <GridListSection aria-label="Favorite Ice Cream">
+      <GridListItem {...itemProps} id="cat" textValue="Vanilla"><Checkbox slot="selection" />Vanilla</GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Chocolate"><Checkbox slot="selection" />Chocolate</GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry"><Checkbox slot="selection" />Strawberry</GridListItem>
+    </GridListSection>
+  </GridList>
+);
+
 
 let DraggableGridList = (props) => {
   let {dragAndDropHooks} = useDragAndDrop({
@@ -412,6 +431,20 @@ describe('GridList', () => {
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
     expect(items[2]).toHaveAttribute('aria-selected', 'true');
   });
+
+  it('should support sections', () => {
+    let {getAllByRole} = render(<TestGridListSections />);
+
+    let groups = getAllByRole('rowgroup');
+    expect(groups).toHaveLength(2);
+
+    expect(groups[0]).toHaveClass('react-aria-GridListSection');
+    expect(groups[1]).toHaveClass('react-aria-GridListSection');
+
+    expect(groups[0]).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Favorite Animal');
+    expect(groups[1].getAttribute('aria-label')).toEqual('Favorite Ice Cream');
+  })
 
   describe('selectionBehavior="replace"', () => {
     // Required for proper touch detection
