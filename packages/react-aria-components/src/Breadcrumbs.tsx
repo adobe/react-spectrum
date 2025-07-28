@@ -73,12 +73,16 @@ export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, Glo
   id?: Key
 }
 
-// TODO: perhaps this should be reuse ItemNode, for now just have it separate
 class BreadcrumbNode extends CollectionNode<any> {
   static readonly type = 'item';
 
   constructor(key: Key) {
     super(BreadcrumbNode.type, key);
+  }
+
+  // For, don't support Breadcrumb filtering
+  filter(): CollectionNode<any> | null {
+    return this.clone();
   }
 }
 

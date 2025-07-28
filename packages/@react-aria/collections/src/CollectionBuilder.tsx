@@ -140,7 +140,6 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback((element: ElementNode<any> | null) => {
-    // TODO: check setProps api
     element?.setProps(props, ref, rendered, render, CollectionNodeClass);
   }, [props, ref, rendered, render, CollectionNodeClass]);
   let parentNode = useContext(SSRContext);
@@ -148,7 +147,6 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
     // Guard against double rendering in strict mode.
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
-      // TODO: check this, maybe should just pass the CollectionNodeClass as a whole?
       element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
       element.setProps(props, ref, rendered, render);
       parentNode.appendChild(element);
@@ -161,7 +159,6 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
       : null;
   }
 
-  // console.log('type', CollectionNodeClass, CollectionNodeClass.type)
   // @ts-ignore
   // TODO: could just make this a div perhaps, but keep it in line with how it used to work
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
@@ -201,7 +198,6 @@ export function createLeafComponent<P extends object, E extends Element>(Collect
   return Result;
 }
 
-// TODO: check the signature of this too
 export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {

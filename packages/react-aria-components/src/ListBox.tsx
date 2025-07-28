@@ -305,8 +305,6 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
   );
 }
 
-
-// TODO: reuse
 export class ListBoxSectionNode<T> extends CollectionNode<T> {
   static readonly type = 'section';
 
@@ -354,7 +352,6 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   onAction?: () => void
 }
 
-// TODO: reusue
 class ListBoxItemNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
@@ -511,7 +508,6 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   );
 }
 
-// TODO: can reuse this most likely
 class ListBoxLoaderNode extends CollectionNode<any> {
   static readonly type = 'loader';
 

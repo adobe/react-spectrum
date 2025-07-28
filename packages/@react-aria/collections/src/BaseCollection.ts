@@ -233,8 +233,11 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  filter(filterFn: (textValue: string) => boolean): BaseCollection<T> {
-    let newCollection = new BaseCollection<T>();
+  filter(filterFn: (textValue: string) => boolean, newCollection?: BaseCollection<T>): BaseCollection<T> {
+    if (newCollection == null) {
+      newCollection = new BaseCollection<T>();
+    }
+
     let [firstKey, lastKey] = filterChildren(this, newCollection, this.firstKey, filterFn);
     newCollection.firstKey = firstKey;
     newCollection.lastKey = lastKey;
@@ -242,7 +245,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-export function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (textValue: string) => boolean): [Key | null, Key | null] {
+function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (textValue: string) => boolean): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys

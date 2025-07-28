@@ -284,7 +284,6 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   onAction?: () => void
 }
 
-// TODO: reuse?
 class GridListNode extends CollectionNode<any> {
   static readonly type = 'item';
   constructor(key: Key) {
@@ -534,8 +533,6 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-// TODO: can probably reuse ListBox's loaderNode, but might keep separate
-// add filter logic
 class GridListLoaderNode extends CollectionNode<any> {
   static readonly type = 'loader';
 

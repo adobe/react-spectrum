@@ -324,7 +324,6 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  // TODO
   setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement, CollectionNodeClass?: CollectionNodeClass<any>): void {
     let node = this.getMutableNode();
     let {value, textValue, id, ...props} = obj;

@@ -1,5 +1,5 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, filterChildren, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
@@ -165,7 +165,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
     collection.body = this.body;
-    // TODO clone updateColumns as well but it is private
+    collection.updateColumns = this.updateColumns;
     return collection;
   }
 
@@ -198,17 +198,9 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   filter(filterFn: (textValue: string) => boolean): TableCollection<T> {
-    // TODO: ideally we wouldn't need to reimplement this but we need a TableCollection, not a BaseCollection
-    // Also need to handle the fact that a bunch of properites are private
-    let clone = this.clone() as Mutable<TableCollection<T>>;
-    // @ts-ignore
-    let [firstKey, lastKey] = filterChildren(this, clone, this.firstKey, filterFn);
-    // @ts-ignore
-    clone.firstKey = firstKey;
-    // @ts-ignore
-    clone.lastKey = lastKey;
-    // @ts-ignore
-    return clone;
+    let clone = this.clone();
+    return super.filter(filterFn, clone) as TableCollection<T>;
+
   }
 }
 

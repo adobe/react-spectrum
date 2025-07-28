@@ -109,7 +109,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
 }
 
 /**
- * Filters a collection using the provided filter function and returns a new ListState.
+ * Filters a collection using the provided filter function and returns a new TableState.
  */
 export function UNSTABLE_useFilteredTableState<T extends object>(state: TableState<T>, filterFn: ((nodeValue: string) => boolean) | null | undefined): TableState<T> {
   let collection = useMemo(() => filterFn ? state.collection.filter!(filterFn) : state.collection, [state.collection, filterFn]) as ITableCollection<T>;
