@@ -148,7 +148,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
       element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
-      element.setProps(props, ref, rendered, render);
+      element.setProps(props, ref, rendered, render, CollectionNodeClass);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
       parentNode.ownerDocument.nodesByProps.set(props, element);
