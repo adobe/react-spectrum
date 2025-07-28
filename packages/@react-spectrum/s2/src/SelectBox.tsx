@@ -9,7 +9,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from './Checkbox';
+import Checkmark from '../ui-icons/Checkmark';
+import {box, iconStyles} from './Checkbox';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -31,7 +32,22 @@ export interface SelectBoxProps extends StyleProps {
   /**
    * Whether the SelectBox is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Whether to show the selection checkbox.
+   * @default false
+   */
+  isCheckboxDisabled?: boolean,
+  /**
+   * Whether to show the label/text content.
+   * @default false
+   */
+  isLabelDisabled?: boolean,
+  /**
+   * Whether to show the illustration/icon.
+   * @default false
+   */
+  isIllustrationDisabled?: boolean
 }
 
 export const SelectBoxSpectrumContext = createContext<ContextValue<Partial<SelectBoxProps>, FocusableRefValue<HTMLDivElement>>>(null);
@@ -222,7 +238,15 @@ const SelectBoxRenderPropsContext = createContext<{
  */
 export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: SelectBoxProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxSpectrumContext);
-  let {children, value, isDisabled: individualDisabled = false, UNSAFE_style} = props;
+  let {
+    children, 
+    value, 
+    isDisabled: individualDisabled = false, 
+    isCheckboxDisabled = false,
+    isLabelDisabled = false,
+    isIllustrationDisabled = false,
+    UNSAFE_style
+  } = props;
   let divRef = useRef<HTMLDivElement | null>(null);
   let domRef = useFocusableRef(ref, divRef);
   
@@ -230,15 +254,20 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
   let {
     orientation = 'vertical',
     selectedKeys,
-    isDisabled: groupDisabled = false
+    isDisabled: groupDisabled = false,
+    isCheckboxDisabled: groupIsCheckboxDisabled = false,
+    isLabelDisabled: groupIsLabelDisabled = false,
+    isIllustrationDisabled: groupIsIllustrationDisabled = false
   } = contextValue;
 
   let renderProps = useContext(SelectBoxRenderPropsContext);
 
   const size = 'M'; //Only medium size is supported
   const isDisabled = individualDisabled || groupDisabled;
+  const finalShowCheckbox = !isCheckboxDisabled;
+  const finalShowLabel = !isLabelDisabled;
+  const finalShowIllustration = !isIllustrationDisabled;
   const isSelected = selectedKeys === 'all' || (selectedKeys && selectedKeys.has(value));
-  const showCheckbox = isSelected || (!isDisabled && renderProps.isHovered);
   
   const childrenArray = React.Children.toArray(children);
   const iconSlot = childrenArray.find((child: any) => child?.props?.slot === 'icon');
@@ -264,36 +293,52 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       }, props.styles)}
       style={UNSAFE_style}>
       
-      {showCheckbox && (
+      {finalShowCheckbox && (isSelected || (!isDisabled && renderProps.isHovered)) && (
         <div 
           className={style({
             position: 'absolute',
             top: 16,
             left: 16
-          })}>
-          <Checkbox 
-            isSelected={isSelected}
-            isDisabled={isDisabled}
-            isReadOnly
-            excludeFromTabOrder
-            aria-label={isSelected ? 'Selected' : 'Select'} />
+          })}
+          aria-hidden="true">
+          <div
+            className={box({
+              isSelected: isSelected || false,
+              isDisabled,
+              isIndeterminate: false,
+              isHovered: false,
+              isFocused: false,
+              isFocusVisible: false,
+              isPressed: false,
+              isReadOnly: false,
+              isRequired: false,
+              isInvalid: false,
+              size: 'M',
+              isEmphasized: false
+            })}>
+            {isSelected && (
+              <Checkmark 
+                size="S" 
+                className={iconStyles} />
+            )}
+          </div>
         </div>
       )}
       
       {orientation === 'horizontal' ? (
         // Horizontal layout with all combinations
         <>
-          {hasIcon && (
+          {hasIcon && finalShowIllustration && (
             <div className={iconContainer({size, orientation, isDisabled})}>
               {iconSlot}
             </div>
           )}
           
-          {hasIcon || hasDescription ? (
+          {(hasIcon && finalShowIllustration) || hasDescription ? (
             // Standard horizontal layout with icon and/or description
             <div className={contentContainer({size, orientation}, props.styles)}>
               <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-                {textSlot}
+                {finalShowLabel && textSlot}
                 
                 {hasDescription && (
                   <div className={descriptionText({size, orientation, isDisabled})}>
@@ -303,33 +348,37 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
               </div>
             </div>
           ) : (
-            // Text-only horizontal layout (optimized)
-            <div className={style({
-              display: 'flex',
-              alignItems: 'center', 
-              justifyContent: 'center',
-              flexGrow: 1,
-              textAlign: 'center',
-              paddingInline: 'edge-to-text'
-            })}>
-              <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-                {textSlot}
+            // Text-only horizontal layout
+            finalShowLabel && (
+              <div className={style({
+                display: 'flex',
+                alignItems: 'center', 
+                justifyContent: 'center',
+                flexGrow: 1,
+                textAlign: 'center',
+                paddingInline: 'edge-to-text'
+              })}>
+                <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+                  {textSlot}
+                </div>
               </div>
-            </div>
+            )
           )}
         </>
       ) : (
         // Vertical layout with icon and/or description
         <>
-          {hasIcon && (
+          {hasIcon && finalShowIllustration && (
             <div className={iconContainer({size, orientation, isDisabled})}>
               {iconSlot}
             </div>
           )}
           
-          <div className={textContainer({size, orientation, isDisabled})}>
-            {textSlot}
-          </div>
+          {finalShowLabel && (
+            <div className={textContainer({size, orientation, isDisabled})}>
+              {textSlot}
+            </div>
+          )}
           
           {hasDescription && (
             <div className={style({

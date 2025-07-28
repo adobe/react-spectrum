@@ -72,6 +72,18 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    */
   isDisabled?: boolean,
   /**
+   * Whether to disable the selection checkbox for all SelectBoxes.
+   */
+  isCheckboxDisabled?: boolean,
+  /**
+   * Whether to disable the label/text content for all SelectBoxes.
+   */
+  isLabelDisabled?: boolean,
+  /**
+   * Whether to disable the illustration/icon for all SelectBoxes.
+   */
+  isIllustrationDisabled?: boolean,
+  /**
    * The name of the form field.
    */
   name?: string,
@@ -93,16 +105,14 @@ interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   orientation?: Orientation,
   isDisabled?: boolean,
+  isCheckboxDisabled?: boolean,
+  isLabelDisabled?: boolean,
+  isIllustrationDisabled?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
 }
 
-
-
-export const SelectBoxContext = createContext<SelectBoxContextValue>({
-  orientation: 'vertical'
-});
-
+export const SelectBoxContext = createContext<SelectBoxContextValue>({ orientation: 'vertical' });
 export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const gridStyles = style({
@@ -156,6 +166,9 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     gutterWidth = 'default',
     isRequired = false,
     isDisabled = false,
+    isCheckboxDisabled = false,
+    isLabelDisabled = false,
+    isIllustrationDisabled = false,
     name,
     errorMessage,
     isInvalid = false,
@@ -221,12 +234,15 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         allowMultiSelect: selectionMode === 'multiple',
         orientation,
         isDisabled,
+        isCheckboxDisabled,
+        isLabelDisabled,
+        isIllustrationDisabled,
         selectedKeys,
         onSelectionChange: setSelectedKeys
       };
       return contextValue;
     },
-    [selectionMode, orientation, isDisabled, selectedKeys, setSelectedKeys]
+    [selectionMode, orientation, isDisabled, isCheckboxDisabled, isLabelDisabled, isIllustrationDisabled, selectedKeys, setSelectedKeys]
   );
 
   return (
@@ -293,7 +309,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
           const textValue = getTextValue(childElement);
           
           return (
-            <ListBoxItem key={childValue} id={childValue} textValue={textValue} className={style({outlineStyle: 'none'})}>
+            <ListBoxItem key={childValue} id={childValue} textValue={textValue} aria-label={textValue} className={style({outlineStyle: 'none'})}>
               {(renderProps) => (
                 <SelectBoxContext.Provider value={selectBoxContextValue}>
                   <SelectBoxRenderPropsContext.Provider 
@@ -328,7 +344,6 @@ function FormIntegration({name, selectedKeys, selectionMode, isRequired, isInval
     return null;
   }
 
-  // Convert Selection to array of strings for form submission
   const values = selectedKeys === 'all' ? [] : Array.from(selectedKeys).map(String);
 
   if (selectionMode === 'multiple') {

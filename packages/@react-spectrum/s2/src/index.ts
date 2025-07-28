@@ -151,7 +151,7 @@ export type {RadioGroupProps} from './RadioGroup';
 export type {SearchFieldProps} from './SearchField';
 export type {SegmentedControlProps, SegmentedControlItemProps} from './SegmentedControl';
 export type {SelectBoxProps} from './SelectBox';
-export type {SelectBoxGroupProps, SelectBoxValueType} from './SelectBoxGroup';
+export type {SelectBoxGroupProps} from './SelectBoxGroup';
 export type {SliderProps} from './Slider';
 export type {RangeCalendarProps} from './RangeCalendar';
 export type {RangeSliderProps} from './RangeSlider';

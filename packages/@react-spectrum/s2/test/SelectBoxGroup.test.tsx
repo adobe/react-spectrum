@@ -2,14 +2,15 @@ import {act, render, screen, waitFor} from '@react-spectrum/test-utils-internal'
 import {Button, SelectBox, SelectBoxGroup, Text} from '../src';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import {Selection} from '@react-types/shared';
 
 function SingleSelectBox() {
-  const [value, setValue] = React.useState('');
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
   return (
     <SelectBoxGroup
       selectionMode="single"
-      onSelectionChange={(val) => setValue(val as string)}
-      value={value}
+      onSelectionChange={setSelectedKeys}
+      selectedKeys={selectedKeys}
       label="Single select test">
       <SelectBox value="option1">
         <Text slot="text">Option 1</Text>
@@ -25,12 +26,12 @@ function SingleSelectBox() {
 }
 
 function MultiSelectBox() {
-  const [value, setValue] = React.useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
   return (
     <SelectBoxGroup
       selectionMode="multiple"
-      onSelectionChange={(val) => setValue(val as string[])}
-      value={value}
+      onSelectionChange={setSelectedKeys}
+      selectedKeys={selectedKeys}
       label="Multi select test">
       <SelectBox value="option1">
         <Text slot="text">Option 1</Text>
@@ -50,7 +51,7 @@ function DisabledSelectBox() {
     <SelectBoxGroup
       selectionMode="single"
       onSelectionChange={() => {}}
-      value=""
+      selectedKeys={new Set()}
       isDisabled
       label="Disabled select test">
       <SelectBox value="option1">
@@ -65,24 +66,24 @@ function DisabledSelectBox() {
 
 describe('SelectBoxGroup', () => {
   describe('Basic functionality', () => {
-    it('renders as a grid with rows', () => {
+    it('renders as a listbox with options', () => {
       render(<SingleSelectBox />);
-      expect(screen.getByRole('grid', {name: 'Single select test'})).toBeInTheDocument();
-      expect(screen.getAllByRole('row')).toHaveLength(3);
+      expect(screen.getByRole('listbox', {name: 'Single select test'})).toBeInTheDocument();
+      expect(screen.getAllByRole('option')).toHaveLength(3);
       expect(screen.getByText('Option 1')).toBeInTheDocument();
     });
 
     it('renders multiple selection mode', () => {
       render(<MultiSelectBox />);
-      expect(screen.getByRole('grid', {name: 'Multi select test'})).toBeInTheDocument();
-      expect(screen.getAllByRole('row')).toHaveLength(3);
+      expect(screen.getByRole('listbox', {name: 'Multi select test'})).toBeInTheDocument();
+      expect(screen.getAllByRole('option')).toHaveLength(3);
       expect(screen.getByText('Option 1')).toBeInTheDocument();
     });
 
     it('handles selection in single mode', async () => {
       render(<SingleSelectBox />);
-      const rows = screen.getAllByRole('row');
-      const option1 = rows.find(row => row.textContent?.includes('Option 1'))!;
+      const options = screen.getAllByRole('option');
+      const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
       
       await userEvent.click(option1);
       expect(option1).toHaveAttribute('aria-selected', 'true');
@@ -90,9 +91,9 @@ describe('SelectBoxGroup', () => {
 
     it('handles multiple selection', async () => {
       render(<MultiSelectBox />);
-      const rows = screen.getAllByRole('row');
-      const option1 = rows.find(row => row.textContent?.includes('Option 1'))!;
-      const option2 = rows.find(row => row.textContent?.includes('Option 2'))!;
+      const options = screen.getAllByRole('option');
+      const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
+      const option2 = options.find(option => option.textContent?.includes('Option 2'))!;
       
       await userEvent.click(option1);
       await userEvent.click(option2);
@@ -103,11 +104,11 @@ describe('SelectBoxGroup', () => {
 
     it('handles disabled state', () => {
       render(<DisabledSelectBox />);
-      const grid = screen.getByRole('grid');
-      expect(grid).toBeInTheDocument();
+      const listbox = screen.getByRole('listbox');
+      expect(listbox).toBeInTheDocument();
       
-      const rows = screen.getAllByRole('row');
-      expect(rows.length).toBeGreaterThan(0);
+      const options = screen.getAllByRole('option');
+      expect(options.length).toBeGreaterThan(0);
     });
   });
 
@@ -117,7 +118,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="option1" 
+          selectedKeys={new Set(['option1'])}
           label="Checkbox test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -128,12 +129,12 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const selectedRow = screen.getByRole('row', {name: 'Option 1'});
+      const selectedRow = screen.getByRole('option', {name: 'Option 1'});
       expect(selectedRow).toHaveAttribute('aria-selected', 'true');
       
-      const checkbox = selectedRow.querySelector('input[type="checkbox"]');
-      expect(checkbox).toBeInTheDocument();
-      expect(checkbox).toBeChecked();
+      // Look for visual checkbox indicator (the UI checkbox div)
+      const checkboxDiv = selectedRow.querySelector('[aria-hidden="true"]');
+      expect(checkboxDiv).toBeInTheDocument();
     });
 
     it('shows checkbox on hover for non-disabled items', async () => {
@@ -141,7 +142,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="Hover test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -149,12 +150,13 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const row = screen.getByRole('row', {name: 'Option 1'});
+      const row = screen.getByRole('option', {name: 'Option 1'});
       
       await userEvent.hover(row);
       await waitFor(() => {
-        const checkbox = row.querySelector('input[type="checkbox"]');
-        expect(checkbox).toBeInTheDocument();
+        // Check for visual checkbox indicator on hover
+        const checkboxDiv = row.querySelector('[aria-hidden="true"]');
+        expect(checkboxDiv).toBeInTheDocument();
       });
     });
 
@@ -163,7 +165,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="Disabled hover test">
           <SelectBox value="option1" isDisabled>
             <Text slot="text">Option 1</Text>
@@ -171,13 +173,14 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const row = screen.getByRole('row', {name: 'Option 1'});
+      const row = screen.getByRole('option', {name: 'Option 1'});
       
       await userEvent.hover(row);
       
       await waitFor(() => {
-        const checkbox = row.querySelector('input[type="checkbox"]');
-        expect(checkbox).not.toBeInTheDocument();
+        // Should not show checkbox for disabled items
+        const checkboxDiv = row.querySelector('[aria-hidden="true"]');
+        expect(checkboxDiv).not.toBeInTheDocument();
       }, {timeout: 1000});
     });
 
@@ -186,7 +189,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          defaultValue="option1"
+          defaultSelectedKeys={new Set(['option1'])}
           label="Disabled selected test">
           <SelectBox value="option1" isDisabled>
             <Text slot="text">Option 1</Text>
@@ -194,11 +197,10 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const row = screen.getByRole('row', {name: 'Option 1'});
+      const row = screen.getByRole('option', {name: 'Option 1'});
       
-      const checkbox = row.querySelector('input[type="checkbox"]');
-      expect(checkbox).toBeInTheDocument();
-      expect(checkbox).toBeChecked();
+      const checkboxDiv = row.querySelector('[aria-hidden="true"]');
+      expect(checkboxDiv).toBeInTheDocument();
     });
   });
 
@@ -208,15 +210,14 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
-          size="L" 
+          selectedKeys={new Set()}
           label="Size test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      expect(screen.getByRole('grid', {name: 'Size test'})).toBeInTheDocument();
+      expect(screen.getByRole('listbox', {name: 'Size test'})).toBeInTheDocument();
     });
 
     it('supports horizontal orientation', () => {
@@ -224,7 +225,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           orientation="horizontal" 
           label="Orientation test">
           <SelectBox value="option1">
@@ -232,7 +233,7 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-      expect(screen.getByRole('grid', {name: 'Orientation test'})).toBeInTheDocument();
+      expect(screen.getByRole('listbox', {name: 'Orientation test'})).toBeInTheDocument();
     });
 
     it('supports required state', () => {
@@ -240,7 +241,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           isRequired 
           label="Required test">
           <SelectBox value="option1">
@@ -248,8 +249,8 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-      const grid = screen.getByRole('grid', {name: 'Required test'});
-      expect(grid).toBeInTheDocument();
+      const listbox = screen.getByRole('listbox', {name: 'Required test'});
+      expect(listbox).toBeInTheDocument();
       expect(screen.getByText('Required test')).toBeInTheDocument();
     });
 
@@ -258,7 +259,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           isInvalid 
           errorMessage="Please select an option"
           label="Validation test">
@@ -267,13 +268,13 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-      const grid = screen.getByRole('grid', {name: 'Validation test'});
-      expect(grid).toBeInTheDocument();
+      const listbox = screen.getByRole('listbox', {name: 'Validation test'});
+      expect(listbox).toBeInTheDocument();
       
       expect(screen.getByText('Please select an option')).toBeInTheDocument();
       
       const errorMessage = screen.getByText('Please select an option');
-      expect(grid.getAttribute('aria-describedby')).toBe(errorMessage.id);
+      expect(listbox.getAttribute('aria-describedby')).toBe(errorMessage.id);
     });
   });
 
@@ -283,7 +284,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="option1" 
+          selectedKeys={new Set(['option1'])}
           label="Initial value test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -294,8 +295,8 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByRole('row', {name: 'Option 1'});
-      const option2 = screen.getByRole('row', {name: 'Option 2'});
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
       
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'false');
@@ -306,7 +307,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="multiple" 
           onSelectionChange={() => {}}
-          value={['option1', 'option2']}
+          selectedKeys={new Set(['option1', 'option2'])}
           label="Multiple initial test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -320,9 +321,9 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByRole('row', {name: 'Option 1'});
-      const option2 = screen.getByRole('row', {name: 'Option 2'});
-      const option3 = screen.getByRole('row', {name: 'Option 3'});
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      const option3 = screen.getByRole('option', {name: 'Option 3'});
       
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
@@ -335,7 +336,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={onSelectionChange}
-          value=""
+          selectedKeys={new Set()}
           label="Callback test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -346,19 +347,21 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByRole('row', {name: 'Option 1'});
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
       await userEvent.click(option1);
       
-      expect(onSelectionChange).toHaveBeenCalledWith('option1');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      const receivedSelection = onSelectionChange.mock.calls[0][0];
+      expect(Array.from(receivedSelection)).toEqual(['option1']);
     });
 
-    it('calls onSelectionChange with array for multiple selection', async () => {
+    it('calls onSelectionChange with Set for multiple selection', async () => {
       const onSelectionChange = jest.fn();
       render(
         <SelectBoxGroup
           selectionMode="multiple"
           onSelectionChange={onSelectionChange}
-          value={[]}
+          selectedKeys={new Set()}
           label="Multiple callback test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -369,10 +372,12 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByRole('row', {name: 'Option 1'});
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
       await userEvent.click(option1);
       
-      expect(onSelectionChange).toHaveBeenCalledWith(['option1']);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      const receivedSelection = onSelectionChange.mock.calls[0][0];
+      expect(Array.from(receivedSelection)).toEqual(['option1']);
     });
   });
 
@@ -382,7 +387,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="multiple"
           onSelectionChange={() => {}}
-          value={['option1', 'option2']}
+          selectedKeys={new Set(['option1', 'option2'])}
           name="test-field"
           label="Form test">
           <SelectBox value="option1">
@@ -405,7 +410,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={() => {}}
-          value="option1"
+          selectedKeys={new Set(['option1'])}
           name="test-field"
           label="Single form test">
           <SelectBox value="option1">
@@ -432,7 +437,7 @@ describe('SelectBoxGroup', () => {
           <SelectBoxGroup
             selectionMode="multiple"
             onSelectionChange={() => {}}
-            value={['option1', 'option3']}
+            selectedKeys={new Set(['option1', 'option3'])}
             name="preferences"
             label="User Preferences">
             <SelectBox value="option1">
@@ -466,7 +471,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={() => {}}
-          value=""
+          selectedKeys={new Set()}
           label="Individual disabled test">
           <SelectBox value="option1" isDisabled>
             <Text slot="text">Option 1</Text>
@@ -477,7 +482,7 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const rows = screen.getAllByRole('row');
+      const rows = screen.getAllByRole('option');
       expect(rows.length).toBe(2);
     });
 
@@ -487,7 +492,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={onSelectionChange}
-          value=""
+          selectedKeys={new Set()}
           label="Disabled interaction test">
           <SelectBox value="option1" isDisabled>
             <Text slot="text">Option 1</Text>
@@ -495,7 +500,7 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const option1 = screen.getByRole('row', {name: 'Option 1'});
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
       await userEvent.click(option1);
       
       expect(onSelectionChange).not.toHaveBeenCalled();
@@ -508,7 +513,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={() => {}}
-          value=""
+          selectedKeys={new Set()}
           numColumns={2}
           label="Navigation test">
           <SelectBox value="option1">
@@ -526,18 +531,18 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const grid = screen.getByRole('grid');
-      const rows = screen.getAllByRole('row');
+      const listbox = screen.getByRole('listbox');
+      const options = screen.getAllByRole('option');
       
-      expect(grid).toBeInTheDocument();
-      expect(rows).toHaveLength(4);
+      expect(listbox).toBeInTheDocument();
+      expect(options).toHaveLength(4);
       
-      expect(grid).toHaveStyle('grid-template-columns: repeat(2, 1fr)');
+      expect(listbox).toHaveStyle('grid-template-columns: repeat(2, 1fr)');
       
-      expect(screen.getByRole('row', {name: 'Option 1'})).toBeInTheDocument();
-      expect(screen.getByRole('row', {name: 'Option 2'})).toBeInTheDocument();
-      expect(screen.getByRole('row', {name: 'Option 3'})).toBeInTheDocument();
-      expect(screen.getByRole('row', {name: 'Option 4'})).toBeInTheDocument();
+      expect(screen.getByRole('option', {name: 'Option 1'})).toBeInTheDocument();
+      expect(screen.getByRole('option', {name: 'Option 2'})).toBeInTheDocument();
+      expect(screen.getByRole('option', {name: 'Option 3'})).toBeInTheDocument();
+      expect(screen.getByRole('option', {name: 'Option 4'})).toBeInTheDocument();
     });
 
     it('supports space key selection', async () => {
@@ -546,7 +551,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           selectionMode="single"
           onSelectionChange={onSelectionChange}
-          value=""
+          selectedKeys={new Set()}
           label="Space key test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -554,15 +559,59 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const grid = screen.getByRole('grid');
+      const listbox = screen.getByRole('listbox');
       await act(async () => {
-        grid.focus();
+        listbox.focus();
       });
       
       await act(async () => {
         await userEvent.keyboard(' ');
       });
-      expect(onSelectionChange).toHaveBeenCalledWith('option1');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      const receivedSelection = onSelectionChange.mock.calls[0][0];
+      expect(Array.from(receivedSelection)).toEqual(['option1']);
+    });
+  });
+
+  describe('Visibility controls', () => {
+    it('supports checkbox visibility controls', () => {
+      render(
+        <SelectBoxGroup
+          selectionMode="multiple"
+          onSelectionChange={() => {}}
+          selectedKeys={new Set(['option1'])}
+          isCheckboxDisabled={true}
+          label="Checkbox disabled test">
+          <SelectBox value="option1">
+            <Text slot="text">Option 1</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const selectedRow = screen.getByRole('option', {name: 'Option 1'});
+      // Should not show checkbox when isCheckboxDisabled is true
+      const checkboxDiv = selectedRow.querySelector('[aria-hidden="true"]');
+      expect(checkboxDiv).not.toBeInTheDocument();
+    });
+
+    it('supports individual visibility overrides', () => {
+      render(
+        <SelectBoxGroup
+          selectionMode="multiple"
+          onSelectionChange={() => {}}
+          selectedKeys={new Set(['option1'])}
+          isCheckboxDisabled={true}
+          label="Individual override test">
+          <SelectBox value="option1" isCheckboxDisabled={false}>
+            <Text slot="text">Option 1</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const selectedRow = screen.getByRole('option', {name: 'Option 1'});
+      // Should show checkbox when individual override is false and item is selected
+      const checkboxDiv = selectedRow.querySelector('[aria-hidden="true"]');
+      expect(checkboxDiv).toBeInTheDocument();
     });
   });
 
@@ -577,7 +626,7 @@ describe('SelectBoxGroup', () => {
 
     it('validates minimum children', () => {
       render(
-        <SelectBoxGroup onSelectionChange={() => {}} value="" label="Min children test">
+        <SelectBoxGroup onSelectionChange={() => {}} selectedKeys={new Set()} label="Min children test">
           {[]}
         </SelectBoxGroup>
       );
@@ -595,7 +644,7 @@ describe('SelectBoxGroup', () => {
       ));
       
       render(
-        <SelectBoxGroup onSelectionChange={() => {}} value="" label="Max children test">
+        <SelectBoxGroup onSelectionChange={() => {}} selectedKeys={new Set()} label="Max children test">
           {manyChildren}
         </SelectBoxGroup>
       );
@@ -607,12 +656,12 @@ describe('SelectBoxGroup', () => {
   });
 
   describe('Accessibility', () => {
-    it('has proper grid structure', () => {
+    it('has proper listbox structure', () => {
       render(
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="ARIA test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -623,9 +672,8 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
       
-      expect(screen.getByRole('grid', {name: 'ARIA test'})).toBeInTheDocument();
-      expect(screen.getAllByRole('row')).toHaveLength(2);
-      expect(screen.getAllByRole('gridcell')).toHaveLength(2);
+      expect(screen.getByRole('listbox', {name: 'ARIA test'})).toBeInTheDocument();
+      expect(screen.getAllByRole('option')).toHaveLength(2);
     });
 
     it('associates labels correctly', () => {
@@ -633,7 +681,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="Choose option">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
@@ -641,8 +689,8 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
       
-      const grid = screen.getByRole('grid', {name: 'Choose option'});
-      expect(grid).toBeInTheDocument();
+      const listbox = screen.getByRole('listbox', {name: 'Choose option'});
+      expect(listbox).toBeInTheDocument();
     });
 
     it('supports aria-describedby for error messages', () => {
@@ -650,7 +698,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           isInvalid
           errorMessage="Error occurred"
           label="Error test">
@@ -660,10 +708,10 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
       
-      const grid = screen.getByRole('grid');
+      const listbox = screen.getByRole('listbox');
       const errorMessage = screen.getByText('Error occurred');
       
-      expect(grid).toHaveAttribute('aria-describedby');
+      expect(listbox).toHaveAttribute('aria-describedby');
       expect(errorMessage).toBeInTheDocument();
     });
   });
@@ -674,7 +722,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           orientation="horizontal"
           label="Complex children test">
           <SelectBox value="option1">
@@ -694,7 +742,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="Empty value test">
           <SelectBox value="">
             <Text slot="text">Empty Value</Text>
@@ -702,7 +750,7 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
       
-      const row = screen.getByRole('row', {name: 'Empty Value'});
+      const row = screen.getByRole('option', {name: 'Empty Value'});
       expect(row).toBeInTheDocument();
     });
 
@@ -711,7 +759,7 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           gutterWidth="compact" 
           label="Gutter test">
           <SelectBox value="option1">
@@ -719,7 +767,7 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-      expect(screen.getByRole('grid', {name: 'Gutter test'})).toBeInTheDocument();
+      expect(screen.getByRole('listbox', {name: 'Gutter test'})).toBeInTheDocument();
     });
 
     it('handles emphasized style', () => {
@@ -727,14 +775,71 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup 
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          value="" 
+          selectedKeys={new Set()}
           label="Emphasized test">
           <SelectBox value="option1">
             <Text slot="text">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      expect(screen.getByRole('grid', {name: 'Emphasized test'})).toBeInTheDocument();
+      expect(screen.getByRole('listbox', {name: 'Emphasized test'})).toBeInTheDocument();
+    });
+
+    it('handles "all" selection', () => {
+      render(
+        <SelectBoxGroup 
+          selectionMode="multiple" 
+          onSelectionChange={() => {}} 
+          selectedKeys="all"
+          label="All selected test">
+          <SelectBox value="option1">
+            <Text slot="text">Option 1</Text>
+          </SelectBox>
+          <SelectBox value="option2">
+            <Text slot="text">Option 2</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+      
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('handles controlled component updates', async () => {
+      function ControlledTest() {
+        const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
+        
+        return (
+          <div>
+            <button onClick={() => setSelectedKeys(new Set(['option2']))}>
+              Select Option 2
+            </button>
+            <SelectBoxGroup 
+              selectionMode="single" 
+              onSelectionChange={setSelectedKeys} 
+              selectedKeys={selectedKeys}
+              label="Controlled test">
+              <SelectBox value="option1">
+                <Text slot="text">Option 1</Text>
+              </SelectBox>
+              <SelectBox value="option2">
+                <Text slot="text">Option 2</Text>
+              </SelectBox>
+            </SelectBoxGroup>
+          </div>
+        );
+      }
+
+      render(<ControlledTest />);
+      
+      const button = screen.getByRole('button', {name: 'Select Option 2'});
+      await userEvent.click(button);
+      
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      expect(option2).toHaveAttribute('aria-selected', 'true');
     });
   });
 });
