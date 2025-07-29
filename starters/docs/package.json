@@ -6,8 +6,8 @@
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
-    "@storybook/react": "^9.0.4",
-    "@storybook/react-webpack5": "^9.0.4",
+    "@storybook/react": "^9.0.18",
+    "@storybook/react-webpack5": "^9.0.18",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "clsx": "^2.1.1",
@@ -17,7 +17,7 @@
     "react": "^19.1.0",
     "react-aria-components": "latest",
     "react-dom": "^19.1.0",
-    "storybook": "^9.0.4",
+    "storybook": "^9.0.18",
     "@vueless/storybook-dark-mode": "^9.0.6",
     "typescript": "5.3.3"
   },

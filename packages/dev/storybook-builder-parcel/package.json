@@ -7,7 +7,7 @@
     "@parcel/core": "^2.13.1",
     "@parcel/reporter-cli": "^2.13.1",
     "http-proxy-middleware": "^2.0.6",
-    "storybook": "^9.0.4"
+    "storybook": "^9.0.18"
   },
   "peerDependencies": {
     "react": "*"

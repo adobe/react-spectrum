@@ -65,13 +65,15 @@ module.exports.generatePreviewModern = async function generatePreviewModern(
   window.__STORYBOOK_STORY_STORE__ = window.__STORYBOOK_STORY_STORE__ || window.__STORYBOOK_PREVIEW__.storyStore;
 
 
-  module.hot.accept(() => {
-    // importFn has changed so we need to patch the new one in
-    window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
+  if (import.meta.hot) {
+    import.meta.hot.hot.accept(() => {
+      // importFn has changed so we need to patch the new one in
+      window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
 
-    // getProjectAnnotations has changed so we need to patch the new one in
-    window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
-  });
+      // getProjectAnnotations has changed so we need to patch the new one in
+      window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
+    });
+  }
  `;
   // ${generateHMRHandler(frameworkName)};
   return code;
