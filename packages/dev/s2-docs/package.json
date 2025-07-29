@@ -5,8 +5,8 @@
   "scripts": {
     "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
     "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
-    "generate:og": "node scripts/generateOg.mjs",
-    "generate:md": "node scripts/generateMd.mjs"
+    "generate:og": "node scripts/generateOGImages.mjs",
+    "generate:md": "node scripts/generateMarkdownDocs.mjs"
   },
   "targets": {
     "react-static": {
@@ -47,7 +47,7 @@
     "remark-mdx": "^3.1.0",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
-    "satori": "^0.15.2",
+    "satori": "^0.16.1",
     "sharp": "^0.33.5",
     "tree-sitter-highlight": "^1.0.1",
     "ts-morph": "^26.0.0",

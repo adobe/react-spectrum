@@ -35,6 +35,8 @@ export function Nav({pages, currentPage}: PageProps) {
         height: 'fit',
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
+        paddingX: 12,
+        minWidth: 180,
         display: {
           default: 'none',
           lg: 'block'
@@ -107,9 +109,7 @@ export function SideNav({children}) {
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        minWidth: 160,
-        width: 192,
-        maxWidth: 240,
+        width: 'full',
         boxSizing: 'border-box'
       })}>
       {children}

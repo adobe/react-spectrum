@@ -1,5 +1,5 @@
 import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
-import type {PageProps, TocNode} from '@parcel/rsc';
+import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
 import './anatomy.css';
@@ -44,6 +44,17 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
+const getTitle = (currentPage: Page): string => {
+  let library: string | undefined;
+  if (currentPage.name.startsWith('react-aria/')) {
+    library = 'React Aria';
+  } else if (currentPage.name.startsWith('s2/')) {
+    library = 'React Spectrum';
+  }
+  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  return library ? `${pageTitle} - ${library}` : pageTitle;
+};
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   return (
@@ -52,7 +63,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
-        <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
+        <title>{getTitle(currentPage)}</title>
       </head>
       <body
         className={style({
@@ -73,13 +84,17 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           gap: {
             default: 0,
             lg: 12
+          },
+          overscrollBehavior: {
+            default: 'auto',
+            lg: 'none'
           }
         })}>
         <Header pages={pages} currentPage={currentPage} />
         <MobileHeader
           toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
           nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
-        <div className={style({display: 'flex', gap: 32, width: 'full'})}>
+        <div className={style({display: 'flex', width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}
