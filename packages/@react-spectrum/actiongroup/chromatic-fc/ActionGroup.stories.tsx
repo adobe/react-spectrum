@@ -11,32 +11,41 @@
  */
 
 
-import {Compact, Default, IsDisabled, IsEmphasized, IsQuiet, StaticColorBlack, StaticColorWhite} from '../chromatic/ActionGroup.stories';
+import {docItems, editItems, Render, viewItems} from '../chromatic/ActionGroup.stories';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {StoryFn} from '@storybook/react';
+import {View} from '@react-spectrum/view';
 
 export default {
   title: 'ActionGroup'
 };
 
-export const All = () => (
+export type ActionGroupStory = StoryFn<typeof Render>;
+
+export const All: ActionGroupStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>default</h2>
-    <Default />
+    <Render items={docItems} />
     <h2>isDisabled</h2>
-    <IsDisabled />
+    <Render items={docItems} isDisabled defaultSelectedKeys={['1']} />
     <h2>compact</h2>
-    <Compact />
+    <Render items={viewItems} density="compact" defaultSelectedKeys={['1']} />
     <h2>isQuiet</h2>
-    <IsQuiet />
+    <Render items={editItems} isQuiet defaultSelectedKeys={['1']} />
     <h2>isEmphasized</h2>
-    <IsEmphasized />
+    <Render items={docItems} isEmphasized defaultSelectedKeys={['1']} />
     <h2>staticColor: black</h2>
-    <StaticColorBlack />
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Render items={viewItems} staticColor="black" defaultSelectedKeys={['1']} />
+    </View>
     <h2>staticColor: white</h2>
-    <StaticColorWhite />
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Render items={viewItems} staticColor="white" defaultSelectedKeys={['1']} />
+    </View>
   </Flex>
 );
+
 All.story = {
   name: 'all'
 };

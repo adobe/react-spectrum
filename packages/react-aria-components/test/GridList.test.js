@@ -32,9 +32,9 @@ import {
   Virtualizer
 } from '../';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -1099,9 +1099,9 @@ describe('GridList', () => {
               <GridListItem id={item.name}>{item.name}</GridListItem>
             )}
           </Collection>
-          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_GridListLoadingSentinel>
+          </GridListLoadMoreItem>
         </GridList>
       );
     };
@@ -1211,9 +1211,9 @@ describe('GridList', () => {
                   <GridListItem id={item.name}>{item.name}</GridListItem>
                 )}
               </Collection>
-              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+              <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_GridListLoadingSentinel>
+              </GridListLoadMoreItem>
             </GridList>
           </Virtualizer>
         );
@@ -1227,7 +1227,7 @@ describe('GridList', () => {
         expect(rows).toHaveLength(8);
         let loaderRow = rows[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -1302,7 +1302,7 @@ describe('GridList', () => {
         rows = gridListTester.rows;
         expect(rows).toHaveLength(8);
         loaderRow = rows[7];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 7) {
             continue;
@@ -1311,6 +1311,29 @@ describe('GridList', () => {
           }
         }
       });
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderGridList({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
+      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+      await gridListTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

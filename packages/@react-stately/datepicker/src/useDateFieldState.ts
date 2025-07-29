@@ -42,6 +42,8 @@ export interface DateSegment {
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue | null,
+  /** The default field value. */
+  defaultValue: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
@@ -188,6 +190,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   const previousValue = useRef(value)
 
+  let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -276,8 +279,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
     } else if (
-      validKeys.length === 0 || 
-      validKeys.length >= allKeys.length || 
+      (validKeys.length === 0 && clearedSegment.current == null) ||
+      validKeys.length >= allKeys.length ||
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
     ) {
       // If the field was empty (no valid segments) or all segments are completed, commit the new value.
@@ -380,6 +383,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   return {
     ...validation,
     value: calendarValue,
+    defaultValue: props.defaultValue ?? initialValue,
     dateValue,
     calendar,
     setValue,
@@ -527,9 +531,9 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
 
     // There is an issue in RTL languages where time fields render (minute:hour) instead of (hour:minute).
     // To force an LTR direction on the time field since, we wrap the time segments in LRI (left-to-right) isolate unicode. See https://www.w3.org/International/questions/qa-bidi-unicode-controls.
-    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change. 
+    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change.
     if (type === 'hour') {
-      // This marks the start of the embedded direction change. 
+      // This marks the start of the embedded direction change.
       processedSegments.push({
         type: 'literal',
         text: '\u2066',
@@ -562,7 +566,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
         isEditable: false
       });
     } else {
-      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal. 
+      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal.
       processedSegments.push(dateSegment);
     }
   }

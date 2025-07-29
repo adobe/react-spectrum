@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CardView, CardViewProps, Content, Heading, IllustratedMessage} from '../src';
+import {CardView, Content, Heading, IllustratedMessage, SkeletonCollection} from '../src';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {PhotoCard} from '../stories/CardView.stories';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof CardView> = {
@@ -32,8 +33,8 @@ const cardViewStyles = style({
   height: 600
 });
 
-export const Empty = (args: CardViewProps<any>) => {
-  return (
+export const Empty: StoryObj<typeof CardView> = {
+  render: (args) => (
     <CardView
       aria-label="Assets"
       {...args}
@@ -47,5 +48,38 @@ export const Empty = (args: CardViewProps<any>) => {
       )}>
       {[]}
     </CardView>
-  );
+  )
+};
+
+export const Loading: StoryObj<typeof CardView> = {
+  render: (args) => (
+    <CardView
+      aria-label="Assets"
+      loadingState="loading"
+      styles={cardViewStyles}
+      renderEmptyState={() => (
+        <IllustratedMessage size="L">
+          <EmptyIcon />
+          <Heading>Create your first asset.</Heading>
+          <Content>Get started by uploading or importing some assets.</Content>
+        </IllustratedMessage>
+      )}
+      {...args}>
+      <SkeletonCollection>
+        {() => (
+          <PhotoCard
+            layout="grid"
+            item={{
+              id: Math.random(),
+              user: {name: 'Devon Govett', profile_image: {small: ''}},
+              urls: {regular: ''},
+              description: 'This is a fake description. Kinda long so it wraps to a new line.',
+              alt_description: '',
+              width: 400,
+              height: 200 + Math.max(0, Math.round(Math.random() * 400))
+            }} />
+        )}
+      </SkeletonCollection>
+    </CardView>
+  )
 };

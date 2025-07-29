@@ -183,11 +183,11 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...startFieldProps,
       ...commonFieldProps,
       value: state.value?.start ?? null,
-      onChange: start => {
-        state.setDateTime('start', start)
-      },
+      defaultValue: state.defaultValue?.start,
+      onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
       name: props.startName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -203,8 +203,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end ?? null,
+      defaultValue: state.defaultValue?.end,
       onChange: end => state.setDateTime('end', end),
       name: props.endName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -230,7 +232,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      firstDayOfWeek: props.firstDayOfWeek,
+      pageBehavior: props.pageBehavior
     },
     isInvalid,
     validationErrors,

@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumb, Breadcrumbs} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
@@ -39,35 +39,40 @@ const meta: Meta<typeof Breadcrumbs> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Breadcrumbs>;
 
-export const Example = (args: any) => (
-  <Breadcrumbs {...args}>
-    <Breadcrumb href="/">
-      Home
-    </Breadcrumb>
-    <Breadcrumb href="/react-aria">
-      React Aria
-    </Breadcrumb>
-    <Breadcrumb href="/breadcrumbs">
-      Breadcrumbs
-    </Breadcrumb>
-  </Breadcrumbs>
-);
+export const Example: Story = {
+  render: (args: any) => (
+    <Breadcrumbs {...args}>
+      <Breadcrumb href="/">
+        Home
+      </Breadcrumb>
+      <Breadcrumb href="/react-aria">
+        React Aria
+      </Breadcrumb>
+      <Breadcrumb href="/breadcrumbs">
+        Breadcrumbs
+      </Breadcrumb>
+    </Breadcrumbs>
+  )
+};
 
 let items = [
   {id: 'home', name: 'Home'},
   {id: 'react-aria', name: 'React Aria'},
   {id: 'breadcrumbs', name: 'Breadcrumbs'}
 ];
-export const WithActions = (args: any) => (
-  <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
-    {item => (
-      <Breadcrumb href={item.href}>
-        {item.name}
-      </Breadcrumb>
-    )}
-  </Breadcrumbs>
-);
+export const WithActions: Story = {
+  render: (args: any) => (
+    <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
+      {item => (
+        <Breadcrumb href={item.href}>
+          {item.name}
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  )
+};
 
 let manyItems = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over'},
@@ -79,17 +84,19 @@ let manyItems = [
   {id: 'Folder 7', name: 'April 7'}
 ];
 
-export const Many = (args: any) => (
-  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
-    <Breadcrumbs items={manyItems} {...args}>
-      {item => (
-        <Breadcrumb>
-          {item.name}
-        </Breadcrumb>
-      )}
-    </Breadcrumbs>
-  </div>
-);
+export const Many: Story = {
+  render: (args: any) => (
+    <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+      <Breadcrumbs items={manyItems} {...args}>
+        {item => (
+          <Breadcrumb>
+            {item.name}
+          </Breadcrumb>
+        )}
+      </Breadcrumbs>
+    </div>
+  )
+};
 
 let manyItemsWithLinks = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
@@ -101,14 +108,16 @@ let manyItemsWithLinks = [
   {id: 'Folder 7', name: 'April 7', href: '/folder7'}
 ];
 
-export const ManyWithLinks = (args: any) => (
-  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
-    <Breadcrumbs items={manyItemsWithLinks} {...args}>
-      {item => (
-        <Breadcrumb href={item.href}>
-          {item.name}
-        </Breadcrumb>
-      )}
-    </Breadcrumbs>
-  </div>
-);
+export const ManyWithLinks: Story = {
+  render: (args: any) => (
+    <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+      <Breadcrumbs items={manyItemsWithLinks} {...args}>
+        {item => (
+          <Breadcrumb href={item.href}>
+            {item.name}
+          </Breadcrumb>
+        )}
+      </Breadcrumbs>
+    </div>
+  )
+};

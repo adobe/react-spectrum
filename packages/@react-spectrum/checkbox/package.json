@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/checkbox",
-  "version": "3.9.18",
+  "version": "3.10.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,19 +40,19 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/checkbox": "^3.15.7",
-    "@react-aria/focus": "^3.20.5",
-    "@react-aria/interactions": "^3.25.3",
-    "@react-spectrum/form": "^3.7.16",
-    "@react-spectrum/label": "^3.16.16",
-    "@react-spectrum/utils": "^3.12.6",
-    "@react-stately/checkbox": "^3.6.15",
-    "@react-stately/toggle": "^3.8.5",
-    "@react-types/checkbox": "^3.9.5",
-    "@react-types/shared": "^3.30.0",
-    "@spectrum-icons/ui": "^3.6.17",
+    "@react-aria/checkbox": "^3.16.0",
+    "@react-aria/focus": "^3.21.0",
+    "@react-aria/interactions": "^3.25.4",
+    "@react-spectrum/form": "^3.7.17",
+    "@react-spectrum/label": "^3.16.17",
+    "@react-spectrum/utils": "^3.12.7",
+    "@react-stately/checkbox": "^3.7.0",
+    "@react-stately/toggle": "^3.9.0",
+    "@react-types/checkbox": "^3.10.0",
+    "@react-types/shared": "^3.31.0",
+    "@spectrum-icons/ui": "^3.6.18",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.10.1"
+    "react-aria-components": "^1.11.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

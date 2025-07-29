@@ -19,7 +19,8 @@ import React, {
   type JSX,
   LabelHTMLAttributes,
   RefObject,
-  useEffect
+  useEffect,
+  useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
@@ -142,7 +143,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     pattern: props.pattern
   };
 
-  useFormReset(ref, value, setValue);
+  let [initialValue] = useState(value);
+  useFormReset(ref, props.defaultValue ?? initialValue, setValue);
   useFormValidation(props, validationState, ref);
 
   useEffect(() => {
@@ -186,6 +188,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         maxLength: props.maxLength,
         minLength: props.minLength,
         name: props.name,
+        form: props.form,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
         autoCorrect: props.autoCorrect,

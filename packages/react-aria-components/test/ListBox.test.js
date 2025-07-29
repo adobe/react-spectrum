@@ -28,8 +28,8 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
 import React, {useState} from 'react';
-import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1566,9 +1566,9 @@ describe('ListBox', () => {
               <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
             )}
           </Collection>
-          <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_ListBoxLoadingSentinel>
+          </ListBoxLoadMoreItem>
         </ListBox>
       );
     };
@@ -1683,9 +1683,9 @@ describe('ListBox', () => {
                   <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
                 )}
               </Collection>
-              <UNSTABLE_ListBoxLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <ListBoxLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_ListBoxLoadingSentinel>
+              </ListBoxLoadMoreItem>
             </ListBox>
           </Virtualizer>
         );
@@ -1698,8 +1698,8 @@ describe('ListBox', () => {
         expect(options).toHaveLength(8);
         let loaderRow = options[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-posinset', '51');
-        expect(loaderRow).toHaveAttribute('aria-setSize', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-posinset');
+        expect(loaderRow).not.toHaveAttribute('aria-setSize');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -1754,6 +1754,29 @@ describe('ListBox', () => {
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('30px');
       });
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderListbox({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
+      let listBoxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+      await listBoxTester.triggerOptionAction({option: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

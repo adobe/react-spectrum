@@ -11,7 +11,23 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
+import {
+  Button,
+  CalendarCell,
+  CalendarGrid,
+  DateInput,
+  DateRangePicker,
+  DateRangePickerContext,
+  DateSegment,
+  Dialog,
+  FieldError,
+  Group,
+  Heading,
+  Label,
+  Popover,
+  RangeCalendar,
+  Text
+} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -163,11 +179,13 @@ describe('DateRangePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(<TestDateRangePicker startName="start" endName="end" form="test" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
+    expect(start).toHaveAttribute('form', 'test');
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
+    expect(end).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -296,8 +314,8 @@ describe('DateRangePicker', () => {
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
     let normalize = (s) => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
-    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString()));
-    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString()));
+    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString('en-US')));
+    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString('en-US')));
   });
 
   it('should disable button and date input when DatePicker is disabled', () => {

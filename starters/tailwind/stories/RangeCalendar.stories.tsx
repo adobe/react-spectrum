@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React from 'react';
 import { RangeCalendar } from '../src/RangeCalendar';
 

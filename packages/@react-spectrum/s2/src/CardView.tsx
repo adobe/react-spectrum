@@ -16,15 +16,16 @@ import {
   ContextValue,
   GridLayout,
   GridListItem,
+  GridListLoadMoreItem,
   GridListProps,
+  GridListRenderProps,
   Size,
-  UNSTABLE_GridListLoadingSentinel,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
 import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
@@ -33,7 +34,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -203,8 +204,10 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     UNSAFE_className = '',
     UNSAFE_style,
     styles,
+    loadingState,
     onLoadMore,
     items,
+    renderEmptyState: renderEmptyStateProp,
     ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
@@ -244,9 +247,11 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderer;
   let cardLoadingSentinel = (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
+      isLoading={isLoading}
       onLoadMore={onLoadMore} />
   );
 
@@ -268,6 +273,15 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     );
   }
 
+  // Wrap the renderEmptyState function so that it is not called when there is a skeleton loader.
+  let renderEmptyState = renderEmptyStateProp ? (renderProps: GridListRenderProps) => {
+    let collection = renderProps.state.collection;
+    let firstKey = collection.getFirstKey();
+    if (firstKey == null || collection.getItem(firstKey)?.type !== 'skeleton') {
+      return renderEmptyStateProp(renderProps);
+    }
+  } : undefined;
+
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
       <InternalCardViewContext.Provider value={GridListItem}>
@@ -276,6 +290,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              renderEmptyState={renderEmptyState}
               items={items}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}

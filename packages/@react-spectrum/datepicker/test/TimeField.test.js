@@ -297,6 +297,29 @@ describe('TimeField', function () {
       expect(input).toHaveValue('08:30:00');
     });
 
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {
+          const [value, formAction] = React.useActionState(() => new Time(10, 30), new Time(8, 30));
+          
+          return (
+            <form action={formAction}>
+              <TimeField label="Value" name="time" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let input = document.querySelector('input[name=time]');
+        expect(input).toHaveValue('08:30:00');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('10:30:00');
+      });
+    }
+
     describe('validation', () => {
       describe('validationBehavior=native', () => {
         it('supports isRequired', async () => {

@@ -51,12 +51,13 @@ type: component
 
 ```tsx example
 import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import {ChevronDown} from 'lucide-react';
 
 <ComboBox>
   <Label>Favorite Animal</Label>
   <div>
     <Input />
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   <Popover>
     <ListBox>
@@ -338,7 +339,7 @@ function MyComboBox<T extends object>({label, description, errorMessage, childre
       <Label>{label}</Label>
       <div className="my-combobox-container">
         <Input />
-        <Button>▼</Button>
+        <Button><ChevronDown size={16} /></Button>
       </div>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -906,12 +907,11 @@ The example below has `menuTrigger` set to `focus`.
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
-state to the user, or support features like infinite scroll to load more data. See
-[this CodeSandbox](https://codesandbox.io/s/dreamy-burnell-3i2jy?file=/src/Autocomplete.tsx) for an example
-of a ComboBox supporting those features.
+and filtering of data from a server. Use the [renderEmptyState](../react-aria/ListBox.html#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a [`<ListBoxLoadMoreItem>`](../react-aria/ListBox.html#listboxloadmoreitem) element at the end of the list.
 
 ```tsx example
+import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -920,15 +920,20 @@ interface Character {
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
       let res = await fetch(
-        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`,
         {signal}
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
@@ -936,14 +941,62 @@ function AsyncLoadingExample() {
   return (
     <MyComboBox
       label="Star Wars Character Lookup"
-      items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}>
-      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      {/*- begin highlight -*/}
+      <Collection items={list.items}>
+        {(item) => (
+          <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <MyProgressCircle isIndeterminate aria-label="Loading more..." />
+      </ListBoxLoadMoreItem>
+      {/*- end highlight -*/}
     </MyComboBox>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxLoadingIndicator {
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+  display: flex;
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
 
 ## Disabled
 
@@ -1062,7 +1115,7 @@ The `description` slot can be used to associate additional help text with a Comb
   <Label>Favorite Animal</Label>
   <div>
     <Input />
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   {/*- begin highlight -*/}
   <Text slot="description">Please select an animal.</Text>
@@ -1409,6 +1462,7 @@ This example shows a `ComboBoxClearButton` component that can be placed within a
 
 ```tsx example
 import {ComboBoxStateContext} from 'react-aria-components';
+import {X} from 'lucide-react';
 
 function ComboBoxClearButton() {
   /*- begin highlight -*/
@@ -1421,7 +1475,7 @@ function ComboBoxClearButton() {
       className="clear-button"
       aria-label="Clear"
       onPress={() => state?.setSelectedKey(null)}>
-      ✕
+      <X size={14} />
     </Button>
   );
 }
@@ -1433,7 +1487,7 @@ function ComboBoxClearButton() {
     {/*- begin highlight -*/}
     <ComboBoxClearButton />
     {/*- end highlight -*/}
-    <Button>▼</Button>
+    <Button><ChevronDown size={16} /></Button>
   </div>
   <Popover>
     <ListBox>
@@ -1463,6 +1517,9 @@ function ComboBoxClearButton() {
   border: none;
   padding: 0;
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &[data-pressed] {
     background: dimgray;
@@ -1487,7 +1544,7 @@ If you need to customize things even further, such as accessing internal state, 
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the combobox tester and a sample of how you could use it in your test suite.

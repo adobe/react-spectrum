@@ -1527,6 +1527,32 @@ describe('DateRangePicker', function () {
       expect(end).toHaveValue('2022-04-08');
     });
 
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {
+          const [value, formAction] = React.useActionState(() => ({start: new CalendarDate(2025, 2, 3), end: new CalendarDate(2025, 4, 8)}), {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+          
+          return (
+            <form action={formAction}>
+              <DateRangePicker startName="start" endName="end" label="Value" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let start = document.querySelector('input[name=start]');
+        let end = document.querySelector('input[name=end]');
+        expect(start).toHaveValue('2020-02-03');
+        expect(end).toHaveValue('2022-04-08');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(start).toHaveValue('2025-02-03');
+        expect(end).toHaveValue('2025-04-08');
+      });
+    }
+
     describe('validation', () => {
       describe('validationBehavior=native', () => {
         it('supports isRequired', async () => {

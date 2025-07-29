@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "Tudo selecionado",
   "breadcrumbs.more": "Mais artigos",
   "button.pending": "pendente",
+  "calendar.invalidSelection": "A(s) {selectedCount, plural, one {data} other {datas}} selecionada(s) não está(ão) disponível/disponível(eis).",
   "combobox.noResults": "Sem resultados",
   "contextualhelp.help": "Ajuda",
   "contextualhelp.info": "Informação",
+  "datepicker.endTime": "Terminar tempo",
+  "datepicker.startTime": "Iniciar tempo",
+  "datepicker.time": "Tempo",
   "dialog.alert": "Alerta",
   "dialog.dismiss": "Dispensar",
   "dropzone.replaceMessage": "Largar ficheiro para substituir",
@@ -33,7 +37,7 @@
   "tag.hideButtonLabel": "Mostrar menos",
   "tag.noTags": "Nenhum",
   "tag.showAllButtonLabel": "Mostrar tudo ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Limpar tudo",
+  "toast.collapse": "Colapsar",
+  "toast.showAll": "Mostrar tudo"
 }
