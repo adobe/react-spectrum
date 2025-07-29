@@ -189,8 +189,6 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
                 <RangeCalendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
-                  pageBehavior={pageBehavior}
-                  firstDayOfWeek={firstDayOfWeek}
                   createCalendar={props.createCalendar}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': validationState === 'invalid'})} />
                 {showTimeField &&
