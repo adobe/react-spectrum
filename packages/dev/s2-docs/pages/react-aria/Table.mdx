@@ -121,7 +121,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
 
 ## Content
 
-`Table` follows the **Collection Components API**, accepting both static and dynamic collections. 
+`Table` follows the **Collection Components API**, accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -441,7 +441,7 @@ function SortableTable() {
   }
 
   return (
-    <Table 
+    <Table
       aria-label="Favorite pokemon"
       ///- begin highlight -///
       sortDescriptor={sortDescriptor}
@@ -519,7 +519,7 @@ const rows = [
 
 ### Resize events
 
-The ResizableTableContainer's `onResize` event is called when a column resizer is moved by the user. The `onResizeEnd` event is called when the user finishes resizing. These receive a `Map` containing the widths of all columns in the Table. This example persists the column widths in `localStorage`.
+The `ResizableTableContainer`'s `onResize` event is called when a column resizer is moved by the user. The `onResizeEnd` event is called when the user finishes resizing. These receive a `Map` containing the widths of all columns in the `Table`. This example persists the column widths in `localStorage`.
 
 ```tsx render
 "use client";
@@ -562,14 +562,14 @@ export default function ResizableTable() {
       <Table aria-label="Table with resizable columns">
         <TableHeader columns={columns} dependencies={[columnWidths]}>
           {column => (
-            <Column 
+            <Column
               isRowHeader={column.id === 'file'}
               ///- begin highlight -///
               width={columnWidths.get(column.id)}
               ///- end highlight -///
             >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <span tabIndex={-1} className="column-name">File Name</span>
+                <span tabIndex={-1} className="column-name">{column.name}</span>
                 <ColumnResizer />
               </div>
             </Column>
@@ -625,7 +625,7 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+`Table` supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
 
 ```tsx render
 "use client";
