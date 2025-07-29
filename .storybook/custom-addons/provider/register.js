@@ -1,4 +1,4 @@
-import {addons, types} from '@storybook/manager-api';
+import {addons, types} from 'storybook/manager-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
@@ -75,6 +75,7 @@ function ProviderFieldSetter({api}) {
   };
   useEffect(() => {
     let storySwapped = () => {
+      console.log('storySwapped', values);
       channel.emit('provider/updated', values);
     };
     channel.on('rsp/ready-for-update', storySwapped);
@@ -121,6 +122,7 @@ function ProviderFieldSetter({api}) {
 }
 
 addons.register('ProviderSwitcher', (api) => {
+  console.log('ProviderSwitcher registering');
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,

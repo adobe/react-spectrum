@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Form, Group, Heading, Input, Label, Popover, RangeCalendar, TextField} from 'react-aria-components';
 import clsx from 'clsx';
 import {Meta, StoryFn} from '@storybook/react';
