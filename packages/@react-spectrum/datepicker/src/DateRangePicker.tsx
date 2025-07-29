@@ -50,9 +50,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
     isDisabled,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1,
-    pageBehavior,
-    firstDayOfWeek
+    maxVisibleMonths = 1
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement | null>(null);
