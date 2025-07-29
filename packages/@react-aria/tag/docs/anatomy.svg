@@ -1,4 +1,4 @@
-<svg style="max-height:200px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:4px" viewBox="0 0 415 220">
+<svg style="max-height:200px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:var(--anatomy-radius);" viewBox="0 0 415 220">
   <g id="Tag" transform="translate(67.653 85.595)">
     <rect id="Placement_Area" data-name="Placement Area" width="148.873" height="45.807" transform="translate(0 0)" fill="red" opacity="0"/>
     <g id="Background" transform="translate(0 0)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="1">

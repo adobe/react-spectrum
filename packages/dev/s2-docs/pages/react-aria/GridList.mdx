@@ -163,7 +163,7 @@ function AsyncLoadingExample() {
 
 Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
 
-```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
+```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
@@ -181,7 +181,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 ```tsx render hideImports
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {GridList} from 'vanilla-starter/GridList';
 
 <GridList
   aria-label="Search results"

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height:300px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:4px" viewBox="0 0 627 300">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height:300px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:var(--anatomy-radius);" viewBox="0 0 627 300">
   <title>List anatomy diagram</title>
   <desc>Shows a list and list item component with labels pointing to its parts.</desc>
   <defs>
