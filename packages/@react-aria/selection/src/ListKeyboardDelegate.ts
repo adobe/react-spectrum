@@ -50,7 +50,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.orientation = opts.orientation;
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
-      this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref, this.orientation);
+      this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref);
     } else {
       this.collection = args[0];
       this.disabledKeys = args[1];
@@ -59,6 +59,13 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.layout = 'stack';
       this.disabledBehavior = 'all';
       this.layoutDelegate = new DOMLayoutDelegate(this.ref);
+    }
+
+    // Log warning when keyboard mismatches the layout.
+    let layoutOrientation = this.layoutDelegate.getOrientation?.();
+
+    if (this.orientation && layoutOrientation && layoutOrientation !== this.orientation) {
+      console.warn('Layout does not match keyboard orientation.');
     }
 
     // If this is a vertical stack, remove the left/right methods completely
@@ -80,7 +87,6 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getOrientation(): Orientation {
-    // TODO: Should we log a warning if keyboard and layout delegate mismatch in orientation?
     return this.orientation || this.layoutDelegate.getOrientation?.() || 'vertical';
   }
 

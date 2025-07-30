@@ -11,39 +11,13 @@
  */
 
 import {getItemElement} from './utils';
-import {Key, LayoutDelegate, Orientation, Rect, RefObject, Size} from '@react-types/shared';
+import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
   private ref: RefObject<HTMLElement | null>;
-  private orientation?: Orientation;
 
-  constructor(ref: RefObject<HTMLElement | null>, orientation?: Orientation) {
+  constructor(ref: RefObject<HTMLElement | null>) {
     this.ref = ref;
-    this.orientation = orientation;
-  }
-
-  getOrientation(): Orientation | null {
-    let container = this.ref.current;
-    if (this.orientation) {
-      return this.orientation;
-    }
-
-    // https://w3c.github.io/aria/#aria-orientation
-    switch (container?.role) {
-      case 'menubar':
-      case 'slider':
-      case 'separator':
-      case 'tablist':
-      case 'toolbar':
-        return 'horizontal';
-      case 'listbox':
-      case 'menu':
-      case 'scrollbar':
-      case 'tree':
-        return 'vertical';
-      default:
-        return null;
-    }
   }
 
   getItemRect(key: Key): Rect | null {
