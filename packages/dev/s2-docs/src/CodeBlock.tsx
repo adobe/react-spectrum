@@ -78,7 +78,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
   }
 
   let content = (
-    <CodePlatter>
+    <CodePlatter {...props}>
       {code}
     </CodePlatter>
   );
@@ -89,7 +89,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={files}>{content}</Files>
           : content}
       </div>
@@ -170,6 +170,6 @@ export function getFiles(files: string[]) {
       }
     }
   }
-  
+
   return fileContents;
 }

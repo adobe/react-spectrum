@@ -87,7 +87,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
               <Tooltip>Share</Tooltip>
             </TooltipTrigger>
             <Menu hideLinkOutIcon>
-              {shareUrl && 
+              {shareUrl &&
                 <MenuItem
                   onAction={() => {
                     // Find previous heading element to get hash.
@@ -108,7 +108,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   <Text slot="label">Copy link</Text>
                 </MenuItem>
               }
-              {(files || type) && 
+              {(files || type) &&
                 <MenuItem
                   onAction={() => {
                     let code = codeRef.current!.querySelector('pre')!.textContent!;
@@ -121,7 +121,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
               }
-              {(files || type) && type !== 's2' && 
+              {(files || type) && type !== 's2' &&
                 <MenuItem
                   onAction={() => {
                     let code = codeRef.current!.querySelector('pre')!.textContent!;
@@ -134,8 +134,8 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   <Text slot="label">Open in StackBlitz</Text>
                 </MenuItem>
               }
-              {registryUrl && 
-                <MenuItem 
+              {registryUrl &&
+                <MenuItem
                   href={`https://v0.dev/chat/api/open?url=${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
@@ -143,13 +143,13 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   <Text>Open in v0</Text>
                 </MenuItem>
               }
-              {registryUrl && 
+              {registryUrl &&
                 <MenuItem onAction={() => setShowShadcn(true)}>
                   <Prompt />
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {(files || type) && 
+              {(files || type) &&
                 <MenuItem
                   onAction={() => {
                     let code = codeRef.current!.querySelector('pre')!.textContent!;
@@ -182,7 +182,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
           </MenuTrigger>}
         </ActionButtonGroup>
       </div>
-      <div ref={codeRef}> 
+      <div ref={codeRef}>
         {children}
       </div>
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
@@ -226,7 +226,7 @@ const V0 = createIcon(props => (
     <path
       d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
       fill="var(--iconPrimary)" />
-  </svg> 
+  </svg>
 ));
 
 const Flash = createIcon(props => (
@@ -265,7 +265,7 @@ function ShadcnDialog({registryUrl}) {
         <Heading slot="title">Install with shadcn</Heading>
         <Content>
           <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {componentName} and its dependencies into your project.</p>
-          <div 
+          <div
             className={style({
               backgroundColor: 'layer-1',
               borderRadius: 'xl',
