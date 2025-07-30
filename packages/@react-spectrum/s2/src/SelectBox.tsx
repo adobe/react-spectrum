@@ -19,6 +19,7 @@ import {SelectBoxContext} from './SelectBoxGroup';
 import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import { IllustrationContext } from './Icon';
 
 export interface SelectBoxProps extends StyleProps {
   /**
@@ -186,6 +187,19 @@ const iconContainer = style({
   color: {
     isDisabled: 'disabled'
   },
+
+  marginBottom: {
+    default: 8,
+    orientation: {
+      horizontal: 0
+    }
+  },
+  marginEnd: {
+    default: 0,
+    orientation: {
+      horizontal: 8
+    }
+  },
   opacity: {
     isDisabled: 0.4
   }
@@ -267,14 +281,14 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
   const isSelected = selectedKeys === 'all' || (selectedKeys && selectedKeys.has(value));
   
   const childrenArray = React.Children.toArray(children);
-  const iconSlot = childrenArray.find((child: any) => child?.props?.slot === 'icon');
+  const illustrationSlot = childrenArray.find((child: any) => child?.props?.slot === 'illustration');
   const textSlot = childrenArray.find((child: any) => child?.props?.slot === 'text');
   const descriptionSlot = childrenArray.find((child: any) => child?.props?.slot === 'description');
   const otherChildren = childrenArray.filter((child: any) => 
-    !['icon', 'text', 'description'].includes(child?.props?.slot)
+    !['illustration', 'text', 'description'].includes(child?.props?.slot)
   );
 
-  const hasIcon = !!iconSlot;
+  const hasIcon = !!illustrationSlot;
   const hasDescription = !!descriptionSlot;
   
   return (
@@ -290,7 +304,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
       }, props.styles)}
       style={UNSAFE_style}>
       
-      {!(isCheckboxHidden || groupIsCheckboxHidden) && (isSelected || (!isDisabled && renderProps.isHovered)) && (
+      {!(isCheckboxHidden || groupIsCheckboxHidden) && (isSelected || (!isDisabled && renderProps.isHovered)) && orientation === 'vertical' && (
         <div 
           className={style({
             position: 'absolute',
@@ -327,7 +341,9 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
         <>
           {hasIcon && !(isIllustrationHidden || groupIsIllustrationHidden) && (
             <div className={iconContainer({size, orientation, isDisabled})}>
-              {iconSlot}
+              <IllustrationContext.Provider value={{size: 'S'}}>
+                {illustrationSlot}
+              </IllustrationContext.Provider>
             </div>
           )}
           
@@ -368,7 +384,9 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
         <>
           {hasIcon && !(isIllustrationHidden || groupIsIllustrationHidden) && (
             <div className={iconContainer({size, orientation, isDisabled})}>
-              {iconSlot}
+              <IllustrationContext.Provider value={{size: 'S'}}>
+                {illustrationSlot}
+              </IllustrationContext.Provider>
             </div>
           )}
           
