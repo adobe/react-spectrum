@@ -343,9 +343,10 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-export function VirtualizedListBox(args) {
-  let heightProperty = args.orientation === 'horizontal' ? 'width' : 'height';
-  let widthProperty = args.orientation === 'horizontal' ? 'height' : 'width';
+function VirtualizedListBoxRender(args): JSX.Element {
+  let {variableHeight, isLoading, orientation} = args;
+  let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
+  let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
@@ -359,12 +360,12 @@ export function VirtualizedListBox(args) {
   return (
     <Virtualizer
       layout={new ListLayout({
-        orientation: args.orientation,
+        orientation,
         estimatedRowHeight: 25,
         estimatedHeadingHeight: 26,
         loaderHeight: 30
       })}>
-      <ListBox orientation={args.orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
+      <ListBox orientation={orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
         <Collection items={sections}>
           {section => (
             <ListBoxSection className={styles.group}>
@@ -384,15 +385,8 @@ export function VirtualizedListBox(args) {
 export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
   render: (args) => <VirtualizedListBoxRender {...args} />,
   args: {
-    orientation: 'vertical',
     variableHeight: false,
     isLoading: false
-  },
-  argTypes: {
-    orientation: {
-      control: 'radio',
-      options: ['vertical', 'horizontal']
-    }
   }
 };
 
@@ -411,7 +405,8 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
   )
 };
 
-export function VirtualizedListBoxDnd(args) {
+function VirtualizedListBoxDndRender(args): JSX.Element {
+  let {orientation} = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -442,15 +437,14 @@ export function VirtualizedListBoxDnd(args) {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          orientation: args.orientation,
-          rowHeight: args.orientation === 'horizontal' ? 45 : 25,
+          orientation,
+          rowHeight: orientation === 'horizontal' ? 45 : 25,
           gap: 8
         }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
-          orientation={args.orientation}
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={list.items}
@@ -460,9 +454,10 @@ export function VirtualizedListBoxDnd(args) {
       </Virtualizer>
     </div>
   );
-}
+};
 
-VirtualizedListBoxDnd.story = {
+export const VirtualizedListBoxDnd: StoryObj<typeof VirtualizedListBoxDndRender> = {
+  render: (args) => <VirtualizedListBoxDndRender {...args} />,
   args: {
     orientation: 'vertical'
   },
