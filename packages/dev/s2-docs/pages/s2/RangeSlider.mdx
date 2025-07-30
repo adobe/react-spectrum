@@ -1,0 +1,192 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RangeSlider} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# RangeSlider
+
+<PageDescription>{docs.exports.RangeSlider.description}</PageDescription>
+
+<VisualExample
+  component={RangeSlider}
+  docs={docs.exports.RangeSlider}
+  props={['size', 'isEmphasized', 'trackStyle', 'thumbStyle', 'labelPosition', 'labelAlign']}
+  initialProps={{
+    label: 'Range',
+    defaultValue: {start: 30, end: 60}
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+RangeSliders are controlled with the `value` prop and uncontrolled with the `defaultValue` prop. This value consists of two parts, `start` and `end`. Both parts must fall between the RangeSlider's minimum and maximum values, which default to 0 and 100 respectively.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState({start: 25, end: 75});
+  
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <RangeSlider
+        label="Range (uncontrolled)"
+        defaultValue={{start: 25, end: 75}} />
+      <RangeSlider
+        label="Range (controlled)"
+        value={value}
+        onChange={setValue} />
+    </div>
+  );
+}
+```
+
+## Value scale
+
+By default, range slider values are percentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+
+<RangeSlider
+  label="Price range"
+  minValue={50}
+  maxValue={150}
+  defaultValue={{start: 75, end: 100}} />
+```
+
+## Number formatting
+
+The range slider value can be formatted by using the `formatOptions` prop. `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
+  <RangeSlider
+    label="Price range"
+    formatOptions={{style: 'currency', currency: 'USD'}}
+    defaultValue={{start: 75, end: 100}} />
+  
+  <RangeSlider
+    label="Completion range"
+    maxValue={1}
+    step={0.01}
+    formatOptions={{style: 'percent'}}
+    defaultValue={{start: 0.25, end: 0.75}} />
+</div>
+```
+
+## Range selection
+
+RangeSlider allows users to select a range between two values. The filled track shows the selected range between the start and end thumbs.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [range, setRange] = useState({start: 20, end: 80});
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <RangeSlider
+        label="Temperature range"
+        value={range}
+        onChange={setRange}
+        formatOptions={{style: 'unit', unit: 'celsius'}} />
+      <div>Selected range: {range.start}°C to {range.end}°C</div>
+    </div>
+  );
+}
+```
+
+## Events
+
+RangeSlider accepts `onChange` and `onChangeEnd` props which are triggered when the user interacts with the slider. The `onChange` prop is called as the user drags, while `onChangeEnd` is called when they finish dragging.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState({start: 25, end: 75});
+  let [lastValue, setLastValue] = useState(value);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <RangeSlider
+        label="Price filter"
+        value={value}
+        onChange={setValue}
+        onChangeEnd={setLastValue}
+        formatOptions={{style: 'currency', currency: 'USD'}} />
+      <div>Current range: ${value.start} - ${value.end}</div>
+      <div>Last range: ${lastValue.start} - ${lastValue.end}</div>
+    </div>
+  );
+}
+```
+
+## Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a RangeSlider.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<RangeSlider
+  label="Search radius"
+  defaultValue={{start: 15, end: 60}}
+  formatOptions={{style: 'unit', unit: 'kilometer'}}
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Search radius</Heading>
+      <Content>Search results are sorted by distance from your location.</Content>
+    </ContextualHelp>
+  } />
+```
+
+## HTML forms
+
+RangeSlider supports the `startName` and `endName` props for integration with HTML forms. Each thumb will submit its value with the corresponding name.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+
+<form>
+  <RangeSlider
+    label="Price range"
+    defaultValue={{start: 25, end: 75}}
+    startName="minPrice"
+    endName="maxPrice"
+    formatOptions={{style: 'currency', currency: 'USD'}} />
+</form>
+```
+
+## Accessibility
+
+A `label`, `aria-label`, or `aria-labelledby` prop is required for accessibility. The individual thumbs are automatically labeled with "minimum" and "maximum" based on the current locale.
+
+```tsx render hideImports
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+
+<RangeSlider
+  aria-label="Volume range"
+  defaultValue={{start: 25, end: 75}} />
+```
+
+## Props
+
+<PropTable component={docs.exports.RangeSlider} links={docs.links} />
