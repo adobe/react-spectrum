@@ -141,7 +141,7 @@
 }
 
 .react-spectrum-Datepicker-dialog.react-spectrum-Datepicker-dialog {
-  width: auto;
+  max-width: fit-content;
 }
 
 .react-spectrum-Datepicker-dialogContent {
