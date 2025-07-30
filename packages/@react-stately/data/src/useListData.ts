@@ -36,6 +36,12 @@ export interface ListData<T> {
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
 
+  /** Adds the given keys to the current selected keys. */
+  addSelectedKeys(keys: Selection): void,
+
+  /** Removes the given keys from the current selected keys. */
+  removeSelectedKeys(keys: Selection): void,
+
   /** The current filter text. */
   filterText: string,
 
@@ -174,6 +180,55 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         ...state,
         selectedKeys
       }));
+    },
+    addSelectedKeys(selectedKeys: Selection) {
+      dispatch(state => {
+        if (state.selectedKeys === 'all') {
+          return state;
+        }
+        if (selectedKeys === 'all') {
+          return {
+            ...state,
+            selectedKeys: 'all'
+          };
+        }
+        let validSelectedKeys = new Set(selectedKeys);
+        const allValidKeys = new Set(state.items.map(getKey!));
+        for (let key of validSelectedKeys) {
+          if (!allValidKeys.has(key)) {
+            validSelectedKeys.delete(key);
+          }
+        }
+        let selection: Selection = new Set([...state.selectedKeys, ...validSelectedKeys]);
+        selection = selection.size === state.items.length ? 'all' : selection;
+
+        return {
+          ...state,
+          selectedKeys: selection
+        };
+      });
+    },
+    removeSelectedKeys(selectedKeys: Selection) {
+      dispatch(state => {
+        if (selectedKeys === 'all') {
+          return {
+            ...state,
+            selectedKeys: new Set()
+          };
+        }
+
+        let selection: Selection = state.selectedKeys  === 'all' ? new Set(state.items.map(getKey!)) : new Set(state.selectedKeys);
+        for (let key of selectedKeys) {
+          selection.delete(key);
+        }
+        if (selection.size === state.items.length) {
+          selection = 'all';
+        }
+        return {
+          ...state,
+          selectedKeys: selection
+        };
+      });
     },
     setFilterText(filterText: string) {
       dispatch(state => ({
