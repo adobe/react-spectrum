@@ -44,6 +44,74 @@ describe('useListData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
   });
 
+  describe('addSelectedKeys', function () {
+    it('should add selected keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.addSelectedKeys(['Julia']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    });
+
+    it('should add all remaining valid keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.addSelectedKeys(['Julia', 'David']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual('all');
+    });
+
+    it('should add only valid keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.addSelectedKeys(['David', 'invalid']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'David']));
+    });
+  });
+
+  describe('removeSelectedKeys', function () {
+    it('should remove all keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeSelectedKeys('all');
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set());
+    });
+
+    it('should remove the selected keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeSelectedKeys(['Sam']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Julia']));
+    });
+
+    it('should remove only valid keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+
+      act(() => {
+        result.current.removeSelectedKeys(['invalid', 'Julia']);
+      });
+      expect(result.current.selectedKeys).toEqual(new Set(['Sam']));
+    });
+  });
+
   it('should get an item by key', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
     expect(result.current.getItem('Sam')).toBe(initial[1]);
