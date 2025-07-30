@@ -75,6 +75,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   protected numColumns: number = 0;
   private contentSize: Size = new Size();
   private layoutInfos: Map<Key, LayoutInfo> = new Map();
+  private margin: number = 0;
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return newOptions.maxColumns !== oldOptions.maxColumns
@@ -173,7 +174,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
         if (skeleton) {
           content = oldLayoutInfo && oldLayoutInfo.content.key === key ? oldLayoutInfo.content : {...skeleton, key};
         }
-        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
+        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing) + this.margin;
         let height = itemHeight;
         let estimatedSize = !preserveAspectRatio;
         if (oldLayoutInfo && estimatedSize) {
