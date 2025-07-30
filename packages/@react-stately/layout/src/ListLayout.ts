@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
+import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node, Orientation} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface ListLayoutOptions {
+  /**
+   * The orientation of the list.
+   * @default 'vertical'
+   */
+  orientation?: Orientation,
   /**
    * The fixed height of a row in px.
    * @default 48
@@ -92,7 +97,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
    * of the options that can be provided.
    */
   constructor(options: ListLayoutOptions = {}) {
-    super();
+    super(options);
     this.rowHeight = options.rowHeight ?? null;
     this.estimatedRowHeight = options.estimatedRowHeight ?? null;
     this.headingHeight = options.headingHeight ?? null;
@@ -121,23 +126,27 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
+    let visibleRect = rect.copy();
+    let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
+    let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
+
     // Adjust rect to keep number of visible rows consistent.
-    // (only if height > 1 for getDropTargetFromPoint)
-    if (rect.height > 1) {
+    // (only if height > 1 or width > 1 for getDropTargetFromPoint)
+    if (visibleRect[heightProperty] > 1) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
-      rect.y = Math.floor(rect.y / rowHeight) * rowHeight;
-      rect.height = Math.ceil(rect.height / rowHeight) * rowHeight;
+      visibleRect[offsetProperty] = Math.floor(visibleRect[offsetProperty] / rowHeight) * rowHeight;
+      visibleRect[heightProperty] = Math.ceil(visibleRect[heightProperty] / rowHeight) * rowHeight;
     }
 
     // If layout hasn't yet been done for the requested rect, union the
     // new rect with the existing valid rect, and recompute.
-    this.layoutIfNeeded(rect);
+    this.layoutIfNeeded(visibleRect);
 
     let res: LayoutInfo[] = [];
 
     let addNodes = (nodes: LayoutNode[]) => {
       for (let node of nodes) {
-        if (this.isVisible(node, rect)) {
+        if (this.isVisible(node, visibleRect)) {
           res.push(node.layoutInfo);
 
           if (node.children) {
@@ -194,6 +203,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let options = invalidationContext.layoutOptions;
     return invalidationContext.sizeChanged
       || this.rowHeight !== (options?.rowHeight ?? this.rowHeight)
+      || this.orientation !== (options?.orientation ?? this.orientation)
       || this.headingHeight !== (options?.headingHeight ?? this.headingHeight)
       || this.loaderHeight !== (options?.loaderHeight ?? this.loaderHeight)
       || this.gap !== (options?.gap ?? this.gap)
@@ -202,6 +212,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return newOptions.rowHeight !== oldOptions.rowHeight
+      || newOptions.orientation !== oldOptions.orientation
       || newOptions.estimatedRowHeight !== oldOptions.estimatedRowHeight
       || newOptions.headingHeight !== oldOptions.headingHeight
       || newOptions.estimatedHeadingHeight !== oldOptions.estimatedHeadingHeight
@@ -224,6 +235,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
     let options = invalidationContext.layoutOptions;
     this.rowHeight = options?.rowHeight ?? this.rowHeight;
+    this.orientation = options?.orientation ?? this.orientation;
     this.estimatedRowHeight = options?.estimatedRowHeight ?? this.estimatedRowHeight;
     this.headingHeight = options?.headingHeight ?? this.headingHeight;
     this.estimatedHeadingHeight = options?.estimatedHeadingHeight ?? this.estimatedHeadingHeight;
@@ -251,26 +263,28 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     this.validRect = this.requestedRect.copy();
   }
 
-  protected buildCollection(y: number = this.padding): LayoutNode[] {
+  protected buildCollection(offset: number = this.padding): LayoutNode[] {
     let collection = this.virtualizer!.collection;
     let collectionNodes = [...collection];
     let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
     let isEmptyOrLoading = collection?.size === 0;
     if (isEmptyOrLoading) {
-      y = 0;
+      offset = 0;
     }
 
-    for (let node of collectionNodes) {
+    for (let node of collection) {
+      let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
+      let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
       // Skip rows before the valid rectangle unless they are already cached.
-      if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
-        y += rowHeight;
+      if (node.type === 'item' && offset + rowHeight < this.requestedRect[offsetProperty] && !this.isValid(node, offset)) {
+        offset += rowHeight;
         continue;
       }
 
-      let layoutNode = this.buildChild(node, this.padding, y, null);
-      y = layoutNode.layoutInfo.rect.maxY + this.gap;
+      let layoutNode = this.orientation === 'horizontal' ? this.buildChild(node, offset, this.padding, null) : this.buildChild(node, this.padding, offset, null);
+      offset = layoutNode.layoutInfo.rect[maxOffsetProperty] + this.gap;
       nodes.push(layoutNode);
       if (node.type === 'loader') {
         let index = loaderNodes.indexOf(node);
@@ -280,44 +294,45 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       // Build each loader that exists in the collection that is outside the visible rect so that they are persisted
       // at the proper estimated location. If the node.type is "section" then we don't do this shortcut since we have to
       // build the sections to see how tall they are.
-      if ((node.type === 'item' || node.type === 'loader') && y > this.requestedRect.maxY) {
+      if ((node.type === 'item' || node.type === 'loader') && offset > this.requestedRect[maxOffsetProperty]) {
         let lastProcessedIndex = collectionNodes.indexOf(node);
         for (let loaderNode of loaderNodes) {
           let loaderNodeIndex = collectionNodes.indexOf(loaderNode);
           // Subtract by an additional 1 since we've already added the current item's height to y
-          y += (loaderNodeIndex - lastProcessedIndex - 1) * rowHeight;
-          let loader = this.buildChild(loaderNode, this.padding, y, null);
+          offset += (loaderNodeIndex - lastProcessedIndex - 1) * rowHeight;
+          let loader = this.orientation === 'horizontal' ? this.buildChild(loaderNode, offset, this.padding, null) : this.buildChild(loaderNode, this.padding, offset, null);
           nodes.push(loader);
-          y = loader.layoutInfo.rect.maxY;
+          offset = loader.layoutInfo.rect[maxOffsetProperty];
           lastProcessedIndex = loaderNodeIndex;
         }
 
         // Account for the rest of the items after the last loader spinner, subtract by 1 since we've processed the current node's height already
-        y += (collectionNodes.length - lastProcessedIndex - 1) * rowHeight;
+        offset += (collectionNodes.length - lastProcessedIndex - 1) * rowHeight;
         break;
       }
     }
 
-    y -= this.gap;
-    y += isEmptyOrLoading ? 0 : this.padding;
-    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
+    offset = Math.max(offset - this.gap, 0);
+    offset += isEmptyOrLoading ? 0 : this.padding;
+    this.contentSize = this.orientation === 'horizontal' ? new Size(offset, this.virtualizer!.visibleRect.height) : new Size(this.virtualizer!.visibleRect.width, offset);
     return nodes;
   }
 
-  protected isValid(node: Node<T>, y: number): boolean {
+  protected isValid(node: Node<T>, offset: number): boolean {
     let cached = this.layoutNodes.get(node.key);
+    let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     return (
       !this.invalidateEverything &&
       !!cached &&
       cached.node === node &&
-      y === cached.layoutInfo.rect.y &&
+      offset === cached.layoutInfo.rect[offsetProperty] &&
       cached.layoutInfo.rect.intersects(this.validRect) &&
       cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.requestedRect))
     );
   }
 
   protected buildChild(node: Node<T>, x: number, y: number, parentKey: Key | null): LayoutNode {
-    if (this.isValid(node, y)) {
+    if (this.isValid(node, this.orientation === 'horizontal' ? x : y)) {
       return this.layoutNodes.get(node.key)!;
     }
 
@@ -348,11 +363,17 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, this.padding, 0);
-    let layoutInfo = new LayoutInfo('loader', node.key, rect);
-    rect.width = this.virtualizer!.contentSize.width - this.padding - x;
+    let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+
     // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
     // room for the loader alongside rendering the emptyState
-    rect.height = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
+    if (this.orientation === 'horizontal') {
+      rect.height = this.virtualizer!.contentSize.height - this.padding - y;
+      rect.width = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
+    } else {
+      rect.width = this.virtualizer!.contentSize.width - this.padding - x;
+      rect.height = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
+    }
 
     return {
       layoutInfo,
@@ -362,36 +383,41 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let collection = this.virtualizer!.collection;
-    let width = this.virtualizer!.visibleRect.width - this.padding;
-    let rect = new Rect(x, y, width - x, 0);
+    let width = this.virtualizer!.visibleRect.width - this.padding - x;
+    let height = this.virtualizer!.visibleRect.height - this.padding - y;
+    let rect = this.orientation === 'horizontal' ? new Rect(x, y, 0, height) : new Rect(x, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
-    let startY = y;
+    let offset = this.orientation === 'horizontal' ? x : y;
+    let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
+    let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
+    let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
+
     let skipped = 0;
     let children: LayoutNode[] = [];
     for (let child of getChildNodes(node, collection)) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
 
       // Skip rows before the valid rectangle unless they are already cached.
-      if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
-        y += rowHeight;
+      if (offset + rowHeight < this.requestedRect[offsetProperty] && !this.isValid(node, offset)) {
+        offset += rowHeight;
         skipped++;
         continue;
       }
 
-      let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
-      y = layoutNode.layoutInfo.rect.maxY + this.gap;
+      let layoutNode = this.orientation === 'horizontal' ? this.buildChild(child, offset, y, layoutInfo.key) : this.buildChild(child, x, offset, layoutInfo.key);
+      offset = layoutNode.layoutInfo.rect[maxOffsetProperty] + this.gap;
       children.push(layoutNode);
 
-      if (y > this.requestedRect.maxY) {
+      if (offset > this.requestedRect[maxOffsetProperty]) {
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += ([...getChildNodes(node, collection)].length - (children.length + skipped)) * rowHeight;
+        offset += ([...getChildNodes(node, collection)].length - (children.length + skipped)) * rowHeight;
         break;
       }
     }
 
-    y -= this.gap;
-    rect.height = y - startY;
+    offset -= this.gap;
+    rect[heightProperty] = offset - (this.orientation === 'horizontal' ? x : y);
 
     return {
       layoutInfo,
@@ -402,45 +428,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer!.visibleRect.width - this.padding;
-    let rectHeight = this.headingHeight;
-    let isEstimated = false;
-
-    // If no explicit height is available, use an estimated height.
-    if (rectHeight == null) {
-      // If a previous version of this layout info exists, reuse its height.
-      // Mark as estimated if the size of the overall virtualizer changed,
-      // or the content of the item changed.
-      let previousLayoutNode = this.layoutNodes.get(node.key);
-      let previousLayoutInfo = previousLayoutNode?.layoutInfo;
-      if (previousLayoutInfo) {
-        let curNode = this.virtualizer!.collection.getItem(node.key);
-        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
-        rectHeight = previousLayoutInfo.rect.height;
-        isEstimated = width !== previousLayoutInfo.rect.width || curNode !== lastNode || previousLayoutInfo.estimatedSize;
-      } else {
-        rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
-        isEstimated = true;
-      }
-    }
-
-    if (rectHeight == null) {
-      rectHeight = DEFAULT_HEIGHT;
-    }
-
-    let headerRect = new Rect(x, y, width - x, rectHeight);
-    let header = new LayoutInfo('header', node.key, headerRect);
-    header.estimatedSize = isEstimated;
-    return {
-      layoutInfo: header,
-      children: [],
-      validRect: header.rect.intersection(this.requestedRect),
-      node
-    };
+    return this.buildItem(node, x, y);
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer!.visibleRect.width - this.padding - x;
+    let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
+    let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
+
+    let width = this.virtualizer!.visibleRect[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
     let rectHeight = this.rowHeight;
     let isEstimated = false;
 
@@ -449,12 +444,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       // If a previous version of this layout info exists, reuse its height.
       // Mark as estimated if the size of the overall virtualizer changed,
       // or the content of the item changed.
-      let previousLayoutNode = this.layoutNodes.get(node.key);
-      if (previousLayoutNode) {
-        rectHeight = previousLayoutNode.layoutInfo.rect.height;
-        isEstimated = width !== previousLayoutNode.layoutInfo.rect.width || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
+      let previous = this.layoutNodes.get(node.key);
+      if (previous) {
+        rectHeight = previous.layoutInfo.rect[heightProperty];
+        isEstimated = width !== previous.layoutInfo.rect[widthProperty] || node !== previous.node || previous.layoutInfo.estimatedSize;
       } else {
-        rectHeight = this.estimatedRowHeight;
+        rectHeight = node.type === 'item' || node.rendered ? this.estimatedRowHeight : 0;
         isEstimated = true;
       }
     }
@@ -463,13 +458,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       rectHeight = DEFAULT_HEIGHT;
     }
 
-    let rect = new Rect(x, y, width, rectHeight);
+    let rect = this.orientation === 'horizontal' ? new Rect(x, y, rectHeight, width) : new Rect(x, y, width, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo,
       children: [],
-      validRect: layoutInfo.rect,
+      validRect: layoutInfo.rect.intersection(this.requestedRect),
       node
     };
   }
@@ -483,19 +478,21 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
     let collection = this.virtualizer!.collection;
     let layoutInfo = layoutNode.layoutInfo;
+    let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
+    let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     layoutInfo.estimatedSize = false;
-    if (layoutInfo.rect.height !== size.height) {
+    if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
-      newLayoutInfo.rect.height = size.height;
+      newLayoutInfo.rect[heightProperty] = size[heightProperty];
       layoutNode.layoutInfo = newLayoutInfo;
 
       // Items after this layoutInfo will need to be repositioned to account for the new height.
       // Adjust the validRect so that only items above remain valid.
-      this.validRect.height = Math.min(this.validRect.height, layoutInfo.rect.y - this.validRect.y);
+      this.validRect[heightProperty] = Math.min(this.validRect[heightProperty], layoutInfo.rect[offsetProperty] - this.validRect[offsetProperty]);
 
       // The requestedRect also needs to be adjusted to account for the height difference.
-      this.requestedRect.height += newLayoutInfo.rect.height - layoutInfo.rect.height;
+      this.requestedRect[heightProperty] += newLayoutInfo.rect[heightProperty] - layoutInfo.rect[heightProperty];
 
       // Invalidate layout for this layout node and all parents
       this.updateLayoutNode(key, layoutInfo, newLayoutInfo);
@@ -591,7 +588,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
-      rect = new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
+      rect = this.orientation === 'horizontal' ? 
+        new Rect(Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2), layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
     } else if (target.dropPosition === 'after') {
       // Render after last visible descendant of the drop target.
       let targetNode = this.collection.getItem(target.key);
@@ -609,7 +608,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
           currentKey = this.collection.getKeyAfter(currentKey);
         }
       }
-      rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+      rect = this.orientation === 'horizontal' ? 
+        new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
     } else {
       rect = layoutInfo.rect;
     }
