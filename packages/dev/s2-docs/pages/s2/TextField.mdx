@@ -1,0 +1,170 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {TextField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# TextField
+
+<PageDescription>{docs.exports.TextField.description}</PageDescription>
+
+<VisualExample
+  component={TextField}
+  docs={docs.exports.TextField}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isDisabled', 'isReadOnly', 'isRequired']}
+  initialProps={{
+    label: 'Name'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState('me@email.com');
+
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <TextField
+        label="Email (Uncontrolled)"
+        defaultValue="me@email.com" />
+      <TextField
+        label="Email (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </div>
+  );
+}
+```
+
+## Input types
+
+TextField accepts various input types through the `type` prop, enabling specialized behavior for different data types like email, password, number, URL, and more.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
+  <TextField label="Email" type="email" placeholder="user@example.com" />
+  <TextField label="Password" type="password" />
+  <TextField label="Phone" type="tel" placeholder="(555) 123-4567" />
+  <TextField label="Website" type="url" placeholder="https://example.com" />
+</div>
+```
+
+## Events
+
+TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [text, setText] = useState('');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <TextField
+        onChange={setText}
+        label="Your text" />
+      <div>Mirrored text: {text}</div>
+    </div>
+  );
+}
+```
+
+## Validation
+
+TextField supports HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `type="email"`, `minLength`, and `pattern`, as well as custom validation functions and server-side validation.
+
+```tsx render hideImports
+"use client";
+import {TextField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native" style={{maxWidth: 300}}>
+  <TextField label="Email" name="email" type="email" isRequired />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Help text
+
+Both a description and an error message can be supplied to a TextField. The description is always visible unless an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+  <TextField 
+    label="Name" 
+    defaultValue="John" 
+    description="Enter your full name." />
+  <TextField 
+    label="Name" 
+    isInvalid
+    errorMessage="Name is required." />
+</div>
+```
+
+## Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextField.
+
+```tsx render hideImports
+"use client";
+import {TextField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<TextField
+  label="Password"
+  type="password"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Password requirements</Heading>
+      <Content>Passwords must be at least 8 characters long and contain at least one number.</Content>
+    </ContextualHelp>
+  } />
+```
+
+## HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+
+<form>
+  <TextField label="Email" name="email" type="email" />
+</form>
+```
+
+## Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the TextField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+```tsx render hideImports
+"use client";
+import {TextField} from '@react-spectrum/s2';
+
+<TextField
+  aria-label="Search products"
+  placeholder="Search..." />
+```
+
+## Props
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
