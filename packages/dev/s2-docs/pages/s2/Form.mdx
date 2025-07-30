@@ -1,0 +1,187 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Form, TextField, Checkbox, Button, RadioGroup, Radio, InlineAlert, Heading, Content, ButtonGroup} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Form
+
+<PageDescription>{docs.exports.Form.description}</PageDescription>
+
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} initialProps={{style: {maxWidth: 400}}} expanded type="s2"
+import {Form, TextField, Checkbox, Button} from '@react-spectrum/s2';
+
+<Form/* PROPS */>
+  <TextField label="Name" />
+  <TextField label="Email" type="email" />
+  <Checkbox>I agree to the terms</Checkbox>
+  <Button type="submit" variant="primary">Submit</Button>
+</Form>
+```
+
+## Validation
+
+Form supports both client-side and server-side validation. By default, validation errors are displayed in realtime as the value is edited. To enable native HTML form validation and prevent form submission when fields are invalid, set the `validationBehavior` prop to `"native"`.
+
+```tsx render hideImports
+"use client";
+import {Form, TextField, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native" style={{maxWidth: 300}}>
+  <TextField label="Email" name="email" type="email" isRequired />
+  <TextField label="Password" name="password" type="password" isRequired minLength={8} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Server-side validation
+
+Form can display server-side validation errors by providing the `validationErrors` prop with an object that maps field names to error messages.
+
+```tsx render hideImports
+"use client";
+import {Form, TextField, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [errors, setErrors] = useState({});
+
+  let handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate server validation
+    setErrors({
+      username: 'This username is already taken.',
+      email: 'Please enter a valid email address.'
+    });
+  };
+
+  return (
+    <Form 
+      validationErrors={errors} 
+      onSubmit={handleSubmit}
+      style={{maxWidth: 300}}>
+      <TextField 
+        label="Username" 
+        name="username" 
+        onChange={() => setErrors(prev => ({...prev, username: undefined}))} />
+      <TextField 
+        label="Email" 
+        name="email" 
+        type="email"
+        onChange={() => setErrors(prev => ({...prev, email: undefined}))} />
+      <Button type="submit" variant="primary">Create Account</Button>
+    </Form>
+  );
+}
+```
+
+## Form submission
+
+Form supports standard HTML form submission with the `onSubmit` event. You can access form data using the standard FormData API or by accessing individual field values.
+
+```tsx render hideImports
+"use client";
+import {Form, TextField, Checkbox, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [submitted, setSubmitted] = useState(null);
+
+  let handleSubmit = (e) => {
+    e.preventDefault();
+    let formData = new FormData(e.target);
+    let data = Object.fromEntries(formData.entries());
+    setSubmitted(JSON.stringify(data, null, 2));
+  };
+
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <Form onSubmit={handleSubmit} style={{width: 250}}>
+        <TextField label="Name" name="name" />
+        <TextField label="Email" name="email" type="email" />
+        <Checkbox name="newsletter" value="yes">Subscribe to newsletter</Checkbox>
+        <Button type="submit" variant="primary">Submit</Button>
+      </Form>
+      
+      {submitted && (
+        <div style={{width: 250}}>
+          <h4>Submitted data:</h4>
+          <pre style={{fontSize: 12, background: '#f5f5f5', padding: 8, borderRadius: 4}}>
+            {submitted}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Focus management
+
+After a user submits a form with validation errors, the first invalid field will be focused by default. You can customize this behavior using the `onInvalid` event.
+
+```tsx render hideImports
+"use client";
+import {Form, TextField, InlineAlert, Heading, Content, Button, ButtonGroup} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [isInvalid, setInvalid] = useState(false);
+
+  return (
+    <Form
+      validationBehavior="native"
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}
+      style={{maxWidth: 400}}>
+      {isInvalid &&
+        <InlineAlert variant="negative" autoFocus>
+          <Heading>Unable to submit</Heading>
+          <Content>
+            Please fix the validation errors below, and re-submit the form.
+          </Content>
+        </InlineAlert>
+      }
+      <TextField label="First Name" isRequired />
+      <TextField label="Last Name" isRequired />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
+
+## Accessibility
+
+A label should be provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, so that the element will be identified to assistive technology as a form landmark region.
+
+```tsx render hideImports
+"use client";
+import {Form, TextField, Button} from '@react-spectrum/s2';
+
+<div>
+  <h3 id="form-label">Personal Information</h3>
+  <Form aria-labelledby="form-label" style={{maxWidth: 300}}>
+    <TextField label="First Name" />
+    <TextField label="Last Name" />
+    <Button type="submit" variant="primary">Submit</Button>
+  </Form>
+</div>
+```
+
+## Props
+
+<PropTable component={docs.exports.Form} links={docs.links} />
