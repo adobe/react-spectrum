@@ -125,9 +125,10 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     let itemHeight = minItemSize.height + Math.floor((maxItemHeight - minItemSize.height) * t);
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
-    // Compute the horizontal spacing and content height
-    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
+    // Compute the horizontal spacing, content height and horizontal margin
+    let horizontalSpacing = Math.min(maxSpace, Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
     this.gap = new Size(horizontalSpacing, minSpace.height);
+    this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
     // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
     // so that an additional row is added for the skeletons.
@@ -142,7 +143,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       }
       lastKey = collection.getKeyBefore(lastKey);
     }
-    
+
     let rows = Math.ceil(collectionSize / numColumns);
     let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
