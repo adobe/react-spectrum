@@ -1,0 +1,143 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/TimeField';
+import {TimeField as VanillaTimeField} from 'vanilla-starter/TimeField';
+import {TimeField as TailwindTimeField} from 'tailwind-starter/TimeField';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
+
+# TimeField
+
+<PageDescription>{docs.exports.TimeField.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaTimeField}
+    docs={vanillaDocs.exports.TimeField}
+    links={vanillaDocs.links}
+    props={['label', 'granularity', 'isDisabled']}
+    initialProps={{label: 'Time'}}
+    type="vanilla"
+    files={["starters/docs/src/TimeField.tsx", "starters/docs/src/TimeField.css", "starters/docs/src/theme.css"]} />
+  <VisualExample
+    component={TailwindTimeField}
+    docs={vanillaDocs.exports.TimeField}
+    links={vanillaDocs.links}
+    props={['label', 'granularity', 'isDisabled']}
+    initialProps={{label: 'Time'}}
+    type="tailwind"
+    files={["starters/tailwind/src/TimeField.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Anatomy
+
+<Anatomy />
+
+A TimeField consists of a label, and a [Group](Group.html) of segments representing each unit of a time (e.g. hours, minutes, and seconds). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value.
+
+`TimeField` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
+
+```tsx
+import {TimeField, Label, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
+
+<TimeField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <FieldError />
+</TimeField>
+```
+
+Most of this anatomy is shared with [DateField](DateField.html), so you can reuse many components between them.
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDate), but only displays the time.
+
+```tsx render
+"use client";
+import {Time} from '@internationalized/date';
+import {useDateFormatter} from 'react-aria';
+import {TimeField} from 'vanilla-starter/TimeField';
+import {useState} from 'react';
+
+function Example() {
+  let [time, setTime] = useState(new Time(11, 45));
+  let formatter = useDateFormatter({ timeStyle: 'full' });
+  
+  return (
+    <>
+      <TimeField
+        ///- begin highlight -///
+        value={time}
+        onChange={setTime} />
+      {/*- end highlight -*/}
+      <p>Selected time: {time ? time.toString() : '--'}</p>
+    </>
+  );
+}
+```
+
+### Format options
+
+The time format is automatically determined based on the user's locale. `TimeField` supports several props to control how values are displayed.
+
+```tsx render docs={docs.exports.TimeField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Time'}}
+"use client";
+import {parseZonedDateTime} from '@internationalized/date';
+import {TimeField} from 'vanilla-starter/TimeField';
+
+<TimeField
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T17:45:00[America/Los_Angeles]')} />
+```
+
+## Forms
+
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {Time} from '@internationalized/date';
+import {TimeField} from 'vanilla-starter/TimeField';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'react-aria-components';
+
+<Form>
+  <TimeField
+    label="Appointment time"
+    ///- begin highlight -///
+    name="time"
+    isRequired
+    minValue={new Time(9)}
+    maxValue={new Time(17)}
+    validate={time => time?.minute % 15 !== 0 ? 'Appointments start every 15 minutes.' : null}
+    ///- end highlight -///
+  />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## API
+
+### TimeField
+
+<PropTable component={docs.exports.TimeField} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-TimeField" properties={docs.exports.DateFieldRenderProps.properties} />
+
+### DateInput
+
+<PropTable component={docs.exports.DateInput} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-DateInput" properties={docs.exports.DateInputRenderProps.properties} />
+
+### DateSegment
+
+<PropTable component={docs.exports.DateSegment} links={docs.links} showDescription />
+
+<StateTable defaultClassName="react-aria-DateSegment" properties={docs.exports.DateSegmentRenderProps.properties} />
