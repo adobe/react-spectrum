@@ -200,7 +200,9 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
           }
         }
         let selection: Selection = new Set([...state.selectedKeys, ...validSelectedKeys]);
-        selection = selection.size === state.items.length ? 'all' : selection;
+        if (selection.size === state.items.length) {
+          selection = 'all';
+        }
 
         return {
           ...state,
