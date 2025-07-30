@@ -37,6 +37,11 @@ export interface GridLayoutOptions {
    */
   minSpace?: Size,
   /**
+   * The maximum allowed horizontal space between items.
+   * @default Infinity
+   */
+  maxSpace?: number,
+  /**
    * The maximum number of columns.
    * @default Infinity
    */
@@ -53,6 +58,7 @@ const DEFAULT_OPTIONS = {
   maxItemSize: new Size(Infinity, Infinity),
   preserveAspectRatio: false,
   minSpace: new Size(18, 18),
+  maxSpace: Infinity,
   maxColumns: Infinity,
   dropIndicatorThickness: 2
 };
@@ -76,7 +82,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       || newOptions.preserveAspectRatio !== oldOptions.preserveAspectRatio
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
-      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace));
+      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
+      || newOptions.maxSpace !== oldOptions.maxSpace;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -85,6 +92,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       maxItemSize = DEFAULT_OPTIONS.maxItemSize,
       preserveAspectRatio = DEFAULT_OPTIONS.preserveAspectRatio,
       minSpace = DEFAULT_OPTIONS.minSpace,
+      maxSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
     } = invalidationContext.layoutOptions || {};
