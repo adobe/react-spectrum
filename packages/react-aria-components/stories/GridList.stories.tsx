@@ -210,7 +210,8 @@ export let VirtualizedGridListGrid: GridListStory = () => {
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40)
+        minItemSize: new Size(40, 40),
+        maxSpace: 5
       }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
