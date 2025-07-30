@@ -1,0 +1,189 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Calendar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Calendar
+
+<PageDescription>{docs.exports.Calendar.description}</PageDescription>
+
+<VisualExample
+  component={Calendar}
+  docs={docs.exports.Calendar}
+  props={['visibleMonths', 'pageBehavior', 'isDisabled', 'isReadOnly']}
+  initialProps={{'aria-label': 'Event date'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A Calendar displays dates in a monthly view and allows users to select a single date. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+```tsx render
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseDate('2024-03-15'));
+
+  return (
+    <>
+      <Calendar
+        aria-label="Event date"
+        value={value}
+        onChange={setValue} />
+      <p>Selected date: {value.toString()}</p>
+    </>
+  );
+}
+```
+
+## Labeling
+
+An `aria-label` must be provided to the Calendar for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+```tsx render
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+
+<Calendar aria-label="Appointment date" />
+```
+
+## Validation
+
+Calendar supports validation through the `minValue` and `maxValue` props to prevent selecting dates outside a certain range.
+
+```tsx render hideImports
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<Calendar
+  aria-label="Appointment date"
+  minValue={today(getLocalTimeZone())} />
+```
+
+### Unavailable dates
+
+Calendar supports marking certain dates as unavailable. These dates cannot be selected and are displayed with a crossed out appearance. The `isDateUnavailable` prop accepts a callback that evaluates whether each visible date is unavailable.
+
+```tsx render hideImports
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+import {today, isWeekend, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let {locale} = useLocale();
+  
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let isDateUnavailable = (date) => {
+    return isWeekend(date, locale) || 
+           disabledRanges.some((interval) => 
+             date.compare(interval[0]) >= 0 && 
+             date.compare(interval[1]) <= 0
+           );
+  };
+
+  return (
+    <Calendar
+      aria-label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={isDateUnavailable} />
+  );
+}
+```
+
+## Controlling focus
+
+By default, the selected date is focused when a Calendar first mounts. However, Calendar supports controlling which date is focused using the `focusedValue` and `onFocusChange` props.
+
+```tsx render hideImports
+"use client";
+import {Calendar, ActionButton} from '@react-spectrum/s2';
+import {CalendarDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let defaultDate = new CalendarDate(2024, 6, 15);
+  let [focusedDate, setFocusedDate] = useState(defaultDate);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'start'}}>
+      <ActionButton onPress={() => setFocusedDate(defaultDate)}>
+        Reset focused date
+      </ActionButton>
+      <Calendar
+        aria-label="Event date"
+        focusedValue={focusedDate}
+        onFocusChange={setFocusedDate} />
+    </div>
+  );
+}
+```
+
+## Events
+
+Calendar accepts an `onChange` prop which is triggered whenever a date is selected by the user.
+
+```tsx render hideImports
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2024-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <Calendar
+        aria-label="Event date"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
+## International calendars
+
+Calendar supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
+
+```tsx render hideImports
+"use client";
+import {Calendar} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(null);
+  
+  return (
+    <div style={{fontFamily: 'system-ui'}}>
+      <Calendar
+        aria-label="تاریخ"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />

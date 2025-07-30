@@ -1,0 +1,210 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {DateField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# DateField
+
+<PageDescription>{docs.exports.DateField.description}</PageDescription>
+
+<VisualExample
+  component={DateField}
+  docs={docs.exports.DateField}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid']}
+  initialProps={{label: 'Birth date'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A DateField displays a placeholder by default. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+```tsx render
+"use client";
+import {DateField} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseDate('2024-03-15'));
+
+  return (
+    <>
+      <DateField
+        label="Birth date"
+        value={value}
+        onChange={setValue} />
+      <p>Selected date: {value.toString()}</p>
+    </>
+  );
+}
+```
+
+## Segments
+
+DateField is composed of individual segments for date parts like month, day, and year. Users can navigate between segments with the Tab key and modify values using the arrow keys or by typing.
+
+```tsx render
+"use client";
+import {DateField} from '@react-spectrum/s2';
+
+<DateField label="Event date" />
+```
+
+## Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by a DateField. By default, dates are displayed with `"day"` granularity. More granular values can be displayed by setting the `granularity` prop to `"hour"`, `"minute"`, or `"second"`.
+
+```tsx render hideImports
+"use client";
+import {DateField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <DateField
+    label="Date only"
+    granularity="day" />
+  <DateField
+    label="Date and time"
+    granularity="minute" />
+  <DateField
+    label="With seconds"
+    granularity="second" />
+</div>
+```
+
+## Time zones
+
+DateField is time zone aware when a ZonedDateTime object is provided as the value. In this case, the time zone abbreviation is displayed.
+
+```tsx render hideImports
+"use client";
+import {DateField} from '@react-spectrum/s2';
+import {parseZonedDateTime} from '@internationalized/date';
+
+<DateField
+  label="Event time"
+  defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')}
+  granularity="minute" />
+```
+
+## Validation
+
+DateField supports validation through the `isRequired` prop and custom validation functions. It can be integrated with forms and displays error states appropriately.
+
+```tsx render hideImports
+"use client";
+import {DateField, Button, Form} from '@react-spectrum/s2';
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<Form>
+  <DateField
+    label="Appointment date"
+    name="appointmentDate"
+    isRequired
+    minValue={today(getLocalTimeZone())}
+    description="Select a future date for your appointment." />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## Error state
+
+DateField can display validation errors using the `isInvalid` and `errorMessage` props.
+
+```tsx render
+"use client";
+import {DateField} from '@react-spectrum/s2';
+
+<DateField
+  label="Birth date"
+  isInvalid
+  errorMessage="Please enter a valid date." />
+```
+
+## Help text
+
+You can provide additional context with the `description` prop.
+
+```tsx render
+"use client";
+import {DateField} from '@react-spectrum/s2';
+
+<DateField
+  label="Birth date"
+  description="Enter your date of birth (MM/DD/YYYY)." />
+```
+
+## Label positioning
+
+The label can be positioned using the `labelPosition` prop.
+
+```tsx render hideImports docs={docs.exports.DateField} links={docs.links} props={['labelPosition', 'labelAlign']}
+"use client";
+import {DateField} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <DateField
+      {...props}/* PROPS */
+      label="Birth date" />
+  );
+}
+```
+
+## International calendars
+
+DateField supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
+
+```tsx render hideImports
+"use client";
+import {DateField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(null);
+  
+  return (
+    <div style={{fontFamily: 'system-ui'}}>
+      <DateField
+        label="تاریخ تولد"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </div>
+  );
+}
+```
+
+## Events
+
+DateField accepts an `onChange` prop which is triggered whenever the date is edited by the user.
+
+```tsx render hideImports
+"use client";
+import {DateField} from '@react-spectrum/s2';
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2024-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <DateField
+        label="Event date"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.DateField} links={docs.links} />

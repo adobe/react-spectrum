@@ -1,0 +1,246 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RangeCalendar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# RangeCalendar
+
+<PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
+
+<VisualExample
+  component={RangeCalendar}
+  docs={docs.exports.RangeCalendar}
+  props={['visibleMonths', 'pageBehavior', 'isDisabled', 'isReadOnly']}
+  initialProps={{'aria-label': 'Trip dates'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A RangeCalendar displays dates in a monthly view and allows users to select a date range. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date range values are objects with `start` and `end` properties containing date values from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package.
+
+```tsx render
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState({
+    start: parseDate('2024-03-15'),
+    end: parseDate('2024-03-22')
+  });
+
+  return (
+    <>
+      <RangeCalendar
+        aria-label="Trip dates"
+        value={value}
+        onChange={setValue} />
+      <p>
+        Selected range: {value.start.toString()} to {value.end.toString()}
+      </p>
+    </>
+  );
+}
+```
+
+## Range selection
+
+Users can select a date range by clicking on a start date and then clicking on an end date. The selected range is highlighted on the calendar.
+
+```tsx render
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+
+<RangeCalendar aria-label="Vacation dates" />
+```
+
+## Labeling
+
+An `aria-label` must be provided to the RangeCalendar for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+```tsx render
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+
+<RangeCalendar aria-label="Hotel booking dates" />
+```
+
+## Validation
+
+RangeCalendar supports validation through the `minValue` and `maxValue` props to prevent selecting dates outside a certain range.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<RangeCalendar
+  aria-label="Trip dates"
+  minValue={today(getLocalTimeZone())} />
+```
+
+### Unavailable dates
+
+RangeCalendar supports marking certain dates as unavailable. These dates cannot be selected and are displayed with a crossed out appearance. The `isDateUnavailable` prop accepts a callback that evaluates whether each visible date is unavailable.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+import {today, isWeekend, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let {locale} = useLocale();
+  
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let isDateUnavailable = (date) => {
+    return isWeekend(date, locale) || 
+          disabledRanges.some((interval) => 
+            date.compare(interval[0]) >= 0 && 
+            date.compare(interval[1]) <= 0
+          );
+  };
+
+  return (
+    <RangeCalendar
+      aria-label="Trip dates"
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={isDateUnavailable} />
+  );
+}
+```
+
+## Multiple months
+
+The RangeCalendar can display multiple months at once using the `visibleMonths` prop. This allows users to see a broader date range at a glance and makes it easier to select ranges that span multiple months.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+
+<RangeCalendar
+  aria-label="Event date range"
+  visibleMonths={2} />
+```
+
+## Page behavior
+
+By default, when pressing the next or previous buttons, pagination advances by the `visibleMonths` value. This behavior can be changed to page by single months by setting `pageBehavior` to `single`.
+
+```tsx render hideImports docs={docs.exports.RangeCalendar} links={docs.links} props={['pageBehavior']}
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <RangeCalendar
+      {...props}/* PROPS */
+      aria-label="Trip dates"
+      visibleMonths={3} />
+  );
+}
+```
+
+## Controlling focus
+
+By default, the selected start date is focused when a RangeCalendar first mounts. However, RangeCalendar supports controlling which date is focused using the `focusedValue` and `onFocusChange` props.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar, ActionButton} from '@react-spectrum/s2';
+import {CalendarDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let defaultDate = new CalendarDate(2024, 6, 15);
+  let [focusedDate, setFocusedDate] = useState(defaultDate);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'start'}}>
+      <ActionButton onPress={() => setFocusedDate(defaultDate)}>
+        Reset focused date
+      </ActionButton>
+      <RangeCalendar
+        aria-label="Trip dates"
+        focusedValue={focusedDate}
+        onFocusChange={setFocusedDate} />
+    </div>
+  );
+}
+```
+
+## Events
+
+RangeCalendar accepts an `onChange` prop which is triggered whenever a date range is selected by the user.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useState} from 'react';
+
+function Example() {
+  let [range, setRange] = useState({
+    start: parseDate('2024-07-04'),
+    end: parseDate('2024-07-10')
+  });
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <RangeCalendar
+        aria-label="Trip dates"
+        value={range}
+        onChange={setRange} />
+      <p>
+        Selected range: {range ? 
+          formatter.formatRange(
+            range.start.toDate(getLocalTimeZone()), 
+            range.end.toDate(getLocalTimeZone())
+          ) : '--'}
+      </p>
+    </>
+  );
+}
+```
+
+## International calendars
+
+RangeCalendar supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
+
+```tsx render hideImports
+"use client";
+import {RangeCalendar} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [range, setRange] = useState(null);
+  
+  return (
+    <div style={{fontFamily: 'system-ui'}}>
+      <RangeCalendar
+        aria-label="محدوده تاریخ"
+        value={range}
+        onChange={setRange} />
+      <p>Start date: {range?.start.toString()}</p>
+      <p>End date: {range?.end.toString()}</p>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.RangeCalendar} links={docs.links} />
