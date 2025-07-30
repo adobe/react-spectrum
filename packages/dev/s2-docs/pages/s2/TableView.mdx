@@ -47,7 +47,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 `TableView` follows the **Collection Components API**, accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
-```tsx render
+```tsx render type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell, CheckboxGroup, Checkbox, ActionButton} from '@react-spectrum/s2';
 import {useState} from 'react';
@@ -117,7 +117,7 @@ function FileTable() {
 
 To enable infinite scrolling, provide `loadingState` and `onLoadMore` to the `TableView`. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
-```tsx render
+```tsx render type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -218,7 +218,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ### Empty state
 
-```tsx render hideImports
+```tsx render hideImports type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -242,7 +242,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 Use the `align` prop on a Column and Cell to control the horizontal alignment of the content within. Similarly, use the `showDivider` prop to
 render a visual divider between columns and cells for increased clarity.
 
-```tsx render hideImports
+```tsx render hideImports type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -296,7 +296,7 @@ function TableWithDividers() {
 Custom column menus can be added via the `menuItems` props. This prop accepts the same contents that a `Menu` accepts, please see the docs for
 more details.
 
-```tsx render
+```tsx render type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell, MenuSection, MenuItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -362,7 +362,7 @@ function CustomMenusTable() {
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. Similarly, rows can be disabled via the `disabledKeys` prop. The `onAction` event handles item actions. See the [selection guide](selection.html) for more details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide hideImports
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide hideImports type="s2"
 "use client";
 import type {Selection} from 'react-aria-components';
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
@@ -423,7 +423,7 @@ function Example(props) {
 
 Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, the table will call `onSortChange` with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `TableView` to display the sorted column.
 
-```tsx render hideImports
+```tsx render hideImports type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -489,7 +489,7 @@ function SortableTable() {
 
 Set the `allowsResizing` prop on a `<Column>` to make it resizable. Use the `defaultWidth`, `width`, `minWidth`, and `maxWidth` props on a `<Column>` to control resizing behavior. These accept pixels, percentages, or fractional values (the [fr](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) unit). The default column width is `1fr`.
 
-```tsx render hideImports
+```tsx render hideImports type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -531,7 +531,7 @@ const rows = [
 
 The `TableView`'s `onResize` event is called when a column resizer is moved by the user. The `onResizeEnd` event is called when the user finishes resizing. These receive a `Map` containing the widths of all columns in the `TableView`. This example persists the column widths in `localStorage`.
 
-```tsx render hideImports
+```tsx render hideImports type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
