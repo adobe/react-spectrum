@@ -40,21 +40,23 @@ In this example, both the tags and the rows are provided to the table via a rend
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag} from '@react-spectrum/s2';
+import {TagGroup, Tag, Text} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import OrientationLandscape from '@react-spectrum/s2/icons/OrientationLandscape';
+import OrientationPortrait from '@react-spectrum/s2/icons/OrientationPortrait';
+import Star from '@react-spectrum/s2/icons/Star';
+import CameraProperties from '@react-spectrum/s2/icons/CameraProperties';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
+import Cloud from '@react-spectrum/s2/icons/Cloud';
 
 ///- begin collapse -///
 const initialTags = [
-  {name: 'Landscape', id: 'landscape'},
-  {name: 'Portrait', id: 'portrait'},
-  {name: 'Macro', id: 'macro'},
-  {name: 'Night', id: 'night'},
-  {name: 'Dual', id: 'dual'},
-  {name: 'Golden Hour', id: 'golden-hour'},
-  {name: 'Animal', id: 'animal'},
-  {name: 'Plant', id: 'plant'},
-  {name: 'Travel', id: 'travel'}
+  {name: 'Landscape', id: 'landscape', Icon: OrientationLandscape},
+  {name: 'Portrait', id: 'portrait', Icon: OrientationPortrait},
+  {name: 'Night', id: 'night', Icon: Star},
+  {name: 'Dual', id: 'dual', Icon: CameraProperties},
+  {name: 'Golden Hour', id: 'golden-hour', Icon: Lighten}
 ];
 ///- end collapse -///
 
@@ -63,7 +65,7 @@ function PhotoCategories() {
 
   return (
     <TagGroup label="Photo categories" selectionMode="multiple" maxRows={2} items={tags} styles={style({width: 320})}>
-      {tag => <Tag>{tag.name}</Tag>}
+      {({name, Icon}) => <Tag><Icon /><Text>{name}</Text></Tag>}
     </TagGroup>
   );
 }
@@ -135,12 +137,12 @@ import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TagGroup label="Types of photos" maxRows={2} styles={style({width: 320})}>
-  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography">Landscape</Tag>
-  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography">Portrait</Tag>
-  <Tag href="https://en.wikipedia.org/wiki/Macro_photography">Macro</Tag>
-  <Tag href="https://en.wikipedia.org/wiki/Night_photography">Night</Tag>
-  <Tag href="https://en.wikipedia.org/wiki/Dualphotography">Dual</Tag>
-  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)">Golden Hour</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
 </TagGroup>
 ```
 
@@ -157,6 +159,48 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 <TagGroup renderEmptyState={() => 'No categories'} label="Photo categories" styles={style({width: 320})}>
   {[]}
 </TagGroup>
+```
+
+### Group actions
+
+You can add a group action to the tag group by providing a `groupActionLabel` and `onGroupAction` prop.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const initialTags = [
+  {name: 'Landscape', id: 'landscape'},
+  {name: 'Portrait', id: 'portrait'},
+  {name: 'Macro', id: 'macro'},
+  {name: 'Night', id: 'night'},
+  {name: 'Dual', id: 'dual'},
+  {name: 'Golden Hour', id: 'golden-hour'},
+];
+///- end collapse -///
+
+function CopyAll() {
+  let [tags, setTags] = useState(initialTags);
+  let [selectedTags, setSelectedTags] = useState<string[]>([]);
+  return (
+    <TagGroup
+      groupActionLabel="Alert"
+      onGroupAction={() => {
+        alert([...selectedTags].map(tag => tags.find(t => t.id === tag)?.name).join(', '));
+      }}
+      selectionMode="multiple"
+      selectedKeys={selectedTags}
+      onSelectionChange={setSelectedTags}
+      items={tags}
+      label="Photo categories"
+      styles={style({width: 320})}>
+      {tag => <Tag>{tag.name}</Tag>}
+    </TagGroup>
+  )
+}
 ```
 
 ## Props
