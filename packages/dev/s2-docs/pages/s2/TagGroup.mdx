@@ -1,0 +1,170 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'errorMessage', 'maxRows', 'selectionMode', 'description', 'label', 'disallowEmptySelection', 'selectionBehavior', 'isEmphasized', 'isInvalid', ]} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} type="s2"
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup/* PROPS */ styles={style({width: 320})}>
+  <Tag>Chocolate</Tag>
+  <Tag>Mint</Tag>
+  <Tag>Strawberry</Tag>
+  <Tag>Vanilla</Tag>
+  <Tag>Chocolate Chip Cookie Dough</Tag>
+  <Tag>Rocky Road</Tag>
+  <Tag>Butter Pecan</Tag>
+  <Tag>Neapolitan</Tag>
+  <Tag>Salted Caramel</Tag>
+  <Tag>Mint Chocolate Chip</Tag>
+  <Tag>Tonight Dough</Tag>
+  <Tag>Lemon Cookie</Tag>
+  <Tag>Cookies and Cream</Tag>
+  <Tag>Phish Food</Tag>
+  <Tag>Peanut Butter Cup</Tag>
+  <Tag>Coffee</Tag>
+  <Tag>Pistachio</Tag>
+  <Tag>Cherry</Tag>
+</TagGroup>
+```
+
+## Content
+
+`TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections.
+In this example, both the tags and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const initialTags = [
+  {name: 'Landscape', id: 'landscape'},
+  {name: 'Portrait', id: 'portrait'},
+  {name: 'Macro', id: 'macro'},
+  {name: 'Night', id: 'night'},
+  {name: 'Dual', id: 'dual'},
+  {name: 'Golden Hour', id: 'golden-hour'},
+  {name: 'Animal', id: 'animal'},
+  {name: 'Plant', id: 'plant'},
+  {name: 'Travel', id: 'travel'}
+];
+///- end collapse -///
+
+function PhotoCategories() {
+  let [tags, setTags] = useState(initialTags);
+
+  return (
+    <TagGroup label="Photo categories" selectionMode="multiple" maxRows={2} items={tags} styles={style({width: 320})}>
+      {tag => <Tag>{tag.name}</Tag>}
+    </TagGroup>
+  );
+}
+```
+
+### Removing tags
+
+To show a remove button on the tag, you can use the `onRemove` prop.
+
+```tsx render type="s2"
+"use client";
+import {Button, TagGroup, Tag, TextField} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const initialTags = [
+  {name: 'Landscape', id: 'landscape'},
+  {name: 'Portrait', id: 'portrait'},
+  {name: 'Macro', id: 'macro'},
+  {name: 'Night', id: 'night'},
+  {name: 'Dual', id: 'dual'},
+  {name: 'Golden Hour', id: 'golden-hour'},
+  {name: 'Animal', id: 'animal'},
+  {name: 'Plant', id: 'plant'},
+  {name: 'Travel', id: 'travel'}
+];
+///- end collapse -///
+
+function PhotoCategories() {
+  let [tags, setTags] = useState(initialTags);
+  let [newTag, setNewTag] = useState('');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+      <div style={{display: 'flex', gap: 8}}>
+        <TextField label="Add a category" value={newTag} onChange={setNewTag} />
+        <Button
+          styles={style({alignSelf: 'end'})}
+          onPress={() => {
+            setTags([...tags, {name: newTag, id: newTag}]);
+            setNewTag('');
+          }}>Add</Button>
+      </div>
+      <TagGroup
+        onRemove={keys => setTags((prev) => prev.filter(t => !keys.has(t.id)))}
+        label="Photo categories"
+        selectionMode="multiple"
+        maxRows={2}
+        items={tags}
+        styles={style({width: 320})}
+        isEmphasized
+      >
+        {tag => <Tag>{tag.name}</Tag>}
+      </TagGroup>
+    </div>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<Tag>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup label="Types of photos" maxRows={2} styles={style({width: 320})}>
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography">Landscape</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)">Golden Hour</Tag>
+</TagGroup>
+```
+
+### Empty state
+
+If the collection is empty, the `renderEmptyState` prop will be called.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup renderEmptyState={() => 'No categories'} label="Photo categories" styles={style({width: 320})}>
+  {[]}
+</TagGroup>
+```
+
+## Props
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} />
+
+### Tag
+
+<PropTable component={docs.exports.Tag} links={docs.links} />
