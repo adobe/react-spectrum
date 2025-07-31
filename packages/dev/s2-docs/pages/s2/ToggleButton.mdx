@@ -1,0 +1,107 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ToggleButton, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ToggleButton
+
+<PageDescription>{docs.exports.ToggleButton.description}</PageDescription>
+
+<VisualExample
+  component={ToggleButton}
+  docs={docs.exports.ToggleButton}
+  props={['children', 'isEmphasized', 'staticColor', 'isQuiet', 'size', 'isDisabled', 'isSelected']}
+  initialProps={{children: 'Pin'}}
+  slots={{icon: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Content
+
+ToggleButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ToggleButton.
+A visible label can be provided by passing a string or a Text component as a child, depending on whether the ToggleButton has an accompanying icon.
+
+```tsx render expanded
+"use client";
+import {ToggleButton, Text} from '@react-spectrum/s2';
+import PinOn from '@react-spectrum/s2/icons/PinOn';
+import PinOff from '@react-spectrum/s2/icons/PinOff';
+
+<ToggleButton>
+  <PinOn />
+  <Text>Icon + Label</Text>
+</ToggleButton>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+```tsx render hideImports
+"use client";
+import {ToggleButton} from '@react-spectrum/s2';
+import PinOn from '@react-spectrum/s2/icons/PinOn';
+import PinOff from '@react-spectrum/s2/icons/PinOff';
+
+<ToggleButton aria-label="Pin">
+  <PinOn />
+</ToggleButton>
+```
+
+**Note:** `ToggleButton` should not be used when the content of the button changes between selection states, for example,
+mute/unmute or play/pause. In these cases, use an [ActionButton](ActionButton.html) instead.
+
+### Internationalization
+
+In order to internationalize a ToggleButton, a localized string should be passed to the `children` or `aria-label` prop.
+
+## Value
+
+ToggleButtons are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
+Alternatively, the `isSelected` prop can be used to make the selected state controlled.
+
+```tsx render hideImports
+"use client";
+import {ToggleButton} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20}}>
+  <ToggleButton>Default</ToggleButton>
+  <ToggleButton defaultSelected>Default Selected</ToggleButton>
+</div>
+```
+
+## Events
+
+ToggleButtons support user interactions via mouse, keyboard, and touch. When pressing the button, the selection
+state is toggled, and the `onChange` event is fired.
+
+```tsx render hideImports
+"use client";
+import {ToggleButton} from '@react-spectrum/s2';
+import PinOn from '@react-spectrum/s2/icons/PinOn';
+import {useState} from 'react';
+
+function Example() {
+  let [isSelected, setSelected] = useState(false);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+      <ToggleButton
+        isEmphasized
+        isSelected={isSelected}
+        onChange={setSelected}
+        aria-label="Pin">
+        <PinOn />
+      </ToggleButton>
+      <p>Selected: {isSelected ? 'true' : 'false'}</p>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ToggleButton} links={docs.links} />
