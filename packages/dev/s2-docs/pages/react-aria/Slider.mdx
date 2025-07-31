@@ -31,29 +31,6 @@ import Anatomy from '@react-aria/slider/docs/anatomy.svg';
     files={["starters/tailwind/src/Slider.tsx"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A `Slider` consists of a `<SliderTrack>` displaying the range of available values, one or more `<SliderThumb>`s showing the current values, an optional `<SliderOutput>` displaying the current values textually, and a `<Label>`. The thumbs can be dragged to allow a user to change their value. The track can be clicked to move the nearest thumb to that position.
-
-If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
-
-<Slider>
-  <Label />
-  <SliderOutput />
-  <SliderTrack>
-    <SliderThumb />
-    <SliderThumb>
-      <Label />
-    </SliderThumb>
-  </SliderTrack>
-</Slider>
-```
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the slider's value. The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released.
@@ -116,6 +93,21 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
   }} />
 
 ## API
+
+<Anatomy />
+
+```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderThumb: '#sliderthumb'}}
+<Slider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+    <SliderThumb>
+      <Label />
+    </SliderThumb>
+  </SliderTrack>
+</Slider>
+```
 
 ### Slider
 

@@ -31,31 +31,6 @@ import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
     files={["starters/tailwind/src/NumberField.tsx"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A `NumberField` consist of an input element that shows the current value and allows the user to type a new value,
-optional stepper buttons to increment and decrement the value, a group containing the input and stepper buttons,
-and a label.
-
-`NumberField` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {NumberField, Label, Group, Input, Button, Text, FieldError} from 'react-aria-components';
-
-<NumberField>
-  <Label />
-  <Group>
-    <Input />
-    <Button slot="increment" />
-    <Button slot="decrement" />
-  </Group>
-  <Text slot="description" />
-  <FieldError />
-</NumberField>
-```
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the number value. The `onChange` event is called when the user finishes editing the value (e.g. on blur, incrementing, or decrementing).
@@ -148,6 +123,23 @@ import {Form} from 'react-aria-components';
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{NumberField: '#numberfield', Group: 'Group.html', Button: 'Button.html'}}
+<NumberField>
+  <Label />
+  <Group>
+    <Input />
+    <Button slot="increment" />
+    <Button slot="decrement" />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+</NumberField>
+```
+
+### NumberField
 
 <PropTable component={docs.exports.NumberField} links={docs.links} />
 

@@ -59,28 +59,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   ```
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A tooltip consists of a trigger element and a small overlay. Users may reveal the tooltip by hovering or focusing the trigger.
-
-```tsx
-import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-components';
-
-<TooltipTrigger>
-  <Button />
-  <Tooltip>
-    <OverlayArrow />
-  </Tooltip>
-</TooltipTrigger>
-```
-
-<InlineAlert variant="notice">
-  <Heading>Accessibility</Heading>
-  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
-</InlineAlert>
-
 ## Interactions
 
 Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
@@ -119,6 +97,11 @@ function Example(props) {
 }
 ```
 
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Accessibility</Heading>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+</InlineAlert>
+
 ## Custom trigger
 
 `DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
@@ -152,6 +135,17 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 [DialogTrigger](Dialog.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
 
 ## API
+
+<Anatomy />
+
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button.html'}}
+<TooltipTrigger>
+  <Button />
+  <Tooltip>
+    <OverlayArrow />
+  </Tooltip>
+</TooltipTrigger>
+```
 
 ### TooltipTrigger
 

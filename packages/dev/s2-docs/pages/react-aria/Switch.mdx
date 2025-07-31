@@ -30,20 +30,6 @@ import Anatomy from '@react-aria/switch/docs/anatomy.svg';
     files={["starters/tailwind/src/Switch.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A switch consists of a visual selection indicator and a label. Users may click, touch, or use the <Keyboard>Space</Keyboard> key to toggle it.
-
-In most cases, switches should have a visual label. If a switch does not have a visible label, an `aria-label` or `aria-labelledby` prop must be provided to identify it to assistive technology.
-
-```tsx
-import {Switch} from 'react-aria-components';
-
-<Switch>Label</Switch>
-```
-
 ## Selection
 
 Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
@@ -95,6 +81,14 @@ import {Form} from 'react-aria-components';
 
 ## API
 
-<PropTable component={docs.exports.Switch} links={docs.links} showDescription />
+<Anatomy />
+
+```tsx links={{Switch: '#switch'}}
+<Switch>Label</Switch>
+```
+
+### Switch
+
+<PropTable component={docs.exports.Switch} links={docs.links} />
 
 <StateTable defaultClassName="react-aria-Switch" properties={docs.exports.SwitchRenderProps.properties} />

@@ -65,23 +65,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   ```
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger.
-
-```tsx
-import {DialogTrigger, Popover, Button, OverlayArrow} from 'react-aria-components';
-
-<DialogTrigger>
-  <Button />
-  <Popover>
-    <OverlayArrow />
-  </Popover>
-</DialogTrigger>
-```
-
 ## Custom trigger
 
 `DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
@@ -147,6 +130,17 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover', OverlayArrow: '#overlayarrow'}}
+<DialogTrigger>
+  <Button />
+  <Popover>
+    <OverlayArrow />
+  </Popover>
+</DialogTrigger>
+```
 
 ### DialogTrigger
 

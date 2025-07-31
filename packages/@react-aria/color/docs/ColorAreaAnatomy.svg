@@ -1,9 +1,9 @@
-<svg style="max-height: 312px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 408 312">
+<svg style="max-height: 256px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 408 256">
   <title>Color area anatomy diagram</title>
   <desc>Shows a color area component with labels pointing to its parts, including the area, and thumb elements.</desc>
   <g transform="translate(44 0)" fill="var(--anatomy-gray-300)" stroke="rgba(73,110,194,0.1)" stroke-width="1">
-    <rect width="312" height="312" rx="5" stroke="none" />
-    <rect x="0.5" y="0.5" width="311" height="311" rx="4.5" fill="none" />
+    <rect width="256" height="256" rx="5" stroke="none" />
+    <rect x="0.5" y="0.5" width="255" height="255" rx="4.5" fill="none" />
   </g>
   <g transform="translate(333.5 1757)" fill="var(--anatomy-gray-50)">
     <path

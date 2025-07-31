@@ -28,23 +28,6 @@ import Anatomy from '@react-aria/color/docs/ColorWheelAnatomy.svg';
     files={["starters/tailwind/src/ColorWheel.tsx", "starters/tailwind/src/ColorThumb.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy
-  role="img"
-  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
-
-A color wheel consists of a circular `<ColorWheelTrack>` and a `<ColorThumb>` that the user can drag to change the color hue.
-
-```tsx
-import {ColorWheel, ColorWheelTrack, ColorThumb} from 'react-aria-components';
-
-<ColorWheel>
-  <ColorWheelTrack />
-  <ColorThumb />
-</ColorWheel>
-```
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the color value. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
@@ -79,6 +62,17 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy
+  role="img"
+  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
+
+```tsx links={{ColorWheel: '#colorwheel', ColorWheelTrack: '#colorwheeltrack', ColorThumb: '#colorthumb'}}
+<ColorWheel>
+  <ColorWheelTrack />
+  <ColorThumb />
+</ColorWheel>
+```
 
 ### ColorWheel
 

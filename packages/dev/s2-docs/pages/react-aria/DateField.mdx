@@ -31,29 +31,6 @@ import Anatomy from '@react-aria/datepicker/docs/datefield-anatomy.svg';
     files={["starters/tailwind/src/DateField.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A DateField consists of a label, and a [Group](Group.html) of segments for each unit of a date and time (e.g. years, months, days, etc.). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value.
-
-`DateField` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {DateField, Label, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
-
-<DateField>
-  <Label />
-  <DateInput>
-    {segment => <DateSegment segment={segment} />}
-  </DateInput>
-  <Text slot="description" />
-  <FieldError />
-</DateField>
-```
-
-Most of this anatomy is shared with [TimeField](TimeField.html), so you can reuse many components between them.
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
@@ -136,6 +113,19 @@ import {Form} from 'react-aria-components';
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{DateField: '#datefield', DateInput: '#dateinput', DateSegment: '#datesegment'}}
+<DateField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <FieldError />
+</DateField>
+```
 
 ### DateField
 

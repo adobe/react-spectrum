@@ -30,18 +30,6 @@ import '../../tailwind/tailwind.css';
     files={["starters/tailwind/src/ColorPicker.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-A color picker does not render any UI by itself. You can render any combination of color components as children of a color picker, including [ColorArea](ColorArea.html), [ColorSlider](ColorSlider.html), [ColorWheel](ColorWheel.html), [ColorField](ColorField.html), [ColorSwatch](ColorSwatch.html), and [ColorSwatchPicker](ColorSwatchPicker.html). `ColorPicker` manages the state of the selected color, and coordinates the value between all of the components inside it.
-
-```tsx
-import {ColorPicker} from 'react-aria-components';
-
-<ColorPicker>
-  {/* Color components here */}
-</ColorPicker>
-```
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the color value. This may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function. The `onChange` event is always called with a `Color` object.

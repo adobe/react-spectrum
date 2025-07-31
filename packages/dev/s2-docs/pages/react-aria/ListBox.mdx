@@ -43,28 +43,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
-
-A listbox consists of a container element, with a list of items or sections inside.
-Users can select one or more items by clicking, tapping, or navigating with the keyboard.
-
-```tsx
-import {ListBox, ListBoxItem, ListBoxSection, Header, Text} from 'react-aria-components';
-
-<ListBox>
-  <ListBoxItem>
-    <Text slot="label" />
-    <Text slot="description" />
-  </ListBoxItem>
-  <ListBoxSection>
-    <Header />
-    <ListBoxItem />
-  </ListBoxSection>
-</ListBox>
-```
-
 ## Content
 
 `ListBox` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
@@ -390,6 +368,22 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
+
+```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem'}}
+<ListBox>
+  <ListBoxItem>
+    <Text slot="label" />
+    <Text slot="description" />
+  </ListBoxItem>
+  <ListBoxSection>
+    <Header />
+    <ListBoxItem />
+  </ListBoxSection>
+  <ListBoxLoadMoreItem />
+</ListBox>
+```
 
 ### ListBox
 

@@ -31,37 +31,6 @@ import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
     files={["starters/tailwind/src/DatePicker.tsx", "starters/tailwind/src/DateField.tsx",  "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A DatePicker consists of a label, and a [Group](Group.html) containing a [DateField](DateField.html) and a [Button](Button.html). Clicking the button opens a [Popover](Popover.html) containing a [Calendar](Calendar.html). The DateField includes segments for each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard.
-
-`DatePicker` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {DatePicker, Label, Group, Popover, Dialog, Calendar, Button, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
-
-<DatePicker>
-  <Label />
-  <Group>
-    <DateInput>
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
-    <Button />
-  </Group>
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <Dialog>
-      <Calendar />
-    </Dialog>
-  </Popover>
-</DatePicker>
-```
-
-Most of this anatomy is shared with [DateRangePicker](DateRangePicker.html), so you can reuse many components between them.
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
@@ -164,6 +133,29 @@ function Example() {
 
 ## API
 
-<PropTable component={docs.exports.DatePicker} links={docs.links} showDescription />
+<Anatomy />
+
+```tsx links={{DatePicker: '#datepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', DateSegment: 'DateField.html#datesegment', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', Calendar: 'Calendar.html'}}
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <Dialog>
+      <Calendar />
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+### DatePicker
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} />
 
 <StateTable defaultClassName="react-aria-DatePicker" properties={docs.exports.DatePickerRenderProps.properties} />

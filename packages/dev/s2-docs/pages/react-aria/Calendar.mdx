@@ -29,37 +29,6 @@ import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
     files={["starters/tailwind/src/Calendar.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy
-  role="img"
-  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
-
-A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each `CalendarGrid` consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
-
-`Calendar` also supports an optional error message element, which can be used to provide more context about any validation errors.
-
-```tsx
-import {Calendar, Heading, Button, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Text} from 'react-aria-components';
-
-<Calendar>
-  <Button slot="previous" />
-  <Heading />
-  <Button slot="next" />
-  <CalendarGrid>
-    <CalendarGridHeader>
-      {day => <CalendarHeaderCell />}
-    </CalendarGridHeader>
-    <CalendarGridBody>
-      {date => <CalendarCell date={date} />}
-    </CalendarGridBody>
-  </CalendarGrid>
-  <Text slot="errorMessage" />
-</Calendar>
-```
-
-Most of this anatomy is shared with [RangeCalendar](RangeCalendar.html), so you can reuse many components between them.
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
@@ -315,6 +284,27 @@ import {Button} from 'vanilla-starter/Button';
 ```
 
 ## API
+
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
+
+```tsx links={{Calendar: '#calendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+<Calendar>
+  <Button slot="previous" />
+  <Heading />
+  <Button slot="next" />
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell />}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+  <Text slot="errorMessage" />
+</Calendar>
+```
 
 ### Calendar
 

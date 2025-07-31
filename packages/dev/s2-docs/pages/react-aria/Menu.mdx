@@ -82,35 +82,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A menu trigger consists of a button or other trigger element combined with a menu displayed in a popover,
-with a list of menu items or sections inside. Users can click, touch, or use the keyboard to open the menu.
-
-```tsx
-import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, Header, Text, Keyboard} from 'react-aria-components';
-
-<MenuTrigger>
-  <Button />
-  <Popover>
-    <Menu>
-      <MenuItem>
-        <Text slot="label" />
-        <Text slot="description" />
-        <Keyboard />
-      </MenuItem>
-      <Separator />
-      <MenuSection>
-        <Header />
-        <MenuItem />
-      </MenuSection>
-    </Menu>
-  </Popover>
-</MenuTrigger>
-```
-
 ## Content
 
 `Menu` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
@@ -494,6 +465,38 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 ## API
 
+<Anatomy />
+
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Popover: 'Popover.html', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator.html', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger'}}
+<MenuTrigger>
+  <Button />
+  <Popover>
+    <Menu>
+      <MenuItem>
+        <Text slot="label" />
+        <Text slot="description" />
+        <Keyboard />
+      </MenuItem>
+      <Separator />
+      <MenuSection>
+        <Header />
+        <MenuItem />
+      </MenuSection>
+      <SubmenuTrigger>
+        <MenuItem />
+        <Popover>
+          <Menu />
+        </Popover>
+      </SubmenuTrigger>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} />
+
 ### Menu
 
 <PropTable component={docs.exports.Menu} links={docs.links} />
@@ -511,3 +514,7 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 <PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
 
 {/* <StateTable defaultClassName="react-aria-MenuSection" properties={docs.exports.MenuSectionRenderProps.properties} /> */}
+
+### SubmenuTrigger
+
+<PropTable component={docs.exports.SubmenuTrigger} links={docs.links} />

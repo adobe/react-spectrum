@@ -31,29 +31,6 @@ import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
     files={["starters/tailwind/src/TimeField.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A TimeField consists of a label, and a [Group](Group.html) of segments representing each unit of a time (e.g. hours, minutes, and seconds). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value.
-
-`TimeField` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {TimeField, Label, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
-
-<TimeField>
-  <Label />
-  <DateInput>
-    {segment => <DateSegment segment={segment} />}
-  </DateInput>
-  <Text slot="description" />
-  <FieldError />
-</TimeField>
-```
-
-Most of this anatomy is shared with [DateField](DateField.html), so you can reuse many components between them.
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDate), but only displays the time.
@@ -123,6 +100,19 @@ import {Form} from 'react-aria-components';
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{TimeField: '#timefield', DateInput: '#dateinput', DateSegment: '#datesegment'}}
+<TimeField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <FieldError />
+</TimeField>
+```
 
 ### TimeField
 

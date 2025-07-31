@@ -31,27 +31,6 @@ import Anatomy from '@react-aria/color/docs/ColorSliderAnatomy.svg';
     files={["starters/tailwind/src/ColorSlider.tsx", "starters/tailwind/src/ColorThumb.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy
-  role="img"
-  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements." />
-
-A color slider consists of a `<SliderTrack>` and a `<ColorThumb>` that the user can drag to change a single channel of a color value.
-It may also include optional `<Label>` and `<SliderOutput>` elements to display the color channel name and current numeric value, respectively.
-
-```tsx
-import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-aria-components';
-
-<ColorSlider>
-  <Label />
-  <SliderOutput />
-  <SliderTrack>
-    <ColorThumb />
-  </SliderTrack>
-</ColorSlider>
-```
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the color value, and the `channel` prop to specify which color channel to display. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
@@ -87,6 +66,20 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy
+  role="img"
+  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements." />
+
+```tsx links={{ColorSlider: '#colorslider', SliderOutput: 'Slider.html#slideroutput', SliderTrack: 'Slider.html#slidertrack', ColorThumb: '#colorthumb'}}
+<ColorSlider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <ColorThumb />
+  </SliderTrack>
+</ColorSlider>
+```
 
 ### ColorSlider
 

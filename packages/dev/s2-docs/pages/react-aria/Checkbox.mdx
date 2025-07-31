@@ -30,21 +30,6 @@ import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
     files={["starters/tailwind/src/Checkbox.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A checkbox consists of a visual selection indicator and a label. Checkboxes support three
-selection states: checked, unchecked, and indeterminate. Users may click, touch, or use the <Keyboard>Space</Keyboard> key to toggle it.
-
-In most cases, checkboxes should have a visual label. If a checkbox does not have a visible label, an `aria-label` or `aria-labelledby` prop must be provided to identify it to assistive technology.
-
-```tsx
-import {Checkbox} from 'react-aria-components';
-
-<Checkbox>Label</Checkbox>
-```
-
 ## Selection
 
 Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes. The `isIndeterminate` prop overrides the selection state regardless of user interaction.
@@ -101,6 +86,14 @@ import {Form} from 'react-aria-components';
 
 ## API
 
-<PropTable component={docs.exports.Checkbox} links={docs.links} showDescription />
+<Anatomy />
+
+```tsx links={{Checkbox: '#checkbox'}}
+<Checkbox>Label</Checkbox>
+```
+
+### Checkbox
+
+<PropTable component={docs.exports.Checkbox} links={docs.links} />
 
 <StateTable defaultClassName="react-aria-Checkbox" properties={docs.exports.CheckboxRenderProps.properties} />

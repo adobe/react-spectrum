@@ -67,20 +67,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   ```
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A modal consists of an overlay container element, and an underlay. The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
-
-```tsx
-import {ModalOverlay, Modal} from 'react-aria-components';
-
-<ModalOverlay>
-  <Modal />
-</ModalOverlay>
-```
-
 ## Sheet
 
 Overlays such as trays, drawers, and sheets can be built using a `Modal` with custom entry and exit animations.
@@ -171,8 +157,20 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
-
 ## API
+
+<Anatomy />
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
+<DialogTrigger>
+  <Button />
+  <ModalOverlay>
+    <Modal>
+      <Dialog />
+    </Modal>
+  </ModalOverlay>
+</DialogTrigger>
+```
 
 ### DialogTrigger
 

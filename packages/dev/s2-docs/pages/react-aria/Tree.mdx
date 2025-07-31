@@ -55,29 +55,6 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
-
-A Tree consists of a container element, with rows of data inside. The items within a tree may contain focusable elements or plain text content. Each item may also contain a button to toggle the expandable state of that item. If the tree supports item selection, each item can optionally include a selection checkbox.
-
-```tsx
-import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-components';
-
-<Tree>
-  <TreeItem>
-    <TreeItemContent>
-      <Button slot="chevron" />
-      <Checkbox slot="selection" />
-      <Button slot="drag" />
-    </TreeItemContent>
-    <TreeItem>
-      {/* ... */}
-    </TreeItem>
-  </TreeItem>
-</Tree>
-```
-
 ## Content
 
 `Tree` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
@@ -384,6 +361,24 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
+
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem'}}
+<Tree>
+  <TreeItem>
+    <TreeItemContent>
+      <Button slot="chevron" />
+      <Checkbox slot="selection" />
+      <Button slot="drag" />
+    </TreeItemContent>
+    <TreeItem>
+      {/* ... */}
+    </TreeItem>
+    <TreeLoadMoreItem />
+  </TreeItem>
+</Tree>
+```
 
 ### Tree
 

@@ -42,42 +42,6 @@ import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A ComboBox consists of a label, an input which displays the current value, a [ListBox](ListBox.html) displayed in a [Popover](Popover.html), and an optional [Button](Button.html)
-to open the popover. Users can type within the input to filter the available options
-within the ListBox.
-
-`ComboBox` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-For more flexibility when building patterns such as command palettes, searchable menus, or filterable selects, see the [Autocomplete](Autocomplete.html) component.
-
-```tsx
-import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
-
-<ComboBox>
-  <Label />
-  <Input />
-  <Button />
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <ListBox>
-      <ListBoxItem>
-        <Text slot="label" />
-        <Text slot="description" />
-      </ListBoxItem>
-      <ListBoxSection>
-        <Header />
-        <ListBoxItem />
-      </ListBoxSection>
-    </ListBox>
-  </Popover>
-</ComboBox>
-```
-
 ## Content
 
 `ComboBox` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
@@ -316,6 +280,23 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{ComboBox: '#combobox', Button: 'Button.html', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+<ComboBox>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</ComboBox>
+```
+
+### ComboBox
 
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
 

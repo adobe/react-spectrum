@@ -31,53 +31,6 @@ import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
     files={["starters/tailwind/src/DateRangePicker.tsx", "starters/tailwind/src/DateField.tsx",  "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A DateRangePicker consists of a label, and [Group](Group.html) containing two [DateField](DateField.html)s and a [Button](Button.html). Clicking the button opens a [Popover](Popover.html) containing a [RangeCalendar](RangeCalendar.html). The DateFields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard.
-
-`DateRangePicker` also supports optional description and `<FieldError>` elements. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
-
-<DateRangePicker>
-  <Label />
-  <Group>
-    <DateInput slot="start">
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
-    <DateInput slot="end">
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
-    <Button />
-  </Group>
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <Dialog>
-      <RangeCalendar>
-        <Button slot="previous" />
-        <Heading />
-        <Button slot="next" />
-        <CalendarGrid>
-          <CalendarGridHeader>
-            {day => <CalendarHeaderCell />}
-          </CalendarGridHeader>
-          <CalendarGridBody>
-            {date => <CalendarCell date={date} />}
-          </CalendarGridBody>
-        </CalendarGrid>
-        <Text slot="errorMessage" />
-      </RangeCalendar>
-    </Dialog>
-  </Popover>
-</DateRangePicker>
-```
-
-Most of this anatomy is shared with [DatePicker](DatePicker.html), so you can reuse many components between them.
-
 ## Value
 
 Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
@@ -196,6 +149,32 @@ function Example(props) {
 
 ## API
 
-<PropTable component={docs.exports.DateRangePicker} links={docs.links} showDescription />
+<Anatomy />
+
+```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', DateSegment: 'DateField.html#datesegment', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', RangeCalendar: 'RangeCalendar.html'}}
+<DateRangePicker>
+  <Label />
+  <Group>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <DateInput slot="end">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <Dialog>
+      <RangeCalendar />
+    </Dialog>
+  </Popover>
+</DateRangePicker>
+```
+
+### DateRangePicker
+
+<PropTable component={docs.exports.DateRangePicker} links={docs.links} />
 
 <StateTable defaultClassName="react-aria-DateRangePicker" properties={docs.exports.DateRangePickerRenderProps.properties} />

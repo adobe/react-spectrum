@@ -38,31 +38,6 @@ import Anatomy from '@react-aria/tag/docs/anatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A tag group consists of label and a list of tags. Each tag should include a visual label, and may optionally include a remove button. If a visual label is not included in a tag group, then an `aria-label` or `aria-labelledby` prop must be passed to identify it to assistive technology.
-
-`TagGroup` also supports optional description and error message slots, which can be used
-to provide more context about the tag group, and any validation messages. These are linked with the
-tag group via the `aria-describedby` attribute.
-
-```tsx
-import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components';
-
-<TagGroup>
-  <Label />
-  <TagList>
-    <Tag>
-      <Button slot="remove" />
-    </Tag>
-  </TagList>
-  <Text slot="description" />
-  <Text slot="errorMessage" />
-</TagGroup>
-```
-
 ## Content
 
 `TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
@@ -164,6 +139,21 @@ function Example(props) {
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{TagGroup: '#taggroup', TagList: '#taglist', Tag: '#tag', Button: 'Button.html'}}
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
 
 ### TagGroup
 
