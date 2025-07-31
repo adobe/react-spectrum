@@ -37,10 +37,10 @@ export interface ListData<T> {
   setSelectedKeys(keys: Selection): void,
 
   /** Adds the given keys to the current selected keys. */
-  addSelectedKeys(keys: Selection): void,
+  addKeysToSelection(keys: Selection): void,
 
   /** Removes the given keys from the current selected keys. */
-  removeSelectedKeys(keys: Selection): void,
+  removeKeysFromSelection(keys: Selection): void,
 
   /** The current filter text. */
   filterText: string,
@@ -181,7 +181,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         selectedKeys
       }));
     },
-    addSelectedKeys(selectedKeys: Selection) {
+    addKeysToSelection(selectedKeys: Selection) {
       dispatch(state => {
         if (state.selectedKeys === 'all') {
           return state;
@@ -210,7 +210,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         };
       });
     },
-    removeSelectedKeys(selectedKeys: Selection) {
+    removeKeysFromSelection(selectedKeys: Selection) {
       dispatch(state => {
         if (selectedKeys === 'all') {
           return {
