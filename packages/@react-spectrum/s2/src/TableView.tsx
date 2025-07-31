@@ -507,6 +507,7 @@ const columnStyles = style({
 });
 
 export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
+  // TODO: this prop doesn't seem to work, is it supposed to be supported?
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
