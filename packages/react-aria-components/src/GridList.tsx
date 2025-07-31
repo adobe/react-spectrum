@@ -106,7 +106,9 @@ interface GridListInnerProps<T extends object> {
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
   // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
-  let {filter} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
@@ -135,6 +137,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let {gridProps} = useGridList({
     ...props,
+    ...DOMCollectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,

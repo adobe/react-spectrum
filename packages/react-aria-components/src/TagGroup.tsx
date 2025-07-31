@@ -75,7 +75,9 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let {filter} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tagListRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
@@ -99,6 +101,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
   } = useTagGroup({
     ...props,
     ...domPropOverrides,
+    ...DOMCollectionProps,
     label
   }, filteredState, tagListRef);
 

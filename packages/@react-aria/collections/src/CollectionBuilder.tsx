@@ -164,6 +164,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 
+// TODO: have it still accept a string along side a collectionNodeClass, just have it default to a base node class if so
 // TODO: check the signature of the CollectionNodeClass here and other places (aka useSSRCollectionNode and branchCompoennt). If I use the generic it complains. Perhaps it should be unknown? Or maybe the definitions in Listbox and stuff shouldn't use a generic?
 export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
 export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;

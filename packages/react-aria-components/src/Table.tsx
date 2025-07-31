@@ -375,7 +375,9 @@ interface TableInnerProps {
 
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
-  let {filter} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
   let tableState = useTableState({
@@ -390,6 +392,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
+    ...DOMCollectionProps,
     layoutDelegate,
     isVirtualized
   }, filteredState, ref);

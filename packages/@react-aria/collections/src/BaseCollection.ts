@@ -282,7 +282,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  filter(filterFn: FilterFn, newCollection?: BaseCollection<T>): BaseCollection<T> {
+  filter(filterFn: FilterFn<T>, newCollection?: BaseCollection<T>): BaseCollection<T> {
     if (newCollection == null) {
       newCollection = new BaseCollection<T>();
     }
@@ -294,7 +294,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: FilterFn): [Key | null, Key | null] {
+function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: FilterFn<T>): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys

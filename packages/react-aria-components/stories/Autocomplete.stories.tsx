@@ -19,7 +19,6 @@ import {MyListBoxLoaderIndicator, renderEmptyState} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
 import React from 'react';
 import styles from '../example/index.css';
-import {TreeExampleStaticRender} from './Tree.stories';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 import './styles.css';
