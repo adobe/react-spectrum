@@ -1,5 +1,7 @@
 {
   "decrease": "Minska {fieldLabel}",
   "increase": "Öka {fieldLabel}",
-  "numberField": "Nummerfält"
+  "numberField": "Nummerfält",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }
