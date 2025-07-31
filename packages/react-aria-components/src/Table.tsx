@@ -197,7 +197,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     return text.join(' ');
   }
 
-  filter(filterFn: (node: Node<T>) => boolean): TableCollection<T> {
+  filter(filterFn: (textValue: string, node: Node<T>) => boolean): TableCollection<T> {
     let clone = this.clone();
     return super.filter(filterFn, clone) as TableCollection<T>;
 
@@ -1063,10 +1063,10 @@ class TableRowNode<T> extends CollectionNode<T> {
     super(TableRowNode.type, key);
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): TableRowNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
-      if (filterFn(cell)) {
+      if (filterFn(cell.textValue, cell)) {
         return this.clone();
       }
     }

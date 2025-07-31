@@ -944,10 +944,6 @@ AutocompleteWithAsyncListBox.story = {
   }
 };
 
-// TODO: I'm skipping Breadcrumbs, Tabs for now, not sure it makes sense to filter that via Autocomplete
-// Filtering the Taggroup might make sense
-// TODO make all of the below examples async loading as well?
-
 export const AutocompleteWithGridList = () => {
   return (
     <AutocompleteWrapper>
@@ -987,7 +983,8 @@ export const AutocompleteWithTable = () => {
           layout={TableLayout}
           layoutOptions={{
             rowHeight: 25,
-            headingHeight: 25
+            headingHeight: 25,
+            padding: 10
           }}>
           <Table aria-label="Files" selectionMode="multiple" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
             <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -999,7 +996,7 @@ export const AutocompleteWithTable = () => {
               <Column>Date Modified</Column>
             </TableHeader>
             <TableBody>
-              <Row id="1">
+              <Row id="1" style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>
                   <MyCheckbox slot="selection" />
                 </Cell>
@@ -1007,7 +1004,7 @@ export const AutocompleteWithTable = () => {
                 <Cell>File folder</Cell>
                 <Cell>6/7/2020</Cell>
               </Row>
-              <Row id="2">
+              <Row id="2" style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>
                   <MyCheckbox slot="selection" />
                 </Cell>
@@ -1015,7 +1012,7 @@ export const AutocompleteWithTable = () => {
                 <Cell>File folder</Cell>
                 <Cell>4/7/2021</Cell>
               </Row>
-              <Row id="3">
+              <Row id="3" style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>
                   <MyCheckbox slot="selection" />
                 </Cell>
@@ -1023,7 +1020,7 @@ export const AutocompleteWithTable = () => {
                 <Cell>System file</Cell>
                 <Cell>11/20/2010</Cell>
               </Row>
-              <Row id="4">
+              <Row id="4" style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>
                   <MyCheckbox slot="selection" />
                 </Cell>
@@ -1079,16 +1076,32 @@ export const AutocompleteWithTagGroup = () => {
   );
 };
 
-export const AutocompleteWithTree = () => {
+function AutocompletePreserveFirstSection(args) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue, node) => {
+    if (node.parentKey === 'Section 1') {
+      return true;
+    }
+    return contains(textValue, inputValue);
+  };
+
   return (
-    <AutocompleteWrapper>
+    <Autocomplete filter={filter}>
       <div>
-        <TextField autoFocus data-testid="autocomplete-example">
+        <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
-        </TextField>
-        <TreeExampleStaticRender />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </SearchField>
+        <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
+          {item => dynamicRenderFuncSections(item)}
+        </Menu>
       </div>
-    </AutocompleteWrapper>
+    </Autocomplete>
   );
+}
+
+export const AutocompletePreserveFirstSectionStory: AutocompleteStory = {
+  render: (args) => <AutocompletePreserveFirstSection {...args} />,
+  name: 'Autocomplete, never filter first section'
 };

@@ -17,6 +17,8 @@ export type Mutable<T> = {
   -readonly[P in keyof T]: T[P]
 }
 
+type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
+
 /** An immutable object representing a Node in a Collection. */
 export class CollectionNode<T> implements Node<T> {
   readonly type: string;
@@ -69,7 +71,7 @@ export class CollectionNode<T> implements Node<T> {
     return node;
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): CollectionNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
     let [firstKey, lastKey] = filterChildren(collection, newCollection, this.firstChildKey, filterFn);
     let newNode: Mutable<CollectionNode<T>> = this.clone();
     newNode.firstChildKey = firstKey;
@@ -82,7 +84,7 @@ export class CollectionNode<T> implements Node<T> {
 // Perhaps this filter logic should be in CollectionNode instead and the current logic of CollectionNode's filter should move to Table
 export class FilterLessNode<T> extends CollectionNode<T> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): FilterLessNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): FilterLessNode<T> | null {
     return this.clone();
   }
 }
@@ -94,8 +96,8 @@ export class ItemNode<T> extends CollectionNode<T> {
     super(ItemNode.type, key);
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): ItemNode<T> | null {
-    if (filterFn(this)) {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
+    if (filterFn(this.textValue, this)) {
       return this.clone();
     }
 
@@ -110,7 +112,7 @@ export class SectionNode<T> extends CollectionNode<T> {
     super(SectionNode.type, key);
   }
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (node: Node<T>) => boolean): SectionNode<T> | null {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): SectionNode<T> | null {
     let filteredSection = super.filter(collection, newCollection, filterFn);
     if (filteredSection) {
       if (filteredSection.lastChildKey !== null) {
@@ -280,7 +282,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  filter(filterFn: (node: Node<T>) => boolean, newCollection?: BaseCollection<T>): BaseCollection<T> {
+  filter(filterFn: FilterFn, newCollection?: BaseCollection<T>): BaseCollection<T> {
     if (newCollection == null) {
       newCollection = new BaseCollection<T>();
     }
@@ -292,7 +294,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: (node: Node<T>) => boolean): [Key | null, Key | null] {
+function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: FilterFn): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys

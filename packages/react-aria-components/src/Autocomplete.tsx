@@ -23,7 +23,7 @@ import {TextFieldContext} from './TextField';
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filter?: (node: Node<unknown>) => boolean,
+  filter?: (nodeTextValue: string, node: Node<unknown>) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }

@@ -27,12 +27,14 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether typeahead is disabled. */
   disallowTypeAhead: boolean
 }
+
+// TODO: is in beta so technically could replace textValue with Node if we are comfortable with that
 export interface AriaAutocompleteProps extends AutocompleteProps {
   /**
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string) => boolean,
+  filter?: (textValue: string, inputValue: string, node: Node<unknown>) => boolean,
 
   /**
    * Whether or not to focus the first item in the collection after a filter is performed.
@@ -55,8 +57,9 @@ export interface AutocompleteAria {
   collectionProps: CollectionOptions,
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
+  // TODO: same as above, replace nodeTextValue?
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (node: Node<unknown>) => boolean
+  filter?: (nodeTextValue: string, node: Node<unknown>) => boolean
 }
 
 /**
@@ -316,9 +319,9 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     'aria-label': stringFormatter.format('collectionLabel')
   });
 
-  let filterFn = useCallback((node: Node<unknown>) => {
+  let filterFn = useCallback((nodeTextValue: string, node: Node<unknown>) => {
     if (filter) {
-      return filter(node.textValue, state.inputValue);
+      return filter(nodeTextValue, state.inputValue, node);
     }
 
     return true;
