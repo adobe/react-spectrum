@@ -40,7 +40,7 @@ export interface GridLayoutOptions {
    * The maximum allowed horizontal space between items.
    * @default Infinity
    */
-  maxSpace?: number,
+  maxHorizontalSpace?: number,
   /**
    * The maximum number of columns.
    * @default Infinity
@@ -84,7 +84,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
       || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
-      || newOptions.maxSpace !== oldOptions.maxSpace;
+      || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -93,7 +93,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       maxItemSize = DEFAULT_OPTIONS.maxItemSize,
       preserveAspectRatio = DEFAULT_OPTIONS.preserveAspectRatio,
       minSpace = DEFAULT_OPTIONS.minSpace,
-      maxSpace = DEFAULT_OPTIONS.maxSpace,
+      maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
     } = invalidationContext.layoutOptions || {};
@@ -126,7 +126,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(maxSpace, Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
+    let horizontalSpacing = Math.min(maxHorizontalSpace, Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
     this.gap = new Size(horizontalSpacing, minSpace.height);
     this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
