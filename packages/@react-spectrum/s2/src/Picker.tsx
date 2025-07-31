@@ -335,6 +335,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   }
   let scale = useScale();
 
+  const context = useMemo(() => ({size}), [size]);
+
   return (
     <AriaSelect
       {...pickerProps}
@@ -348,7 +350,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       }, props.styles)}>
       {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
-          <InternalPickerContext.Provider value={{size}}>
+          <InternalPickerContext.Provider value={context}>
             <FieldLabel
               isDisabled={isDisabled}
               isRequired={isRequired}
@@ -568,6 +570,11 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
+  const context = useMemo(() => ({
+    slots: {
+      icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+    }
+  }), []);
   return (
     <ListBoxItem
       {...props}
@@ -580,9 +587,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
         return (
           <DefaultProvider
             context={IconContext}
-            value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
-            }}}>
+            value={context}>
             <DefaultProvider
               context={TextContext}
               value={{

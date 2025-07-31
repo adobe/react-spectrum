@@ -17,7 +17,7 @@ import {getDoc} from 'globals-docs';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
-import React, {useContext} from 'react';
+import React, {useContext, useMemo} from 'react';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -224,8 +224,10 @@ export function Indent({params, open, close, children, alwaysIndent}) {
     small += '  ';
   }
 
+  const context = useMemo(() => ({small, large, alwaysIndent}), [alwaysIndent, large, small]);
+
   return (
-    <IndentContext.Provider value={{small, large, alwaysIndent}}>
+    <IndentContext.Provider value={context}>
       {open}
       {children}
       {close}
@@ -267,6 +269,8 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
     );
   }
 
+  const context = useMemo(() => ({small, large, alwaysIndent}), [alwaysIndent, large, small]);
+
   return elements
     .filter(Boolean)
     .reduce((acc, v, i) => [
@@ -277,7 +281,7 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
         {contents}
       </span>,
       <IndentContext.Provider
-        value={{small, large, alwaysIndent}}
+        value={context}
         key={`type${v.name || v.raw}${i}`}>
         <Type type={v} />
       </IndentContext.Provider>
@@ -374,7 +378,7 @@ function Parameter({name, value, default: defaultValue, optional, rest}) {
 }
 
 export function LinkProvider({children}) {
-  let links = new Map();
+  let links = useMemo(() => new Map(), []);
   return (
     <LinkContext.Provider value={links}>
       {children}

@@ -18,7 +18,7 @@ import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBase
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {ForwardedRef, forwardRef, ReactNode, useMemo} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -66,6 +66,12 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
   if (contextualHelp && !labelProps.id) {
     labelProps.id = fallbackLabelPropsId;
   }
+
+  const context = useMemo(() => ({
+    id: contextualHelpId,
+    'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
+    size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
+  } as const), [contextualHelpId, labelProps.id, size]);
 
   if (!props.children) {
     return null;
@@ -135,11 +141,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
               height: 0
             })}>
             <ContextualHelpContext.Provider
-              value={{
-                id: contextualHelpId,
-                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
-                size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
-              }}>
+              value={context}>
               {contextualHelp}
             </ContextualHelpContext.Provider>
           </CenterBaseline>

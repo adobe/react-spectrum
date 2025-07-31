@@ -13,7 +13,7 @@
 import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem} from 'react-aria-components';
 import {Color} from '@react-types/color';
 import {DOMRef, StyleProps, ValueBase} from '@react-types/shared';
-import React, {forwardRef, ReactElement, ReactNode} from 'react';
+import React, {forwardRef, ReactElement, ReactNode, useMemo} from 'react';
 import {SpectrumColorSwatchContext, SpectrumColorSwatchProps} from './ColorSwatch';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -51,6 +51,8 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Sp
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
+  const context = useMemo(() => ({useWrapper, size, rounding}), [rounding, size]);
+
   return (
     <AriaColorSwatchPicker
       {...otherProps}
@@ -67,7 +69,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Sp
           }
         }
       })({density})}>
-      <SpectrumColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
+      <SpectrumColorSwatchContext.Provider value={context}>
         {props.children}
       </SpectrumColorSwatchContext.Provider>
     </AriaColorSwatchPicker>

@@ -78,6 +78,24 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
   } = props;
   let domRef = useDOMRef(ref);
 
+  const context = useMemo(() => ({
+    labelPosition,
+    labelAlign,
+    necessityIndicator,
+    isRequired,
+    isDisabled,
+    isEmphasized,
+    size
+  }), [
+    isDisabled,
+    isEmphasized,
+    isRequired,
+    labelAlign,
+    labelPosition,
+    necessityIndicator,
+    size
+  ]);
+
   return (
     <RACForm
       {...formProps}
@@ -104,15 +122,7 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
         columnGap: 'text-to-control'
       }, getAllowedOverrides())({labelPosition, size}, props.styles)}>
       <FormContext.Provider
-        value={{
-          labelPosition,
-          labelAlign,
-          necessityIndicator,
-          isRequired,
-          isDisabled,
-          isEmphasized,
-          size
-        }}>
+        value={context}>
         {props.children}
       </FormContext.Provider>
     </RACForm>
