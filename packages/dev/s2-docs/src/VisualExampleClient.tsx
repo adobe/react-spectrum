@@ -1,15 +1,16 @@
 'use client';
 
 import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
 import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {getColorChannels, parseColor} from 'react-stately';
 import {IconPicker} from './IconPicker';
+import {ListBox, ListBoxItem} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {useLocale} from 'react-aria';
 
 type Props = {[name: string]: any};
@@ -340,6 +341,9 @@ export function Control({name}: {name: string}) {
       if (name === 'colorSpace') {
         return <ColorSpaceControl control={control} value={value} />;
       }
+      if (name === 'placement') {
+        return <PlacementControl control={control} value={value} onChange={onChange} />;
+      }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;
@@ -475,7 +479,11 @@ function NumberControl({control, value, onChange}: ControlProps) {
       contextualHelp={<PropContextualHelp control={control} />}
       value={value}
       onChange={onChange}
-      styles={style({width: 130})} />
+      styles={style({width: 130})}
+      formatOptions={control.name === 'delay' || control.name === 'closeDelay' ? {
+        style: 'unit',
+        unit: 'millisecond'
+      } : undefined} />
   );
 }
 
@@ -895,5 +903,77 @@ function ColorSpaceControl({control, value}) {
           return props;
         });
       }} />
+  );
+}
+
+function PlacementControl({control, value, onChange}) {
+  return (
+    <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+      <ListBox
+        aria-label={control.name}
+        layout="grid"
+        selectionMode="single"
+        disallowEmptySelection
+        selectedKeys={[value]}
+        onSelectionChange={keys => onChange([...keys][0])}
+        style={{
+          display: 'grid',
+          gridTemplateAreas: `
+            ".  ts tc te . "
+            "st .  .  .  et"
+            "sc .  .  .  ec"
+            "sb .  .  .  eb"
+            ".  bs bc be . "
+          `,
+          gridTemplateColumns: '25px 24px 24px 25px 24px',
+          gridTemplateRows: '25px 24px 24px 25px 24px'
+        }}>
+        <PlacementControlItem id="top start" style={{gridArea: 'ts'}} />
+        <PlacementControlItem id="top" style={{gridArea: 'tc'}} />
+        <PlacementControlItem id="top end" style={{gridArea: 'te'}} />
+        <PlacementControlItem id="start top" style={{gridArea: 'st'}} />
+        <PlacementControlItem id="end top" style={{gridArea: 'et'}} />
+        <PlacementControlItem id="start" style={{gridArea: 'sc'}} />
+        <PlacementControlItem id="end" style={{gridArea: 'ec'}} />
+        <PlacementControlItem id="start bottom" style={{gridArea: 'sb'}} />
+        <PlacementControlItem id="end bottom" style={{gridArea: 'eb'}} />
+        <PlacementControlItem id="bottom start" style={{gridArea: 'bs'}} />
+        <PlacementControlItem id="bottom" style={{gridArea: 'bc'}} />
+        <PlacementControlItem id="bottom end" style={{gridArea: 'be'}} />
+      </ListBox>
+    </Wrapper>
+  );
+}
+
+function PlacementControlItem(props) {
+  return (
+    <ListBoxItem 
+      {...props}
+      aria-label={props.id}
+      className={style({
+        ...focusRing(),
+        size: 24,
+        transition: 'default',
+        backgroundColor: {
+          default: baseColor('gray-100'),
+          isSelected: 'neutral'
+        },
+        color: {
+          default: 'neutral',
+          isSelected: 'white'
+        },
+        zIndex: {
+          default: 0,
+          isFocusVisible: 1
+        }
+      })}>
+      <div
+        className={style({
+          size: 'full',
+          outlineStyle: 'solid',
+          outlineColor: 'gray-600',
+          outlineWidth: 1
+        })} />
+    </ListBoxItem>
   );
 }

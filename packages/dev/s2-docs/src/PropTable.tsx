@@ -22,7 +22,7 @@ const GROUPS = {
     'minValue', 'maxValue', 'step', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'necessityIndicator', 'description', 'errorMessage'
   ],
   Overlay: [
-    'isOpen', 'defaultOpen', 'onOpenChange', 'placement', 'direction', 'align', 'shouldFlip', 'menuWidth'
+    'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'menuWidth'
   ],
   Events: [
     /^on[A-Z]/
@@ -34,7 +34,7 @@ const GROUPS = {
     'style', 'className'
   ],
   Forms: [
-    'name', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
+    'name', 'startName', 'endName', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
   ],
   Accessibility: [
     'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/

@@ -60,6 +60,8 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, Button, DateInput, 
 </DatePicker>
 ```
 
+Most of this anatomy is shared with [DateRangePicker](DateRangePicker.html), so you can reuse many components between them.
+
 ## Value
 
 Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
@@ -92,14 +94,14 @@ function Example() {
 
 The date format is automatically determined based on the user's locale. `DatePicker` supports several props to control how values are displayed.
 
-```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'firstDayOfWeek', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
+```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
 "use client";
 import {parseZonedDateTime} from '@internationalized/date';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 
 <DatePicker
-  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')}
-  /* PROPS */ />
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
 ```
 
 ### International calendars
