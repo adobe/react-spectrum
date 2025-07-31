@@ -200,9 +200,6 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
           }
         }
         let selection: Selection = new Set([...state.selectedKeys, ...validSelectedKeys]);
-        if (selection.size === state.items.length) {
-          selection = 'all';
-        }
 
         return {
           ...state,
@@ -222,9 +219,6 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         let selection: Selection = state.selectedKeys  === 'all' ? new Set(state.items.map(getKey!)) : new Set(state.selectedKeys);
         for (let key of selectedKeys) {
           selection.delete(key);
-        }
-        if (selection.size === state.items.length) {
-          selection = 'all';
         }
         return {
           ...state,

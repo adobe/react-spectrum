@@ -56,17 +56,6 @@ describe('useListData', function () {
       expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
     });
 
-    it('should add all remaining valid keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
-      let initialResult = result.current;
-
-      act(() => {
-        result.current.addKeysToSelection(['Julia', 'David']);
-      });
-      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
-      expect(result.current.selectedKeys).toEqual('all');
-    });
-
     it('should add only valid keys', function () {
       let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
       let initialResult = result.current;
