@@ -200,7 +200,20 @@ export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
   }
 };
 
-export let VirtualizedGridListGrid: GridListStory = () => {
+interface VirtualizedGridListGridProps {
+  maxItemSizeWidth?: number,
+  maxColumns?: number,
+  minHorizontalSpace?: number,
+  maxHorizontalSpace?: number
+}
+
+export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
+  const {
+    maxItemSizeWidth = 65,
+    maxColumns = Infinity,
+    minHorizontalSpace = 0,
+    maxHorizontalSpace = Infinity
+  } = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -211,13 +224,47 @@ export let VirtualizedGridListGrid: GridListStory = () => {
       layout={GridLayout}
       layoutOptions={{
         minItemSize: new Size(40, 40),
-        maxSpace: 5
+        maxItemSize: new Size(maxItemSizeWidth, 40),
+        minSpace: new Size(minHorizontalSpace, 18),
+        maxColumns,
+        maxHorizontalSpace
       }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
   );
+};
+
+VirtualizedGridListGrid.story = {
+  args: {
+    maxItemSizeWidth: 65,
+    maxColumns: undefined,
+    minHorizontalSpace: 0,
+    maxHorizontalSpace: undefined
+  },
+  argTypes: {
+    maxItemSizeWidth: {
+      control: 'number',
+      description: 'Maximum width of each item in the grid list.',
+      defaultValue: 65
+    },
+    maxColumns: {
+      control: 'number',
+      description: 'Maximum number of columns in the grid list.',
+      defaultValue: undefined
+    },
+    minHorizontalSpace: {
+      control: 'number',
+      description: 'Minimum horizontal space between grid items.',
+      defaultValue: 0
+    },
+    maxHorizontalSpace: {
+      control: 'number',
+      description: 'Maximum horizontal space between grid items.',
+      defaultValue: undefined
+    }
+  }
 };
 
 let renderEmptyState = ({isLoading}) => {
