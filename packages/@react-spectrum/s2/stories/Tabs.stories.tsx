@@ -18,7 +18,9 @@ import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {style} from '../style' with { type: 'macro' };
-import {Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
+import {Button, Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
+import React from 'react';
+import { tab } from '@testing-library/user-event/dist/cjs/setup/directApi.js';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -148,3 +150,55 @@ export const Dynamic: Story = {
     </div>
   )
 };
+
+function ExampleTest(props) {
+  let [tabs, setTabs] = React.useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <div className={style({width: 600})}>
+      <Tabs {...props} aria-label="Tabs">
+        <div className={style({display: 'flex', alginSelf: 'stretch'})}>
+          <TabList items={tabs} styles={style({flexShrink: 1, flexGrow: 1, flexBasis: 'auto'})}>
+            {tab => <Tab id={tab.id}>{tab.title}</Tab>}
+          </TabList>
+          <div className={style({display: 'flex', alignItems: 'center', flexShrink: 0, flexGrow: 0, flexBasis: 'auto'})}>
+            <Button onPress={addTab}>Add tab</Button>
+            <Button onPress={removeTab}>Remove tab</Button>
+          </div>
+        </div>
+        <Collection items={tabs}>
+            {tab => (
+              <TabPanel id={tab.id}>
+                {tab.content}
+              </TabPanel>
+          )}
+          </Collection>
+      </Tabs>
+    </div>
+  )
+}
+
+export const AddRemoveTabs: Story = {
+  render: (args) => <ExampleTest {...args} />
+}
