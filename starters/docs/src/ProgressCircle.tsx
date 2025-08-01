@@ -1,33 +1,65 @@
-import {ProgressBar} from 'react-aria-components';
+'use client';
+import {composeRenderProps, ProgressBar} from 'react-aria-components';
 import type {ProgressBarProps} from 'react-aria-components';
 
-export function ProgressCircle(props: ProgressBarProps) {
+export interface ProgressCircleProps extends ProgressBarProps {
+  size?: number
+}
+
+export function ProgressCircle(props: ProgressCircleProps) {
+  // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
+  let strokeWidth = 4;
+  let radius = `calc(50% - ${strokeWidth / 2}px)`;
+
   return (
-    <ProgressBar {...props}>
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        style={{ display: 'block' }}
-      >
-        <path
-          fill="currentColor"
-          d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
-          opacity=".25"
-        />
-        <path
-          fill="currentColor"
-          d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            dur="0.75s"
-            values="0 12 12;360 12 12"
-            repeatCount="indefinite"
-          />
-        </path>
-      </svg>
-    </ProgressBar>
+      <ProgressBar
+        {...props}
+        style={composeRenderProps(props.style, style => ({
+          ...style,
+          width: props.size || 16,
+          height: props.size || 16
+        }))}>
+        {({percentage, isIndeterminate}) => (
+          <>
+            <svg
+              fill="none"
+              width="100%"
+              height="100%"
+              viewBox="0 0 32 32">
+              <circle
+                cx="50%"
+                cy="50%"
+                r={radius}
+                stroke="var(--gray-100)"
+                strokeWidth={strokeWidth} />
+              <circle
+                cx="50%"
+                cy="50%"
+                r={radius}
+                stroke="var(--highlight-background)"
+                strokeWidth={strokeWidth}
+                // Normalize the path length to 100 so we can easily set stroke-dashoffset to a percentage.
+                pathLength="100"
+                // Add extra gap between dashes so 0% works in Chrome.
+                strokeDasharray="100 200"
+                strokeDashoffset={100 - (isIndeterminate || percentage == null ? 25 : percentage)}
+                strokeLinecap="round"
+                style={{
+                  rotate: '-90deg',
+                  transformOrigin: 'center center'
+                }}>
+                {isIndeterminate && 
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    dur="0.75s"
+                    values="0;360"
+                    repeatCount="indefinite" />
+                }
+              </circle>
+            </svg>
+          </>
+        )}
+      </ProgressBar>
   );
 }

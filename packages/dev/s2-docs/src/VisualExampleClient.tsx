@@ -1,6 +1,6 @@
 'use client';
 
-import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
 import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -473,6 +473,17 @@ function PropContextualHelp({control}) {
 }
 
 function NumberControl({control, value, onChange}: ControlProps) {
+  if (control.options?.control === 'slider') {
+    return (
+      <Slider
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        value={value}
+        onChange={onChange}
+        styles={style({width: 130})} />
+    );
+  }
+
   return (
     <NumberField
       label={control.name}

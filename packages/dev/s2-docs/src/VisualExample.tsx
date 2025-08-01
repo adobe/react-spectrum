@@ -1,5 +1,6 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
 import {Files, getFiles} from './CodeBlock';
+import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
@@ -130,7 +131,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     if (typeof defaultValue === 'string') {
       defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
       try {
-        defaultValue = JSON.parse(defaultValue);
+        defaultValue = json5.parse(defaultValue);
       } catch {
         // ignore
       }
