@@ -13,9 +13,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
-import {Node} from 'react-stately';
-import type {ListState} from '@react-stately/list';
-
 
 export interface AriaGridListSectionProps {
   /** The heading for the section. */

@@ -12,7 +12,7 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createLeafComponent, createBranchComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -592,13 +592,11 @@ function GridListSectionInner<T extends object>(props: GridListSectionProps<T>, 
         values={[
           [HeaderContext, {...headingProps, ref: headingRef}],
           [GridListHeaderContext, {...rowProps}]
-        ]}
-        >
+        ]}>
         <CollectionBranch
-            collection={state.collection}
-            parent={section}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} 
-            />
+          collection={state.collection}
+          parent={section}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       </Provider>
     </section>
   );

@@ -21,14 +21,13 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
   GridListItem,
   GridListItemProps,
   GridListLoadMoreItem,
   GridListProps,
-  GridListHeader,
   GridListSection,
   Heading,
-  Header,
   ListLayout,
   Modal,
   ModalOverlay,
@@ -153,11 +152,10 @@ export const GridListSectionExample = (args) => (
   <GridList
     {...args}
     className={styles.menu}
-    layout="stack"
     aria-label="test gridlist"
     style={{
       width: 400,
-      height: 400,
+      height: 400
     }}>
     <GridListSection>
       <GridListHeader>Section 1</GridListHeader>
@@ -212,10 +210,9 @@ GridListSectionExample.story = {
 
 export function VirtualizedGridListSection() {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
-  for (let s = 0; s < 2; s++) {
+  for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
-    for (let i = 0; i < 5; i++) {
-      const l = (s * 5) + i + 10;
+    for (let i = 0; i < 100; i++) {
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
@@ -237,7 +234,7 @@ export function VirtualizedGridListSection() {
           {section => (
             <GridListSection>
               <GridListHeader>{section.name}</GridListHeader>
-              <Collection items={section.children}>
+              <Collection items={section.children} >
                 {item => <MyGridListItem>{item.name}</MyGridListItem>}
               </Collection>
             </GridListSection>
