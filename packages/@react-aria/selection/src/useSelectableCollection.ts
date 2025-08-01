@@ -125,7 +125,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
-  
+
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
     if (e.altKey && e.key === 'Tab') {
