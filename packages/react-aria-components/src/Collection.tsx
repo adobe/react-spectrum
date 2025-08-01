@@ -99,6 +99,7 @@ interface SectionContextValue {
 
 export const SectionContext = createContext<SectionContextValue | null>(null);
 
+// TODO: should I update this since it is deprecated?
 /** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
   let {name, render} = useContext(SectionContext)!;
