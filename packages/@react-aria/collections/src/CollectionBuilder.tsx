@@ -132,8 +132,20 @@ export type CollectionNodeClass<T> = {
   readonly type: string
 };
 
-// TODO: discuss the former Type arg, renamed to CollectionNodeClass
-function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T>, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>) => ReactElement) {
+function createCollectionNodeClass(type: string): CollectionNodeClass<any> {
+  let NodeClass = function (key: Key) {
+    return new CollectionNode(type, key);
+  } as any;
+  NodeClass.type = type;
+  return NodeClass;
+}
+
+function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T> | string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>) => ReactElement) {
+  // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
+  if (typeof CollectionNodeClass === 'string') {
+    CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
+  }
+
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
   // Therefore we can create elements in our collection document during render so that they are in the
@@ -164,11 +176,9 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 
-// TODO: have it still accept a string along side a collectionNodeClass, just have it default to a base node class if so
-// TODO: check the signature of the CollectionNodeClass here and other places (aka useSSRCollectionNode and branchCompoennt). If I use the generic it complains. Perhaps it should be unknown? Or maybe the definitions in Listbox and stuff shouldn't use a generic?
-export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
@@ -199,7 +209,7 @@ export function createLeafComponent<P extends object, E extends Element>(Collect
   return Result;
 }
 
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(CollectionNodeClass: CollectionNodeClass<any>, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
