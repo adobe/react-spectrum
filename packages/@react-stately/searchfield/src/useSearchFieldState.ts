@@ -18,7 +18,7 @@ export interface SearchFieldState {
   readonly value: string,
 
   /** Sets the value of the search field. */
-  setValue(value: string): void
+  setValue: (value: string) => void
 }
 
 /**

@@ -26,17 +26,17 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   /** The default value of the combo box input. */
   defaultInputValue: string,
   /** Sets the value of the combo box input. */
-  setInputValue(value: string): void,
+  setInputValue: (value: string) => void,
   /** Selects the currently focused item and updates the input value. */
-  commit(): void,
+  commit: () => void,
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy | null,
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  open: (focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction) => void,
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  toggle: (focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction) => void,
   /** Resets the input value to the previously selected item's text if any and closes the menu.  */
-  revert(): void
+  revert: () => void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;

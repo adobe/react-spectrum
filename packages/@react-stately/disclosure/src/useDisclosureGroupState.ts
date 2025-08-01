@@ -38,10 +38,10 @@ export interface DisclosureGroupState {
   readonly expandedKeys: Set<Key>,
 
   /** Toggles the expanded state for an item by its key. */
-  toggleKey(key: Key): void,
+  toggleKey: (key: Key) => void,
 
   /** Replaces the set of expanded keys. */
-  setExpandedKeys(keys: Set<Key>): void
+  setExpandedKeys: (keys: Set<Key>) => void
 }
 
 /**

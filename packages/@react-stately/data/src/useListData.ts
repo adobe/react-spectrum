@@ -34,92 +34,92 @@ export interface ListData<T> {
   selectedKeys: Selection,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Selection): void,
+  setSelectedKeys: (keys: Selection) => void,
 
   /** The current filter text. */
   filterText: string,
 
   /** Sets the filter text. */
-  setFilterText(filterText: string): void,
+  setFilterText: (filterText: string) => void,
 
   /**
    * Gets an item from the list by key.
    * @param key - The key of the item to retrieve.
    */
-  getItem(key: Key): T | undefined,
+  getItem: (key: Key) => T | undefined,
 
   /**
    * Inserts items into the list at the given index.
    * @param index - The index to insert into.
    * @param values - The values to insert.
    */
-  insert(index: number, ...values: T[]): void,
+  insert: (index: number, ...values: T[]) => void,
 
   /**
    * Inserts items into the list before the item at the given key.
    * @param key - The key of the item to insert before.
    * @param values - The values to insert.
    */
-  insertBefore(key: Key, ...values: T[]): void,
+  insertBefore: (key: Key, ...values: T[]) => void,
 
   /**
    * Inserts items into the list after the item at the given key.
    * @param key - The key of the item to insert after.
    * @param values - The values to insert.
    */
-  insertAfter(key: Key, ...values: T[]): void,
+  insertAfter: (key: Key, ...values: T[]) => void,
 
   /**
    * Appends items to the list.
    * @param values - The values to insert.
    */
-  append(...values: T[]): void,
+  append: (...values: T[]) => void,
 
   /**
    * Prepends items to the list.
    * @param value - The value to insert.
    */
-  prepend(...values: T[]): void,
+  prepend: (...values: T[]) => void,
 
   /**
    * Removes items from the list by their keys.
    * @param keys - The keys of the item to remove.
    */
-  remove(...keys: Key[]): void,
+  remove: (...keys: Key[]) => void,
 
   /**
    * Removes all items from the list that are currently
    * in the set of selected items.
    */
-  removeSelectedItems(): void,
+  removeSelectedItems: () => void,
 
   /**
    * Moves an item within the list.
    * @param key - The key of the item to move.
    * @param toIndex - The index to move the item to.
    */
-  move(key: Key, toIndex: number): void,
+  move: (key: Key, toIndex: number) => void,
 
   /**
    * Moves one or more items before a given key.
    * @param key - The key of the item to move the items before.
    * @param keys - The keys of the items to move.
    */
-  moveBefore(key: Key, keys: Iterable<Key>): void,
+  moveBefore: (key: Key, keys: Iterable<Key>) => void,
 
   /**
    * Moves one or more items after a given key.
    * @param key - The key of the item to move the items after.
    * @param keys - The keys of the items to move.
    */
-  moveAfter(key: Key, keys: Iterable<Key>): void,
+  moveAfter: (key: Key, keys: Iterable<Key>) => void,
 
   /**
    * Updates an item in the list.
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
    */
-  update(key: Key, newValue: T): void
+  update: (key: Key, newValue: T) => void
 }
 
 export interface ListState<T> {
