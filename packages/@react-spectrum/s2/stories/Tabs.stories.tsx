@@ -11,16 +11,14 @@
  */
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
+import {Button, Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
 import {Collection, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import {fn} from '@storybook/test';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {style} from '../style' with { type: 'macro' };
-import {Button, Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
-import React from 'react';
-import { tab } from '@testing-library/user-event/dist/cjs/setup/directApi.js';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -188,17 +186,17 @@ function ExampleTest(props) {
           </div>
         </div>
         <Collection items={tabs}>
-            {tab => (
-              <TabPanel id={tab.id}>
-                {tab.content}
-              </TabPanel>
+          {tab => (
+            <TabPanel id={tab.id}>
+              {tab.content}
+            </TabPanel>
           )}
-          </Collection>
+        </Collection>
       </Tabs>
     </div>
-  )
+  );
 }
 
 export const AddRemoveTabs: Story = {
   render: (args) => <ExampleTest {...args} />
-}
+};
