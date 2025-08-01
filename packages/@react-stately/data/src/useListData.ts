@@ -192,18 +192,10 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
             selectedKeys: 'all'
           };
         }
-        let validSelectedKeys = new Set(selectedKeys);
-        const allValidKeys = new Set(state.items.map(getKey!));
-        for (let key of validSelectedKeys) {
-          if (!allValidKeys.has(key)) {
-            validSelectedKeys.delete(key);
-          }
-        }
-        let selection: Selection = new Set([...state.selectedKeys, ...validSelectedKeys]);
 
         return {
           ...state,
-          selectedKeys: selection
+          selectedKeys: new Set([...state.selectedKeys, ...selectedKeys])
         };
       });
     },

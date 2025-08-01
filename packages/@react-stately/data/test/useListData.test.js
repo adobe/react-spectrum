@@ -55,17 +55,6 @@ describe('useListData', function () {
       expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
       expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
     });
-
-    it('should add only valid keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
-      let initialResult = result.current;
-
-      act(() => {
-        result.current.addKeysToSelection(['David', 'invalid']);
-      });
-      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
-      expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'David']));
-    });
   });
 
   describe('removeKeysFromSelection', function () {
@@ -89,15 +78,6 @@ describe('useListData', function () {
       });
       expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
       expect(result.current.selectedKeys).toEqual(new Set(['Julia']));
-    });
-
-    it('should remove only valid keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
-
-      act(() => {
-        result.current.removeKeysFromSelection(['invalid', 'Julia']);
-      });
-      expect(result.current.selectedKeys).toEqual(new Set(['Sam']));
     });
   });
 
