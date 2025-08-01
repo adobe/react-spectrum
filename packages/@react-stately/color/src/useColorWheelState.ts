@@ -21,29 +21,29 @@ export interface ColorWheelState {
   /** The default color value. */
   readonly defaultValue: Color,
   /** Sets the color value represented by the color wheel, and triggers `onChange`. */
-  setValue(value: string | Color): void,
+  setValue: (value: string | Color) => void,
 
   /** The current value of the hue channel displayed by the color wheel. */
   readonly hue: number,
   /** Sets the hue channel of the current color value and triggers `onChange`. */
-  setHue(value: number): void,
+  setHue: (value: number) => void,
 
   /** Sets the hue channel of the current color value based on the given coordinates and radius of the color wheel, and triggers `onChange`. */
-  setHueFromPoint(x: number, y: number, radius: number): void,
+  setHueFromPoint: (x: number, y: number, radius: number) => void,
   /** Returns the coordinates of the thumb relative to the center point of the color wheel. */
-  getThumbPosition(radius: number): {x: number, y: number},
+  getThumbPosition: (radius: number) => {x: number, y: number},
 
   /** Increments the hue by the given amount (defaults to 1). */
-  increment(stepSize?: number): void,
+  increment: (stepSize?: number) => void,
   /** Decrements the hue by the given amount (defaults to 1). */
-  decrement(stepSize?: number): void,
+  decrement: (stepSize?: number) => void,
 
   /** Whether the color wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
-  setDragging(value: boolean): void,
+  setDragging: (value: boolean) => void,
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
-  getDisplayColor(): Color,
+  getDisplayColor: () => Color,
   /** The step value of the hue channel, used when incrementing and decrementing. */
   step: number,
   /** The page step value of the hue channel, used when incrementing and decrementing. */

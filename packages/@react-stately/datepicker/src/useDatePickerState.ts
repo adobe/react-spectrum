@@ -33,7 +33,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** The default date. */
   defaultValue: DateValue | null,
   /** Sets the selected date. */
-  setValue(value: DateValue | null): void,
+  setValue: (value: DateValue | null) => void,
   /**
    * The date portion of the value. This may be set prior to `value` if the user has
    * selected a date but has not yet selected a time.
@@ -47,7 +47,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
    */
   timeValue: TimeValue | null,
   /** Sets the time portion of the value. */
-  setTimeValue(value: TimeValue): void,
+  setTimeValue: (value: TimeValue) => void,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** Whether the date picker supports selecting a time, according to the `granularity` prop and current value. */
@@ -55,7 +55,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** Whether the calendar popover is currently open. */
   isOpen: boolean,
   /** Sets whether the calendar popover is open. */
-  setOpen(isOpen: boolean): void,
+  setOpen: (isOpen: boolean) => void,
   /**
    * The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
@@ -64,9 +64,9 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  formatValue: (locale: string, fieldOptions: FieldOptions) => string,
   /** Gets a formatter based on state's props. */
-  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
+  getDateFormatter: (locale: string, formatOptions: FormatterOptions) => DateFormatter
 }
 
 /**

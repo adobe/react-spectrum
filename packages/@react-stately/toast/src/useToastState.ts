@@ -44,11 +44,11 @@ export interface ToastState<T> {
   /**
    * Closes a toast.
    */
-  close(key: string): void,
+  close: (key: string) => void,
   /** Pauses the timers for all visible toasts. */
-  pauseAll(): void,
+  pauseAll: () => void,
   /** Resumes the timers for all visible toasts. */
-  resumeAll(): void,
+  resumeAll: () => void,
   /** The visible toasts. */
   visibleToasts: QueuedToast<T>[]
 }

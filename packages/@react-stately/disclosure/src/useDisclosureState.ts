@@ -27,13 +27,13 @@ export interface DisclosureState {
   /** Whether the disclosure is currently expanded. */
   readonly isExpanded: boolean,
   /** Sets whether the disclosure is expanded. */
-  setExpanded(isExpanded: boolean): void,
+  setExpanded: (isExpanded: boolean) => void,
   /** Expand the disclosure. */
-  expand(): void,
+  expand: () => void,
   /** Collapse the disclosure. */
-  collapse(): void,
+  collapse: () => void,
   /** Toggles the disclosure's visibility. */
-  toggle(): void
+  toggle: () => void
 }
 
 /**

@@ -27,16 +27,16 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
   readonly isFocused: boolean,
 
   /** Sets whether the select is focused. */
-  setFocused(isFocused: boolean): void,
+  setFocused: (isFocused: boolean) => void,
 
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy | null,
 
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null): void,
+  open: (focusStrategy?: FocusStrategy | null) => void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void
+  toggle: (focusStrategy?: FocusStrategy | null) => void
 }
 
 /**

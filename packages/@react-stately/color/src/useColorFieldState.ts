@@ -31,28 +31,28 @@ export interface ColorFieldState extends FormValidationState {
   /** The default value of the color field. */
   readonly defaultColorValue: Color | null,
   /** Sets the color value of the field. */
-  setColorValue(value: Color | null): void,
+  setColorValue: (value: Color | null) => void,
   /** Sets the current text value of the input. */
-  setInputValue(value: string): void,
+  setInputValue: (value: string) => void,
   /**
    * Updates the input value based on the currently parsed color value.
    * Typically this is called when the field is blurred.
    */
-  commit(): void,
+  commit: () => void,
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
-  increment(): void,
+  increment: () => void,
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
-  decrement(): void,
+  decrement: () => void,
   /** Sets the current value to the maximum color value, and fires `onChange`. */
-  incrementToMax(): void,
+  incrementToMax: () => void,
   /** Sets the current value to the minimum color value, and fires `onChange`. */
-  decrementToMin(): void,
+  decrementToMin: () => void,
   /**
    * Validates a user input string.
    * Values can be partially entered, and may be valid even if they cannot currently be parsed to a color.
    * Can be used to implement validation as a user types.
    */
-  validate(value: string): boolean
+  validate: (value: string) => boolean
 }
 
 const MIN_COLOR = parseColor('#000000');
