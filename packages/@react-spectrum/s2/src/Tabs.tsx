@@ -708,7 +708,6 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   let valueId = useId();
 
   let contents: ReactNode;
-
   if (showItems) {
     contents = (
       <RACTabs
@@ -720,13 +719,6 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   } else {
     contents = (
       <>
-        {/* <TabsMenu
-          id={menuId}
-          valueId={valueId}
-          items={children}
-          onSelectionChange={onSelectionChange}
-          aria-label={props['aria-label']}
-          aria-describedby={props['aria-labelledby']} /> */}
         <CollapseContext.Provider value={{showTabs: false, tabs: children, menuId, valueId, listRef: listRef, onSelectionChange, ariaLabel: props['aria-label'], ariaDescribedBy: props['aria-labelledby']}}>
           {props.children}
         </CollapseContext.Provider>
