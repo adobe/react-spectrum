@@ -36,6 +36,12 @@ export interface ListData<T> {
   /** Sets the selected keys. */
   setSelectedKeys(keys: Selection): void,
 
+  /** Adds the given keys to the current selected keys. */
+  addKeysToSelection(keys: Selection): void,
+
+  /** Removes the given keys from the current selected keys. */
+  removeKeysFromSelection(keys: Selection): void,
+
   /** The current filter text. */
   filterText: string,
 
@@ -174,6 +180,43 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         ...state,
         selectedKeys
       }));
+    },
+    addKeysToSelection(selectedKeys: Selection) {
+      dispatch(state => {
+        if (state.selectedKeys === 'all') {
+          return state;
+        }
+        if (selectedKeys === 'all') {
+          return {
+            ...state,
+            selectedKeys: 'all'
+          };
+        }
+
+        return {
+          ...state,
+          selectedKeys: new Set([...state.selectedKeys, ...selectedKeys])
+        };
+      });
+    },
+    removeKeysFromSelection(selectedKeys: Selection) {
+      dispatch(state => {
+        if (selectedKeys === 'all') {
+          return {
+            ...state,
+            selectedKeys: new Set()
+          };
+        }
+
+        let selection: Selection = state.selectedKeys  === 'all' ? new Set(state.items.map(getKey!)) : new Set(state.selectedKeys);
+        for (let key of selectedKeys) {
+          selection.delete(key);
+        }
+        return {
+          ...state,
+          selectedKeys: selection
+        };
+      });
     },
     setFilterText(filterText: string) {
       dispatch(state => ({
