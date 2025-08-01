@@ -177,8 +177,7 @@ const contentContainer = style({
       horizontal: '1 0 0'
     }
   },
-  width: '100%',
-  minWidth: 0
+  width: '100%'
 }, getAllowedOverrides());
 
 const illustrationContainer = style({
@@ -229,38 +228,11 @@ const textContainer = style({
 }, getAllowedOverrides());
 
 const descriptionText = style({
-  display: {
-    default: 'none',
-    orientation: {
-      horizontal: 'block'
-    }
-  },
-  alignSelf: {
-    orientation: {
-      horizontal: 'stretch'
-    }
-  },
-  width: {
-    orientation: {
-      horizontal: '100%'
-    }
-  },
-  minWidth: {
-    orientation: {
-      horizontal: 0
-    }
-  },
-  overflow: {
-    orientation: {
-      horizontal: 'hidden'
-    }
-  },
-  textOverflow: 'ellipsis',
-  whiteSpace: {
-    orientation: {
-      horizontal: 'nowrap'
-    }
-  },
+  display: 'block',
+  alignSelf: 'stretch',
+  width: '100%',
+  minWidth: 0,
+  whiteSpace: 'normal',
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
@@ -271,6 +243,7 @@ const labelText = style({
   display: 'block',
   width: '100%',
   overflow: 'hidden',
+  minWidth: 0,
   textAlign: {
     default: 'center',
     orientation: {
@@ -387,7 +360,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
             {textSlot}
           </div>
           
-          {!!descriptionSlot && (
+          {!!descriptionSlot && orientation === 'horizontal' && (
             <div 
               className={descriptionText({size, orientation, isDisabled})}>
               {descriptionSlot}

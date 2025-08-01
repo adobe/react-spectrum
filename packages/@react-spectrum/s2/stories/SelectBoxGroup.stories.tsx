@@ -608,9 +608,6 @@ export const WithCheckboxes: Story = {
   render: (args) => (
     <div style={{maxWidth: 600}}>
       <Heading level={3} UNSAFE_style={{marginBottom: 16, fontSize: 16}}>Checkboxes Enabled</Heading>
-      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
-        When isCheckboxSelection is true, checkboxes appear on hover and when selected:
-      </p>
       <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
         <SelectBox value="aws">
           <Server slot="illustration" />
@@ -639,7 +636,7 @@ export const WithCheckboxes: Story = {
         </SelectBox>
         <SelectBox value="anotherlongone">
           <StarFilled2 slot="illustration" />
-          <Text slot="text">Another very long cloud service provider name that will test ellipsis</Text>
+          <Text slot="text">Another extremely long text. This is a very long text that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
           <Text slot="description">Another extremely long description text that will help us verify how the SelectBox handles text overflow in different scenarios and orientations, ensuring that the text behavior is consistent and user-friendly across all use cases.</Text>
         </SelectBox>
         <SelectBox value="shortname">
@@ -650,9 +647,6 @@ export const WithCheckboxes: Story = {
       </SelectBoxGroup>
       
       <Heading level={3} UNSAFE_style={{marginTop: 32, marginBottom: 16, fontSize: 16}}>Checkboxes Disabled (Default)</Heading>
-      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
-        By default, isCheckboxSelection is false and no checkboxes appear:
-      </p>
       <SelectBoxGroup defaultSelectedKeys={new Set(['aws'])} onSelectionChange={action('onSelectionChange')}>
         <SelectBox value="aws">
           <Server slot="illustration" />
