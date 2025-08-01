@@ -24,7 +24,7 @@ import {useAsyncList, useListData} from 'react-stately';
 export default {
   title: 'React Aria Components/ListBox',
   component: ListBox,
-  excludeStories: ['MyListBoxLoaderIndicator', 'renderEmptyState']
+  excludeStories: ['MyListBoxLoaderIndicator']
 } as Meta<typeof ListBox>;
 
 export type ListBoxStory = StoryFn<typeof ListBox>;
@@ -546,7 +546,7 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}: {minS
   );
 }
 
-export let renderEmptyState = ({isLoading}) => {
+let renderEmptyState = ({isLoading}) => {
   return  (
     <div style={{height: 30, width: '100%'}}>
       {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
