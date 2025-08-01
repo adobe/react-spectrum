@@ -1,0 +1,218 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'errorMessage', 'maxRows', 'description', 'label', 'isEmphasized', 'isInvalid']} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} type="s2"
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup/* PROPS */ styles={style({width: 320})}>
+  <Tag>Chocolate</Tag>
+  <Tag>Mint</Tag>
+  <Tag>Strawberry</Tag>
+  <Tag>Vanilla</Tag>
+  <Tag>Chocolate Chip Cookie Dough</Tag>
+  <Tag>Rocky Road</Tag>
+  <Tag>Butter Pecan</Tag>
+  <Tag>Neapolitan</Tag>
+  <Tag>Salted Caramel</Tag>
+  <Tag>Mint Chocolate Chip</Tag>
+  <Tag>Tonight Dough</Tag>
+  <Tag>Lemon Cookie</Tag>
+  <Tag>Cookies and Cream</Tag>
+  <Tag>Phish Food</Tag>
+  <Tag>Peanut Butter Cup</Tag>
+  <Tag>Coffee</Tag>
+  <Tag>Pistachio</Tag>
+  <Tag>Cherry</Tag>
+</TagGroup>
+```
+
+## Content
+
+`TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections.
+This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+Items can be removed via the `onRemove` event.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, TextField, Button} from '@react-spectrum/s2';
+import {useListData} from 'react-stately';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const initialItems = [
+  {name: 'Landscape', id: 'landscape'},
+  {name: 'Portrait', id: 'portrait'},
+  {name: 'Night', id: 'night'},
+  {name: 'Dual', id: 'dual'},
+  {name: 'Golden Hour', id: 'golden-hour'}
+];
+///- end collapse -///
+
+function PhotoCategories() {
+  let list = useListData({initialItems});
+  let [newTag, setNewTag] = useState('');
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      {/*- begin collapse -*/}
+      <div className={style({display: 'flex', gap: 8})}>
+        <TextField label="Add a category" value={newTag} onChange={setNewTag} />
+        <Button
+          styles={style({alignSelf: 'end'})}
+          onPress={() => {
+            list.append({name: newTag, id: newTag});
+            setNewTag('');
+          }}>Add</Button>
+      </div>
+      {/*- end collapse -*/}
+      <TagGroup
+        label="Photo categories"
+        styles={style({width: 320})}
+        ///- begin highlight -///
+        items={list.items}
+        onRemove={(keys) => list.remove(...keys)}
+        ///- end highlight -///
+      >
+        {(item) => <Tag>{item.name}</Tag>}
+      </TagGroup>
+    </div>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<Tag>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup label="Types of photos" maxRows={2} styles={style({width: 320})}>
+  {/*- begin highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
+  {/*- end highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
+</TagGroup>
+```
+
+### Empty state
+
+If the collection is empty, the `renderEmptyState` prop will be called.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup} from '@react-spectrum/s2';
+
+<TagGroup
+  label="Photo categories"
+  renderEmptyState={() => 'No categories'}>
+  {[]}
+</TagGroup>
+```
+
+### Selection
+
+Use the `selectionMode` prop to enable single or multiple selection.
+The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items.
+Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <TagGroup
+        {...props}
+        label="Amenities"
+        ///- begin highlight -///
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+      >
+        <Tag id="laundry">Laundry</Tag>
+        <Tag id="fitness">Fitness center</Tag>
+        <Tag id="parking" isDisabled>Parking</Tag>
+        <Tag id="pool">Swimming pool</Tag>
+        <Tag id="breakfast">Breakfast</Tag>
+      </TagGroup>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+
+### Group actions
+
+You can add a group action to the tag group by providing a `groupActionLabel` and `onGroupAction` prop.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const initialTags = [
+  {name: 'Landscape', id: 'landscape'},
+  {name: 'Portrait', id: 'portrait'},
+  {name: 'Macro', id: 'macro'},
+  {name: 'Night', id: 'night'},
+  {name: 'Dual', id: 'dual'},
+  {name: 'Golden Hour', id: 'golden-hour'},
+];
+///- end collapse -///
+
+function CopyAll(props) {
+  let [tags, setTags] = useState(initialTags);
+  let [selectedTags, setSelectedTags] = useState<string[]>([]);
+  return (
+    <TagGroup
+      {...props}
+      ///- begin highlight -///
+      groupActionLabel="Alert"
+      onGroupAction={() => {
+        alert([...selectedTags].map(tag => tags.find(t => t.id === tag)?.name).join(', '));
+      }}
+      ///- end highlight -///
+      selectionMode="multiple"
+      selectedKeys={selectedTags}
+      onSelectionChange={setSelectedTags}
+      items={tags}
+      label="Photo categories"
+      styles={style({width: 320})}>
+      {tag => <Tag>{tag.name}</Tag>}
+    </TagGroup>
+  )
+}
+```
+
+## Props
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} showDescription />
+
+### Tag
+
+<PropTable component={docs.exports.Tag} links={docs.links} showDescription />
