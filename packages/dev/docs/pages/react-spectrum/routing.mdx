@@ -270,32 +270,17 @@ export default function App() {
 }
 ```
 
-### TanStack Router
+## TanStack Router
 
-To use [TanStack Router](https://tanstack.com/router) with React Spectrum, render React Spectrum's `Provider` inside your root route. Use `router.navigate` in the `navigate` prop, and `router.buildLocation` in the `useHref` prop. You can also configure TypeScript to get autocomplete for the `href` prop by declaring the `RouterConfig` type using the types provided by TanStack Router.
+To use [TanStack Router](https://tanstack.com/router) with React Spectrum v3.43.0 or later, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Spectrum component as a link. `RouterProvider` is not needed.
 
 ```tsx
-import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
-import {Provider, defaultTheme} from '@adobe/react-spectrum';
+// src/Link.tsx
+import {createLink} from '@tanstack/react-router';
+import {Link as SpectrumLink, Item} from '@adobe/react-spectrum';
 
-declare module '@adobe/react-spectrum' {
-  interface RouterConfig {
-    href: ToOptions['to'];
-    routerOptions: Omit<NavigateOptions, keyof ToOptions>;
-  }
-}
-
-function RootRoute() {
-  let router = useRouter();
-  return (
-    <Provider
-      theme={defaultTheme}
-      router={{
-        navigate: (to, options) => router.navigate({to, ...options}),
-        useHref: to => router.buildLocation({to}).href
-      }}>
-      {/* ...*/}
-    </Provider>
-  );
-}
+export const Link = createLink(SpectrumLink);
+export const ItemLink = createLink(Item);
 ```
+
+In your app, use these components instead of importing directly from `@adobe/react-spectrum`.
