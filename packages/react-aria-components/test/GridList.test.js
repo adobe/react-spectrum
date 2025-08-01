@@ -444,7 +444,55 @@ describe('GridList', () => {
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Favorite Animal');
     expect(groups[1].getAttribute('aria-label')).toEqual('Favorite Ice Cream');
-  })
+  });
+
+  it('should update collection when moving item to a different section', () => {
+    let {getAllByRole, rerender} = render(
+      <GridList aria-label="Test">
+        <GridListSection id="veggies">
+          <GridListHeader>Veggies</GridListHeader>
+          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
+          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
+          <GridListItem key="onion" id="onion">Onion</GridListItem>
+        </GridListSection>
+        <GridListSection id="meats">
+          <GridListHeader>Meats</GridListHeader>
+          <GridListItem key="ham" id="ham">Ham</GridListItem>
+          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
+          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+        </GridListSection>
+      </GridList>
+    );
+
+    let sections = getAllByRole('rowgroup');
+    let items = within(sections[0]).getAllByRole('gridcell');
+    expect(items).toHaveLength(3);
+    items = within(sections[1]).getAllByRole('gridcell');
+    expect(items).toHaveLength(3);
+
+    rerender(
+      <GridList aria-label="Test">
+        <GridListSection id="veggies">
+          <GridListHeader>Veggies</GridListHeader>
+          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
+          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
+          <GridListItem key="onion" id="onion">Onion</GridListItem>
+          <GridListItem key="ham" id="ham">Ham</GridListItem>
+        </GridListSection>
+        <GridListSection id="meats">
+          <GridListHeader>Meats</GridListHeader>
+          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
+          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+        </GridListSection>
+      </GridList>
+    );
+
+    sections = getAllByRole('rowgroup');
+    items = within(sections[0]).getAllByRole('gridcell');
+    expect(items).toHaveLength(4);
+    items = within(sections[1]).getAllByRole('gridcell');
+    expect(items).toHaveLength(2);
+  });
 
   describe('selectionBehavior="replace"', () => {
     // Required for proper touch detection

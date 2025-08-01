@@ -588,21 +588,30 @@ function GridListSectionInner<T extends object>(props: GridListSectionProps<T>, 
       {...rowGroupProps}
       {...renderProps}
       ref={ref}>
-      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+      <Provider
+        values={[
+          [HeaderContext, {...headingProps, ref: headingRef}],
+          [GridListHeaderContext, {...rowProps}]
+        ]}
+        >
         <CollectionBranch
-          collection={state.collection}
-          parent={section}
-          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} 
-          />
-      </HeaderContext.Provider>
+            collection={state.collection}
+            parent={section}
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} 
+            />
+      </Provider>
     </section>
   );
 }
 
+const GridListHeaderContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
+
 export const GridListHeader = /*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);
+  let rowProps = useContext(GridListHeaderContext);
+
   return (
-    <div role="row">
+    <div {...rowProps} >
       <header className="react-aria-Header" {...props} ref={ref}>
         {props.children}
       </header>

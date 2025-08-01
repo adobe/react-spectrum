@@ -212,34 +212,14 @@ GridListSectionExample.story = {
 
 export function VirtualizedGridListSection() {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
-  for (let s = 0; s < 10; s++) {
+  for (let s = 0; s < 2; s++) {
     let items: {id: string, name: string}[] = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 5; i++) {
       const l = (s * 5) + i + 10;
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
-
-  // let list = useListData({
-  //   initialItems: sections
-  // });
-
-  // let {dragAndDropHooks} = useDragAndDrop({
-  //   getItems: (keys) => {
-  //     return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
-  //   },
-  //   onReorder(e) {
-  //     if (e.target.dropPosition === 'before') {
-  //       list.moveBefore(e.target.key, e.keys);
-  //     } else if (e.target.dropPosition === 'after') {
-  //       list.moveAfter(e.target.key, e.keys);
-  //     }
-  //   },
-  //   renderDropIndicator(target) {
-  //     return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
-  //   }
-  // });
 
   return (
     <Virtualizer
@@ -250,10 +230,10 @@ export function VirtualizedGridListSection() {
       <GridList
         className={styles.menu}
         // selectionMode="multiple"
-        // dragAndDropHooks={dragAndDropHooks}
         style={{height: 400}}
         aria-label="virtualized with grid section"
         items={sections}>
+        <Collection items={sections}>
           {section => (
             <GridListSection>
               <GridListHeader>{section.name}</GridListHeader>
@@ -262,6 +242,7 @@ export function VirtualizedGridListSection() {
               </Collection>
             </GridListSection>
           )}
+        </Collection>
       </GridList>
     </Virtualizer>
   );
