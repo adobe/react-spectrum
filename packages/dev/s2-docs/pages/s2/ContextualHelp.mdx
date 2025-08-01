@@ -1,0 +1,51 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ContextualHelp, Heading, Content, Footer} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ContextualHelp
+
+<PageDescription>{docs.exports.ContextualHelp.description}</PageDescription>
+
+```tsx render docs={docs.exports.ContextualHelp} links={docs.links} props={['variant', 'size', 'placement']} initialProps={{variant: 'help'}} expanded type="s2"
+import {ContextualHelp, Heading, Content, Footer, Link} from '@react-spectrum/s2';
+
+<ContextualHelp/* PROPS */>
+  <Heading>Permission required</Heading>
+  <Content>Your admin must grant you permission before you can create a segment.</Content>
+  <Footer>
+    <Link isStandalone href="#" target="_blank">Learn more about segments</Link>
+  </Footer>
+</ContextualHelp>
+```
+
+## Events
+
+ContextualHelp accepts an `onOpenChange` prop, triggered when the ContextualHelp's popover opens or closes.
+
+```tsx render expanded
+"use client";
+import {ContextualHelp, Heading, Content, Text} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [state, setState] = useState(false);
+
+  return (
+    <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+      <ContextualHelp variant="info" onOpenChange={(isOpen) => setState(isOpen)}>
+        <Heading>Permission required</Heading>
+        <Content>Your admin must grant you permission before you can create a segment.</Content>
+      </ContextualHelp>
+      <Text>Current open state: {state.toString()}</Text>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## Props
+
+<PropTable component={docs.exports.ContextualHelp} links={docs.links} />
