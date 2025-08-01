@@ -40,7 +40,7 @@ export interface QueuedToast<T> extends ToastOptions {
 
 export interface ToastState<T> {
   /** Adds a new toast to the queue. */
-  add(content: T, options?: ToastOptions): string,
+  add: (content: T, options?: ToastOptions) => string,
   /**
    * Closes a toast.
    */

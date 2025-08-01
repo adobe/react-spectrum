@@ -40,7 +40,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
    */
   dateValue: DateValue | null,
   /** Sets the date portion of the value. */
-  setDateValue(value: DateValue): void,
+  setDateValue: (value: DateValue) => void,
   /**
    * The time portion of the value. This may be set prior to `value` if the user has
    * selected a time but has not yet selected a date.
