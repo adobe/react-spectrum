@@ -22,6 +22,10 @@ export class Custom454Calendar extends GregorianCalendar {
     return weekPattern[date.month - 1] * 7;
   }
 
+  getMaxDays(): number {
+    return 35
+  }
+
   fromJulianDay(jd: number): CalendarDate {
     const date = super.fromJulianDay(jd);
     let year = date.year;

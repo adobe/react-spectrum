@@ -69,6 +69,10 @@ export class IslamicCivilCalendar implements Calendar {
     return length;
   }
 
+  getMaxDays(): number {
+    return 30
+  }
+
   getMonthsInYear(): number {
     return 12;
   }
