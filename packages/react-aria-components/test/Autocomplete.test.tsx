@@ -282,10 +282,6 @@ let StaticBreadcrumbs = (props) => (
     <Breadcrumb>Baz</Breadcrumb>
   </Breadcrumbs>
 );
-// TODO: add GridList, Table, TagGroup make sure that it filters and doesn't have virtual focus
-// Also test that it doesn't filter Tabs, Tree, Breadcrumbs
-// Also test that it can do node specific filtering
-
 
 let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
   let {contains} = useFilter({sensitivity: 'base'});
@@ -358,6 +354,28 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
         onSelectionChange={onSelectionChange}>
         {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
+    </Autocomplete>
+  );
+};
+
+let CustomFiltering = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let [inputValue, setInputValue] = React.useState('');
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue, node) => {
+    if (node.parentKey === 'sec1') {
+      return true;
+    }
+    return contains(textValue, inputValue);
+  };
+
+  return (
+    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
+      {children}
     </Autocomplete>
   );
 };
@@ -896,9 +914,9 @@ describe('Autocomplete', () => {
     );
 
     let wrappedComponent = getByTestId('wrapped');
-    expect(within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(within(wrappedComponent).findByText('Baz')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
 
     let input = getByRole('searchbox');
     await user.tab();
@@ -909,9 +927,35 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('aria-autocomplete');
     expect(input).not.toHaveAttribute('aria-activedescendant');
 
-    expect(within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(within(wrappedComponent).findByText('Baz')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
+  });
+
+  it('should allow user to filter by node information', async () => {
+    let {getByRole} = render(
+      <CustomFiltering>
+        <MenuWithSections />
+      </CustomFiltering>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    let menu = getByRole('menu');
+    let sections = within(menu).getAllByRole('group');
+    expect(sections.length).toBe(2);
+    let options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(6);
+
+    await user.keyboard('Copy');
+    sections = within(menu).getAllByRole('group');
+    options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(4);
+    expect(within(sections[0]).getByText('Foo')).toBeTruthy();
+    expect(within(sections[0]).getByText('Bar')).toBeTruthy();
+    expect(within(sections[0]).getByText('Baz')).toBeTruthy();
+    expect(within(sections[1]).getByText('Copy')).toBeTruthy();
   });
 });
 

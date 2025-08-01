@@ -12,17 +12,17 @@
 
 import {action} from '@storybook/addon-actions';
 import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
-import {MyListBoxItem, MyMenuItem} from './utils';
-import {MyListBoxLoaderIndicator, renderEmptyState} from './ListBox.stories';
+import {MyGridListItem} from './GridList.stories';
+import {MyListBoxLoaderIndicator} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 import './styles.css';
-import {MyGridListItem} from './GridList.stories';
 
 export default {
   title: 'React Aria Components/Autocomplete',
@@ -868,8 +868,23 @@ interface Character {
   birth_year: number
 }
 
+let renderEmptyState = (list, cursor) => {
+  let emptyStateContent;
+  if (list.loadingState === 'loading') {
+    emptyStateContent = <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />;
+  } else if (list.loadingState === 'idle' && !cursor) {
+    emptyStateContent = 'No results';
+  }
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {emptyStateContent}
+    </div>
+  );
+};
+
 
 export const AutocompleteWithAsyncListBox = (args) => {
+  let [cursor, setCursor] = useState(null);
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -879,6 +894,7 @@ export const AutocompleteWithAsyncListBox = (args) => {
       await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
+      setCursor(json.next);
       return {
         items: json.results,
         cursor: json.next
@@ -913,7 +929,7 @@ export const AutocompleteWithAsyncListBox = (args) => {
               display: 'flex'
             }}
             aria-label="async virtualized listbox"
-            renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+            renderEmptyState={() => renderEmptyState(list, cursor)}>
             <Collection items={list.items}>
               {(item: Character) => (
                 <MyListBoxItem
@@ -1075,10 +1091,10 @@ export const AutocompleteWithTagGroup = () => {
   );
 };
 
-function AutocompletePreserveFirstSection(args) {
+function AutocompleteNodeFiltering(args) {
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = (textValue, inputValue, node) => {
-    if (node.parentKey === 'Section 1') {
+    if ((node.parentKey === 'Section 1' && textValue === 'Open View') || (node.parentKey === 'Section 2' && textValue === 'Appearance')) {
       return true;
     }
     return contains(textValue, inputValue);
@@ -1101,6 +1117,11 @@ function AutocompletePreserveFirstSection(args) {
 }
 
 export const AutocompletePreserveFirstSectionStory: AutocompleteStory = {
-  render: (args) => <AutocompletePreserveFirstSection {...args} />,
-  name: 'Autocomplete, never filter first section'
+  render: (args) => <AutocompleteNodeFiltering {...args} />,
+  name: 'Autocomplete, per node filtering',
+  parameters: {
+    description: {
+      data: 'It should never filter out Open View or Appearance'
+    }
+  }
 };
