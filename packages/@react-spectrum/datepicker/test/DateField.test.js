@@ -239,7 +239,7 @@ describe('DateField', function () {
       await user.keyboard('[ArrowRight]');
       await user.keyboard('1');
       await user.keyboard('[ArrowRight]');
-      await user.keyboard('1980');
+      await user.keyboard('1980[Tab]');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
