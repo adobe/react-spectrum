@@ -7,7 +7,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.TagGroup.description}</PageDescription>
 
-```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'errorMessage', 'maxRows', 'selectionMode', 'description', 'label', 'disallowEmptySelection', 'selectionBehavior', 'isEmphasized', 'isInvalid', ]} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} type="s2"
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'errorMessage', 'maxRows', 'description', 'label', 'isEmphasized', 'isInvalid']} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} type="s2"
 import {TagGroup, Tag} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -36,90 +36,52 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 ## Content
 
 `TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections.
-In this example, both the tags and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
+This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+Items can be removed via the `onRemove` event.
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, Text} from '@react-spectrum/s2';
-import {useState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import OrientationLandscape from '@react-spectrum/s2/icons/OrientationLandscape';
-import OrientationPortrait from '@react-spectrum/s2/icons/OrientationPortrait';
-import Star from '@react-spectrum/s2/icons/Star';
-import CameraProperties from '@react-spectrum/s2/icons/CameraProperties';
-import Lighten from '@react-spectrum/s2/icons/Lighten';
-import Cloud from '@react-spectrum/s2/icons/Cloud';
-
-///- begin collapse -///
-const initialTags = [
-  {name: 'Landscape', id: 'landscape', Icon: OrientationLandscape},
-  {name: 'Portrait', id: 'portrait', Icon: OrientationPortrait},
-  {name: 'Night', id: 'night', Icon: Star},
-  {name: 'Dual', id: 'dual', Icon: CameraProperties},
-  {name: 'Golden Hour', id: 'golden-hour', Icon: Lighten}
-];
-///- end collapse -///
-
-function PhotoCategories() {
-  let [tags, setTags] = useState(initialTags);
-
-  return (
-    <TagGroup label="Photo categories" selectionMode="multiple" maxRows={2} items={tags} styles={style({width: 320})}>
-      {({name, Icon}) => <Tag><Icon /><Text>{name}</Text></Tag>}
-    </TagGroup>
-  );
-}
-```
-
-### Removing tags
-
-To show a remove button on the tag, you can use the `onRemove` prop.
-
-```tsx render type="s2"
-"use client";
-import {Button, TagGroup, Tag, TextField} from '@react-spectrum/s2';
+import {TagGroup, Tag, TextField, Button} from '@react-spectrum/s2';
+import {useListData} from 'react-stately';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
-const initialTags = [
+const initialItems = [
   {name: 'Landscape', id: 'landscape'},
   {name: 'Portrait', id: 'portrait'},
-  {name: 'Macro', id: 'macro'},
   {name: 'Night', id: 'night'},
   {name: 'Dual', id: 'dual'},
-  {name: 'Golden Hour', id: 'golden-hour'},
-  {name: 'Animal', id: 'animal'},
-  {name: 'Plant', id: 'plant'},
-  {name: 'Travel', id: 'travel'}
+  {name: 'Golden Hour', id: 'golden-hour'}
 ];
 ///- end collapse -///
 
 function PhotoCategories() {
-  let [tags, setTags] = useState(initialTags);
+  let list = useListData({initialItems});
   let [newTag, setNewTag] = useState('');
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-      <div style={{display: 'flex', gap: 8}}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      {/*- begin collapse -*/}
+      <div className={style({display: 'flex', gap: 8})}>
         <TextField label="Add a category" value={newTag} onChange={setNewTag} />
         <Button
           styles={style({alignSelf: 'end'})}
           onPress={() => {
-            setTags([...tags, {name: newTag, id: newTag}]);
+            list.append({name: newTag, id: newTag});
             setNewTag('');
           }}>Add</Button>
       </div>
+      {/*- end collapse -*/}
       <TagGroup
-        onRemove={keys => setTags((prev) => prev.filter(t => !keys.has(t.id)))}
         label="Photo categories"
-        selectionMode="multiple"
-        maxRows={2}
-        items={tags}
         styles={style({width: 320})}
-        isEmphasized
+        ///- begin highlight -///
+        items={list.items}
+        onRemove={(keys) => list.remove(...keys)}
+        ///- end highlight -///
       >
-        {tag => <Tag>{tag.name}</Tag>}
+        {(item) => <Tag>{item.name}</Tag>}
       </TagGroup>
     </div>
   );
@@ -133,11 +95,12 @@ Use the `href` prop on a `<Tag>` to create a link. See the **client side routing
 ```tsx render type="s2"
 "use client";
 import {TagGroup, Tag} from '@react-spectrum/s2';
-import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TagGroup label="Types of photos" maxRows={2} styles={style({width: 320})}>
+  {/*- begin highlight -*/}
   <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
+  {/*- end highlight -*/}
   <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
   <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
   <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
@@ -152,14 +115,52 @@ If the collection is empty, the `renderEmptyState` prop will be called.
 
 ```tsx render type="s2"
 "use client";
+import {TagGroup} from '@react-spectrum/s2';
+
+<TagGroup
+  label="Photo categories"
+  renderEmptyState={() => 'No categories'}>
+  {[]}
+</TagGroup>
+```
+
+### Selection
+
+Use the `selectionMode` prop to enable single or multiple selection.
+The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items.
+Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
 import {TagGroup, Tag} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<TagGroup renderEmptyState={() => 'No categories'} label="Photo categories" styles={style({width: 320})}>
-  {[]}
-</TagGroup>
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <TagGroup
+        {...props}
+        label="Amenities"
+        ///- begin highlight -///
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+      >
+        <Tag id="laundry">Laundry</Tag>
+        <Tag id="fitness">Fitness center</Tag>
+        <Tag id="parking" isDisabled>Parking</Tag>
+        <Tag id="pool">Swimming pool</Tag>
+        <Tag id="breakfast">Breakfast</Tag>
+      </TagGroup>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
 ```
+
 
 ### Group actions
 
@@ -182,15 +183,18 @@ const initialTags = [
 ];
 ///- end collapse -///
 
-function CopyAll() {
+function CopyAll(props) {
   let [tags, setTags] = useState(initialTags);
   let [selectedTags, setSelectedTags] = useState<string[]>([]);
   return (
     <TagGroup
+      {...props}
+      ///- begin highlight -///
       groupActionLabel="Alert"
       onGroupAction={() => {
         alert([...selectedTags].map(tag => tags.find(t => t.id === tag)?.name).join(', '));
       }}
+      ///- end highlight -///
       selectionMode="multiple"
       selectedKeys={selectedTags}
       onSelectionChange={setSelectedTags}
@@ -207,8 +211,8 @@ function CopyAll() {
 
 ### TagGroup
 
-<PropTable component={docs.exports.TagGroup} links={docs.links} />
+<PropTable component={docs.exports.TagGroup} links={docs.links} showDescription />
 
 ### Tag
 
-<PropTable component={docs.exports.Tag} links={docs.links} />
+<PropTable component={docs.exports.Tag} links={docs.links} showDescription />

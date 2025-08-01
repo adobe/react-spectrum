@@ -65,7 +65,9 @@ import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components
 
 ## Content
 
-`TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
+`TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections.
+This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+Items can be removed via the `onRemove` event.
 
 ```tsx render
 "use client";
@@ -91,7 +93,6 @@ function Example() {
       {/*- end highlight -*/}
       {(item) => <Tag>{item.name}</Tag>}
     </TagGroup>
-    /*- end highlight -*/
   );
 }
 ```
