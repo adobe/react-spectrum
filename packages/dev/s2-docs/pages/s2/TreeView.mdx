@@ -1,0 +1,250 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# TreeView
+
+<PageDescription>{docs.exports.TreeView.description}</PageDescription>
+
+{/* <VisualExample
+  component={TreeView}
+  docs={docs.exports.TreeView}
+  props={['selectionMode', 'isDetached', 'isEmphasized']}
+  initialProps={{selectionMode: 'multiple'}}
+  importSource="@react-spectrum/s2"
+  type="s2" /> */}
+
+```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'isDetached', 'isEmphasized']} initialProps={{selectionMode: 'multiple'}} expanded type="s2"
+import {TreeView, TreeViewItem, TreeViewItemContent, Text} from '@react-spectrum/s2';
+
+<TreeView aria-label="File system" defaultExpandedKeys={['documents']}>
+  <TreeViewItem id="documents" textValue="Documents">
+    <TreeViewItemContent>
+      <Text>Documents</Text>
+    </TreeViewItemContent>
+    <TreeViewItem id="project-a" textValue="Project A">
+      <TreeViewItemContent>
+        <Text>Project A</Text>
+      </TreeViewItemContent>
+      <TreeViewItem id="report" textValue="Weekly Report">
+        <TreeViewItemContent>
+          <Text>Weekly Report</Text>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+    <TreeViewItem id="readme" textValue="README">
+      <TreeViewItemContent>
+        <Text>README</Text>
+      </TreeViewItemContent>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
+## Content
+
+TreeView is a collection component that provides users with a way to navigate nested hierarchical information. Items can be statically defined as children, or generated dynamically using a function based on the data passed to the `items` prop.
+
+### Static Collections
+
+Basic usage of TreeView shows the use of a static collection where the contents are hard coded.
+
+```tsx render expanded
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Text} from '@react-spectrum/s2';
+
+<div style={{width: '300px', height: '320px'}}>
+  <TreeView aria-label="File system" defaultExpandedKeys={['documents']}>
+    <TreeViewItem id="documents" textValue="Documents">
+      <TreeViewItemContent>
+        <Text>Documents</Text>
+      </TreeViewItemContent>
+      <TreeViewItem id="project-a" textValue="Project A">
+        <TreeViewItemContent>
+          <Text>Project A</Text>
+        </TreeViewItemContent>
+        <TreeViewItem id="report" textValue="Weekly Report">
+          <TreeViewItemContent>
+            <Text>Weekly Report</Text>
+          </TreeViewItemContent>
+        </TreeViewItem>
+      </TreeViewItem>
+      <TreeViewItem id="readme" textValue="README">
+        <TreeViewItemContent>
+          <Text>README</Text>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
+</div>
+```
+
+### Dynamic Collections
+
+Dynamic collections can be used when the options come from an external data source or update over time.
+
+```tsx render expanded
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text} from '@react-spectrum/s2';
+
+let items = [
+  {id: 'projects', name: 'Projects',  childItems: [
+    {id: 'project-1', name: 'Project 1'},
+    {id: 'project-2', name: 'Project 2', childItems: [
+      {id: 'document-a', name: 'Document A'},
+      {id: 'document-b', name: 'Document B'}
+    ]}
+  ]},
+  {id: 'reports', name: 'Reports', childItems: [
+    {id: 'report-1', name: 'Report 1'}
+  ]}
+];
+
+const DynamicTreeItem = (props) => {
+  return (
+    <TreeViewItem id={props.id} textValue={props.name}>
+      <TreeViewItemContent>
+        <Text>{props.name}</Text>
+      </TreeViewItemContent>
+      <Collection items={props.childItems}>
+        {(item) => (
+          <DynamicTreeItem
+            id={item.id}
+            childItems={item.childItems}
+            name={item.name} />
+        )}
+      </Collection>
+    </TreeViewItem>
+  );
+};
+
+<div style={{width: '300px', height: '320px'}}>
+  <TreeView aria-label="Dynamic tree" items={items} defaultExpandedKeys={['projects']}>
+    {(item) => (
+      <DynamicTreeItem
+        id={item.id}
+        childItems={item.childItems}
+        name={item.name} />
+    )}
+  </TreeView>
+</div>
+```
+
+## Selection
+
+### Multiple Selection
+
+Enable multiple selection by setting `selectionMode` to `"multiple"`.
+
+```tsx render expanded
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Text} from '@react-spectrum/s2';
+
+<div style={{width: '300px', height: '320px'}}>
+  <TreeView 
+    aria-label="File system with selection" 
+    defaultExpandedKeys={['documents']}
+    selectionMode="multiple"
+    defaultSelectedKeys={['report', 'readme']}>
+    <TreeViewItem id="documents" textValue="Documents">
+      <TreeViewItemContent>
+        <Text>Documents</Text>
+      </TreeViewItemContent>
+      <TreeViewItem id="report" textValue="Report">
+        <TreeViewItemContent>
+          <Text>Report</Text>          
+        </TreeViewItemContent>
+      </TreeViewItem>
+      <TreeViewItem id="readme" textValue="README">
+        <TreeViewItemContent>
+          <Text>README</Text>          
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
+</div>
+```
+
+### Single Selection
+
+Limit users to selecting only one item by setting `selectionMode` to `"single"`.
+
+```tsx render expanded
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Text} from '@react-spectrum/s2';
+
+<div style={{width: '300px', height: '320px'}}>
+  <TreeView 
+    aria-label="File system with single selection" 
+    defaultExpandedKeys={['documents']}
+    selectionMode="single"
+    defaultSelectedKeys={['report']}>
+    <TreeViewItem id="documents" textValue="Documents">
+      <TreeViewItemContent>
+        <Text>Documents</Text>
+      </TreeViewItemContent>
+      <TreeViewItem id="report" textValue="Report">
+        <TreeViewItemContent>
+          <Text>Report</Text>          
+        </TreeViewItemContent>
+      </TreeViewItem>
+      <TreeViewItem id="readme" textValue="README">
+        <TreeViewItemContent>
+          <Text>README</Text>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
+</div>
+```
+
+## Actions
+
+TreeView supports item actions and action menus for additional functionality.
+
+```tsx render expanded
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+
+<div style={{width: '300px', height: '320px'}}>
+  <TreeView aria-label="File system with actions" defaultExpandedKeys={['documents']}>
+    <TreeViewItem id="documents" textValue="Documents">
+      <TreeViewItemContent>
+        <Text>Documents</Text>
+        <ActionMenu>
+          <MenuItem id="edit">
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Text>Delete</Text>
+          </MenuItem>
+        </ActionMenu>
+      </TreeViewItemContent>
+      <TreeViewItem id="report" textValue="Report">
+        <TreeViewItemContent>
+          <Text>Report</Text>
+          
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
+</div>
+```
+
+## Accessibility
+
+An `aria-label` must be provided to the TreeView for accessibility. If the TreeView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Props
+
+<PropTable component={docs.exports.TreeView} links={docs.links} />
