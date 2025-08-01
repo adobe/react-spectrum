@@ -20,11 +20,11 @@ import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
 import {Button, Heading, SelectBox, SelectBoxGroup, Text} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paperairplane from '../spectrum-illustrations/linear/Paperairplane';
-import StarFilled1 from '../spectrum-illustrations/gradient/generic1/Star';
-import StarFilled2 from '../spectrum-illustrations/gradient/generic2/Star';
 import React, {useState} from 'react';
 import type {Selection} from 'react-aria-components';
 import Server from '../spectrum-illustrations/linear/Server';
+import StarFilled1 from '../spectrum-illustrations/gradient/generic1/Star';
+import StarFilled2 from '../spectrum-illustrations/gradient/generic2/Star';
 
 const meta: Meta<typeof SelectBoxGroup> = {
   title: 'SelectBoxGroup',
@@ -48,6 +48,9 @@ const meta: Meta<typeof SelectBoxGroup> = {
     gutterWidth: {
       control: 'select',
       options: ['compact', 'default', 'spacious']
+    },
+    isCheckboxSelection: {
+      control: 'boolean'
     }
   },
   args: {
@@ -55,36 +58,32 @@ const meta: Meta<typeof SelectBoxGroup> = {
     orientation: 'vertical',
     numColumns: 2,
     gutterWidth: 'default',
-    isDisabled: false
+    isDisabled: false,
+    isCheckboxSelection: false
   }
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic Stories
 export const Default: Story = {
   render: (args) => (
-    <SelectBoxGroup onSelectionChange={action('onSelectionChange')}>
+    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
       <SelectBox value="aws">
         <Server slot="illustration" />
         <Text slot="text">Amazon Web Services</Text>
-        <Text slot="description">Reliable cloud infrastructure</Text>
       </SelectBox>
       <SelectBox value="azure">
         <AlertNotice slot="illustration" />
         <Text slot="text">Microsoft Azure</Text>
-        <Text slot="description">Enterprise cloud solutions</Text>
       </SelectBox>
       <SelectBox value="gcp">
         <Paperairplane slot="illustration" />
         <Text slot="text">Google Cloud Platform</Text>
-        <Text slot="description">Modern cloud services</Text>
       </SelectBox>
-      <SelectBox value="oracle">
-        <Server slot="illustration" />
-        <Text slot="text">Oracle Cloud</Text>
-        <Text slot="description">Database-focused cloud</Text>
+      <SelectBox value="ibm">
+        <StarFilled1 slot="illustration" />
+        <Text slot="text">IBM Cloud</Text>
       </SelectBox>
     </SelectBoxGroup>
   )
@@ -154,7 +153,6 @@ export const MultipleSelection: Story = {
   )
 };
 
-// Disabled States
 export const DisabledGroup: Story = {
   args: {
     isDisabled: true,
@@ -314,7 +312,8 @@ function FormAndLayoutStory() {
             action('onSelectionChange')(selection);
           }}
           numColumns={4}
-          gutterWidth="spacious">
+          gutterWidth="spacious"
+          name="preferences">
           
           <SelectBox value="newsletter">
             <AlertNotice slot="illustration" />
@@ -597,6 +596,74 @@ export const AllSlotCombinations: Story = {
         </div>
       </div>
 
+    </div>
+  )
+};
+
+export const WithCheckboxes: Story = {
+  args: {
+    defaultSelectedKeys: new Set(['aws', 'gcp'])
+  },
+  render: (args) => (
+    <div style={{maxWidth: 600}}>
+      <Heading level={3} UNSAFE_style={{marginBottom: 16, fontSize: 16}}>Checkboxes Enabled</Heading>
+      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
+        When isCheckboxSelection is true, checkboxes appear on hover and when selected:
+      </p>
+      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
+        <SelectBox value="aws">
+          <Server slot="illustration" />
+          <Text slot="text">Amazon Web Services</Text>
+          <Text slot="description">Reliable cloud infrastructure</Text>
+        </SelectBox>
+        <SelectBox value="azure">
+          <AlertNotice slot="illustration" />
+          <Text slot="text">Microsoft Azure</Text>
+          <Text slot="description">Enterprise cloud solutions</Text>
+        </SelectBox>
+        <SelectBox value="gcp">
+          <Paperairplane slot="illustration" />
+          <Text slot="text">Google Cloud Platform</Text>
+          <Text slot="description">Modern cloud services</Text>
+        </SelectBox>
+        <SelectBox value="oracle">
+          <Server slot="illustration" />
+          <Text slot="text">Oracle Cloud</Text>
+          <Text slot="description">Database-focused cloud</Text>
+        </SelectBox>
+        <SelectBox value="longtext">
+          <StarFilled1 slot="illustration" />
+          <Text slot="text">This is an extremely long service name that should definitely overflow and show ellipsis behavior</Text>
+          <Text slot="description">This is a very long description that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
+        </SelectBox>
+        <SelectBox value="anotherlongone">
+          <StarFilled2 slot="illustration" />
+          <Text slot="text">Another very long cloud service provider name that will test ellipsis</Text>
+          <Text slot="description">Another extremely long description text that will help us verify how the SelectBox handles text overflow in different scenarios and orientations, ensuring that the text behavior is consistent and user-friendly across all use cases.</Text>
+        </SelectBox>
+        <SelectBox value="shortname">
+          <Paperairplane slot="illustration" />
+          <Text slot="text">Short</Text>
+          <Text slot="description">This description is intentionally very long to create a mixed layout where some boxes have short labels but long descriptions, which will help test how the grid layout handles boxes of different content lengths and whether they maintain consistent heights as expected.</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+      
+      <Heading level={3} UNSAFE_style={{marginTop: 32, marginBottom: 16, fontSize: 16}}>Checkboxes Disabled (Default)</Heading>
+      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
+        By default, isCheckboxSelection is false and no checkboxes appear:
+      </p>
+      <SelectBoxGroup defaultSelectedKeys={new Set(['aws'])} onSelectionChange={action('onSelectionChange')}>
+        <SelectBox value="aws">
+          <Server slot="illustration" />
+          <Text slot="text">Amazon Web Services</Text>
+          <Text slot="description">No checkbox visible</Text>
+        </SelectBox>
+        <SelectBox value="azure">
+          <AlertNotice slot="illustration" />
+          <Text slot="text">Microsoft Azure</Text>
+          <Text slot="description">No checkbox on hover</Text>
+        </SelectBox>
+      </SelectBoxGroup>
     </div>
   )
 };

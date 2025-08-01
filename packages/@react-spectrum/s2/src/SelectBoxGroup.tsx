@@ -12,21 +12,18 @@
 import {
   ContextValue,
   ListBox,
-  ListBoxItem,
-  Text
+  ListBoxItem
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, HelpTextProps, Orientation, Selection, SpectrumLabelableProps} from '@react-types/shared';
-import {FieldLabel} from './Field';
+import {DOMRef, DOMRefValue, Orientation, Selection} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useMemo} from 'react';
 import {SelectBoxRenderPropsContext} from './SelectBox';
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useId} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface SelectBoxGroupProps extends StyleProps {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
@@ -64,50 +61,33 @@ export interface SelectBoxGroupProps extends StyleProps, SpectrumLabelableProps,
    */
   gutterWidth?: 'default' | 'compact' | 'spacious',
   /**
-   * Whether the SelectBoxGroup is required.
-   */
-  isRequired?: boolean,
-  /**
    * Whether the SelectBoxGroup is disabled.
    */
   isDisabled?: boolean,
   /**
-   * Whether to hide the selection checkbox for all SelectBoxes.
+   * Whether to show selection checkboxes for all SelectBoxes.
+   * @default false
    */
-  isCheckboxHidden?: boolean,
+  isCheckboxSelection?: boolean,
   /**
-   * Whether to hide the label/text content for all SelectBoxes.
-   */
-  isLabelHidden?: boolean,
-  /**
-   * Whether to hide the illustration/icon for all SelectBoxes.
-   */
-  isIllustrationHidden?: boolean,
-  /**
-   * The name of the form field.
+   * The name of the form field for form submission.
    */
   name?: string,
   /**
-   * The error message to display when validation fails.
+   * Defines a string value that labels the SelectBoxGroup.
    */
-  errorMessage?: ReactNode,
+  'aria-label'?: string,
   /**
-   * Whether the SelectBoxGroup is in an invalid state.
+   * Identifies the element (or elements) that labels the SelectBoxGroup.
    */
-  isInvalid?: boolean,
-  /**
-   * Contextual help text for the SelectBoxGroup.
-   */
-  contextualHelp?: ReactNode
+  'aria-labelledby'?: string
 }
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   orientation?: Orientation,
   isDisabled?: boolean,
-  isCheckboxHidden?: boolean,
-  isLabelHidden?: boolean,
-  isIllustrationHidden?: boolean,
+  isCheckboxSelection?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
 }
@@ -133,18 +113,12 @@ const containerStyles = style({
   gap: 8
 }, getAllowedOverrides());
 
-const errorMessageStyles = style({
-  color: 'negative',
-  font: 'ui-sm'
-}, getAllowedOverrides());
-
 interface FormIntegrationProps {
   name?: string,
   selectedKeys: Selection,
-  selectionMode: 'single' | 'multiple',
-  isRequired?: boolean,
-  isInvalid?: boolean
+  selectionMode: 'single' | 'multiple'
 }
+
 /**
  * SelectBox groups allow users to select one or more options from a list.
  * All possible options are exposed up front for users to compare.
@@ -154,8 +128,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
   
   let {
-    label,
-    contextualHelp,
     children,
     onSelectionChange,
     selectedKeys: controlledSelectedKeys,
@@ -164,20 +136,15 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     orientation = 'vertical',
     numColumns = 2,
     gutterWidth = 'default',
-    isRequired = false,
     isDisabled = false,
-    isCheckboxHidden = false,
-    isLabelHidden = false,
-    isIllustrationHidden = false,
+    isCheckboxSelection = false,
     name,
-    errorMessage,
-    isInvalid = false,
-    UNSAFE_style
+    UNSAFE_style,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
   } = props;
 
   const domRef = useDOMRef(ref);
-  const gridId = useId();
-  const errorId = useId();
 
   const [selectedKeys, setSelectedKeys] = useControlledState(
     controlledSelectedKeys,
@@ -185,19 +152,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     onSelectionChange
   );
 
-
-  const validationErrors = useMemo(() => {
-    const errors: string[] = [];
-    
-    const selectionSize = selectedKeys === 'all' ? 1 : selectedKeys.size;
-    if (isRequired && selectionSize === 0) {
-      errors.push('Selection is required');
-    }
-    
-    return errors;
-  }, [isRequired, selectedKeys]);
-
-  const hasValidationErrors = isInvalid || validationErrors.length > 0;
   const childrenArray = React.Children.toArray(children).filter((x) => x);
   
   const disabledKeys = useMemo(() => {
@@ -220,11 +174,8 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   }, [isDisabled, childrenArray]);
   
   useEffect(() => {
-    if (childrenArray.length <= 0) {
-      console.error('Invalid content. SelectBox must have at least one item.');
-    }
     if (childrenArray.length > 9) {
-      console.error('Invalid content. SelectBox cannot have more than 9 children.');
+      console.error('Invalid content. SelectBoxGroup cannot have more than 9 children.');
     }
   }, [childrenArray.length]);
 
@@ -234,15 +185,14 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         allowMultiSelect: selectionMode === 'multiple',
         orientation,
         isDisabled,
-        isCheckboxHidden,
-        isLabelHidden,
-        isIllustrationHidden,
+        isCheckboxSelection,
         selectedKeys,
         onSelectionChange: setSelectedKeys
       };
+      
       return contextValue;
     },
-    [selectionMode, orientation, isDisabled, isCheckboxHidden, isLabelHidden, isIllustrationHidden, selectedKeys, setSelectedKeys]
+    [selectionMode, orientation, isDisabled, isCheckboxSelection, selectedKeys, setSelectedKeys]
   );
 
   return (
@@ -254,29 +204,16 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
       <FormIntegration
         name={name}
         selectedKeys={selectedKeys}
-        selectionMode={selectionMode}
-        isRequired={isRequired}
-        isInvalid={hasValidationErrors} />
-      
-      {label && (
-        <FieldLabel
-          id={gridId}
-          isRequired={isRequired}
-          contextualHelp={contextualHelp}>
-          {label}
-        </FieldLabel>
-      )}
+        selectionMode={selectionMode} />
       
       <ListBox
         layout="grid"
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
-        onSelectionChange={isDisabled ? () => {} : setSelectedKeys}
+        onSelectionChange={setSelectedKeys}
         disabledKeys={disabledKeys}
-        aria-labelledby={label ? gridId : undefined}
-        aria-describedby={hasValidationErrors && errorMessage ? errorId : undefined}
-        aria-invalid={hasValidationErrors}
-        aria-required={isRequired}
+        aria-label={ariaLabel || 'Select options'}
+        aria-labelledby={ariaLabelledby}
         className={gridStyles({gutterWidth, orientation}, props.styles)}
         style={{
           gridTemplateColumns: `repeat(${numColumns}, 1fr)`
@@ -309,7 +246,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
           const textValue = getTextValue(childElement);
           
           return (
-            <ListBoxItem key={childValue} id={childValue} textValue={textValue} aria-label={textValue} className={style({outlineStyle: 'none'})}>
+            <ListBoxItem key={childValue} id={childValue} textValue={textValue} aria-label={textValue}>
               {(renderProps) => (
                 <SelectBoxContext.Provider value={selectBoxContextValue}>
                   <SelectBoxRenderPropsContext.Provider 
@@ -326,20 +263,11 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
           );
         })}
       </ListBox>
-      
-      {hasValidationErrors && errorMessage && (
-        <Text
-          slot="errorMessage"
-          id={errorId}
-          className={errorMessageStyles(null, props.styles)}>
-          {errorMessage}
-        </Text>
-      )}
     </div>
   );
 });
 
-function FormIntegration({name, selectedKeys, selectionMode, isRequired, isInvalid}: FormIntegrationProps) {
+function FormIntegration({name, selectedKeys, selectionMode}: FormIntegrationProps) {
   if (!name) {
     return null;
   }
@@ -354,28 +282,21 @@ function FormIntegration({name, selectedKeys, selectionMode, isRequired, isInval
             key={index}
             type="hidden"
             name={name}
-            value={val}
-            required={isRequired && index === 0}
-            aria-invalid={isInvalid} />
+            value={val} />
         ))}
-        {values.length === 0 && isRequired && (
+        {values.length === 0 && (
           <input
             type="hidden"
             name={name}
-            value=""
-            required
-            aria-invalid={isInvalid} />
+            value="" />
         )}
       </>
     );
   }
-
   return (
     <input
       type="hidden"
       name={name}
-      value={values[0] || ''}
-      required={isRequired}
-      aria-invalid={isInvalid} />
+      value={values[0] || ''} />
   );
 }

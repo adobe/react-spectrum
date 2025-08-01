@@ -14,12 +14,12 @@ import Checkmark from '../ui-icons/Checkmark';
 import {ContextValue} from 'react-aria-components';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {IllustrationContext} from '../src/Icon';
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {SelectBoxContext} from './SelectBoxGroup';
 import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { IllustrationContext } from './Icon';
 
 export interface SelectBoxProps extends StyleProps {
   /**
@@ -33,22 +33,7 @@ export interface SelectBoxProps extends StyleProps {
   /**
    * Whether the SelectBox is disabled.
    */
-  isDisabled?: boolean,
-  /**
-   * Whether to hide the selection checkbox.
-   * @default false
-   */
-  isCheckboxHidden?: boolean,
-  /**
-   * Whether to hide the label/text content.
-   * @default false
-   */
-  isLabelHidden?: boolean,
-  /**
-   * Whether to hide the illustration/icon.
-   * @default false
-   */
-  isIllustrationHidden?: boolean
+  isDisabled?: boolean
 }
 
 export const SelectBoxSpectrumContext = createContext<ContextValue<Partial<SelectBoxProps>, FocusableRefValue<HTMLDivElement>>>(null);
@@ -61,63 +46,85 @@ const selectBoxStyles = style({
       horizontal: 'row'
     }
   },
-  lineHeight: 'title',
-  justifyContent: 'center',
-  flexShrink: 0,
+  justifyContent: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
   alignItems: 'center',
   font: 'ui',
+  flexShrink: 0,
+  boxSizing: 'border-box',
+  overflow: 'hidden',
+  position: 'relative',
+  // Sizing
   width: {
-    default: {
-      size: {
-        S: 128,
-        M: 136,
-        L: 160,
-        XL: 192
-      }
-    },
+    default: 170,
     orientation: {
-      horizontal: 'auto'
+      horizontal: 368
     }
   },
   height: {
-    default: {
-      size: {
-        S: 128,
-        M: 136,
-        L: 160,
-        XL: 192
-      }
-    },
+    default: 170,
     orientation: {
-      horizontal: 'auto'
+      horizontal: '100%'
     }
   },
   minWidth: {
+    default: 144,
     orientation: {
-      horizontal: 160
+      horizontal: 188
     }
   },
   maxWidth: {
+    default: 170,
     orientation: {
-      horizontal: 272
+      horizontal: 480
     }
   },
+  minHeight: {
+    default: 144,
+    orientation: {
+      horizontal: 80
+    }
+  },
+  maxHeight: {
+    default: 170,
+    orientation: {
+      horizontal: 240
+    }
+  },
+  // Spacing
   padding: {
-    size: {
-      S: 16,
-      M: 20,
-      L: 24,
-      XL: 28
+    default: 24,
+    orientation: {
+      horizontal: 16
     }
   },
+  paddingStart: {
+    orientation: {
+      horizontal: 24
+    }
+  },
+  paddingEnd: {
+    orientation: {
+      horizontal: 32
+    }
+  },
+  gap: {
+    default: 12,
+    orientation: {
+      horizontal: 0
+    }
+  },
+  // Visual styling
   borderRadius: 'lg',
   backgroundColor: {
     default: 'layer-2',
-    isSelected: 'layer-2',
     isDisabled: 'layer-1'
   },
   color: {
-    isEmphasized: 'gray-900',
     isDisabled: 'disabled'
   },
   boxShadow: {
@@ -127,8 +134,6 @@ const selectBoxStyles = style({
     forcedColors: 'none',
     isDisabled: 'emphasized'
   },
-  outlineStyle: 'none',
-  position: 'relative',
   borderWidth: 2,
   borderStyle: 'solid',
   borderColor: {
@@ -138,67 +143,62 @@ const selectBoxStyles = style({
     isDisabled: 'transparent'
   },
   transition: 'default',
-  gap: {
-    orientation: {
-      horizontal: 'text-to-visual'
-    }
-  },
   cursor: {
     default: 'pointer',
     isDisabled: 'default'
-  }
+  },
+  outlineStyle: 'none'
 }, getAllowedOverrides());
 
 const contentContainer = style({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: {
-    default: 'center',
+  flexDirection: {
+    default: 'column',
     orientation: {
-      horizontal: 'start'
+      horizontal: 'row'
     }
   },
   justifyContent: 'center',
+  alignItems: 'center',
   textAlign: {
     default: 'center',
     orientation: {
       horizontal: 'start'
     }
   },
+  gap: {
+    default: 8,
+    orientation: {
+      horizontal: 12
+    }
+  },
   flex: {
     orientation: {
-      horizontal: 1
+      horizontal: '1 0 0'
     }
-  }
+  },
+  width: '100%',
+  minWidth: 0
 }, getAllowedOverrides());
 
-const iconContainer = style({
+const illustrationContainer = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   size: {
-    XS: 16,
     S: 20,
     M: 24,
     L: 28,
     XL: 32
   },
   flexShrink: 0,
+  marginEnd: {
+    orientation: {
+      horizontal: 12
+    }
+  },
   color: {
     isDisabled: 'disabled'
-  },
-
-  marginBottom: {
-    default: 8,
-    orientation: {
-      horizontal: 0
-    }
-  },
-  marginEnd: {
-    default: 0,
-    orientation: {
-      horizontal: 8
-    }
   },
   opacity: {
     isDisabled: 0.4
@@ -207,20 +207,39 @@ const iconContainer = style({
 
 const textContainer = style({
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: {
+    orientation: {
+      horizontal: 'column'
+    }
+  },
+  justifyContent: 'center',
   alignItems: {
     default: 'center',
     orientation: {
       horizontal: 'start'
     }
   },
-  gap: 'text-to-visual',
+  gap: {
+    default: 12,
+    orientation: {
+      horizontal: 2
+    }
+  },
+  flex: {
+    orientation: {
+      horizontal: '1 0 0'
+    }
+  },
+  width: '100%',
+  minWidth: 0,
+  overflow: {
+    orientation: {
+      horizontal: 'hidden'
+    }
+  },
   color: {
     default: 'neutral',
-    isDisabled: {
-      default: 'gray-600',
-      forcedColors: 'GrayText'
-    }
+    isDisabled: 'disabled'
   }
 }, getAllowedOverrides());
 
@@ -231,12 +250,65 @@ const descriptionText = style({
       horizontal: 'block'
     }
   },
-  font: 'ui-sm',
-  color: {
-    default: 'gray-600',
-    isDisabled: 'disabled'
+  alignSelf: {
+    orientation: {
+      horizontal: 'stretch'
+    }
   },
-  lineHeight: 'body'
+  width: {
+    orientation: {
+      horizontal: '100%'
+    }
+  },
+  minWidth: {
+    orientation: {
+      horizontal: 0
+    }
+  },
+  overflow: {
+    orientation: {
+      horizontal: 'hidden'
+    }
+  },
+  wordWrap: {
+    orientation: {
+      horizontal: 'break-word'
+    }
+  },
+  font: 'ui',
+  color: {
+    default: 'neutral',
+    isDisabled: 'disabled'
+  }
+});
+
+const labelText = style({
+  display: 'block',
+  width: '100%',
+  overflow: 'hidden',
+  textAlign: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  alignSelf: {
+    orientation: {
+      horizontal: 'stretch'
+    }
+  },
+  font: 'ui',
+  fontWeight: {
+    orientation: {
+      horizontal: 'bold'
+    }
+  },
+  color: {
+    default: 'neutral',
+    isDisabled: 'disabled'
+  }
 });
 
 
@@ -248,7 +320,7 @@ const SelectBoxRenderPropsContext = createContext<{
 
 /**
  * SelectBox components allow users to select options from a list.
- * Works as content within a GridListItem for automatic grid navigation.
+ * Works as content within a ListBoxItem.
  */
 export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: SelectBoxProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxSpectrumContext);
@@ -256,9 +328,6 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
     children, 
     value, 
     isDisabled: individualDisabled = false, 
-    isCheckboxHidden = false,
-    isLabelHidden = false,
-    isIllustrationHidden = false,
     UNSAFE_style
   } = props;
   let divRef = useRef<HTMLDivElement | null>(null);
@@ -269,14 +338,12 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
     orientation = 'vertical',
     selectedKeys,
     isDisabled: groupDisabled = false,
-    isCheckboxHidden: groupIsCheckboxHidden = false,
-    isLabelHidden: groupIsLabelHidden = false,
-    isIllustrationHidden: groupIsIllustrationHidden = false
+    isCheckboxSelection = false
   } = contextValue;
 
   let renderProps = useContext(SelectBoxRenderPropsContext);
 
-  const size = 'M'; // Only medium size is supported
+  const size = 'M';
   const isDisabled = individualDisabled || groupDisabled;
   const isSelected = selectedKeys === 'all' || (selectedKeys && selectedKeys.has(value));
   
@@ -288,9 +355,6 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
     !['illustration', 'text', 'description'].includes(child?.props?.slot)
   );
 
-  const hasIcon = !!illustrationSlot;
-  const hasDescription = !!descriptionSlot;
-  
   return (
     <div
       ref={domRef}
@@ -303,8 +367,7 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
         isFocusVisible: renderProps.isFocusVisible || false
       }, props.styles)}
       style={UNSAFE_style}>
-      
-      {!(isCheckboxHidden || groupIsCheckboxHidden) && (isSelected || (!isDisabled && renderProps.isHovered)) && orientation === 'vertical' && (
+      {isCheckboxSelection && (isSelected || (!isDisabled && renderProps.isHovered)) && (
         <div 
           className={style({
             position: 'absolute',
@@ -314,19 +377,10 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
           aria-hidden="true">
           <div
             className={box({
-              isSelected: isSelected || false,
+              isSelected,
               isDisabled,
-              isIndeterminate: false,
-              isHovered: false,
-              isFocused: false,
-              isFocusVisible: false,
-              isPressed: false,
-              isReadOnly: false,
-              isRequired: false,
-              isInvalid: false,
-              size: 'M',
-              isEmphasized: false
-            })}>
+              size: 'M'
+            } as any)}>
             {isSelected && (
               <Checkmark 
                 size="S" 
@@ -335,84 +389,28 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
           </div>
         </div>
       )}
-      
-      {orientation === 'horizontal' ? (
-        // Horizontal layout with all combinations
-        <>
-          {hasIcon && !(isIllustrationHidden || groupIsIllustrationHidden) && (
-            <div className={iconContainer({size, orientation, isDisabled})}>
-              <IllustrationContext.Provider value={{size: 'S'}}>
-                {illustrationSlot}
-              </IllustrationContext.Provider>
-            </div>
-          )}
-          
-          {(hasIcon && !(isIllustrationHidden || groupIsIllustrationHidden)) || hasDescription ? (
-            // Standard horizontal layout with icon and/or description
-            <div className={contentContainer({size, orientation}, props.styles)}>
-              <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-                {!(isLabelHidden || groupIsLabelHidden) && textSlot}
-                
-                {hasDescription && (
-                  <div className={descriptionText({size, orientation, isDisabled})}>
-                    {descriptionSlot}
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            // Text-only horizontal layout
-            !(isLabelHidden || groupIsLabelHidden) && (
-              <div 
-                className={style({
-                  display: 'flex',
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  flexGrow: 1,
-                  textAlign: 'center',
-                  paddingInline: 'edge-to-text'
-                })}>
-                <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
-                  {textSlot}
-                </div>
-              </div>
-            )
-          )}
-        </>
-      ) : (
-        // Vertical layout with icon and/or description
-        <>
-          {hasIcon && !(isIllustrationHidden || groupIsIllustrationHidden) && (
-            <div className={iconContainer({size, orientation, isDisabled})}>
-              <IllustrationContext.Provider value={{size: 'S'}}>
-                {illustrationSlot}
-              </IllustrationContext.Provider>
-            </div>
-          )}
-          
-          {!(isLabelHidden || groupIsLabelHidden) && (
-            <div className={textContainer({size, orientation, isDisabled})}>
-              {textSlot}
-            </div>
-          )}
-          
-          {hasDescription && (
-            <div 
-              className={style({
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                marginTop: 'text-to-visual'
-              })}>
-              <div className={descriptionText({size, orientation, isDisabled})}>
-                {descriptionSlot}
-              </div>
-            </div>
-          )}
-        </>
+      {!!illustrationSlot && (
+        <div className={illustrationContainer({size: 'S', orientation, isDisabled})}>
+          <IllustrationContext.Provider value={{size: 'S'}}>
+            {illustrationSlot}
+          </IllustrationContext.Provider>
+        </div>
       )}
       
+      <div className={contentContainer({size, orientation}, props.styles)}>
+        <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+          <div className={labelText({orientation, isDisabled})}>
+            {textSlot}
+          </div>
+          
+          {!!descriptionSlot && (
+            <div 
+              className={descriptionText({size, orientation, isDisabled})}>
+              {descriptionSlot}
+            </div>
+          )}
+        </div>
+      </div>
       {otherChildren}
     </div>
   );
