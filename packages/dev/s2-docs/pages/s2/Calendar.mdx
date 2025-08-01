@@ -90,10 +90,10 @@ function Example() {
 
   let isDateUnavailable = (date) => {
     return isWeekend(date, locale) || 
-           disabledRanges.some((interval) => 
-             date.compare(interval[0]) >= 0 && 
-             date.compare(interval[1]) <= 0
-           );
+      disabledRanges.some((interval) => 
+        date.compare(interval[0]) >= 0 && 
+        date.compare(interval[1]) <= 0
+      );
   };
 
   return (

@@ -69,36 +69,6 @@ import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 </IllustratedMessage>
 ```
 
-### Accessibility
+## Props
 
-When an IllustratedMessage has an `svg` and a `Heading`, the `svg` needs an `aria-hidden` prop and a `role` prop set to `presentation`.
-
-```tsx render
-"use client";
-import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
-import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
-
-<IllustratedMessage>
-  <Image aria-hidden role="presentation" />
-  <Heading>No results found</Heading>
-  <Content>Check your search terms and try again.</Content>
-</IllustratedMessage>
-```
-
-## Labeling
-
-### Accessibility
-
-The title of an IllustratedMessage is typically provided via its `Heading`.
-If a `Heading` isn't specified, the illustration needs an `aria-label` prop to identify it to assistive technology.
-If you pass an SVG in yourself, you'll need to ensure that the `role` prop is set to `img` as well.
-
-```tsx render expanded
-"use client";
-import {IllustratedMessage} from '@react-spectrum/s2';
-import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
-
-<IllustratedMessage>
-  <Image aria-label="No results" />
-</IllustratedMessage>
-```
+<PropTable component={docs.exports.IllustratedMessage} links={docs.links} />
