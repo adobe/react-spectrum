@@ -113,9 +113,9 @@ const selectBoxStyles = style({
     }
   },
   gap: {
-    default: 12,
+    default: 8,
     orientation: {
-      horizontal: 0
+      horizontal: 8
     }
   },
   // Visual styling
@@ -185,18 +185,8 @@ const illustrationContainer = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  size: {
-    S: 20,
-    M: 24,
-    L: 28,
-    XL: 32
-  },
+  minSize: 48,
   flexShrink: 0,
-  marginEnd: {
-    orientation: {
-      horizontal: 12
-    }
-  },
   color: {
     isDisabled: 'disabled'
   },
@@ -232,11 +222,6 @@ const textContainer = style({
   },
   width: '100%',
   minWidth: 0,
-  overflow: {
-    orientation: {
-      horizontal: 'hidden'
-    }
-  },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
@@ -270,12 +255,12 @@ const descriptionText = style({
       horizontal: 'hidden'
     }
   },
-  wordWrap: {
+  textOverflow: 'ellipsis',
+  whiteSpace: {
     orientation: {
-      horizontal: 'break-word'
+      horizontal: 'nowrap'
     }
   },
-  font: 'ui',
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
@@ -299,7 +284,6 @@ const labelText = style({
       horizontal: 'stretch'
     }
   },
-  font: 'ui',
   fontWeight: {
     orientation: {
       horizontal: 'bold'

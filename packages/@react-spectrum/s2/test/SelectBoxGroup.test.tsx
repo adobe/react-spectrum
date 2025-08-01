@@ -111,6 +111,37 @@ describe('SelectBoxGroup', () => {
       const options = screen.getAllByRole('option');
       expect(options.length).toBeGreaterThan(0);
     });
+
+    it('prevents interaction when group is disabled', async () => {
+      const onSelectionChange = jest.fn();
+      render(
+        <SelectBoxGroup
+          aria-label="Group disabled test"
+          selectionMode="single"
+          onSelectionChange={onSelectionChange}
+          selectedKeys={new Set()}
+          isDisabled>
+          <SelectBox value="option1">
+            <Text slot="text">Option 1</Text>
+          </SelectBox>
+          <SelectBox value="option2">
+            <Text slot="text">Option 2</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      
+      await userEvent.click(option1);
+      await userEvent.click(option2);
+      
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      
+      // Items should have disabled attributes
+      expect(option1).toHaveAttribute('aria-disabled', 'true');
+      expect(option2).toHaveAttribute('aria-disabled', 'true');
+    });
   });
 
   describe('Checkbox functionality', () => {

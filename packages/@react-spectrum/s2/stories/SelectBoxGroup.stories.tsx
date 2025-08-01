@@ -156,7 +156,8 @@ export const MultipleSelection: Story = {
 export const DisabledGroup: Story = {
   args: {
     isDisabled: true,
-    defaultSelectedKeys: new Set(['option1'])
+    defaultSelectedKeys: new Set(['option1']),
+    isCheckboxSelection: true
   },
   render: (args) => (
     <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>

@@ -155,16 +155,14 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   const childrenArray = React.Children.toArray(children).filter((x) => x);
   
   const disabledKeys = useMemo(() => {
-    if (isDisabled) {
-      return 'all';
-    }
-    
     const disabled = new Set<string>();
+    
     childrenArray.forEach((child, index) => {
       if (React.isValidElement(child)) {
         const childElement = child as ReactElement<{value?: string, isDisabled?: boolean}>;
         const childValue = childElement.props?.value || String(index);
-        if (childElement.props?.isDisabled) {
+        
+        if (isDisabled || childElement.props?.isDisabled) {
           disabled.add(childValue);
         }
       }
