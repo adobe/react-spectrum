@@ -1,0 +1,198 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {AlertDialog, DialogTrigger, ActionButton, Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# AlertDialog
+
+<PageDescription>{docs.exports.AlertDialog.description}</PageDescription>
+
+```tsx render docs={docs.exports.AlertDialog} links={docs.links} props={['variant', 'size', 'autoFocusButton', 'isPrimaryActionDisabled', 'isSecondaryActionDisabled']} initialProps={{}} expanded type="s2"
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <ActionButton>Save</ActionButton>
+  <AlertDialog
+    title="Confirm Save"
+    primaryActionLabel="Save"
+    cancelLabel="Cancel"
+    /* PROPS */>
+    Are you sure you want to save these changes?
+  </AlertDialog>
+</DialogTrigger>
+```
+
+## Content
+
+AlertDialogs are a specific type of Dialog designed for displaying important information that users need to acknowledge. Unlike regular dialogs, AlertDialogs have a predefined layout with support for up to three action buttons and specific visual variants.
+
+### Basic Usage
+
+```tsx render expanded
+"use client";
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <ActionButton>Save Document</ActionButton>
+  <AlertDialog
+    title="Save Changes"
+    primaryActionLabel="Save"
+    cancelLabel="Cancel">
+    You have unsaved changes. Would you like to save before closing?
+  </AlertDialog>
+</DialogTrigger>
+```
+
+### With Secondary Action
+
+AlertDialogs can include up to three buttons: primary, secondary, and cancel.
+
+```tsx render expanded
+"use client";
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <ActionButton>Publish</ActionButton>
+  <AlertDialog
+    title="Publish Document"
+    primaryActionLabel="Publish"
+    secondaryActionLabel="Save Draft"
+    cancelLabel="Cancel">
+    Would you like to publish this document now or save it as a draft?
+  </AlertDialog>
+</DialogTrigger>
+```
+
+## Events
+
+AlertDialog provides event handlers for each button action.
+
+```tsx render expanded
+"use client";
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function EventsExample() {
+  const [lastAction, setLastAction] = useState('None');
+
+  const handlePrimary = () => {
+    setLastAction('Primary action clicked');
+  };
+
+  const handleSecondary = () => {
+    setLastAction('Secondary action clicked');
+  };
+
+  const handleCancel = () => {
+    setLastAction('Cancel clicked');
+  };
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+      <DialogTrigger>
+        <ActionButton>Test Events</ActionButton>
+        <AlertDialog
+          title="Event Handling"
+          primaryActionLabel="Primary"
+          secondaryActionLabel="Secondary"
+          cancelLabel="Cancel"
+          onPrimaryAction={handlePrimary}
+          onSecondaryAction={handleSecondary}
+          onCancel={handleCancel}>
+          Click any button to see the event handling in action.
+        </AlertDialog>
+      </DialogTrigger>
+      <p style={{fontSize: '14px', color: 'var(--spectrum-neutral-content-color-emphasized)'}}>
+        Last action: <strong>{lastAction}</strong>
+      </p>
+    </div>
+  );
+}
+
+<EventsExample />
+```
+
+## Focus Management
+
+Control which button receives focus when the dialog opens.
+
+```tsx render expanded
+"use client";
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: '16px', flexWrap: 'wrap'}}>
+  <DialogTrigger>
+    <ActionButton>Focus Primary</ActionButton>
+    <AlertDialog
+      title="Focus Primary Button"
+      primaryActionLabel="Primary (Focused)"
+      cancelLabel="Cancel"
+      autoFocusButton="primary">
+      The primary button will be focused when this dialog opens.
+    </AlertDialog>
+  </DialogTrigger>
+
+  <DialogTrigger>
+    <ActionButton>Focus Cancel</ActionButton>
+    <AlertDialog
+      title="Focus Cancel Button"
+      primaryActionLabel="Primary"
+      cancelLabel="Cancel (Focused)"
+      autoFocusButton="cancel">
+      The cancel button will be focused when this dialog opens.
+    </AlertDialog>
+  </DialogTrigger>
+
+  <DialogTrigger>
+    <ActionButton>Focus Secondary</ActionButton>
+    <AlertDialog
+      title="Focus Secondary Button"
+      primaryActionLabel="Primary"
+      secondaryActionLabel="Secondary (Focused)"
+      cancelLabel="Cancel"
+      autoFocusButton="secondary">
+      The secondary button will be focused when this dialog opens.
+    </AlertDialog>
+  </DialogTrigger>
+</div>
+```
+
+## Disabled States
+
+Individual buttons can be disabled based on application state.
+
+```tsx render expanded
+"use client";
+import {AlertDialog, DialogTrigger, ActionButton} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: '16px', flexWrap: 'wrap'}}>
+  <DialogTrigger>
+    <ActionButton>Disabled Primary</ActionButton>
+    <AlertDialog
+      title="Action Unavailable"
+      primaryActionLabel="Disabled Action"
+      cancelLabel="Cancel"
+      isPrimaryActionDisabled>
+      The primary action is currently disabled.
+    </AlertDialog>
+  </DialogTrigger>
+
+  <DialogTrigger>
+    <ActionButton>Disabled Secondary</ActionButton>
+    <AlertDialog
+      title="Partial Actions"
+      primaryActionLabel="Available"
+      secondaryActionLabel="Disabled"
+      cancelLabel="Cancel"
+      isSecondaryActionDisabled>
+      The secondary action is currently disabled.
+    </AlertDialog>
+  </DialogTrigger>
+</div>
+```
+
+
+## Props
+
+<PropTable component={docs.exports.AlertDialog} links={docs.links} />
