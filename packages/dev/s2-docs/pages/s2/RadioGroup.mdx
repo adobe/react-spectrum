@@ -1,0 +1,254 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# RadioGroup
+
+<PageDescription>{docs.exports.RadioGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isInvalid']} initialProps={{label: 'Favorite pet'}} expanded type="s2"
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<RadioGroup/* PROPS */>
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+## Content
+
+RadioGroup accepts multiple Radio elements as children. Each Radio represents an option that can be selected, labeled by its children.
+
+**Note:** A Radio cannot be used outside of a RadioGroup.
+
+```tsx render expanded
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<RadioGroup label="Favorite pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+  <Radio value="birds">Birds</Radio>
+</RadioGroup>
+```
+
+## Value
+
+RadioGroup only allows single selection. An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState('yes');
+
+  return (
+    <div style={{display: 'flex', gap: 40}}>
+      <RadioGroup label="Are you a wizard? (uncontrolled)" defaultValue="yes">
+        <Radio value="yes">Yes</Radio>
+        <Radio value="no">No</Radio>
+      </RadioGroup>
+
+      <RadioGroup label="Are you a wizard? (controlled)" value={selected} onChange={setSelected}>
+        <Radio value="yes">Yes</Radio>
+        <Radio value="no">No</Radio>
+      </RadioGroup>
+    </div>
+  );
+}
+```
+
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<RadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+## Labeling
+
+A visual label should be provided for the RadioGroup using the `label` prop. If the RadioGroup is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 40, flexWrap: 'wrap'}}>
+  <RadioGroup label="Favorite avatar">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+
+  <RadioGroup label="Favorite avatar" isRequired necessityIndicator="icon">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+
+  <RadioGroup label="Favorite avatar" isRequired necessityIndicator="label">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+
+  <RadioGroup label="Favorite avatar" necessityIndicator="label">
+   <Radio value="wizard">Wizard</Radio>
+   <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+</div>
+```
+
+### Accessibility
+
+If a visible label isn't specified for a RadioGroup, an `aria-label` must be provided for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+Radio elements should always have a visible label.
+
+### Internationalization
+
+To internationalize a RadioGroup, a localized string should be passed to the `label` prop and as the child content of the Radio elements. For languages that are read right-to-left (e.g. Hebrew and Arabic), the Radio is automatically placed on the right side of the text. When the necessityIndicator prop is set to "label", a localized string will be provided for "(required)" or "(optional)" automatically.
+
+## Events
+
+RadioGroup accepts an `onChange` prop, which is triggered when a user changes the selected value. The example below uses `onChange` to log how the user is interacting with the component.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(null);
+
+  return (
+    <>
+      <RadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
+        <Radio value="wizard">Wizard</Radio>
+        <Radio value="dragon">Dragon</Radio>
+      </RadioGroup>
+      <div>You have selected: {selected}</div>
+    </>
+  );
+}
+```
+
+## Validation
+
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio, Form, ButtonGroup, Button} from '@react-spectrum/s2';
+
+<Form>
+  <RadioGroup label="Favorite pet" name="pet" isRequired>
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Label position and alignment
+
+By default, the label is positioned above the RadioGroup. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the RadioGroup and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', flexDirection: 'column', gap: 30}}>
+  <RadioGroup label="Top (default)" defaultValue="wizard">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  
+  <RadioGroup label="Side start" labelPosition="side" labelAlign="start" defaultValue="wizard">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  
+  <RadioGroup label="Side end" labelPosition="side" labelAlign="end" defaultValue="wizard">
+    <Radio value="wizard">Wizard</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+</div>
+```
+
+## Help text
+
+Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <RadioGroup
+      label="Favorite pet"
+      value={selected}
+      onChange={setSelected}
+      isInvalid={!isValid}
+      description="Please select a pet."
+      errorMessage={
+        selected === 'cats'
+          ? 'No cats allowed.'
+          : 'Please select dogs.'
+      }>
+      <Radio value="dogs">Dogs</Radio>
+      <Radio value="cats">Cats</Radio>
+      <Radio value="dragons">Dragons</Radio>
+    </RadioGroup>
+  );
+}
+```
+
+## Contextual help
+
+A ContextualHelp element may be placed next to the label to provide additional information or help about a RadioGroup.
+
+```tsx render hideImports
+"use client";
+import {RadioGroup, Radio, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<RadioGroup
+  label="T-shirt size"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Size and fit</Heading>
+      <Content>Our sizes run on the small side. Choose a size up from your usual.</Content>
+    </ContextualHelp>
+  }>
+  <Radio value="S">Small</Radio>
+  <Radio value="M">Medium</Radio>
+  <Radio value="L">Large</Radio>
+</RadioGroup>
+```
+
+## Props
+
+### RadioGroup props
+
+<PropTable component={docs.exports.RadioGroup} links={docs.links} />
+
+### Radio props
+
+<PropTable component={docs.exports.Radio} links={docs.links} />
