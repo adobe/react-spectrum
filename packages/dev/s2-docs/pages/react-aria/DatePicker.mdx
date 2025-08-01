@@ -135,13 +135,11 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{DatePicker: '#datepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', DateSegment: 'DateField.html#datesegment', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', Calendar: 'Calendar.html'}}
+```tsx links={{DatePicker: '#datepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', Calendar: 'Calendar.html'}}
 <DatePicker>
   <Label />
   <Group>
-    <DateInput>
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
+    <DateInput />
     <Button />
   </Group>
   <Text slot="description" />

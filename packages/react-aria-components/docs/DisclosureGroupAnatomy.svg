@@ -18,7 +18,7 @@
   </g>
   <text id="Button" transform="translate(28 64)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)" font-style="italic" letter-spacing="0.003em"><tspan x="0" y="0">Button</tspan></text>
   <text id="Lorem_ipsum_dolor_sit_amet_consectetur_adipiscing_elit" data-name="Lorem ipsum dolor sit amet, 
-consectetur adipiscing elit" transform="translate(120.791 96)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)" font-weight="300"><tspan x="0" y="0">Lorem ipsum dolor sit amet, </tspan><tspan x="0" y="17">consectetur adipiscing elit</tspan></text>
+consectetur adipiscing elit" transform="translate(120.791 96)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)" font-weight="400"><tspan x="0" y="0">Lorem ipsum dolor sit amet, </tspan><tspan x="0" y="17">consectetur adipiscing elit</tspan></text>
   <text id="Panel" transform="translate(33 104)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)" font-style="italic" letter-spacing="0.003em"><tspan x="0" y="0">Panel</tspan></text>
   <rect id="rectangle-1-2" data-name="rectangle-1" width="48.218" height="1" transform="translate(111.218 100.993) rotate(180)" fill="var(--anatomy-gray-500)"/>
   <rect id="rectangle-1-3" data-name="rectangle-1" width="35.013" height="1" transform="translate(110.84 118) rotate(-90)" fill="var(--anatomy-gray-500)"/>

@@ -78,7 +78,9 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
   }
 
   let content = (
-    <CodePlatter>
+    <CodePlatter
+      files={files ? getFiles(files) : undefined}
+      type={props.type}>
       {code}
     </CodePlatter>
   );

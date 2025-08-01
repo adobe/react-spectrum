@@ -401,7 +401,7 @@ function UnionControl({control, value, onChange, isPicker = false}) {
         onSelectionChange={v => onChange(v === '__none' ? null : v)}
         styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
-        {control.value.elements.map(element => (
+        {control.value.elements.filter(e => e.value).map(element => (
           <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
         ))}
       </Picker>

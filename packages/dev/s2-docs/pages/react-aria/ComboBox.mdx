@@ -111,11 +111,10 @@ function Example() {
     <div>
       <ComboBox
         label="Pick an animal"
-        ///- begin highlight -///
+        /*- begin highlight -*/
         selectedKey={animal}
-        onSelectionChange={setAnimal}
-        ///- end highlight -///
-      >
+        onSelectionChange={setAnimal}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus" isDisabled>Platypus</ComboBoxItem>
@@ -144,16 +143,14 @@ function Example(props) {
 
   return (
     <div>
-      <p>Current input value: {value}</p>
       <ComboBox
         {...props}
         label="Favorite Animal"
+        /*- begin highlight -*/
         /* PROPS */
-        ///- begin highlight -///
         inputValue={value}
-        onInputChange={setValue}
-        ///- end highlight -///
-      >
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus">Platypus</ComboBoxItem>
@@ -161,6 +158,7 @@ function Example(props) {
         <ComboBoxItem id="bison">Bison</ComboBoxItem>
         <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
       </ComboBox>
+      <p>Current input value: {value}</p>
     </div>
   );
 }
@@ -214,8 +212,6 @@ function ControlledComboBox() {
 
   return (
     <div>
-      <p>Current selected major id: {fieldState.selectedKey}</p>
-      <p>Current input text: {fieldState.inputValue}</p>
        <ComboBox
         label="Pick a engineering major"
         /*- begin highlight -*/
@@ -227,6 +223,10 @@ function ControlledComboBox() {
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
+      <pre style={{fontSize: 12}}>
+        Current selected major id: {fieldState.selectedKey}{'\n'}
+        Current input text: {fieldState.inputValue}
+      </pre>
     </div>
   );
 }
@@ -234,7 +234,7 @@ function ControlledComboBox() {
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
 ```tsx render
 "use client";

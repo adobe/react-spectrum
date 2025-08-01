@@ -151,16 +151,12 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', DateSegment: 'DateField.html#datesegment', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', RangeCalendar: 'RangeCalendar.html'}}
+```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', RangeCalendar: 'RangeCalendar.html'}}
 <DateRangePicker>
   <Label />
   <Group>
-    <DateInput slot="start">
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
-    <DateInput slot="end">
-      {segment => <DateSegment segment={segment} />}
-    </DateInput>
+    <DateInput slot="start" />
+    <DateInput slot="end" />
     <Button />
   </Group>
   <Text slot="description" />
