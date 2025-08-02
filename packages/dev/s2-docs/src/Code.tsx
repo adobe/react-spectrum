@@ -76,7 +76,7 @@ export function Code({children, lang, hideImports = true, links}: ICodeProps) {
           visible.push(line);
         }
 
-        if (line.tagName === 'highlight' && !hasHighlight) {
+        if ((line.tagName === 'highlight' || line.tagName === 'focus') && !hasHighlight) {
           hasHighlight = true;
           // Center highlighted lines within collapsed window (~8 lines).
           let highlightedLines = line.children.length;

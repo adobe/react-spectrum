@@ -1,16 +1,19 @@
 'use client';
 
-import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, Fragment, isValidElement, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
+import {flushSync} from 'react-dom';
 import {getColorChannels, parseColor} from 'react-stately';
 import {IconPicker} from './IconPicker';
 import {ListBox, ListBoxItem} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
+import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {useLocale} from 'react-aria';
 
 type Props = {[name: string]: any};
@@ -276,6 +279,23 @@ function renderValue(value: any) {
       if (value == null) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
+      if (Array.isArray(value)) {
+        let res: ReactNode[] = value.map((item, i) => {
+          let result = renderValue(item);
+          if (i < value.length - 1) {
+            result = <>{result}, </>;
+          }
+          return <Fragment key={i}>{result}</Fragment>;
+        });
+
+        if (countChars(res) > 40) {
+          res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
+          res.push('\n  ');
+        }
+
+        return <>{'['}{res}{']'}</>;
+      }
+
       let entries = Object.entries(value);
       let res: ReactNode[] = entries.map(([name, value], i) => {
         let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
@@ -368,6 +388,12 @@ export function Control({name}: {name: string}) {
         return <DurationControl control={control} value={value} onChange={onChange} />;
       }
       break;
+    case 'array':
+      return <ArrayControl control={control} valueType={control.value.elementType} value={value} onChange={onChange} />;
+    case 'application':
+      if (control.value.base.type === 'identifier' && (control.value.base.name === 'ReadonlyArray' || control.value.base.name === 'Array')) {
+        return <ArrayControl control={control} value={value} valueType={control.value.typeParameters[0]} onChange={onChange} />;
+      }
     default:
       if (name === 'children') {
         return <StringControl control={control} value={value} onChange={onChange} />;
@@ -443,9 +469,9 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   );
 }
 
-function Wrapper({control, children, styles}: {control: PropControl, children: ReactNode, styles?: StyleString}) {
+function Wrapper({control, children, styles, ref}: {control: PropControl, children: ReactNode, styles?: StyleString, ref?: Ref<HTMLDivElement>}) {
   return (
-    <div className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
+    <div ref={ref} className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
       <span className={style({font: 'ui', color: 'neutral-subdued', wordBreak: 'break-all'})}>
         {control.name}
         <span className={style({whiteSpace: 'nowrap'})}>
@@ -986,5 +1012,78 @@ function PlacementControlItem(props) {
           outlineWidth: 1
         })} />
     </ListBoxItem>
+  );
+}
+
+function ArrayControl({control, valueType, value = [], onChange}) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  return (
+    <Wrapper ref={ref} control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1, width: 150})}>
+      {value.length === 0 && 
+        <ActionButton
+          size="S"
+          aria-label="Add item"
+          onPress={() => {
+            flushSync(() => onChange(['']));
+            ref.current?.querySelector('input')?.focus();
+          }}>
+          <AddCircle />
+        </ActionButton>
+      }
+      {value.map((item, index) => {
+        let rendered;
+        switch (valueType.type) {
+          case 'string':
+            rendered = (
+              <TextField
+                aria-label={`${control.name}, item ${index}`}
+                size="S"
+                styles={style({flexGrow: 1})}
+                value={item}
+                onChange={newValue => {
+                  let arr: any[] = [...value];
+                  arr[index] = newValue;
+                  onChange(arr);
+                }} />
+            );
+            break;
+          default:
+            console.warn('unknown array element type', valueType);
+            return null;
+        }
+
+        return (
+          <div key={index} className={style({display: 'flex', gap: 4})}>
+            {rendered}
+            <ActionButton
+              size="S"
+              aria-label="Add item after"
+              onPress={() => {
+                let arr: any[] = [...value];
+                arr.splice(index + 1, 0, '');
+                flushSync(() => onChange(arr));
+                ref.current?.querySelectorAll('input')[index + 1]?.focus();
+              }}>
+              <AddCircle />
+            </ActionButton>
+            <ActionButton
+              size="S"
+              aria-label="Remove item"
+              onPress={() => {
+                let arr: any[] = [...value];
+                arr.splice(index, 1);
+                flushSync(() => onChange(arr));
+                if (arr.length > 0) {
+                  ref.current?.querySelectorAll('input')[Math.min(arr.length - 1, index)]?.focus();
+                } else {
+                  ref.current?.querySelector('button')?.focus();
+                }
+              }}>
+              <RemoveCircle />
+            </ActionButton>
+          </div>
+        );
+      })}
+    </Wrapper>
   );
 }
