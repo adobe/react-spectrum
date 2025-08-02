@@ -1023,6 +1023,7 @@ function ArrayControl({control, valueType, value = [], onChange}) {
         <ActionButton
           size="S"
           aria-label="Add item"
+          styles={style({alignSelf: 'start'})}
           onPress={() => {
             flushSync(() => onChange(['']));
             ref.current?.querySelector('input')?.focus();

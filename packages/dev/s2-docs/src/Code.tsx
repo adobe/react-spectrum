@@ -39,7 +39,8 @@ function Highlight({children}) {
 
 const groupings = {
   highlight: Highlight,
-  collapse: CodeFold
+  collapse: CodeFold,
+  focus: 'span'
 };
 
 type Links = {[name: string]: string};
@@ -213,8 +214,8 @@ function renderHast(node: HastNode | HastTextNode, key: number, links?: Links, i
       children = childArray[1];
     }
 
-    let tagName = node.tagName;
-    let properties = node.properties;
+    let tagName: any = node.tagName;
+    let properties: any = node.properties;
     if (links && typeof children === 'string' && links[children]) {
       let link = links[children];
       tagName = CodeLink;
