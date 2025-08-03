@@ -198,7 +198,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
   let [placeholderDate, setPlaceholderDate] = useState(
-    () => createPlaceholderDate(value || props.placeholderValue, granularity, calendar, defaultTimeZone)
+    () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
   );
 
   let val = calendarValue || placeholderDate;
@@ -248,7 +248,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   if (value !== previousValue && value && Object.keys(validSegments).length <= Object.keys(allSegments).length) {
     validSegments = {...allSegments};
     setValidSegments(validSegments);
-    setPlaceholderDate(value);
     setPreviousValue(value);
     setIsValueConfirmed(true);
   }
@@ -296,7 +295,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(value);
       setIsValueConfirmed(true);
       setPreviousValue(value);
-      setPlaceholderDate(value);
     }
   };
 
