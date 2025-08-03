@@ -188,9 +188,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   );
 
   const [isValueConfirmed, setIsValueConfirmed] = useState(!!(value));
-
-
-  const previousValue = useRef(value);
+  const [previousValue, setPreviousValue] = useState(value);
 
   let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
@@ -247,21 +245,21 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
-  if (value !== previousValue.current && value && Object.keys(validSegments).length <= Object.keys(allSegments).length) {
+  if (value !== previousValue && value && Object.keys(validSegments).length <= Object.keys(allSegments).length) {
     validSegments = {...allSegments};
     setValidSegments(validSegments);
     setPlaceholderDate(value);
-    previousValue.current = value;
+    setPreviousValue(value);
     setIsValueConfirmed(true);
   }
 
 
   // If the value is set to null and all segments are valid, reset the placeholder.
-  if (value !== previousValue.current && value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
+  if (value !== previousValue && value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
     validSegments = {};
     setValidSegments(validSegments);   // reason 
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
-    previousValue.current = value;
+    setPreviousValue(value);
     setIsValueConfirmed(true);
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
@@ -277,6 +275,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     // if all the segments are completed or a timefield with everything but am/pm set the time, also ignore when am/pm cleared
     if (newValue == null) {
       setDate(null);
+      setPreviousValue(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
     } else if (
@@ -296,7 +295,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       const value = toCalendar(newValue, v?.calendar || new GregorianCalendar());
       setDate(value);
       setIsValueConfirmed(true);
-      previousValue.current = value;
+      setPreviousValue(value);
       setPlaceholderDate(value);
     }
   };
@@ -444,8 +443,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         setValue(constrainDate(currentValue.current));
       } else {
         setDate(null);
+        setPreviousValue(null);
         setIsValueConfirmed(true);
-        previousValue.current = null;
       }
     },
     clearSegment(part) {
