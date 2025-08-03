@@ -256,7 +256,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   // If the value is set to null and all segments are valid, reset the placeholder.
   if (value !== previousValue && value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
     validSegments = {};
-    setValidSegments(validSegments);   // reason 
+    setValidSegments(validSegments);
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
     setPreviousValue(value);
     setIsValueConfirmed(true);
