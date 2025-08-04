@@ -1330,7 +1330,6 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         let allowsZero = (label.indexOf('hour') === 0 && props?.hourCycle === 24) || label.indexOf('minute') === 0 || label.indexOf('second') === 0;
-        let count = 0;
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
