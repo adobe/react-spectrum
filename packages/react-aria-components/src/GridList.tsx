@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -104,11 +104,9 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
-  // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
-  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
+  let {filter, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
@@ -137,7 +135,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let {gridProps} = useGridList({
     ...props,
-    ...DOMCollectionProps,
+    ...collectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
@@ -345,7 +343,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
     values: {
       ...states,
       isHovered,
-      isFocusVisible,
+      // TODO: check if I can get rid of useFocusRing
+      isFocusVisible: isFocusVisible || states.isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
@@ -388,7 +387,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible={isFocusVisible || states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}

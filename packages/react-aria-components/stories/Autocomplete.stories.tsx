@@ -959,6 +959,12 @@ AutocompleteWithAsyncListBox.story = {
   }
 };
 
+function MyButton() {
+  return (
+    <Button onPress={action('button press')}>Actions</Button>
+  );
+}
+
 export const AutocompleteWithGridList = () => {
   return (
     <AutocompleteWrapper>
@@ -968,18 +974,19 @@ export const AutocompleteWithGridList = () => {
           <Input />
         </TextField>
         <GridList
+          onAction={action('onAction')}
           className={styles.menu}
           style={{height: 200, width: 200}}
           aria-label="test gridlist">
-          <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
+          <MyGridListItem textValue="Foo">Foo <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Bar">Bar <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Baz">Baz <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Charizard">Charizard<MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Blastoise">Blastoise <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Pikachu">Pikachu <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Venusaur">Venusaur<MyButton /></MyGridListItem>
+          <MyGridListItem textValue="text value check">textValue is "text value check" <MyButton /></MyGridListItem>
+          <MyGridListItem textValue="Blah">Blah <MyButton /></MyGridListItem>
         </GridList>
       </div>
     </AutocompleteWrapper>

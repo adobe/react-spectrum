@@ -12,7 +12,7 @@
 
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, getFocusableTreeWalker, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -131,13 +131,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldUseVirtualFocus
   });
 
+  let focusElement = (element: FocusableElement) => {
+    if (!shouldUseVirtualFocus) {
+      focusSafely(element);
+    } else {
+      moveVirtualFocus(element);
+    }
+  };
+
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) as FocusableElement : document.activeElement;
 
     if ('expandedKeys' in state && document.activeElement === ref.current) {
       if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
@@ -162,20 +170,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           if (focusable) {
             e.preventDefault();
             e.stopPropagation();
-            focusSafely(focusable);
+            focusElement(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
             // If there is no next focusable child, then return focus back to the row
             e.preventDefault();
             e.stopPropagation();
             if (direction === 'rtl') {
-              focusSafely(ref.current);
+              focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
               if (lastElement) {
-                focusSafely(lastElement);
+                focusElement(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
               }
             }
@@ -192,19 +200,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           if (focusable) {
             e.preventDefault();
             e.stopPropagation();
-            focusSafely(focusable);
+            focusElement(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
             e.preventDefault();
             e.stopPropagation();
             if (direction === 'ltr') {
-              focusSafely(ref.current);
+              focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
               if (lastElement) {
-                focusSafely(lastElement);
+                focusElement(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
               }
             }

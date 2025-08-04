@@ -12,7 +12,7 @@
 
 import {chain, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
+import {focusSafely, isFocusVisible, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -401,6 +401,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isPressed,
     isSelected: manager.isSelected(key),
     isFocused: manager.isFocused && manager.focusedKey === key,
+    isFocusVisible: manager.isFocused && manager.focusedKey === key && isFocusVisible(),
     isDisabled,
     allowsSelection,
     hasAction
