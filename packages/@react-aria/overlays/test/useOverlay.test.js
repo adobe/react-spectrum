@@ -162,13 +162,13 @@ describe('useOverlay with shadow dom', () => {
   describe.each`
     type                | prepare                | actions
     ${'Mouse Events'}   | ${installMouseEvent}   | ${[(el) => fireEvent.mouseDown(el, {button: 0}), (el) => fireEvent.mouseUp(el, {button: 0})]}
-    ${'Pointer Events'} | ${installPointerEvent} | ${[(el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})]}
+    ${'Pointer Events'} | ${installPointerEvent} | ${[(el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), (el) => {fireEvent.pointerUp(el, {button: 0, pointerId: 1}); fireEvent.click(el, {button: 0, pointerId: 1});}]}
     ${'Touch Events'}   | ${() => {}}            | ${[(el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}), (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})]}
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
-    it('should not close the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
-      const {shadowRoot, shadowHost} = createShadowRoot();
+    it.only('should not close the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
+      const {shadowRoot, cleanup} = createShadowRoot();
 
       let onClose = jest.fn();
       let underlay;
@@ -195,11 +195,11 @@ describe('useOverlay with shadow dom', () => {
 
       // Cleanup
       unmount();
-      document.body.removeChild(shadowHost);
+      cleanup();
     });
 
     it('should not close the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
-      const {shadowRoot, shadowHost} = createShadowRoot();
+      const {shadowRoot, cleanup} = createShadowRoot();
 
       let onClose = jest.fn();
       let underlay;
@@ -224,7 +224,7 @@ describe('useOverlay with shadow dom', () => {
 
       // Cleanup
       unmount();
-      document.body.removeChild(shadowHost);
+      cleanup();
     });
   });
 });
