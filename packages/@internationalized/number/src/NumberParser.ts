@@ -19,7 +19,9 @@ interface Symbols {
   group?: string,
   literals: RegExp,
   numeral: RegExp,
-  index: (v: string) => string
+  numerals: string[],
+  index: (v: string) => string,
+  noNumeralUnits: Array<{unit: string, value: number}>
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
@@ -194,8 +196,30 @@ class NumberParserImpl {
   }
 
   sanitize(value: string) {
-    // Remove literals and whitespace, which are allowed anywhere in the string
-    value = value.replace(this.symbols.literals, '');
+    // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
+    // return the known value for that case.
+    if (this.symbols.noNumeralUnits.length > 0 && this.symbols.noNumeralUnits.find(obj => obj.unit === value)) {
+      return this.symbols.noNumeralUnits.find(obj => obj.unit === value)!.value.toString();
+    }
+    // Do our best to preserve the number and its possible group and decimal symbols, this includes the sign as well
+    let preservedInsideNumber = value.match(new RegExp(`([${this.symbols.numerals.join('')}].*[${this.symbols.numerals.join('')}])`));
+    if (preservedInsideNumber) {
+      // If we found a number, replace literals everywhere except inside the number
+      let beforeNumber = value.substring(0, preservedInsideNumber.index!);
+      let afterNumber = value.substring(preservedInsideNumber.index! + preservedInsideNumber[0].length);
+      let insideNumber = preservedInsideNumber[0];
+
+      // Replace literals in the parts outside the number
+      beforeNumber = beforeNumber.replace(this.symbols.literals, '');
+      afterNumber = afterNumber.replace(this.symbols.literals, '');
+
+      // Reconstruct the value with literals removed from outside the number
+      value = beforeNumber + insideNumber + afterNumber;
+    } else {
+      // If no number found, replace literals everywhere
+      value = value.replace(this.symbols.literals, '');
+    }
+
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
@@ -207,12 +231,17 @@ class NumberParserImpl {
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
       if (this.symbols.decimal) {
-        value = value.replace(',', this.symbols.decimal);
-        value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
+        value = replaceAll(value, ',', this.symbols.decimal);
+        value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
       }
       if (this.symbols.group) {
         value = replaceAll(value, '.', this.symbols.group);
       }
+    }
+
+    // Some locales, such as swiss when using currency, use a single quote as a group character
+    if (this.symbols.group && value.includes("'")) {
+      value = replaceAll(value, "'", this.symbols.group);
     }
 
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
@@ -220,6 +249,68 @@ class NumberParserImpl {
     if (this.options.locale === 'fr-FR' && this.symbols.group) {
       value = replaceAll(value, ' ', this.symbols.group);
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
+    }
+
+    // If there are multiple decimal separators and only one group separator, swap them
+    if (this.symbols.decimal
+      && this.symbols.group
+      && [...value.matchAll(new RegExp(escapeRegex(this.symbols.decimal), 'g'))].length > 1
+      && [...value.matchAll(new RegExp(escapeRegex(this.symbols.group), 'g'))].length <= 1) {
+      value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
+    }
+
+    // If the decimal separator is before the group separator, swap them
+    let decimalIndex = value.indexOf(this.symbols.decimal!);
+    let groupIndex = value.indexOf(this.symbols.group!);
+    if (this.symbols.decimal && this.symbols.group && decimalIndex > -1 && groupIndex > -1 && decimalIndex < groupIndex) {
+      value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
+    }
+
+    // in the value, for any non-digits and not the plus/minus sign,
+    // if there is only one of that character and its index in the string is 0 or it's only preceeded by this numbering system's "0" character,
+    // then we could try to guess that it's a decimal character and replace it, but it's too ambiguous, a user may be deleting 1,024 -> ,024 and
+    // we don't want to change 24 into .024
+    let temp = value;
+    if (this.symbols.minusSign) {
+      temp = replaceAll(temp, this.symbols.minusSign, '');
+      temp = replaceAll(temp, '\u2212', '');
+    }
+    if (this.symbols.plusSign) {
+      temp = replaceAll(temp, this.symbols.plusSign, '');
+    }
+    temp = replaceAll(temp, new RegExp(`^${escapeRegex(this.symbols.numerals[0])}+`, 'g'), '');
+    let nonDigits = new Set(replaceAll(temp, this.symbols.numeral, '').split(''));
+
+    // This is to fuzzy match group and decimal symbols from a different formatting, we can only do it if there are 2 non-digits, otherwise it's too ambiguous
+    let areOnlyGroupAndDecimalSymbols = [...nonDigits].every(char => allPossibleGroupAndDecimalSymbols.has(char));
+    let oneSymbolNotMatching = (
+      nonDigits.size === 2
+      && this.symbols.group
+      && this.symbols.decimal
+      && (!nonDigits.has(this.symbols.group!) || !nonDigits.has(this.symbols.decimal!))
+    );
+    let bothSymbolsNotMatching = (
+      nonDigits.size === 2
+      && this.symbols.group
+      && this.symbols.decimal
+      && !nonDigits.has(this.symbols.group!) && !nonDigits.has(this.symbols.decimal!)
+    );
+    if (areOnlyGroupAndDecimalSymbols && (oneSymbolNotMatching || bothSymbolsNotMatching)) {
+      // Try to determine which of the nonDigits is the group and which is the decimal
+      // Whichever of the nonDigits is first in the string is the group.
+      // If there are more than one of a nonDigit, then that one is the group.
+      let [firstChar, secondChar] = [...nonDigits];
+      if (value.indexOf(firstChar) < value.indexOf(secondChar)) {
+        value = replaceAll(value, firstChar, '__GROUP__');
+        value = replaceAll(value, secondChar, '__DECIMAL__');
+        value = replaceAll(value, '__GROUP__', this.symbols.group!);
+        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
+      } else {
+        value = replaceAll(value, secondChar, '__GROUP__');
+        value = replaceAll(value, firstChar, '__DECIMAL__');
+        value = replaceAll(value, '__GROUP__', this.symbols.group!);
+        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
+      }
     }
 
     return value;
@@ -233,11 +324,6 @@ class NumberParserImpl {
       value = value.slice(this.symbols.minusSign.length);
     } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
-    }
-
-    // Numbers cannot start with a group separator
-    if (this.symbols.group && value.startsWith(this.symbols.group)) {
-      return false;
     }
 
     // Numbers that can't have any decimal values fail if a decimal character is typed
@@ -261,6 +347,9 @@ class NumberParserImpl {
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
 
+// This list is a best guess at the moment
+const allPossibleGroupAndDecimalSymbols = new Set(['.', ',', ' ', String.fromCharCode(1548), '\u00A0', "'"]);
+
 // This list is derived from https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html#comparison and includes
 // all unique numbers which we need to check in order to determine all the plural forms for a given locale.
 // See: https://github.com/adobe/react-spectrum/pull/5134/files#r1337037855 for used script
@@ -282,6 +371,14 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let allParts = symbolFormatter.formatToParts(-10000.111);
   let posAllParts = symbolFormatter.formatToParts(10000.111);
   let pluralParts = pluralNumbers.map(n => symbolFormatter.formatToParts(n));
+  // if the plural parts include a unit but no integer or fraction, then we need to add the unit to the special set
+  let noNumeralUnits = pluralParts.map((p, i) => {
+    let unit = p.find(p => p.type === 'unit');
+    if (unit && !p.some(p => p.type === 'integer' || p.type === 'fraction')) {
+      return {unit: unit.value, value: pluralNumbers[i]};
+    }
+    return null;
+  }).filter(p => !!p);
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
@@ -305,9 +402,10 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let pluralPartsLiterals = pluralParts.flatMap(p => p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value)));
   let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort((a, b) => b.length - a.length);
 
+  // Match both whitespace and formatting characters
   let literals = sortedLiterals.length === 0 ?
-      new RegExp('[\\p{White_Space}]', 'gu') :
-      new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
+      new RegExp('\\p{White_Space}|\\p{Cf}', 'gu') :
+      new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();
@@ -315,7 +413,15 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));
 
-  return {minusSign, plusSign, decimal, group, literals, numeral, index};
+  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index, noNumeralUnits};
+}
+
+function swapCharacters(str: string, char1: string, char2: string) {
+  const tempChar = '_TEMP_';
+  let result = str.replaceAll(char1, tempChar);
+  result = result.replaceAll(char2, char1);
+  result = result.replaceAll(tempChar, char2);
+  return result;
 }
 
 function replaceAll(str: string, find: string | RegExp, replace: string) {
