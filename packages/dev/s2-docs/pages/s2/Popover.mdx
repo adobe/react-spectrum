@@ -1,0 +1,176 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Popover, DialogTrigger, ActionButton, Button, Text, Menu, MenuItem} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Popover
+
+<PageDescription>{docs.exports.Popover.description}</PageDescription>
+
+{/* TODO: Example */}
+
+## Content
+
+Popovers are overlay elements positioned relative to a trigger. They are commonly used with DialogTrigger to create dropdowns, menus, and other contextual interfaces.
+
+### Basic example
+
+```tsx render expanded
+"use client";
+import {Popover, DialogTrigger, ActionButton, Menu, MenuItem} from '@react-spectrum/s2';
+import More from '@react-spectrum/s2/icons/More';
+
+<DialogTrigger>
+  <ActionButton aria-label="More actions">
+    <More />
+  </ActionButton>
+  <Popover>
+    <Menu onAction={(key) => alert(`Selected: ${key}`)}>
+      <MenuItem id="edit">Edit</MenuItem>
+      <MenuItem id="duplicate">Duplicate</MenuItem>
+      <MenuItem id="delete">Delete</MenuItem>
+    </Menu>
+  </Popover>
+</DialogTrigger>
+```
+
+### Advanced example
+
+Popovers can also contain more multiple interactive components or form fields.
+
+```tsx render expanded
+"use client";
+import {Popover, DialogTrigger, ActionButton, SearchField, Menu, MenuItem, MenuSection, SubmenuTrigger, Avatar, Switch, Divider, Text} from '@react-spectrum/s2';
+import {Autocomplete} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useFilter} from '@react-aria/i18n';
+import Buildings from '@react-spectrum/s2/icons/Buildings';
+import Settings from '@react-spectrum/s2/icons/Settings';
+
+<DialogTrigger>
+  <ActionButton aria-label="Settings">
+    <Settings />
+  </ActionButton>
+  <Popover hideArrow placement="bottom end">
+    <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
+      <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
+        <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
+        <div>
+          <div className={style({font: 'title'})}>Devon Govett</div>
+          <div className={style({font: 'ui'})}>user@example.com</div>
+          <Switch styles={style({marginTop: 4})}>Dark theme</Switch>
+        </div>
+      </div>
+      <Divider styles={style({marginX: 12})} />
+      <Menu aria-label="Account">
+        <MenuSection>
+          <SubmenuTrigger>
+            <MenuItem>
+              <Buildings />
+              <Text slot="label">Organization</Text>
+              <Text slot="value">Nike</Text>
+            </MenuItem>
+            <Menu selectionMode="single" selectedKeys={['nike']}>
+              <MenuItem id="adobe">Adobe</MenuItem>
+              <MenuItem id="nike">Nike</MenuItem>
+              <MenuItem id="apple">Apple</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+          <MenuItem>
+            <Settings />
+            <Text slot="label">Settings</Text>
+          </MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <MenuItem>Legal notices</MenuItem>
+          <MenuItem>Sign out</MenuItem>
+        </MenuSection>
+      </Menu>
+    </div>
+  </Popover>
+</DialogTrigger>
+```
+
+## Advanced usage
+
+### Controlled state
+
+Popovers can be controlled using the DialogTrigger's state management.
+
+```tsx render expanded
+"use client";
+import {Popover, DialogTrigger, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [isOpen, setOpen] = useState(false);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+      <div style={{display: 'flex', gap: '12px'}}>
+        <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
+          <Button>Toggle popover</Button>
+          <Popover>
+            <div style={{padding: '16px'}}>
+              <p style={{margin: '0 0 12px 0'}}>Controlled popover content</p>
+              <Button onPress={() => setOpen(false)}>Close</Button>
+            </div>
+          </Popover>
+        </DialogTrigger>
+      </div>
+      <div>Popover is {isOpen ? 'open' : 'closed'}</div>
+    </div>
+  );
+}
+
+<Example />
+```
+
+### Custom trigger
+
+Popovers can be positioned relative to any element using `triggerRef`.
+
+```tsx render expanded
+"use client";
+import {Popover, Button} from '@react-spectrum/s2';
+import {useState, useRef} from 'react';
+
+function Example() {
+  let [isOpen, setOpen] = useState(false);
+  let triggerRef = useRef(null);
+
+  return (
+    <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+      <Button onPress={() => setOpen(!isOpen)}>
+        Open popover
+      </Button>
+      <div 
+        ref={triggerRef}
+        style={{
+          padding: '8px', 
+          backgroundColor: '#f0f0f0', 
+          borderRadius: '4px',
+          fontSize: '14px'
+        }}>
+        Popover appears here
+      </div>
+      <Popover 
+        isOpen={isOpen} 
+        onOpenChange={setOpen} 
+        triggerRef={triggerRef}>
+        <div style={{padding: '12px'}}>
+          Popover with custom trigger reference
+        </div>
+      </Popover>
+    </div>
+  );
+}
+
+<Example />
+```
+
+
+## Props
+
+<PropTable component={docs.exports.Popover} links={docs.links} />
