@@ -17,12 +17,12 @@ import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-export function StateTable({properties, showOptional}) {
+export function StateTable({properties, showOptional, hideSelector}) {
   let props = Object.values(properties);
   if (!showOptional) {
     props = props.filter(prop => !prop.optional);
   }
-  let showSelector = props.some(prop => prop.selector);
+  let showSelector = !hideSelector && props.some(prop => prop.selector);
 
   return (
     <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>

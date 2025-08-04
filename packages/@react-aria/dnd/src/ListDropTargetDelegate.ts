@@ -33,7 +33,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   private ref: RefObject<HTMLElement | null>;
   private layout: 'stack' | 'grid';
   private orientation: Orientation;
-  private direction: Direction;
+  protected direction: Direction;
 
   constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
     this.collection = collection;
@@ -87,7 +87,8 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     let isSecondaryRTL = this.layout === 'grid' && this.orientation === 'vertical' && this.direction === 'rtl';
     let isFlowRTL = this.layout === 'stack' ? isPrimaryRTL : isSecondaryRTL;
 
-    let elements = this.ref.current.querySelectorAll('[data-key]');
+    let collection = this.ref.current?.dataset.collection;
+    let elements = this.ref.current.querySelectorAll(collection ? `[data-collection="${CSS.escape(collection)}"]` : '[data-key]');
     let elementMap = new Map<string, HTMLElement>();
     for (let item of elements) {
       if (item instanceof HTMLElement && item.dataset.key != null) {

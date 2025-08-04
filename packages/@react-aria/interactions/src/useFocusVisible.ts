@@ -41,7 +41,7 @@ let changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
 }
-export let hasSetupGlobalListeners = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
+export let hasSetupGlobalListeners: Map<Window, GlobalListenerData> = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -93,7 +93,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document || ignoreFocusEvent) {
+  if (e.target === window || e.target === document || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 
@@ -123,7 +123,7 @@ function handleWindowBlur() {
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
 function setupGlobalFocusEvents(element?: HTMLElement | null) {
-  if (typeof window === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
     return;
   }
 
@@ -153,7 +153,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     documentObject.addEventListener('pointerdown', handlePointerEvent, true);
     documentObject.addEventListener('pointermove', handlePointerEvent, true);
     documentObject.addEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.addEventListener('mousedown', handlePointerEvent, true);
     documentObject.addEventListener('mousemove', handlePointerEvent, true);
     documentObject.addEventListener('mouseup', handlePointerEvent, true);
@@ -189,7 +189,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
     documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
     documentObject.removeEventListener('pointermove', handlePointerEvent, true);
     documentObject.removeEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.removeEventListener('mousedown', handlePointerEvent, true);
     documentObject.removeEventListener('mousemove', handlePointerEvent, true);
     documentObject.removeEventListener('mouseup', handlePointerEvent, true);
@@ -247,7 +247,7 @@ export function getInteractionModality(): Modality | null {
   return currentModality;
 }
 
-export function setInteractionModality(modality: Modality) {
+export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
   triggerChangeHandlers(modality, null);
 }

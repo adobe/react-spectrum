@@ -50,7 +50,7 @@ interface DragHooks {
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
-  renderDragPreview?: (items: DragItem[]) => JSX.Element,
+  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
   isVirtualDragging?: () => boolean
 }
 
@@ -81,7 +81,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
    */
-  renderDragPreview?: (items: DragItem[]) => JSX.Element,
+  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
   /**
    * A function that renders a drop indicator element between two items in a collection.
    * This should render a `<DropIndicator>` element. If this function is not provided, a
@@ -104,6 +104,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       onInsert,
       onItemDrop,
       onReorder,
+      onMove,
       onRootDrop,
       getItems,
       renderDragPreview,
@@ -112,7 +113,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
     } = options;
 
     let isDraggable = !!getItems;
-    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
+    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onMove || onRootDrop);
 
     let hooks = {} as DragAndDropHooks;
     if (isDraggable) {

@@ -83,6 +83,21 @@ describe('Calendar', () => {
     }
   });
 
+  it('should support aria props on the Calendar', () => {
+    let {getByRole} = renderCalendar({      
+      'aria-label': 'label',
+      'aria-labelledby': 'labelledby',
+      'aria-describedby': 'describedby',
+      'aria-details': 'details'
+    });
+
+    let group = getByRole('application');
+    expect(group).toHaveAttribute('aria-label', expect.stringContaining('label'));
+    expect(group).toHaveAttribute('aria-labelledby', expect.stringContaining('labelledby'));
+    expect(group).toHaveAttribute('aria-describedby', 'describedby');
+    expect(group).toHaveAttribute('aria-details', 'details');    
+  });
+
   it('should support custom CalendarGridHeader', () => {
     let {getByRole} = render(
       <Calendar aria-label="Appointment date">

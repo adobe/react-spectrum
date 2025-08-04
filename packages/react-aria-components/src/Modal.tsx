@@ -12,13 +12,13 @@
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DOMAttributes, forwardRefType, RefObject} from '@react-types/shared';
+import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * Whether the modal is currently performing an entry animation.
    */
@@ -30,6 +30,7 @@ export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTrigger
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   UNSTABLE_portalContainer?: Element
 }
@@ -68,6 +69,12 @@ export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal
   let ctx = useContext(InternalModalContext);
 
   if (ctx) {
+    if (process.env.NODE_ENV !== 'production' && (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)) {
+      // create a list of props that are passed in but not allowed when using an external ModalOverlay
+      const invalidSet = new Set(['isDismissable', 'isKeyboardDismissDisabled', 'isOpen', 'defaultOpen', 'onOpenChange', 'isEntering', 'isExiting', 'UNSTABLE_portalContainer', 'shouldCloseOnInteractOutside']);
+      const invalidProps = Object.keys(props).filter(key => invalidSet.has(key));
+      console.warn(`This modal is already wrapped in a ModalOverlay, props [${invalidProps.join(', ')}] should be placed on the ModalOverlay instead.`);
+    }
     return <ModalContent {...props} modalRef={ref}>{props.children}</ModalContent>;
   }
 
@@ -115,6 +122,11 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  if (state === contextState) {
+    if (process.env.NODE_ENV !== 'production' && (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)) {
+      console.warn('This modals state is controlled by a trigger, place onOpenChange on the trigger instead.');
+    }
+  }
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
@@ -167,7 +179,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <div
-        {...mergeProps(filterDOMProps(props as any), underlayProps)}
+        {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
         style={style}
         ref={props.overlayRef}
@@ -185,7 +197,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   );
 }
 
-interface ModalContentProps extends RenderProps<ModalRenderProps> {
+interface ModalContentProps extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   modalRef: ForwardedRef<HTMLDivElement>
 }
 
@@ -208,7 +220,7 @@ function ModalContent(props: ModalContentProps) {
 
   return (
     <div
-      {...mergeProps(filterDOMProps(props as any), modalProps)}
+      {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
       data-entering={entering || undefined}

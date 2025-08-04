@@ -59,6 +59,7 @@ export class TableViewLayout<T> extends TableLayout<T> {
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = layoutInfo.key;
       empty.isSticky = true;
+      empty.allowOverflow = true;
       let node = {
         layoutInfo: empty,
         validRect: empty.rect
@@ -89,8 +90,8 @@ export class TableViewLayout<T> extends TableLayout<T> {
     return super.getEstimatedRowHeight() + 1; // for bottom border
   }
 
-  protected isStickyColumn(node: GridNode<T>) {
-    return node.props?.isDragButtonCell || node.props?.isSelectionCell;
+  protected isStickyColumn(node: GridNode<T>): boolean {
+    return (node.props?.isDragButtonCell || node.props?.isSelectionCell) ?? false;
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {

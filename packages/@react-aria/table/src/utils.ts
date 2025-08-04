@@ -13,7 +13,7 @@
 import {Key} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 
-export const gridIds = new WeakMap<TableState<unknown>, string>();
+export const gridIds: WeakMap<TableState<unknown>, string> = new WeakMap<TableState<unknown>, string>();
 
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
@@ -32,7 +32,7 @@ export function getColumnHeaderId<T>(state: TableState<T>, columnKey: Key): stri
   return `${gridId}-${normalizeKey(columnKey)}`;
 }
 
-export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key) {
+export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key): string {
   let gridId = gridIds.get(state);
   if (!gridId) {
     throw new Error('Unknown grid');

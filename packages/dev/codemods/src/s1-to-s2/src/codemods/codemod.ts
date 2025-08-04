@@ -1,13 +1,11 @@
 /* eslint-disable max-depth */
-import {addComment} from './utils';
+import {addComment} from './shared/utils';
 import {API, FileInfo} from 'jscodeshift';
-import {changes as changesJSON} from './changes';
-import {functionMap} from './transforms';
 import {getComponents} from '../getComponents';
-import {iconMap} from '../iconMap';
+import {iconMap} from './icons/iconMap';
 import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
-import {transformStyleProps} from './styleProps';
+import transformStyleProps from './shared/styleProps';
 import traverse, {Binding, NodePath} from '@babel/traverse';
 
 // Determine list of available components in S2 from index.ts
@@ -35,7 +33,7 @@ interface Options {
   components?: string
 }
 
-export default function transformer(file: FileInfo, api: API, options: Options) {
+export default function transformer(file: FileInfo, api: API, options: Options):string {
   let j = api.jscodeshift.withParser({
     parse(source: string) {
       return recastParse(source, {
@@ -192,20 +190,18 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
       addComment(path.node, ' TODO(S2-upgrade): Could not transform style prop automatically: ' + error);
     }
 
-    const componentInfo = changesJSON[elementName];
-    if (!componentInfo) {
-      return;
-    }
-    const {changes} = componentInfo;
-
-    changes.forEach((change) => {
-      const {function: functionInfo} = change;
-      let {name: functionName, args: functionArgs} = functionInfo;
-      // Call the respective transformation function
-      if (functionMap[functionName]) {
-        functionMap[functionName](path, functionArgs as any);
+    // Try to find a specific transform
+    try {
+      // Dynamically import the transform based on elementName
+      const transformPath = `./components/${elementName}/transform`;
+      // Use require for dynamic import in CommonJS context
+      const componentTransform = require(transformPath);
+      if (componentTransform && typeof componentTransform.default === 'function') {
+        componentTransform.default(path);
       }
-    });
+    } catch {
+      // Do nothing if the transform doesn't exist
+    }
   });
 
   if (hasMacros) {

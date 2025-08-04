@@ -20,19 +20,19 @@ import {
   InputContext,
   useSlottedContext
 } from 'react-aria-components';
-import {centerPadding, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {mergeRefs} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the text field.
    *
@@ -41,7 +41,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const TextFieldContext = createContext<ContextValue<TextFieldProps, TextFieldRef>>(null);
+export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
@@ -61,7 +61,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
-export const TextAreaContext = createContext<ContextValue<TextAreaProps, TextFieldRef<HTMLTextAreaElement>>>(null);
+export const TextAreaContext = createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
@@ -135,8 +135,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        {/* TODO: set GroupContext in RAC TextField */}
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} styles={fieldGroupCss}>
+        <FieldGroup size={props.size} styles={fieldGroupCss}>
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
@@ -191,14 +190,14 @@ function TextAreaInput() {
       className={style({
         paddingX: 0,
         paddingY: centerPadding(),
-        minHeight: 'control',
+        minHeight: controlSize(),
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
-        color: '[inherit]',
-        fontFamily: '[inherit]',
-        fontSize: '[inherit]',
-        fontWeight: '[inherit]',
-        lineHeight: '[inherit]',
+        color: 'inherit',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        fontWeight: 'inherit',
+        lineHeight: 'inherit',
         flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',

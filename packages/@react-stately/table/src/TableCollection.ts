@@ -50,8 +50,9 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
       // than the previous column, than we need to shift the parent
       // in the previous column so it's level with the current column.
       if (seen.has(parent)) {
-        parent.colspan ??= 0;
-        parent.colspan++;
+        parent.colSpan ??= 0;
+        parent.colSpan++;
+        parent.colspan = parent.colSpan;
 
         let {column, index} = seen.get(parent);
         if (index > col.length) {
@@ -70,6 +71,7 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
           }
         }
       } else {
+        parent.colSpan = 1;
         parent.colspan = 1;
         col.push(parent);
         seen.set(parent, {column: col, index: col.length - 1});
@@ -93,12 +95,13 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
       if (item) {
         // Fill the space up until the current column with a placeholder
         let row = headerRows[i];
-        let rowLength = row.reduce((p, c) => p + (c.colspan ?? 1), 0);
+        let rowLength = row.reduce((p, c) => p + (c.colSpan ?? 1), 0);
         if (rowLength < colIndex) {
           let placeholder: GridNode<T> = {
             type: 'placeholder',
             key: 'placeholder-' + item.key,
             colspan: colIndex - rowLength,
+            colSpan: colIndex - rowLength,
             index: rowLength,
             value: null,
             rendered: null,
@@ -136,11 +139,12 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
   // Add placeholders at the end of each row that is shorter than the maximum
   let i = 0;
   for (let row of headerRows) {
-    let rowLength = row.reduce((p, c) => p + (c.colspan ?? 1), 0);
+    let rowLength = row.reduce((p, c) => p + (c.colSpan ?? 1), 0);
     if (rowLength < columnNodes.length) {
       let placeholder: GridNode<T> = {
         type: 'placeholder',
         key: 'placeholder-' + row[row.length - 1].key,
+        colSpan: columnNodes.length - rowLength,
         colspan: columnNodes.length - rowLength,
         index: rowLength,
         value: null,
@@ -282,41 +286,41 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     }
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): IterableIterator<GridNode<T>> {
     yield* this.body.childNodes;
   }
 
-  get size() {
+  get size(): number {
     return this._size;
   }
 
-  getKeys() {
+  getKeys(): IterableIterator<Key> {
     return this.keyMap.keys();
   }
 
-  getKeyBefore(key: Key) {
+  getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
     return node?.prevKey ?? null;
   }
 
-  getKeyAfter(key: Key) {
+  getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
     return node?.nextKey ?? null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return getFirstItem(this.body.childNodes)?.key ?? null;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     return getLastItem(this.body.childNodes)?.key ?? null;
   }
 
-  getItem(key: Key) {
+  getItem(key: Key): GridNode<T> | null {
     return this.keyMap.get(key) ?? null;
   }
 
-  at(idx: number) {
+  at(idx: number): GridNode<T> | null {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }

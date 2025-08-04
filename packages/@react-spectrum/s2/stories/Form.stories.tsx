@@ -23,6 +23,7 @@ import {
   ContextualHelp,
   Divider,
   Form,
+  FormProps,
   Heading,
   Meter,
   NumberField,
@@ -42,11 +43,11 @@ import {
   ToggleButton
 } from '../src';
 import {categorizeArgTypes} from './utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
-import {useState} from 'react';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -61,61 +62,71 @@ const meta: Meta<typeof Form> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Form>;
 
-export const Example = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <CheckboxGroup label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <TextField label="City" name="city" description="A long description to test help text wrapping." />
-    <TextField label="A long label to test wrapping behavior" name="long" />
-    <SearchField label="Search" name="search" />
-    <TextArea label="Comment" name="comment" />
-    <Switch>Wi-Fi</Switch>
-    <Checkbox>I agree to the terms</Checkbox>
-    <Slider label="Cookies"  defaultValue={30} />
-    <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
-    <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
-  </Form>
-);
+export const Example: Story = {
+  render: (args) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" />
+      <TextField label="Last Name" name="firstName" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <Picker label="Country" name="country">
+        <PickerItem id="canada">Canada</PickerItem>
+        <PickerItem id="united-states">United States</PickerItem>
+        <PickerItem id="mexico">Mexico</PickerItem>
+        <PickerItem id="argentina">Argentina</PickerItem>
+      </Picker>
+      <CheckboxGroup label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <TextField label="City" name="city" description="A long description to test help text wrapping." />
+      <TextField label="A long label to test wrapping behavior" name="long" />
+      <SearchField label="Search" name="search" />
+      <TextArea label="Comment" name="comment" />
+      <Switch>Wi-Fi</Switch>
+      <Checkbox>I agree to the terms</Checkbox>
+      <Slider label="Cookies"  defaultValue={30} />
+      <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
+      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    </Form>
+  )
+};
 
-export const MixedForm = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <CheckboxGroup aria-label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup aria-label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <SearchField label="Search" name="search" />
-  </Form>
-);
-
-MixedForm.parameters = {
-  docs: {
-    disable: true
+export const MixedForm: Story = {
+  render: (args) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" />
+      <TextField label="Last Name" name="firstName" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <CheckboxGroup aria-label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup aria-label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <SearchField label="Search" name="search" />
+    </Form>
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
 
-export const CustomLabelsExample = (args: any) => {
+const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
@@ -208,8 +219,11 @@ export const CustomLabelsExample = (args: any) => {
   );
 };
 
-CustomLabelsExample.parameters = {
-  docs: {
-    disable: true
+export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
+  render: (args) => <CustomLabelsExampleRender {...args} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

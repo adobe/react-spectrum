@@ -18,7 +18,7 @@ import {Key, useDateFormatter} from 'react-aria';
 import {Label} from 'tailwind-starter/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
 import {Popover} from 'tailwind-starter/Popover';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {SelectItem} from 'tailwind-starter/Select';
 
 interface Point {
@@ -59,14 +59,14 @@ const doubleTapKeyframes: PropertyIndexedKeyframes = {
   easing: 'ease-in-out'
 };
 
-export function A11y() {
+export function A11y(): ReactNode {
   let ref = useRef<HTMLDivElement>(null);
   let fingerRef = useRef<HTMLDivElement>(null);
   let [cursorRect, setCursorRect] = useState<Rect | null>(null);
   let [fingerPos, setFingerPos] = useState<Point | null>(null);
   let [isOpen, setOpen] = useState(false);
   let [caption, setCaption] = useState('');
-  let [selectedKey, setSelectedKey] = useState<Key>('read');
+  let [selectedKey, setSelectedKey] = useState<Key | null>('read');
   useIntersectionObserver(ref, useCallback(() => {
     let button: HTMLButtonElement | null = null;
     let listbox: HTMLElement | null = null;

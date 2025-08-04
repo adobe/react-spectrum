@@ -16,13 +16,14 @@ import {
   ContextValue,
   SliderOutput,
   SliderThumb,
+  SliderThumbRenderProps,
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
+import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
-import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
@@ -31,7 +32,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
+export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation' | keyof GlobalDOMAttributes>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
   /**
    * The size of the Slider.
@@ -66,10 +67,10 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
   fillOffset?: number
 }
 
-export const SliderContext = createContext<ContextValue<SliderProps, FocusableRefValue<HTMLDivElement>>>(null);
+export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
-  font: 'control',
+  font: controlFont(),
   alignItems: {
     labelPosition: {
       side: 'center'
@@ -172,7 +173,7 @@ export let thumbContainer = style({
   },
   display: 'inline-block',
   position: 'absolute',
-  top: '[50%]'
+  top: '50%'
 });
 
 // if precision thumb should have a smaller hit area, then remove this
@@ -199,13 +200,13 @@ export let thumbHitArea = style({
   }
 });
 
-export let thumb = style({
+export let thumb = style<SliderThumbRenderProps & {size: 'S' | 'M' | 'L' | 'XL', thumbStyle: 'default' | 'precise'}>({
   ...focusRing(),
   display: 'inline-block',
   boxSizing: 'border-box',
   position: 'absolute',
-  top: '[50%]',
-  left: '[50%]',
+  top: '50%',
+  left: '50%',
   transform: 'translateY(-50%) translateX(-50%)',
   width: {
     thumbStyle: {
@@ -262,7 +263,7 @@ const trackStyling = {
       thick: 16
     }
   },
-  top: '[50%]',
+  top: '50%',
   borderRadius: {
     trackStyle: {
       thin: 'lg',
@@ -271,14 +272,14 @@ const trackStyling = {
   }
 } as const;
 
-export let upperTrack = style({
+export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick'}>({
   ...trackStyling,
   position: 'absolute',
   backgroundColor: {
     default: 'gray-300',
     isDisabled: 'disabled'
   },
-  translateY: '[-50%]',
+  translateY: '-50%',
   width: 'full',
   boxSizing: 'border-box',
   borderStyle: 'solid',
@@ -292,7 +293,7 @@ export let upperTrack = style({
   }
 });
 
-export let filledTrack = style({
+export let filledTrack = style<{isDisabled?: boolean, isEmphasized?: boolean, trackStyle: 'thin' | 'thick'}>({
   ...trackStyling,
   position: 'absolute',
   backgroundColor: {
@@ -314,10 +315,10 @@ export let filledTrack = style({
       isDisabled: 'GrayText'
     }
   },
-  translateY: '[-50%]'
+  translateY: '-50%'
 });
 
-export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}) {
+export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}): ReactNode {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
@@ -389,6 +390,9 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
 export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
@@ -425,7 +429,7 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
             <>
               <div className={upperTrack({isDisabled, trackStyle})} />
               <div style={{width: `${Math.abs(fillWidth) * 100}%`, [cssDirection]: `${offset * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
-              <SliderThumb  className={thumbContainer} index={0} name={props.name} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
+              <SliderThumb  className={thumbContainer} index={0} name={props.name} form={props.form} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>
                     <div

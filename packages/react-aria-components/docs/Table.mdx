@@ -93,6 +93,7 @@ import {MyCheckbox} from './Checkbox';
 ```css hidden
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
+@import './CheckboxGroup.mdx' layer(checkboxgroup);
 @import './Checkbox.mdx' layer(checkbox);
 @import './Popover.mdx' layer(popover);
 @import './Menu.mdx' layer(menu);
@@ -234,6 +235,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 * **Async loading** – Support for loading and sorting items asynchronously.
 * **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Drag and drop** – Tables support drag and drop to reorder, insert, or update rows via mouse, touch, keyboard, and screen reader interactions.
+* **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large tables by rendering only the visible rows.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -344,18 +346,19 @@ The following example includes a custom Column component with a sort indicator. 
 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
+import {ArrowUp, ArrowDown} from 'lucide-react';
 
-function MyColumn(props: ColumnProps) {
+export function MyColumn(props: Omit<ColumnProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Column {...props}>
-      {({allowsSorting, sortDirection}) => <>
+      {({allowsSorting, sortDirection}) => <div className="column-header">
         {props.children}
         {allowsSorting && (
           <span aria-hidden="true" className="sort-indicator">
-            {sortDirection === 'ascending' ? '▲' : '▼'}
+            {sortDirection === 'ascending' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
           </span>
         )}
-      </>}
+      </div>}
     </Column>
   );
 }
@@ -367,7 +370,7 @@ The TableHeader and Row components can also be wrapped to automatically include 
 import type {TableHeaderProps, RowProps} from 'react-aria-components';
 import {Collection, useTableOptions} from 'react-aria-components';
 
-function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
+export function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
@@ -382,12 +385,12 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
   );
 }
 
-function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
     <Row id={id} {...otherProps}>
-      {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
+      {allowsDragging && <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>}
       {selectionBehavior === 'toggle' && <Cell><MyCheckbox slot="selection" /></Cell>}
       <Collection items={columns}>
         {children}
@@ -430,44 +433,74 @@ Now we can render a table with a default selection column built in.
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
-In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
-only the rows dynamic.
+In the example below, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns
+and add additional rows. You can also make the columns static and only the rows dynamic.
+
+**Note**: Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example). See the [collections](collections.html#dependencies) guide for more details.
 
 ```tsx example export=true
 import type {TableProps} from 'react-aria-components';
+import {MyCheckboxGroup} from './CheckboxGroup';
+import {MyCheckbox} from './Checkbox';
 
 function FileTable(props: TableProps) {
+  let [showColumns, setShowColumns] = React.useState(['name', 'type', 'date']);
   let columns = [
     {name: 'Name', id: 'name', isRowHeader: true},
     {name: 'Type', id: 'type'},
     {name: 'Date Modified', id: 'date'}
-  ];
+  ].filter(column => showColumns.includes(column.id));
 
-  let rows = [
+  let [rows, setRows] = React.useState([
     {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
     {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
     {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
     {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
+  ]);
+
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
 
   return (
-    <Table aria-label="Files" {...props}>
-      <MyTableHeader columns={columns}>
-        {column => (
-          <Column isRowHeader={column.isRowHeader}>
-            {column.name}
-          </Column>
-        )}
-      </MyTableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <MyRow columns={columns}>
-            {column => <Cell>{item[column.id]}</Cell>}
-          </MyRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="flex-col">
+      <MyCheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} style={{flexDirection: 'row'}}>
+        <MyCheckbox value="type">Type</MyCheckbox>
+        <MyCheckbox value="date">Date Modified</MyCheckbox>
+      </MyCheckboxGroup>
+      <Table aria-label="Files" {...props}>
+        <MyTableHeader columns={columns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows} dependencies={[columns]}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+      <Button onPress={addRow}>Add row</Button>
+    </div>
   );
+}
+```
+
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8;
+  align-items: start;
 }
 ```
 
@@ -765,6 +798,130 @@ This accepts a list of row ids that are disabled. A row is considered disabled i
 <PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
 
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<TableLoadMoreItem>` element at the end of the table.
+
+```tsx example
+import {Collection, TableLoadMoreItem} from 'react-aria-components';
+import {useAsyncList} from '@react-stately/data';
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+function AsyncSortTable() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ResizableTableContainer className="my-async-table">
+      <Table
+        aria-label="Example table with async loading">
+        <TableHeader>
+          <MyColumn id="name" isRowHeader width={100}>Name</MyColumn>
+          <MyColumn id="height" width={100}>Height</MyColumn>
+          <MyColumn id="mass" width={100}>Mass</MyColumn>
+          <MyColumn id="birth_year" width={100}>Birth Year</MyColumn>
+        </TableHeader>
+        <TableBody>
+          {/*- begin highlight -*/}
+          <Collection items={list.items}>
+            {item => (
+              <Row id={item.name}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </Collection>
+          <TableLoadMoreItem
+            onLoadMore={list.loadMore}
+            isLoading={list.loadingState === 'loadingMore'}>
+            <MyProgressCircle isIndeterminate aria-label="Loading more..." />
+          </TableLoadMoreItem>
+          {/*- end highlight -*/}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-async-table {
+  height: 150px;
+  width: fit-content;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-color);
+
+  .react-aria-Table {
+    border: none;
+  }
+
+  .react-aria-TableHeader {
+    position: sticky;
+    top: 0;
+    background: var(--overlay-background);
+    z-index: 1;
+  }
+
+  .react-aria-TableLoadingIndicator {
+    height: 24px;
+    position: relative;
+  }
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="100%" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
+
 ## Sorting
 
 Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
@@ -843,8 +1000,16 @@ function AsyncSortTable() {
 
 ```css
 .react-aria-Column {
+  .column-header {
+    display: flex;
+    align-items: center;
+  }
+
   .sort-indicator {
     padding: 0 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &:not([data-sort-direction]) .sort-indicator {
@@ -1141,7 +1306,7 @@ function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps
           </MenuTrigger>
           {allowsSorting && (
             <span aria-hidden="true" className="sort-indicator">
-              {sortDirection === 'ascending' ? '▲' : '▼'}
+              {sortDirection === 'ascending' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
             </span>
           )}
           <ColumnResizer />
@@ -1226,6 +1391,7 @@ This uses [useListData](../react-stately/useListData.html) from React Stately to
 ```tsx example
 import {useListData} from 'react-stately';
 import {useDragAndDrop, Button} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 function Example() {
   let list = useListData({
@@ -1271,7 +1437,7 @@ function Example() {
         {item => (
           <Row>
             {/*- begin highlight -*/}
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             {/*- end highlight -*/}
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
@@ -1298,7 +1464,11 @@ function Example() {
   [slot=drag] {
     all: unset;
     width: 15px;
+    height: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &[data-focus-visible] {
       border-radius: 4px;
@@ -1377,7 +1547,7 @@ function Example() {
       <TableBody items={list.items}>
         {item => (
           <Row>
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
@@ -2210,7 +2380,7 @@ function DndTable(props: DndTableProps) {
       <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
         {item => (
           <Row>
-            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><Button slot="drag"><GripVertical size={18} /></Button></Cell>
             <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.id}</Cell>
             <Cell>{item.name}</Cell>
@@ -2281,6 +2451,17 @@ function DndTable(props: DndTableProps) {
 ### ColumnResizer
 
 <PropTable component={docs.exports.ColumnResizer} links={docs.links} />
+
+### TableLoadMoreItem
+
+A `<TableLoadMoreItem>` defines the load more spinner within a `<Table>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the table that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} />
+
+</details>
 
 ## Styling
 
@@ -2479,7 +2660,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.

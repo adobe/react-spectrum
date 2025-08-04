@@ -16,7 +16,7 @@ import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, InputDOMProps} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -36,12 +36,17 @@ export interface NumberFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the number field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
    * State of the number field.
    */
   state: NumberFieldState
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
@@ -84,12 +89,13 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     values: {
       state,
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -119,8 +125,9 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         ref={ref}
         slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-required={props.isRequired || undefined}
         data-invalid={validation.isInvalid || undefined} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
 });

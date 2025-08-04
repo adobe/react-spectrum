@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Tab, TabList, TabPanel, Tabs} from '../';
-import {fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {Button, Collection, Tab, TabList, TabPanel, Tabs, Tooltip, TooltipTrigger} from '../';
 import React, {useState} from 'react';
 import {TabsExample} from '../stories/Tabs.stories';
 import {User} from '@react-aria/test-utils';
@@ -36,6 +36,7 @@ describe('Tabs', () => {
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   it('should render tabs with default classes', () => {
@@ -594,5 +595,50 @@ describe('Tabs', () => {
     expect(onSelectionChange).not.toHaveBeenCalled();
     tabs = getAllByRole('tab');
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('supports tooltips', async function () {
+    let {getByRole, getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+          <TooltipTrigger>
+            <Tab id="c">C</Tab>
+            <Tooltip>Test</Tooltip>
+          </TooltipTrigger>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+
+    let tab = getAllByRole('tab')[2];
+    fireEvent.mouseMove(document.body);
+    await user.hover(tab);
+    act(() => jest.runAllTimers());
+    expect(getByRole('tooltip')).toHaveTextContent('Test');
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+      await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
+  
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 });

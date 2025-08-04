@@ -15,14 +15,15 @@ import {ActionMenu, MenuItem} from '../src';
 import {categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 
-const meta: Meta<typeof ActionMenu> = {
+const meta: Meta<typeof ActionMenu<any>> = {
   component: ActionMenu,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onOpenChange'])
+    ...categorizeArgTypes('Events', ['onAction', 'onOpenChange']),
+    children: {table: {disable: true}}
   },
   title: 'ActionMenu'
 };

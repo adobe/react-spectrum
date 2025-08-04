@@ -25,7 +25,7 @@ export interface VirtualizerItemOptions {
   ref: RefObject<HTMLElement | null>
 }
 
-export function useVirtualizerItem(options: VirtualizerItemOptions) {
+export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize: () => void} {
   let {layoutInfo, virtualizer, ref} = options;
   let key = layoutInfo?.key;
 
@@ -45,7 +45,7 @@ export function useVirtualizerItem(options: VirtualizerItemOptions) {
   return {updateSize};
 }
 
-function getSize(node: HTMLElement) {
+function getSize(node: HTMLElement): Size {
   // Reset height before measuring so we get the intrinsic size
   let height = node.style.height;
   node.style.height = '';

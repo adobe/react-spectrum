@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Seçimi temizle",
   "actionbar.selected": "{count, plural, =0 {Hiçbiri seçilmedi} other {# seçildi}}",
   "actionbar.selectedAll": "Tümü seçildi",
+  "breadcrumbs.more": "Daha fazla öğe",
   "button.pending": "beklemede",
+  "calendar.invalidSelection": "Seçilen {selectedCount, plural, one {tarih} other {tarihler}} müsait değil.",
+  "combobox.noResults": "Sonuç yok",
   "contextualhelp.help": "Yardım",
   "contextualhelp.info": "Bilgiler",
+  "datepicker.endTime": "Bitiş saati",
+  "datepicker.startTime": "Başlangıç saati",
+  "datepicker.time": "Saat",
   "dialog.alert": "Uyarı",
   "dialog.dismiss": "Kapat",
   "dropzone.replaceMessage": "Değiştirmek için dosyayı bırakın",
@@ -17,6 +23,8 @@
   "label.(optional)": "(isteğe bağlı)",
   "label.(required)": "(gerekli)",
   "menu.moreActions": "Daha fazla eylem",
+  "notificationbadge.indicatorOnly": "Yeni etkinlik",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Seçin…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Daha az göster",
   "tag.noTags": "Hiçbiri",
   "tag.showAllButtonLabel": "Tümünü göster ({tagCount, number})",
-  "breadcrumbs.more": "Daha Fazla Öğe"
+  "toast.clearAll": "Tümünü temizle",
+  "toast.collapse": "Daralt",
+  "toast.showAll": "Tümünü göster"
 }

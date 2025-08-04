@@ -268,6 +268,7 @@ describe('queries', function () {
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(new CalendarDate(2021, 8, 2));
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(new CalendarDate(2021, 8, 3));
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 1));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'thu')).toEqual(new CalendarDate(2021, 7, 29));
     });
   });
 

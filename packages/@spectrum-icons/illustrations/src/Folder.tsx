@@ -1,7 +1,7 @@
 import {Illustration, IllustrationPropsWithoutChildren} from '@react-spectrum/icon';
-import React from 'react';
+import React, {JSX} from 'react';
 
-export default function File(props: IllustrationPropsWithoutChildren) {
+export default function File(props: IllustrationPropsWithoutChildren): JSX.Element {
   return (
     <Illustration {...props}>
       <svg viewBox="0 0 32 32" height="32" width="32">

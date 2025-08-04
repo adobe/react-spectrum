@@ -16,8 +16,9 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
+import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
@@ -209,6 +210,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
+    defaultValue: state.defaultInputValue,
     onFocus,
     autoComplete: 'off',
     validate: undefined,
@@ -342,6 +344,13 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   }, [state.isOpen, inputRef, popoverRef]);
 
+  useUpdateEffect(() => {
+    // Re-show focus ring when there is no virtually focused item.
+    if (!focusedItem && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) === inputRef.current) {
+      dispatchVirtualFocus(inputRef.current, null);
+    }
+  }, [focusedItem]);
+
   return {
     labelProps,
     buttonProps: {
@@ -367,7 +376,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

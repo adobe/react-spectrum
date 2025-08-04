@@ -14,20 +14,21 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DatePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
+import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
 
-export type DatePickerStory = ComponentStoryObj<typeof DatePicker>;
+export type DatePickerStory = StoryObj<typeof DatePicker>;
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
 export default {
@@ -188,7 +189,7 @@ export default {
       options: [undefined, 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
     }
   }
-} as ComponentMeta<typeof DatePicker>;
+} as Meta<typeof DatePicker>;
 
 export const Default: DatePickerStory = {
   render: (args) => render(args)
@@ -285,6 +286,11 @@ export const ContextualHelpStory: DatePickerStory = {
   name: 'contextual help'
 };
 
+export const CustomCalendar: DatePickerStory = {
+  args: {value: new CalendarDate(2024, 2, 13), createCalendar: () => new Custom454Calendar()},
+  render: (args) => <CustomExample {...args} />
+};
+
 function render(props = {}) {
   return (
     <Example
@@ -332,7 +338,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key | null>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
@@ -378,3 +384,13 @@ function ControlledExample(props) {
     </Flex>
   );
 }
+
+function CustomExample(props) {
+  let [value, setValue] = React.useState(props.value);
+
+  return (
+    <Flex direction="column" alignItems="center" gap="size-150">
+      <DatePicker label="Custom 4-5-4 calendar" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+    </Flex>
+  );
+};

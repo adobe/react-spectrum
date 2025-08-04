@@ -256,7 +256,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
           if (shouldSetValue) {
             focusManager.focusNext();
           }
-        } else {
+        } else if (shouldSetValue) {
+          // Don't accept leading zeros except for fields that accept 0 as a entire value (aka 00 for minutes/seconds/etc)
           enteredKeys.current = newValue;
         }
         break;
@@ -325,7 +326,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         if (ref.current) {
           ref.current.textContent = compositionRef.current;
         }
-
         // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
         // Can also happen e.g. with Pinyin keyboard on iOS.
         if (data != null && (startsWith(am, data) || startsWith(pm, data))) {
@@ -385,18 +385,15 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     };
   }
 
-  let dateSegments = ['day', 'month', 'year'];
-  let segmentStyle : CSSProperties = {caretColor: 'transparent'};
+  let segmentStyle: CSSProperties = {caretColor: 'transparent'};
   if (direction === 'rtl') {
-    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
+    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings.
     // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
-    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
-    if (dateSegments.includes(segment.type)) {
-      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
-    } else if (segment.type === 'timeZoneName') {
-      // This is needed so that the time zone renders on the left side of the time segments (hour:minute).
-      // Otherwise, it will render on the right side which is incorrect. 
-      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'};
+    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise.
+    segmentStyle.unicodeBidi = 'embed';
+    let format = options[segment.type];
+    if (format === 'numeric' || format === '2-digit') {
+      segmentStyle.direction = 'ltr';
     }
   }
 

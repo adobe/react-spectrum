@@ -342,7 +342,9 @@ function visitChildren(obj, fn) {
         optional: obj.optional,
         access: obj.access,
         description: obj.description,
-        default: obj.default
+        default: obj.default,
+        static: obj.static,
+        abstract: obj.abstract
       };
     case 'alias':
       return {
@@ -442,7 +444,7 @@ function visitChildren(obj, fn) {
         keyof: fn(obj.keyof, 'keyof')
       };
     default:
-      console.log('Unknown type in DocsPackager: ' + obj.type, obj);
+      // console.log('Unknown type in DocsPackager: ' + obj.type, obj);
       return obj;
   }
 }

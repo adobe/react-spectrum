@@ -12,7 +12,6 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateField} from '../';
@@ -20,12 +19,13 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
+import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 
-export type DateFieldStory = ComponentStoryObj<typeof DateField>;
+export type DateFieldStory = StoryObj<typeof DateField>;
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
 export default {
@@ -160,7 +160,7 @@ export default {
       control: 'text'
     }
   }
-} as ComponentMeta<typeof DateField>;
+} as Meta<typeof DateField>;
 
 export const Default: DateFieldStory = {
   render: (args) => render(args)
@@ -212,7 +212,7 @@ export const IsDateUnavailable: DateFieldStory = {
   ...Default,
   args: {
     isDateUnavailable: (date) => {
-      return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
+      return date.compare(new CalendarDate(1980, 1, 1)) >= 0
           && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
     },
     errorMessage: 'Date unavailable.',
@@ -310,7 +310,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key | null>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);

@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Vymazat výběr",
   "actionbar.selected": "Vybráno: { count }",
   "actionbar.selectedAll": "Vybráno vše",
+  "breadcrumbs.more": "Další položky",
   "button.pending": "čeká na vyřízení",
+  "calendar.invalidSelection": "{selectedCount, plural, one {Vybrané datum není} other {Vybraná data nejsou}} k dispozici.",
+  "combobox.noResults": "Žádné výsledky",
   "contextualhelp.help": "Nápověda",
   "contextualhelp.info": "Informace",
+  "datepicker.endTime": "Konečný čas",
+  "datepicker.startTime": "Počáteční čas",
+  "datepicker.time": "Čas",
   "dialog.alert": "Výstraha",
   "dialog.dismiss": "Odstranit",
   "dropzone.replaceMessage": "Přetáhněte soubor k nahrazení",
@@ -17,6 +23,8 @@
   "label.(optional)": "(volitelně)",
   "label.(required)": "(požadováno)",
   "menu.moreActions": "Další akce",
+  "notificationbadge.indicatorOnly": "Nová aktivita",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrat…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Zobrazit méně",
   "tag.noTags": "Žádný",
   "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})",
-  "breadcrumbs.more": "Více položek"
+  "toast.clearAll": "Smazat vše",
+  "toast.collapse": "Sbalit",
+  "toast.showAll": "Zobrazit vše"
 }

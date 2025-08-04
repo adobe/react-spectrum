@@ -22,7 +22,8 @@ import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
-import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
+import {FocusRing, FocusScope} from '@react-aria/focus';
+import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
@@ -31,7 +32,6 @@ import {mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ForwardedRef, HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -117,7 +117,11 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, String(inputProps.value ?? ''), formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+  useFormReset<any>(
+    inputRef,
+    formValue === 'text' ? state.defaultInputValue : state.defaultSelectedKey,
+    formValue === 'text' ? state.setInputValue : state.setSelectedKey
+  );
 
   return (
     <>
@@ -179,9 +183,10 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let valueId = useId();
   let invalidId = useId();
+  let validId = useId();
   let validationIcon = validationState === 'invalid'
     ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
-    : <CheckmarkMedium />;
+    : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
 
   let validation = React.cloneElement(validationIcon, {
     UNSAFE_className: classNames(
@@ -202,7 +207,8 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
       props['aria-labelledby'],
       props['aria-label'] && !props['aria-labelledby'] ? props.id : null,
       valueId,
-      validationState === 'invalid' ? invalidId : null
+      validationState === 'invalid' ? invalidId : null,
+      validationState === 'valid' ? validId : null
     ].filter(Boolean).join(' '),
     elementType: 'div'
   }, objRef);

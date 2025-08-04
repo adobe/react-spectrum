@@ -19,8 +19,8 @@ import intlMessages from '../intl/*.json';
 import {KeyboardEvent} from 'react';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates} from '@react-aria/selection';
+import {useFocusable, useInteractionModality} from '@react-aria/interactions';
 import {useGridListItem} from '@react-aria/gridlist';
-import {useInteractionModality} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -56,8 +56,6 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     node: item
   }, state, ref);
 
-  // We want the group to handle keyboard navigation between tags.
-  delete rowProps.onKeyDownCapture;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {descriptionProps: _, ...stateWithoutDescription} = states;
 
@@ -93,16 +91,19 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
 
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
+  let {focusableProps} = useFocusable({
+    isDisabled
+  }, ref);
+
   return {
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
       isDisabled,
       id: buttonId,
-      onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
-      excludeFromTabOrder: true
+      onPress: () => onRemove ? onRemove(new Set([item.key])) : null
     },
-    rowProps: mergeProps(rowProps, domProps, linkProps, {
+    rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
       tabIndex,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']

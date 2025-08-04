@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Puhasta valik",
   "actionbar.selected": "{count, plural, =0 {Pole valitud} other {# valitud}}",
   "actionbar.selectedAll": "Kõik valitud",
+  "breadcrumbs.more": "Veel üksusi",
   "button.pending": "ootel",
+  "calendar.invalidSelection": "Valitud {selectedCount, plural, one {kuupäev} other {kuupäevad}} pole saadaval.",
+  "combobox.noResults": "Tulemusi pole",
   "contextualhelp.help": "Spikker",
   "contextualhelp.info": "Teave",
+  "datepicker.endTime": "Lõpuaeg",
+  "datepicker.startTime": "Algusaeg",
+  "datepicker.time": "Aeg",
   "dialog.alert": "Teade",
   "dialog.dismiss": "Lõpeta",
   "dropzone.replaceMessage": "Kukuta fail asendamiseks",
@@ -17,6 +23,8 @@
   "label.(optional)": "(valikuline)",
   "label.(required)": "(nõutav)",
   "menu.moreActions": "Veel toiminguid",
+  "notificationbadge.indicatorOnly": "Uus tegevus",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Valige…",
   "slider.maximum": "Maksimaalne",
   "slider.minimum": "Minimaalne",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Kuva vähem",
   "tag.noTags": "Puudub",
   "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})",
-  "breadcrumbs.more": "Veel üksusi"
+  "toast.clearAll": "Tühjenda kõik",
+  "toast.collapse": "Ahenda",
+  "toast.showAll": "Kuva kõik"
 }

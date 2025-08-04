@@ -30,7 +30,7 @@ export interface ContextualHelpProps extends
   Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The size of the ActionButton.
    *
@@ -41,12 +41,12 @@ export interface ContextualHelpProps extends
 
 const popover = style({
   fontFamily: 'sans',
-  minWidth: 218,
-  width: 218,
+  minWidth: 268,
+  width: 268,
   padding: 24
 });
 
-export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
@@ -103,8 +103,8 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         offset={offset}
         crossOffset={crossOffset}
         hideArrow
-        UNSAFE_className={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: -24, padding: 24}))}>
+        styles={popover}>
+        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
           <Provider
             values={[
               [TextContext, {

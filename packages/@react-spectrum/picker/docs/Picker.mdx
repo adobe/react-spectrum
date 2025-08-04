@@ -52,7 +52,7 @@ keywords: [select, collections, dropdown]
 ```
 
 ## Content
-Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](MenuTrigger.html), Picker accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Picker, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
+Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Menu](Menu.html), Picker accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Picker, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
@@ -590,7 +590,7 @@ for more information on how to handle these behaviors in your test suite.
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/picker/test/Picker.test.js) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-spectrum/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the select tester and a sample of how you could use it in your test suite.
@@ -602,7 +602,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
-// ...
+// Other setup, be sure to check out the suggested mocks mentioned above in https://react-spectrum.adobe.com/react-spectrum/Picker.html#testing
 
 it('Picker can select an option via keyboard', async function () {
   // Render your test component/app and initialize the select tester

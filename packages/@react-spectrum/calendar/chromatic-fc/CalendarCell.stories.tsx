@@ -12,13 +12,16 @@
 
 import {AllStates} from '../chromatic/CalendarCell.stories';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'CalendarCell'
-};
+} as Meta<typeof AllStates> ;
 
-export const All = () => (
+export type AllStatesStory = StoryFn<typeof AllStates>;
+
+export const All: AllStatesStory = () => (
   <Flex gap="size-100" direction={'column'}>
     <h2>All States</h2>
     <AllStates />

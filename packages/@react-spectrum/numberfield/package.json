@@ -1,12 +1,16 @@
 {
   "name": "@react-spectrum/numberfield",
-  "version": "3.9.9",
+  "version": "3.10.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -36,22 +40,22 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.11.1",
-    "@react-aria/focus": "^3.19.1",
-    "@react-aria/i18n": "^3.12.5",
-    "@react-aria/interactions": "^3.23.0",
-    "@react-aria/numberfield": "^3.11.10",
-    "@react-aria/utils": "^3.27.0",
-    "@react-spectrum/form": "^3.7.11",
-    "@react-spectrum/label": "^3.16.11",
-    "@react-spectrum/textfield": "^3.12.8",
-    "@react-spectrum/utils": "^3.12.1",
-    "@react-stately/numberfield": "^3.9.9",
-    "@react-types/button": "^3.10.2",
-    "@react-types/numberfield": "^3.8.8",
-    "@react-types/shared": "^3.27.0",
-    "@spectrum-icons/ui": "^3.6.12",
-    "@spectrum-icons/workflow": "^4.2.17",
+    "@react-aria/button": "^3.14.0",
+    "@react-aria/focus": "^3.21.0",
+    "@react-aria/i18n": "^3.12.11",
+    "@react-aria/interactions": "^3.25.4",
+    "@react-aria/numberfield": "^3.12.0",
+    "@react-aria/utils": "^3.30.0",
+    "@react-spectrum/form": "^3.7.17",
+    "@react-spectrum/label": "^3.16.17",
+    "@react-spectrum/textfield": "^3.14.0",
+    "@react-spectrum/utils": "^3.12.7",
+    "@react-stately/numberfield": "^3.10.0",
+    "@react-types/button": "^3.13.0",
+    "@react-types/numberfield": "^3.8.13",
+    "@react-types/shared": "^3.31.0",
+    "@spectrum-icons/ui": "^3.6.18",
+    "@spectrum-icons/workflow": "^4.2.23",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

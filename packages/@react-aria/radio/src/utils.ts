@@ -14,9 +14,10 @@ import {RadioGroupState} from '@react-stately/radio';
 
 interface RadioGroupData {
   name: string,
+  form: string | undefined,
   descriptionId: string | undefined,
   errorMessageId: string | undefined,
   validationBehavior: 'aria' | 'native'
 }
 
-export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();
+export const radioGroupData: WeakMap<RadioGroupState, RadioGroupData> = new WeakMap<RadioGroupState, RadioGroupData>();

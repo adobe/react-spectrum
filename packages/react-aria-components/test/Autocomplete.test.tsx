@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -67,6 +67,102 @@ let MenuWithSections = (props) => (
   </Menu>
 );
 
+// TODO: add tests for nested submenus and subdialogs
+let SubMenus = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <Menu {...props}>
+          <MenuItem>Lvl 1 Bar 1</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Lvl 1 Bar 2</MenuItem>
+            <Popover>
+              <Menu {...props}>
+                <MenuItem>Lvl 2 Bar 1</MenuItem>
+                <MenuItem>Lvl 2 Bar 2</MenuItem>
+                <MenuItem>Lvl 2 Bar 3</MenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MenuItem >Lvl 1 Bar 3</MenuItem>
+        </Menu>
+      </Popover>
+    </SubmenuTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
+
+let SubDialogs = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <AutocompleteWrapper inputProps={{autoFocus: true}}>
+          <Menu {...props}>
+            <MenuItem>Lvl 1 Bar 1</MenuItem>
+            <SubmenuTrigger>
+              <MenuItem>Lvl 1 Bar 2</MenuItem>
+              <Popover>
+                <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                  <Menu {...props}>
+                    <MenuItem>Lvl 2 Bar 1</MenuItem>
+                    <MenuItem>Lvl 2 Bar 2</MenuItem>
+                    <MenuItem>Lvl 2 Bar 3</MenuItem>
+                  </Menu>
+                </AutocompleteWrapper>
+              </Popover>
+            </SubmenuTrigger>
+            <MenuItem >Lvl 1 Bar 3</MenuItem>
+          </Menu>
+        </AutocompleteWrapper>
+      </Popover>
+    </SubmenuTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
+
+let SubDialogAndMenu = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <AutocompleteWrapper inputProps={{autoFocus: true}}>
+          <Menu {...props}>
+            <MenuItem>Lvl 1 Bar 1</MenuItem>
+            <SubmenuTrigger>
+              <MenuItem>Lvl 1 Bar 2</MenuItem>
+              <Popover>
+                <Menu {...props}>
+                  <MenuItem>Lvl 2 Bar 1</MenuItem>
+                  <SubmenuTrigger>
+                    <MenuItem>Lvl 2 Bar 2</MenuItem>
+                    <Popover>
+                      <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                        <Menu {...props}>
+                          <MenuItem>Lvl 3 Bar 1</MenuItem>
+                          <MenuItem>Lvl 3 Bar 2</MenuItem>
+                          <MenuItem>Lvl 3 Bar 3</MenuItem>
+                        </Menu>
+                      </AutocompleteWrapper>
+                    </Popover>
+                  </SubmenuTrigger>
+                  <MenuItem>Lvl 2 Bar 3</MenuItem>
+                </Menu>
+              </Popover>
+            </SubmenuTrigger>
+            <MenuItem >Lvl 1 Bar 3</MenuItem>
+          </Menu>
+        </AutocompleteWrapper>
+      </Popover>
+    </SubmenuTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
+
 let StaticListbox = (props) => (
   <ListBox {...props}>
     <ListBoxItem id="1">Foo</ListBoxItem>
@@ -106,7 +202,7 @@ let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: 
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <UNSTABLE_Autocomplete filter={filter} {...autocompleteProps}>
+    <Autocomplete filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
@@ -114,7 +210,7 @@ let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: 
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -124,14 +220,14 @@ let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <UNSTABLE_Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -160,7 +256,7 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
   });
 
   return (
-    <UNSTABLE_Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
@@ -172,7 +268,7 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
         onSelectionChange={onSelectionChange}>
         {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -180,6 +276,11 @@ describe('Autocomplete', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
   });
 
   // Skipping since arrow keys will still leak out from useSelectableCollection, re-enable when that gets fixed
@@ -232,17 +333,464 @@ describe('Autocomplete', () => {
     let input = getByRole('searchbox');
     await user.tab();
     expect(document.activeElement).toBe(input);
+    // Focus ring should be on input when no aria-activeelement
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    // Focus ring should be on option when it is the active descendant and keyboard modality
     await user.keyboard('{ArrowDown}');
     let menu = getByRole('menu');
     let options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
 
+    // Focus ring should not be on either input or option when hovering (aka mouse modality)
     await user.click(input);
     await user.hover(options[1]);
     options = within(menu).getAllByRole('menuitem');
     expect(options[1]).toHaveAttribute('data-focused');
     expect(options[1]).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+
+    // Reset focus visible on input so that isTextInput in useFocusRing doesn't prevent the focus ring
+    // from appearing on the input
+    await user.tab();
+    await user.tab({shift: true});
+
+    // Focus ring should be on option after typing and option is autofocused
+    await user.keyboard('Bar');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+
+    // Focus ring should be on input after clearing focus via ArrowLeft
+    await user.keyboard('{ArrowLeft}');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    input = getByRole('searchbox');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    // Focus ring should be on input after clearing focus via Backspace
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should not display focus in the virtually focused menu if focus isn\'t in the autocomplete input', async function () {
+    let {getByRole} = render(
+      <>
+        <input />
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+        <input />
+      </>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focus-visible');
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+
+    await user.tab();
+    expect(document.activeElement).not.toBe(input);
+    expect(options[0]).not.toHaveAttribute('data-focused');
+    expect(options[0]).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+
+    await user.tab({shift: true});
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toBe(input);
+    expect(options[0]).toHaveAttribute('data-focused');
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+  });
+
+  it('should restore focus visible styles back to the input when typing forward results in only disabled items', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let baz = options[1];
+    expect(baz).toHaveTextContent('Baz');
+    expect(input).toHaveAttribute('aria-activedescendant', baz.id);
+    expect(baz).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('r');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    let bar = options[0];
+    expect(bar).toHaveTextContent('Bar');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(bar).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should maintain focus styles on the input if typing forward results in an completely empty collection', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Q');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).queryAllByRole('menuitem');
+    expect(options).toHaveLength(0);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+  });
+
+  it('should restore focus visible styles back to the input if the user types forward and backspaces in quick succession', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('F');
+    // If 500ms hasn't elapsed the aria-activedecendant hasn't been updated
+    act(() => jest.advanceTimersByTime(300));
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+    expect(foo).toHaveTextContent('Foo');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).not.toHaveAttribute('data-focus-visible');
+  });
+
+  it('should work inside a Select', async function () {
+    let {getByRole} = render(
+      <Select>
+        <Label>Test</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+            <StaticListbox />
+          </AutocompleteWrapper>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+
+    let searchfield = getByRole('searchbox');
+    expect(document.activeElement).toBe(searchfield);
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(searchfield).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('{ArrowDown}');
+    expect(searchfield).toHaveAttribute('aria-activedescendant', options[1].id);
+
+    await user.keyboard('b');
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(searchfield).toHaveAttribute('aria-activedescendant', options[0].id);
+
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+    expect(listbox).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+    expect(button).toHaveTextContent('Bar');
+  });
+
+  it('should be able to tab inside a focus scope that contains', async () => {
+    const MyMenu = () => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Button>First</Button>
+              <Button>Second</Button>
+              <Autocomplete filter={contains}>
+                <TextField autoFocus aria-label="Search">
+                  <Input />
+                </TextField>
+                <Menu>
+                  <MenuItem>Open</MenuItem>
+                  <MenuItem>
+                    Rename…
+                  </MenuItem>
+                  <MenuItem>
+                    Duplicate
+                  </MenuItem>
+                </Menu>
+              </Autocomplete>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    function App() {
+      return (
+        <div>
+          <input />
+          <div>
+            <MyMenu />
+          </div>
+          <input />
+        </div>
+      );
+    }
+
+    let {getByRole} = render(<App />);
+    let trigger = getByRole('button', {name: 'Menu'});
+    await user.click(trigger);
+    let firstButton = getByRole('button', {name: 'First'});
+    let secondButton = getByRole('button', {name: 'Second'});
+    let input = getByRole('textbox');
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab();
+
+    expect(document.activeElement).toBe(firstButton);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(secondButton);
+  });
+
+  it('should be able to tab inside a focus scope that contains with buttons after the autocomplete', async () => {
+    const MyMenu = () => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Autocomplete filter={contains}>
+                <TextField autoFocus aria-label="Search">
+                  <Input />
+                </TextField>
+                <Menu>
+                  <MenuItem>Open</MenuItem>
+                  <MenuItem>
+                    Rename…
+                  </MenuItem>
+                  <MenuItem>
+                    Duplicate
+                  </MenuItem>
+                </Menu>
+              </Autocomplete>
+              <Button>First</Button>
+              <Button>Second</Button>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    function App() {
+      return (
+        <div>
+          <input />
+          <div>
+            <MyMenu />
+          </div>
+          <input />
+        </div>
+      );
+    }
+
+    let {getByRole} = render(<App />);
+    let trigger = getByRole('button', {name: 'Menu'});
+    await user.click(trigger);
+    let firstButton = getByRole('button', {name: 'First'});
+    let secondButton = getByRole('button', {name: 'Second'});
+    let input = getByRole('textbox');
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab();
+
+    expect(document.activeElement).toBe(firstButton);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(secondButton);
+  });
+
+  it('should not auto focus first item when disableAutoFocusFirst is true', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper autocompleteProps={{disableAutoFocusFirst: true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('Foo');
+
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+  });
+
+  it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
+    const DialogExample = (props) => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Button>First</Button>
+              <Button>Second</Button>
+              <Autocomplete filter={contains}>
+                <SearchField autoFocus aria-label="Search">
+                  <Input />
+                </SearchField>
+                <StaticListbox escapeKeyBehavior={props?.escapeKeyBehavior} selectionMode="single" defaultSelectedKeys={['1']} />
+              </Autocomplete>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    let {getByRole, getAllByRole, rerender, queryAllByRole} = render(<DialogExample escapeKeyBehavior="none" />);
+    let button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+
+    let dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    let options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    let input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
+
+    // Test without escapeKeyBehavior, 2nd Escape should clear selection instead of closing the dialog
+    rerender(<DialogExample />);
+    button = getByRole('button');
+    await user.click(button);
+    act(() => jest.runAllTimers());
+
+    dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
   });
 });
 
@@ -287,6 +835,21 @@ AriaAutocompleteTests({
     defaultValue: () => render(
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticMenu />
+      </AutocompleteWrapper>
+    ),
+    submenus: () => render(
+      <AutocompleteWrapper>
+        <SubMenus />
+      </AutocompleteWrapper>
+    ),
+    subdialogs: () => render(
+      <AutocompleteWrapper>
+        <SubDialogs />
+      </AutocompleteWrapper>
+    ),
+    subdialogAndMenu: () => render(
+      <AutocompleteWrapper>
+        <SubDialogAndMenu />
       </AutocompleteWrapper>
     )
   },

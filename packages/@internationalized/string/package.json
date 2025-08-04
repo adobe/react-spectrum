@@ -1,12 +1,16 @@
 {
   "name": "@internationalized/string",
-  "version": "3.2.5",
+  "version": "3.2.7",
   "description": "Internationalized string formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },

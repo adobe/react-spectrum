@@ -26,7 +26,7 @@ import Image from '@spectrum-icons/workflow/Image';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Text} from '@react-spectrum/text';
-import {TreeView, TreeViewItem} from '@react-spectrum/tree';
+import {Collection, TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/tree';
 import {JSX} from "react";
 import {Key} from "@react-types/shared";
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
@@ -52,41 +52,59 @@ keywords: [tree, grid]
 ## Example
 
 ```tsx example
-<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={new Set(['documents', 'photos'])} height="size-4600" maxWidth="size-6000">
+<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={['documents', 'photos']} height="size-4600" maxWidth="size-6000">
   <TreeViewItem id="documents" textValue="Documents">
-    <Text>Documents</Text>
-    <Folder />
-    <TreeViewItem id="project-a" textValue="Project A">
-      <Text>Project A</Text>
+    <TreeViewItemContent>
+      <Text>Documents</Text>
       <Folder />
+    </TreeViewItemContent>
+    <TreeViewItem id="project-a" textValue="Project A">
+      <TreeViewItemContent>
+        <Text>Project A</Text>
+        <Folder />
+      </TreeViewItemContent>
       <TreeViewItem id="weekly-report" textValue="Weekly-Report">
-        <Text>Weekly Report</Text>
-        <FileTxt />
+        <TreeViewItemContent>
+          <Text>Weekly Report</Text>
+          <FileTxt />
+        </TreeViewItemContent>
       </TreeViewItem>
     </TreeViewItem>
     <TreeViewItem id="document-1" textValue="Document 1">
-      <Text>Document 1</Text>
-      <FileTxt />
+      <TreeViewItemContent>
+        <Text>Document 1</Text>
+        <FileTxt />
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem id="document-2" textValue="Document 2">
-      <Text>Document 2</Text>
-      <FileTxt />
+      <TreeViewItemContent>
+        <Text>Document 2</Text>
+        <FileTxt />
+      </TreeViewItemContent>
     </TreeViewItem>
   </TreeViewItem>
   <TreeViewItem id="photos" textValue="Photos">
-    <Text>Photos</Text>
-    <Folder />
+    <TreeViewItemContent>
+      <Text>Photos</Text>
+      <Folder />
+    </TreeViewItemContent>
     <TreeViewItem id="image-1" textValue="Image 1">
-      <Text>Image 1</Text>
-      <Image />
+      <TreeViewItemContent>
+        <Text>Image 1</Text>
+        <Image />
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem id="image-2" textValue="Image 2">
-      <Text>Image 2</Text>
-      <Image />
+      <TreeViewItemContent>
+        <Text>Image 2</Text>
+        <Image />
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem id="image-3" textValue="Image 3">
-      <Text>Image 3</Text>
-      <Image />
+      <TreeViewItemContent>
+        <Text>Image 3</Text>
+        <Image />
+      </TreeViewItemContent>
     </TreeViewItem>
   </TreeViewItem>
 </TreeView>
@@ -124,14 +142,41 @@ let items: MyItem[] = [
   ]}
 ];
 
+const DynamicTreeItem = (props) => {
+  return (
+    <>
+      <TreeViewItem id={props.id} textValue={props.name}>
+        <TreeViewItemContent>
+          <Text>{props.name}</Text>
+          {props.icon}
+        </TreeViewItemContent>
+        <Collection items={props.childItems}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+      </TreeViewItem>
+    </>
+  );
+};
+
 function ExampleTree(props) {
   return (
     <TreeView aria-label="Example tree with dynamic content" height="size-3000" maxWidth="size-6000" items={items} {...props}>
       {(item: MyItem) => (
-        <TreeViewItem childItems={item.childItems} textValue={item.name}>
-          <Text>{item.name}</Text>
-          {item.icon}
-        </TreeViewItem>
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name} />
       )}
     </TreeView>
   );
@@ -340,19 +385,27 @@ Tree items may also be links to another page or website. This can be achieved by
 ```tsx example
 <TreeView aria-label="Example tree with links" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000" maxWidth="size-6000">
   <TreeViewItem id="bookmarks" textValue="Bookmarks">
-    <Text>Bookmarks</Text>
-    <Folder />
+    <TreeViewItemContent>
+      <Text>Bookmarks</Text>
+      <Folder />
+    </TreeViewItemContent>
     <TreeViewItem href="https://adobe.com/" target="_blank" id="adobe" textValue="Adobe">
-      <Text>Adobe</Text>
-      <GlobeOutline />
+      <TreeViewItemContent>
+        <Text>Adobe</Text>
+        <GlobeOutline />
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem href="https://google.com/" target="_blank" id="google" textValue="Google">
-      <Text>Google</Text>
-      <GlobeOutline />
+      <TreeViewItemContent>
+        <Text>Google</Text>
+        <GlobeOutline />
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem href="https://nytimes.com/" target="_blank" id="nytimes" textValue="New York Times">
-      <Text>New York Times</Text>
-      <GlobeOutline />
+      <TreeViewItemContent>
+        <Text>New York Times</Text>
+        <GlobeOutline />
+      </TreeViewItemContent>
     </TreeViewItem>
   </TreeViewItem>
 </TreeView>
@@ -366,45 +419,61 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 
 ```tsx example
 <TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <Text>{item.name}</Text>
-      {item.icon}
-      <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-        <Item key="edit" textValue="Edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete" textValue="Delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionGroup>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
 ### With action menus
 
 ```tsx example
+import {Collection} from '@adobe/react-spectrum';
+
 <TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <Text>{item.name}</Text>
-      {item.icon}
-      <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-        <Item key="edit" textValue="Edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete" textValue="Delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionMenu>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
@@ -413,6 +482,10 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### TreeView props
 
 <PropTable component={docs.exports.TreeView} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TreeViewItemContent props
+
+<PropTable component={docs.exports.TreeViewItemContent} links={docs.links} style={{marginBottom: '40px'}} />
 
 ### TreeViewItem props
 
@@ -458,7 +531,7 @@ behaviors in your test suite.
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tree/test/TreeView.test.tsx) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-spectrum/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
@@ -470,7 +543,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
-// ...
+// Other setup, be sure to check out the suggested mocks mentioned above in https://react-spectrum.adobe.com/react-spectrum/TreeView.html#testing
 
 it('TreeView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the Tree tester

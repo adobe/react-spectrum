@@ -50,7 +50,7 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   props = useProviderProps(props);
   props = useFormProps(props);
 
-  if (props.placeholder) {
+  if (props.placeholder && process.env.NODE_ENV !== 'production') {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
   }
 

@@ -173,6 +173,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
                   visibleMonths={visibleMonths}
                   pageBehavior={pageBehavior}
                   firstDayOfWeek={firstDayOfWeek}
+                  createCalendar={props.createCalendar}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': isInvalid})} />
                 {showTimeField &&
                   <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>

@@ -16,7 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts
@@ -1003,14 +1003,14 @@ describe('TooltipTrigger', function () {
   describe('portalContainer', () => {
     function InfoTooltip(props) {
       return (
-        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+        <UNSAFE_PortalProvider getContainer={() => props.container.current}>
           <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>
               <div data-testid="content">hello</div>
             </Tooltip>
           </TooltipTrigger>
-        </UNSTABLE_PortalProvider>
+        </UNSAFE_PortalProvider>
       );
     }
 
@@ -1049,24 +1049,24 @@ describe('TooltipTrigger', function () {
   describe('portalContainer overwrite', () => {
     function InfoTooltip(props) {
       return (
-        <UNSTABLE_PortalProvider getContainer={null}>
+        <UNSAFE_PortalProvider getContainer={null}>
           <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>
               <div data-testid="content">hello</div>
             </Tooltip>
           </TooltipTrigger>
-        </UNSTABLE_PortalProvider>
+        </UNSAFE_PortalProvider>
       );
     }
     function App() {
       let container = React.useRef(null);
       return (
         <>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <InfoTooltip container={container} />
             <div ref={container} data-testid="custom-container" />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         </>
       );
     }

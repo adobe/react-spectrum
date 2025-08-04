@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Очистити вибір",
   "actionbar.selected": "Вибрано: {count}",
   "actionbar.selectedAll": "Усе вибрано",
+  "breadcrumbs.more": "Більше елементів",
   "button.pending": "в очікуванні",
+  "calendar.invalidSelection": "{selectedCount, plural, one {Вибрана дата недоступна} other {Вибрані дати недоступні}}.",
+  "combobox.noResults": "Результатів немає",
   "contextualhelp.help": "Довідка",
   "contextualhelp.info": "Інформація",
+  "datepicker.endTime": "Час завершення",
+  "datepicker.startTime": "Час початку",
+  "datepicker.time": "Час",
   "dialog.alert": "Сигнал тривоги",
   "dialog.dismiss": "Скасувати",
   "dropzone.replaceMessage": "Перетягніть файл для заміни",
@@ -17,6 +23,8 @@
   "label.(optional)": "(необов’язково)",
   "label.(required)": "(обов’язково)",
   "menu.moreActions": "Більше дій",
+  "notificationbadge.indicatorOnly": "Нова активність",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Вибрати…",
   "slider.maximum": "Максимум",
   "slider.minimum": "Мінімум",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Показувати менше",
   "tag.noTags": "Немає",
   "tag.showAllButtonLabel": "Показати всі ({tagCount, number})",
-  "breadcrumbs.more": "Більше елементів"
+  "toast.clearAll": "Очистити все",
+  "toast.collapse": "Згорнути",
+  "toast.showAll": "Показати все"
 }

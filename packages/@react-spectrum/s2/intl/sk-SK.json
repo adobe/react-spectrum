@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Vymazať výber",
   "actionbar.selected": "Vybrané položky: {count}",
   "actionbar.selectedAll": "Všetky vybraté položky",
+  "breadcrumbs.more": "Ďalšie položky",
   "button.pending": "čakajúce",
+  "calendar.invalidSelection": "{selectedCount, plural, one {Vybratý dátum} other {Vybraté dátumy}}: nedostupné.",
+  "combobox.noResults": "Žiadne výsledky",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informácie",
+  "datepicker.endTime": "Čas ukončenia",
+  "datepicker.startTime": "Čas začiatku",
+  "datepicker.time": "Čas",
   "dialog.alert": "Upozornenie",
   "dialog.dismiss": "Zrušiť",
   "dropzone.replaceMessage": "Presuňte súbor, ktorý chcete nahradiť",
@@ -17,6 +23,8 @@
   "label.(optional)": "(nepovinné)",
   "label.(required)": "(povinné)",
   "menu.moreActions": "Ďalšie akcie",
+  "notificationbadge.indicatorOnly": "Nová aktivita",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrať…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Zobraziť menej",
   "tag.noTags": "Žiadne",
   "tag.showAllButtonLabel": "Zobraziť všetko ({tagCount, number})",
-  "breadcrumbs.more": "Ďalšie položky"
+  "toast.clearAll": "Vymazať všetko",
+  "toast.collapse": "Zbaliť",
+  "toast.showAll": "Zobraziť všetko"
 }

@@ -11,7 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
-import {ForwardedRef, ReactElement} from 'react';
+import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
 import {Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -38,13 +38,14 @@ export class BaseNode<T> {
   private _previousSibling: ElementNode<T> | null = null;
   private _nextSibling: ElementNode<T> | null = null;
   private _parentNode: BaseNode<T> | null = null;
+  private _minInvalidChildIndex: ElementNode<T> | null = null;
   ownerDocument: Document<T, any>;
 
   constructor(ownerDocument: Document<T, any>) {
     this.ownerDocument = ownerDocument;
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): Iterator<ElementNode<T>> {
     let node = this.firstChild;
     while (node) {
       yield node;
@@ -52,57 +53,72 @@ export class BaseNode<T> {
     }
   }
 
-  get firstChild() {
+  get firstChild(): ElementNode<T> | null {
     return this._firstChild;
   }
 
-  set firstChild(firstChild) {
+  set firstChild(firstChild: ElementNode<T> | null) {
     this._firstChild = firstChild;
     this.ownerDocument.markDirty(this);
   }
 
-  get lastChild() {
+  get lastChild(): ElementNode<T> | null {
     return this._lastChild;
   }
 
-  set lastChild(lastChild) {
+  set lastChild(lastChild: ElementNode<T> | null) {
     this._lastChild = lastChild;
     this.ownerDocument.markDirty(this);
   }
 
-  get previousSibling() {
+  get previousSibling(): ElementNode<T> | null {
     return this._previousSibling;
   }
 
-  set previousSibling(previousSibling) {
+  set previousSibling(previousSibling: ElementNode<T> | null) {
     this._previousSibling = previousSibling;
     this.ownerDocument.markDirty(this);
   }
 
-  get nextSibling() {
+  get nextSibling(): ElementNode<T> | null {
     return this._nextSibling;
   }
 
-  set nextSibling(nextSibling) {
+  set nextSibling(nextSibling: ElementNode<T> | null) {
     this._nextSibling = nextSibling;
     this.ownerDocument.markDirty(this);
   }
 
-  get parentNode() {
+  get parentNode(): BaseNode<T> | null {
     return this._parentNode;
   }
 
-  set parentNode(parentNode) {
+  set parentNode(parentNode: BaseNode<T> | null) {
     this._parentNode = parentNode;
     this.ownerDocument.markDirty(this);
   }
 
-  get isConnected() {
+  get isConnected(): boolean {
     return this.parentNode?.isConnected || false;
   }
 
-  appendChild(child: ElementNode<T>) {
-    this.ownerDocument.startTransaction();
+  private invalidateChildIndices(child: ElementNode<T>): void {
+    if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
+      this._minInvalidChildIndex = child;
+      this.ownerDocument.markDirty(this);
+    }
+  }
+
+  updateChildIndices(): void {
+    let node = this._minInvalidChildIndex;
+    while (node) {
+      node.index = node.previousSibling ? node.previousSibling.index + 1 : 0;
+      node = node.nextSibling;
+    }
+    this._minInvalidChildIndex = null;
+  }
+
+  appendChild(child: ElementNode<T>): void {
     if (child.parentNode) {
       child.parentNode.removeChild(child);
     }
@@ -125,30 +141,27 @@ export class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    if (child.hasSetProps) {
-      // Only add the node to the collection if we already received props for it.
-      // Otherwise wait until then so we have the correct id for the node.
-      this.ownerDocument.addNode(child);
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
     }
-
-    this.ownerDocument.endTransaction();
-    this.ownerDocument.queueUpdate();
   }
 
-  insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
+  insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>): void {
     if (referenceNode == null) {
       return this.appendChild(newNode);
     }
 
-    this.ownerDocument.startTransaction();
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
     }
 
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
-    newNode.index = referenceNode.index;
-
+    // Ensure that the newNode's index is less than that of the reference node so that
+    // invalidateChildIndices will properly use the newNode as the _minInvalidChildIndex, thus making sure
+    // we will properly update the indexes of all sibiling nodes after the newNode. The value here doesn't matter
+    // since updateChildIndices should calculate the proper indexes.
+    newNode.index = referenceNode.index - 1;
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
     } else if (referenceNode.previousSibling) {
@@ -158,33 +171,23 @@ export class BaseNode<T> {
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
-    let node: ElementNode<T> | null = referenceNode;
-    while (node) {
-      node.index++;
-      node = node.nextSibling;
+    this.invalidateChildIndices(newNode);
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
     }
-
-    if (newNode.hasSetProps) {
-      this.ownerDocument.addNode(newNode);
-    }
-
-    this.ownerDocument.endTransaction();
-    this.ownerDocument.queueUpdate();
   }
 
-  removeChild(child: ElementNode<T>) {
+  removeChild(child: ElementNode<T>): void {
     if (child.parentNode !== this || !this.ownerDocument.isMounted) {
       return;
     }
 
-    this.ownerDocument.startTransaction();
-    let node = child.nextSibling;
-    while (node) {
-      node.index--;
-      node = node.nextSibling;
+    if (this._minInvalidChildIndex === child) {
+      this._minInvalidChildIndex = null;
     }
 
     if (child.nextSibling) {
+      this.invalidateChildIndices(child.nextSibling);
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
@@ -205,13 +208,46 @@ export class BaseNode<T> {
     child.previousSibling = null;
     child.index = 0;
 
-    this.ownerDocument.removeNode(child);
-    this.ownerDocument.endTransaction();
-    this.ownerDocument.queueUpdate();
+    this.ownerDocument.markDirty(child);
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
-  addEventListener() {}
-  removeEventListener() {}
+  addEventListener(): void {}
+  removeEventListener(): void {}
+
+  get previousVisibleSibling(): ElementNode<T> | null {
+    let node = this.previousSibling;
+    while (node && node.isHidden) {
+      node = node.previousSibling;
+    }
+    return node;
+  }
+
+  get nextVisibleSibling(): ElementNode<T> | null {
+    let node = this.nextSibling;
+    while (node && node.isHidden) {
+      node = node.nextSibling;
+    }
+    return node;
+  }
+
+  get firstVisibleChild(): ElementNode<T> | null {
+    let node = this.firstChild;
+    while (node && node.isHidden) {
+      node = node.nextSibling;
+    }
+    return node;
+  }
+
+  get lastVisibleChild(): ElementNode<T> | null {
+    let node = this.lastChild;
+    while (node && node.isHidden) {
+      node = node.previousSibling;
+    }
+    return node;
+  }
 }
 
 /**
@@ -221,23 +257,21 @@ export class BaseNode<T> {
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: CollectionNode<T>;
+  isMutated = true;
   private _index: number = 0;
   hasSetProps = false;
+  isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
     this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
-    // Start a transaction so that no updates are emitted from the collection
-    // until the props for this node are set. We don't know the real id for the
-    // node until then, so we need to avoid emitting collections in an inconsistent state.
-    this.ownerDocument.startTransaction();
   }
 
-  get index() {
+  get index(): number {
     return this._index;
   }
 
-  set index(index) {
+  set index(index: number) {
     this._index = index;
     this.ownerDocument.markDirty(this);
   }
@@ -250,20 +284,45 @@ export class ElementNode<T> extends BaseNode<T> {
     return 0;
   }
 
-  updateNode() {
-    let node = this.ownerDocument.getMutableNode(this);
+  /**
+   * Lazily gets a mutable instance of a Node. If the node has already
+   * been cloned during this update cycle, it just returns the existing one.
+   */
+  private getMutableNode(): Mutable<CollectionNode<T>> {
+    if (!this.isMutated) {
+      this.node = this.node.clone();
+      this.isMutated = true;
+    }
+
+    this.ownerDocument.markDirty(this);
+    return this.node;
+  }
+
+  updateNode(): void {
+    let nextSibling = this.nextVisibleSibling;
+    let node = this.getMutableNode();
     node.index = this.index;
     node.level = this.level;
     node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
-    node.prevKey = this.previousSibling?.node.key ?? null;
-    node.nextKey = this.nextSibling?.node.key ?? null;
+    node.prevKey = this.previousVisibleSibling?.node.key ?? null;
+    node.nextKey = nextSibling?.node.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstChild?.node.key ?? null;
-    node.lastChildKey = this.lastChild?.node.key ?? null;
+    node.firstChildKey = this.firstVisibleChild?.node.key ?? null;
+    node.lastChildKey = this.lastVisibleChild?.node.key ?? null;
+
+    // Update the colIndex of sibling nodes if this node has a colSpan.
+    if ((node.colSpan != null || node.colIndex != null) && nextSibling) {
+      // This queues the next sibling for update, which means this happens recursively.
+      let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
+      if (nextColIndex !== nextSibling.node.colIndex) {
+        let siblingNode = nextSibling.getMutableNode();
+        siblingNode.colIndex = nextColIndex;
+      }
+    }
   }
 
-  setProps<E extends Element>(obj: any, ref: ForwardedRef<E>, rendered?: any, render?: (node: Node<T>) => ReactElement) {
-    let node = this.ownerDocument.getMutableNode(this);
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
+    let node = this.getMutableNode();
     let {value, textValue, id, ...props} = obj;
     props.ref = ref;
     node.props = props;
@@ -278,25 +337,56 @@ export class ElementNode<T> extends BaseNode<T> {
       node.key = id;
     }
 
-    // If this is the first time props have been set, end the transaction started in the constructor
-    // so this node can be emitted.
-    if (!this.hasSetProps) {
-      this.ownerDocument.addNode(this);
-      this.ownerDocument.endTransaction();
-      this.hasSetProps = true;
+    if (props.colSpan != null) {
+      node.colSpan = props.colSpan;
     }
 
-    this.ownerDocument.queueUpdate();
+    this.hasSetProps = true;
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
-  get style() {
-    return {};
+  get style(): CSSProperties {
+    // React sets display: none to hide elements during Suspense.
+    // We'll handle this by setting the element to hidden and invalidating
+    // its siblings/parent. Hidden elements remain in the Document, but
+    // are removed from the Collection.
+    let element = this;
+    return {
+      get display() {
+        return element.isHidden ? 'none' : '';
+      },
+      set display(value) {
+        let isHidden = value === 'none';
+        if (element.isHidden !== isHidden) {
+          // Mark parent node dirty if this element is currently the first or last visible child.
+          if (element.parentNode?.firstVisibleChild === element || element.parentNode?.lastVisibleChild === element) {
+            element.ownerDocument.markDirty(element.parentNode);
+          }
+
+          // Mark sibling visible elements dirty.
+          let prev = element.previousVisibleSibling;
+          let next = element.nextVisibleSibling;
+          if (prev) {
+            element.ownerDocument.markDirty(prev);
+          }
+          if (next) {
+            element.ownerDocument.markDirty(next);
+          }
+
+          // Mark self dirty.
+          element.isHidden = isHidden;
+          element.ownerDocument.markDirty(element);
+        }
+      }
+    };
   }
 
-  hasAttribute() {}
-  setAttribute() {}
-  setAttributeNS() {}
-  removeAttribute() {}
+  hasAttribute(): void {}
+  setAttribute(): void {}
+  setAttributeNS(): void {}
+  removeAttribute(): void {}
 }
 
 /**
@@ -305,144 +395,144 @@ export class ElementNode<T> extends BaseNode<T> {
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
-  ownerDocument = this;
+  ownerDocument: Document<T, C> = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
   isSSR = false;
   nodeId = 0;
-  nodesByProps = new WeakMap<object, ElementNode<T>>();
+  nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
   isMounted = true;
   private collection: C;
-  private collectionMutated: boolean;
-  private mutatedNodes: Set<ElementNode<T>> = new Set();
+  private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
-  private transactionCount = 0;
+  private queuedRender = false;
+  private inSubscription = false;
 
   constructor(collection: C) {
     // @ts-ignore
     super(null);
     this.collection = collection;
-    this.collectionMutated = true;
+    this.nextCollection = collection;
   }
 
-  get isConnected() {
+  get isConnected(): boolean {
     return this.isMounted;
   }
 
-  createElement(type: string) {
+  createElement(type: string): ElementNode<T> {
     return new ElementNode(type, this);
   }
 
-  /**
-   * Lazily gets a mutable instance of a Node. If the node has already
-   * been cloned during this update cycle, it just returns the existing one.
-   */
-  getMutableNode(element: ElementNode<T>): Mutable<CollectionNode<T>> {
-    let node = element.node;
-    if (!this.mutatedNodes.has(element)) {
-      node = element.node.clone();
-      this.mutatedNodes.add(element);
-      element.node = node;
-    }
-    this.markDirty(element);
-    return node;
-  }
-
   private getMutableCollection() {
-    if (!this.isSSR && !this.collectionMutated) {
-      this.collection = this.collection.clone();
-      this.collectionMutated = true;
+    if (!this.nextCollection) {
+      this.nextCollection = this.collection.clone();
     }
 
-    return this.collection;
+    return this.nextCollection;
   }
 
-  markDirty(node: BaseNode<T>) {
+  markDirty(node: BaseNode<T>): void {
     this.dirtyNodes.add(node);
   }
 
-  startTransaction() {
-    this.transactionCount++;
-  }
+  private addNode(element: ElementNode<T>): void {
+    if (element.isHidden) {
+      return;
+    }
 
-  endTransaction() {
-    this.transactionCount--;
-  }
-
-  addNode(element: ElementNode<T>) {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
-      collection.addNode(element.node);
-
       for (let child of element) {
         this.addNode(child);
       }
     }
 
-    this.markDirty(element);
+    collection.addNode(element.node);
   }
 
-  removeNode(node: ElementNode<T>) {
+  private removeNode(node: ElementNode<T>): void {
     for (let child of node) {
       this.removeNode(child);
     }
 
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
-    this.markDirty(node);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
-    if (this.transactionCount > 0) {
-      return this.collection;
+    // If in a subscription update, return a clone of the existing collection.
+    // This ensures React will queue a render. React will call getCollection again
+    // during render, at which point all the updates will be complete and we can return
+    // the new collection.
+    if (this.inSubscription) {
+      return this.collection.clone();
     }
+
+    // Reset queuedRender to false when getCollection is called during render.
+    this.queuedRender = false;
 
     this.updateCollection();
     return this.collection;
   }
 
-  updateCollection() {
+  updateCollection(): void {
+    // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode && element.isConnected) {
-        element.updateNode();
+      if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
+        this.removeNode(element);
+      } else {
+        element.updateChildIndices();
+      }
+    }
+
+    // Next, update dirty collection nodes.
+    for (let element of this.dirtyNodes) {
+      if (element instanceof ElementNode) {
+        if (element.isConnected && !element.isHidden) {
+          element.updateNode();
+          this.addNode(element);
+        }
+
+        element.isMutated = false;
       }
     }
 
     this.dirtyNodes.clear();
 
-    if (this.mutatedNodes.size || this.collectionMutated) {
-      let collection = this.getMutableCollection();
-      for (let element of this.mutatedNodes) {
-        if (element.isConnected) {
-          collection.addNode(element.node);
-        }
+    // Finally, update the collection.
+    if (this.nextCollection) {
+      this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
+      if (!this.isSSR) {
+        this.collection = this.nextCollection;
+        this.nextCollection = null;
       }
-
-      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null, this.isSSR);
-      this.mutatedNodes.clear();
     }
-
-    this.collectionMutated = false;
   }
 
-  queueUpdate() {
-    // Don't emit any updates if there is a transaction in progress.
-    // queueUpdate should be called again after the transaction.
-    if (this.dirtyNodes.size === 0 || this.transactionCount > 0) {
+  queueUpdate(): void {
+    if (this.dirtyNodes.size === 0 || this.queuedRender) {
       return;
     }
 
+    // Only trigger subscriptions once during an update, when the first item changes.
+    // React's useSyncExternalStore will call getCollection immediately, to check whether the snapshot changed.
+    // If so, React will queue a render to happen after the current commit to our fake DOM finishes.
+    // We track whether getCollection is called in a subscription, and once it is called during render,
+    // we reset queuedRender back to false.
+    this.queuedRender = true;
+    this.inSubscription = true;
     for (let fn of this.subscriptions) {
       fn();
     }
+    this.inSubscription = false;
   }
 
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
-    return () => this.subscriptions.delete(fn);
+    return (): boolean => this.subscriptions.delete(fn);
   }
 
-  resetAfterSSR() {
+  resetAfterSSR(): void {
     if (this.isSSR) {
       this.isSSR = false;
       this.firstChild = null;

@@ -17,10 +17,11 @@ import {DateFieldContext} from './DateField';
 import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
+import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
@@ -64,13 +65,16 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
 export const DatePickerStateContext = createContext<DatePickerState | null>(null);
 export const DateRangePickerStateContext = createContext<DateRangePickerState | null>(null);
+
+// Contexts to clear inside the popover.
+const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
 
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
@@ -131,7 +135,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     defaultClassName: 'react-aria-DatePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -148,7 +152,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           trigger: 'DatePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties
+          style: {'--trigger-width': groupWidth} as React.CSSProperties,
+          clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
         [TextContext, {
@@ -160,9 +165,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...focusProps}
-        {...DOMProps}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focus-within={isFocused || undefined}
@@ -170,6 +173,11 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-open={state.isOpen || undefined} />
+      <HiddenDateInput
+        autoComplete={props.autoComplete}
+        name={props.name}
+        isDisabled={props.isDisabled}
+        state={state} />
     </Provider>
   );
 });
@@ -235,7 +243,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     defaultClassName: 'react-aria-DateRangePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -251,7 +259,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
           trigger: 'DateRangePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties
+          style: {'--trigger-width': groupWidth} as React.CSSProperties,
+          clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
         [DateFieldContext, {
@@ -269,9 +278,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...focusProps}
-        {...DOMProps}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focus-within={isFocused || undefined}

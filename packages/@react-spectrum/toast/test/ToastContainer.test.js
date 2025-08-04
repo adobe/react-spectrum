@@ -85,13 +85,18 @@ describe('Toast Provider and Container', function () {
     const domProps = {
       'data-testid': testid
     };
-    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} />);
+    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} actionLabel="Update" />);
     let button = getByRole('button');
 
     expect(queryByTestId(testid)).toBeNull();
     await user.click(button);
     expect(getByTestId(testid)).not.toBeNull();
     expect(queryByText(/Show Default Toast/)).not.toBeNull();
+    let secondaryButton = getByTestId('rsp-Toast-secondaryButton');
+    expect(secondaryButton).toBeDefined();
+    let closeButton = getByTestId('rsp-Toast-closeButton');
+    expect(closeButton).toBeDefined();
+
   });
 
   it('should label icon by variant', async () => {
@@ -245,7 +250,7 @@ describe('Toast Provider and Container', function () {
     expect(button).toHaveFocus();
   });
 
-  it('should move focus to remaining toast when a toast exits and there are more', async () => {
+  it('should restore focus when removing with the mouse', async () => {
     let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
@@ -256,11 +261,39 @@ describe('Toast Provider and Container', function () {
     let closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
 
+    expect(document.activeElement).toBe(button);
+    
+    toast = getAllByRole('alertdialog')[0];
+    closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+
+    expect(queryByRole('alertdialog')).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should move focus to remaining toast when a toast exits and there are more', async () => {
+    let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let button = getByRole('button');
+
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
+
+    let toast = getAllByRole('alertdialog')[0];
+    let closeButton = within(toast).getByRole('button');
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
+
     toast = getByRole('alertdialog');
     expect(document.activeElement).toBe(toast);
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(queryByRole('alertdialog')).toBeNull();
     expect(document.activeElement).toBe(button);
@@ -270,18 +303,25 @@ describe('Toast Provider and Container', function () {
     let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    await user.click(button);
-    await user.click(button);
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
 
-    let toast = getAllByRole('alertdialog')[1];
+    let toast = getAllByRole('alertdialog')[0];
     let closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     toast = getByRole('alertdialog');
     expect(document.activeElement).toBe(toast);
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(queryByRole('alertdialog')).toBeNull();
     expect(document.activeElement).toBe(button);

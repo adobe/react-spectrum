@@ -32,7 +32,7 @@ export interface DropIndicatorRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropIndicatorProps extends AriaDropIndicatorProps, RenderProps<DropIndicatorRenderProps> { }
+export interface DropIndicatorProps extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> { }
 interface DropIndicatorContextValue {
   render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }
@@ -45,7 +45,9 @@ export const DropIndicator = forwardRef(function DropIndicator(props: DropIndica
   return <>{render(props, ref)}</>;
 });
 
-export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
+type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined
+
+export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
   let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
   let fn = useCallback((target: ItemDropTarget) => {
@@ -59,7 +61,7 @@ export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, drop
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;
 }
 
-export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
+export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): Set<Key> {
   // Persist the focused key and the drop target key.
   let focusedKey = selectionManager.focusedKey;
   let dropTargetKey: Key | null | undefined = null;
@@ -67,7 +69,37 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
     dropTargetKey = dropState.target.key;
     if (dropState.target.dropPosition === 'after') {
       // Normalize to the "before" drop position since we only render those to the DOM.
-      dropTargetKey = dropState.collection.getKeyAfter(dropTargetKey) ?? dropTargetKey;
+      let nextKey = dropState.collection.getKeyAfter(dropTargetKey);
+      let lastDescendantKey: Key | null = null;
+      if (nextKey != null) {
+        let targetLevel = dropState.collection.getItem(dropTargetKey)?.level ?? 0;
+        // Skip over any rows that are descendants of the target ("after" position should be after all children)
+        while (nextKey) {
+          let node = dropState.collection.getItem(nextKey);
+          // eslint-disable-next-line max-depth
+          if (!node) {
+            break;
+          }
+          // Skip over non-item nodes (e.g., loaders) since they can't be drop targets.
+          // eslint-disable-next-line max-depth
+          if (node.type !== 'item') {
+            nextKey = dropState.collection.getKeyAfter(nextKey);
+            continue;
+          }
+
+          // Stop once we find an item at the same level or higher
+          // eslint-disable-next-line max-depth
+          if ((node.level ?? 0) <= targetLevel) {
+            break;
+          }
+          
+          lastDescendantKey = nextKey;
+          nextKey = dropState.collection.getKeyAfter(nextKey);
+        }
+      }
+
+      // If nextKey is null (end of collection), use the last descendant
+      dropTargetKey = nextKey ?? lastDescendantKey ?? dropTargetKey;
     }
   }
 

@@ -30,7 +30,7 @@ export const ColorField = React.forwardRef(function ColorField(props: SpectrumCo
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);
-  if (props.placeholder) {
+  if (props.placeholder && process.env.NODE_ENV !== 'production') {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
   }
 
@@ -73,7 +73,7 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         inputRef={inputRef}
         {...result}
         inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </>
   );
 }

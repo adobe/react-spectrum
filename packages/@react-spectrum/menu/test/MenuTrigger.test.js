@@ -29,7 +29,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -265,6 +265,30 @@ describe('MenuTrigger', function () {
       expect(menuTester.menu).toBeInTheDocument();
       expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
       expect(onOpenChange).toBeCalledTimes(1);
+    });
+
+    it.each`
+      Name               | Component        | props
+      ${'MenuTrigger'}   | ${MenuTrigger}   | ${{onOpenChange}}
+    `('$Name should prevent Esc from clearing selection and close the menu if escapeKeyBehavior is "none"', async function ({Component, props}) {
+      tree = renderComponent(Component, props, {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container, interactionType: 'keyboard'});
+      expect(onOpenChange).toBeCalledTimes(0);
+      await menuTester.open();
+
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
+      await menuTester.selectOption({option: 'Bar', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+
+      await menuTester.close();
+      expect(menuTester.menu).not.toBeInTheDocument();
+      expect(onOpenChange).toBeCalledTimes(2);
     });
 
     it.each`
@@ -735,7 +759,7 @@ describe('MenuTrigger', function () {
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
-          <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <UNSAFE_PortalProvider getContainer={() => props.container.current}>
             <MenuTrigger>
               <ActionButton aria-label="trigger" />
               <Menu>
@@ -744,7 +768,7 @@ describe('MenuTrigger', function () {
                 <Item key="3">Three</Item>
               </Menu>
             </MenuTrigger>
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         </Provider>
       );
     }
@@ -783,6 +807,36 @@ describe('MenuTrigger', function () {
 
       expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
     });
+  });
+
+  it('does not close if menu is tabbed away from', async function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button variant="primary">
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    menuTester.setInteractionType('keyboard');
+
+    await menuTester.open();
+    act(() => {jest.runAllTimers();});
+
+    let menu = menuTester.menu;
+
+    await user.tab();
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    expect(menu).toBeInTheDocument();
+    expect(document.activeElement).toBe(menuTester.options()[0]);
   });
 });
 
@@ -875,22 +929,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <Provider theme={theme}>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu>
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>
@@ -1027,24 +1065,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <Provider theme={theme}>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu items={ariaWithSection}>
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>

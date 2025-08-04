@@ -71,9 +71,10 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 .react-aria-ListBox {
   display: flex;
   flex-direction: column;
+  gap: 4px;
   max-height: inherit;
   overflow: auto;
-  padding: 2px;
+  padding: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--overlay-background);
@@ -91,8 +92,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 }
 
 .react-aria-ListBoxItem {
-  margin: 2px;
-  padding: 0.286rem 0.571rem;
+  padding: 0 0.571rem;
   border-radius: 6px;
   outline: none;
   cursor: default;
@@ -101,6 +101,8 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-height: 32px;
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -132,6 +134,7 @@ listbox components that can be styled as needed.
 * **Keyboard navigation** – List items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Layout options** – Items can be arranged in a vertical or horizontal stack, or as a two-dimensional grid.
 * **Drag and drop** – ListBox supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
+* **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large lists by rendering only the visible items.
 * **Touch friendly** – Selection behavior adapts depending on the device. For example, selection occurs on mouse down but on touch up, which is consistent with native conventions.
 * **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
@@ -235,7 +238,8 @@ function MyItem(props: ListBoxItemProps) {
 .my-listbox {
   max-height: inherit;
   overflow: auto;
-  padding: 2px;
+  padding: 4px;
+  gap: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--overlay-background);
@@ -248,7 +252,6 @@ function MyItem(props: ListBoxItemProps) {
 .my-item {
   --highlight: #e70073;
 
-  margin: 2px;
   padding: 0.286rem 0.571rem;
   border-radius: 6px;
   outline: none;
@@ -630,22 +633,11 @@ let albums = [
       max-width: 150px;
       margin-bottom: 4px;
       border-radius: 4px;
-      transition: box-shadow 200ms;
-    }
-
-    &[data-hovered] {
-      & img {
-        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
-      }
     }
 
     &[data-selected] {
       background: none;
       color: inherit;
-
-      & img {
-        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
-      }
 
       &:after {
         content: '✓';
@@ -668,6 +660,11 @@ let albums = [
         justify-content: center;
         box-shadow: 0 0 8px rgb(0 0 0 / .5);
       }
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
     }
   }
 }
@@ -781,10 +778,11 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-of data from a server. You may additionally want to display a spinner to indicate the loading
-state to the user, or support features like infinite scroll to load more data.
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<ListBoxLoadMoreItem>` element at the end of the list.
 
 ```tsx example
+import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -793,26 +791,76 @@ interface Character {
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({signal, cursor, filterText}) {
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
         {signal}
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
 
   return (
     <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      {/*- begin highlight -*/}
+      <Collection items={list.items}>
+        {(item) => (
+          <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <MyProgressCircle isIndeterminate aria-label="Loading more..." />
+      </ListBoxLoadMoreItem>
+      {/*- end highlight -*/}
     </ListBox>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxLoadingIndicator {
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+  display: flex;
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
 
 ## Disabled items
 
@@ -1911,6 +1959,17 @@ A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children
 
 </details>
 
+### ListBoxLoadMoreItem
+
+A `<ListBoxLoadMoreItem>` defines the load more spinner within a `<ListBox>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the list that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} />
+
+</details>
+
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
@@ -1984,7 +2043,7 @@ A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector,
 
 <StateTable properties={docs.exports.ListBoxItemRenderProps.properties} showOptional />
 
-Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [Text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
@@ -2093,7 +2152,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.

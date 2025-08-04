@@ -1,3 +1,4 @@
+'use client';
 import React, { ReactNode } from 'react';
 import { Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
@@ -43,7 +44,7 @@ const styles = tv({
 
 export function Radio(props: RadioProps) {
   return (
-    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
+    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
       {renderProps => <>
         <div className={styles(renderProps)} />
         {props.children}

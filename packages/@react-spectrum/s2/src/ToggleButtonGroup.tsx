@@ -13,14 +13,15 @@
 import {ActionButtonGroupProps, actionGroupStyle} from './ActionButtonGroup';
 import {ContextValue, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps as RACToggleButtonGroupProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef} from 'react';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className'> {
+export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes> {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
 
-export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>(null);
+export const ToggleButtonGroupContext = createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.

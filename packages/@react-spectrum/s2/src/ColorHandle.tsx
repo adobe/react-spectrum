@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cloneElement, JSX, RefObject, useState} from 'react';
+import {cloneElement, JSX, ReactNode, RefObject, useState} from 'react';
 import {ColorThumb} from 'react-aria-components';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -28,7 +28,7 @@ interface ColorHandleProps {
   getPosition: () => {x: number, y: number}
 }
 
-export function ColorHandle({containerRef, getPosition}: ColorHandleProps) {
+export function ColorHandle({containerRef, getPosition}: ColorHandleProps): ReactNode {
   return (
     <ColorThumb
       className={style({

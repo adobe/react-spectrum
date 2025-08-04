@@ -249,6 +249,27 @@ let items = [
 </TableView>"
 `;
 
+exports[`Move loadingState and onLoadMore from TableBody to TableView 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+<TableView loadingState="loading" onLoadMore={() => {}}>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
 exports[`Static TableView 1`] = `
 "import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
 

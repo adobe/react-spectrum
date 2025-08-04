@@ -23,6 +23,7 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
+  MenuItemRenderProps,
   Provider,
   Separator,
   SeparatorProps
@@ -30,12 +31,12 @@ import {
 import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
-import {DOMRef, DOMRefValue, PressEvent} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -72,7 +73,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies'>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -82,12 +83,12 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode),
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean
 }
 
-export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const MenuContext = createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const menuItemGrid = {
   size: {
@@ -103,7 +104,7 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   width: 'full',
   overflow: {
     isPopover: 'auto'
@@ -115,7 +116,8 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont(),
+  gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
 export let section = style({
@@ -135,7 +137,7 @@ export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   gridColumnStart: 2,
   gridColumnEnd: -2,
   boxSizing: 'border-box',
-  minHeight: 'control',
+  minHeight: controlSize(),
   paddingY: centerPadding()
 });
 
@@ -145,15 +147,11 @@ export let sectionHeading = style({
   margin: 0
 });
 
-export let menuitem = style({
+export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> & {isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL', isLink?: boolean, hasSubmenu?: boolean, isOpen?: boolean}>({
   ...focusRing(),
-  boxSizing: 'border-box',
-  borderRadius: 'control',
-  font: 'control',
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
@@ -162,7 +160,7 @@ export let menuitem = style({
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -186,8 +184,6 @@ export let menuitem = style({
   rowGap: {
     ':has([slot=description])': space(1)
   },
-  alignItems: 'baseline',
-  minHeight: 'control',
   height: 'min',
   textDecoration: 'none',
   cursor: {
@@ -203,7 +199,7 @@ export let checkmark = style({
     isSelected: 'visible'
   },
   gridArea: 'checkmark',
-  color: 'accent',
+  color: baseColor('accent'),
   '--iconPrimary': {
     type: 'fill',
     value: {
@@ -259,8 +255,8 @@ let image = style({
 
 export let label = style<{size: string}>({
   gridArea: 'label',
-  font: 'control',
-  color: '[inherit]',
+  font: controlFont(),
+  color: 'inherit',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'
@@ -278,7 +274,7 @@ export let description = style({
     }
   },
   color: {
-    default: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
     // Ideally this would use the same token as hover, but we don't have access to that here.
     // TODO: should we always consider isHovered and isFocused to be the same thing?
     isFocused: 'gray-800',
@@ -292,11 +288,11 @@ let value = style({
   marginStart: 8
 });
 
-let keyboard = style({
+let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
-  fontWeight: 'light',
+  textAlign: 'end',
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
@@ -304,7 +300,6 @@ let keyboard = style({
       isDisabled: 'GrayText'
     }
   },
-  background: 'gray-25',
   unicodeBidi: 'plaintext'
 });
 
@@ -366,7 +361,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
-          [HeadingContext, {styles: sectionHeading}],
+          [HeadingContext, {
+            // @ts-ignore
+            role: 'presentation',
+            styles: sectionHeading
+          }],
           [TextContext, {
             slots: {
               'description': {styles: description({size})}
@@ -405,7 +404,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-export function Divider(props: SeparatorProps) {
+export function Divider(props: SeparatorProps): ReactNode {
   return (
     <Separator
       {...props}
@@ -427,8 +426,8 @@ export function Divider(props: SeparatorProps) {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, keyof GlobalDOMAttributes> {}
+export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -443,7 +442,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */
@@ -464,7 +463,7 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
-export function MenuItem(props: MenuItemProps) {
+export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
@@ -547,7 +546,7 @@ export function MenuItem(props: MenuItemProps) {
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-function MenuTrigger(props: MenuTriggerProps) {
+function MenuTrigger(props: MenuTriggerProps): ReactNode {
   // RAC sets isPressed via PressResponder when the menu is open.
   // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
@@ -590,6 +589,6 @@ export {MenuTrigger, SubmenuTrigger};
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>) {
+export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
   return <div />;
 }

@@ -18,20 +18,20 @@ import {
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
 import {createContext, forwardRef} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius'>, StyleProps {
+export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * @default 192
    */
   size?: number
 }
 
-export const ColorWheelContext = createContext<ContextValue<ColorWheelProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorWheel allows users to adjust the hue of an HSL or HSB color value on a circular track.

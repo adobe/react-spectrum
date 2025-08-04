@@ -11,4 +11,4 @@
  */
 
 export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria, LandmarkController} from './useLandmark';
-export {useLandmark, createLandmarkController} from './useLandmark';
+export {useLandmark, UNSTABLE_createLandmarkController} from './useLandmark';

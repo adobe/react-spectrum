@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime} from './types';
+import {AnyCalendarDate, AnyTime, Calendar} from './types';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
@@ -42,21 +42,22 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
 
 /** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameDay(a, b);
 }
 
 /** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
-  a = startOfMonth(a);
-  b = startOfMonth(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameMonth(a, b);
 }
 
 /** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
-  a = startOfYear(a);
-  b = startOfYear(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameYear(a, b);
+}
+
+/** Returns whether two calendars are the same. */
+export function isEqualCalendar(a: Calendar, b: Calendar): boolean {
+  return a.isEqual?.(b) ?? b.isEqual?.(a) ?? a.identifier === b.identifier;
 }
 
 /** Returns whether the date is today in the given time zone. */
@@ -177,7 +178,7 @@ export function endOfYear(date: DateValue): DateValue {
   return endOfMonth(date.add({months: date.calendar.getMonthsInYear(date) - date.month}));
 }
 
-export function getMinimumMonthInYear(date: AnyCalendarDate) {
+export function getMinimumMonthInYear(date: AnyCalendarDate): number {
   if (date.calendar.getMinimumMonthInYear) {
     return date.calendar.getMinimumMonthInYear(date);
   }
@@ -185,7 +186,7 @@ export function getMinimumMonthInYear(date: AnyCalendarDate) {
   return 1;
 }
 
-export function getMinimumDayInMonth(date: AnyCalendarDate) {
+export function getMinimumDayInMonth(date: AnyCalendarDate): number {
   if (date.calendar.getMinimumDayInMonth) {
     return date.calendar.getMinimumDayInMonth(date);
   }

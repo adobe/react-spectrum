@@ -40,7 +40,7 @@ export interface FocusRingProps {
  * Focus rings are visible only when the user is interacting with a keyboard,
  * not with a mouse, touch, or other input methods.
  */
-export function FocusRing(props: FocusRingProps) {
+export function FocusRing(props: FocusRingProps): React.ReactElement<unknown, string | React.JSXElementConstructor<any>> {
   let {children, focusClass, focusRingClass} = props;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);

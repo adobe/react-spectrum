@@ -112,9 +112,28 @@ describe('TimeField', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <TimeField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
   it('should support form value', () => {
     render(
-      <TimeField name="time" value={new Time(8, 30)}>
+      <TimeField name="time" form="test" value={new Time(8, 30)}>
         <Label>Time</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -123,6 +142,7 @@ describe('TimeField', () => {
     );
     let input = document.querySelector('input[name=time]');
     expect(input).toHaveValue('08:30:00');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('supports validation errors', async () => {

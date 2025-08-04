@@ -11,9 +11,10 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {useListData} from '@react-stately/data';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
@@ -44,6 +45,7 @@ let renderTagGroup = (tagGroupProps, tagListProps, itemProps) => render(<TestTag
 
 describe('TagGroup', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -306,6 +308,27 @@ describe('TagGroup', () => {
     expect(grid).toHaveTextContent('No results');
   });
 
+  it('supports tooltips', async function () {
+    let {getByRole, getAllByRole} = render(
+      <TagGroup>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <TooltipTrigger>
+            <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+            <Tooltip>Test</Tooltip>
+          </TooltipTrigger>
+        </TagList>
+      </TagGroup>
+    );
+
+    let tag = getAllByRole('row')[2];
+    await user.hover(tag);
+    act(() => jest.runAllTimers());
+    expect(getByRole('tooltip')).toHaveTextContent('Test');
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       let trigger = async item => {
@@ -413,9 +436,11 @@ describe('TagGroup', () => {
         </Tag>
       );
     }
-    let {getByRole} = render(<MyTagGroup />);
+    let {getByRole, getAllByRole} = render(<MyTagGroup />);
     let grid = getByRole('grid');
+    let tags = getAllByRole('row');
     await user.tab();
+    expect(tags[2]).toHaveFocus();
     await user.keyboard('{Backspace}');
     expect(grid).toHaveFocus();
   });
@@ -448,5 +473,109 @@ describe('TagGroup', () => {
     await user.tab({shift: true});
 
     expect(document.activeElement).toBe(tree.getByRole('grid'));
+  });
+
+  it('should support tabbing to remove buttons', async () => {
+    let onRemove = jest.fn();
+    let {getAllByRole, getAllByText} = render(
+      <TagGroup data-testid="group" onRemove={onRemove}>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+      </TagGroup>
+    );
+
+    let tags = getAllByRole('row');
+    let removeButtons = getAllByText('x');
+    expect(removeButtons).toHaveLength(3);
+
+    // Tab to focus the first tag
+    await user.tab();
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toBe(tags[0]);
+
+    // Tab to focus the first remove button
+    await user.tab();
+    expect(document.activeElement).toBe(removeButtons[0]);
+
+    // Test remove button functionality
+    await user.keyboard(' '); // Press space to activate button
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
+
+    await user.keyboard('{Delete}');
+    expect(onRemove).toHaveBeenCalledTimes(2);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
+
+    await user.keyboard('{ArrowRight}');
+    expect(tags[1]).toHaveFocus();
+
+    await user.keyboard('{Delete}');
+    expect(onRemove).toHaveBeenCalledTimes(3);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['dog']));
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(0);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('press events', () => {
+    it.only.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+      await tester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 });

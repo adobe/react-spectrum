@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ariaHideOutside} from './ariaHideOutside';
+import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
+import {useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -28,6 +29,12 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * The ref for the popover element.
    */
   popoverRef: RefObject<Element | null>,
+  /**
+   * An optional ref for a group of popovers, e.g. submenus.
+   * When provided, this element is used to detect outside interactions
+   * and hiding elements from assistive technologies instead of the popoverRef.
+   */
+  groupRef?: RefObject<Element | null>,
   /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.
@@ -74,23 +81,25 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   let {
     triggerRef,
     popoverRef,
+    groupRef,
     isNonModal,
     isKeyboardDismissDisabled,
     shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
+  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger';
+
   let {overlayProps, underlayProps} = useOverlay(
     {
-      // If popover is in the top layer, it should not prevent other popovers from being dismissed.
-      isOpen: state.isOpen && !otherProps['data-react-aria-top-layer'],
+      isOpen: state.isOpen,
       onClose: state.close,
       shouldCloseOnBlur: true,
-      isDismissable: !isNonModal,
+      isDismissable: !isNonModal || isSubmenu,
       isKeyboardDismissDisabled,
       shouldCloseOnInteractOutside
     },
-    popoverRef
+    groupRef ?? popoverRef
   );
 
   let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
@@ -98,18 +107,22 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: isNonModal ? state.close : null
+    onClose: isNonModal && !isSubmenu ? state.close : null
   });
 
   usePreventScroll({
     isDisabled: isNonModal || !state.isOpen
   });
 
-  useLayoutEffect(() => {
-    if (state.isOpen && !isNonModal && popoverRef.current) {
-      return ariaHideOutside([popoverRef.current]);
+  useEffect(() => {
+    if (state.isOpen && popoverRef.current) {
+      if (isNonModal) {
+        return keepVisible(groupRef?.current ?? popoverRef.current);
+      } else {
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
+      }
     }
-  }, [isNonModal, state.isOpen, popoverRef]);
+  }, [isNonModal, state.isOpen, popoverRef, groupRef]);
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),

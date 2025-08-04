@@ -93,7 +93,7 @@ export function useMove(props: MoveEvents): MoveResult {
       state.current.didMove = false;
     };
 
-    if (typeof PointerEvent === 'undefined') {
+    if (typeof PointerEvent === 'undefined' && process.env.NODE_ENV === 'test') {
       let onMouseMove = (e: MouseEvent) => {
         if (e.button === 0) {
           move(e, 'mouse', e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));

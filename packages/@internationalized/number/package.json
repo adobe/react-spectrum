@@ -1,12 +1,16 @@
 {
   "name": "@internationalized/number",
-  "version": "3.6.0",
+  "version": "3.6.4",
   "description": "Internationalized number formatting and parsing utilities",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },

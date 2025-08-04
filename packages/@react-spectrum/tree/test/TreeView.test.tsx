@@ -12,17 +12,18 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {TreeView, TreeViewItem} from '../';
-import {User} from '@react-aria/test-utils';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
 import userEvent from '@testing-library/user-event';
 
 let onSelectionChange = jest.fn();
@@ -32,34 +33,8 @@ let onExpandedChange = jest.fn();
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
   <TreeView defaultExpandedKeys={new Set(['Projects', 'Projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <TreeViewItem id="Photos" textValue="Photos" {...rowProps}>
-      <Text>Photos</Text>
-      <Folder />
-      <ActionGroup>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionGroup>
-    </TreeViewItem>
-    <TreeViewItem id="Projects" textValue="Projects" {...rowProps}>
-      <Text>Projects</Text>
-      <Folder />
-      <ActionGroup>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionGroup>
-      <TreeViewItem id="Projects-1" textValue="Projects-1" {...rowProps}>
-        <Text>Projects-1</Text>
+      <TreeViewItemContent>
+        <Text>Photos</Text>
         <Folder />
         <ActionGroup>
           <Item key="edit">
@@ -71,8 +46,26 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-        <TreeViewItem id="Projects-1A" textValue="Projects-1A" {...rowProps}>
-          <Text>Projects-1A</Text>
+      </TreeViewItemContent>
+    </TreeViewItem>
+    <TreeViewItem id="Projects" textValue="Projects" {...rowProps}>
+      <TreeViewItemContent>
+        <Text>Projects</Text>
+        <Folder />
+        <ActionGroup>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeViewItemContent>
+      <TreeViewItem id="Projects-1" textValue="Projects-1" {...rowProps}>
+        <TreeViewItemContent>
+          <Text>Projects-1</Text>
           <Folder />
           <ActionGroup>
             <Item key="edit">
@@ -84,35 +77,55 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
+        </TreeViewItemContent>
+        <TreeViewItem id="Projects-1A" textValue="Projects-1A" {...rowProps}>
+          <TreeViewItemContent>
+            <Text>Projects-1A</Text>
+            <Folder />
+            <ActionGroup>
+              <Item key="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </Item>
+              <Item key="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </Item>
+            </ActionGroup>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeViewItem>
       <TreeViewItem id="Projects-2" textValue="Projects-2" {...rowProps}>
-        <Text>Projects-2</Text>
-        <Folder />
-        <ActionGroup>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
+        <TreeViewItemContent>
+          <Text>Projects-2</Text>
+          <Folder />
+          <ActionGroup>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
       </TreeViewItem>
       <TreeViewItem id="Projects-3" textValue="Projects-3" {...rowProps}>
-        <Text>Projects-3</Text>
-        <Folder />
-        <ActionGroup>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
+        <TreeViewItemContent>
+          <Text>Projects-3</Text>
+          <Folder />
+          <ActionGroup>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
       </TreeViewItem>
     </TreeViewItem>
   </TreeView>
@@ -148,23 +161,51 @@ let rows = [
   ]}
 ];
 
+const DynamicTreeItem = (props) => {
+  let {childItems, name} = props;
+  return (
+    <>
+      <TreeViewItem id={props.id} textValue={name} href={props.href}>
+        <TreeViewItemContent>
+          <Text>{name}</Text>
+          <ActionGroup>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
+        <Collection items={childItems}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}
+              href={props.href}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+      </TreeViewItem>
+    </>
+  );
+};
+
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
   <TreeView defaultExpandedKeys={new Set(['Projects', 'Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
-      <TreeViewItem childItems={item.childItems} textValue={item.name} {...rowProps}>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionGroup>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItem>
+      <DynamicTreeItem
+        {...rowProps}
+        id={item.id}
+        childItems={item.childItems}
+        textValue={item.name}
+        name={item.name} />
     )}
   </TreeView>
 );
@@ -252,7 +293,7 @@ describe('Tree', () => {
     expect(rowNoChild).toHaveAttribute('data-level', '1');
     expect(rowNoChild).toHaveAttribute('aria-posinset', '1');
     expect(rowNoChild).toHaveAttribute('aria-setsize', '2');
-    expect(rowNoChild).not.toHaveAttribute('data-has-child-rows');
+    expect(rowNoChild).not.toHaveAttribute('data-has-child-items');
     expect(rowNoChild).toHaveAttribute('data-rac');
 
     let rowWithChildren = rows[1];
@@ -264,7 +305,7 @@ describe('Tree', () => {
     expect(rowWithChildren).toHaveAttribute('data-level', '1');
     expect(rowWithChildren).toHaveAttribute('aria-posinset', '2');
     expect(rowWithChildren).toHaveAttribute('aria-setsize', '2');
-    expect(rowWithChildren).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rowWithChildren).toHaveAttribute('data-has-child-items', 'true');
     expect(rowWithChildren).toHaveAttribute('data-rac');
 
     let level2ChildRow = rows[2];
@@ -275,7 +316,7 @@ describe('Tree', () => {
     expect(level2ChildRow).toHaveAttribute('data-level', '2');
     expect(level2ChildRow).toHaveAttribute('aria-posinset', '1');
     expect(level2ChildRow).toHaveAttribute('aria-setsize', '3');
-    expect(level2ChildRow).toHaveAttribute('data-has-child-rows', 'true');
+    expect(level2ChildRow).toHaveAttribute('data-has-child-items', 'true');
     expect(level2ChildRow).toHaveAttribute('data-rac');
 
     let level3ChildRow = rows[3];
@@ -286,7 +327,7 @@ describe('Tree', () => {
     expect(level3ChildRow).toHaveAttribute('data-level', '3');
     expect(level3ChildRow).toHaveAttribute('aria-posinset', '1');
     expect(level3ChildRow).toHaveAttribute('aria-setsize', '1');
-    expect(level3ChildRow).not.toHaveAttribute('data-has-child-rows');
+    expect(level3ChildRow).not.toHaveAttribute('data-has-child-items');
     expect(level3ChildRow).toHaveAttribute('data-rac');
 
     let level2ChildRow2 = rows[4];
@@ -297,7 +338,7 @@ describe('Tree', () => {
     expect(level2ChildRow2).toHaveAttribute('data-level', '2');
     expect(level2ChildRow2).toHaveAttribute('aria-posinset', '2');
     expect(level2ChildRow2).toHaveAttribute('aria-setsize', '3');
-    expect(level2ChildRow2).not.toHaveAttribute('data-has-child-rows');
+    expect(level2ChildRow2).not.toHaveAttribute('data-has-child-items');
     expect(level2ChildRow2).toHaveAttribute('data-rac');
 
     let level2ChildRow3 = rows[5];
@@ -308,7 +349,7 @@ describe('Tree', () => {
     expect(level2ChildRow3).toHaveAttribute('data-level', '2');
     expect(level2ChildRow3).toHaveAttribute('aria-posinset', '3');
     expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
-    expect(level2ChildRow3).not.toHaveAttribute('data-has-child-rows');
+    expect(level2ChildRow3).not.toHaveAttribute('data-has-child-items');
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
 
@@ -317,7 +358,7 @@ describe('Tree', () => {
 
     let rows = getAllByRole('row');
     expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
-    expect(rows[1]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[1]).toHaveAttribute('data-has-child-items', 'true');
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
   });
 
@@ -333,28 +374,28 @@ describe('Tree', () => {
     expect(rows[0]).toHaveAttribute('aria-level', '1');
     expect(rows[0]).toHaveAttribute('aria-posinset', '1');
     expect(rows[0]).toHaveAttribute('aria-setsize', '2');
-    expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
 
     expect(rows[2]).toHaveAttribute('aria-label', 'Project 2');
     expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[2]).toHaveAttribute('aria-level', '2');
     expect(rows[2]).toHaveAttribute('aria-posinset', '2');
     expect(rows[2]).toHaveAttribute('aria-setsize', '5');
-    expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[2]).toHaveAttribute('data-has-child-items', 'true');
 
     expect(rows[8]).toHaveAttribute('aria-label', 'Project 5');
     expect(rows[8]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[8]).toHaveAttribute('aria-level', '2');
     expect(rows[8]).toHaveAttribute('aria-posinset', '5');
     expect(rows[8]).toHaveAttribute('aria-setsize', '5');
-    expect(rows[8]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[8]).toHaveAttribute('data-has-child-items', 'true');
 
     expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
     expect(rows[12]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[12]).toHaveAttribute('aria-level', '1');
     expect(rows[12]).toHaveAttribute('aria-posinset', '2');
     expect(rows[12]).toHaveAttribute('aria-setsize', '2');
-    expect(rows[12]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[12]).toHaveAttribute('data-has-child-items', 'true');
 
     expect(rows[16]).toHaveAttribute('aria-label', 'Reports 1ABC');
     expect(rows[16]).toHaveAttribute('aria-level', '5');
@@ -422,11 +463,34 @@ describe('Tree', () => {
     expect(treeTester.selectedRows[0]).toBe(row1);
   });
 
-  it('should render a chevron for an expandable row marked with hasChildRows', () => {
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}} />);
+    let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+    let rows = treeTester.rows;
+    let row1 = rows[1];
+    await treeTester.toggleRowSelection({row: row1});
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+
+    let row2 = rows[2];
+    await treeTester.toggleRowSelection({row: row2});
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+    expect(treeTester.selectedRows).toHaveLength(2);
+
+    await user.keyboard('{Escape}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(treeTester.selectedRows).toHaveLength(2);
+  });
+
+  it('should render a chevron for an expandable row marked with hasChildItems', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">
         <TreeViewItem textValue="Test" hasChildItems>
-          <Text>Test</Text>
+          <TreeViewItemContent>
+            <Text>Test</Text>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeView>
     );
@@ -437,7 +501,7 @@ describe('Tree', () => {
     expect(rows[0]).toHaveAttribute('aria-label', 'Test');
     // Until the row gets children, don't mark it with the aria/data attributes.
     expect(rows[0]).not.toHaveAttribute('aria-expanded');
-    expect(rows[0]).not.toHaveAttribute('data-has-child-rows');
+    expect(rows[0]).toHaveAttribute('data-has-child-items');
     expect(chevron).toBeTruthy();
   });
 
@@ -445,7 +509,9 @@ describe('Tree', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">
         <TreeViewItem textValue="Test" aria-label="test row">
-          <Text>Test</Text>
+          <TreeViewItemContent>
+            <Text>Test</Text>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeView>
     );
@@ -627,6 +693,211 @@ describe('Tree', () => {
       let tree = getByRole('treegrid');
       fireEvent.scroll(tree);
       expect(onScroll).toHaveBeenCalled();
+    });
+
+    describe('highlight selection', () => {
+      // Required for proper touch detection
+      installPointerEvent();
+      describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+        it('should perform selection for highlight mode with single selection', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'single', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'single');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called twice because initial focus will select the first keyboard focused row
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row1);
+
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
+          expect(treeTester.selectedRows).toHaveLength(0);
+        });
+
+        it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1', 'Projects']));
+            expect(treeTester.selectedRows).toHaveLength(3);
+            expect(treeTester.selectedRows[1]).toBe(row1);
+            expect(treeTester.selectedRows[2]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1', 'Projects']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          }
+
+          // With modifier key, you should be able to deselect on press of the same row
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Photos', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[1]).toBe(row2);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+        });
+
+        it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            // Called multiple times since selection changes on option focus as we arrow down to the target option
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1});
+          if (type !== 'touch') {
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'false');
+            expect(row2).not.toHaveAttribute('data-selected');
+            if (type === 'keyboard') {
+              expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            } else {
+              expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            }
+            expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Projects']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+
+            // pressing without modifier keys won't deselect the row
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            if (type === 'keyboard') {
+              expect(onSelectionChange).toHaveBeenCalledTimes(4);
+            } else {
+              expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            }
+            expect(treeTester.selectedRows).toHaveLength(1);
+          } else {
+            // touch always behaves as toggle
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'true');
+            expect(row2).toHaveAttribute('data-selected', 'true');
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'false');
+            expect(row1).not.toHaveAttribute('data-selected');
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
+          }
+        });
+      });
     });
 
     describe('links', function () {
@@ -848,7 +1119,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-level', '1');
         expect(rows[0]).toHaveAttribute('aria-posinset', '1');
         expect(rows[0]).toHaveAttribute('aria-setsize', '2');
-        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
         // Check we can open/close a top level row
@@ -859,7 +1130,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-level', '1');
         expect(rows[0]).toHaveAttribute('aria-posinset', '1');
         expect(rows[0]).toHaveAttribute('aria-setsize', '2');
-        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         // Note that the children of the parent row will still be in the "expanded" array
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
@@ -873,7 +1144,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-level', '1');
         expect(rows[0]).toHaveAttribute('aria-posinset', '1');
         expect(rows[0]).toHaveAttribute('aria-setsize', '2');
-        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(2);
         expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
         rows = treeTester.rows;
@@ -887,7 +1158,7 @@ describe('Tree', () => {
         expect(rows[2]).toHaveAttribute('aria-level', '2');
         expect(rows[2]).toHaveAttribute('aria-posinset', '2');
         expect(rows[2]).toHaveAttribute('aria-setsize', '5');
-        expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[2]).toHaveAttribute('data-has-child-items', 'true');
 
         // Check we can close a nested row and it doesn't affect the parent
         await treeTester.toggleRowExpansion({row: rows[2], interactionType: type as 'mouse' | 'keyboard'});
@@ -897,13 +1168,13 @@ describe('Tree', () => {
         expect(rows[2]).toHaveAttribute('aria-level', '2');
         expect(rows[2]).toHaveAttribute('aria-posinset', '2');
         expect(rows[2]).toHaveAttribute('aria-setsize', '5');
-        expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[2]).toHaveAttribute('data-has-child-items', 'true');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
         expect(rows[0]).toHaveAttribute('aria-level', '1');
         expect(rows[0]).toHaveAttribute('aria-posinset', '1');
         expect(rows[0]).toHaveAttribute('aria-setsize', '2');
-        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(3);
         expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(new Set(['Projects', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
         rows = treeTester.rows;
@@ -1169,8 +1440,8 @@ describe('Tree', () => {
 
       let row = treeTester.rows[0];
       expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(row).not.toHaveAttribute('aria-posinset');
+      expect(row).not.toHaveAttribute('aria-setsize');
       let gridCell = treeTester.cells({element: row})[0];
       expect(gridCell).toHaveTextContent('No resultsNo results found.');
 
@@ -1193,7 +1464,9 @@ describe('Tree', () => {
       let tree = render(
         <TreeView aria-label="test tree" selectionMode="multiple" disabledBehavior="selection">
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <Text>Test</Text>
+            <TreeViewItemContent>
+              <Text>Test</Text>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );
@@ -1205,7 +1478,9 @@ describe('Tree', () => {
         tree,
         <TreeView aria-label="test tree" selectionMode="multiple" disabledKeys={['Test']} disabledBehavior="selection">
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <Text>Test</Text>
+            <TreeViewItemContent>
+              <Text>Test</Text>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );
@@ -1217,7 +1492,9 @@ describe('Tree', () => {
         tree,
         <TreeView aria-label="test tree" selectionMode="multiple" disabledBehavior="all" disabledKeys={['Test']}>
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <Text>Test</Text>
+            <TreeViewItemContent>
+              <Text>Test</Text>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );
