@@ -263,7 +263,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let displayValue = isValueConfirmed && value ? value :  placeholderDate ;
-  const currentValue = useRef(displayValue);
   let setValue = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
@@ -307,7 +306,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
-    currentValue.current = newValue;
+    displayValue = newValue;
     setPlaceholderDate(newValue);
   };
 
@@ -337,25 +336,22 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     setShouldValidate(true);
     setIsValueConfirmed(false);
-
+    
+    let v = displayValue;
     if (!validSegments[type]) {
       markValid(type);
-      let validKeys = Object.keys(validSegments);
-      let allKeys = Object.keys(allSegments);
-      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        currentValue.current = displayValue;
-        setValue(constrainDate(displayValue));
-      } else {updatePlaceholder(displayValue);}
     } else {
-      let validKeys = Object.keys(validSegments);
-      let allKeys = Object.keys(allSegments);
-      const v = addSegment(displayValue, type, amount, resolvedOptions);
-      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        currentValue.current = v;
-        setValue(constrainDate(v));
-      } else {
-        updatePlaceholder(v);
-      }
+      v = addSegment(displayValue, type, amount, resolvedOptions);
+    }
+
+    let validKeys = Object.keys(validSegments);
+    let allKeys = Object.keys(allSegments);
+    if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
+      const constrained = constrainDate(v);
+      displayValue = constrained; 
+      setValue(constrained);
+    } else {
+      updatePlaceholder(v);
     }
   };
   
@@ -420,7 +416,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let validKeys = Object.keys(validSegments);
       let allKeys = Object.keys(allSegments);
       const value = setSegment(displayValue, part, v, resolvedOptions);
-      currentValue.current = value;
       if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
         setValue(constrainDate(value));
       } else {
@@ -438,7 +433,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
         validSegments = {...allSegments};
         setValidSegments(validSegments);
-        setValue(constrainDate(currentValue.current));
+        setValue(constrainDate(displayValue));
       } else {
         setDate(null);
         setPreviousValue(null);
