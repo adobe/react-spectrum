@@ -93,6 +93,7 @@ export interface DateFieldState extends FormValidationState {
   /** Sets the value of the given segment. */
   setSegment(type: 'era', value: string): void,
   setSegment(type: SegmentType, value: number): void,
+  /** Sets the value of the given segment by the maximum or the minimum, for example 31 days, 12 months, and 9999 years. */
   incrementToMinMax(type: SegmentType, value: number): void,
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void,
