@@ -196,13 +196,13 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
-let StaticGridList = (props) => (
-  <GridList aria-label="test gridlist" {...props}>
-    <GridListItem id="1">Foo</GridListItem>
-    <GridListItem id="2">Bar</GridListItem>
-    <GridListItem id="3">Baz</GridListItem>
-  </GridList>
-);
+// let StaticGridList = (props) => (
+//   <GridList aria-label="test gridlist" {...props}>
+//     <GridListItem id="1">Foo</GridListItem>
+//     <GridListItem id="2">Bar</GridListItem>
+//     <GridListItem id="3">Baz</GridListItem>
+//   </GridList>
+// );
 
 let StaticTable = (props) => (
   <Table aria-label="test table" {...props}>
@@ -231,16 +231,16 @@ let StaticTable = (props) => (
   </Table>
 );
 
-let StaticTagGroup = (props) => (
-  <TagGroup {...props}>
-    <Label>Test tag group</Label>
-    <TagList>
-      <Tag>Foo</Tag>
-      <Tag>Bar</Tag>
-      <Tag>Baz</Tag>
-    </TagList>
-  </TagGroup>
-);
+// let StaticTagGroup = (props) => (
+//   <TagGroup {...props}>
+//     <Label>Test tag group</Label>
+//     <TagList>
+//       <Tag>Foo</Tag>
+//       <Tag>Bar</Tag>
+//       <Tag>Baz</Tag>
+//     </TagList>
+//   </TagGroup>
+// );
 
 let StaticTabs = (props) => (
   <Tabs {...props}>
