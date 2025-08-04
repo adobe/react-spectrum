@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps, RefObject} from '@react-types/shared';
 import {focusSafely} from './';
 import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef, useSyncRef} from '@react-aria/utils';
-import React, {ForwardedRef, forwardRef, MutableRefObject, ReactElement, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, MutableRefObject, ReactElement, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useFocus} from './useFocus';
 import {useKeyboard} from './useKeyboard';
 
@@ -50,12 +50,16 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
 export const FocusableProvider:
   React.ForwardRefExoticComponent<FocusableProviderProps & React.RefAttributes<FocusableElement>> =
 React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
-  let {children, ...otherProps} = props;
+  let {children} = props;
   let objRef = useObjectRef(ref);
-  let context = {
-    ...otherProps,
-    ref: objRef
-  };
+  let context = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {children: _, ...otherProps} = props;
+    return {
+      ...otherProps,
+      ref: objRef
+    };
+  }, [objRef, props]);
 
   return (
     <FocusableContext.Provider value={context}>

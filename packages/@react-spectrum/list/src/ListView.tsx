@@ -214,8 +214,32 @@ export const ListView = React.forwardRef(function ListView<T extends object>(pro
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
+  const context = useMemo(() => ({
+    state,
+    dragState,
+    dropState,
+    dragAndDropHooks,
+    onAction,
+    isListDraggable,
+    isListDroppable,
+    layout,
+    loadingState,
+    renderEmptyState
+  }), [
+    dragAndDropHooks,
+    dragState,
+    dropState,
+    isListDraggable,
+    isListDroppable,
+    layout,
+    loadingState,
+    onAction,
+    renderEmptyState,
+    state
+  ]);
+
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragAndDropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState, renderEmptyState}}>
+    <ListViewContext.Provider value={context}>
       <FocusScope>
         <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
           <Virtualizer

@@ -16,7 +16,7 @@ import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useInteractOutside} from '@react-aria/interactions';
-import React, {forwardRef, Fragment, useRef} from 'react';
+import React, {forwardRef, Fragment, useMemo, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -60,7 +60,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
   }
 
   let isMobile = useIsMobileDevice();
-  let menuContext = {
+  let menuContext = useMemo(() => ({
     ...menuProps,
     ref: menuRef,
     onClose: state.close,
@@ -72,7 +72,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
     } : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
     state
-  };
+  }), [closeOnSelect, isMobile, menuProps, state]);
 
   // Close when clicking outside the root menu when a submenu is open.
   let rootOverlayRef = useRef(null);

@@ -19,7 +19,7 @@ import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, Sp
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -75,6 +75,10 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
     ...groupProps
   } = props;
 
+  const context = useMemo(() => ({
+    ...formContext, size, isEmphasized
+  }), [formContext, isEmphasized, size]);
+
   return (
     <AriaRadioGroup
       {...groupProps}
@@ -120,7 +124,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
               columnGap: 16,
               rowGap: '--field-gap'
             })({orientation})}>
-            <FormContext.Provider value={{...formContext, size, isEmphasized}}>
+            <FormContext.Provider value={context}>
               {children}
             </FormContext.Provider>
           </div>

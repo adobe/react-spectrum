@@ -39,7 +39,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
@@ -118,6 +118,9 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
 
   let domRef = useDOMRef(ref);
 
+  const rendererContext = useMemo(() => ({renderer}), [renderer]);
+  const internalContext = useMemo(() => ({isDetached, isEmphasized}), [isDetached, isEmphasized]);
+
   return (
     <Virtualizer
       layout={ListLayout}
@@ -125,8 +128,8 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
         rowHeight: scale === 'large' ? 50 : 40,
         gap: isDetached ? 2 : 0
       }}>
-      <TreeRendererContext.Provider value={{renderer}}>
-        <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
+      <TreeRendererContext.Provider value={rendererContext}>
+        <InternalTreeContext.Provider value={internalContext}>
           <Tree
             {...props}
             style={UNSAFE_style}
