@@ -1,0 +1,116 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Tooltip, TooltipTrigger, Button, ActionButton} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Tooltip
+
+<PageDescription>{docs.exports.Tooltip.description}</PageDescription>
+
+{/* TODO: Example */}
+
+## Content
+
+The TooltipTrigger accepts exactly two children: the element which triggers the display of the Tooltip and the Tooltip itself. The trigger element must be the first child passed into the TooltipTrigger.
+
+### Basic usage
+
+```tsx render expanded
+"use client";
+import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+
+<TooltipTrigger>
+  <Button aria-label="Edit Name"><Edit /></Button>
+  <Tooltip>Change Name</Tooltip>
+</TooltipTrigger>
+```
+
+### Accessibility
+
+Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them. When displayed, TooltipTrigger automatically associates the tooltip with the trigger element so that it is described by the tooltip content.
+
+## Delay
+
+Tooltips should appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover.
+
+```tsx render expanded
+"use client";
+import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
+import SaveFloppy from '@react-spectrum/s2/icons/SaveFloppy';
+
+<TooltipTrigger delay={0}>
+  <Button aria-label="Save"><SaveFloppy /></Button>
+  <Tooltip>Saving applies your new settings right away.</Tooltip>
+</TooltipTrigger>
+```
+
+### Warmup / Cooldown
+
+Tooltips have a warm up and cool down period. Only one tooltip can be open at a time.
+
+```tsx render expanded
+"use client";
+import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: '12px'}}>
+  <TooltipTrigger>
+    <Button>Hover me</Button>
+    <Tooltip>I come up after a delay.</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>Then hover me</Button>
+    <Tooltip>If you did it quickly, I appear immediately.</Tooltip>
+  </TooltipTrigger>
+</div>
+```
+
+## Events
+
+TooltipTrigger accepts an `onOpenChange` handler which is triggered whenever the Tooltip is shown or hidden.
+
+```tsx render expanded
+"use client";
+import {Tooltip, TooltipTrigger, Button, Text} from '@react-spectrum/s2';
+import {useState} from 'react';
+import Resize from '@react-spectrum/s2/icons/Resize';
+
+function Example() {
+  let [isOpen, setOpen] = useState(false);
+
+  return (
+    <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button aria-label="Resize"><Resize /></Button>
+        <Tooltip>Resize text.</Tooltip>
+      </TooltipTrigger>
+      <Text>Tooltip is {isOpen ? 'showing' : 'not showing'}</Text>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## Usage on disabled or non-interactive elements
+
+Tooltips need to be accessible to keyboard and screen reader users, so we ensure that they are only placed on focusable and hoverable elements. For example, plain text and disabled buttons aren't focusable, meaning keyboard and screen reader users would be unable to access the information in that tooltip.
+
+If you need to display additional context for disabled elements, consider using alternative patterns or ensuring the trigger remains focusable.
+
+```tsx render expanded
+"use client";
+import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
+  <TooltipTrigger>
+    <Button isDisabled>Delete resource</Button>
+    <Tooltip>This tooltip works because the button is still focusable when disabled.</Tooltip>
+  </TooltipTrigger>
+  <ContextualHelp variant="info">
+      <Heading>Permission required</Heading>
+      <Content>Your admin must grant you permission before you can delete resources.</Content>
+  </ContextualHelp>
+</div>
+```
