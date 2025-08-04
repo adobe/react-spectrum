@@ -23,7 +23,7 @@ export class Custom454Calendar extends GregorianCalendar {
   }
 
   getMaxDays(): number {
-    return 35
+    return 35;
   }
 
   fromJulianDay(jd: number): CalendarDate {

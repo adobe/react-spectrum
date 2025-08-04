@@ -93,7 +93,7 @@ export class EthiopicCalendar implements Calendar {
   }
 
   getMaxDays(): number {
-    return 30
+    return 30;
   }
 
   getMonthsInYear(): number {

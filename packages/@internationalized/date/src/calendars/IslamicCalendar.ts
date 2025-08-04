@@ -70,7 +70,7 @@ export class IslamicCivilCalendar implements Calendar {
   }
 
   getMaxDays(): number {
-    return 30
+    return 30;
   }
 
   getMonthsInYear(): number {

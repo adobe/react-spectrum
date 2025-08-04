@@ -110,7 +110,7 @@ export class GregorianCalendar implements Calendar {
   }
 
   getMaxDays(): number {
-    return 31
+    return 31;
   }
 
   getDaysInYear(date: AnyCalendarDate): number {

@@ -81,7 +81,7 @@ export class PersianCalendar implements Calendar {
   }
 
   getMaxDays(): number {
-    return 31
+    return 31;
   }
 
   getEras(): string[] {
