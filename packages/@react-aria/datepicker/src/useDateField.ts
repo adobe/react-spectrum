@@ -83,7 +83,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
       state.confirmPlaceholder();
       if (state.shouldValidate) {
         state.commitValidation();
-        state.setShouldValidate(false)
+        state.setShouldValidate(false);
       };
       props.onBlur?.(e);
     },
