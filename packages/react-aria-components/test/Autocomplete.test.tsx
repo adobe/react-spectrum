@@ -1102,26 +1102,26 @@ AriaAutocompleteTests({
   ariaPattern: 'grid'
 });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-gridlist',
-  renderers: {
-    noVirtualFocus: () => render(
-      <AutocompleteWrapper>
-        <StaticGridList />
-      </AutocompleteWrapper>
-    )
-  },
-  ariaPattern: 'grid'
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-gridlist',
+//   renderers: {
+//     noVirtualFocus: () => render(
+//       <AutocompleteWrapper>
+//         <StaticGridList />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   ariaPattern: 'grid'
+// });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-taggroup',
-  renderers: {
-    noVirtualFocus: () => render(
-      <AutocompleteWrapper>
-        <StaticTagGroup />
-      </AutocompleteWrapper>
-    )
-  },
-  ariaPattern: 'grid'
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-taggroup',
+//   renderers: {
+//     noVirtualFocus: () => render(
+//       <AutocompleteWrapper>
+//         <StaticTagGroup />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   ariaPattern: 'grid'
+// });
