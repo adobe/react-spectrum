@@ -388,9 +388,6 @@ function FormAndLayoutStory() {
           <div style={{marginTop: 8}}>
             Preferences: {submittedData.length > 0 ? submittedData.join(', ') : 'None selected'}
           </div>
-          <div style={{marginTop: 4, fontSize: 12, color: '#666'}}>
-            Form data would be sent to server with name "preferences"
-          </div>
         </div>
       )}
     </div>
@@ -642,7 +639,7 @@ export const WithCheckboxes: Story = {
         <SelectBox value="shortname">
           <Paperairplane slot="illustration" />
           <Text slot="text">Short</Text>
-          <Text slot="description">This description is intentionally very long to create a mixed layout where some boxes have short labels but long descriptions, which will help test how the grid layout handles boxes of different content lengths and whether they maintain consistent heights as expected.</Text>
+          <Text slot="description">This description is intentionally very long to create a mixed layout where some boxes have short labels but long descriptions, which will help test how the grid layout handles boxes of different content lengths and whether they maintain consistent heights as expected. This is a very long description that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
         </SelectBox>
       </SelectBoxGroup>
       

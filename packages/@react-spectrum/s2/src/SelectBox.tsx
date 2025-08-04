@@ -177,7 +177,8 @@ const contentContainer = style({
       horizontal: '1 0 0'
     }
   },
-  width: '100%'
+  width: '100%',
+  overflow: 'hidden'
 }, getAllowedOverrides());
 
 const illustrationContainer = style({
@@ -224,15 +225,19 @@ const textContainer = style({
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
-  }
+  },
 }, getAllowedOverrides());
 
 const descriptionText = style({
-  display: 'block',
-  alignSelf: 'stretch',
+  alignSelf: 'stretch', 
   width: '100%',
   minWidth: 0,
-  whiteSpace: 'normal',
+  overflow: 'hidden',
+  maxHeight: {
+    orientation: {
+      horizontal: 120,
+    }
+  },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
@@ -353,13 +358,11 @@ export const SelectBox = /*#__PURE__*/ forwardRef(function SelectBox(props: Sele
           </IllustrationContext.Provider>
         </div>
       )}
-      
-      <div className={contentContainer({size, orientation}, props.styles)}>
-        <div className={textContainer({size, orientation, isDisabled}, props.styles)}>
+      <div className={contentContainer({size, orientation})}>
+        <div className={textContainer({size, orientation, isDisabled})}>
           <div className={labelText({orientation, isDisabled})}>
             {textSlot}
           </div>
-          
           {!!descriptionSlot && orientation === 'horizontal' && (
             <div 
               className={descriptionText({size, orientation, isDisabled})}>
