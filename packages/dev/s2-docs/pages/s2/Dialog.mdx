@@ -1,0 +1,285 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Dialog, FullscreenDialog, CustomDialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Heading, Header, Content, Footer, Image, TextField, Checkbox, CloseButton, ActionButton, IllustratedMessage} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Dialog
+
+<PageDescription>{docs.exports.Dialog.description}</PageDescription>
+
+{/* TODO: Example */}
+
+## Content
+
+Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface. React Spectrum provides three dialog types for different use cases:
+
+- **Dialog** - Standard dialogs with predefined layout sections
+- **FullscreenDialog** - Fullscreen dialogs for complex workflows
+- **CustomDialog** - Dialogs with complete layout control
+
+### Standard Dialog
+
+The standard Dialog component follows the Collection Components API with predefined sections for consistent layout.
+
+```tsx render expanded
+"use client";
+import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <Button variant="primary">Open Dialog</Button>
+  <Dialog>
+    {({close}) => (
+      <>
+        <Heading slot="title">Newsletter Signup</Heading>
+        <Header>Stay updated with our latest news</Header>
+        <Content>
+          <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
+        </Content>
+        <Footer>
+          <Checkbox>I agree to receive marketing emails</Checkbox>
+        </Footer>
+        <ButtonGroup>
+          <Button onPress={close} variant="secondary">Cancel</Button>
+          <Button onPress={close} variant="accent">Subscribe</Button>
+        </ButtonGroup>
+      </>
+    )}
+  </Dialog>
+</DialogTrigger>
+```
+
+### Dialog with Hero Image
+
+Dialogs can include hero images using the `hero` slot.
+
+```tsx render expanded
+"use client";
+import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Content, Image} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <Button variant="primary">View Details</Button>
+  <Dialog>
+    {({close}) => (
+      <>
+        <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Mountain landscape" />
+        <Heading slot="title">Beautiful Landscape</Heading>
+        <Content>
+          This stunning mountain landscape showcases the natural beauty of the region. Perfect for outdoor enthusiasts and nature lovers.
+        </Content>
+        <ButtonGroup>
+          <Button onPress={close} variant="secondary">Close</Button>
+          <Button onPress={close} variant="accent">Learn More</Button>
+        </ButtonGroup>
+      </>
+    )}
+  </Dialog>
+</DialogTrigger>
+```
+
+## Fullscreen Dialog
+
+Use FullscreenDialog for complex workflows that require more space.
+
+```tsx render expanded
+"use client";
+import {FullscreenDialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <Button variant="primary">Open Fullscreen</Button>
+  <FullscreenDialog>
+    {({close}) => (
+      <>
+        <Heading slot="title">Advanced Settings</Heading>
+        <Header>Configure your application preferences</Header>
+        <Content>
+          <div style={{height: '400px', padding: '20px', backgroundColor: 'var(--spectrum-gray-100)', borderRadius: '8px'}}>
+            <p>This fullscreen dialog provides ample space for complex forms, detailed content, or multi-step workflows.</p>
+            <p>The content area can scroll if needed, making it perfect for lengthy forms or comprehensive settings panels.</p>
+          </div>
+        </Content>
+        <ButtonGroup>
+          <Button onPress={close} variant="secondary">Cancel</Button>
+          <Button onPress={close} variant="accent">Save Changes</Button>
+        </ButtonGroup>
+      </>
+    )}
+  </FullscreenDialog>
+</DialogTrigger>
+```
+
+### Fullscreen Takeover
+
+Use the `fullscreenTakeover` variant to cover the entire screen.
+
+```tsx render expanded
+"use client";
+import {FullscreenDialog, DialogTrigger, Button, ButtonGroup, Heading, Content} from '@react-spectrum/s2';
+
+<DialogTrigger>
+  <Button variant="primary">Open Takeover</Button>
+  <FullscreenDialog variant="fullscreenTakeover">
+    {({close}) => (
+      <>
+        <Heading slot="title">Welcome Setup</Heading>
+        <Content>
+          <div style={{textAlign: 'center', padding: '40px'}}>
+            <h2>Welcome to our application!</h2>
+            <p>Let's get you set up with a quick onboarding process.</p>
+          </div>
+        </Content>
+        <ButtonGroup>
+          <Button onPress={close} variant="secondary">Skip</Button>
+          <Button onPress={close} variant="accent">Get Started</Button>
+        </ButtonGroup>
+      </>
+    )}
+  </FullscreenDialog>
+</DialogTrigger>
+```
+
+## Custom Dialog
+
+CustomDialog provides complete control over the dialog layout for specialized use cases.
+
+{/* TODO: Example */}
+
+## DialogContainer
+
+DialogContainer is useful when you need to display dialogs that are triggered by components that may unmount, such as menu items.
+
+```tsx render expanded
+"use client";
+import {DialogContainer, Dialog, Button, ButtonGroup, Heading, Content, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function DialogContainerExample() {
+  const [dialogType, setDialogType] = useState(null);
+
+  return (
+    <>
+      <ActionMenu onAction={setDialogType}>
+        <MenuItem id="edit">Edit Item</MenuItem>
+        <MenuItem id="delete">Delete Item</MenuItem>
+        <MenuItem id="share">Share Item</MenuItem>
+      </ActionMenu>
+      
+      <DialogContainer onDismiss={() => setDialogType(null)}>
+        {dialogType === 'edit' && (
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading slot="title">Edit Item</Heading>
+                <Content>Make changes to your item here.</Content>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="accent">Save</Button>
+                </ButtonGroup>
+              </>
+            )}
+          </Dialog>
+        )}
+        {dialogType === 'delete' && (
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading slot="title">Delete Item</Heading>
+                <Content>Are you sure you want to delete this item? This action cannot be undone.</Content>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="negative">Delete</Button>
+                </ButtonGroup>
+              </>
+            )}
+          </Dialog>
+        )}
+        {dialogType === 'share' && (
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading slot="title">Share Item</Heading>
+                <Content>Choose how you would like to share this item.</Content>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="accent">Share</Button>
+                </ButtonGroup>
+              </>
+            )}
+          </Dialog>
+        )}
+      </DialogContainer>
+    </>
+  );
+}
+
+<DialogContainerExample />
+```
+
+## Events
+
+Dialogs support various event handlers for interaction management.
+
+```tsx render expanded
+"use client";
+import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Content} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function EventExample() {
+  const [lastAction, setLastAction] = useState('None');
+
+  const handleSave = (close) => {
+    setLastAction('Saved');
+    close();
+  };
+
+  const handleCancel = (close) => {
+    setLastAction('Cancelled');
+    close();
+  };
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+      <DialogTrigger onOpenChange={(isOpen) => isOpen && setLastAction('Dialog opened')}>
+        <Button variant="primary">Open Dialog</Button>
+        <Dialog>
+          {({close}) => (
+            <>
+              <Heading slot="title">Confirm Action</Heading>
+              <Content>Choose an action to see event handling in action.</Content>
+              <ButtonGroup>
+                <Button onPress={() => handleCancel(close)} variant="secondary">Cancel</Button>
+                <Button onPress={() => handleSave(close)} variant="accent">Save</Button>
+              </ButtonGroup>
+            </>
+          )}
+        </Dialog>
+      </DialogTrigger>
+      <p>Last action: <strong>{lastAction}</strong></p>
+    </div>
+  );
+}
+
+<EventExample />
+```
+
+## Props
+
+### Dialog
+
+<PropTable component={docs.exports.Dialog} links={docs.links} />
+
+### FullscreenDialog
+
+<PropTable component={docs.exports.FullscreenDialog} links={docs.links} />
+
+### CustomDialog
+
+<PropTable component={docs.exports.CustomDialog} links={docs.links} />
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
+
+### DialogContainer
+
+<PropTable component={docs.exports.DialogContainer} links={docs.links} />
