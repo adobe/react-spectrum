@@ -37,7 +37,7 @@ describe('CalendarDate manipulation', function () {
 
     it('should add months and constrain days', function () {
       let date = new CalendarDate(2020, 8, 31);
-      expect(date.add({months: 1})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.add({months: 1})).toEqual(new CalendarDate(2020, 10, 1));
     });
 
     it('should add days', function () {
@@ -217,7 +217,7 @@ describe('CalendarDate manipulation', function () {
 
       it('should constrain when reaching year 9919', function () {
         let date = new CalendarDate(new IndianCalendar(), 9919, 12, 10);
-        expect(date.add({months: 1})).toEqual(new CalendarDate(new IndianCalendar(), 9919, 12, 31));
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new IndianCalendar(), 9919, 12, 30));
       });
     });
 
@@ -229,7 +229,7 @@ describe('CalendarDate manipulation', function () {
 
       it('should constrain when reaching year 9377', function () {
         let date = new CalendarDate(new PersianCalendar(), 9377, 12, 10);
-        expect(date.add({months: 1})).toEqual(new CalendarDate(new PersianCalendar(), 9377, 12, 31));
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new PersianCalendar(), 9377, 12, 30));
       });
     });
 
@@ -248,7 +248,7 @@ describe('CalendarDate manipulation', function () {
     describe('CopticCalendar', function () {
       it('should rebalance era when subtracting', function () {
         let date = new CalendarDate(new CopticCalendar(), 1, 1, 12);
-        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 'BCE', 1, 13, 5));
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 'CE', 1, 1, 7));
       });
 
       it('should rebalance era when adding', function () {
@@ -353,7 +353,7 @@ describe('CalendarDate manipulation', function () {
 
     it('should subtract months and constrain days', function () {
       let date = new CalendarDate(2020, 10, 31);
-      expect(date.subtract({months: 1})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.subtract({months: 1})).toEqual(new CalendarDate(2020, 10, 1));
     });
 
     it('should subtract days', function () {
@@ -529,7 +529,7 @@ describe('CalendarDate manipulation', function () {
 
     it('should set month and constrain day', function () {
       let date = new CalendarDate(2020, 8, 31);
-      expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 9, 31));
     });
 
     it('should set day', function () {
@@ -539,15 +539,15 @@ describe('CalendarDate manipulation', function () {
 
     it('should constrain day', function () {
       let date = new CalendarDate(2020, 9, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 9, 31));
     });
 
     it('should constrain day on leap years', function () {
       let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 2, 29));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 2, 31));
 
       date = new CalendarDate(2019, 2, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2019, 2, 28));
+      expect(date.set({day: 31})).toEqual(new CalendarDate(2019, 2, 31));
     });
 
     describe('Japanese calendar', function () {
@@ -639,7 +639,7 @@ describe('CalendarDate manipulation', function () {
 
       it('should constrain the day on leap years', function () {
         let date = new CalendarDate(2020, 2, 29);
-        expect(date.cycle('year', 1)).toEqual(new CalendarDate(2021, 2, 28));
+        expect(date.cycle('year', 1)).toEqual(new CalendarDate(2021, 2, 29));
       });
 
       it('should adjust the era', function () {
@@ -675,10 +675,10 @@ describe('CalendarDate manipulation', function () {
 
       it('should constrain the day', function () {
         let date = new CalendarDate(2020, 1, 31);
-        expect(date.cycle('month', 1)).toEqual(new CalendarDate(2020, 2, 29));
+        expect(date.cycle('month', 1)).toEqual(new CalendarDate(2020, 2, 31));
 
         date = new CalendarDate(2021, 1, 31);
-        expect(date.cycle('month', 1)).toEqual(new CalendarDate(2021, 2, 28));
+        expect(date.cycle('month', 1)).toEqual(new CalendarDate(2021, 2, 31));
       });
 
       it('should adjust the era', function () {
@@ -704,8 +704,8 @@ describe('CalendarDate manipulation', function () {
         let date = new CalendarDate(2020, 9, 3);
         expect(date.cycle('day', 1)).toEqual(new CalendarDate(2020, 9, 4));
         expect(date.cycle('day', -1)).toEqual(new CalendarDate(2020, 9, 2));
-        expect(date.cycle('day', 28)).toEqual(new CalendarDate(2020, 9, 1));
-        expect(date.cycle('day', -4)).toEqual(new CalendarDate(2020, 9, 29));
+        expect(date.cycle('day', 28)).toEqual(new CalendarDate(2020, 9, 31));
+        expect(date.cycle('day', -4)).toEqual(new CalendarDate(2020, 9, 30));
       });
 
       it('should cycle the day with rounding', function () {

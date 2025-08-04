@@ -239,7 +239,7 @@ describe('DateField', function () {
       await user.keyboard('[ArrowRight]');
       await user.keyboard('1');
       await user.keyboard('[ArrowRight]');
-      await user.keyboard('1980');
+      await user.keyboard('1980[Tab]');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
@@ -373,6 +373,7 @@ describe('DateField', function () {
       expect(input).toHaveAttribute('name', 'date');
       await user.tab();
       await user.keyboard('{ArrowUp}');
+      await user.tab({shift: true});
       expect(getDescription()).toBe('Selected Date: March 3, 2020');
       expect(input).toHaveValue('2020-03-03');
 
@@ -461,7 +462,7 @@ describe('DateField', function () {
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
           await user.keyboard('[Tab][Tab][ArrowUp]');
-
+          
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(input.validity.valid).toBe(true);
 
@@ -471,9 +472,13 @@ describe('DateField', function () {
 
           await user.tab({shift: true});
           await user.keyboard('2025');
+
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
-          expect(input.validity.valid).toBe(false);
+          expect(input.validity.valid).toBe(true);
+
           await user.tab();
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+          expect(input.validity.valid).toBe(false);
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
@@ -507,12 +512,11 @@ describe('DateField', function () {
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
-
           await user.keyboard('[ArrowRight][ArrowRight]2024');
 
           expect(getDescription()).toContain('Invalid value');
-          expect(input.validity.valid).toBe(true);
-
+          expect(input.validity.valid).toBe(false);
+          
           await user.tab();
 
           expect(getDescription()).not.toContain('Invalid value');
@@ -632,10 +636,12 @@ describe('DateField', function () {
           await user.keyboard('232023');
 
           expect(group).toHaveAttribute('aria-describedby');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
 
           await user.tab();
           expect(getDescription()).not.toContain('Constraints not satisfied');
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
         });
       });
 
@@ -653,13 +659,13 @@ describe('DateField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
-          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp][Tab]');
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
-          await user.keyboard('[ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp][Tab]');
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('[Tab][Tab][Tab][ArrowDown][Tab]');
           expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
         });
 
@@ -677,7 +683,7 @@ describe('DateField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
 
-          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
           expect(getDescription()).not.toContain('Invalid value');
         });
 
