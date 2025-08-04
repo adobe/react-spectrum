@@ -12,7 +12,7 @@
 
 import {ContextValue, DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
@@ -22,7 +22,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, DOMProps {
+export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the drop zone. */
@@ -86,7 +86,7 @@ const banner = style({
   borderRadius: 'default',
   color: 'white',
   fontWeight: 'bold',
-  padding: '[calc((self(minHeight))/1.5)]'
+  padding: 'calc((self(minHeight))/1.5)'
 });
 
 /**

@@ -64,9 +64,10 @@ export class MenuTester {
   private _advanceTimer: UserOpts['advanceTimer'];
   private _trigger: HTMLElement | undefined;
   private _isSubmenu: boolean = false;
+  private _rootMenu: HTMLElement | undefined;
 
   constructor(opts: MenuTesterOpts) {
-    let {root, user, interactionType, advanceTimer, isSubmenu} = opts;
+    let {root, user, interactionType, advanceTimer, isSubmenu, rootMenu} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
@@ -85,6 +86,7 @@ export class MenuTester {
     }
 
     this._isSubmenu = isSubmenu || false;
+    this._rootMenu = rootMenu;
   }
 
   /**
@@ -213,7 +215,7 @@ export class MenuTester {
           return;
         }
 
-        if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
+        if (document.activeElement !== menu && !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
 
@@ -226,20 +228,56 @@ export class MenuTester {
           await this.user.pointer({target: option, keys: '[TouchA]'});
         }
       }
-      act(() => {jest.runAllTimers();});
 
-      if (option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
+      // This chain of waitFors is needed in place of running all timers since we don't know how long transitions may take, or what action
+      // the menu option select may trigger.
+      if (
+        !(menuSelectionMode === 'single' && !closesOnSelect) &&
+        !(menuSelectionMode === 'multiple' && (keyboardActivation === 'Space' || interactionType === 'mouse'))
+      ) {
+        // For RSP, clicking on a submenu option seems to briefly lose focus to the body before moving to the clicked option in the test so we need to wait
+        // for focus to be coerced to somewhere else in place of running all timers.
+        if (this._isSubmenu) {
+          await waitFor(() => {
+            if (document.activeElement === document.body) {
+              throw new Error('Expected focus to move to somewhere other than the body after selecting a submenu option.');
+            } else {
+              return true;
+            }
+          });
+        }
+
+        // If user isn't trying to select multiple menu options or closeOnSelect is true then we can assume that
+        // the menu will close or some action is triggered. In cases like that focus should move somewhere after the menu closes
+        // but we can't really know where so just make sure it doesn't get lost to the body.
         await waitFor(() => {
-          if (document.activeElement !== trigger) {
-            throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
+          if (document.activeElement === option) {
+            throw new Error('Expected focus after selecting an option to move away from the option.');
           } else {
             return true;
           }
         });
 
-        if (document.contains(menu)) {
-          throw new Error('Expected menu element to not be in the document after selecting an option');
+        // We'll also want to wait for focus to move away from the original submenu trigger since the entire submenu tree should
+        // close. In React 16, focus actually makes it all the way to the root menu's submenu trigger so we need check the root menu
+        if (this._isSubmenu) {
+          await waitFor(() => {
+            if (document.activeElement === this.trigger || this._rootMenu?.contains(document.activeElement)) {
+              throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
+            } else {
+              return true;
+            }
+          });
         }
+
+        // Finally wait for focus to be coerced somewhere final when the menu tree is removed from the DOM
+        await waitFor(() => {
+          if (document.activeElement === document.body) {
+            throw new Error('Expected focus to move to somewhere other than the body after selecting a menu option.');
+          } else {
+            return true;
+          }
+        });
       }
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
@@ -269,18 +307,30 @@ export class MenuTester {
           submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenuTrigger, isSubmenu: true});
+        let submenuTriggerTester = new MenuTester({
+          user: this.user,
+          interactionType: this._interactionType,
+          root: submenuTrigger,
+          isSubmenu: true,
+          advanceTimer: this._advanceTimer,
+          rootMenu: (this._isSubmenu ? this._rootMenu : this.menu) || undefined
+        });
         if (interactionType === 'mouse') {
           await this.user.pointer({target: submenuTrigger});
-          act(() => {jest.runAllTimers();});
         } else if (interactionType === 'keyboard') {
           await this.keyboardNavigateToOption({option: submenuTrigger});
           await this.user.keyboard('[ArrowRight]');
-          act(() => {jest.runAllTimers();});
         } else {
           await submenuTriggerTester.open();
         }
 
+        await waitFor(() => {
+          if (submenuTriggerTester._trigger?.getAttribute('aria-expanded') !== 'true') {
+            throw new Error('aria-expanded for the submenu trigger wasn\'t changed to "true", unable to confirm the existance of the submenu');
+          } else {
+            return true;
+          }
+        });
 
         return submenuTriggerTester;
       }

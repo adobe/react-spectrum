@@ -157,6 +157,8 @@ class PressEvent implements IPressEvent {
 }
 
 const LINK_CLICKED = Symbol('linkClicked');
+const STYLE_ID = 'react-aria-pressable-style';
+const PRESSABLE_ATTRIBUTE = 'data-react-aria-pressable';
 
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
@@ -176,8 +178,7 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     shouldCancelOnPointerExit,
     allowTextSelectionOnPress,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
+    ref: domRef,
     ...domProps
   } = usePressResponderContext(props);
 
@@ -384,7 +385,9 @@ export function usePress(props: PressHookProps): PressResult {
             shouldStopPropagation = stopPressStart && stopPressUp && stopPressEnd;
           } else if (state.isPressed && state.pointerType !== 'keyboard') {
             let pointerType = state.pointerType || (e.nativeEvent as PointerEvent).pointerType as PointerType || 'virtual';
-            shouldStopPropagation = triggerPressEnd(createEvent(e.currentTarget, e), pointerType, true);
+            let stopPressUp = triggerPressUp(createEvent(e.currentTarget, e), pointerType);
+            let stopPressEnd =  triggerPressEnd(createEvent(e.currentTarget, e), pointerType, true);
+            shouldStopPropagation = stopPressUp && stopPressEnd;
             state.isOverTarget = false;
             triggerClick(e);
             cancel(e);
@@ -506,8 +509,8 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        // Only handle left clicks
-        if (e.button === 0) {
+        // Only handle left clicks. If isPressed is true, delay until onClick.
+        if (e.button === 0 && !state.isPressed) {
           triggerPressUp(e, state.pointerType || e.pointerType);
         }
       };
@@ -650,7 +653,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
+        if (!state.ignoreEmulatedMouseEvents && e.button === 0 && !state.isPressed) {
           triggerPressUp(e, state.pointerType || 'mouse');
         }
       };
@@ -814,13 +817,37 @@ export function usePress(props: PressHookProps): PressResult {
     triggerSyntheticClick
   ]);
 
-  // Remove user-select: none in case component unmounts immediately after pressStart
+  // Avoid onClick delay for double tap to zoom by default.
+  useEffect(() => {
+    if (!domRef || process.env.NODE_ENV === 'test') {
+      return;
+    }
 
+    const ownerDocument = getOwnerDocument(domRef.current);
+    if (!ownerDocument || !ownerDocument.head || ownerDocument.getElementById(STYLE_ID)) {
+      return;
+    }
+
+    const style = ownerDocument.createElement('style');
+    style.id = STYLE_ID;
+    // touchAction: 'manipulation' is supposed to be equivalent, but in
+    // Safari it causes onPointerCancel not to fire on scroll.
+    // https://bugs.webkit.org/show_bug.cgi?id=240917
+    style.textContent = `
+@layer {
+  [${PRESSABLE_ATTRIBUTE}] {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+}
+    `.trim();
+    ownerDocument.head.prepend(style);
+  }, [domRef]);
+
+  // Remove user-select: none in case component unmounts immediately after pressStart
   useEffect(() => {
     let state = ref.current;
     return () => {
       if (!allowTextSelectionOnPress) {
-         
         restoreTextSelection(state.target ?? undefined);
       }
       for (let dispose of state.disposables) {
@@ -832,7 +859,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps)
+    pressProps: mergeProps(domProps, pressProps, {[PRESSABLE_ATTRIBUTE]: true})
   };
 }
 

@@ -120,8 +120,22 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
     this.gap = new Size(horizontalSpacing, minSpace.height);
 
-    let rows = Math.ceil(this.virtualizer!.collection.size / numColumns);
-    let iterator = this.virtualizer!.collection[Symbol.iterator]();
+    // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
+    // so that an additional row is added for the skeletons.
+    let collection = this.virtualizer!.collection;
+    let collectionSize = collection.size;
+    let lastKey = collection.getLastKey();
+    for (let i = 0; i < 2 && lastKey != null; i++) {
+      let item = collection.getItem(lastKey);
+      if (item?.type === 'skeleton') {
+        collectionSize++;
+        break;
+      }
+      lastKey = collection.getKeyBefore(lastKey);
+    }
+    
+    let rows = Math.ceil(collectionSize / numColumns);
+    let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
     let skeleton: Node<T> | null = null;
@@ -134,6 +148,11 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
         let node = skeleton || iterator.next().value;
         if (!node) {
           break;
+        }
+
+        // We will add the loader after the skeletons so skip here
+        if (node.type === 'loader') {
+          continue;
         }
 
         if (node.type === 'skeleton') {
@@ -177,12 +196,20 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       }
     }
 
+    // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
+    let lastNode = collection.getItem(collection.getLastKey()!);
+    if (lastNode?.type === 'loader') {
+      let rect = new Rect(horizontalSpacing, y, itemWidth, 0);
+      let layoutInfo = new LayoutInfo('loader', lastNode.key, rect);
+      newLayoutInfos.set(lastNode.key, layoutInfo);
+    }
+
     this.layoutInfos = newLayoutInfos;
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
-  getLayoutInfo(key: Key): LayoutInfo {
-    return this.layoutInfos.get(key)!;
+  getLayoutInfo(key: Key): LayoutInfo | null {
+    return this.layoutInfos.get(key) || null;
   }
 
   getContentSize(): Size {
@@ -192,7 +219,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key) || layoutInfo.type === 'loader') {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -227,7 +254,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     // Find the closest item within on either side of the point using the gap width.
     let key: Key | null = null;
     if (this.numColumns === 1) {
-      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, this.gap.height * 2);
+      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, Math.max(1, this.gap.height * 2));
       let candidates = this.getVisibleLayoutInfos(searchRect);
       let minDistance = Infinity;
       for (let candidate of candidates) {

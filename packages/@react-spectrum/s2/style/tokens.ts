@@ -18,14 +18,49 @@ export function getToken(name: keyof typeof tokens): string {
   return (tokens[name] as any).value;
 }
 
-export function colorToken(name: keyof typeof tokens): string {
+export interface ColorToken {
+  type: 'color',
+  light: string,
+  dark: string,
+  forcedColors?: string
+}
+
+export function colorToken(name: keyof typeof tokens): ColorToken | ColorRef {
+  let token = tokens[name] as typeof tokens['gray-25'] | typeof tokens['neutral-content-color-default'];
+  if ('ref' in token) {
+    return {
+      type: 'ref',
+      light: token.ref.slice(1, -1).replace('-color', ''),
+      dark: token.ref.slice(1, -1).replace('-color', '')
+    };
+  }
+
+  return {
+    type: 'color',
+    light: token.sets.light.value,
+    dark: token.sets.dark.value
+  };
+}
+
+export function rawColorToken(name: keyof typeof tokens): string {
   let token = tokens[name] as typeof tokens['gray-25'];
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
-export function weirdColorToken(name: keyof typeof tokens): string {
+export interface ColorRef {
+  type: 'ref',
+  light: string,
+  dark: string,
+  forcedColors?: string
+}
+
+export function weirdColorToken(name: keyof typeof tokens): ColorRef {
   let token = tokens[name] as typeof tokens['accent-background-color-default'];
-  return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
+  return {
+    type: 'ref',
+    light: token.sets.light.ref.slice(1, -1).replace('-color', ''),
+    dark: token.sets.dark.ref.slice(1, -1).replace('-color', '')
+  };
 }
 
 type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
@@ -98,17 +133,38 @@ export function generateOverlayColorScale(bg = 'var(--s2-container-bg)'): ColorS
   };
 }
 
-function pxToRem(px: string | number) {
-  if (typeof px === 'string') {
-    px = parseFloat(px);
-  }
-  return px / 16 + 'rem';
-}
+const indexes = {
+  'font-size-25': -3,
+  'font-size-50': -2,
+  'font-size-75': -1,
+  'font-size-100': 0,
+  'font-size-200': 1,
+  'font-size-300': 2,
+  'font-size-400': 3,
+  'font-size-500': 4,
+  'font-size-600': 5,
+  'font-size-700': 6,
+  'font-size-800': 7,
+  'font-size-900': 8,
+  'font-size-1000': 9,
+  'font-size-1100': 10,
+  'font-size-1200': 11,
+  'font-size-1300': 12,
+  'font-size-1400': 13,
+  'font-size-1500': 14
+};
 
-export function fontSizeToken(name: keyof typeof tokens): {default: string, touch: string} {
-  let token = tokens[name] as typeof tokens['font-size-100'];
-  return {
-    default: pxToRem(token.sets.desktop.value),
-    touch: pxToRem(token.sets.mobile.value)
-  };
+/** Returns the index of a font token relative to font-size-100 (which is index 0). */
+export function fontSizeToken(name: keyof typeof tokens): number {
+  let token = tokens[name] as typeof tokens['font-size-100'] | typeof tokens['heading-size-m'];
+  if ('ref' in token) {
+    name = token.ref.slice(1, -1) as keyof typeof tokens;
+  }
+
+  let index = indexes[name];
+  if (index == null) {
+    throw new Error('Unknown font size ' + name);
+  }
+
+  return index;
 }

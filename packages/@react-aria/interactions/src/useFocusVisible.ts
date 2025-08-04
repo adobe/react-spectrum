@@ -41,7 +41,7 @@ let changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
 }
-export let hasSetupGlobalListeners = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
+export let hasSetupGlobalListeners: Map<Window, GlobalListenerData> = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -123,7 +123,7 @@ function handleWindowBlur() {
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
 function setupGlobalFocusEvents(element?: HTMLElement | null) {
-  if (typeof window === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
     return;
   }
 

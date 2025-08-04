@@ -14,11 +14,12 @@ import {useCallback, useMemo} from 'react';
 // Shim to support React 17 and below.
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
+type ToastAction = 'add' | 'remove' | 'clear';
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
   maxVisibleToasts?: number,
   /** Function to wrap updates in (i.e. document.startViewTransition()). */
-  wrapUpdate?: (fn: () => void) => void
+  wrapUpdate?: (fn: () => void, action: ToastAction) => void
 }
 
 export interface ToastOptions {
@@ -86,7 +87,7 @@ export class ToastQueue<T> {
   private queue: QueuedToast<T>[] = [];
   private subscriptions: Set<() => void> = new Set();
   private maxVisibleToasts: number;
-  private wrapUpdate?: (fn: () => void) => void;
+  private wrapUpdate?: (fn: () => void, action: ToastAction) => void;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
 
@@ -95,18 +96,18 @@ export class ToastQueue<T> {
     this.wrapUpdate = options?.wrapUpdate;
   }
 
-  private runWithWrapUpdate(fn: () => void): void {
+  private runWithWrapUpdate(fn: () => void, action: ToastAction): void {
     if (this.wrapUpdate) {
-      this.wrapUpdate(fn);
+      this.wrapUpdate(fn, action);
     } else {
       fn();
     }
   }
 
   /** Subscribes to updates to the visible toasts. */
-  subscribe(fn: () => void): () => boolean {
+  subscribe(fn: () => void): () => void {
     this.subscriptions.add(fn);
-    return (): boolean => this.subscriptions.delete(fn);
+    return () => this.subscriptions.delete(fn);
   }
 
   /** Adds a new toast to the queue. */
@@ -121,7 +122,7 @@ export class ToastQueue<T> {
 
     this.queue.unshift(toast);
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts('add');
     return toastKey;
   }
 
@@ -135,15 +136,17 @@ export class ToastQueue<T> {
       this.queue.splice(index, 1);
     }
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts('remove');
   }
 
-  private updateVisibleToasts() {
+  private updateVisibleToasts(action: ToastAction) {
     this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
 
-    for (let fn of this.subscriptions) {
-      this.runWithWrapUpdate(fn);
-    }
+    this.runWithWrapUpdate(() => {
+      for (let fn of this.subscriptions) {
+        fn();
+      }
+    }, action);
   }
 
   /** Pauses the timers for all visible toasts. */
@@ -163,6 +166,11 @@ export class ToastQueue<T> {
       }
     }
   }
+
+  clear(): void {
+    this.queue = [];
+    this.updateVisibleToasts('clear');
+  }
 }
 
 class Timer {
@@ -176,12 +184,12 @@ class Timer {
     this.callback = callback;
   }
 
-  reset(delay: number) {
+  reset(delay: number): void {
     this.remaining = delay;
     this.resume();
   }
 
-  pause() {
+  pause(): void {
     if (this.timerId == null) {
       return;
     }
@@ -191,7 +199,7 @@ class Timer {
     this.remaining -= Date.now() - this.startTime!;
   }
 
-  resume() {
+  resume(): void {
     if (this.remaining <= 0) {
       return;
     }

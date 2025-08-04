@@ -1050,6 +1050,7 @@ function TableSelectAllCell({column}) {
         }
         <Checkbox
           {...checkboxProps}
+          data-testid="selectAll"
           isEmphasized
           UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />

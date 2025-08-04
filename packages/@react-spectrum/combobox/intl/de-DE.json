@@ -2,5 +2,6 @@
   "clear": "Löschen",
   "invalid": "(ungültig)",
   "loading": "Wird geladen...",
-  "noResults": "Keine Ergebnisse"
+  "noResults": "Keine Ergebnisse",
+  "valid": "(gültig)"
 }

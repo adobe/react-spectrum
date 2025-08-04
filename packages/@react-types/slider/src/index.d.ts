@@ -117,5 +117,11 @@ export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeVal
   /**
    * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string
+  endName?: string,
+  /**
+   * The `<form>` element to associate the slider with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }

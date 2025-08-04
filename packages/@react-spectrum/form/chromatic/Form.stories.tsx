@@ -17,10 +17,10 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
@@ -28,9 +28,11 @@ import {TextArea, TextField} from '@react-spectrum/textfield';
 const meta: Meta<SpectrumFormProps> = {
   title: 'Form',
   component: Form
-};
+} as Meta<typeof Form>;
 
 export default meta;
+
+export type FormStory = StoryObj<typeof Form>;
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -38,7 +40,7 @@ let flatOptions = [
   {id: 3, name: 'Snake'}
 ];
 
-const Template = (args) => (
+const Template = (args: SpectrumFormProps): JSX.Element => (
   <Form {...args}>
     <CheckboxGroup defaultValue={['dragons']} label="Pets">
       <Checkbox value="dogs">Dogs</Checkbox>
@@ -74,74 +76,74 @@ const Template = (args) => (
   </Form>
 );
 
-export const Default = {
-  render: Template,
+export const Default: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
-export const LabelPositionSide = {
-  render: Template,
+export const LabelPositionSide: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label position: side',
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const LabelAlignEnd = {
-  render: Template,
+export const LabelAlignEnd: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label align: end',
   args: {...Default.args, labelAlign: 'end'}
 };
 
-export const LabelAlignSideEnd = {
-  render: Template,
+export const LabelAlignSideEnd: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'label position: side, label align: end',
   args: {...Default.args, labelPosition: 'side', labelAlign: 'end'}
 };
 
-export const Required = {
-  render: Template,
+export const Required: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isRequired',
   args: {...Default.args, isRequired: true}
 };
 
-export const NecessityIndicatorLabel = {
-  render: Template,
+export const NecessityIndicatorLabel: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'necessity indicator: label',
   args: {...Default.args, necessityIndicator: 'label'}
 };
 
-export const Quiet = {
-  render: Template,
+export const Quiet: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isQuiet',
   args: {...Default.args, isQuiet: true}
 };
 
-export const Emphasized = {
-  render: Template,
+export const Emphasized: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isEmphasized',
   args: {...Default.args, isEmphasized: true}
 };
 
-export const Disabled = {
-  render: Template,
+export const Disabled: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isDisabled',
   args: {...Default.args, isDisabled: true}
 };
 
-export const ReadOnly = {
-  render: Template,
+export const ReadOnly: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'isReadOnly',
   args: {...Default.args, isReadOnly: true}
 };
 
-export const ValidationStateInvalid = {
-  render: Template,
+export const ValidationStateInvalid: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'validationState: invalid',
   args: {...Default.args, validationState: 'invalid'}
 };
 
-export const ValidationStateValid = {
-  render: Template,
+export const ValidationStateValid: FormStory = {
+  render: (args) => <Template {...args} />,
   name: 'validationState: valid',
   args: {...Default.args, validationState: 'valid'}
 };

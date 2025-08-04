@@ -16,19 +16,41 @@ import Dash_S from './S2_DashSize75.svg';
 import Dash_XL from './S2_DashSize300.svg';
 import Dash_XS from './S2_DashSize50.svg';
 import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
+
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 12,
+      XS: 8,
+      S: 8
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 12,
+      XS: 8,
+      S: 8
+    }
+  }
+});
 
 export default function Dash(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Dash_M {...otherProps} />;
+      return <Dash_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <Dash_L {...otherProps} />;
+      return <Dash_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <Dash_XL {...otherProps} />;
+      return <Dash_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XS':
-      return <Dash_XS {...otherProps} />;
+      return <Dash_XS {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'S':
-      return <Dash_S {...otherProps} />;
+      return <Dash_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

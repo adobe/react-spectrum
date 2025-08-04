@@ -32,7 +32,16 @@ import {TabsTester} from './tabs';
 import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
-let keyToUtil = {
+let keyToUtil: {
+  'Select': typeof SelectTester,
+  'Table': typeof TableTester,
+  'Menu': typeof MenuTester,
+  'ComboBox': typeof ComboBoxTester,
+  'GridList': typeof GridListTester,
+  'ListBox': typeof ListBoxTester,
+  'Tabs': typeof TabsTester,
+  'Tree': typeof TreeTester
+} = {
   'Select': SelectTester,
   'Table': TableTester,
   'Menu': MenuTester,
@@ -67,7 +76,7 @@ type TesterOpts<T> =
   T extends 'Tree' ? TreeTesterOpts :
   never;
 
-let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
+let defaultAdvanceTimer = (waitTime: number | undefined) => new Promise((resolve) => setTimeout(resolve, waitTime));
 
 export class User {
   private user;

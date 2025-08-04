@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
-import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useEffect, useRef} from 'react';
@@ -220,6 +220,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
   let hadPrimaryActionOnPressStart = useRef(false);
+  let collectionItemProps = manager.getItemProps(key);
 
   let performAction = (e) => {
     if (onAction) {
@@ -227,8 +228,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (hasLinkAction && ref.current) {
-      let itemProps = manager.getItemProps(key);
-      router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
+      router.open(ref.current, e, collectionItemProps.href, collectionItemProps.routerOptions);
     }
   };
 
@@ -239,7 +239,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
-  let itemPressProps: PressProps = {};
+  let itemPressProps: PressHookProps = {ref};
   if (shouldSelectOnPressUp) {
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
@@ -337,6 +337,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     });
   }
 
+  if (collectionItemProps) {
+    for (let key of ['onPressStart', 'onPressEnd', 'onPressChange', 'onPress', 'onPressUp', 'onClick']) {
+      if (collectionItemProps[key]) {
+        itemPressProps[key] = chain(itemPressProps[key], collectionItemProps[key]);
+      }
+    }
+  }
+
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -373,7 +381,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).
-  let onClick = manager.isLink(key) ? e => {
+  let onClick = linkBehavior !== 'none' && manager.isLink(key) ? e => {
     if (!(openLink as any).isOpening) {
       e.preventDefault();
     }
@@ -382,7 +390,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction || shouldUseVirtualFocus ? pressProps : {},
+      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture, onClick, id},
       // Prevent DOM focus from moving on mouse down when using virtual focus

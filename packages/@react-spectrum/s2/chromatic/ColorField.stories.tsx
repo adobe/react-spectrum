@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField} from '../src';
+import {ColorField, ColorFieldProps} from '../src';
 import {generateComboChunks, shortName} from './utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement} from 'react';
 import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof ColorField> = {
@@ -34,9 +35,9 @@ let states = [
   {size: ['S', 'M', 'L', 'XL']}
 ];
 
-const Template = ({combos, ...args}) => {
+const Template = ({combos, ...args}: ColorFieldProps & {combos: any[]}): ReactElement => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 450px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 450px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combos.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -53,24 +54,24 @@ const Template = ({combos, ...args}) => {
 
 let sideChunks = generateComboChunks({states, numChunks: 3});
 
-export const LabelPositionSide = {
-  render: Template,
+export const LabelPositionSide: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: sideChunks[0],
     labelPosition: 'side'
   }
 };
 
-export const LabelPositionSidePt2 = {
-  render: Template,
+export const LabelPositionSidePt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionSide.args,
     combos: sideChunks[1]
   }
 };
 
-export const LabelPositionSidePt3 = {
-  render: Template,
+export const LabelPositionSidePt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionSide.args,
     combos: sideChunks[2]
@@ -84,40 +85,40 @@ let topState = [
 
 let topChunks = generateComboChunks({states: topState, numChunks: 5});
 
-export const LabelPositionTop = {
-  render: Template,
+export const LabelPositionTop: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     combos: topChunks[0],
     labelPosition: 'top'
   }
 };
 
-export const LabelPositionTopPt2 = {
-  render: Template,
+export const LabelPositionTopPt2: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[1]
   }
 };
 
-export const LabelPositionTopPt3 = {
-  render: Template,
+export const LabelPositionTopPt3: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[2]
   }
 };
 
-export const LabelPositionTopPt4 = {
-  render: Template,
+export const LabelPositionTopPt4: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[3]
   }
 };
 
-export const LabelPositionTopPt5 = {
-  render: Template,
+export const LabelPositionTopPt5: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[4]

@@ -11,7 +11,7 @@
  */
 
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {Text, ToggleButton} from '../src';
 
@@ -23,19 +23,20 @@ const meta: Meta<typeof ToggleButton> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange']),
+    children: {table: {disable: true}}
   },
   title: 'ToggleButton'
 };
 
 export default meta;
 
-export const Example: StoryFn<typeof ToggleButton> = (args) => {
-  return (
+export const Example: StoryObj<typeof ToggleButton> = {
+  render: (args) => (
     <div style={{display: 'flex', gap: 8}}>
       <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
       <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
     </div>
-  );
+  )
 };

@@ -1,12 +1,16 @@
 {
   "name": "@react-aria/ssr",
-  "version": "3.9.7",
+  "version": "3.9.10",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },

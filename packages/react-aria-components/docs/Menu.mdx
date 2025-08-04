@@ -29,7 +29,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
-keywords: [menu trigger, mutli-select menu, aria]
+keywords: [menu trigger, multi-select menu, aria]
 type: component
 ---
 
@@ -48,9 +48,10 @@ type: component
 
 ```tsx example
 import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
+import {Menu as MenuIcon} from 'lucide-react';
 
 <MenuTrigger>
-  <Button aria-label="Menu">☰</Button>
+  <Button aria-label="Menu"><MenuIcon size={18} /></Button>
   <Popover>
     <Menu>
       <MenuItem onAction={() => alert('open')}>Open</MenuItem>
@@ -209,6 +210,7 @@ This example wraps `MenuTrigger` and all of its children together into a single 
 
 ```tsx example export=true
 import type {MenuProps, MenuTriggerProps, MenuItemProps} from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 interface MyMenuButtonProps<T> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
   label?: string
@@ -227,7 +229,7 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
   );
 }
 
-export function MyItem(props: MenuItemProps) {
+export function MyItem(props: Omit<MenuItemProps, 'children'> & {children?: React.ReactNode}) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <MenuItem
@@ -238,7 +240,7 @@ export function MyItem(props: MenuItemProps) {
         <>
           {props.children}
           {hasSubmenu && (
-            <svg className="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg>
+            <ChevronRight size={18} className="chevron" />
           )}
         </>
       )}
@@ -276,8 +278,6 @@ export function MyItem(props: MenuItemProps) {
     color: var(--text-color);
   }
   .chevron {
-    width: 20;
-    height: 20;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -1109,7 +1109,7 @@ A `MenuItem` can be targeted with the `.react-aria-MenuItem` CSS selector, or by
 
 <StateTable properties={docs.exports.MenuItemRenderProps.properties} />
 
-MenuItems also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+MenuItems also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [text slots](#text-slots) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
@@ -1222,7 +1222,7 @@ By providing the above contexts, the existing `Button`, `Popover`, and `Menu` co
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArgTypes, ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {ArgTypes, Meta, StoryObj} from '@storybook/react';
 import {Link} from '../';
 import React from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 
-type LinkStory = ComponentStoryObj<typeof Link>;
+type LinkStory = StoryObj<typeof Link>;
 
 export default {
   title: 'Link',
@@ -31,7 +31,7 @@ export default {
       action: 'pressend'
     }
   }
-} as ComponentMeta<typeof Link>;
+} as Meta<typeof Link>;
 
 export let Default: LinkStory = {
   args: {children: 'This is a React Spectrum Link'}

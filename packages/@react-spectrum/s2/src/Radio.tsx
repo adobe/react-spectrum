@@ -15,16 +15,16 @@ import {
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {FocusableRef} from '@react-types/shared';
+import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FocusableRef, GlobalDOMAttributes} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
-export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The label for the element.
    */
@@ -50,12 +50,13 @@ interface RenderProps extends RadioRenderProps, ContextProps {}
 
 const wrapper = style({
   display: 'flex',
+  position: 'relative',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
-  font: 'control',
+  font: controlFont(),
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -69,7 +70,7 @@ const wrapper = style({
 
 const circle = style<RenderProps>({
   ...focusRing(),
-  size: 'control-sm',
+  size: controlSize('sm'),
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
@@ -79,8 +80,8 @@ const circle = style<RenderProps>({
   borderStyle: 'solid',
   boxSizing: 'border-box',
   borderWidth: {
-    default: 2,
-    isSelected: '[calc((self(height) - 4px) / 2)]'
+    default: space(2),
+    isSelected: 'calc((self(height) - (4 / 16) * 1rem) / 2)'
   },
   forcedColorAdjust: 'none',
   backgroundColor: 'gray-25',
@@ -92,7 +93,7 @@ const circle = style<RenderProps>({
       forcedColors: 'Highlight'
     },
     isInvalid: {
-      default: 'negative',
+      default: baseColor('negative'),
       forcedColors: 'Mark'
     },
     isDisabled: {

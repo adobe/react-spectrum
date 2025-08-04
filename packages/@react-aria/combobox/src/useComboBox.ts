@@ -210,6 +210,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
+    defaultValue: state.defaultInputValue,
     onFocus,
     autoComplete: 'off',
     validate: undefined,
@@ -375,7 +376,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

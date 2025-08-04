@@ -12,12 +12,12 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
@@ -53,21 +53,21 @@ interface ActionGroupItemStyleProps {
   isJustified?: boolean
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending' | 'onClick'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
+const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
-  display: 'flex',
-  alignItems: 'center',
+  ...controlStyle,
   justifyContent: 'center',
-  columnGap: 'text-to-visual',
   flexShrink: {
     default: 1,
     isInGroup: 0
@@ -78,11 +78,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   flexBasis: {
     isJustified: 0
   },
-  font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',
-  height: 'control',
-  minWidth: 'control',
   transition: 'default',
   forcedColorAdjust: 'none',
   backgroundColor: {
@@ -94,8 +91,13 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       }
     },
     isSelected: {
-      default: 'neutral',
-      isEmphasized: 'accent',
+      default: baseColor('neutral'),
+      isEmphasized: {
+        default: lightDark('accent-900', 'accent-700'),
+        isHovered: lightDark('accent-1000', 'accent-600'),
+        isPressed: lightDark('accent-1000', 'accent-600'),
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
+      },
       isDisabled: {
         default: 'gray-100',
         isQuiet: 'transparent'
@@ -124,7 +126,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isSelected: {
       default: 'gray-25',
       isEmphasized: 'white'
@@ -153,66 +155,54 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     forcedColors: 'Highlight'
   },
   borderStyle: 'none',
-  paddingX: {
-    default: 'edge-to-text',
-    [iconOnly]: 0
-  },
-  paddingY: 0,
   borderTopStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':first-child': 'control'
+        ':first-child': controlStyle.borderRadius
       }
     }
   },
   borderTopEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           },
           vertical: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           },
           vertical: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':last-child': 'control'
+        ':last-child': controlStyle.borderRadius
       }
-    }
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0
     }
   },
   zIndex: {
@@ -222,15 +212,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgeTop': {
     type: 'top',
     value: {
-      default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
+      default: 'calc(self(height)/2 - var(--iconWidth)/2)',
       [textOnly]: 0
-    }
-  },
-  '--buttonPaddingX': {
-    type: 'paddingStart',
-    value: {
-      default: 'edge-to-text',
-      [iconOnly]: 0
     }
   },
   '--iconWidth': {
@@ -240,10 +223,14 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgePosition': {
     type: 'width',
     value: {
-      default: '[calc(var(--buttonPaddingX) + var(--iconWidth))]',
-      [iconOnly]: '[calc(self(minWidth)/2 + var(--iconWidth)/2)]',
+      default: 'calc(self(paddingStart) + var(--iconWidth))',
+      [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
+  },
+  paddingX: {
+    default: controlStyle.paddingX,
+    [avatarOnly]: 0
   }
 }, getAllowedOverrides());
 
@@ -302,19 +289,27 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+          [TextContext, {styles: style({order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }],
           [AvatarContext, {
             size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+            styles: style({
+              marginStart: {
+                default: '--iconMargin',
+                ':last-child': 0
+              },
+              flexShrink: 0,
+              order: 0
+            })
           }],
           [NotificationBadgeContext, {
+            staticColor: staticColor,
             size: props.size === 'XS' ? undefined : props.size,
             isDisabled: props.isDisabled,
-            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
+            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

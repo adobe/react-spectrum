@@ -4,9 +4,15 @@
   "actionbar.clearSelection": "Annulla selezione",
   "actionbar.selected": "{count, plural, =0 {Nessuno selezionato} one {# selezionato} other {# selezionati}}",
   "actionbar.selectedAll": "Tutti selezionati",
+  "breadcrumbs.more": "Altri elementi",
   "button.pending": "in sospeso",
+  "calendar.invalidSelection": "{selectedCount, plural, one {Data selezionata non disponibile} other {Date selezionate non disponibili}}.",
+  "combobox.noResults": "Nessun risultato",
   "contextualhelp.help": "Aiuto",
   "contextualhelp.info": "Informazioni",
+  "datepicker.endTime": "Ora di fine",
+  "datepicker.startTime": "Ora di inizio",
+  "datepicker.time": "Ora",
   "dialog.alert": "Avviso",
   "dialog.dismiss": "Ignora",
   "dropzone.replaceMessage": "Rilascia il file da sostituire",
@@ -17,6 +23,8 @@
   "label.(optional)": "(facoltativo)",
   "label.(required)": "(obbligatorio)",
   "menu.moreActions": "Altre azioni",
+  "notificationbadge.indicatorOnly": "Nuova attività",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Seleziona…",
   "slider.maximum": "Massimo",
   "slider.minimum": "Minimo",
@@ -29,5 +37,7 @@
   "tag.hideButtonLabel": "Mostra meno",
   "tag.noTags": "Nessuno",
   "tag.showAllButtonLabel": "Mostra tutto ({tagCount, number})",
-  "breadcrumbs.more": "Altri elementi"
+  "toast.clearAll": "Cancella tutto",
+  "toast.collapse": "Comprimi",
+  "toast.showAll": "Mostra tutto"
 }

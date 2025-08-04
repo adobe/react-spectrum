@@ -46,6 +46,7 @@ async function build() {
   let pkg = {
     name: 'react-spectrum-monorepo',
     version: '0.0.0',
+    packageManager: "yarn@4.2.2",
     private: true,
     workspaces: [
       'packages/*/*'
@@ -71,6 +72,9 @@ async function build() {
     scripts: {
       build: 'yarn parcel build packages/@react-spectrum/actiongroup',
       postinstall: 'patch-package'
+    },
+    '@parcel/resolver-default': {
+      packageExports: true
     }
   };
 
@@ -79,6 +83,7 @@ async function build() {
   let cleanPkg = {
     name: 'react-spectrum-monorepo',
     version: '0.0.0',
+    packageManager: "yarn@4.2.2",
     private: true,
     workspaces: [
       'packages/*/*'
@@ -103,6 +108,9 @@ async function build() {
     scripts: {
       build: 'yarn parcel build packages/@react-spectrum/actiongroup',
       postinstall: 'patch-package'
+    },
+    '@parcel/resolver-default': {
+      packageExports: true
     }
   };
 
@@ -145,6 +153,7 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
   fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
 
   // Install dependencies from npm
   console.log('install our latest packages from npm');

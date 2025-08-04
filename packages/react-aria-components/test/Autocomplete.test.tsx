@@ -427,6 +427,97 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('data-focused');
   });
 
+  it('should restore focus visible styles back to the input when typing forward results in only disabled items', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let baz = options[1];
+    expect(baz).toHaveTextContent('Baz');
+    expect(input).toHaveAttribute('aria-activedescendant', baz.id);
+    expect(baz).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('r');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    let bar = options[0];
+    expect(bar).toHaveTextContent('Bar');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(bar).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should maintain focus styles on the input if typing forward results in an completely empty collection', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Q');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).queryAllByRole('menuitem');
+    expect(options).toHaveLength(0);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+  });
+
+  it('should restore focus visible styles back to the input if the user types forward and backspaces in quick succession', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('F');
+    // If 500ms hasn't elapsed the aria-activedecendant hasn't been updated
+    act(() => jest.advanceTimersByTime(300));
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+    expect(foo).toHaveTextContent('Foo');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).not.toHaveAttribute('data-focus-visible');
+  });
+
   it('should work inside a Select', async function () {
     let {getByRole} = render(
       <Select>
@@ -620,6 +711,86 @@ describe('Autocomplete', () => {
     let menu = getByRole('menu');
     let options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+  });
+
+  it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
+    const DialogExample = (props) => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Button>First</Button>
+              <Button>Second</Button>
+              <Autocomplete filter={contains}>
+                <SearchField autoFocus aria-label="Search">
+                  <Input />
+                </SearchField>
+                <StaticListbox escapeKeyBehavior={props?.escapeKeyBehavior} selectionMode="single" defaultSelectedKeys={['1']} />
+              </Autocomplete>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    let {getByRole, getAllByRole, rerender, queryAllByRole} = render(<DialogExample escapeKeyBehavior="none" />);
+    let button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+
+    let dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    let options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    let input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
+
+    // Test without escapeKeyBehavior, 2nd Escape should clear selection instead of closing the dialog
+    rerender(<DialogExample />);
+    button = getByRole('button');
+    await user.click(button);
+    act(() => jest.runAllTimers());
+
+    dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
   });
 });
 

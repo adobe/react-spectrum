@@ -52,9 +52,6 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs at least four child items, all enabled, with single selection
     multipleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
-    // needs a focusable sibling after the trigger with the label 'after'
-    // TODO: better to have tests return JSX and I call `render`? could allow me to inject elements in the DOM more easily
-    siblingFocusableElement?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs two menus that are siblings
     multipleMenus?: (props?: {name: string}) => ReturnType<typeof render>,
     // Menu should only open on long press
@@ -63,7 +60,7 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     submenus?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
-export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => {
+export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): void => {
   describe(prefix ? prefix + 'AriaMenuTrigger' : 'AriaMenuTrigger', function () {
     let onOpenChange = jest.fn();
     let onOpen = jest.fn();
@@ -555,25 +552,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       });
     }
 
-    if (renderers.siblingFocusableElement) {
-      describe('sibling focusable element', function () {
-        it('focuses the next tabbable thing after the trigger if tab is hit inside the menu', async function () {
-          let tree = (renderers.siblingFocusableElement!)();
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
-
-          await menuTester.open();
-          act(() => {jest.runAllTimers();});
-
-          let menu = menuTester.menu;
-
-          await user.tab();
-          act(() => {jest.runAllTimers();});
-          expect(menu).not.toBeInTheDocument();
-          expect(document.activeElement).toBe(tree.getByLabelText('after'));
-        });
-      });
-    }
-
     if (renderers.multipleMenus) {
       describe('multiple menus', function () {
         it('two menus can not be open at the same time', async function () {
@@ -621,8 +599,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenu).toBeInTheDocument();
 
           await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger);
@@ -639,7 +615,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
@@ -648,13 +623,11 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
           await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();

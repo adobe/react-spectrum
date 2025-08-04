@@ -18,7 +18,7 @@ const meta: Meta<typeof NotificationBadge> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
+  tags: ['!autodocs'],
   title: 'NotificationBadge'
 };
 

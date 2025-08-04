@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -51,12 +51,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
@@ -64,38 +64,17 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
 export const ButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 export const LinkButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
+  ...control({shape: 'pill', wrap: true, icon: true}),
   position: 'relative',
-  display: 'flex',
-  alignItems: {
-    default: 'baseline',
-    [iconOnly]: 'center'
-  },
   justifyContent: 'center',
   textAlign: 'start',
-  columnGap: 'text-to-visual',
-  font: 'control',
   fontWeight: 'bold',
   userSelect: 'none',
-  minHeight: 'control',
-  minWidth: {
-    [iconOnly]: 'control'
-  },
-  borderRadius: 'pill',
-  boxSizing: 'border-box',
   width: 'fit',
   textDecoration: 'none', // for link buttons
-  paddingX: {
-    default: 'pill',
-    [iconOnly]: 0
-  },
-  paddingY: 0,
-  aspectRatio: {
-    [iconOnly]: 'square'
-  },
   transition: 'default',
   borderStyle: 'solid',
   borderWidth: {
@@ -106,17 +85,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     variant: {
       premium: 0,
       genai: 0
-    }
-  },
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0
     }
   },
   borderColor: {
@@ -142,10 +110,20 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     fillStyle: {
       fill: {
         variant: {
-          primary: 'neutral',
+          primary: baseColor('neutral'),
           secondary: baseColor('gray-100'),
-          accent: 'accent',
-          negative: 'negative',
+          accent: {
+            default: lightDark('accent-900', 'accent-700'),
+            isHovered: lightDark('accent-1000', 'accent-600'),
+            isPressed: lightDark('accent-1000', 'accent-600'),
+            isFocusVisible: lightDark('accent-1000', 'accent-600')
+          },
+          negative: {
+            default: lightDark('negative-900', 'negative-700'),
+            isHovered: lightDark('negative-1000', 'negative-600'),
+            isPressed: lightDark('negative-1000', 'negative-600'),
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
+          },
           premium: 'gray-100',
           genai: 'gray-100'
         },
@@ -215,7 +193,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       fill: {
         variant: {
           primary: 'gray-25',
-          secondary: 'neutral',
+          secondary: baseColor('neutral'),
           accent: 'white',
           negative: 'white',
           premium: 'white',
@@ -224,7 +202,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         isDisabled: 'disabled'
       },
       outline: {
-        default: 'neutral',
+        default: baseColor('neutral'),
         variant: {
           premium: 'white',
           genai: 'white'
@@ -286,7 +264,7 @@ const gradient = style({
   inset: 0,
   zIndex: -1,
   transition: 'default',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   backgroundImage: {
     variant: {
       premium: {
@@ -369,7 +347,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({
@@ -414,8 +392,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
             <div
               className={style({
                 position: 'absolute',
-                top: '[50%]',
-                left: '[50%]',
+                top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)',
                 opacity: {
                   default: 0,

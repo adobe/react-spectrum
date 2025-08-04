@@ -1,11 +1,10 @@
 import linearIllustrations from '@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
 import gradientIllustrations from '@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
-import Paste from '@react-spectrum/s2/s2wf-icons/S2_Icon_Paste_20_N.svg';
+import Paste from '@react-spectrum/s2/icons/Paste';
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {ActionButton, Text} from '@react-spectrum/s2';
+import {ActionButton, Radio, RadioGroup} from '@react-spectrum/s2';
 import {H2, H3, P, Code, Pre, Link} from './typography';
 import {highlight} from './highlight' with {type: 'macro'};
-import { Radio, RadioGroup } from '../../packages/@react-spectrum/s2/src';
 import { useState } from 'react';
 
 export function Illustrations() {

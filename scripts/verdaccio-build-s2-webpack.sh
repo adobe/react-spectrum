@@ -3,6 +3,7 @@
 port=4000
 registry="http://localhost:$port"
 output="output.out"
+touch $output
 
 set -e
 

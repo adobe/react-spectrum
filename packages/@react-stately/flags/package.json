@@ -1,13 +1,17 @@
 {
   "name": "@react-stately/flags",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },

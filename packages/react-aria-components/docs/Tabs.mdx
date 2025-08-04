@@ -707,6 +707,7 @@ This example shows a `TabNavigation` component that can be placed within `Tabs` 
 
 ```tsx example
 import {TabListStateContext, Button} from 'react-aria-components';
+import {ArrowLeft, ArrowRight} from 'lucide-react';
 
 function TabNavigation() {
   /*- begin highlight -*/
@@ -718,8 +719,8 @@ function TabNavigation() {
   let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
   return (
     <div className="button-group">
-      <Button aria-label="Previous tab" onPress={onPrev}>←</Button>
-      <Button aria-label="Next tab" onPress={onNext}>→</Button>
+      <Button aria-label="Previous tab" onPress={onPrev}><ArrowLeft size={16} /></Button>
+      <Button aria-label="Next tab" onPress={onNext}><ArrowRight size={16} /></Button>
     </div>
   );
 }
@@ -755,7 +756,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.

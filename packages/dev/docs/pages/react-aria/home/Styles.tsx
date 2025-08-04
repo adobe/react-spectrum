@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AddressBar, FileTab, Scrollable, Window} from './components';
-import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'framer-motion';
+import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'motion/react';
 import {
   Button,
   Collection,
@@ -22,10 +22,10 @@ import {
 } from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {Slider} from 'tailwind-starter/Slider';
 
-export function Styles() {
+export function Styles(): ReactNode {
   return (
     <AnimatedTabs
       tabs={[

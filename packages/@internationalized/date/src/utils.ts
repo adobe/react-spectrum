@@ -10,28 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime} from './CalendarDate';
-
 export type Mutable<T> = {
   -readonly[P in keyof T]: T[P]
 };
 
 export function mod(amount: number, numerator: number): number {
   return amount - numerator * Math.floor(amount / numerator);
-}
-
-export function copy(date: CalendarDate): Mutable<CalendarDate> {
-  if (date.era) {
-    return new CalendarDate(date.calendar, date.era, date.year, date.month, date.day);
-  } else {
-    return new CalendarDate(date.calendar, date.year, date.month, date.day);
-  }
-}
-
-export function copyDateTime(date: CalendarDateTime): Mutable<CalendarDateTime> {
-  if (date.era) {
-    return new CalendarDateTime(date.calendar, date.era, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
-  } else {
-    return new CalendarDateTime(date.calendar, date.year, date.month, date.day, date.hour, date.minute, date.second);
-  }
 }

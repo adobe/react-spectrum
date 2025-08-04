@@ -22,7 +22,8 @@ const meta: Meta<typeof ActionMenu<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onOpenChange'])
+    ...categorizeArgTypes('Events', ['onAction', 'onOpenChange']),
+    children: {table: {disable: true}}
   },
   title: 'ActionMenu'
 };
