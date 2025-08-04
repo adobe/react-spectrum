@@ -1070,14 +1070,14 @@ export const AutocompleteWithTagGroup = () => {
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
         </TextField>
-        <TagGroup>
+        <TagGroup onRemove={action('onRemove')}>
           <Label>Categories</Label>
           <TagList style={{display: 'flex', gap: 4}}>
-            <MyTag href="https://nytimes.com">News</MyTag>
-            <MyTag>Travel</MyTag>
-            <MyTag>Gaming</MyTag>
+            <MyTag href="https://nytimes.com" textValue="News">News<Button slot="remove">X</Button></MyTag>
+            <MyTag textValue="Travel">Travel<Button slot="remove">X</Button></MyTag>
+            <MyTag textValue="Gaming">Gaming<Button slot="remove">X</Button></MyTag>
             <TooltipTrigger>
-              <MyTag>Shopping</MyTag>
+              <MyTag textValue="Shopping">Shopping<Button slot="remove">X</Button></MyTag>
               <Tooltip
                 offset={5}
                 style={{

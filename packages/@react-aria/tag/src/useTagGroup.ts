@@ -56,11 +56,17 @@ export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'chil
    * An optional keyboard delegate to handle arrow key navigation,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  // TODO: double check if this should be in props or options, it was in options for menu
+  /**
+   * Whether the tags should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface HookData {
-  onRemove?: (keys: Set<Key>) => void
+  onRemove?: (keys: Set<Key>) => void,
+  shouldUseVirtualFocus?: boolean
 }
 
 export const hookData: WeakMap<ListState<any>, HookData> = new WeakMap<ListState<any>, HookData>();
@@ -86,6 +92,7 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     ...props,
     labelElementType: 'span'
   });
+
   let {gridProps} = useGridList({
     ...props,
     ...fieldProps,
@@ -110,7 +117,7 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     prevCount.current = state.collection.size;
   }, [state.collection.size, isFocusWithin, ref]);
 
-  hookData.set(state, {onRemove: props.onRemove});
+  hookData.set(state, {onRemove: props.onRemove, shouldUseVirtualFocus: props.shouldUseVirtualFocus});
 
   return {
     gridProps: mergeProps(gridProps, domProps, {

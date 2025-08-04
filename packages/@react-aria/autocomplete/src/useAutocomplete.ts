@@ -240,13 +240,20 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       case 'PageDown':
       case 'PageUp':
       case 'ArrowUp':
-      case 'ArrowDown': {
+      case 'ArrowDown':
+      case 'ArrowLeft':
+      case 'ArrowRight':  {
         if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
         }
 
         // Prevent these keys from moving the text cursor in the input
-        e.preventDefault();
+        // TODO: special case ArrowLeft/Right so they still do move the text cursor
+        // However, this should really depend on the primary wrapped component's layout orientation (aka maybe shouldn't happen if TagGroup?)
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault();
+        }
+
         // Move virtual focus into the wrapped collection
         let focusCollection = new CustomEvent(FOCUS_EVENT, {
           cancelable: true,

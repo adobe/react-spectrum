@@ -16,10 +16,10 @@ import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusVisible, useFocusable, useInteractionModality} from '@react-aria/interactions';
 import {KeyboardEvent} from 'react';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates} from '@react-aria/selection';
-import {useFocusable, useInteractionModality} from '@react-aria/interactions';
 import {useGridListItem} from '@react-aria/gridlist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -113,6 +113,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       'aria-label': props['aria-label']
     }),
     ...stateWithoutDescription,
+    isFocusVisible: isItemFocused && state.selectionManager.isFocused && isFocusVisible(),
     allowsRemoving: !!onRemove
   };
 }

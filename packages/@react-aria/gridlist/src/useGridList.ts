@@ -96,7 +96,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+  // TODO: double check if this should be in props or options, it was in options for menu
+  /**
+   * Whether the grid list items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 export interface GridListAria {
@@ -121,7 +126,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow',
     escapeKeyBehavior = 'clearSelection',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    shouldUseVirtualFocus
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -141,11 +147,12 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     linkBehavior,
     disallowTypeAhead,
     autoFocus: props.autoFocus,
-    escapeKeyBehavior
+    escapeKeyBehavior,
+    shouldUseVirtualFocus
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp, shouldUseVirtualFocus});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
