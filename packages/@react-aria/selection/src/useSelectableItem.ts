@@ -78,6 +78,8 @@ export interface SelectableItemStates {
   isSelected: boolean,
   /** Whether the item is currently focused. */
   isFocused: boolean,
+  /** Whether the item is keyboard focused. */
+  isFocusVisible: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
