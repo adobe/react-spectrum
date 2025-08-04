@@ -522,7 +522,7 @@ describe('TimeField', function () {
 
       describe('validationBehavior=aria', () => {
         it('supports minValue and maxValue', async () => {
-          let {getByRole, getByLabelText} = render(
+          let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
                 <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} />

@@ -1017,7 +1017,7 @@ describe('DatePicker', function () {
       expect(segments[2]).toHaveFocus();
     });
 
-    //This test should be reviewed
+    // This test should be reviewed
     it('should focus the button when the era is removed', async function () {
       let {getByTestId, queryByTestId, getByRole} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
       let field = getByTestId('date-field');
@@ -1027,14 +1027,14 @@ describe('DatePicker', function () {
       act(() => era.focus());
       await user.keyboard('{ArrowUp}');
 
-      const button = getByRole('button')
+      const button = getByRole('button');
       act(() => button.focus());
 
       expect(queryByTestId('era')).toBeNull();
       expect(document.activeElement).toBe(button);
     });
 
-    //This test should be reviewed
+    // This test should be reviewed
     it('should focus the button when the era is removed and is the first segment', async function () {
       let {getByTestId, queryByTestId, getByRole} = render(
         <Provider theme={theme} locale="lv-LV">
@@ -1048,7 +1048,7 @@ describe('DatePicker', function () {
       act(() => era.focus());
       await user.keyboard('{ArrowUp}');
 
-      const button = getByRole('button')
+      const button = getByRole('button');
       act(() => button.focus());
       expect(queryByTestId('era')).toBeNull();
       expect(document.activeElement).toBe(button);
@@ -1072,7 +1072,7 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
 
         // Test controlled mode
-        let {getByLabelText, unmount, getByRole} = render(
+        let {getByLabelText, unmount} = render(
           <Provider theme={theme} locale={options?.locale}>
             <DatePicker label="Date" value={value} onChange={onChange} {...options.props} />
           </Provider>
@@ -1351,8 +1351,8 @@ describe('DatePicker', function () {
           expect(segment).toHaveFocus();
         }
 
-        let button = getByRole('button')
-        act (() => button.focus())
+        let button = getByRole('button');
+        act(() => button.focus());
         expect(onChange).toHaveBeenCalledWith(newValue);
         expect(segment.textContent).toBe(textContent);
 
@@ -1369,7 +1369,6 @@ describe('DatePicker', function () {
         textContent = segment.textContent;
         act(() => {segment.focus();});
 
-        count = 0;
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
@@ -1390,8 +1389,8 @@ describe('DatePicker', function () {
           expect(segment).toHaveFocus();
         }
 
-        button = getByRole('button')
-        act (() => button.focus())
+        button = getByRole('button');
+        act(() => button.focus());
         expect(onChange).toHaveBeenCalledWith(newValue);
         expect(segment.textContent).not.toBe(textContent);
 
@@ -1550,7 +1549,7 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard('{Backspace}');
-        let button = getByRole('button')
+        let button = getByRole('button');
         act(() => {button.focus();});
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(newValue);
@@ -1565,7 +1564,7 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard('{Backspace}');
-        button = getByRole('button')
+        button = getByRole('button');
         act(() => {button.focus();});
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(newValue);
@@ -1640,7 +1639,7 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard('{Backspace}');
-        await user.tab()
+        await user.tab();
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(new CalendarDate(201, 2, 3));
         expect(segment).toHaveTextContent('٢٠١');
@@ -1661,13 +1660,13 @@ describe('DatePicker', function () {
       let year = getByLabelText('year,');
       act(() => year.focus());
       await user.keyboard('{ArrowDown}');
-      await user.tab()
+      await user.tab();
 
       expect(getByTestId('invalid-icon')).toBeVisible();
 
       act(() => year.focus());
       await user.keyboard('{ArrowUp}');
-      await user.tab()
+      await user.tab();
       expect(queryByTestId('invalid-icon')).toBeNull();
     });
 
@@ -1828,7 +1827,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(0);
       beforeInput(document.activeElement, '0');
       expect(segments[2]).toHaveFocus();
-      await user.tab()
+      await user.tab();
       expect(onChange).toHaveBeenCalledTimes(1);
       value = new CalendarDate(2020, 4, 5);
       expect(onChange).toHaveBeenCalledWith(value);
