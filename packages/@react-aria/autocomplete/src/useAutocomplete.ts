@@ -250,7 +250,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // Prevent these keys from moving the text cursor in the input
         // TODO: special case ArrowLeft/Right so they still do move the text cursor
         // However, this should really depend on the primary wrapped component's layout orientation (aka maybe shouldn't happen if TagGroup?)
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        if (!(e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
           e.preventDefault();
         }
 

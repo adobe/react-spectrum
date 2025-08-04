@@ -106,7 +106,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
   }
   let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
-
+  // TODO: will need to support virtual focus on the button
   return {
     isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(additionalProps, buttonProps, {

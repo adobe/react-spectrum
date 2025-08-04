@@ -140,7 +140,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let {gridProps} = useGridList({
     ...props,
-    ...DOMCollectionProps,
+    ...collectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
@@ -346,7 +346,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     values: {
       ...states,
       isHovered,
-      isFocusVisible,
+      // TODO: check if I can get rid of useFocusRing
+      isFocusVisible: isFocusVisible || states.isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
@@ -389,7 +390,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible={isFocusVisible || states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}

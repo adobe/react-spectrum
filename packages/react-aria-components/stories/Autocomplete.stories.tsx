@@ -961,6 +961,12 @@ AutocompleteWithAsyncListBox.story = {
   }
 };
 
+function MyButton() {
+  return (
+    <Button onPress={action('button press')}>Actions</Button>
+  );
+}
+
 export const AutocompleteWithGridList = () => {
   return (
     <AutocompleteWrapper>
@@ -970,6 +976,7 @@ export const AutocompleteWithGridList = () => {
           <Input />
         </TextField>
         <GridList
+          onAction={action('onAction')}
           className={styles.menu}
           style={{height: 200, width: 200}}
           aria-label="test gridlist">
