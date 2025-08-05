@@ -257,8 +257,6 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
-  // TODO: running with assumption that setProps will be called before any other calls to node are made so theoretically
-  // node will be defined
   private _node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
@@ -335,17 +333,14 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement, CollectionNodeClass?: CollectionNodeClass<any>): void {
-    let node = this.getMutableNode();
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, CollectionNodeClass: CollectionNodeClass<any>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
+    let node;
     let {value, textValue, id, ...props} = obj;
-
-
-    // TODO: Flow here is that if this called for first time, aka this.node is undef, call
-    // this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`); but make new TreeNode/MenuNode/etc instead of CollectionNode
-    // Caveat is this assumes we don't need a node before setProps is called on it
-    if (node == null && CollectionNodeClass) {
-      node = new CollectionNodeClass(`react-aria-${++this.ownerDocument.nodeId}`);
+    if (this._node == null) {
+      node = new CollectionNodeClass(id ?? `react-aria-${++this.ownerDocument.nodeId}`);
       this.node = node;
+    } else {
+      node = this.getMutableNode();
     }
 
     props.ref = ref;
@@ -355,20 +350,13 @@ export class ElementNode<T> extends BaseNode<T> {
     node.value = value;
     node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
-      // TODO: still need to use this.hasSetProps so this can run twice (?) instead of setting node.key above
-      // If we set node.key = id and change this to if (this.node), setting refs fails. If we just check (this.node here), it will fail if the user provides an id
-      if (this.hasSetProps) {
-        throw new Error('Cannot change the id of an item');
-      }
-      node.key = id;
+      throw new Error('Cannot change the id of an item');
     }
 
     if (props.colSpan != null) {
       node.colSpan = props.colSpan;
     }
 
-    // TODO: still need this, see above comment
-    this.hasSetProps = true;
     if (this.isConnected) {
       this.ownerDocument.queueUpdate();
     }
