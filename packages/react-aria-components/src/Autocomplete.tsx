@@ -20,24 +20,24 @@ import React, {createContext, JSX, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
-export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
+export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProps {}
 
-interface InternalAutocompleteContextValue {
-  filter?: (nodeTextValue: string, node: Node<unknown>) => boolean,
+interface InternalAutocompleteContextValue<T> {
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
+export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue<any> | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
  */
-export function Autocomplete(props: AutocompleteProps): JSX.Element {
+export function Autocomplete<T>(props: AutocompleteProps<T>): JSX.Element {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;
@@ -65,7 +65,7 @@ export function Autocomplete(props: AutocompleteProps): JSX.Element {
         [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn,
+          filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
           collectionProps,
           collectionRef: mergedCollectionRef
         }]
