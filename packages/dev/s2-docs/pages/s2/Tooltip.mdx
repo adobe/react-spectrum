@@ -8,7 +8,16 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
 
-{/* TODO: Example */}
+```tsx render docs={docs.exports.Tooltip} links={docs.links} props={[]} expanded type="s2"
+"use client";
+import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+
+<TooltipTrigger>
+  <Button aria-label="Edit Name"><Edit /></Button>
+  <Tooltip/* PROPS */>Change Name</Tooltip>
+</TooltipTrigger>
+```
 
 ## Content
 

@@ -8,7 +8,24 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.Popover.description}</PageDescription>
 
-{/* TODO: Example */}
+```tsx render docs={docs.exports.Popover} links={docs.links} props={['hideArrow', 'placement']} expanded type="s2"
+"use client";
+import {Popover, DialogTrigger, ActionButton, Menu, MenuItem} from '@react-spectrum/s2';
+import More from '@react-spectrum/s2/icons/More';
+
+<DialogTrigger>
+  <ActionButton aria-label="More actions">
+    <More />
+  </ActionButton>
+  <Popover/* PROPS */>
+    <Menu onAction={(key) => alert(`Selected: ${key}`)}>
+      <MenuItem id="edit">Edit</MenuItem>
+      <MenuItem id="duplicate">Duplicate</MenuItem>
+      <MenuItem id="delete">Delete</MenuItem>
+    </Menu>
+  </Popover>
+</DialogTrigger>
+```
 
 ## Content
 
