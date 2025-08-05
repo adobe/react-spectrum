@@ -12,7 +12,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {ReactNode} from 'react';
-import {useId} from '@react-aria/utils';
+import {useId, useLabels} from '@react-aria/utils';
 
 export interface AriaGridListSectionProps {
   /** The heading for the section. */
@@ -40,6 +40,10 @@ export interface GridListSectionAria {
 export function useGridListSection(props: AriaGridListSectionProps): GridListSectionAria {
   let {heading, 'aria-label': ariaLabel} = props;
   let headingId = useId();
+  let labelProps = useLabels({
+    'aria-label': ariaLabel,
+    'aria-labelledby': headingId
+  });
   
   return {
     rowProps: {
@@ -51,8 +55,7 @@ export function useGridListSection(props: AriaGridListSectionProps): GridListSec
     } : {},
     rowGroupProps: {
       role: 'rowgroup',
-      'aria-label': ariaLabel,
-      'aria-labelledby': heading ? headingId : undefined
+      ...labelProps
     }
   };
 }

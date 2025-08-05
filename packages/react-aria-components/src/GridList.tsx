@@ -582,11 +582,12 @@ function GridListSectionInner<T extends object>(props: GridListSectionProps<T>, 
     values: {}
   });
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
   return (
     <section
-      {...filterDOMProps(props as any)}
-      {...rowGroupProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
         values={[
