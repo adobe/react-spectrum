@@ -149,11 +149,17 @@ export const Dynamic: Story = {
   )
 };
 
-function ExampleTest(props) {
+function AddRemoveTabsExample(props) {
   let [tabs, setTabs] = React.useState([
     {id: 1, title: 'Tab 1', content: 'Tab body 1'},
     {id: 2, title: 'Tab 2', content: 'Tab body 2'},
-    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}, 
+    {id: 4, title: 'Tab 4', content: 'Tab body 4'},
+    {id: 5, title: 'Tab 5', content: 'Tab body 5'},
+    {id: 6, title: 'Tab 6', content: 'Tab body 6'},
+    {id: 7, title: 'Tab 7', content: 'Tab body 7'},
+    {id: 8, title: 'Tab 8', content: 'Tab body 8'},
+    {id: 9, title: 'Tab 9', content: 'Tab body 9'}
   ]);
 
   let addTab = () => {
@@ -197,6 +203,7 @@ function ExampleTest(props) {
   );
 }
 
-export const AddRemoveTabs: Story = {
-  render: (args) => <ExampleTest {...args} />
+export const CustomizedLayout: Story = {
+  render: (args) => <AddRemoveTabsExample {...args} />,
+  tags: ['!autodocs']
 };

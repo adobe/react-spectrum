@@ -90,7 +90,7 @@ interface CollapseContextType {
   ariaLabel?: string | undefined,
   ariaDescribedBy?: string | undefined,
   tabs: Array<Node<any>>,
-  listRef: RefObject<HTMLDivElement | null>,
+  listRef?: RefObject<HTMLDivElement | null>,
   onSelectionChange?: (key: Key) => void
 }
 
@@ -98,8 +98,7 @@ const CollapseContext = createContext<CollapseContextType>({
   showTabs: true,
   menuId: '',
   valueId: '',
-  tabs: [],
-  listRef: {current: null}
+  tabs: []
 });
 
 const tabs = style({
@@ -229,9 +228,9 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   
   return (
     <div className={tablistWrapper(null, props.styles)}>
-      <div className={tablist({orientation, labelBehavior, density})}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
         <HiddenTabs items={tabs} density={density} listRef={listRef} />
-      </div>
+      </div>}
       <TabsMenu
         id={menuId}
         valueId={valueId}
@@ -260,9 +259,9 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
       className={
         (props.UNSAFE_className || '') +
         tablistWrapper(null, props.styles)}>
-      <div className={tablist({orientation, labelBehavior, density})}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
         <HiddenTabs items={tabs} density={density} listRef={listRef} />
-      </div>
+      </div>}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
