@@ -7,7 +7,7 @@ import BreadcrumbsSvg from '../../docs/pages/assets/component-illustrations/Brea
 import ButtonGroupSvg from '../../docs/pages/assets/component-illustrations/ButtonGroup.svg';
 import ButtonSvg from '../../docs/pages/assets/component-illustrations/Button.svg';
 import CalendarSvg from '../../docs/pages/assets/component-illustrations/Calendar.svg';
-import {Card, CardPreview, Content, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, CardView, Collection, Content, Tag, TagGroup, Text} from '@react-spectrum/s2';
 import CheckboxGroupSvg from '../../docs/pages/assets/component-illustrations/CheckboxGroup.svg';
 import CheckboxSvg from '../../docs/pages/assets/component-illustrations/Checkbox.svg';
 import CollectionsSvg from '../../docs/pages/assets/component-illustrations/Collections.svg';
@@ -29,15 +29,14 @@ import DisclosureSvg from '../../docs/pages/assets/component-illustrations/Discl
 import DragAndDropSvg from '../../docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import DropZoneSvg from '../../docs/pages/assets/component-illustrations/DropZone.svg';
 import FileTriggerSvg from '../../docs/pages/assets/component-illustrations/FileTrigger.svg';
-import {focusRing, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import FocusScopeSvg from '../../docs/pages/assets/component-illustrations/FocusScope.svg';
 import FormSvg from '../../docs/pages/assets/component-illustrations/Form.svg';
 import InputSvg from '../../docs/pages/assets/component-illustrations/Input.svg';
 import InternationalizedDateSvg from '../../docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 import LabeledValueSvg from '../../docs/pages/assets/component-illustrations/LabeledValue.svg';
 import LabelSvg from '../../docs/pages/assets/component-illustrations/Label.svg';
-import {Link} from 'react-aria-components';
 import LinkSvg from '../../docs/pages/assets/component-illustrations/Link.svg';
+
 import ListBoxSvg from '../../docs/pages/assets/component-illustrations/ListBox.svg';
 import ListViewSvg from '../../docs/pages/assets/component-illustrations/ListView.svg';
 import MenuSvg from '../../docs/pages/assets/component-illustrations/Menu.svg';
@@ -51,11 +50,12 @@ import ProgressCircleSvg from '../../docs/pages/assets/component-illustrations/P
 import RadioGroupSvg from '../../docs/pages/assets/component-illustrations/RadioGroup.svg';
 import RangeCalendarSvg from '../../docs/pages/assets/component-illustrations/RangeCalendar.svg';
 import RangeSliderSvg from '../../docs/pages/assets/component-illustrations/RangeSlider.svg';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import SearchFieldSvg from '../../docs/pages/assets/component-illustrations/SearchField.svg';
 import SelectionSvg from '../../docs/pages/assets/component-illustrations/Selection.svg';
 import SliderSvg from '../../docs/pages/assets/component-illustrations/Slider.svg';
 import StatusLightSvg from '../../docs/pages/assets/component-illustrations/StatusLight.svg';
+import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import SwitchSvg from '../../docs/pages/assets/component-illustrations/Switch.svg';
 import TableSvg from '../../docs/pages/assets/component-illustrations/Table.svg';
 import TabsSvg from '../../docs/pages/assets/component-illustrations/Tabs.svg';
@@ -152,12 +152,6 @@ const componentIllustrations: Record<string, React.ComponentType> = {
   'usePress': usePressSvg
 };
 
-interface IExampleSection {
-  id: string,
-  name: string,
-  children?: IExampleItem[]
-}
-
 interface IExampleItem {
   id: string,
   name: string,
@@ -170,12 +164,6 @@ interface CardListProps {
   selectedLibrary: 'react-spectrum' | 'react-aria' | 'internationalized',
   pages?: Page[]
 }
-
-const linkCardStyles = style({
-  textDecoration: 'none',
-  borderRadius: 'default',
-  ...focusRing()
-});
 
 const illustrationStyles = style({
   width: 'full',
@@ -243,8 +231,19 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
 
     otherSections.sort((a, b) => a.name.localeCompare(b.name));
 
-    return componentsSection ? [...otherSections, componentsSection] : otherSections;
+    return componentsSection ? [componentsSection, ...otherSections] : otherSections;
   }, [pages, selectedLibrary]);
+
+  const [selectedSection, setSelectedSection] = useState<string>('components');
+
+  useEffect(() => {
+    if (sectionsData.length > 0) {
+      setSelectedSection(sectionsData[0].id);
+    }
+  }, [sectionsData]);
+
+  const selectedSectionData = sectionsData.find(section => section.id === selectedSection);
+  const items = selectedSectionData?.children || [];
 
   return (
     <nav
@@ -252,54 +251,61 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
         flexGrow: 1,
         overflow: 'auto',
         margin: 16,
-        padding: 16
+        padding: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16
       })}>
-      {sectionsData.map((section: IExampleSection) => (
-        <div key={section.id}>
-          <h3 
-            id={section.id} 
-            className={style({
-              font: 'heading',
-              marginTop: 32,
-              position: 'relative',
-              scrollMarginTop: 16
-            })}>
-            {section.name}
-          </h3>
-          
-          <div
-            className={style({ 
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, 192px)',
-              columnGap: 16,
-              rowGap: 16
-            })}>
-            {section.children && section.children.map((item) => {
+      {sectionsData.length > 0 && (
+        <TagGroup
+          selectionMode="single"
+          selectedKeys={[selectedSection]}
+          onSelectionChange={(keys) => {
+            const newSelection = Array.from(keys)[0] as string;
+            setSelectedSection(newSelection);
+          }}
+          aria-label="Select section">
+          {sectionsData.map((section) => (
+            <Tag key={section.id} id={section.id}>
+              {section.name}
+            </Tag>
+          ))}
+        </TagGroup>
+      )}
+
+      {items.length > 0 && (
+        <CardView
+          aria-label={`${selectedSectionData?.name || 'Items'}`}
+          styles={style({
+            flexGrow: 1
+          })}>
+          <Collection items={items}>
+            {(item) => {
               const {IllustrationComponent} = item;
               return (
-                <Link href={item.href} key={item.id} className={linkCardStyles}>
-                  <Card
-                    id={item.id}
-                    textValue={item.name}
-                    size="S">
-                    {IllustrationComponent && (
-                      <CardPreview>
-                        <IllustrationComponent
-                          aria-hidden="true"
-                          // @ts-ignore
-                          className={illustrationStyles} />
-                      </CardPreview>
-                    )}
-                    <Content>
-                      <Text slot="title">{item.name}</Text>
-                    </Content>
-                  </Card>
-                </Link>
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  textValue={item.name}
+                  href={item.href}
+                  size="S">
+                  {IllustrationComponent && (
+                    <CardPreview>
+                      <IllustrationComponent
+                        aria-hidden="true"
+                        // @ts-ignore
+                        className={illustrationStyles} />
+                    </CardPreview>
+                  )}
+                  <Content>
+                    <Text slot="title">{item.name}</Text>
+                  </Content>
+                </Card>
               );
-            })}
-          </div>
-        </div>
-      ))}
+            }}
+          </Collection>
+        </CardView>
+      )}
     </nav>
   );
 }
