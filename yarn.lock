@@ -7260,6 +7260,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.9.0"
     "@react-types/shared": "npm:^3.31.0"
     "@swc/helpers": "npm:^0.5.0"
+    "@types/react-transition-group": "npm:^4.4.12"
     react-transition-group: "npm:^4.4.5"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
@@ -10594,6 +10595,15 @@ __metadata:
   peerDependencies:
     "@types/react": ^19.0.0
   checksum: 10c0/7ba74eee2919e3f225e898b65fdaa16e54952aaf9e3472a080ddc82ca54585e46e60b3c52018d21d4b7053f09d27b8293e9f468b85f9932ff452cd290cc131e8
+  languageName: node
+  linkType: hard
+
+"@types/react-transition-group@npm:^4.4.12":
+  version: 4.4.12
+  resolution: "@types/react-transition-group@npm:4.4.12"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10c0/0441b8b47c69312c89ec0760ba477ba1a0808a10ceef8dc1c64b1013ed78517332c30f18681b0ec0b53542731f1ed015169fed1d127cc91222638ed955478ec7
   languageName: node
   linkType: hard
 
