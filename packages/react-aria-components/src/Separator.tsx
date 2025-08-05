@@ -29,7 +29,8 @@ export class SeparatorNode extends CollectionNode<any> {
   }
 
   filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
-    if (newCollection.getItem(this.prevKey!)) {
+    let prevItem = newCollection.getItem(this.prevKey!);
+    if (prevItem && prevItem.type !== 'separator') {
       return this.clone();
     }
 

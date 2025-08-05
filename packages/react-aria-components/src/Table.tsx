@@ -18,10 +18,6 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, React
 import ReactDOM from 'react-dom';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
-export type Mutable<T> = {
-  -readonly[P in keyof T]: T[P]
-}
-
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
