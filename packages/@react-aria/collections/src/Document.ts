@@ -259,7 +259,7 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   // TODO: running with assumption that setProps will be called before any other calls to node are made so theoretically
   // node will be defined
-  node: CollectionNode<T> | null;
+  private _node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
   hasSetProps = false;
@@ -267,7 +267,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = null;
+    this._node = null;
   }
 
   get index(): number {
@@ -285,6 +285,17 @@ export class ElementNode<T> extends BaseNode<T> {
     }
 
     return 0;
+  }
+
+  get node(): CollectionNode<T> | null {
+    if (this._node == null && process.env.NODE_ENV !== 'production') {
+      console.error('Attempted to access node before it was defined. Check if setProps wasn\'t called before attempting to access the node.');
+    }
+    return this._node;
+  }
+
+  set node(node: CollectionNode<T>) {
+    this._node = node;
   }
 
   /**

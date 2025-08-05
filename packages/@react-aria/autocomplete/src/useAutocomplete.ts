@@ -50,7 +50,7 @@ export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'ch
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export interface AutocompleteAria {
+export interface AutocompleteAria<T> {
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
   textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
@@ -58,7 +58,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (nodeTextValue: string, node: Node<unknown>) => boolean
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean
 }
 
 /**
@@ -67,7 +67,7 @@ export interface AutocompleteAria {
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria<T> {
   let {
     inputRef,
     collectionRef,
