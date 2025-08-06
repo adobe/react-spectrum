@@ -259,6 +259,7 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
       {sectionsData.length > 0 && (
         <TagGroup
           selectionMode="single"
+          disallowEmptySelection
           selectedKeys={[selectedSection]}
           onSelectionChange={(keys) => {
             const newSelection = Array.from(keys)[0] as string;
