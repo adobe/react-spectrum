@@ -82,10 +82,23 @@ const InternalTabsContext = createContext<Partial<TabsProps> & {
   prevRef?: RefObject<DOMRect | null>,
   selectedKey?: Key | null
 }>({});
-const CollapseContext = createContext({
+
+interface CollapseContextType {
+  showTabs: boolean,
+  menuId: string,
+  valueId: string,
+  ariaLabel?: string | undefined,
+  ariaDescribedBy?: string | undefined,
+  tabs: Array<Node<any>>,
+  listRef?: RefObject<HTMLDivElement | null>,
+  onSelectionChange?: (key: Key) => void
+}
+
+const CollapseContext = createContext<CollapseContextType>({
   showTabs: true,
   menuId: '',
-  valueId: ''
+  valueId: '',
+  tabs: []
 });
 
 const tabs = style({
@@ -198,35 +211,57 @@ const tablist = style({
   minWidth: 'min'
 });
 
+const tablistWrapper = style({
+  position: 'relative',
+  minWidth: 'min',
+  flexShrink: 0,
+  flexGrow: 0
+}, getAllowedOverrides());
+
 export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
-  let {showTabs} = useContext(CollapseContext) ?? {};
+  let {showTabs, menuId, valueId, tabs, listRef, onSelectionChange, ariaLabel, ariaDescribedBy} = useContext(CollapseContext) ?? {};
+  let {density, orientation, labelBehavior} = useContext(InternalTabsContext);
 
   if (showTabs) {
     return <TabListInner {...props} />;
   }
-  return null;
+  
+  return (
+    <div className={tablistWrapper(null, props.styles)}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
+        <HiddenTabs items={tabs} density={density} listRef={listRef} />
+      </div>}
+      <TabsMenu
+        id={menuId}
+        valueId={valueId}
+        items={tabs}
+        onSelectionChange={onSelectionChange}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy} />
+    </div>
+  );
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
   let {
     tablistRef,
+    orientation,
     density,
     labelBehavior,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy
   } = useContext(InternalTabsContext) ?? {};
+  let {tabs, listRef} = useContext(CollapseContext) ?? {};
 
   return (
     <div
       style={props.UNSAFE_style}
       className={
         (props.UNSAFE_className || '') +
-        style({
-          position: 'relative',
-          flexGrow: 0,
-          flexShrink: 0,
-          minWidth: 'min'
-        }, getAllowedOverrides())(null, props.styles)}>
+        tablistWrapper(null, props.styles)}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
+        <HiddenTabs items={tabs} density={density} listRef={listRef} />
+      </div>}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
@@ -519,7 +554,7 @@ let HiddenTabs = function (props: {
   size?: string,
   density?: 'compact' | 'regular'
 }) {
-  let {listRef, items, size, density} = props;
+  let {listRef, items = [], size, density} = props;
 
   return (
     <div
@@ -612,7 +647,7 @@ let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionCha
 };
 
 let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collection<Node<unknown>>, containerRef: any} & TabsProps) => {
-  let {density = 'regular', orientation = 'horizontal', labelBehavior = 'show', onSelectionChange} = props;
+  let {orientation = 'horizontal', onSelectionChange} = props;
   let [showItems, _setShowItems] = useState(true);
   showItems = orientation === 'vertical' ? true : showItems;
   let setShowItems = useCallback((value: boolean) => {
@@ -683,14 +718,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   } else {
     contents = (
       <>
-        <TabsMenu
-          id={menuId}
-          valueId={valueId}
-          items={children}
-          onSelectionChange={onSelectionChange}
-          aria-label={props['aria-label']}
-          aria-describedby={props['aria-labelledby']} />
-        <CollapseContext.Provider value={{showTabs: false, menuId, valueId}}>
+        <CollapseContext.Provider value={{showTabs: false, tabs: children, menuId, valueId, listRef: listRef, onSelectionChange, ariaLabel: props['aria-label'], ariaDescribedBy: props['aria-labelledby']}}>
           {props.children}
         </CollapseContext.Provider>
       </>
@@ -699,10 +727,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
 
   return (
     <div style={props.UNSAFE_style} className={(props.UNSAFE_className || '') + tabs({orientation}, props.styles)} ref={containerRef}>
-      <div className={tablist({orientation, labelBehavior, density})}>
-        <HiddenTabs items={children} density={density} listRef={listRef} />
-      </div>
-      <CollapseContext.Provider value={{showTabs: true, menuId, valueId}}>
+      <CollapseContext.Provider value={{showTabs: true, menuId, valueId, tabs: children, listRef: listRef}}>
         {contents}
       </CollapseContext.Provider>
     </div>
