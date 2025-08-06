@@ -1,6 +1,5 @@
-import React from "react";
-import { Heading } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import {Heading} from "@react-spectrum/s2";
+import {style} from "@react-spectrum/s2/style" with { type: "macro" };
 
 export default function Section(props: any) {
   let { title, children } = props;

@@ -1,4 +1,3 @@
-import React, {useState} from "react";
 import "@react-spectrum/s2/page.css";
 import {
   Accordion,
@@ -75,7 +74,8 @@ import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Section from "./components/Section";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import {style} from "@react-spectrum/s2/style" with { type: "macro" };
+import {useState} from "react";
 
 export default function Lazy() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);

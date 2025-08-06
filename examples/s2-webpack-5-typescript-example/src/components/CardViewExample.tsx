@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import React  from "react";
-import { ActionMenu, Avatar, Card, CardPreview, CardView, Collection, CollectionCardPreview, Content, Image, MenuItem, SkeletonCollection, Text } from '@react-spectrum/s2';
-import Folder from '@react-spectrum/s2/icons/Folder';
+import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Image, MenuItem, SkeletonCollection, Text} from '@react-spectrum/s2';
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { useAsyncList } from 'react-stately';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import {iconStyle, style} from "@react-spectrum/s2/style" with { type: "macro" };
+import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
   width: 'full',
@@ -32,7 +31,20 @@ const avatarSize = {
   XL: 32
 };
 
-function PhotoCard({item, layout}) {
+type Item = {
+  id: number,
+  user: {
+    name: string,
+    profile_image: { small: string }
+  },
+  urls: { regular: string },
+  description: string,
+  alt_description: string,
+  width: number,
+  height: number
+};
+
+function PhotoCard({item, layout}: {item: Item, layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
       {({size}) => (<>
@@ -50,7 +62,7 @@ function PhotoCard({item, layout}) {
             }}
             renderError={() => (
               <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-                <ErrorIcon size="S" />
+                <ErrorIcon styles={iconStyle({size: 'L'})} />
               </div>
             )} />
         </CardPreview>
@@ -69,8 +81,8 @@ function PhotoCard({item, layout}) {
   );
 }
 
-export const CardViewExample = (props) => {
-  let list = useAsyncList({
+export const CardViewExample = (props: CardViewProps<any>) => {
+  let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
       let res = await fetch(
@@ -80,7 +92,7 @@ export const CardViewExample = (props) => {
       let nextItems = await res.json();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      nextItems = nextItems.filter((i: Item) => !existingKeys.has(i.id) && (i.description || i.alt_description));
       return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
@@ -119,7 +131,15 @@ export const CardViewExample = (props) => {
   );
 };
 
-function TopicCard({topic}) {
+interface Topic {
+  id: string,
+  title: string,
+  total_photos: number,
+  links: {html: string},
+  preview_photos: {id: string, urls: {small: string}}[]
+}
+
+function TopicCard({topic}: {topic: Topic}) {
   return (
     <Card href={topic.links.html} target="_blank" textValue={topic.title}>
       <CollectionCardPreview>
@@ -138,15 +158,15 @@ function TopicCard({topic}) {
   );
 }
 
-export const CollectionCardsExample = (props) => {
-  let list = useAsyncList({
+export const CollectionCardsExample = (props: CardViewProps<any>) => {
+  let list = useAsyncList<Topic, number | null>({
     async load({signal, cursor}) {
       let page = cursor || 1;
       let res = await fetch(
         `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
-      let items = (await res.json()).filter((topic) => !!topic.preview_photos);
+      let items = (await res.json()).filter((topic: Topic) => !!topic.preview_photos);
       return {items, cursor: items.length ? page + 1 : null};
     }
   });

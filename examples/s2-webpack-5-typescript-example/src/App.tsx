@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import React, { useState } from "react";
 import "@react-spectrum/s2/page.css";
 import {
   ActionButton,
@@ -40,19 +39,21 @@ import {
   TreeViewItem,
   TreeViewItemContent
 } from "@react-spectrum/s2";
+import {CardViewExample} from "./components/CardViewExample";
+import {CollectionCardsExample} from "./components/CollectionCardsExample";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import FileTxt from "@react-spectrum/s2/icons/FileText";
 import Folder from "@react-spectrum/s2/icons/Folder";
+import {LoadingState} from '@react-types/shared'
+import React, {useState} from "react";
 import Section from "./components/Section";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { CardViewExample } from "./components/CardViewExample";
-import { CollectionCardsExample } from "./components/CollectionCardsExample";
+import {style} from "@react-spectrum/s2/style" with { type: "macro" };
 
 const Lazy = React.lazy(() => import('./Lazy'));
 
 function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
-  let [cardViewState, setCardViewState] = useState({
+  let [cardViewState, setCardViewState] = useState<{layout?: 'grid' | 'waterfall' , loadingState: LoadingState}>({
     layout: 'grid',
     loadingState: 'idle',
   });
@@ -73,7 +74,7 @@ function App() {
         styles={style({ font: "heading-xl", textAlign: "center" })}
         level={1}
       >
-        Spectrum 2 + Webpack
+        Spectrum 2 + Webpack + Typescript
       </Heading>
       <div
         className={style({
