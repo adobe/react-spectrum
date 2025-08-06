@@ -26,7 +26,9 @@ const switcher = style({
 
 export const ExampleSwitcherContext = createContext<Key | null>(null);
 
-export function ExampleSwitcher({examples = ['Vanilla CSS', 'Tailwind'] as Key[], children}) {
+const DEFAULT_EXAMPLES = ['Vanilla CSS', 'Tailwind'] as Key[];
+
+export function ExampleSwitcher({examples = DEFAULT_EXAMPLES, children}) {
   let [selected, setSelected] = useState<Key>(examples[0]);
 
   useEffect(() => {
@@ -39,7 +41,9 @@ export function ExampleSwitcher({examples = ['Vanilla CSS', 'Tailwind'] as Key[]
 
   let onSelectionChange = key => {
     setSelected(key);
-    localStorage.setItem('exampleType', key);
+    if (DEFAULT_EXAMPLES.includes(key)) {
+      localStorage.setItem('exampleType', key);
+    }
   };
 
   return (

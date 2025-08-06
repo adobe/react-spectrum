@@ -350,7 +350,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 </GridList>
 ```
 
-In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `GridList` level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the collection level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{selectionMode: 'multiple'}}
 "use client";

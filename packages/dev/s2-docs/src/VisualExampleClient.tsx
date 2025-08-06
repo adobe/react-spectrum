@@ -4,17 +4,18 @@ import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, Conte
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {flushSync} from 'react-dom';
 import {getColorChannels, parseColor} from 'react-stately';
-import {IconPicker} from './IconPicker';
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {useLocale} from 'react-aria';
+
+export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -24,7 +25,8 @@ interface ContextValue {
   importSource?: string,
   controls: Controls,
   props: Props,
-  setProps(v: Props): void
+  setProps(v: Props): void,
+  propsObject?: string
 }
 
 const Context = createContext<ContextValue>({
@@ -41,16 +43,24 @@ interface VisualExampleClientProps {
   importSource?: string,
   controls: Controls,
   children: ReactNode,
-  initialProps?: {[prop: string]: any}
+  initialProps?: {[prop: string]: any},
+  propsObject?: string
 }
 
-export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}}: VisualExampleClientProps) {
+export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}, propsObject}: VisualExampleClientProps) {
   let [props, setProps] = useState(() => {
     let props = {...initialProps};
     for (let name in controls) {
       let defaultValue = controls[name].default;
       if (!(name in initialProps)) {
         props[name] = defaultValue;
+      }
+      if (controls[name].value.type === 'interface' && controls[name].value.name === 'Size') {
+        if (typeof props[name] === 'object') {
+          props[name] = new Size(props[name].width, props[name].height);
+        } else {
+          delete props[name];
+        }
       }
     }
 
@@ -86,7 +96,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   }, []);
 
   return (
-    <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
+    <Context.Provider value={{component, name, importSource, controls, props, setProps, propsObject}}>
       <div hidden ref={ref} />
       {children}
     </Context.Provider>
@@ -94,7 +104,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
 }
 
 export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'}) {
-  let {component, props} = useContext(Context);
+  let {component, props, propsObject} = useContext(Context);
 
   if (!isValidElement(component)) {
     let children = props.children;
@@ -113,6 +123,10 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
     props = {...props, children};
   }
 
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
   return (
     <ExampleOutput
       component={component}
@@ -129,7 +143,7 @@ interface CodeOutputProps {
 }
 
 export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
-  let {name, importSource, props, controls} = useContext(Context);
+  let {name, importSource, props, controls, propsObject} = useContext(Context);
   let searchParams = new URLSearchParams();
   
   let exampleType = useContext(ExampleSwitcherContext);
@@ -149,6 +163,10 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 
   let url = '?' + searchParams.toString();
 
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
   code ||= (
     <Pre>
       <code>
@@ -166,8 +184,12 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 }
 
 export function CodeProps({indent = ''}) {
-  let {props, controls} = useContext(Context);
-  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  let {props, controls, propsObject} = useContext(Context);
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
+  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop], indent)).filter(Boolean);
   let newlines = indent.length > 0 || countChars(renderedProps) > 40;
   let separator = newlines ? (indent || '  ') : ' ';
   renderedProps = renderedProps.map((p, i) => {
@@ -185,7 +207,7 @@ export function CodeProps({indent = ''}) {
 
 function renderElement(name: string, props: Props, controls?: Controls) {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop])).filter(Boolean);
+  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop], '  ')).filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
   renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' : ' '}{p}</Fragment>);
   if (props.children) {
@@ -238,7 +260,7 @@ function countChars(element: ReactNode) {
   return 0;
 }
 
-function renderProp(name: string, value: any, control?: PropControl) {
+function renderProp(name: string, value: any, control?: PropControl, indent = '') {
   if (value === control?.default) {
     return null;
   }
@@ -257,7 +279,7 @@ function renderProp(name: string, value: any, control?: PropControl) {
   } else if (value == null) {
     return null;
   } else if (typeof value === 'object') {
-    propValue = <>{'{'}{renderValue(value)}{'}'}</>;
+    propValue = <>{'{'}{renderValue(value, indent)}{'}'}</>;
   }
 
   if (propValue) {
@@ -267,7 +289,7 @@ function renderProp(name: string, value: any, control?: PropControl) {
   return <Fragment key={name}>{propName}{propValue}</Fragment>;
 }
 
-function renderValue(value: any) {
+function renderValue(value: any, indent = '') {
   switch (typeof value) {
     case 'string':
       return <span className={style({color: 'green-1000'})}>"{value}"</span>;
@@ -281,7 +303,7 @@ function renderValue(value: any) {
       }
       if (Array.isArray(value)) {
         let res: ReactNode[] = value.map((item, i) => {
-          let result = renderValue(item);
+          let result = renderValue(item, indent);
           if (i < value.length - 1) {
             result = <>{result}, </>;
           }
@@ -289,16 +311,20 @@ function renderValue(value: any) {
         });
 
         if (countChars(res) > 40) {
-          res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
+          res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
           res.push('\n  ');
         }
 
         return <>{'['}{res}{']'}</>;
       }
 
+      if (value instanceof Size) {
+        return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Size</span>(<span className={style({color: 'pink-1000'})}>{value.width}</span>, <span className={style({color: 'pink-1000'})}>{value.height}</span>)</>;
+      }
+
       let entries = Object.entries(value);
       let res: ReactNode[] = entries.map(([name, value], i) => {
-        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
+        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value, indent)}</>;
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
@@ -306,8 +332,8 @@ function renderValue(value: any) {
       });
 
       if (countChars(res) > 40) {
-        res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
-        res.push('\n  ');
+        res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
+        res.push('\n' + indent);
       }
 
       return <>{'{'}{res}{'}'}</>;
@@ -386,6 +412,9 @@ export function Control({name}: {name: string}) {
     case 'interface':
       if (control.value.name === 'DateDuration') {
         return <DurationControl control={control} value={value} onChange={onChange} />;
+      }
+      if (control.value.name === 'Size') {
+        return <SizeControl control={control} value={value} onChange={onChange} />;
       }
       break;
     case 'array':
@@ -953,6 +982,7 @@ function PlacementControl({control, value, onChange}) {
         disallowEmptySelection
         selectedKeys={[value]}
         onSelectionChange={keys => onChange([...keys][0])}
+        className=""
         style={{
           display: 'grid',
           gridTemplateAreas: `
@@ -1085,6 +1115,27 @@ function ArrayControl({control, valueType, value = [], onChange}) {
           </div>
         );
       })}
+    </Wrapper>
+  );
+}
+
+function SizeControl({control, value, onChange}: ControlProps) {
+  return (
+    <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+      <div className={style({display: 'flex', gap: 4, width: 130})}>
+        <NumberField
+          aria-label="Width"
+          value={value?.width}
+          onChange={width => onChange(new Size(width, value?.height ?? 0))}
+          styles={style({flexShrink: 1, flexGrow: 1})}
+          hideStepper />
+        <NumberField
+          aria-label="Height"
+          value={value?.height}
+          onChange={height => onChange(new Size(value?.width ?? 0, height))}
+          styles={style({flexShrink: 1, flexGrow: 1})}
+          hideStepper />
+      </div>
     </Wrapper>
   );
 }

@@ -190,6 +190,7 @@ function Example(props) {
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
+    timeZone: 'UTC'
   });
 
   return (
@@ -208,7 +209,7 @@ function Example(props) {
               {i === 0 && 
                 <Button slot="previous">◀</Button>
               }
-              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</h2>
+              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate('UTC'))}</h2>
               {i === props.visibleDuration.months - 1 && 
                 <Button slot="next">▶</Button>
               }
