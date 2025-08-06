@@ -18,6 +18,7 @@ const {SwcMinifyWebpackPlugin} = require("swc-minify-webpack-plugin");
 const {browserslistToTargets} = require('lightningcss');
 const browserslist = require('browserslist');
 const macros = require("unplugin-parcel-macros");
+const webpack = require('webpack');
 
 // Adjust this to target the browsers your product supports.
 // https://browserslist.dev/
@@ -64,6 +65,9 @@ module.exports = (env, argv) => ({
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      React: 'react'
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "index.html"),
     }),
