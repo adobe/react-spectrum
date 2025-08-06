@@ -26,6 +26,8 @@ import {
   GridListLoadMoreItem,
   GridListProps,
   Heading,
+  Input,
+  Label,
   ListLayout,
   Modal,
   ModalOverlay,
@@ -35,6 +37,7 @@ import {
   Tag,
   TagGroup,
   TagList,
+  TextField,
   useDragAndDrop,
   Virtualizer
 } from 'react-aria-components';
@@ -474,5 +477,39 @@ export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> =
         component: 'Selecting an option from the grid list over the backdrop should not result in the modal closing.'
       }
     }
+  }
+};
+
+export let GridListWithTextFields: StoryObj<typeof GridList> = {
+  render: (args) => {
+    return (
+      <GridList
+        aria-label="Actors named Chris"
+        keyboardNavigationBehavior="tab"
+        style={{display: 'grid', gridTemplateColumns: 'auto auto auto', gridTemplateRows: 'auto auto auto'}}
+        {...args}
+        items={[
+          {id: '1', name: 'Chris Pine'},
+          {id: '2', name: 'Chris Hemsworth'},
+          {id: '3', name: 'Chris Evans'}
+        ]}>
+        {(item) => (
+          <GridListItem textValue={item.name} style={{display: 'grid', gridTemplateColumns: 'subgrid', gridAutoFlow: 'column', gridColumn: '1 / 4'}}>
+            <TextField>
+              <Label>first {item.name}</Label>
+              <Input />
+            </TextField>
+            <TextField>
+              <Label>second {item.name}</Label>
+              <Input />
+            </TextField>
+            <TextField>
+              <Label>third {item.name}</Label>
+              <Input />
+            </TextField>
+          </GridListItem>
+        )}
+      </GridList>
+    );
   }
 };

@@ -21,7 +21,8 @@ import {
   KeyboardDelegate,
   LayoutDelegate,
   MultipleSelection,
-  RefObject
+  RefObject,
+  BaseEvent
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listMap} from './utils';
@@ -29,6 +30,7 @@ import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
+import {KeyboardEvent, useCallback} from 'react';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether to auto focus the gridlist or an option. */
@@ -143,6 +145,38 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     autoFocus: props.autoFocus,
     escapeKeyBehavior
   });
+
+  let originalOnKeyDown = listProps.onKeyDown;
+  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (keyboardNavigationBehavior === 'tab') {
+      if (e.target === ref.current
+        || (e.target as HTMLElement).getAttribute('role') === 'gridcell'
+        || (e.target as HTMLElement).getAttribute('role') === 'row'
+        || e.key === 'Tab') {
+        originalOnKeyDown?.(e);
+      }
+    }
+    if (keyboardNavigationBehavior !== 'tab') {
+      originalOnKeyDown?.(e);
+    }
+  }, [originalOnKeyDown, keyboardNavigationBehavior, ref]);
+  listProps.onKeyDown = onKeyDown;
+
+  let originalOnKeyDownCapture = listProps.onKeyDownCapture;
+  let onKeyDownCapture = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (keyboardNavigationBehavior === 'tab') {
+      if (e.target === ref.current
+        || (e.target as HTMLElement).getAttribute('role') === 'gridcell'
+        || (e.target as HTMLElement).getAttribute('role') === 'row'
+        || e.key === 'Tab') {
+        originalOnKeyDownCapture?.(e);
+      }
+    }
+    if (keyboardNavigationBehavior !== 'tab') {
+      originalOnKeyDownCapture?.(e);
+    }
+  }, [originalOnKeyDownCapture, keyboardNavigationBehavior, ref]);
+  listProps.onKeyDownCapture = onKeyDownCapture;
 
   let id = useId(props.id);
   listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});

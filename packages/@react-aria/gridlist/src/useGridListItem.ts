@@ -135,6 +135,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
+    if (keyboardNavigationBehavior === 'tab' && e.target !== ref.current) {
+      return;
+    }
+
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
 
