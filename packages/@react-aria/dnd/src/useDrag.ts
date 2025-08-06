@@ -115,6 +115,9 @@ export function useDrag(options: DragOptions): DragResult {
       });
     }
 
+    // Clear any data that may already be in the drag event (e.g. if the user has text of the page highlighted)
+    e.dataTransfer.clearData?.();
+
     let items = options.getItems();
     writeToDataTransfer(e.dataTransfer, items);
 
