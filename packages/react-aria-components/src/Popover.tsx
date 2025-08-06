@@ -190,11 +190,12 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
+  // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && ref.current && !ref.current.contains(document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
     }
-  }, [isDialog, ref]);
+  }, [isDialog, ref, props.trigger]);
 
   let children = useMemo(() => {
     let children = renderProps.children;
