@@ -117,7 +117,7 @@ export function useDrag(options: DragOptions): DragResult {
 
     let items = options.getItems();
     // Clear existing data (e.g. selected text on the page would be included in some browsers)
-    e.dataTransfer.clearData();
+    e.dataTransfer.clearData?.();
     writeToDataTransfer(e.dataTransfer, items);
 
     let allowed = DROP_OPERATION.all;
