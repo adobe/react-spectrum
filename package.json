@@ -209,7 +209,7 @@
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.9.0",
+    "typescript-eslint": "^8.38.0",
     "verdaccio": "^6.0.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
