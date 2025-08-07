@@ -151,23 +151,6 @@ import {DatePicker} from '@react-spectrum/s2';
   maxVisibleMonths={2} />
 ```
 
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.DatePicker} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <DatePicker
-      {...props}/* PROPS */
-      label="Event date" />
-  );
-}
-```
-
 ## Events
 
 DatePicker accepts an `onChange` prop which is triggered whenever the date is edited by the user.

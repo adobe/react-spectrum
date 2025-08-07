@@ -124,23 +124,6 @@ import {DateField} from '@react-spectrum/s2';
   errorMessage="Please enter a valid date." />
 ```
 
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.DateField} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {DateField} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <DateField
-      {...props}/* PROPS */
-      label="Birth date" />
-  );
-}
-```
-
 ## International calendars
 
 DateField supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.

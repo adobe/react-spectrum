@@ -141,23 +141,6 @@ import {TimeField} from '@react-spectrum/s2';
   errorMessage="Please enter a valid time." />
 ```
 
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.TimeField} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <TimeField
-      {...props}/* PROPS */
-      label="Event time" />
-  );
-}
-```
-
 ## Placeholder value
 
 When no value is set, a placeholder is shown. The `placeholderValue` prop controls the default values of each segment when the user first interacts with them.

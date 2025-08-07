@@ -166,23 +166,6 @@ import {DateRangePicker} from '@react-spectrum/s2';
   maxVisibleMonths={2} />
 ```
 
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.DateRangePicker} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <DateRangePicker
-      {...props}/* PROPS */
-      label="Trip dates" />
-  );
-}
-```
-
 ## Events
 
 DateRangePicker accepts an `onChange` prop which is triggered whenever the start or end date is edited by the user.
