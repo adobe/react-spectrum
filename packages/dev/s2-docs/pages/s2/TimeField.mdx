@@ -127,20 +127,6 @@ import {Time} from '@internationalized/date';
 </Form>
 ```
 
-## Error state
-
-TimeField can display validation errors using the `isInvalid` and `errorMessage` props.
-
-```tsx render
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-<TimeField
-  label="Event time"
-  isInvalid
-  errorMessage="Please enter a valid time." />
-```
-
 ## Placeholder value
 
 When no value is set, a placeholder is shown. The `placeholderValue` prop controls the default values of each segment when the user first interacts with them.

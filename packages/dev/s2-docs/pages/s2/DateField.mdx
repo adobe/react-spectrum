@@ -110,20 +110,6 @@ import {today, getLocalTimeZone} from '@internationalized/date';
 </Form>
 ```
 
-## Error state
-
-DateField can display validation errors using the `isInvalid` and `errorMessage` props.
-
-```tsx render
-"use client";
-import {DateField} from '@react-spectrum/s2';
-
-<DateField
-  label="Birth date"
-  isInvalid
-  errorMessage="Please enter a valid date." />
-```
-
 ## International calendars
 
 DateField supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
