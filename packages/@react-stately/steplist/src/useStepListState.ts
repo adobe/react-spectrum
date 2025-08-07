@@ -32,9 +32,9 @@ export interface StepListProps<T> extends CollectionBase<T>, Omit<SingleSelectio
 
 export interface StepListState<T> extends SingleSelectListState<T> {
   readonly lastCompletedStep?: Key,
-  setLastCompletedStep(key: Key): void,
-  isCompleted(key: Key): boolean,
-  isSelectable(key: Key): boolean
+  setLastCompletedStep: (key: Key) => void,
+  isCompleted: (key: Key) => boolean,
+  isSelectable: (key: Key) => boolean
 }
 
 export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {

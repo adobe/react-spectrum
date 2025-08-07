@@ -102,11 +102,11 @@ export interface AsyncListData<T> extends ListData<T> {
   sortDescriptor?: SortDescriptor,
 
   /** Reloads the data in the list. */
-  reload(): void,
+  reload: () => void,
   /** Loads the next page of data in the list. */
-  loadMore(): void,
+  loadMore: () => void,
   /** Triggers sorting for the list. */
-  sort(descriptor: SortDescriptor): void,
+  sort: (descriptor: SortDescriptor) => void,
   /** The current loading state for the list. */
   loadingState: LoadingState
 }
