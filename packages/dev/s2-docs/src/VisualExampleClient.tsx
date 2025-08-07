@@ -387,7 +387,7 @@ export function Control({name}: {name: string}) {
       if (name === 'colorSpace') {
         return <ColorSpaceControl control={control} value={value} />;
       }
-      if (name === 'placement') {
+      if (name === 'placement' && control.value.elements.length === 22) {
         return <PlacementControl control={control} value={value} onChange={onChange} />;
       }
       return <UnionControl control={control} value={value} onChange={onChange} />;
