@@ -30,7 +30,9 @@ import userEvent from '@testing-library/user-event';
 interface AriaAutocompleteTestProps extends AriaBaseTestProps {
   renderers: {
     // needs to wrap a menu with at three items, all enabled. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively
-    standard: () => ReturnType<typeof render>,
+    standard?: () => ReturnType<typeof render>,
+    // needs 3 items with content Foo, Bar Baz and needs to be a component that doesn't support virtual focus with the Autocomplete (e.g. GridList, Table, TagGroup, collection components that have left/right navigation).
+    noVirtualFocus?: () => ReturnType<typeof render>,
     // needs at two sections with titles containing Section 1 and Section 2. The first section should have Foo, Bar, Baz with ids 1, 2, and 3. The second section
     // should have Copy, Cut, Paste with ids 4, 5, 6
     sections?: () => ReturnType<typeof render>,
@@ -59,7 +61,7 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3 -> (branch off Lvl 2 Bar 2) ->  Lvl 3 Bar 1, Lvl 3 Bar 2, Lvl 3 Bar 3
     subdialogAndMenu?: () => ReturnType<typeof render>
   },
-  ariaPattern?: 'menu' | 'listbox',
+  ariaPattern?: 'menu' | 'listbox' | 'grid',
   selectionListener?: jest.Mock<any, any>,
   actionListener?: jest.Mock<any, any>
 }
@@ -82,6 +84,8 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         collectionNodeRole = 'listbox';
         collectionItemRole = 'option';
         collectionSelectableItemRole = 'option';
+      } else if (ariaPattern === 'grid') {
+        collectionNodeRole = 'grid';
       }
     });
 
@@ -91,196 +95,55 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       act(() => jest.runAllTimers());
     });
 
-    describe('standard interactions', function () {
-      it('has default behavior (input field renders with expected attributes)', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        expect(input).toHaveAttribute('aria-controls');
-        expect(input).toHaveAttribute('aria-haspopup', 'listbox');
-        expect(input).toHaveAttribute('aria-autocomplete', 'list');
-        expect(input).toHaveAttribute('autoCorrect', 'off');
-        expect(input).toHaveAttribute('spellCheck', 'false');
-        expect(input).toHaveAttribute('enterkeyhint', 'go');
+    let filterTests = (renderer) => {
+      describe('default text filtering', function () {
+        it('should support filtering', async function () {
+          let {getByRole} = renderer();
+          let input = getByRole('searchbox');
+          expect(input).toHaveValue('');
+          let menu = getByRole(collectionNodeRole);
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(options).toHaveLength(3);
 
-        let menu = getByRole(collectionNodeRole);
-        expect(menu).toHaveAttribute('id', input.getAttribute('aria-controls')!);
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('F');
+          act(() => jest.runAllTimers());
+          options = within(menu).getAllByRole(collectionItemRole);
+          expect(options).toHaveLength(1);
+          expect(options[0]).toHaveTextContent('Foo');
+
+          expect(input).toHaveValue('F');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{Backspace}');
+          options = within(menu).getAllByRole(collectionItemRole);
+          expect(options).toHaveLength(3);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          expect(document.activeElement).toBe(input);
+        });
       });
+    };
 
-      it('should support keyboard navigation', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        let options = within(menu).getAllByRole(collectionItemRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
+    if (renderers.standard) {
+      describe('standard interactions', function () {
+        it('has default behavior (input field renders with expected attributes)', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          expect(input).toHaveAttribute('aria-controls');
+          expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+          expect(input).toHaveAttribute('aria-autocomplete', 'list');
+          expect(input).toHaveAttribute('autoCorrect', 'off');
+          expect(input).toHaveAttribute('spellCheck', 'false');
+          expect(input).toHaveAttribute('enterkeyhint', 'go');
 
-        await user.tab();
-        expect(document.activeElement).toBe(input);
+          let menu = getByRole(collectionNodeRole);
+          expect(menu).toHaveAttribute('id', input.getAttribute('aria-controls')!);
+        });
 
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[2].id);
-        await user.keyboard('{ArrowUp}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
-
-        expect(document.activeElement).toBe(input);
-      });
-
-      it('should clear the focused key when using ArrowLeft and ArrowRight but preserves it internally for future keyboard operations', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-
-        await user.keyboard('{ArrowDown}');
-        let options = within(menu).getAllByRole(collectionItemRole);
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-        await user.keyboard('{ArrowRight}');
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-        // Old focused key was options[0] so should move one down
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
-        await user.keyboard('{ArrowLeft}');
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-        expect(document.activeElement).toBe(input);
-        await user.keyboard('{ArrowUp}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-      });
-
-      it('should completely clear the focused key when Backspacing', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-
-        await user.keyboard('B');
-        act(() => jest.runAllTimers());
-        let options = within(menu).getAllByRole(collectionItemRole);
-        let firstActiveDescendant = options[0].id;
-        expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
-        expect(options[0]).toHaveTextContent('Bar');
-        await user.keyboard('{Backspace}');
-        act(() => jest.runAllTimers());
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        options = within(menu).getAllByRole(collectionItemRole);
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-        expect(firstActiveDescendant).not.toEqual(options[0].id);
-        expect(options[0]).toHaveTextContent('Foo');
-      });
-
-      it('should completely clear the focused key when pasting', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-
-        await user.keyboard('B');
-        act(() => jest.runAllTimers());
-        let options = within(menu).getAllByRole(collectionItemRole);
-        let firstActiveDescendant = options[0].id;
-        expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
-
-        await user.paste('az');
-        act(() => jest.runAllTimers());
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        options = within(menu).getAllByRole(collectionItemRole);
-        await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-        expect(firstActiveDescendant).not.toEqual(options[0].id);
-        expect(options[0]).toHaveTextContent('Baz');
-      });
-
-      it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-
-        await user.keyboard('a');
-        let options = within(menu).getAllByRole(collectionItemRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-        act(() => jest.advanceTimersByTime(500));
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-      });
-
-      it('should maintain the newest focused item as the activescendant if set after autofocusing the first option', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox');
-        let menu = getByRole(collectionNodeRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-
-        await user.keyboard('a');
-        let options = within(menu).getAllByRole(collectionItemRole);
-        expect(input).not.toHaveAttribute('aria-activedescendant');
-        await user.keyboard('{ArrowDown}');
-        act(() => jest.runAllTimers());
-        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
-      });
-
-      it('should not move the text input cursor when using Home/End/ArrowUp/ArrowDown', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox') as HTMLInputElement;
-
-        await user.tab();
-        expect(document.activeElement).toBe(input);
-        await user.keyboard('Bar');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(3);
-
-        await user.keyboard('{ArrowLeft}');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(2);
-
-        await user.keyboard('{Home}');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(2);
-
-        await user.keyboard('{End}');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(2);
-
-        await user.keyboard('{ArrowDown}');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(2);
-
-        await user.keyboard('{ArrowUp}');
-        act(() => jest.runAllTimers());
-        expect(input.selectionStart).toBe(2);
-      });
-
-      it('should focus the input when clicking on an item', async function () {
-        let {getByRole} = renderers.standard();
-        let input = getByRole('searchbox') as HTMLInputElement;
-        let menu = getByRole(collectionNodeRole);
-        let options = within(menu).getAllByRole(collectionItemRole);
-
-        await user.click(options[0]);
-        expect(document.activeElement).toBe(input);
-      });
-
-      if (ariaPattern === 'menu') {
-        it('should update the aria-activedescendant when hovering over an item', async function () {
-          let {getByRole} = renderers.standard();
+        it('should support keyboard navigation', async function () {
+          let {getByRole} = renderers.standard!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           let options = within(menu).getAllByRole(collectionItemRole);
@@ -288,15 +151,251 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
           await user.tab();
           expect(document.activeElement).toBe(input);
-          // Need to press to set a modality
-          await user.click(input);
-          await user.hover(options[1]);
-          act(() => jest.runAllTimers());
+
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[2].id);
+          await user.keyboard('{ArrowUp}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+
           expect(document.activeElement).toBe(input);
         });
-      }
-    });
+
+        it('should clear the focused key when using ArrowLeft and ArrowRight but preserves it internally for future keyboard operations', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          await user.keyboard('{ArrowRight}');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          // Old focused key was options[0] so should move one down
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          await user.keyboard('{ArrowLeft}');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowUp}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        });
+
+        it('should completely clear the focused key when Backspacing', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('B');
+          act(() => jest.runAllTimers());
+          let options = within(menu).getAllByRole(collectionItemRole);
+          let firstActiveDescendant = options[0].id;
+          expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
+          expect(options[0]).toHaveTextContent('Bar');
+          await user.keyboard('{Backspace}');
+          act(() => jest.runAllTimers());
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          options = within(menu).getAllByRole(collectionItemRole);
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          expect(firstActiveDescendant).not.toEqual(options[0].id);
+          expect(options[0]).toHaveTextContent('Foo');
+        });
+
+        it('should completely clear the focused key when pasting', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('B');
+          act(() => jest.runAllTimers());
+          let options = within(menu).getAllByRole(collectionItemRole);
+          let firstActiveDescendant = options[0].id;
+          expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
+
+          await user.paste('az');
+          act(() => jest.runAllTimers());
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          options = within(menu).getAllByRole(collectionItemRole);
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          expect(firstActiveDescendant).not.toEqual(options[0].id);
+          expect(options[0]).toHaveTextContent('Baz');
+        });
+
+        it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('a');
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          act(() => jest.advanceTimersByTime(500));
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        });
+
+        it('should maintain the newest focused item as the activescendant if set after autofocusing the first option', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('a');
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          await user.keyboard('{ArrowDown}');
+          act(() => jest.runAllTimers());
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+        });
+
+        it('should not move the text input cursor when using Home/End/ArrowUp/ArrowDown', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox') as HTMLInputElement;
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('Bar');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(3);
+
+          await user.keyboard('{ArrowLeft}');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(2);
+
+          await user.keyboard('{Home}');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(2);
+
+          await user.keyboard('{End}');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(2);
+
+          await user.keyboard('{ArrowDown}');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(2);
+
+          await user.keyboard('{ArrowUp}');
+          act(() => jest.runAllTimers());
+          expect(input.selectionStart).toBe(2);
+        });
+
+        it('should focus the input when clicking on an item', async function () {
+          let {getByRole} = renderers.standard!();
+          let input = getByRole('searchbox') as HTMLInputElement;
+          let menu = getByRole(collectionNodeRole);
+          let options = within(menu).getAllByRole(collectionItemRole);
+
+          await user.click(options[0]);
+          expect(document.activeElement).toBe(input);
+        });
+
+        if (ariaPattern === 'menu') {
+          it('should update the aria-activedescendant when hovering over an item', async function () {
+            let {getByRole} = renderers.standard!();
+            let input = getByRole('searchbox');
+            let menu = getByRole(collectionNodeRole);
+            let options = within(menu).getAllByRole(collectionItemRole);
+            expect(input).not.toHaveAttribute('aria-activedescendant');
+
+            await user.tab();
+            expect(document.activeElement).toBe(input);
+            // Need to press to set a modality
+            await user.click(input);
+            await user.hover(options[1]);
+            act(() => jest.runAllTimers());
+            expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+            expect(document.activeElement).toBe(input);
+          });
+        }
+      });
+
+      filterTests(renderers.standard);
+    }
+
+    if (renderers.noVirtualFocus) {
+      describe('no virtual focus', function () {
+        it('should not support virtual focus navigation from the input', async function () {
+          let {getByRole} = renderers.noVirtualFocus!();
+          let input = getByRole('searchbox');
+          expect(input).toHaveAttribute('aria-controls');
+          expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+          expect(input).toHaveAttribute('aria-autocomplete', 'list');
+          expect(input).toHaveAttribute('autoCorrect', 'off');
+          expect(input).toHaveAttribute('spellCheck', 'false');
+          expect(input).toHaveAttribute('enterkeyhint', 'go');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          let collection = getByRole(collectionNodeRole);
+          expect(collection).toHaveAttribute('id', input.getAttribute('aria-controls')!);
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.keyboard('Foo');
+          expect(input).toHaveValue('Foo');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+        });
+
+        it('should properly filter the wrapper collection component when typing in the autocomplete', async function () {
+          let {getByRole} = renderers.noVirtualFocus!();
+          let input = getByRole('searchbox');
+
+          let collection = getByRole(collectionNodeRole);
+          expect(await within(collection).findByText('Foo')).toBeTruthy();
+          expect(await within(collection).findByText('Bar')).toBeTruthy();
+          expect(await within(collection).findByText('Baz')).toBeTruthy();
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('Foo');
+          expect(input).toHaveValue('Foo');
+
+          expect(await within(collection).findByText('Foo')).toBeTruthy();
+          expect(await within(collection).queryByText('Bar')).toBeFalsy();
+          expect(await within(collection).queryByText('Baz')).toBeFalsy();
+
+          await user.keyboard('{Backspace}');
+          await user.keyboard('{Backspace}');
+          await user.keyboard('{Backspace}');
+          await user.keyboard('Ba');
+          expect(input).toHaveValue('Ba');
+
+          expect(await within(collection).queryByText('Foo')).toBeFalsy();
+          expect(await within(collection).findByText('Bar')).toBeTruthy();
+          expect(await within(collection).findByText('Baz')).toBeTruthy();
+        });
+      });
+    }
 
     if (renderers.defaultValue) {
       describe('default text value', function () {
@@ -346,7 +445,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should not trigger the wrapped element\'s actionListener when hitting Space', async function () {
-          let {getByRole} = renderers.standard();
+          let {getByRole} = renderers.standard!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -494,39 +593,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
       });
     }
-
-    let filterTests = (renderer) => {
-      describe('default text filtering', function () {
-        it('should support filtering', async function () {
-          let {getByRole} = renderer();
-          let input = getByRole('searchbox');
-          expect(input).toHaveValue('');
-          let menu = getByRole(collectionNodeRole);
-          let options = within(menu).getAllByRole(collectionItemRole);
-          expect(options).toHaveLength(3);
-
-          await user.tab();
-          expect(document.activeElement).toBe(input);
-          await user.keyboard('F');
-          act(() => jest.runAllTimers());
-          options = within(menu).getAllByRole(collectionItemRole);
-          expect(options).toHaveLength(1);
-          expect(options[0]).toHaveTextContent('Foo');
-
-          expect(input).toHaveValue('F');
-          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-          expect(document.activeElement).toBe(input);
-
-          await user.keyboard('{Backspace}');
-          options = within(menu).getAllByRole(collectionItemRole);
-          expect(options).toHaveLength(3);
-          expect(input).not.toHaveAttribute('aria-activedescendant');
-          expect(document.activeElement).toBe(input);
-        });
-      });
-    };
-
-    filterTests(renderers.standard);
 
     if (renderers.controlled) {
       describe('controlled text value', function () {

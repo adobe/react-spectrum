@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMProps, Node, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -27,12 +27,14 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether typeahead is disabled. */
   disallowTypeAhead: boolean
 }
-export interface AriaAutocompleteProps extends AutocompleteProps {
+
+// TODO; For now go with Node here, but maybe pare it down to just the essentials? Value, key, and maybe type?
+export interface AriaAutocompleteProps<T> extends AutocompleteProps {
   /**
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string) => boolean,
+  filter?: (textValue: string, inputValue: string, node: Node<T>) => boolean,
 
   /**
    * Whether or not to focus the first item in the collection after a filter is performed.
@@ -41,14 +43,14 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
   disableAutoFocusFirst?: boolean
 }
 
-export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
+export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'> {
   /** The ref for the wrapped collection element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the wrapped collection element. */
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export interface AutocompleteAria {
+export interface AutocompleteAria<T> {
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
   textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
@@ -56,7 +58,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (nodeTextValue: string) => boolean
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean
 }
 
 /**
@@ -65,7 +67,7 @@ export interface AutocompleteAria {
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: AutocompleteState): AutocompleteAria<T> {
   let {
     inputRef,
     collectionRef,
@@ -73,7 +75,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     disableAutoFocusFirst = false
   } = props;
 
-  let collectionId = useId();
+  let collectionId = useSlotId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef<string | null>(null);
@@ -316,9 +318,9 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     'aria-label': stringFormatter.format('collectionLabel')
   });
 
-  let filterFn = useCallback((nodeTextValue: string) => {
+  let filterFn = useCallback((nodeTextValue: string, node: Node<T>) => {
     if (filter) {
-      return filter(nodeTextValue, state.inputValue);
+      return filter(nodeTextValue, state.inputValue, node);
     }
 
     return true;
@@ -352,13 +354,19 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     }
   };
 
-  return {
-    textFieldProps: {
-      value: state.inputValue,
-      onChange,
+  // Only apply the autocomplete specific behaviors if the collection component wrapped by it is actually
+  // being filtered/allows filtering by the Autocomplete.
+  let textFieldProps = {
+    value: state.inputValue,
+    onChange
+  } as AriaTextFieldProps<HTMLInputElement>;
+
+  if (collectionId) {
+    textFieldProps = {
+      ...textFieldProps,
       onKeyDown,
       autoComplete: 'off',
-      'aria-haspopup': 'listbox',
+      'aria-haspopup': collectionId ? 'listbox' : undefined,
       'aria-controls': collectionId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
@@ -370,7 +378,11 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       enterKeyHint: 'go',
       onBlur,
       onFocus
-    },
+    };
+  }
+
+  return {
+    textFieldProps,
     collectionProps: mergeProps(collectionProps, {
       shouldUseVirtualFocus,
       disallowTypeAhead: true
