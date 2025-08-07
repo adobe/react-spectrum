@@ -1,0 +1,132 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ColorSwatchPicker
+
+<PageDescription>{docs.exports.ColorSwatchPicker.description}</PageDescription>
+
+```tsx render docs={docs.exports.ColorSwatchPicker} links={docs.links} props={['size', 'density', 'rounding']} initialProps={{defaultValue: '#f00'}} expanded type="s2"
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+
+<ColorSwatchPicker/* PROPS */>
+  <ColorSwatch color="#f00" />
+  <ColorSwatch color="#0f0" />
+  <ColorSwatch color="#00f" />
+  <ColorSwatch color="#ff0" />
+  <ColorSwatch color="#f0f" />
+  <ColorSwatch color="#0ff" />
+</ColorSwatchPicker>
+```
+
+## Selection
+
+ColorSwatchPicker manages selection state for a collection of color swatches. Use the `value` or `defaultValue` prop to control which color is selected, and handle changes with the `onChange` event.
+
+```tsx render
+"use client";
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [selectedColor, setSelectedColor] = useState(parseColor('#e11d48'));
+
+  return (
+    <>
+      <ColorSwatchPicker
+        value={selectedColor}
+        onChange={setSelectedColor}>
+        <ColorSwatch color="#e11d48" />
+        <ColorSwatch color="#f97316" />
+        <ColorSwatch color="#eab308" />
+        <ColorSwatch color="#22c55e" />
+        <ColorSwatch color="#3b82f6" />
+        <ColorSwatch color="#8b5cf6" />
+        <ColorSwatch color="#ec4899" />
+      </ColorSwatchPicker>
+      <p>Selected: {selectedColor.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+## Grid layout
+
+ColorSwatchPicker automatically wraps to multiple rows when there are many colors. You can constrain the width to control the layout.
+
+```tsx render
+"use client";
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ColorSwatchPicker
+  defaultValue="#e11d48"
+  styles={style({maxWidth: 200})}>
+  <ColorSwatch color="#e11d48" />
+  <ColorSwatch color="#f97316" />
+  <ColorSwatch color="#eab308" />
+  <ColorSwatch color="#22c55e" />
+  <ColorSwatch color="#3b82f6" />
+  <ColorSwatch color="#8b5cf6" />
+  <ColorSwatch color="#ec4899" />
+  <ColorSwatch color="#06b6d4" />
+  <ColorSwatch color="#10b981" />
+  <ColorSwatch color="#f59e0b" />
+  <ColorSwatch color="#ef4444" />
+  <ColorSwatch color="#84cc16" />
+  <ColorSwatch color="#6366f1" />
+  <ColorSwatch color="#d946ef" />
+  <ColorSwatch color="#14b8a6" />
+</ColorSwatchPicker>
+```
+
+## Dynamic collections
+
+ColorSwatchPicker can be populated dynamically from data arrays, making it easy to work with programmatically generated color palettes.
+
+```tsx render hideImports
+"use client";
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+
+function Example() {
+  let colors = [
+    '#ff0000', '#ff8000', '#ffff00', '#80ff00',
+    '#00ff00', '#00ff80', '#00ffff', '#0080ff',
+    '#0000ff', '#8000ff', '#ff00ff', '#ff0080'
+  ];
+
+  return (
+    <ColorSwatchPicker defaultValue={colors[0]}>
+      {colors.map(color => (
+        <ColorSwatch key={color} color={color} />
+      ))}
+    </ColorSwatchPicker>
+  );
+}
+```
+
+## Accessibility
+
+ColorSwatchPicker provides full keyboard navigation and screen reader support. Users can navigate between swatches using arrow keys and select with Enter or Space.
+
+```tsx render
+"use client";
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+
+<ColorSwatchPicker
+  aria-label="Choose a color theme"
+  defaultValue="#3b82f6">
+  <ColorSwatch color="#3b82f6" aria-label="Blue" />
+  <ColorSwatch color="#22c55e" aria-label="Green" />
+  <ColorSwatch color="#f97316" aria-label="Orange" />
+  <ColorSwatch color="#8b5cf6" aria-label="Purple" />
+  <ColorSwatch color="#ec4899" aria-label="Pink" />
+</ColorSwatchPicker>
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorSwatchPicker} links={docs.links} />

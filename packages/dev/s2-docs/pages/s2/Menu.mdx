@@ -1,0 +1,317 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Menu, MenuTrigger, MenuItem, MenuSection, SubmenuTrigger, Button, Text, Keyboard, Header, Heading} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Menu
+
+<PageDescription>{docs.exports.Menu.description}</PageDescription>
+
+```tsx render docs={docs.exports.CombinedMenu} links={docs.links} props={['size', 'selectionMode', 'align', 'direction', 'shouldFlip']} initialProps={{}} expanded type="s2"
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+
+<MenuTrigger/* PROPS */>
+  <Button>Edit</Button>
+  <Menu>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+## Content
+
+Menu follows the Collection Components API, accepting both static and dynamic collections. The MenuTrigger serves as a wrapper around a Menu and its associated trigger, linking the Menu's open state with the trigger's press state.
+
+### Basic Menu
+
+A basic menu with static items.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu onAction={(key) => alert(`Selected: ${key}`)}>
+    <MenuItem id="cut">Cut</MenuItem>
+    <MenuItem id="copy">Copy</MenuItem>
+    <MenuItem id="paste">Paste</MenuItem>
+    <MenuItem id="replace">Replace</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+### Dynamic Items
+
+Items can be generated dynamically using a function based on data.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+
+let menuItems = [
+  {id: 'cut', name: 'Cut'},
+  {id: 'copy', name: 'Copy'},
+  {id: 'paste', name: 'Paste'},
+  {id: 'replace', name: 'Replace'}
+];
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu items={menuItems} onAction={(key) => alert(`Selected: ${key}`)}>
+    {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+  </Menu>
+</MenuTrigger>
+```
+
+## Selection
+
+Menu supports multiple selection modes using the `selectionMode` prop.
+
+### Single Selection
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(new Set(['middle']));
+
+  return (
+    <div>
+      <MenuTrigger>
+        <Button>Align</Button>
+        <Menu selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+          <MenuItem id="left">Left</MenuItem>
+          <MenuItem id="middle">Middle</MenuItem>
+          <MenuItem id="right">Right</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p>Selected: {[...selected].join(', ')}</p>
+    </div>
+  );
+}
+
+<Example />
+```
+
+### Multiple Selection
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(new Set(['sidebar', 'console']));
+
+  return (
+    <div>
+      <MenuTrigger closeOnSelect={false}>
+        <Button>Show</Button>
+        <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+          <MenuItem id="sidebar">Sidebar</MenuItem>
+          <MenuItem id="searchbar">Searchbar</MenuItem>
+          <MenuItem id="tools">Tools</MenuItem>
+          <MenuItem id="console">Console</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p>Selected: {[...selected].join(', ')}</p>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## Complex Items
+
+Menu items can include additional content such as icons, descriptions, and keyboard shortcuts.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button, Text, Keyboard} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu>
+    <MenuItem id="cut" textValue="Cut">
+      <Text slot="label">Cut</Text>
+      <Keyboard>⌘X</Keyboard>
+    </MenuItem>
+    <MenuItem id="copy" textValue="Copy">
+      <Text slot="label">Copy</Text>
+      <Keyboard>⌘C</Keyboard>
+    </MenuItem>
+    <MenuItem id="paste" textValue="Paste">
+      <Text slot="label">Paste</Text>
+      <Keyboard>⌘V</Keyboard>
+    </MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+## Sections
+
+Menu supports sections to group related items together.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, MenuSection, Button, Header, Heading} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <Button>Format</Button>
+  <Menu>
+    <MenuSection>
+      <Header>
+        <Heading>Text Style</Heading>
+      </Header>
+      <MenuItem id="bold">Bold</MenuItem>
+      <MenuItem id="italic">Italic</MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+    <MenuSection>
+      <Header>
+        <Heading>Alignment</Heading>
+      </Header>
+      <MenuItem id="left">Left</MenuItem>
+      <MenuItem id="center">Center</MenuItem>
+      <MenuItem id="right">Right</MenuItem>
+    </MenuSection>
+  </Menu>
+</MenuTrigger>
+```
+
+## Submenus
+
+Create nested menus using `SubmenuTrigger`.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Button} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <Button>Actions</Button>
+  <Menu onAction={(key) => alert(`Selected: ${key}`)}>
+    <MenuItem id="copy">Copy</MenuItem>
+    <MenuItem id="cut">Cut</MenuItem>
+    <MenuItem id="paste">Paste</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem id="share">Share</MenuItem>
+      <Menu>
+        <MenuItem id="email">Email</MenuItem>
+        <MenuItem id="sms">SMS</MenuItem>
+        <MenuItem id="copy-link">Copy Link</MenuItem>
+      </Menu>
+    </SubmenuTrigger>
+  </Menu>
+</MenuTrigger>
+```
+
+## Links
+
+Menu items can be links to other pages or websites.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <Button>Links</Button>
+  <Menu>
+    <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
+    <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
+    <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
+    <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+
+## Events
+
+### Menu Actions
+
+Handle item selection using the `onAction` callback.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [action, setAction] = useState('');
+
+  return (
+    <div>
+      <MenuTrigger>
+        <Button>Edit</Button>
+        <Menu onAction={setAction}>
+          <MenuItem id="cut">Cut</MenuItem>
+          <MenuItem id="copy">Copy</MenuItem>
+          <MenuItem id="paste">Paste</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p>Last action: {action}</p>
+    </div>
+  );
+}
+
+<Example />
+```
+
+### Open/Close Events
+
+Handle menu open/close state with `onOpenChange`.
+
+```tsx render expanded
+"use client";
+import {Menu, MenuTrigger, MenuItem, Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div>
+      <MenuTrigger onOpenChange={setIsOpen}>
+        <Button>Edit</Button>
+        <Menu>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p>Menu is: {isOpen ? 'open' : 'closed'}</p>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## Props
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} />
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} />
+
+### MenuItem
+
+<PropTable component={docs.exports.MenuItem} links={docs.links} />
+
+### MenuSection
+
+<PropTable component={docs.exports.MenuSection} links={docs.links} />
+
+### SubmenuTrigger
+
+<PropTable component={docs.exports.SubmenuTrigger} links={docs.links} />

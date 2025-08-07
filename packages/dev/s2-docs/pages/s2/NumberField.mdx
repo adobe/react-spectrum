@@ -1,0 +1,267 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {NumberField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# NumberField
+
+<PageDescription>{docs.exports.NumberField.description}</PageDescription>
+
+<VisualExample
+  component={NumberField}
+  docs={docs.exports.NumberField}
+  props={['size', 'hideStepper', 'labelPosition', 'labelAlign', 'necessityIndicator']}
+  initialProps={{
+    label: 'Quantity',
+    defaultValue: 0
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A NumberField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(15);
+
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <NumberField
+        label="Cookies (Uncontrolled)"
+        defaultValue={15}
+        minValue={0} />
+
+      <NumberField
+        label="Cookies (Controlled)"
+        value={value}
+        onChange={setValue}
+        minValue={0} />
+    </div>
+  );
+}
+```
+
+## Number formatting
+
+The NumberField value can be formatted by using the `formatOptions` prop. `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+### Currency
+
+Currency values can be displayed using the `style: 'currency'` option.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<NumberField
+  label="Transaction amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
+
+### Percentages
+
+The `style: 'percent'` option treats the value as a percentage. In this mode, the value is multiplied by 100 before it is displayed, i.e. `0.45` is displayed as `45%`. The reverse is also true: when the user enters a value, the `onChange` event will be triggered with the entered value divided by 100.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<NumberField
+  label="Sales tax"
+  formatOptions={{style: 'percent'}}
+  minValue={0}
+  defaultValue={0.05} />
+```
+
+### Decimals
+
+The following example uses the `signDisplay` option to include the plus sign for positive numbers, for example to display an offset from some value. In addition, it always displays a minimum of 1 digit after the decimal point, and allows up to 2 fraction digits.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<NumberField
+  label="Adjust exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0} />
+```
+
+## Step values
+
+The `step` prop can be used to specify the amount that the value should increase or decrease by when using the stepper buttons or arrow keys.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+  <NumberField
+    label="Step by 0.1"
+    step={0.1}
+    defaultValue={1.5}
+    formatOptions={{minimumFractionDigits: 1}} />
+  
+  <NumberField
+    label="Step by 5"
+    step={5}
+    defaultValue={100} />
+</div>
+```
+
+## Validation
+
+NumberField supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum value validation, and custom client and server-side validation. It can also be integrated with other form libraries.
+
+```tsx render hideImports
+"use client";
+import {NumberField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native">
+  <NumberField
+    label="Quantity"
+    name="quantity"
+    isRequired
+    minValue={1}
+    maxValue={100} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Labeling
+
+A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+  <NumberField label="Cookies" minValue={0} />
+  <NumberField label="Cookies" isRequired necessityIndicator="icon" minValue={0} />
+  <NumberField label="Cookies" isRequired necessityIndicator="label" minValue={0} />
+  <NumberField label="Cookies" necessityIndicator="label" minValue={0} />
+</div>
+```
+
+## Events
+
+NumberField accepts an `onChange` prop which is triggered whenever the value is edited by the user. The example below uses `onChange` to update a separate element with the current value.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(15);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <NumberField
+        label="Cookies to buy"
+        value={value}
+        onChange={setValue}
+        minValue={0} />
+      <div>Current value: {value}</div>
+    </div>
+  );
+}
+```
+
+## Help text
+
+Both a description and an error message can be supplied to a NumberField. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(12);
+  let isValid = value >= 1 && value <= 10;
+
+  return (
+    <NumberField
+      label="Cookies"
+      description="Please enter the number of cookies."
+      errorMessage={value === 0 ? "Value must be greater than 0." : "Please select a number between 1 and 10."}
+      value={value}
+      onChange={setValue}
+      isInvalid={!isValid}
+      minValue={0} />
+  );
+}
+```
+
+## Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
+
+```tsx render hideImports
+"use client";
+import {NumberField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<NumberField
+  label="Quantity"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is quantity?</Heading>
+      <Content>Quantity refers to the amount of items you wish to purchase.</Content>
+    </ContextualHelp>
+  } />
+```
+
+## HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<form>
+  <NumberField
+    label="Transaction amount"
+    name="amount"
+    defaultValue={45}
+    formatOptions={{
+      style: 'currency',
+      currency: 'USD'
+    }} />
+</form>
+```
+
+## Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the NumberField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+```tsx render hideImports
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+
+<NumberField aria-label="Width in pixels" defaultValue={1024} />
+```
+
+## Props
+
+<PropTable component={docs.exports.NumberField} links={docs.links} />

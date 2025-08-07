@@ -1,0 +1,110 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Badge, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Badge
+
+<PageDescription>{docs.exports.Badge.description}</PageDescription>
+
+<VisualExample
+  component={Badge}
+  docs={docs.exports.Badge}
+  props={['children', 'variant', 'size', 'fillStyle', 'overflowMode']}
+  initialProps={{variant: "positive", children: "Licensed"}}
+  slots={{icon: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Content
+
+Badges can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the Badge. A visible label can be provided by passing a string or a Text component as a child, depending on whether the Badge has an accompanying icon.
+
+```tsx render expanded
+"use client";
+import {Badge, Text} from '@react-spectrum/s2';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
+
+<Badge variant="positive">
+  <CheckmarkCircle aria-label="Done" />
+  <Text>Icon + Label</Text>
+</Badge>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the icon for accessibility.
+
+```tsx render hideImports
+"use client";
+import {Badge} from '@react-spectrum/s2';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
+
+<Badge variant="positive" aria-label="Approved">
+  <CheckmarkCircle />
+</Badge>
+```
+
+### Internationalization
+
+To internationalize a Badge, a localized string should be set as the child content of the Badge. For languages that are read right-to-left (e.g. Hebrew and Arabic), the Badge is automatically flipped.
+
+## Overflow behavior
+
+Badge text can either wrap or truncate when it exceeds the available space.
+
+```tsx render hideImports
+"use client";
+import {Badge} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
+  <div style={{width: 120}}>
+    <Badge variant="positive" overflowMode="wrap">This is a very long badge that will wrap text</Badge>
+  </div>
+  <div style={{width: 120}}>
+    <Badge variant="positive" overflowMode="truncate">This is a very long badge that will truncate text</Badge>
+  </div>
+</div>
+```
+
+## Semantic variants
+
+When badges have a semantic meaning, they should use semantic variant colors. Use the appropriate color to indicate status as follows:
+
+```tsx render hideImports
+"use client";
+import {Badge} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', flexDirection: 'column', gap: 15}}>
+  <Badge variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</Badge>
+  <Badge variant="informative">Blue: Active, In Use, Live, Published</Badge>
+  <Badge variant="negative">Red: Error, Alert, Rejected, Failed</Badge>
+  <Badge variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</Badge>
+  <Badge variant="notice">Orange: Needs Approval, Pending, Scheduled, Syncing, Indexing, Processing</Badge>
+</div>
+```
+
+## Label variants
+
+When badges are used to color code categories, they use label colors. The ideal usage for these is when there are 8 or fewer categories being color coded. Use them in the following order to ensure the greatest possible color differences for multiple forms of color blindness:
+
+```tsx render hideImports
+"use client";
+import {Badge} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', flexDirection: 'column', gap: 15}}>
+  <Badge variant="indigo">Indigo</Badge>
+  <Badge variant="celery">Celery</Badge>
+  <Badge variant="magenta">Magenta</Badge>
+  <Badge variant="yellow">Yellow</Badge>
+  <Badge variant="fuchsia">Fuchsia</Badge>
+  <Badge variant="seafoam">Seafoam</Badge>
+  <Badge variant="chartreuse">Chartreuse</Badge>
+  <Badge variant="purple">Purple</Badge>
+</div>
+```
+
+## Props
+
+<PropTable component={docs.exports.Badge} links={docs.links} />

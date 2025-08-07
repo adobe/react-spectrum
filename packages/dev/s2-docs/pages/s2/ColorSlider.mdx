@@ -1,0 +1,157 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorSlider} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ColorSlider
+
+<PageDescription>{docs.exports.ColorSlider.description}</PageDescription>
+
+<VisualExample
+  component={ColorSlider}
+  docs={docs.exports.ColorSlider}
+  props={['channel', 'orientation', 'isDisabled']}
+  initialProps={{defaultValue: 'hsl(0, 100%, 50%)', channel: 'hue', label: 'Hue'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A ColorSlider's value can be controlled using the `value` or `defaultValue` prop. The `onChange` event is called as the user drags, and `onChangeEnd` is called when dragging ends.
+
+```tsx render
+"use client";
+import {ColorSlider} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [value, setValue] = useState(parseColor('hsl(180, 50%, 50%)'));
+
+  return (
+    <>
+      <ColorSlider
+        label="Hue"
+        channel="hue"
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+## Channels
+
+ColorSlider supports adjusting individual color channels using the `channel` prop. Different channels are available depending on the color space.
+
+```tsx render hideImports
+"use client";
+import {ColorSlider} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <ColorSlider
+    label="Red"
+    channel="red"
+    defaultValue="rgb(255, 100, 50)" />
+  <ColorSlider
+    label="Hue"
+    channel="hue"
+    defaultValue="hsl(200, 100%, 50%)" />
+  <ColorSlider
+    label="Saturation"
+    channel="saturation"
+    defaultValue="hsl(200, 50%, 50%)" />
+  <ColorSlider
+    label="Alpha"
+    channel="alpha"
+    defaultValue="rgba(255, 100, 50, 0.8)" />
+</div>
+```
+
+## Orientation
+
+ColorSlider supports both horizontal and vertical orientations via the `orientation` prop.
+
+```tsx render hideImports
+"use client";
+import {ColorSlider} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
+  <ColorSlider
+    label="Horizontal"
+    channel="hue"
+    orientation="horizontal"
+    defaultValue="hsl(240, 100%, 50%)" />
+  <ColorSlider
+    aria-label="Vertical"
+    channel="hue"
+    orientation="vertical"
+    defaultValue="hsl(120, 100%, 50%)" />
+</div>
+```
+
+## Label
+
+ColorSlider displays the channel name as a label by default when no explicit label is provided. You can customize this with the `label` prop or hide it for vertical sliders by providing an `aria-label`.
+
+```tsx render hideImports
+"use client";
+import {ColorSlider} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <ColorSlider
+    label="Custom Label"
+    channel="lightness"
+    defaultValue="hsl(200, 100%, 60%)" />
+  <ColorSlider
+    channel="saturation"
+    defaultValue="hsl(200, 80%, 50%)" />
+  <ColorSlider
+    aria-label="No visible label"
+    label={null}
+    channel="hue"
+    defaultValue="hsl(300, 100%, 50%)" />
+</div>
+```
+
+## Events
+
+ColorSlider supports user interactions via mouse, keyboard, and touch. You can handle color changes via the `onChange` and `onChangeEnd` props.
+
+```tsx render hideImports
+"use client";
+import {ColorSlider} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [events, setEvents] = useState([]);
+
+  let addEvent = (type, value) => {
+    setEvents(prev => [...prev.slice(-2), `${type}: ${value}`]);
+  };
+
+  return (
+    <>
+      <ColorSlider
+        label="Lightness"
+        channel="lightness"
+        defaultValue="hsl(200, 100%, 50%)"
+        onChange={(value) => addEvent('onChange', value.toString('hsl'))}
+        onChangeEnd={(value) => addEvent('onChangeEnd', value.toString('hsl'))} />
+      <div style={{marginTop: 10}}>
+        {events.map((event, i) => (
+          <div key={i} style={{fontSize: 12, fontFamily: 'monospace'}}>
+            {event}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorSlider} links={docs.links} />

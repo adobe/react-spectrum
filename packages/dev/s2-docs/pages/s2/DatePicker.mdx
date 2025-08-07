@@ -1,0 +1,245 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {DatePicker} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# DatePicker
+
+<PageDescription>{docs.exports.DatePicker.description}</PageDescription>
+
+<VisualExample
+  component={DatePicker}
+  docs={docs.exports.DatePicker}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly']}
+  initialProps={{label: 'Event date'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A DatePicker displays a placeholder by default. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+```tsx render
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseDate('2024-03-15'));
+
+  return (
+    <>
+      <DatePicker
+        label="Event date"
+        value={value}
+        onChange={setValue} />
+      <p>Selected date: {value.toString()}</p>
+    </>
+  );
+}
+```
+
+## Time zones
+
+DatePicker is time zone aware when a ZonedDateTime object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {parseZonedDateTime} from '@internationalized/date';
+
+<DatePicker
+  label="Event time"
+  defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')} />
+```
+
+## Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by a DatePicker. By default, CalendarDate values are displayed with `"day"` granularity, and CalendarDateTime and ZonedDateTime values are displayed with `"minute"` granularity.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {parseAbsoluteToLocal} from '@internationalized/date';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <DatePicker
+    label="Date only"
+    granularity="day" />
+  <DatePicker
+    label="Date and time"
+    granularity="minute"
+    defaultValue={parseAbsoluteToLocal('2024-04-07T18:45:22Z')} />
+  <DatePicker
+    label="With seconds"
+    granularity="second"
+    defaultValue={parseAbsoluteToLocal('2024-04-07T18:45:22Z')} />
+</div>
+```
+
+## Validation
+
+DatePicker supports validation through the `isRequired` prop, minimum and maximum values, and custom validation functions. It can be integrated with forms and displays error states appropriately.
+
+```tsx render hideImports
+"use client";
+import {DatePicker, Button, Form} from '@react-spectrum/s2';
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<Form>
+  <DatePicker
+    label="Appointment date"
+    name="appointmentDate"
+    isRequired
+    minValue={today(getLocalTimeZone())}
+    description="Select a future date for your appointment." />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Unavailable dates
+
+DatePicker supports marking certain dates as unavailable. These dates cannot be selected and are displayed with a crossed out appearance in the calendar. An invalid state is displayed in the date field if a user enters an unavailable date.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {today, isWeekend, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let {locale} = useLocale();
+  
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let isDateUnavailable = (date) => {
+    return isWeekend(date, locale) || 
+          disabledRanges.some((interval) => 
+            date.compare(interval[0]) >= 0 && 
+            date.compare(interval[1]) <= 0
+          );
+  };
+
+  return (
+    <DatePicker
+      label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={isDateUnavailable} />
+  );
+}
+```
+
+## Multiple months
+
+The calendar popup can display multiple months using the `maxVisibleMonths` prop, if screen space permits.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+
+<DatePicker
+  label="Event date"
+  maxVisibleMonths={2} />
+```
+
+## Help text
+
+You can provide additional context with the `description` prop, and display errors with `errorMessage`.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <DatePicker
+    label="Event date"
+    description="Select the date for your event."
+    defaultValue={today(getLocalTimeZone())} />
+  <DatePicker
+    label="Event date"
+    isInvalid
+    errorMessage="Please select a valid date." />
+</div>
+```
+
+## Label positioning
+
+The label can be positioned using the `labelPosition` prop.
+
+```tsx render hideImports docs={docs.exports.DatePicker} links={docs.links} props={['labelPosition', 'labelAlign']}
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <DatePicker
+      {...props}/* PROPS */
+      label="Event date" />
+  );
+}
+```
+
+## Events
+
+DatePicker accepts an `onChange` prop which is triggered whenever the date is edited by the user.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2024-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <DatePicker
+        label="Event date"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+## International calendars
+
+DatePicker supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
+
+```tsx render hideImports
+"use client";
+import {DatePicker} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(null);
+  
+  return (
+    <div style={{fontFamily: 'system-ui'}}>
+      <DatePicker
+        label="تاریخ رویداد"
+        value={date}
+        onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} />

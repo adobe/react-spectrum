@@ -1,0 +1,120 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ColorField
+
+<PageDescription>{docs.exports.ColorField.description}</PageDescription>
+
+<VisualExample
+  component={ColorField}
+  docs={docs.exports.ColorField}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid']}
+  initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A ColorField's value can be a hex color string or individual color channel values. Use the `value` or `defaultValue` prop to set the initial value, and the `onChange` event to handle changes.
+
+```tsx render
+"use client";
+import {ColorField} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [value, setValue] = useState(parseColor('#e73623'));
+
+  return (
+    <>
+      <ColorField
+        label="Primary color"
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+## Channel editing
+
+ColorField can be used to edit individual color channels by specifying the `channel` prop. This allows users to input numeric values for specific color components.
+
+```tsx render hideImports
+"use client";
+import {ColorField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
+  <ColorField
+    label="Red channel"
+    channel="red"
+    colorSpace="rgb"
+    defaultValue="rgb(255, 100, 50)" />
+  <ColorField
+    label="Hue"
+    channel="hue"
+    colorSpace="hsl"
+    defaultValue="hsl(200, 100%, 50%)" />
+  <ColorField
+    label="Alpha"
+    channel="alpha"
+    defaultValue="rgba(255, 100, 50, 0.8)" />
+</div>
+```
+
+## Validation
+
+ColorField supports validation through the `isRequired` prop and custom validation functions. It integrates with forms and displays error states appropriately.
+
+```tsx render hideImports
+"use client";
+import {ColorField, Button, Form} from '@react-spectrum/s2';
+
+<Form>
+  <ColorField
+    label="Brand color"
+    name="brandColor"
+    isRequired
+    description="Enter your brand's primary color."
+    errorMessage="Please enter a valid color value." />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## Error state
+
+ColorField can display validation errors using the `isInvalid` and `errorMessage` props.
+
+```tsx render
+"use client";
+import {ColorField} from '@react-spectrum/s2';
+
+<ColorField
+  label="Color"
+  defaultValue="invalid-color"
+  isInvalid
+  errorMessage="Please enter a valid hex color." />
+```
+
+## Help text
+
+You can provide additional context with the `description` prop.
+
+```tsx render
+"use client";
+import {ColorField} from '@react-spectrum/s2';
+
+<ColorField
+  label="Accent color"
+  description="Enter a hex color value (e.g., #ff0000)."
+  defaultValue="#6366f1" />
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorField} links={docs.links} />
