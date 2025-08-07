@@ -32,20 +32,6 @@ import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 </Badge>
 ```
 
-### Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the icon for accessibility.
-
-```tsx render hideImports
-"use client";
-import {Badge} from '@react-spectrum/s2';
-import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-
-<Badge variant="positive" aria-label="Approved">
-  <CheckmarkCircle />
-</Badge>
-```
-
 ### Internationalization
 
 To internationalize a Badge, a localized string should be set as the child content of the Badge. For languages that are read right-to-left (e.g. Hebrew and Arabic), the Badge is automatically flipped.

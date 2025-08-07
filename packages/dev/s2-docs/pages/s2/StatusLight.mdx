@@ -30,17 +30,6 @@ import {StatusLight} from '@react-spectrum/s2';
 </div>
 ```
 
-### Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided for accessibility. If the StatusLight is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {StatusLight} from '@react-spectrum/s2';
-
-<StatusLight variant="positive" aria-label="System status" />
-```
-
 In cases where the status changes at runtime, it may be appropriate to add `role="status"` so that the status change will be announced politely by assistive technology.
 
 ```tsx render hideImports

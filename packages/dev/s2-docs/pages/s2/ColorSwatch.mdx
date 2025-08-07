@@ -68,19 +68,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 </div>
 ```
 
-## Accessibility
-
-ColorSwatch automatically provides appropriate accessibility attributes. For interactive use cases or when additional context is needed, you can provide an `aria-label`.
-
-```tsx render
-"use client";
-import {ColorSwatch} from '@react-spectrum/s2';
-
-<ColorSwatch
-  color="#dc2626"
-  aria-label="Brand primary color: red" />
-```
-
 ## Transparent colors
 
 ColorSwatch displays transparent colors with a checkerboard pattern underneath to show the alpha channel effect.

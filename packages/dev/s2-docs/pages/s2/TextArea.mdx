@@ -154,19 +154,6 @@ import {TextArea} from '@react-spectrum/s2';
 </form>
 ```
 
-## Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the TextArea for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<TextArea
-  aria-label="Additional comments"
-  placeholder="Enter any additional comments..." />
-```
-
 ## Props
 
 <PropTable component={docs.exports.TextArea} links={docs.links} />

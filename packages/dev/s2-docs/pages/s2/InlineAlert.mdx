@@ -59,20 +59,6 @@ function Example() {
 }
 ```
 
-## Accessibility
-
-Inline alerts are automatically given the [alert role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role), which means they should only be used for information that requires the user's immediate attention. The `autoFocus` prop can be used to ensure the alert receives focus when it appears.
-
-```tsx render hideImports
-"use client";
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
-
-<InlineAlert variant="negative">
-  <Heading>Critical Error</Heading>
-  <Content>This alert will automatically receive focus when rendered.</Content>
-</InlineAlert>
-```
-
 ## Props
 
 <PropTable component={docs.exports.InlineAlert} links={docs.links} />

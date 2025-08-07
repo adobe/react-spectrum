@@ -164,24 +164,6 @@ function Example() {
 }
 ```
 
-## Accessibility
-
-A label should be provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, so that the element will be identified to assistive technology as a form landmark region.
-
-```tsx render hideImports
-"use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
-
-<div>
-  <h3 id="form-label">Personal Information</h3>
-  <Form aria-labelledby="form-label" style={{maxWidth: 300}}>
-    <TextField label="First Name" />
-    <TextField label="Last Name" />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-</div>
-```
-
 ## Props
 
 <PropTable component={docs.exports.Form} links={docs.links} />

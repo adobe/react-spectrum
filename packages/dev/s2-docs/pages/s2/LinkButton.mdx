@@ -33,22 +33,6 @@ import New from '@react-spectrum/s2/icons/New';
 </LinkButton>
 ```
 
-### Accessibility
-
-If no visible label is provided (e.g. an icon only LinkButton),
-an alternative text label must be provided to identify the control for accessibility. This should be added using
-the `aria-label` prop.
-
-```tsx render expanded
-"use client";
-import {LinkButton} from '@react-spectrum/s2';
-import New from '@react-spectrum/s2/icons/New';
-
-<LinkButton href="https://react-spectrum.adobe.com/" target="_blank" aria-label="Open new page">
-  <New />
-</LinkButton>
-```
-
 ## Events
 
 LinkButtons support standard anchor events such as `onPress` for handling navigation programmatically.

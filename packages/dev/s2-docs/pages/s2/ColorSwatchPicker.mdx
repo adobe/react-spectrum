@@ -108,25 +108,6 @@ function Example() {
 }
 ```
 
-## Accessibility
-
-ColorSwatchPicker provides full keyboard navigation and screen reader support. Users can navigate between swatches using arrow keys and select with Enter or Space.
-
-```tsx render
-"use client";
-import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
-
-<ColorSwatchPicker
-  aria-label="Choose a color theme"
-  defaultValue="#3b82f6">
-  <ColorSwatch color="#3b82f6" aria-label="Blue" />
-  <ColorSwatch color="#22c55e" aria-label="Green" />
-  <ColorSwatch color="#f97316" aria-label="Orange" />
-  <ColorSwatch color="#8b5cf6" aria-label="Purple" />
-  <ColorSwatch color="#ec4899" aria-label="Pink" />
-</ColorSwatchPicker>
-```
-
 ## Props
 
 <PropTable component={docs.exports.ColorSwatchPicker} links={docs.links} />

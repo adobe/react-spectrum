@@ -44,21 +44,6 @@ import {Link} from '@react-spectrum/s2';
 
 The Link component works with frameworks and client side routers like Next.js and React Router. This works via the Provider component at the root of your app.
 
-### Accessibility
-
-When an `href` is not provided, the link component will expose the accessible role to assistive technology as a "link".
-
-```tsx render expanded
-"use client";
-import {Link} from '@react-spectrum/s2';
-
-<Link onPress={e => alert('Forgot password clicked')}>
-  I forgot my password
-</Link>
-```
-
-Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context about where the link will take the user.
-
 ## Props
 
 <PropTable component={docs.exports.Link} links={docs.links} />

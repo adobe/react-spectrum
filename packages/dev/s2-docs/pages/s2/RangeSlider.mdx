@@ -174,19 +174,6 @@ import {RangeSlider} from '@react-spectrum/s2';
 </form>
 ```
 
-## Accessibility
-
-A `label`, `aria-label`, or `aria-labelledby` prop is required for accessibility. The individual thumbs are automatically labeled with "minimum" and "maximum" based on the current locale.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
-
-<RangeSlider
-  aria-label="Volume range"
-  defaultValue={{start: 25, end: 75}} />
-```
-
 ## Props
 
 <PropTable component={docs.exports.RangeSlider} links={docs.links} />

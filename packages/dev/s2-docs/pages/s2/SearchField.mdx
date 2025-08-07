@@ -201,19 +201,6 @@ import {SearchField} from '@react-spectrum/s2';
 </form>
 ```
 
-## Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the SearchField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {SearchField} from '@react-spectrum/s2';
-
-<SearchField
-  aria-label="Search products"
-  placeholder="Search products..." />
-```
-
 ## Props
 
 <PropTable component={docs.exports.SearchField} links={docs.links} />

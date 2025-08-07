@@ -36,25 +36,6 @@ import Edit from '@react-spectrum/s2/icons/Edit';
 </TooltipTrigger>
 ```
 
-### Accessibility
-
-Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them. When displayed, TooltipTrigger automatically associates the tooltip with the trigger element so that it is described by the tooltip content.
-
-## Delay
-
-Tooltips should appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover.
-
-```tsx render expanded
-"use client";
-import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
-import SaveFloppy from '@react-spectrum/s2/icons/SaveFloppy';
-
-<TooltipTrigger delay={0}>
-  <Button aria-label="Save"><SaveFloppy /></Button>
-  <Tooltip>Saving applies your new settings right away.</Tooltip>
-</TooltipTrigger>
-```
-
 ### Warmup / Cooldown
 
 Tooltips have a warm up and cool down period. Only one tooltip can be open at a time.
