@@ -47,7 +47,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
       this.disabledBehavior = opts.disabledBehavior || 'all';
-      this.orientation = opts.orientation || 'vertical';
+      this.orientation = opts.orientation;
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
       this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref);
@@ -57,17 +57,37 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.ref = args[2];
       this.collator = args[3];
       this.layout = 'stack';
-      this.orientation = 'vertical';
       this.disabledBehavior = 'all';
       this.layoutDelegate = new DOMLayoutDelegate(this.ref);
     }
 
-    // If this is a vertical stack, remove the left/right methods completely
-    // so they aren't called by useDroppableCollection.
-    if (this.layout === 'stack' && this.orientation === 'vertical') {
-      this.getKeyLeftOf = undefined;
-      this.getKeyRightOf = undefined;
+    // Log warning when keyboard mismatches the layout.
+    let layoutOrientation = this.layoutDelegate.getOrientation?.();
+
+    if (this.orientation && layoutOrientation && layoutOrientation !== this.orientation) {
+      console.warn('Layout does not match keyboard orientation.');
     }
+
+    // If this is a vertical stack, remove the left/right methods completely
+    // so they aren't called by useDroppableCollection or useAutocomplete.
+    let getKeyRightOf = this.getKeyRightOf;
+    let getKeyLeftOf = this.getKeyLeftOf;
+
+    Object.defineProperty(this, 'getKeyRightOf', {
+      get() { return this.layout === 'stack' && this.getOrientation() === 'vertical' ? undefined : getKeyRightOf; },
+      configurable: true,
+      enumerable: true
+    });
+
+    Object.defineProperty(this, 'getKeyLeftOf', {
+      get() { return this.layout === 'stack' && this.getOrientation() === 'vertical' ? undefined : getKeyLeftOf; },
+      configurable: true,
+      enumerable: true
+    });
+  }
+
+  getOrientation(): Orientation {
+    return this.orientation || this.layoutDelegate.getOrientation?.() || 'vertical';
   }
 
   private isDisabled(item: Node<unknown>) {
@@ -133,7 +153,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyBelow(key: Key): Key | null {
-    if (this.layout === 'grid' && this.orientation === 'vertical') {
+    if (this.layout === 'grid' && this.getOrientation() === 'vertical') {
       return this.findKey(key, (key) => this.getNextKey(key), this.isSameRow);
     } else {
       return this.getNextKey(key);
@@ -141,7 +161,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyAbove(key: Key): Key | null {
-    if (this.layout === 'grid' && this.orientation === 'vertical') {
+    if (this.layout === 'grid' && this.getOrientation() === 'vertical') {
       return this.findKey(key, (key) => this.getPreviousKey(key), this.isSameRow);
     } else {
       return this.getPreviousKey(key);
@@ -162,12 +182,12 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     if (this.layout === 'grid') {
-      if (this.orientation === 'vertical') {
+      if (this.getOrientation() === 'vertical') {
         return this.getNextColumn(key, this.direction === 'rtl');
       } else {
         return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'rtl'), this.isSameColumn);
       }
-    } else if (this.orientation === 'horizontal') {
+    } else if (this.getOrientation() === 'horizontal') {
       return this.getNextColumn(key, this.direction === 'rtl');
     }
 
@@ -182,12 +202,12 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     if (this.layout === 'grid') {
-      if (this.orientation === 'vertical') {
+      if (this.getOrientation() === 'vertical') {
         return this.getNextColumn(key, this.direction === 'ltr');
       } else {
         return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'ltr'), this.isSameColumn);
       }
-    } else if (this.orientation === 'horizontal') {
+    } else if (this.getOrientation() === 'horizontal') {
       return this.getNextColumn(key, this.direction === 'ltr');
     }
 
@@ -216,7 +236,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let nextKey: Key | null = key;
-    if (this.orientation === 'horizontal') {
+    if (this.getOrientation() === 'horizontal') {
       let pageX = Math.max(0, itemRect.x + itemRect.width - this.layoutDelegate.getVisibleRect().width);
 
       while (itemRect && itemRect.x > pageX && nextKey != null) {
@@ -247,7 +267,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let nextKey: Key | null = key;
-    if (this.orientation === 'horizontal') {
+    if (this.getOrientation() === 'horizontal') {
       let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.y - itemRect.width + this.layoutDelegate.getVisibleRect().width);
 
       while (itemRect && itemRect.x < pageX && nextKey != null) {
