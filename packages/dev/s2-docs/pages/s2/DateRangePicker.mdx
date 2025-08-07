@@ -166,30 +166,6 @@ import {DateRangePicker} from '@react-spectrum/s2';
   maxVisibleMonths={2} />
 ```
 
-## Help text
-
-You can provide additional context with the `description` prop, and display errors with `errorMessage`.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-import {today, getLocalTimeZone} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DateRangePicker
-    label="Trip dates"
-    description="Select your travel start and end dates."
-    defaultValue={{
-      start: today(getLocalTimeZone()),
-      end: today(getLocalTimeZone()).add({weeks: 1})
-    }} />
-  <DateRangePicker
-    label="Trip dates"
-    isInvalid
-    errorMessage="Please select a valid date range." />
-</div>
-```
-
 ## Label positioning
 
 The label can be positioned using the `labelPosition` prop.

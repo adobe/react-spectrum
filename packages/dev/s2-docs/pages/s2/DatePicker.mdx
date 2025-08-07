@@ -151,27 +151,6 @@ import {DatePicker} from '@react-spectrum/s2';
   maxVisibleMonths={2} />
 ```
 
-## Help text
-
-You can provide additional context with the `description` prop, and display errors with `errorMessage`.
-
-```tsx render hideImports
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-import {today, getLocalTimeZone} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DatePicker
-    label="Event date"
-    description="Select the date for your event."
-    defaultValue={today(getLocalTimeZone())} />
-  <DatePicker
-    label="Event date"
-    isInvalid
-    errorMessage="Please select a valid date." />
-</div>
-```
-
 ## Label positioning
 
 The label can be positioned using the `labelPosition` prop.

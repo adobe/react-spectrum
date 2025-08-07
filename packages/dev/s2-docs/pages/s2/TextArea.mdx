@@ -103,26 +103,6 @@ import {TextArea, Form, Button, ButtonGroup} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Help text
-
-Both a description and an error message can be supplied to a TextArea. The description is always visible unless an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
-  <TextArea 
-    label="Feedback" 
-    defaultValue="Great product!" 
-    description="Share your thoughts about our service." />
-  <TextArea 
-    label="Feedback" 
-    isInvalid
-    errorMessage="Feedback must be at least 10 characters long." />
-</div>
-```
-
 ## HTML forms
 
 TextArea supports the `name` prop for integration with HTML forms.

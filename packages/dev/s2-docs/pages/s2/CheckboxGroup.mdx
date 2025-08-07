@@ -114,39 +114,6 @@ import {CheckboxGroup, Checkbox, Form, Button, ButtonGroup} from '@react-spectru
 </Form>
 ```
 
-## Help text
-
-Both a description and an error message can be supplied to a CheckboxGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
-
-```tsx render hideImports
-"use client";
-import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [checked, setChecked] = useState(['dogs', 'dragons']);
-  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
-
-  return (
-    <CheckboxGroup
-      label="Pets"
-      onChange={setChecked}
-      value={checked}
-      isInvalid={!isValid}
-      description="Select your pets."
-      errorMessage={
-        checked.includes('cats')
-          ? 'No cats allowed.'
-          : 'Select only dogs and dragons.'
-      }>
-      <Checkbox value="dogs">Dogs</Checkbox>
-      <Checkbox value="cats">Cats</Checkbox>
-      <Checkbox value="dragons">Dragons</Checkbox>
-    </CheckboxGroup>
-  );
-}
-```
-
 ## HTML forms
 
 CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
