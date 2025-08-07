@@ -350,9 +350,10 @@ export function calculatePositionInternal(
     padding + offset,
     placementInfo
   );
+  let renderedSize = userSetMaxHeight ?? scrollSize[size];
 
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
-  if (flip && scrollSize[size] > space) {
+  if (flip && renderedSize > space) {
     let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
     let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
     let flippedSpace = getAvailableSpace(
