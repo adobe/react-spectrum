@@ -1,5 +1,7 @@
 {
   "decrease": "Намаляване {fieldLabel}",
   "increase": "Усилване {fieldLabel}",
-  "numberField": "Номер на полето"
+  "numberField": "Номер на полето",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }

@@ -1,5 +1,7 @@
 {
   "decrease": "Зменшити {fieldLabel}",
   "increase": "Збільшити {fieldLabel}",
-  "numberField": "Поле номера"
+  "numberField": "Поле номера",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }

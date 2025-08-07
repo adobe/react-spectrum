@@ -1,5 +1,7 @@
 {
   "decrease": "降低 {fieldLabel}",
   "increase": "提高 {fieldLabel}",
-  "numberField": "数字字段"
+  "numberField": "数字字段",
+  "pastedValue": "Pasted value: {value}",
+  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
 }
