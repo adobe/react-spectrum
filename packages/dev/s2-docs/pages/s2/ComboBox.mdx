@@ -254,42 +254,6 @@ import {ComboBox, ComboBoxItem, Form, Button} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Contextual Help
-
-Provide additional information using ContextualHelp.
-
-```tsx render expanded
-"use client";
-import {ComboBox, ComboBoxItem, ContextualHelp, Heading, Content, Footer, Link, Text} from '@react-spectrum/s2';
-
-<ComboBox
-  label="Ice cream flavor"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  }>
-  <ComboBoxItem>Chocolate</ComboBoxItem>
-  <ComboBoxItem>Mint</ComboBoxItem>
-  <ComboBoxItem>Strawberry</ComboBoxItem>
-  <ComboBoxItem>Vanilla</ComboBoxItem>
-  <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-</ComboBox>
-```
-
 ## Events
 
 Handle selection and input changes with event callbacks.

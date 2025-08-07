@@ -211,28 +211,6 @@ function Example() {
 }
 ```
 
-## Contextual help
-
-A ContextualHelp element may be placed next to the label to provide additional information or help about a RadioGroup.
-
-```tsx render hideImports
-"use client";
-import {RadioGroup, Radio, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<RadioGroup
-  label="T-shirt size"
-  contextualHelp={
-    <ContextualHelp variant="info">
-      <Heading>Size and fit</Heading>
-      <Content>Our sizes run on the small side. Choose a size up from your usual.</Content>
-    </ContextualHelp>
-  }>
-  <Radio value="S">Small</Radio>
-  <Radio value="M">Medium</Radio>
-  <Radio value="L">Large</Radio>
-</RadioGroup>
-```
-
 ## Props
 
 ### RadioGroup

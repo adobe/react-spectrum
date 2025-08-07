@@ -123,24 +123,6 @@ import {TextArea} from '@react-spectrum/s2';
 </div>
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextArea.
-
-```tsx render hideImports
-"use client";
-import {TextArea, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<TextArea
-  label="Comment"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Comment guidelines</Heading>
-      <Content>Comments will be reviewed before being published. Please keep them constructive and respectful.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 TextArea supports the `name` prop for integration with HTML forms.

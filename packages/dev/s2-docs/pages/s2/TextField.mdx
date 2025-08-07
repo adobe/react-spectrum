@@ -120,25 +120,6 @@ import {TextField} from '@react-spectrum/s2';
 </div>
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextField.
-
-```tsx render hideImports
-"use client";
-import {TextField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<TextField
-  label="Password"
-  type="password"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Password requirements</Heading>
-      <Content>Passwords must be at least 8 characters long and contain at least one number.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.

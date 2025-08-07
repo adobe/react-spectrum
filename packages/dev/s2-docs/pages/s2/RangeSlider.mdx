@@ -136,26 +136,6 @@ function Example() {
 }
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a RangeSlider.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<RangeSlider
-  label="Search radius"
-  defaultValue={{start: 15, end: 60}}
-  formatOptions={{style: 'unit', unit: 'kilometer'}}
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Search radius</Heading>
-      <Content>Search results are sorted by distance from your location.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 RangeSlider supports the `startName` and `endName` props for integration with HTML forms. Each thumb will submit its value with the corresponding name.

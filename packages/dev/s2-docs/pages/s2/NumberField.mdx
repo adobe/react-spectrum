@@ -213,24 +213,6 @@ function Example() {
 }
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
-
-```tsx render hideImports
-"use client";
-import {NumberField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<NumberField
-  label="Quantity"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is quantity?</Heading>
-      <Content>Quantity refers to the amount of items you wish to purchase.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).

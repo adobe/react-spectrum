@@ -147,28 +147,6 @@ function Example() {
 }
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a CheckboxGroup.
-
-```tsx render hideImports
-"use client";
-import {CheckboxGroup, Checkbox, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<CheckboxGroup
-  label="Favorite genres"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What does this do?</Heading>
-      <Content>Your musical taste is used to train our machine learning recommendation algorithm.</Content>
-    </ContextualHelp>
-  }>
-  <Checkbox value="rock">Rock</Checkbox>
-  <Checkbox value="pop">Pop</Checkbox>
-  <Checkbox value="classical">Classical</Checkbox>
-</CheckboxGroup>
-```
-
 ## HTML forms
 
 CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.

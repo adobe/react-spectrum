@@ -170,24 +170,6 @@ import {SearchField} from '@react-spectrum/s2';
 </div>
 ```
 
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a SearchField.
-
-```tsx render hideImports
-"use client";
-import {SearchField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<SearchField
-  label="Search"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Search tips</Heading>
-      <Content>You can use quotes for exact phrases and the minus sign to exclude terms.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
