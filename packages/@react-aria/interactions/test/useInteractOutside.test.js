@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, createShadowRoot, fireEvent, installPointerEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {enableShadowDOM} from '@react-stately/flags';
 import React, {useEffect, useRef} from 'react';
 import ReactDOM, {createPortal} from 'react-dom';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {useInteractOutside} from '../';
+import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let ref = useRef();
@@ -593,3 +596,401 @@ describe('useInteractOutside shadow DOM extended tests', function () {
     cleanup();
   });
 });
+
+describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
+  let user;
+
+  beforeAll(() => {
+    enableShadowDOM();
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
+  });
+
+  it('should handle interact outside events with UNSAFE_PortalProvider in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
+    let interactOutsideTriggered = false;
+
+    function ShadowInteractOutsideExample() {
+      const ref = useRef();
+      useInteractOutside({
+        ref,
+        onInteractOutside: () => {
+          interactOutsideTriggered = true;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="container">
+            <div ref={ref} data-testid="target" style={{ padding: '20px', background: 'lightblue' }}>
+              <button data-testid="inner-button">Inner Button</button>
+              <input data-testid="inner-input" placeholder="Inner Input" />
+            </div>
+            <button data-testid="outside-button">Outside Button</button>
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<ShadowInteractOutsideExample />);
+
+    const target = shadowRoot.querySelector('[data-testid="target"]');
+    const innerButton = shadowRoot.querySelector('[data-testid="inner-button"]');
+    const outsideButton = shadowRoot.querySelector('[data-testid="outside-button"]');
+
+    // Click inside the target - should NOT trigger interact outside
+    await user.click(innerButton);
+    expect(interactOutsideTriggered).toBe(false);
+
+    // Click the target itself - should NOT trigger interact outside  
+    await user.click(target);
+    expect(interactOutsideTriggered).toBe(false);
+
+    // Click outside the target within shadow DOM - should trigger interact outside
+    await user.click(outsideButton);
+    expect(interactOutsideTriggered).toBe(true);
+
+    // Cleanup
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+
+  it('should correctly identify interactions across shadow DOM boundaries (issue #8675)', async () => {
+    const {shadowRoot} = createShadowRoot();
+    let popoverClosed = false;
+
+    function MenuPopoverExample() {
+      const popoverRef = useRef();
+      useInteractOutside({
+        ref: popoverRef,
+        onInteractOutside: () => {
+          popoverClosed = true;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="app">
+            <button data-testid="menu-trigger">Menu Trigger</button>
+            <div 
+              ref={popoverRef}
+              data-testid="menu-popover"
+              style={{ border: '1px solid gray', padding: '10px' }}
+            >
+              <div role="menu" data-testid="menu">
+                <button 
+                  role="menuitem" 
+                  data-testid="menu-item-1"
+                  onClick={() => {
+                    // This click should NOT trigger interact outside
+                    console.log('Menu item 1 clicked');
+                  }}
+                >
+                  Save Document
+                </button>
+                <button 
+                  role="menuitem" 
+                  data-testid="menu-item-2"
+                  onClick={() => {
+                    console.log('Menu item 2 clicked');
+                  }}
+                >
+                  Export Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<MenuPopoverExample />);
+
+    const menuItem1 = shadowRoot.querySelector('[data-testid="menu-item-1"]');
+    const menuTrigger = shadowRoot.querySelector('[data-testid="menu-trigger"]');
+    const menuPopover = shadowRoot.querySelector('[data-testid="menu-popover"]');
+
+    // Click menu item - should NOT close popover (this is the bug being tested)
+    await user.click(menuItem1);
+    expect(popoverClosed).toBe(false);
+
+    // Click on the popover itself - should NOT close popover
+    await user.click(menuPopover);
+    expect(popoverClosed).toBe(false);
+
+    // Click outside the popover - SHOULD close popover
+    await user.click(menuTrigger);
+    expect(popoverClosed).toBe(true);
+
+    // Cleanup
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+
+  it('should handle nested portal scenarios with interact outside in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
+    const modalPortal = document.createElement('div');
+    modalPortal.setAttribute('data-testid', 'modal-portal');
+    shadowRoot.appendChild(modalPortal);
+
+    let modalInteractOutside = false;
+    let popoverInteractOutside = false;
+
+    function NestedPortalsExample() {
+      const modalRef = useRef();
+      const popoverRef = useRef();
+      
+      useInteractOutside({
+        ref: modalRef,
+        onInteractOutside: () => {
+          modalInteractOutside = true;
+        }
+      });
+
+      useInteractOutside({
+        ref: popoverRef,
+        onInteractOutside: () => {
+          popoverInteractOutside = true;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="main-app">
+            <button data-testid="main-button">Main Button</button>
+            
+            {/* Modal */}
+            {ReactDOM.createPortal(
+              <div 
+                ref={modalRef}
+                data-testid="modal"
+                style={{ background: 'rgba(0,0,0,0.5)', padding: '20px' }}
+              >
+                <div role="dialog">
+                  <button data-testid="modal-button">Modal Button</button>
+                  
+                  {/* Popover within modal */}
+                  <div 
+                    ref={popoverRef}
+                    data-testid="popover-in-modal"
+                    style={{ background: 'white', border: '1px solid gray', padding: '10px' }}
+                  >
+                    <button data-testid="popover-button">Popover Button</button>
+                  </div>
+                </div>
+              </div>,
+              modalPortal
+            )}
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<NestedPortalsExample />);
+
+    const mainButton = shadowRoot.querySelector('[data-testid="main-button"]');
+    const modalButton = shadowRoot.querySelector('[data-testid="modal-button"]');
+    const popoverButton = shadowRoot.querySelector('[data-testid="popover-button"]');
+
+    // Click popover button - should NOT trigger either interact outside
+    await user.click(popoverButton);
+    expect(popoverInteractOutside).toBe(false);
+    expect(modalInteractOutside).toBe(false);
+
+    // Click modal button - should trigger popover interact outside but NOT modal
+    await user.click(modalButton);
+    expect(popoverInteractOutside).toBe(true);
+    expect(modalInteractOutside).toBe(false);
+
+    // Reset and click completely outside
+    popoverInteractOutside = false;
+    modalInteractOutside = false;
+
+    await user.click(mainButton);
+    expect(modalInteractOutside).toBe(true);
+
+    // Cleanup
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+
+  it('should handle pointer events correctly in shadow DOM with portal provider', async () => {
+    installPointerEvent();
+
+    const {shadowRoot} = createShadowRoot();
+    let interactOutsideCount = 0;
+
+    function PointerEventsExample() {
+      const ref = useRef();
+      useInteractOutside({
+        ref,
+        onInteractOutside: () => {
+          interactOutsideCount++;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="container">
+            <div ref={ref} data-testid="target">
+              <button data-testid="target-button">Target Button</button>
+            </div>
+            <button data-testid="outside-button">Outside Button</button>
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<PointerEventsExample />);
+
+    const targetButton = shadowRoot.querySelector('[data-testid="target-button"]');
+    const outsideButton = shadowRoot.querySelector('[data-testid="outside-button"]');
+
+    // Simulate pointer events on target - should NOT trigger interact outside
+    fireEvent(targetButton, pointerEvent('pointerdown'));
+    fireEvent(targetButton, pointerEvent('pointerup'));
+    fireEvent.click(targetButton);
+    expect(interactOutsideCount).toBe(0);
+
+    // Simulate pointer events outside - should trigger interact outside
+    fireEvent(outsideButton, pointerEvent('pointerdown'));
+    fireEvent(outsideButton, pointerEvent('pointerup'));
+    fireEvent.click(outsideButton);
+    expect(interactOutsideCount).toBe(1);
+
+    // Cleanup
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+
+  it('should handle interact outside with dynamic content in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
+    let interactOutsideCount = 0;
+
+    function DynamicContentExample() {
+      const ref = useRef();
+      const [showContent, setShowContent] = React.useState(true);
+      
+      useInteractOutside({
+        ref,
+        onInteractOutside: () => {
+          interactOutsideCount++;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="container">
+            <div ref={ref} data-testid="target">
+              <button 
+                data-testid="toggle-button"
+                onClick={() => setShowContent(!showContent)}
+              >
+                Toggle Content
+              </button>
+              {showContent && (
+                <div data-testid="dynamic-content">
+                  <button data-testid="dynamic-button">Dynamic Button</button>
+                </div>
+              )}
+            </div>
+            <button data-testid="outside-button">Outside Button</button>
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<DynamicContentExample />);
+
+    const toggleButton = shadowRoot.querySelector('[data-testid="toggle-button"]');
+    const dynamicButton = shadowRoot.querySelector('[data-testid="dynamic-button"]');
+    const outsideButton = shadowRoot.querySelector('[data-testid="outside-button"]');
+
+    // Click dynamic content - should NOT trigger interact outside
+    await user.click(dynamicButton);
+    expect(interactOutsideCount).toBe(0);
+
+    // Toggle to remove content, then click outside - should trigger interact outside
+    await user.click(toggleButton);
+    await user.click(outsideButton);
+    expect(interactOutsideCount).toBe(1);
+
+    // Toggle content back and click it - should still NOT trigger interact outside
+    await user.click(toggleButton);
+    const newDynamicButton = shadowRoot.querySelector('[data-testid="dynamic-button"]');
+    await user.click(newDynamicButton);
+    expect(interactOutsideCount).toBe(1); // Should remain 1
+
+    // Cleanup
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+
+  it('should handle interact outside across mixed shadow DOM and regular DOM boundaries', async () => {
+    const {shadowRoot} = createShadowRoot();
+    let interactOutsideTriggered = false;
+
+    // Create a regular DOM button outside the shadow DOM
+    const regularDOMButton = document.createElement('button');
+    regularDOMButton.textContent = 'Regular DOM Button';
+    regularDOMButton.setAttribute('data-testid', 'regular-dom-button');
+    document.body.appendChild(regularDOMButton);
+
+    function MixedDOMExample() {
+      const ref = useRef();
+      useInteractOutside({
+        ref,
+        onInteractOutside: () => {
+          interactOutsideTriggered = true;
+        }
+      });
+
+      return (
+        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+          <div data-testid="shadow-container">
+            <div ref={ref} data-testid="shadow-target">
+              <button data-testid="shadow-button">Shadow Button</button>
+            </div>
+            <button data-testid="shadow-outside">Shadow Outside Button</button>
+          </div>
+        </UNSAFE_PortalProvider>
+      );
+    }
+
+    const {unmount} = render(<MixedDOMExample />);
+
+    const shadowButton = shadowRoot.querySelector('[data-testid="shadow-button"]');
+    const shadowOutside = shadowRoot.querySelector('[data-testid="shadow-outside"]');
+
+    // Click inside shadow target - should NOT trigger
+    await user.click(shadowButton);
+    expect(interactOutsideTriggered).toBe(false);
+
+    // Click outside in shadow DOM - should trigger
+    await user.click(shadowOutside);
+    expect(interactOutsideTriggered).toBe(true);
+
+    // Reset and test regular DOM interaction
+    interactOutsideTriggered = false;
+    await user.click(regularDOMButton);
+    expect(interactOutsideTriggered).toBe(true);
+
+    // Cleanup
+    document.body.removeChild(regularDOMButton);
+    unmount();
+    document.body.removeChild(shadowRoot.host);
+  });
+});
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, opts);
+  return evt;
+}

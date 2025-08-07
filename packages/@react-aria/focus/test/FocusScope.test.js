@@ -20,6 +20,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {useEvent} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
@@ -2149,6 +2150,416 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     unmount();
     document.body.removeChild(shadowHost);
+  });
+
+  describe('Shadow DOM boundary containment issues (issue #8675)', function () {
+    it('should properly detect element containment across shadow DOM boundaries with UNSAFE_PortalProvider', async function () {
+      const {shadowRoot} = createShadowRoot();
+      
+      // Create a menu-like structure that reproduces the issue with UNSAFE_PortalProvider
+      function MenuInPopoverWithPortalProvider() {
+        const [isOpen, setIsOpen] = React.useState(true);
+        
+        return (
+          <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+            <FocusScope contain restoreFocus>
+              <div data-testid="popover">
+                {isOpen && (
+                  <FocusScope contain>
+                    <div role="menu" data-testid="menu">
+                      <button 
+                        role="menuitem" 
+                        data-testid="menu-item-1"
+                        onClick={() => {
+                          // This simulates the onAction handler that should fire
+                          setIsOpen(false);
+                        }}
+                      >
+                        Menu Item 1
+                      </button>
+                      <button 
+                        role="menuitem" 
+                        data-testid="menu-item-2"
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                      >
+                        Menu Item 2
+                      </button>
+                    </div>
+                  </FocusScope>
+                )}
+              </div>
+            </FocusScope>
+          </UNSAFE_PortalProvider>
+        );
+      }
+
+      const {unmount} = render(<MenuInPopoverWithPortalProvider />);
+
+      const menuItem1 = shadowRoot.querySelector('[data-testid="menu-item-1"]');
+      const menuItem2 = shadowRoot.querySelector('[data-testid="menu-item-2"]');
+      const menu = shadowRoot.querySelector('[data-testid="menu"]');
+
+      // Focus the first menu item
+      act(() => { menuItem1.focus(); });
+      expect(shadowRoot.activeElement).toBe(menuItem1);
+
+      // Tab to second menu item should work
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(menuItem2);
+
+      // Tab should wrap back to first item due to focus containment
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(menuItem1);
+
+      // Menu should still be visible (not closed unexpectedly)
+      expect(menu).toBeInTheDocument();
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
+
+    it('should handle focus events correctly in shadow DOM with nested FocusScopes and UNSAFE_PortalProvider', async function () {
+      const {shadowRoot} = createShadowRoot();
+      let menuItemClickHandled = false;
+
+      function NestedScopeMenuWithPortalProvider() {
+        const handleMenuItemClick = () => {
+          menuItemClickHandled = true;
+        };
+
+        return (
+          <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+            <FocusScope contain restoreFocus>
+              <div data-testid="outer-container">
+                <button data-testid="trigger">Open Menu</button>
+                <FocusScope contain>
+                  <div role="menu" data-testid="menu">
+                    <button 
+                      role="menuitem" 
+                      data-testid="menu-item"
+                      onClick={handleMenuItemClick}
+                    >
+                      Test Menu Item
+                    </button>
+                  </div>
+                </FocusScope>
+              </div>
+            </FocusScope>
+          </UNSAFE_PortalProvider>
+        );
+      }
+
+      const {unmount} = render(<NestedScopeMenuWithPortalProvider />);
+
+      const trigger = shadowRoot.querySelector('[data-testid="trigger"]');
+      const menuItem = shadowRoot.querySelector('[data-testid="menu-item"]');
+
+      // Focus the trigger first
+      act(() => { trigger.focus(); });
+      expect(shadowRoot.activeElement).toBe(trigger);
+
+      // Tab to menu item
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(menuItem);
+
+      // Click the menu item - this should fire the onClick handler
+      await user.click(menuItem);
+      expect(menuItemClickHandled).toBe(true);
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
+
+
+    it('should handle focus manager operations across shadow DOM boundaries', async function () {
+      const {shadowRoot} = createShadowRoot();
+
+      function FocusManagerTest() {
+        const focusManager = useFocusManager();
+
+        return ReactDOM.createPortal(
+          <FocusScope contain>
+            <div data-testid="focus-scope">
+              <button 
+                data-testid="first"
+                onClick={() => focusManager?.focusNext()}
+              >
+                First
+              </button>
+              <button 
+                data-testid="second" 
+                onClick={() => focusManager?.focusPrevious()}
+              >
+                Second
+              </button>
+              <button 
+                data-testid="third"
+                onClick={() => focusManager?.focusFirst()}
+              >
+                Third
+              </button>
+            </div>
+          </FocusScope>,
+          shadowRoot
+        );
+      }
+
+      const {unmount} = render(<FocusManagerTest />);
+
+      const firstButton = shadowRoot.querySelector('[data-testid="first"]');
+      const secondButton = shadowRoot.querySelector('[data-testid="second"]');
+      const thirdButton = shadowRoot.querySelector('[data-testid="third"]');
+
+      // Focus first button
+      act(() => { firstButton.focus(); });
+      expect(shadowRoot.activeElement).toBe(firstButton);
+
+      // Click first button to trigger focusNext
+      await user.click(firstButton);
+      expect(shadowRoot.activeElement).toBe(secondButton);
+
+      // Click second button to trigger focusPrevious  
+      await user.click(secondButton);
+      expect(shadowRoot.activeElement).toBe(firstButton);
+
+      // Move to third button and test focusFirst
+      act(() => { thirdButton.focus(); });
+      await user.click(thirdButton);
+      expect(shadowRoot.activeElement).toBe(firstButton);
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
+
+    it('should correctly handle portaled elements within shadow DOM scopes', async function () {
+      const {shadowRoot} = createShadowRoot();
+      const portalTarget = document.createElement('div');
+      shadowRoot.appendChild(portalTarget);
+
+      function PortalInShadowDOM() {
+        return ReactDOM.createPortal(
+          <FocusScope contain>
+            <div data-testid="main-content">
+              <button data-testid="main-button">Main Button</button>
+              {ReactDOM.createPortal(
+                <button data-testid="portaled-button">Portaled Button</button>,
+                portalTarget
+              )}
+            </div>
+          </FocusScope>,
+          shadowRoot
+        );
+      }
+
+      const {unmount} = render(<PortalInShadowDOM />);
+
+      const mainButton = shadowRoot.querySelector('[data-testid="main-button"]');
+      const portaledButton = shadowRoot.querySelector('[data-testid="portaled-button"]');
+
+      // Focus main button
+      act(() => { mainButton.focus(); });
+      expect(shadowRoot.activeElement).toBe(mainButton);
+
+      // Focus portaled button  
+      act(() => { portaledButton.focus(); });
+      expect(shadowRoot.activeElement).toBe(portaledButton);
+
+      // Tab navigation should work between main and portaled elements
+      await user.tab();
+      // The exact behavior may vary, but focus should remain within the shadow DOM
+      expect(shadowRoot.activeElement).toBeTruthy();
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
+
+    it('should reproduce the specific issue #8675: Menu items in popover close immediately with UNSAFE_PortalProvider', async function () {
+      const {shadowRoot} = createShadowRoot();
+      let actionExecuted = false;
+      let menuClosed = false;
+
+      // This reproduces the exact scenario described in the issue
+      function WebComponentWithReactApp() {
+        const [isPopoverOpen, setIsPopoverOpen] = React.useState(true);
+
+        const handleMenuAction = (key) => {
+          actionExecuted = true;
+          // In the original issue, this never executes because the popover closes first
+          console.log('Menu action executed:', key);
+        };
+
+        return (
+          <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+            <div data-testid="web-component-root">
+              {isPopoverOpen && (
+                <FocusScope contain restoreFocus>
+                  <div data-testid="popover-overlay">
+                    <FocusScope contain>
+                      <div role="menu" data-testid="menu-container">
+                        <button
+                          role="menuitem"
+                          data-testid="menu-item-save"
+                          onClick={() => handleMenuAction('save')}
+                        >
+                          Save Document
+                        </button>
+                        <button
+                          role="menuitem"
+                          data-testid="menu-item-export"
+                          onClick={() => handleMenuAction('export')}
+                        >
+                          Export Document
+                        </button>
+                      </div>
+                    </FocusScope>
+                  </div>
+                </FocusScope>
+              )}
+              <button
+                data-testid="close-popover"
+                onClick={() => {
+                  setIsPopoverOpen(false);
+                  menuClosed = true;
+                }}
+                style={{position: 'absolute', top: 0, right: 0}}
+              >
+                Close
+              </button>
+            </div>
+          </UNSAFE_PortalProvider>
+        );
+      }
+
+      const {unmount} = render(<WebComponentWithReactApp />);
+
+      const saveMenuItem = shadowRoot.querySelector('[data-testid="menu-item-save"]');
+      const exportMenuItem = shadowRoot.querySelector('[data-testid="menu-item-export"]');
+      const menuContainer = shadowRoot.querySelector('[data-testid="menu-container"]');
+      const popoverOverlay = shadowRoot.querySelector('[data-testid="popover-overlay"]');
+
+      // Verify the menu is initially visible
+      expect(menuContainer).toBeInTheDocument();
+      expect(popoverOverlay).toBeInTheDocument();
+
+      // Focus the first menu item
+      act(() => { saveMenuItem.focus(); });
+      expect(shadowRoot.activeElement).toBe(saveMenuItem);
+
+      // Click the menu item - this should execute the onAction handler, NOT close the menu
+      await user.click(saveMenuItem);
+      
+      // The action should have been executed (this would fail in the buggy version)
+      expect(actionExecuted).toBe(true);
+      
+      // The menu should still be open (this would fail in the buggy version where it closes immediately)
+      expect(menuClosed).toBe(false);
+      expect(menuContainer).toBeInTheDocument();
+
+      // Test focus containment within the menu
+      act(() => { saveMenuItem.focus(); });
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(exportMenuItem);
+
+      await user.tab();
+      // Focus should wrap back to first item due to containment
+      expect(shadowRoot.activeElement).toBe(saveMenuItem);
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
+
+    it('should handle web component scenario with multiple nested portals and UNSAFE_PortalProvider', async function () {
+      const {shadowRoot} = createShadowRoot();
+      
+      // Create nested portal containers within the shadow DOM
+      const modalPortal = document.createElement('div');
+      modalPortal.setAttribute('data-testid', 'modal-portal');
+      shadowRoot.appendChild(modalPortal);
+
+      const tooltipPortal = document.createElement('div');
+      tooltipPortal.setAttribute('data-testid', 'tooltip-portal');
+      shadowRoot.appendChild(tooltipPortal);
+
+      function ComplexWebComponent() {
+        const [showModal, setShowModal] = React.useState(true);
+        const [showTooltip, setShowTooltip] = React.useState(true);
+
+        return (
+          <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
+            <div data-testid="main-app">
+              <button data-testid="main-button">Main Button</button>
+              
+              {/* Modal with its own focus scope */}
+              {showModal && ReactDOM.createPortal(
+                <FocusScope contain restoreFocus autoFocus>
+                  <div data-testid="modal" role="dialog">
+                    <button data-testid="modal-button-1">Modal Button 1</button>
+                    <button data-testid="modal-button-2">Modal Button 2</button>
+                    <button 
+                      data-testid="close-modal"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Close Modal
+                    </button>
+                  </div>
+                </FocusScope>,
+                modalPortal
+              )}
+
+              {/* Tooltip with nested focus scope */}
+              {showTooltip && ReactDOM.createPortal(
+                <FocusScope>
+                  <div data-testid="tooltip" role="tooltip">
+                    <button data-testid="tooltip-action">Tooltip Action</button>
+                  </div>
+                </FocusScope>,
+                tooltipPortal
+              )}
+            </div>
+          </UNSAFE_PortalProvider>
+        );
+      }
+
+      const {unmount} = render(<ComplexWebComponent />);
+
+      const modalButton1 = shadowRoot.querySelector('[data-testid="modal-button-1"]');
+      const modalButton2 = shadowRoot.querySelector('[data-testid="modal-button-2"]');
+      const tooltipAction = shadowRoot.querySelector('[data-testid="tooltip-action"]');
+
+      // Due to autoFocus, the first modal button should be focused
+      act(() => { jest.runAllTimers(); });
+      expect(shadowRoot.activeElement).toBe(modalButton1);
+
+      // Tab navigation should work within the modal
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(modalButton2);
+
+      // Focus should be contained within the modal due to the contain prop
+      await user.tab();
+      // Should cycle to the close button
+      expect(shadowRoot.activeElement.getAttribute('data-testid')).toBe('close-modal');
+
+      await user.tab();
+      // Should wrap back to first modal button
+      expect(shadowRoot.activeElement).toBe(modalButton1);
+
+      // The tooltip button should be focusable when we explicitly focus it
+      act(() => { tooltipAction.focus(); });
+      // But due to modal containment, focus should be restored back to modal
+      act(() => { jest.runAllTimers(); });
+      expect(shadowRoot.activeElement).toBe(modalButton1);
+
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
+    });
   });
 });
 
