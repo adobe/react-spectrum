@@ -30,7 +30,7 @@ interface SearchResultsMenuProps {
   searchRef: React.RefObject<TextFieldRef<HTMLInputElement> | null>,
   showCards: boolean,
   renderCardList: () => React.ReactNode,
-  filter?: AutocompleteProps<any>['filter'],
+  filter?: AutocompleteProps<ComponentItem | ComponentSection>['filter'],
   noResultsText?: (value: string) => string,
   closeSearchMenu: () => void,
   isPrimary?: boolean

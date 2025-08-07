@@ -37,7 +37,7 @@ export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutoco
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
  */
-export function Autocomplete<T>(props: AutocompleteProps<T>): JSX.Element {
+export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX.Element {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;
