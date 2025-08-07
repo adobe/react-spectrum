@@ -37,6 +37,11 @@ export interface GridLayoutOptions {
    */
   minSpace?: Size,
   /**
+   * The maximum allowed horizontal space between items.
+   * @default Infinity
+   */
+  maxHorizontalSpace?: number,
+  /**
    * The maximum number of columns.
    * @default Infinity
    */
@@ -53,6 +58,7 @@ const DEFAULT_OPTIONS = {
   maxItemSize: new Size(Infinity, Infinity),
   preserveAspectRatio: false,
   minSpace: new Size(18, 18),
+  maxSpace: Infinity,
   maxColumns: Infinity,
   dropIndicatorThickness: 2
 };
@@ -69,6 +75,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   protected numColumns: number = 0;
   private contentSize: Size = new Size();
   private layoutInfos: Map<Key, LayoutInfo> = new Map();
+  private margin: number = 0;
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return newOptions.maxColumns !== oldOptions.maxColumns
@@ -76,7 +83,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       || newOptions.preserveAspectRatio !== oldOptions.preserveAspectRatio
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
-      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace));
+      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
+      || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -85,6 +93,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       maxItemSize = DEFAULT_OPTIONS.maxItemSize,
       preserveAspectRatio = DEFAULT_OPTIONS.preserveAspectRatio,
       minSpace = DEFAULT_OPTIONS.minSpace,
+      maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
     } = invalidationContext.layoutOptions || {};
@@ -116,9 +125,10 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     let itemHeight = minItemSize.height + Math.floor((maxItemHeight - minItemSize.height) * t);
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
-    // Compute the horizontal spacing and content height
-    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
+    // Compute the horizontal spacing, content height and horizontal margin
+    let horizontalSpacing = Math.min(maxHorizontalSpace, Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
     this.gap = new Size(horizontalSpacing, minSpace.height);
+    this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
     // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
     // so that an additional row is added for the skeletons.
@@ -133,7 +143,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       }
       lastKey = collection.getKeyBefore(lastKey);
     }
-    
+
     let rows = Math.ceil(collectionSize / numColumns);
     let iterator = collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
@@ -165,7 +175,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
         if (skeleton) {
           content = oldLayoutInfo && oldLayoutInfo.content.key === key ? oldLayoutInfo.content : {...skeleton, key};
         }
-        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
+        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing) + this.margin;
         let height = itemHeight;
         let estimatedSize = !preserveAspectRatio;
         if (oldLayoutInfo && estimatedSize) {
