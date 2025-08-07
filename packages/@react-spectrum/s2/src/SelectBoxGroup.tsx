@@ -9,29 +9,29 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMRef, DOMRefValue, Orientation, Selection} from '@react-types/shared';
+import {box, iconStyles} from './Checkbox';
+import Checkmark from '../ui-icons/Checkmark';
 import {
   ContextValue,
   ListBox,
-  ListBoxItem
+  ListBoxItem,
+  ListBoxProps,
+  Provider
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, Orientation, Selection} from '@react-types/shared';
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useEffect, useMemo} from 'react';
-import {SelectBoxRenderPropsContext} from './SelectBox';
-import {style} from '../style' with {type: 'macro'};
+import {IllustrationContext} from '../src/Icon';
+import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
+import {TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
-import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps extends StyleProps {
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, 'layout' | 'dragAndDropHooks'>, AriaLabelingProps{
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
   children: ReactNode,
-  /**
-   * Handler that is called when the selection changes.
-   */
-  onSelectionChange?: (selection: Selection) => void,
   /**
    * The selection mode for the SelectBoxGroup.
    * @default 'single'
@@ -45,11 +45,6 @@ export interface SelectBoxGroupProps extends StyleProps {
    * The initial selected keys in the collection (uncontrolled).
    */
   defaultSelectedKeys?: Selection,
-  /**
-   * The axis the SelectBox elements should align with.
-   * @default 'vertical'
-   */
-  orientation?: Orientation,
   /**
    * Number of columns to display the SelectBox elements in.
    * @default 2
@@ -68,32 +63,232 @@ export interface SelectBoxGroupProps extends StyleProps {
    * Whether to show selection checkboxes for all SelectBoxes.
    * @default false
    */
-  isCheckboxSelection?: boolean,
+  showCheckbox?: boolean
+}
+
+export interface SelectBoxProps extends StyleProps {
   /**
-   * The name of the form field for form submission.
+   * The value of the SelectBox.
    */
-  name?: string,
+  value: string,
   /**
-   * Defines a string value that labels the SelectBoxGroup.
+   * The label for the element.
    */
-  'aria-label'?: string,
+  children?: ReactNode,
   /**
-   * Identifies the element (or elements) that labels the SelectBoxGroup.
+   * Whether the SelectBox is disabled.
    */
-  'aria-labelledby'?: string
+  isDisabled?: boolean
 }
 
 interface SelectBoxContextValue {
   allowMultiSelect?: boolean,
   orientation?: Orientation,
   isDisabled?: boolean,
-  isCheckboxSelection?: boolean,
+  showCheckbox?: boolean,
   selectedKeys?: Selection,
   onSelectionChange?: (keys: Selection) => void
 }
 
 export const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
-export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+
+const descriptionOnly = ':has([slot=description]):not(:has([slot=label]))';
+const labelOnly = ':has([slot=label]):not(:has([slot=description]))';
+const selectBoxStyles = style({
+  ...focusRing(),
+  outlineOffset: {
+    isFocusVisible: -2
+  },
+  display: 'grid',
+  gridAutoRows: '1fr',
+  position: 'relative',
+  font: 'ui',
+  boxSizing: 'border-box',
+  overflow: 'hidden',
+  width: {
+    default: 170,
+    orientation: {
+      horizontal: 368
+    }
+  },
+  height: {
+    default: 170,
+    orientation: {
+      horizontal: '100%'
+    }
+  },
+  minWidth: {
+    default: 144,
+    orientation: {
+      horizontal: 188
+    }
+  },
+  maxWidth: {
+    default: 170,
+    orientation: {
+      horizontal: 480
+    }
+  },
+  minHeight: {
+    default: 144,
+    orientation: {
+      horizontal: 80
+    }
+  },
+  maxHeight: {
+    default: 170,
+    orientation: {
+      horizontal: 240
+    }
+  },
+  padding: {
+    default: 24,
+    orientation: {
+      horizontal: 16
+    }
+  },
+  paddingStart: {
+    orientation: {
+      horizontal: 24
+    }
+  },
+  paddingEnd: {
+    orientation: {
+      horizontal: 32
+    }
+  },
+  gridTemplateAreas: {
+    orientation: {
+      vertical: [
+        'illustration',
+        '.',
+        'label'
+      ],
+      horizontal: {
+        default: [
+          'illustration . label',
+          'illustration . description'
+        ],
+        [descriptionOnly]: [
+          'illustration . description'
+        ],
+        [labelOnly]: [
+          'illustration . label'
+        ]
+      }
+    }
+  },
+  gridTemplateRows: {
+    orientation: {
+      vertical: ['min-content', 8, 'min-content'],
+      horizontal: ['min-content', 'min-content']
+    }
+  },
+  gridTemplateColumns: {
+    orientation: {
+      horizontal: ['min-content', 12, '1fr']
+    }
+  },
+  alignContent: {
+    orientation: {
+      vertical: 'center'
+    }
+  },
+  borderRadius: 'lg',
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'transparent',
+    isSelected: 'gray-900',
+    isDisabled: 'transparent'
+  },
+  backgroundColor: {
+    default: 'layer-2',
+    isDisabled: 'layer-1'
+  },
+  color: {
+    isDisabled: 'disabled'
+  },
+  boxShadow: {
+    default: 'emphasized',
+    isHovered: 'elevated',
+    isSelected: 'elevated',
+    forcedColors: 'none',
+    isDisabled: 'emphasized'
+  },
+  borderWidth: 2,
+  transition: 'default',
+  cursor: {
+    default: 'pointer',
+    isDisabled: 'default'
+  }
+}, getAllowedOverrides());
+
+const illustrationContainer = style({
+  gridArea: 'illustration',
+  alignSelf: 'center',
+  justifySelf: 'center',
+  minSize: 48,
+  color: {
+    isDisabled: 'disabled'
+  },
+  opacity: {
+    isDisabled: 0.4
+  }
+});
+
+const descriptionText = style({
+  gridArea: 'description',
+  alignSelf: 'center',
+  display: {
+    default: 'block',
+    orientation: {
+      vertical: 'none'
+    }
+  },
+  overflow: 'hidden',
+  textAlign: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  color: {
+    default: 'neutral',
+    isDisabled: 'disabled'
+  }
+});
+
+const labelText = style({
+  gridArea: 'label',
+  alignSelf: 'center',
+  justifySelf: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  width: '100%',
+  overflow: 'hidden',
+  minWidth: 0,
+  textAlign: {
+    default: 'center',
+    orientation: {
+      horizontal: 'start'
+    }
+  },
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  fontWeight: {
+    orientation: {
+      horizontal: 'bold'
+    }
+  },
+  color: {
+    default: 'neutral',
+    isDisabled: 'disabled'
+  }
+});
 
 const gridStyles = style({
   display: 'grid',
@@ -107,26 +302,90 @@ const gridStyles = style({
   }
 }, getAllowedOverrides());
 
-const containerStyles = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8
-}, getAllowedOverrides());
+/**
+ * SelectBox is a single selectable item in a SelectBoxGroup.
+ */
+export function SelectBox(props: SelectBoxProps): ReactNode {
+  let {children, value, isDisabled: individualDisabled = false, UNSAFE_style} = props;
+  
+  let {
+    orientation = 'vertical',
+    isDisabled: groupDisabled = false,
+    showCheckbox = false
+  } = useContext(SelectBoxContext);
 
-interface FormIntegrationProps {
-  name?: string,
-  selectedKeys: Selection,
-  selectionMode: 'single' | 'multiple'
+  const size = 'M';
+  const isDisabled = individualDisabled || groupDisabled;
+
+  return (
+    <ListBoxItem
+      id={value}
+      isDisabled={isDisabled}
+      textValue={value}
+      className={renderProps => (props.UNSAFE_className || '') + selectBoxStyles({
+        size, 
+        orientation, 
+        isDisabled: renderProps.isDisabled,
+        isSelected: renderProps.isSelected,
+        isHovered: renderProps.isHovered,
+        isFocusVisible: renderProps.isFocusVisible
+      }, props.styles)}
+      style={UNSAFE_style}>
+      {(renderProps) => (
+        <>
+          {showCheckbox && (renderProps.isSelected || (!renderProps.isDisabled && renderProps.isHovered)) && (
+            <div 
+              className={style({
+                position: 'absolute',
+                top: 12,
+                left: 12
+              })}
+              aria-hidden="true">
+              <div
+                className={box({
+                  isSelected: renderProps.isSelected,
+                  isDisabled: renderProps.isDisabled,
+                  size: 'M'
+                } as any)}>
+                {renderProps.isSelected && (
+                  <Checkmark 
+                    size="S" 
+                    className={iconStyles} />
+                )}
+              </div>
+            </div>
+          )}
+          <Provider
+            values={[
+              [IllustrationContext, {
+                size: 'S',
+                styles: illustrationContainer({size: 'S', orientation, isDisabled: renderProps.isDisabled})
+              }],
+              [TextContext, {
+                slots: {
+                  label: {
+                    styles: labelText({orientation, isDisabled: renderProps.isDisabled})
+                  },
+                  description: {
+                    styles: descriptionText({orientation, isDisabled: renderProps.isDisabled})
+                  }
+                }
+              }]
+            ]}>
+            {children}
+          </Provider>
+        </>
+      )}
+    </ListBoxItem>
+  );
 }
 
 /**
- * SelectBox groups allow users to select one or more options from a list.
- * All possible options are exposed up front for users to compare.
- * Built with ListBox for automatic grid-based keyboard navigation.
+ * SelectBoxGroup allows users to select one or more options from a list.
  */
-export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(props: SelectBoxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
-  
+
   let {
     children,
     onSelectionChange,
@@ -137,14 +396,10 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
     numColumns = 2,
     gutterWidth = 'default',
     isDisabled = false,
-    isCheckboxSelection = false,
-    name,
-    UNSAFE_style,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    showCheckbox = false,
+    UNSAFE_className,
+    UNSAFE_style
   } = props;
-
-  const domRef = useDOMRef(ref);
 
   const [selectedKeys, setSelectedKeys] = useControlledState(
     controlledSelectedKeys,
@@ -153,27 +408,9 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
   );
 
   const childrenArray = React.Children.toArray(children).filter((x) => x);
-  
-  const disabledKeys = useMemo(() => {
-    const disabled = new Set<string>();
-    
-    childrenArray.forEach((child, index) => {
-      if (React.isValidElement(child)) {
-        const childElement = child as ReactElement<{value?: string, isDisabled?: boolean}>;
-        const childValue = childElement.props?.value || String(index);
-        
-        if (isDisabled || childElement.props?.isDisabled) {
-          disabled.add(childValue);
-        }
-      }
-    });
-    
-    return disabled.size > 0 ? disabled : undefined;
-  }, [isDisabled, childrenArray]);
-  
   useEffect(() => {
     if (childrenArray.length > 9) {
-      console.error('Invalid content. SelectBoxGroup cannot have more than 9 children.');
+      console.warn('Invalid content. SelectBoxGroup cannot have more than 9 children.');
     }
   }, [childrenArray.length]);
 
@@ -183,118 +420,32 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup(p
         allowMultiSelect: selectionMode === 'multiple',
         orientation,
         isDisabled,
-        isCheckboxSelection,
+        showCheckbox,
         selectedKeys,
         onSelectionChange: setSelectedKeys
       };
       
       return contextValue;
     },
-    [selectionMode, orientation, isDisabled, isCheckboxSelection, selectedKeys, setSelectedKeys]
+    [selectionMode, orientation, isDisabled, showCheckbox, selectedKeys, setSelectedKeys]
   );
 
   return (
-    <div
-      className={containerStyles(null, props.styles)}
-      style={UNSAFE_style}
-      ref={domRef}>
-      
-      <FormIntegration
-        name={name}
-        selectedKeys={selectedKeys}
-        selectionMode={selectionMode} />
-      
-      <ListBox
-        layout="grid"
-        selectionMode={selectionMode}
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys}
-        disabledKeys={disabledKeys}
-        aria-label={ariaLabel || 'Select options'}
-        aria-labelledby={ariaLabelledby}
-        className={gridStyles({gutterWidth, orientation}, props.styles)}
-        style={{
-          gridTemplateColumns: `repeat(${numColumns}, 1fr)`
-        }}>
-        
-        {childrenArray.map((child, index) => {
-          if (!React.isValidElement(child)) {return null;}
-          
-          const childElement = child as ReactElement<{value?: string}>;
-          const childValue = childElement.props?.value || String(index);
-          
-          const getTextValue = (element: ReactElement): string => {
-            const elementProps = (element as any).props;
-            const children = React.Children.toArray(elementProps.children) as ReactElement[];
-            const textSlot = children.find((child: any) => 
-              React.isValidElement(child) && (child as any).props?.slot === 'text'
-            );
-            
-            if (React.isValidElement(textSlot)) {
-              return String((textSlot as any).props.children || '');
-            }
-            
-            const textContent = children
-              .filter((child: any) => typeof child === 'string')
-              .join(' ');
-            
-            return textContent || childValue;
-          };
-          
-          const textValue = getTextValue(childElement);
-          
-          return (
-            <ListBoxItem key={childValue} id={childValue} textValue={textValue} aria-label={textValue}>
-              {(renderProps) => (
-                <SelectBoxContext.Provider value={selectBoxContextValue}>
-                  <SelectBoxRenderPropsContext.Provider 
-                    value={{
-                      isHovered: renderProps.isHovered,
-                      isFocusVisible: renderProps.isFocusVisible,
-                      isPressed: renderProps.isPressed
-                    }}>
-                    {child}
-                  </SelectBoxRenderPropsContext.Provider>
-                </SelectBoxContext.Provider>
-              )}
-            </ListBoxItem>
-          );
-        })}
-      </ListBox>
-    </div>
+    <ListBox
+      layout="grid"
+      selectionMode={selectionMode}
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      className={UNSAFE_className + gridStyles({gutterWidth, orientation}, props.styles)}
+      aria-label="SelectBoxGroup"
+      aria-labelledby="SelectBoxGroup"
+      style={{
+        gridTemplateColumns: `repeat(${numColumns}, 1fr)`,
+        ...UNSAFE_style
+      }}>
+      <SelectBoxContext.Provider value={selectBoxContextValue}>
+        {children}
+      </SelectBoxContext.Provider>
+    </ListBox>
   );
 });
-
-function FormIntegration({name, selectedKeys, selectionMode}: FormIntegrationProps) {
-  if (!name) {
-    return null;
-  }
-
-  const values = selectedKeys === 'all' ? [] : Array.from(selectedKeys).map(String);
-
-  if (selectionMode === 'multiple') {
-    return (
-      <>
-        {values.map((val, index) => (
-          <input
-            key={index}
-            type="hidden"
-            name={name}
-            value={val} />
-        ))}
-        {values.length === 0 && (
-          <input
-            type="hidden"
-            name={name}
-            value="" />
-        )}
-      </>
-    );
-  }
-  return (
-    <input
-      type="hidden"
-      name={name}
-      value={values[0] || ''} />
-  );
-}
