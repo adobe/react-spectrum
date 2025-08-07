@@ -31,7 +31,11 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   */
+  placeholder?: string
 }
 
 export const ColorFieldContext = createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);

@@ -38,7 +38,12 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  // TODO: put warning about needing to provide this for cases where the text field is not focused and doesn't have text
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   */
+  placeholder?: string
 }
 
 export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
@@ -159,7 +164,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
 
 function TextAreaInput() {
   // Force re-render when value changes so we update the height.
-  useSlottedContext(AriaTextAreaContext) ?? {};
+  let {placeholder} = useSlottedContext(AriaTextAreaContext) ?? {};
   let onHeightChange = (input: HTMLTextAreaElement) => {
     // TODO: only do this if an explicit height is not given?
     if (input) {
@@ -186,7 +191,7 @@ function TextAreaInput() {
       ref={onHeightChange}
       // Workaround for baseline alignment bug in Safari.
       // https://bugs.webkit.org/show_bug.cgi?id=142968
-      placeholder=" "
+      placeholder={placeholder ?? ' '}
       className={style({
         paddingX: 0,
         paddingY: centerPadding(),

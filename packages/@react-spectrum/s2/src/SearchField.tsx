@@ -37,7 +37,11 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   */
+  placeholder?: string
 }
 
 export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);

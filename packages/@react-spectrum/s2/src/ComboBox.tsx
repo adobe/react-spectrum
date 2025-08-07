@@ -101,7 +101,11 @@ export interface ComboBoxProps<T extends object> extends
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-    loadingState?: LoadingState
+    loadingState?: LoadingState,
+    /**
+     * Temporary text that occupies the text input when it is empty.
+     */
+    placeholder?: string
 }
 
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
