@@ -7393,6 +7393,7 @@ __metadata:
     fast-glob: "npm:^3.3.3"
     globals-docs: "npm:^2.4.1"
     gray-matter: "npm:^4.0.3"
+    json5: "npm:^2.2.3"
     lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
     react: "npm:^19"
@@ -26130,13 +26131,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-server-dom-parcel@npm:^19.1.0":
-  version: 19.1.0
-  resolution: "react-server-dom-parcel@npm:19.1.0"
+"react-server-dom-parcel@npm:canary":
+  version: 19.2.0-canary-bdb4a96f-20250801
+  resolution: "react-server-dom-parcel@npm:19.2.0-canary-bdb4a96f-20250801"
   peerDependencies:
-    react: ^19.1.0
-    react-dom: ^19.1.0
-  checksum: 10c0/82f4822e427308474118a705419b057cf325018078e3c3d622070fdb85a566835f9a902ee367bd94c8ccde35947086614ce6c9319074368be90651fbd2c3696f
+    react: 19.2.0-canary-bdb4a96f-20250801
+    react-dom: 19.2.0-canary-bdb4a96f-20250801
+  checksum: 10c0/987567a4773091ede967ecd86a188d7dcd56a4337dfcff5cfb2f5a5b5fa284ec2514bb684f43bda1b13f23bd05f7b5d110169880f9f6b62fab1a153293e2ae5c
   languageName: node
   linkType: hard
 

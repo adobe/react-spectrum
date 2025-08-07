@@ -20,7 +20,9 @@
         ]
       },
       "includeNodeModules": {
-        "tree-sitter-highlight": false
+        "tree-sitter-highlight": false,
+        "json5": false,
+        "globals-docs": false
       }
     }
   },

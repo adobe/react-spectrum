@@ -2,11 +2,10 @@
 
 import {AdobeLogo} from './icons/AdobeLogo';
 import {AutocompleteProps, Button, ButtonProps, Dialog, Modal, useFilter} from 'react-aria-components';
-import CardList from './CardList';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, lazy, useEffect, useMemo, useRef, useState} from 'react';
 // @ts-ignore
 import reactAriaDocs from 'docs:react-aria-components';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
@@ -16,6 +15,8 @@ import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
+
+const CardList = lazy(() => import('./CardList'));
 
 interface SearchMenuProps {
   pages: Page[],
