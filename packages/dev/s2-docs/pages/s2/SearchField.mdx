@@ -75,59 +75,6 @@ function Example() {
 }
 ```
 
-## Submit behavior
-
-SearchField automatically handles submit behavior when users press Enter. This is useful for triggering search operations or filtering content.
-
-```tsx render hideImports
-"use client";
-import {SearchField} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [submittedText, setSubmittedText] = useState('');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <SearchField
-        label="Product search"
-        onSubmit={setSubmittedText}
-        placeholder="Type and press Enter..." />
-      {submittedText && <div>Searching for: "{submittedText}"</div>}
-    </div>
-  );
-}
-```
-
-## Clear button
-
-SearchField includes an automatic clear button that appears when there's text in the field. This provides an easy way for users to reset their search.
-
-```tsx render hideImports
-"use client";
-import {SearchField} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [value, setValue] = useState('initial search');
-  let [clearCount, setClearCount] = useState(0);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <SearchField
-        label="Search with clear tracking"
-        value={value}
-        onChange={setValue}
-        onClear={() => {
-          setValue('');
-          setClearCount(count => count + 1);
-        }} />
-      <div>Clear button clicked: {clearCount} times</div>
-    </div>
-  );
-}
-```
-
 ## Validation
 
 SearchField supports HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `minLength`, and `pattern`, as well as custom validation functions and server-side validation.

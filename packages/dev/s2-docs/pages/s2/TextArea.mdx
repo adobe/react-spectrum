@@ -44,20 +44,6 @@ function Example() {
 }
 ```
 
-## Auto-resize
-
-TextArea automatically adjusts its height to fit the content as users type, providing a seamless experience without manual resizing.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<TextArea
-  label="Feedback"
-  placeholder="Type your feedback here. The field will grow as you type..."
-  defaultValue="This is a longer piece of text that demonstrates how the TextArea automatically adjusts its height to accommodate multiple lines of content without requiring manual resizing." />
-```
-
 ## Events
 
 TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user.

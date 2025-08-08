@@ -36,26 +36,6 @@ import {ProgressCircle} from '@react-spectrum/s2';
 <ProgressCircle aria-label="Loading…" minValue={50} maxValue={150} value={100} />
 ```
 
-## Indeterminate
-
-By default, ProgressCircles are determinate. Use a determinate ProgressCircle when progress can be calculated against a specific goal.
-
-```tsx render hideImports
-"use client";
-import {ProgressCircle} from '@react-spectrum/s2';
-
-<ProgressCircle aria-label="Loading…" value={50} />
-```
-
-Use an indeterminate ProgressCircle when progress is happening but the time or effort to completion can't be determined.
-
-```tsx render hideImports
-"use client";
-import {ProgressCircle} from '@react-spectrum/s2';
-
-<ProgressCircle aria-label="Loading…" isIndeterminate />
-```
-
 ## Props
 
 <PropTable component={docs.exports.ProgressCircle} links={docs.links} />

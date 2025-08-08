@@ -30,64 +30,6 @@ import {StatusLight} from '@react-spectrum/s2';
 </div>
 ```
 
-In cases where the status changes at runtime, it may be appropriate to add `role="status"` so that the status change will be announced politely by assistive technology.
-
-```tsx render hideImports
-"use client";
-import {ActionButton, StatusLight} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [status, setStatus] = useState('positive');
-  
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
-      <StatusLight variant={status} role="status">System {status}</StatusLight>
-      <ActionButton onPress={() => setStatus(status === 'positive' ? 'negative' : 'positive')}>
-        Toggle Status
-      </ActionButton>
-    </div>
-  );
-}
-```
-
-## Semantic variants
-
-When status lights have a semantic meaning, they should use semantic variant colors. Use the appropriate color to indicate status as follows:
-
-```tsx render hideImports
-"use client";
-import {StatusLight} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: 15}}>
-  <StatusLight variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</StatusLight>
-  <StatusLight variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</StatusLight>
-  <StatusLight variant="notice">Orange: Needs Approval, Pending, Scheduled, Syncing, Indexing, Processing</StatusLight>
-  <StatusLight variant="negative">Red: Error, Alert, Rejected, Failed</StatusLight>
-  <StatusLight variant="informative">Blue: Active, In Use, Live, Published</StatusLight>
-</div>
-```
-
-## Label variants
-
-When status lights are used to color code categories and labels commonly found in data visualization, they use label colors. The ideal usage for these is when there are 8 or fewer categories or labels being color coded. Use them in the following order to ensure the greatest possible color differences for multiple forms of color blindness:
-
-```tsx render hideImports
-"use client";
-import {StatusLight} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: 15}}>
-  <StatusLight variant="indigo">Indigo</StatusLight>
-  <StatusLight variant="celery">Celery</StatusLight>
-  <StatusLight variant="magenta">Magenta</StatusLight>
-  <StatusLight variant="yellow">Yellow</StatusLight>
-  <StatusLight variant="fuchsia">Fuchsia</StatusLight>
-  <StatusLight variant="seafoam">Seafoam</StatusLight>
-  <StatusLight variant="chartreuse">Chartreuse</StatusLight>
-  <StatusLight variant="purple">Purple</StatusLight>
-</div>
-```
-
 ## Props
 
 <PropTable component={docs.exports.StatusLight} links={docs.links} />

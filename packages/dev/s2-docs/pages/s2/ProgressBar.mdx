@@ -48,26 +48,6 @@ import {ProgressBar} from '@react-spectrum/s2';
   value={60} />
 ```
 
-## Indeterminate
-
-By default, ProgressBars are determinate. Use a determinate ProgressBar when progress can be calculated against a specific goal.
-
-```tsx render hideImports
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
-
-<ProgressBar label="Loading…" value={50} />
-```
-
-Use an indeterminate ProgressBar when the wait time or effort to completion cannot be determined.
-
-```tsx render hideImports
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
-
-<ProgressBar label="Loading…" isIndeterminate />
-```
-
 ## Labeling
 
 You can customize the format of the value using `formatOptions`, provide a custom `valueLabel`, or hide the value label entirely with `showValueLabel={false}`.

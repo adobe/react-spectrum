@@ -121,32 +121,6 @@ import {RadioGroup, Radio, Form, ButtonGroup, Button} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Label position and alignment
-
-By default, the label is positioned above the RadioGroup. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the RadioGroup and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
-
-```tsx render hideImports
-"use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: 30}}>
-  <RadioGroup label="Top (default)" defaultValue="wizard">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-  
-  <RadioGroup label="Side start" labelPosition="side" labelAlign="start" defaultValue="wizard">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-  
-  <RadioGroup label="Side end" labelPosition="side" labelAlign="end" defaultValue="wizard">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-</div>
-```
-
 ## Props
 
 ### RadioGroup
