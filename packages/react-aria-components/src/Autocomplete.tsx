@@ -10,29 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaLabelingProps, DOMProps, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
+import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {InputContext} from './Input';
+import {ContextValue, Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
-import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, RefObject, useRef} from 'react';
-import {SearchFieldContext} from './SearchField';
-import {TextFieldContext} from './TextField';
 
 export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProps {}
 
-interface InternalAutocompleteContextValue<T> {
+// TODO: naming
+// IMO I think this could also contain the props that useSelectableCollection takes (minus the selection options?)
+interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
   filter?: (nodeTextValue: string, node: Node<T>) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
+  /** Whether the collection items should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean,
+  /** Whether typeahead is disabled. */
+  disallowTypeAhead?: boolean,
+  collectionRef?: RefObject<HTMLElement | null>
 }
+
+// TODO: naming, may omit value since that is specific controlled textfields
+// for a case like a rich text editor, the specific value to filter against would need to come from
+// the user. Though I guess they could have a separate "filterText" that they pass to Autocomplete that they would
+// only set when the user types a certain symbol. That value wouldn't actually affect the textarea's value, just controlling filtering
+interface FieldInputContextValue extends
+  DOMProps,
+  FocusEvents<HTMLInputElement>,
+  Pick<KeyboardEvents, 'onKeyDown'>,
+  Pick<ValueBase<string>, 'onChange' | 'value'>,
+  Pick<AriaTextFieldProps, 'enterKeyHint' | 'aria-controls' | 'aria-autocomplete' | 'aria-activedescendant' | 'spellCheck' | 'autoCorrect' | 'autoComplete'> {}
 
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
-// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-// TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue<any> | null>(null);
+
+// TODO export from RAC, maybe move up and out of Autocomplete
+export const CollectionContext = createContext<CollectionContextValue<any> | null>(null);
+// TODO: too restrictive to type this as a HTMLInputElement? Needed for the ref merging that happens in TextField/SearchField
+export const FieldInputContext = createContext<ContextValue<FieldInputContextValue, HTMLInputElement>>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -41,7 +57,7 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;
-  let state = useAutocompleteState(props);
+  let state = useAutocompleteState();
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {
@@ -61,12 +77,13 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
     <Provider
       values={[
         [AutocompleteStateContext, state],
-        [SearchFieldContext, textFieldProps],
-        [TextFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
-          collectionProps,
+        [FieldInputContext, {
+          ...textFieldProps,
+          ref: inputRef
+        }],
+        [CollectionContext, {
+          ...collectionProps,
+          filter: filterFn,
           collectionRef: mergedCollectionRef
         }]
       ]}>

@@ -15,7 +15,8 @@ import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FieldInputContext} from './Autocomplete';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -59,7 +60,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  [props, inputRef] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -72,7 +73,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
     ...removeDataAttributes(props),
     label,
     validationBehavior
-  }, state, mergedInputRef);
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -100,7 +101,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {

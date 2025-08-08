@@ -14,7 +14,8 @@ import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FieldInputContext} from './Autocomplete';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -61,8 +62,8 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let inputRef = useRef(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  let inputRef = useRef<HTMLInputElement>(null);
+  [props, inputRef] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -72,16 +73,16 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
     inputElementType,
     label,
     validationBehavior
-  }, mergedInputRef);
+  }, inputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
   let inputOrTextAreaRef = useCallback((el) => {
-    mergedInputRef.current = el;
+    inputRef.current = el;
     if (el) {
       setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
     }
-  }, [mergedInputRef]);
+  }, [inputRef]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -110,7 +111,7 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: inputOrTextAreaRef}],
+          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [GroupContext, {role: 'presentation', isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
           [TextContext, {
