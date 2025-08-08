@@ -486,6 +486,7 @@ export let GridListWithTextFields: StoryObj<typeof GridList> = {
       <GridList
         aria-label="Actors named Chris"
         keyboardNavigationBehavior="tab"
+        selectionMode="multiple"
         style={{display: 'grid', gridTemplateColumns: 'auto auto auto', gridTemplateRows: 'auto auto auto'}}
         {...args}
         items={[
@@ -494,20 +495,25 @@ export let GridListWithTextFields: StoryObj<typeof GridList> = {
           {id: '3', name: 'Chris Evans'}
         ]}>
         {(item) => (
-          <GridListItem textValue={item.name} style={{display: 'grid', gridTemplateColumns: 'subgrid', gridAutoFlow: 'column', gridColumn: '1 / 4'}}>
-            <TextField>
-              <Label>first {item.name}</Label>
-              <Input />
-            </TextField>
-            <TextField>
-              <Label>second {item.name}</Label>
-              <Input />
-            </TextField>
-            <TextField>
-              <Label>third {item.name}</Label>
-              <Input />
-            </TextField>
-          </GridListItem>
+          <GridListItem textValue={item.name} style={{display: 'grid', gridTemplateColumns: 'subgrid', gridAutoFlow: 'column', gridColumn: '1 / 4', position: 'relative'}}>
+            {({isSelected}) => (
+              <>
+                {isSelected && <div style={{position: 'absolute', top: 0, left: '-15px'}}>{'\u2713'}</div>}
+                <TextField>
+                  <Label>first {item.name}</Label>
+                  <Input />
+                </TextField>
+                <TextField>
+                  <Label>second {item.name}</Label>
+                  <Input />
+                </TextField>
+                <TextField>
+                  <Label>third {item.name}</Label>
+                  <Input />
+                </TextField>
+              </>
+            )}
+            </GridListItem>
         )}
       </GridList>
     );

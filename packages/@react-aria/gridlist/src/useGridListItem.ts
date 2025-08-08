@@ -252,6 +252,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
+    console.log('onKeyDown', e.key);
     switch (e.key) {
       case 'Tab': {
         if (keyboardNavigationBehavior === 'tab') {
@@ -267,6 +268,15 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         }
       }
     }
+  };
+
+  let originalOnKeyDown = itemProps.onKeyDown;
+  itemProps.onKeyDown = (e) => {
+    if (keyboardNavigationBehavior === 'tab' && e.key === ' ') {
+      e.stopPropagation();
+      return;
+    }
+    originalOnKeyDown?.(e);
   };
 
   let syntheticLinkProps = useSyntheticLinkProps(node.props);
