@@ -76,29 +76,6 @@ import {parseZonedDateTime} from '@internationalized/date';
   }} />
 ```
 
-## Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by a DateRangePicker. By default, CalendarDate values are displayed with `"day"` granularity, and CalendarDateTime and ZonedDateTime values are displayed with `"minute"` granularity.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-import {parseAbsoluteToLocal} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DateRangePicker
-    label="Date range"
-    granularity="day" />
-  <DateRangePicker
-    label="Date and time range"
-    granularity="minute"
-    defaultValue={{
-      start: parseAbsoluteToLocal('2024-04-07T18:45:22Z'),
-      end: parseAbsoluteToLocal('2024-04-08T20:00:00Z')
-    }} />
-</div>
-```
-
 ## Validation
 
 DateRangePicker supports validation through the `isRequired` prop, minimum and maximum values, and custom validation functions. It can be integrated with forms and displays error states appropriately.
@@ -151,19 +128,6 @@ function Example() {
       isDateUnavailable={isDateUnavailable} />
   );
 }
-```
-
-## Multiple months
-
-The calendar popup can display multiple months using the `maxVisibleMonths` prop, if screen space permits.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-
-<DateRangePicker
-  label="Trip dates"
-  maxVisibleMonths={2} />
 ```
 
 ## Events

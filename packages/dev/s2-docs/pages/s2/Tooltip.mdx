@@ -19,43 +19,6 @@ import Edit from '@react-spectrum/s2/icons/Edit';
 </TooltipTrigger>
 ```
 
-## Content
-
-The TooltipTrigger accepts exactly two children: the element which triggers the display of the Tooltip and the Tooltip itself. The trigger element must be the first child passed into the TooltipTrigger.
-
-### Basic usage
-
-```tsx render expanded
-"use client";
-import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
-import Edit from '@react-spectrum/s2/icons/Edit';
-
-<TooltipTrigger>
-  <Button aria-label="Edit Name"><Edit /></Button>
-  <Tooltip>Change Name</Tooltip>
-</TooltipTrigger>
-```
-
-### Warmup / Cooldown
-
-Tooltips have a warm up and cool down period. Only one tooltip can be open at a time.
-
-```tsx render expanded
-"use client";
-import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: '12px'}}>
-  <TooltipTrigger>
-    <Button>Hover me</Button>
-    <Tooltip>I come up after a delay.</Tooltip>
-  </TooltipTrigger>
-  <TooltipTrigger>
-    <Button>Then hover me</Button>
-    <Tooltip>If you did it quickly, I appear immediately.</Tooltip>
-  </TooltipTrigger>
-</div>
-```
-
 ## Events
 
 TooltipTrigger accepts an `onOpenChange` handler which is triggered whenever the Tooltip is shown or hidden.

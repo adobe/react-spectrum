@@ -11,7 +11,7 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={DateField}
   docs={docs.exports.DateField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid']}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid', 'granularity']}
   initialProps={{label: 'Birth date'}}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -41,38 +41,6 @@ function Example() {
     </>
   );
 }
-```
-
-## Segments
-
-DateField is composed of individual segments for date parts like month, day, and year. Users can navigate between segments with the Tab key and modify values using the arrow keys or by typing.
-
-```tsx render
-"use client";
-import {DateField} from '@react-spectrum/s2';
-
-<DateField label="Event date" />
-```
-
-## Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by a DateField. By default, dates are displayed with `"day"` granularity. More granular values can be displayed by setting the `granularity` prop to `"hour"`, `"minute"`, or `"second"`.
-
-```tsx render hideImports
-"use client";
-import {DateField} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DateField
-    label="Date only"
-    granularity="day" />
-  <DateField
-    label="Date and time"
-    granularity="minute" />
-  <DateField
-    label="With seconds"
-    granularity="second" />
-</div>
 ```
 
 ## Time zones

@@ -54,45 +54,6 @@ import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, TextField} from
 </Accordion>
 ```
 
-## Expansion behavior
-
-By default, only one disclosure can be expanded at a time. To allow multiple disclosures to be expanded simultaneously, use the `allowsMultipleExpanded` prop.
-
-```tsx render hideImports
-"use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 32, flexWrap: 'wrap'}}>
-  <div style={{width: 250}}>
-    <h4>Single expansion (default)</h4>
-    <Accordion defaultExpandedKeys={['item1']}>
-      <Disclosure id="item1">
-        <DisclosureTitle>Item 1</DisclosureTitle>
-        <DisclosurePanel>Content for item 1</DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="item2">
-        <DisclosureTitle>Item 2</DisclosureTitle>
-        <DisclosurePanel>Content for item 2</DisclosurePanel>
-      </Disclosure>
-    </Accordion>
-  </div>
-  
-  <div style={{width: 250}}>
-    <h4>Multiple expansion</h4>
-    <Accordion allowsMultipleExpanded defaultExpandedKeys={['item1', 'item2']}>
-      <Disclosure id="item1">
-        <DisclosureTitle>Item 1</DisclosureTitle>
-        <DisclosurePanel>Content for item 1</DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="item2">
-        <DisclosureTitle>Item 2</DisclosureTitle>
-        <DisclosurePanel>Content for item 2</DisclosurePanel>
-      </Disclosure>
-    </Accordion>
-  </div>
-</div>
-```
-
 ## Controlled state
 
 Accordion can be controlled using the `expandedKeys` prop along with `onExpandedChange` to manage which disclosures are expanded.
