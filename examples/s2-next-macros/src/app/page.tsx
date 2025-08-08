@@ -37,9 +37,14 @@ import {
   TableView,
   Text,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
+import FileTxt from "@react-spectrum/s2/icons/FileText";
+import Folder from "@react-spectrum/s2/icons/Folder";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 import { CardViewExample } from "./components/CardViewExample";
@@ -127,18 +132,18 @@ function App() {
             label="CardView Loading State"
             items={cardViewLoadingOptions}
             selectedKey={cardViewState.loadingState}
-            onSelectionChange={loadingState => setCardViewState({...cardViewState, layout: loadingState.toString()})}>
+            onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState: loadingState as string})}>
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <Picker
             label="CardView Layout"
             items={cardViewLayoutOptions}
             selectedKey={cardViewState.layout}
-            onSelectionChange={layout => setCardViewState({...cardViewState, layout: layout.toString()})}>
+            onSelectionChange={layout => setCardViewState({...cardViewState, layout: layout as string})}>
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <CardViewExample {...cardViewState} />
-          <Divider styles={style({maxWidth: 320, width: 'full', marginX: 'auto'})} />
+          <Divider styles={style({maxWidth: 320, marginX: 'auto'})} />
           <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
@@ -167,7 +172,7 @@ function App() {
           <MenuTrigger>
             <ActionButton>Menu Trigger</ActionButton>
             <Menu>
-              <MenuItem href="/foo" routerOptions={{ scroll: false }}>
+              <MenuItem href="/foo">
                 Link to /foo
               </MenuItem>
               <MenuItem>Cut</MenuItem>
@@ -207,6 +212,44 @@ function App() {
               </Row>
             </TableBody>
           </TableView>
+          <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
+            <TreeViewItem id="Photos" textValue="Photos">
+              <TreeViewItemContent>
+                <Text>Photos</Text>
+                <Folder />
+              </TreeViewItemContent>
+            </TreeViewItem>
+            <TreeViewItem id="projects" textValue="Projects">
+              <TreeViewItemContent>
+                <Text>Projects</Text>
+                <Folder />
+              </TreeViewItemContent>
+              <TreeViewItem id="projects-1" textValue="Projects-1">
+                <TreeViewItemContent>
+                  <Text>Projects-1</Text>
+                  <Folder />
+                </TreeViewItemContent>
+                <TreeViewItem id="projects-1A" textValue="Projects-1A">
+                  <TreeViewItemContent>
+                    <Text>Projects-1A</Text>
+                    <FileTxt />
+                  </TreeViewItemContent>
+                </TreeViewItem>
+              </TreeViewItem>
+              <TreeViewItem id="projects-2" textValue="Projects-2">
+                <TreeViewItemContent>
+                  <Text>Projects-2</Text>
+                  <FileTxt />
+                </TreeViewItemContent>
+              </TreeViewItem>
+              <TreeViewItem id="projects-3" textValue="Projects-3">
+                <TreeViewItemContent>
+                  <Text>Projects-3</Text>
+                  <FileTxt />
+                </TreeViewItemContent>
+              </TreeViewItem>
+            </TreeViewItem>
+          </TreeView>
         </Section>
 
         {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
