@@ -53,61 +53,6 @@ function Example() {
 }
 ```
 
-## Grid layout
-
-ColorSwatchPicker automatically wraps to multiple rows when there are many colors. You can constrain the width to control the layout.
-
-```tsx render
-"use client";
-import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-<ColorSwatchPicker
-  defaultValue="#e11d48"
-  styles={style({maxWidth: 200})}>
-  <ColorSwatch color="#e11d48" />
-  <ColorSwatch color="#f97316" />
-  <ColorSwatch color="#eab308" />
-  <ColorSwatch color="#22c55e" />
-  <ColorSwatch color="#3b82f6" />
-  <ColorSwatch color="#8b5cf6" />
-  <ColorSwatch color="#ec4899" />
-  <ColorSwatch color="#06b6d4" />
-  <ColorSwatch color="#10b981" />
-  <ColorSwatch color="#f59e0b" />
-  <ColorSwatch color="#ef4444" />
-  <ColorSwatch color="#84cc16" />
-  <ColorSwatch color="#6366f1" />
-  <ColorSwatch color="#d946ef" />
-  <ColorSwatch color="#14b8a6" />
-</ColorSwatchPicker>
-```
-
-## Dynamic collections
-
-ColorSwatchPicker can be populated dynamically from data arrays, making it easy to work with programmatically generated color palettes.
-
-```tsx render hideImports
-"use client";
-import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
-
-function Example() {
-  let colors = [
-    '#ff0000', '#ff8000', '#ffff00', '#80ff00',
-    '#00ff00', '#00ff80', '#00ffff', '#0080ff',
-    '#0000ff', '#8000ff', '#ff00ff', '#ff0080'
-  ];
-
-  return (
-    <ColorSwatchPicker defaultValue={colors[0]}>
-      {colors.map(color => (
-        <ColorSwatch key={color} color={color} />
-      ))}
-    </ColorSwatchPicker>
-  );
-}
-```
-
 ## Props
 
 <PropTable component={docs.exports.ColorSwatchPicker} links={docs.links} />
