@@ -57,7 +57,7 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;
-  let state = useAutocompleteState(props);
+  let state = useAutocompleteState();
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {
