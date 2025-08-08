@@ -146,22 +146,6 @@ import {NumberField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Labeling
-
-A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
-
-```tsx render hideImports
-"use client";
-import {NumberField} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
-  <NumberField label="Cookies" minValue={0} />
-  <NumberField label="Cookies" isRequired necessityIndicator="icon" minValue={0} />
-  <NumberField label="Cookies" isRequired necessityIndicator="label" minValue={0} />
-  <NumberField label="Cookies" necessityIndicator="label" minValue={0} />
-</div>
-```
-
 ## Events
 
 NumberField accepts an `onChange` prop which is triggered whenever the value is edited by the user. The example below uses `onChange` to update a separate element with the current value.

@@ -59,17 +59,6 @@ import {RangeCalendar} from '@react-spectrum/s2';
 <RangeCalendar aria-label="Vacation dates" />
 ```
 
-## Labeling
-
-An `aria-label` must be provided to the RangeCalendar for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render
-"use client";
-import {RangeCalendar} from '@react-spectrum/s2';
-
-<RangeCalendar aria-label="Hotel booking dates" />
-```
-
 ## Validation
 
 RangeCalendar supports validation through the `minValue` and `maxValue` props to prevent selecting dates outside a certain range.

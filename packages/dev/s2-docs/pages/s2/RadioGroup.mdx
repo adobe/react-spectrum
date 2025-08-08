@@ -76,37 +76,6 @@ import {RadioGroup, Radio} from '@react-spectrum/s2';
 </RadioGroup>
 ```
 
-## Labeling
-
-A visual label should be provided for the RadioGroup using the `label` prop. If the RadioGroup is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
-
-```tsx render hideImports
-"use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 40, flexWrap: 'wrap'}}>
-  <RadioGroup label="Favorite avatar">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-
-  <RadioGroup label="Favorite avatar" isRequired necessityIndicator="icon">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-
-  <RadioGroup label="Favorite avatar" isRequired necessityIndicator="label">
-    <Radio value="wizard">Wizard</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-
-  <RadioGroup label="Favorite avatar" necessityIndicator="label">
-   <Radio value="wizard">Wizard</Radio>
-   <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-</div>
-```
-
 ## Events
 
 RadioGroup accepts an `onChange` prop, which is triggered when a user changes the selected value. The example below uses `onChange` to log how the user is interacting with the component.
