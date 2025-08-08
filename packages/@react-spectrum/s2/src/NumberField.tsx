@@ -33,6 +33,7 @@ import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
+import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -177,6 +178,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
     }
   }));
 
+  usePlaceholderWarning(props.placeholder, 'NumberField', inputRef);
 
   return (
     <AriaNumberField

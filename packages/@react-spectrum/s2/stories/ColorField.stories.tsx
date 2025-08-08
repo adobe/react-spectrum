@@ -43,7 +43,8 @@ type Story = StoryObj<typeof ColorField>;
 export const Example: Story = {
   render: (args) => <ColorField {...args} />,
   args: {
-    label: 'Color'
+    label: 'Color',
+    placeholder: '######'
   }
 };
 
