@@ -29,6 +29,7 @@ import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
+import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
@@ -37,7 +38,11 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   */
+  placeholder?: string
 }
 
 export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
@@ -76,6 +81,8 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
       return inputRef.current;
     }
   }));
+
+  usePlaceholderWarning(props.placeholder, 'SearchField', inputRef);
 
   return (
     <AriaSearchField

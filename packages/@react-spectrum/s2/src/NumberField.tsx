@@ -33,6 +33,7 @@ import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
+import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -51,7 +52,11 @@ export interface NumberFieldProps extends
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   */
+  placeholder?: string
 }
 
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
@@ -173,6 +178,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
     }
   }));
 
+  usePlaceholderWarning(props.placeholder, 'NumberField', inputRef);
 
   return (
     <AriaNumberField

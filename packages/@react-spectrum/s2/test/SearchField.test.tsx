@@ -41,4 +41,31 @@ describe('SearchField', () => {
     await user.keyboard('Foo');
     expect(group).not.toHaveAttribute('data-focus-visible');
   });
+
+  it('should warn if the SearchField renders/blurs without a placeholder', async () => {
+    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByRole, rerender} = render(
+      <SearchField label="Search" />
+    );
+
+    expect(spy).toHaveBeenCalledWith('Your SearchField is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    spy.mockClear();
+
+    await user.tab();
+    await user.tab();
+    expect(spy).toHaveBeenCalledWith('Your SearchField is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    spy.mockClear();
+
+    let input = getByRole('searchbox');
+    await user.click(input);
+    await user.keyboard('Foo');
+    await user.tab();
+    expect(spy).not.toHaveBeenCalled();
+
+    rerender(<SearchField label="Search" placeholder="test" />);
+    expect(spy).not.toHaveBeenCalled();
+
+    rerender(<SearchField label="Search" autoFocus />);
+    expect(spy).not.toHaveBeenCalled();
+  });
 });

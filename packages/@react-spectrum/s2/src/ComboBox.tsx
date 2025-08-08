@@ -64,6 +64,7 @@ import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {usePlaceholderWarning} from './placeholder-utils';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -101,7 +102,11 @@ export interface ComboBoxProps<T extends object> extends
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-    loadingState?: LoadingState
+    loadingState?: LoadingState,
+    /**
+     * Temporary text that occupies the text input when it is empty.
+     */
+    placeholder?: string
 }
 
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
@@ -576,6 +581,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     );
   }
   let scale = useScale();
+  usePlaceholderWarning(props.placeholder, 'ComboBox', inputRef);
 
   return (
     <>
