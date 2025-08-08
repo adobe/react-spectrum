@@ -32,7 +32,6 @@ const OPEN_STATES = {
  */
 
 export function OpenTransition(
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   props: any
 ): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
