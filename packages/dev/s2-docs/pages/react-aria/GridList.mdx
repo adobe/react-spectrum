@@ -12,7 +12,7 @@ import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 <PageDescription>{docs.exports.GridList.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Favorite pokemon', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Favorite pokemon', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css"]}
   "use client";
   import {GridList, GridListItem} from 'vanilla-starter/GridList';
   import {Button} from 'vanilla-starter/Button';
@@ -52,24 +52,6 @@ import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
   ```
 
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
-
-A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
-If the list supports row selection, each row can optionally include a selection checkbox.
-
-```tsx
-import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
-
-<GridList>
-  <GridListItem>
-    <Button slot="drag" />
-    <Checkbox slot="selection" />
-  </GridListItem>
-</GridList>
-```
 
 ## Content
 
@@ -278,6 +260,18 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
+
+```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html'}}
+<GridList>
+  <GridListItem>
+    <Button slot="drag" />
+    <Checkbox slot="selection" />
+  </GridListItem>
+  <GridListLoadMoreItem />
+</GridList>
+```
 
 ### GridList
 

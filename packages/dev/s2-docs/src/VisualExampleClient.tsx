@@ -1,17 +1,21 @@
 'use client';
 
-import {Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
+import {flushSync} from 'react-dom';
 import {getColorChannels, parseColor} from 'react-stately';
-import {IconPicker} from './IconPicker';
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
+import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {useLocale} from 'react-aria';
+
+export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -21,7 +25,8 @@ interface ContextValue {
   importSource?: string,
   controls: Controls,
   props: Props,
-  setProps(v: Props): void
+  setProps(v: Props): void,
+  propsObject?: string
 }
 
 const Context = createContext<ContextValue>({
@@ -38,16 +43,24 @@ interface VisualExampleClientProps {
   importSource?: string,
   controls: Controls,
   children: ReactNode,
-  initialProps?: {[prop: string]: any}
+  initialProps?: {[prop: string]: any},
+  propsObject?: string
 }
 
-export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}}: VisualExampleClientProps) {
+export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}, propsObject}: VisualExampleClientProps) {
   let [props, setProps] = useState(() => {
     let props = {...initialProps};
     for (let name in controls) {
       let defaultValue = controls[name].default;
       if (!(name in initialProps)) {
         props[name] = defaultValue;
+      }
+      if (controls[name].value.type === 'interface' && controls[name].value.name === 'Size') {
+        if (typeof props[name] === 'object') {
+          props[name] = new Size(props[name].width, props[name].height);
+        } else {
+          delete props[name];
+        }
       }
     }
 
@@ -83,7 +96,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   }, []);
 
   return (
-    <Context.Provider value={{component, name, importSource, controls, props, setProps}}>
+    <Context.Provider value={{component, name, importSource, controls, props, setProps, propsObject}}>
       <div hidden ref={ref} />
       {children}
     </Context.Provider>
@@ -91,7 +104,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
 }
 
 export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'}) {
-  let {component, props} = useContext(Context);
+  let {component, props, propsObject} = useContext(Context);
 
   if (!isValidElement(component)) {
     let children = props.children;
@@ -110,6 +123,10 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
     props = {...props, children};
   }
 
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
   return (
     <ExampleOutput
       component={component}
@@ -126,7 +143,7 @@ interface CodeOutputProps {
 }
 
 export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
-  let {name, importSource, props, controls} = useContext(Context);
+  let {name, importSource, props, controls, propsObject} = useContext(Context);
   let searchParams = new URLSearchParams();
   
   let exampleType = useContext(ExampleSwitcherContext);
@@ -146,6 +163,10 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 
   let url = '?' + searchParams.toString();
 
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
   code ||= (
     <Pre>
       <code>
@@ -163,8 +184,12 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 }
 
 export function CodeProps({indent = ''}) {
-  let {props, controls} = useContext(Context);
-  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  let {props, controls, propsObject} = useContext(Context);
+  if (propsObject) {
+    props = {[propsObject]: props};
+  }
+
+  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop], indent)).filter(Boolean);
   let newlines = indent.length > 0 || countChars(renderedProps) > 40;
   let separator = newlines ? (indent || '  ') : ' ';
   renderedProps = renderedProps.map((p, i) => {
@@ -182,7 +207,7 @@ export function CodeProps({indent = ''}) {
 
 function renderElement(name: string, props: Props, controls?: Controls) {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop])).filter(Boolean);
+  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop], '  ')).filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
   renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' : ' '}{p}</Fragment>);
   if (props.children) {
@@ -235,7 +260,7 @@ function countChars(element: ReactNode) {
   return 0;
 }
 
-function renderProp(name: string, value: any, control?: PropControl) {
+function renderProp(name: string, value: any, control?: PropControl, indent = '') {
   if (value === control?.default) {
     return null;
   }
@@ -254,7 +279,7 @@ function renderProp(name: string, value: any, control?: PropControl) {
   } else if (value == null) {
     return null;
   } else if (typeof value === 'object') {
-    propValue = <>{'{'}{renderValue(value)}{'}'}</>;
+    propValue = <>{'{'}{renderValue(value, indent)}{'}'}</>;
   }
 
   if (propValue) {
@@ -264,7 +289,7 @@ function renderProp(name: string, value: any, control?: PropControl) {
   return <Fragment key={name}>{propName}{propValue}</Fragment>;
 }
 
-function renderValue(value: any) {
+function renderValue(value: any, indent = '') {
   switch (typeof value) {
     case 'string':
       return <span className={style({color: 'green-1000'})}>"{value}"</span>;
@@ -276,9 +301,30 @@ function renderValue(value: any) {
       if (value == null) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
+      if (Array.isArray(value)) {
+        let res: ReactNode[] = value.map((item, i) => {
+          let result = renderValue(item, indent);
+          if (i < value.length - 1) {
+            result = <>{result}, </>;
+          }
+          return <Fragment key={i}>{result}</Fragment>;
+        });
+
+        if (countChars(res) > 40) {
+          res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
+          res.push('\n  ');
+        }
+
+        return <>{'['}{res}{']'}</>;
+      }
+
+      if (value instanceof Size) {
+        return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Size</span>(<span className={style({color: 'pink-1000'})}>{value.width}</span>, <span className={style({color: 'pink-1000'})}>{value.height}</span>)</>;
+      }
+
       let entries = Object.entries(value);
       let res: ReactNode[] = entries.map(([name, value], i) => {
-        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
+        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value, indent)}</>;
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
@@ -286,8 +332,8 @@ function renderValue(value: any) {
       });
 
       if (countChars(res) > 40) {
-        res = res.map((p, i) => <Fragment key={i}>{'\n    '}{p}</Fragment>);
-        res.push('\n  ');
+        res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
+        res.push('\n' + indent);
       }
 
       return <>{'{'}{res}{'}'}</>;
@@ -341,7 +387,7 @@ export function Control({name}: {name: string}) {
       if (name === 'colorSpace') {
         return <ColorSpaceControl control={control} value={value} />;
       }
-      if (name === 'placement') {
+      if (name === 'placement' && control.value.elements.length === 22) {
         return <PlacementControl control={control} value={value} onChange={onChange} />;
       }
       return <UnionControl control={control} value={value} onChange={onChange} />;
@@ -367,7 +413,16 @@ export function Control({name}: {name: string}) {
       if (control.value.name === 'DateDuration') {
         return <DurationControl control={control} value={value} onChange={onChange} />;
       }
+      if (control.value.name === 'Size') {
+        return <SizeControl control={control} value={value} onChange={onChange} />;
+      }
       break;
+    case 'array':
+      return <ArrayControl control={control} valueType={control.value.elementType} value={value} onChange={onChange} />;
+    case 'application':
+      if (control.value.base.type === 'identifier' && (control.value.base.name === 'ReadonlyArray' || control.value.base.name === 'Array')) {
+        return <ArrayControl control={control} value={value} valueType={control.value.typeParameters[0]} onChange={onChange} />;
+      }
     default:
       if (name === 'children') {
         return <StringControl control={control} value={value} onChange={onChange} />;
@@ -401,7 +456,7 @@ function UnionControl({control, value, onChange, isPicker = false}) {
         onSelectionChange={v => onChange(v === '__none' ? null : v)}
         styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
-        {control.value.elements.map(element => (
+        {control.value.elements.filter(e => e.value).map(element => (
           <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
         ))}
       </Picker>
@@ -443,9 +498,9 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   );
 }
 
-function Wrapper({control, children, styles}: {control: PropControl, children: ReactNode, styles?: StyleString}) {
+function Wrapper({control, children, styles, ref}: {control: PropControl, children: ReactNode, styles?: StyleString, ref?: Ref<HTMLDivElement>}) {
   return (
-    <div className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
+    <div ref={ref} className={mergeStyles(style({display: 'flex', flexDirection: 'column', gap: 4}), styles)}>
       <span className={style({font: 'ui', color: 'neutral-subdued', wordBreak: 'break-all'})}>
         {control.name}
         <span className={style({whiteSpace: 'nowrap'})}>
@@ -473,6 +528,17 @@ function PropContextualHelp({control}) {
 }
 
 function NumberControl({control, value, onChange}: ControlProps) {
+  if (control.options?.control === 'slider') {
+    return (
+      <Slider
+        label={control.name}
+        contextualHelp={<PropContextualHelp control={control} />}
+        value={value}
+        onChange={onChange}
+        styles={style({width: 130})} />
+    );
+  }
+
   return (
     <NumberField
       label={control.name}
@@ -916,6 +982,7 @@ function PlacementControl({control, value, onChange}) {
         disallowEmptySelection
         selectedKeys={[value]}
         onSelectionChange={keys => onChange([...keys][0])}
+        className=""
         style={{
           display: 'grid',
           gridTemplateAreas: `
@@ -975,5 +1042,100 @@ function PlacementControlItem(props) {
           outlineWidth: 1
         })} />
     </ListBoxItem>
+  );
+}
+
+function ArrayControl({control, valueType, value = [], onChange}) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  return (
+    <Wrapper ref={ref} control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1, width: 150})}>
+      {value.length === 0 && 
+        <ActionButton
+          size="S"
+          aria-label="Add item"
+          styles={style({alignSelf: 'start'})}
+          onPress={() => {
+            flushSync(() => onChange(['']));
+            ref.current?.querySelector('input')?.focus();
+          }}>
+          <AddCircle />
+        </ActionButton>
+      }
+      {value.map((item, index) => {
+        let rendered;
+        switch (valueType.type) {
+          case 'string':
+            rendered = (
+              <TextField
+                aria-label={`${control.name}, item ${index}`}
+                size="S"
+                styles={style({flexGrow: 1})}
+                value={item}
+                onChange={newValue => {
+                  let arr: any[] = [...value];
+                  arr[index] = newValue;
+                  onChange(arr);
+                }} />
+            );
+            break;
+          default:
+            console.warn('unknown array element type', valueType);
+            return null;
+        }
+
+        return (
+          <div key={index} className={style({display: 'flex', gap: 4})}>
+            {rendered}
+            <ActionButton
+              size="S"
+              aria-label="Add item after"
+              onPress={() => {
+                let arr: any[] = [...value];
+                arr.splice(index + 1, 0, '');
+                flushSync(() => onChange(arr));
+                ref.current?.querySelectorAll('input')[index + 1]?.focus();
+              }}>
+              <AddCircle />
+            </ActionButton>
+            <ActionButton
+              size="S"
+              aria-label="Remove item"
+              onPress={() => {
+                let arr: any[] = [...value];
+                arr.splice(index, 1);
+                flushSync(() => onChange(arr));
+                if (arr.length > 0) {
+                  ref.current?.querySelectorAll('input')[Math.min(arr.length - 1, index)]?.focus();
+                } else {
+                  ref.current?.querySelector('button')?.focus();
+                }
+              }}>
+              <RemoveCircle />
+            </ActionButton>
+          </div>
+        );
+      })}
+    </Wrapper>
+  );
+}
+
+function SizeControl({control, value, onChange}: ControlProps) {
+  return (
+    <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+      <div className={style({display: 'flex', gap: 4, width: 130})}>
+        <NumberField
+          aria-label="Width"
+          value={value?.width}
+          onChange={width => onChange(new Size(width, value?.height ?? 0))}
+          styles={style({flexShrink: 1, flexGrow: 1})}
+          hideStepper />
+        <NumberField
+          aria-label="Height"
+          value={value?.height}
+          onChange={height => onChange(new Size(value?.width ?? 0, height))}
+          styles={style({flexShrink: 1, flexGrow: 1})}
+          hideStepper />
+      </div>
+    </Wrapper>
   );
 }

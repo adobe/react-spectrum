@@ -56,7 +56,7 @@ export function TableHeader<T extends object>(
         {/* Add extra columns for drag and drop and selection. */}
         {allowsDragging && <AriaColumn />}
         {selectionBehavior === 'toggle' && (
-          <AriaColumn>
+          <AriaColumn width={40} minWidth={0}>
             {selectionMode === 'multiple' && <Checkbox slot="selection" />}
           </AriaColumn>
         )}

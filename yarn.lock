@@ -7393,6 +7393,7 @@ __metadata:
     fast-glob: "npm:^3.3.3"
     globals-docs: "npm:^2.4.1"
     gray-matter: "npm:^4.0.3"
+    json5: "npm:^2.2.3"
     lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
     react: "npm:^19"
@@ -16970,15 +16971,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.3.0-alpha.0":
-  version: 11.3.0-alpha.0
-  resolution: "framer-motion@npm:11.3.0-alpha.0"
+"framer-motion@npm:^12.23.6":
+  version: 12.23.6
+  resolution: "framer-motion@npm:12.23.6"
   dependencies:
+    motion-dom: "npm:^12.23.6"
+    motion-utils: "npm:^12.23.6"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
@@ -16986,7 +16989,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/9ae2dab7ebfcaf2f4c1e277094b07f8ed405ce38055665937eddaaac1f70749234dd1500beeaa5cd3582373f2e1ea78fd7b07beb359066bf7085a2eb177bf4f3
+  checksum: 10c0/4bb30b6a39cb3a0cd70a103fa8c321c751d2d308253fb84c3ed3c97ac7278cbd2b66e8b76207f540f2760d024d516e50f7038c15ba63f42c9184d8dab02d7478
   languageName: node
   linkType: hard
 
@@ -23309,6 +23312,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@npm:^12.23.6":
+  version: 12.23.6
+  resolution: "motion-dom@npm:12.23.6"
+  dependencies:
+    motion-utils: "npm:^12.23.6"
+  checksum: 10c0/4f4c5e9fcabdad6e3523c71f1e23bd0cb50a71e362a02d1897dfd30f85b044c88ccf62d506dfa35388b035d4073714b9ad021c70c858eab7d6c2227908ee18cc
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^12.23.6":
+  version: 12.23.6
+  resolution: "motion-utils@npm:12.23.6"
+  checksum: 10c0/c058e8ba6423b3baa63e985bcc669877ee7d9579d938f5348b4e60c5ea1b4b33dd7f4877434436a4a5807f3cf00370d3fd4079a6fdd6309c5c87aa62b311a897
+  languageName: node
+  linkType: hard
+
+"motion@npm:^12.23.6":
+  version: 12.23.6
+  resolution: "motion@npm:12.23.6"
+  dependencies:
+    framer-motion: "npm:^12.23.6"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/f0475a7b5e9b54919c45ce7e4a40bbeb46cdc84358e6c80c40ad797fe6d0bbbb83958c2d8f5522a7a4fb83d1f3ceddfa20505fa96b07ea2133bb9b60377f9cd7
+  languageName: node
+  linkType: hard
+
 "move-concurrently@npm:^1.0.1":
   version: 1.0.1
   resolution: "move-concurrently@npm:1.0.1"
@@ -26091,13 +26131,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-server-dom-parcel@npm:^19.1.0":
-  version: 19.1.0
-  resolution: "react-server-dom-parcel@npm:19.1.0"
+"react-server-dom-parcel@npm:canary":
+  version: 19.2.0-canary-bdb4a96f-20250801
+  resolution: "react-server-dom-parcel@npm:19.2.0-canary-bdb4a96f-20250801"
   peerDependencies:
-    react: ^19.1.0
-    react-dom: ^19.1.0
-  checksum: 10c0/82f4822e427308474118a705419b057cf325018078e3c3d622070fdb85a566835f9a902ee367bd94c8ccde35947086614ce6c9319074368be90651fbd2c3696f
+    react: 19.2.0-canary-bdb4a96f-20250801
+    react-dom: 19.2.0-canary-bdb4a96f-20250801
+  checksum: 10c0/987567a4773091ede967ecd86a188d7dcd56a4337dfcff5cfb2f5a5b5fa284ec2514bb684f43bda1b13f23bd05f7b5d110169880f9f6b62fab1a153293e2ae5c
   languageName: node
   linkType: hard
 
@@ -26210,7 +26250,6 @@ __metadata:
     eslint-plugin-rulesdir: "npm:^0.2.2"
     fast-check: "npm:^2.19.0"
     fast-glob: "npm:^3.1.0"
-    framer-motion: "npm:^11.3.0-alpha.0"
     fs-extra: "npm:^11.0.0"
     glob: "npm:^8.0.3"
     glob-promise: "npm:^6.0.5"
@@ -26226,6 +26265,7 @@ __metadata:
     lfcdn: "npm:^0.4.2"
     lucide-react: "npm:^0.294.0"
     md5: "npm:^2.2.1"
+    motion: "npm:^12.23.6"
     npm-cli-login: "npm:^1.0.0"
     nyc: "npm:^10.2.0"
     p-queue: "npm:^6.2.1"

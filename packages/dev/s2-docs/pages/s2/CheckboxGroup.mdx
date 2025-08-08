@@ -1,0 +1,197 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {CheckboxGroup} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# CheckboxGroup
+
+<PageDescription>{docs.exports.CheckboxGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.CheckboxGroup} links={docs.links} props={['size', 'orientation', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isEmphasized']} initialProps={{label: 'Favorite sports'}} expanded type="s2"
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+
+<CheckboxGroup/* PROPS */>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## Value
+
+CheckboxGroup supports selecting zero or more items. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop. Both props accept an array of selected items, which map to the `value` prop on each item.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(['soccer', 'baseball']);
+
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <CheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+
+      <CheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+    </div>
+  );
+}
+```
+
+## Events
+
+CheckboxGroup accepts an `onChange` prop, which is triggered when a user adds or removes an item from the selection. The example below uses `onChange` to update state and show the current selection.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState([]);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <CheckboxGroup label="Favorite sports" value={selected} onChange={setSelected}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <div>You have selected: {selected.join(', ') || 'None'}</div>
+    </div>
+  );
+}
+```
+
+## Validation
+
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox, Form, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native">
+  <CheckboxGroup label="Sandwich condiments" name="condiments" isRequired>
+    <Checkbox value="lettuce">Lettuce</Checkbox>
+    <Checkbox value="tomato">Tomato</Checkbox>
+    <Checkbox value="onion">Onion</Checkbox>
+    <Checkbox value="sprouts">Sprouts</Checkbox>
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+Individual Checkbox validation can be used to require that specific checkboxes are checked.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox, Form, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native">
+  <CheckboxGroup label="Agree to the following" isRequired>
+    <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+    <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+    <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Help text
+
+Both a description and an error message can be supplied to a CheckboxGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [checked, setChecked] = useState(['dogs', 'dragons']);
+  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
+
+  return (
+    <CheckboxGroup
+      label="Pets"
+      onChange={setChecked}
+      value={checked}
+      isInvalid={!isValid}
+      description="Select your pets."
+      errorMessage={
+        checked.includes('cats')
+          ? 'No cats allowed.'
+          : 'Select only dogs and dragons.'
+      }>
+      <Checkbox value="dogs">Dogs</Checkbox>
+      <Checkbox value="cats">Cats</Checkbox>
+      <Checkbox value="dragons">Dragons</Checkbox>
+    </CheckboxGroup>
+  );
+}
+```
+
+## Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a CheckboxGroup.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<CheckboxGroup
+  label="Favorite genres"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What does this do?</Heading>
+      <Content>Your musical taste is used to train our machine learning recommendation algorithm.</Content>
+    </ContextualHelp>
+  }>
+  <Checkbox value="rock">Rock</Checkbox>
+  <Checkbox value="pop">Pop</Checkbox>
+  <Checkbox value="classical">Classical</Checkbox>
+</CheckboxGroup>
+```
+
+## HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx render hideImports
+"use client";
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+
+<form>
+  <CheckboxGroup label="Condiments" name="condiments">
+    <Checkbox value="mayo">Mayo</Checkbox>
+    <Checkbox value="mustard">Mustard</Checkbox>
+    <Checkbox value="ketchup">Ketchup</Checkbox>
+  </CheckboxGroup>
+</form>
+```
+
+## Accessibility
+
+If a visible label isn't specified for a CheckboxGroup, an `aria-label` must be provided for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+Checkbox elements within a group should always have a visible label.
+
+## Props
+
+<PropTable component={docs.exports.CheckboxGroup} links={docs.links} />

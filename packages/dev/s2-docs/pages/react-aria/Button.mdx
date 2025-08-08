@@ -1,7 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, Content, Image, Text, InlineAlert, Heading} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
 import {Button as VanillaButton} from 'vanilla-starter/Button';
 import {Button as TailwindButton} from 'tailwind-starter/Button';
@@ -9,7 +9,6 @@ import {Button as TailwindButton} from 'tailwind-starter/Button';
 import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 # Button
 
@@ -23,7 +22,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
     props={['isPending', 'isDisabled']}
     initialProps={{children: 'Vanilla'}}
     type="vanilla"
-    files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]} />
   <VisualExample
     component={TailwindButton}
     docs={tailwindDocs.exports.Button}
@@ -40,15 +39,6 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
     initialProps={{children: 'Style Macro'}}
     files={["packages/dev/s2-docs/pages/ButtonExample.tsx"]} /> */}
 </ExampleSwitcher>
-
-## Anatomy
-
-Buttons consist of a clickable area usually containing a textual label or an icon
-that users can click to perform an action. In addition, keyboard users may activate
-buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
-
-If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
-`aria-labelledby` prop must be passed to identify the button to assistive technology.
 
 ## Examples
 
@@ -141,7 +131,7 @@ import {Link} from 'react-aria-components';
 </Link>
 ```
 
-## Props
+## API
 
 <PropTable component={docs.exports.Button} links={docs.links} />
 

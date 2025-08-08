@@ -1,8 +1,9 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
 import {Files, getFiles} from './CodeBlock';
+import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
-import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
+import {renderHTMLfromMarkdown, TComponent, TInterface, TProperty, Type} from './types';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
@@ -73,7 +74,7 @@ export interface VisualExampleProps {
   /** The component to render. */
   component: any,
   /** The TS docs for this component. */
-  docs: TComponent,
+  docs: TComponent | TInterface,
   links: any,
   /** The props to display as controls. */
   props: string[],
@@ -88,7 +89,8 @@ export interface VisualExampleProps {
   type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
-  align?: 'center' | 'start' | 'end'
+  align?: 'center' | 'start' | 'end',
+  propsObject?: string
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -102,8 +104,8 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type}: VisualExampleProps) {
-  let componentProps = docs.props;
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type, propsObject}: VisualExampleProps) {
+  let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
   }
@@ -130,7 +132,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     if (typeof defaultValue === 'string') {
       defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
       try {
-        defaultValue = JSON.parse(defaultValue);
+        defaultValue = json5.parse(defaultValue);
       } catch {
         // ignore
       }
@@ -157,12 +159,12 @@ export function VisualExample({component, docs, links, importSource, props, init
       code={code}
       files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={type === 's2' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
+      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
   );
 
   // Render the corresponding client component to make the controls interactive.
   return (
-    <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
+    <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} />
         <div className={controlsStyle}>

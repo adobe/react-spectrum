@@ -1,0 +1,40 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ButtonGroup
+
+<PageDescription>{docs.exports.ButtonGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.ButtonGroup} links={docs.links} props={['orientation', 'align', 'size', 'isDisabled']} expanded type="s2"
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+
+<ButtonGroup/* PROPS */>
+  <Button variant="primary">Rate Now</Button>
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+</ButtonGroup>
+```
+
+## Content
+
+ButtonGroup expects Buttons as children and handles overflow automatically. When horizontal space is limited, the ButtonGroup switches to a vertical layout. ButtonGroup should be used when there are two or more related Buttons in a group.
+
+```tsx render expanded
+"use client";
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+
+<ButtonGroup>
+  <Button variant="primary">Rate Now</Button>
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+</ButtonGroup>
+```
+
+To see the orientation switch in the example above, resize the width of your window.
+
+## Props
+
+<PropTable component={docs.exports.ButtonGroup} links={docs.links} />

@@ -1,0 +1,238 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Breadcrumbs
+
+<PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
+
+```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} expanded type="s2"
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+
+<Breadcrumbs/* PROPS */>
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/products">Products</Breadcrumb>
+  <Breadcrumb>Current Page</Breadcrumb>
+</Breadcrumbs>
+```
+
+## Content
+
+Breadcrumbs show hierarchy and navigational context for a user's location within an application. They follow the Collection Components API, accepting both static and dynamic collections.
+
+### Basic Usage
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+
+<Breadcrumbs>
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/documents">Documents</Breadcrumb>
+  <Breadcrumb href="/documents/projects">Projects</Breadcrumb>
+  <Breadcrumb>Current Folder</Breadcrumb>
+</Breadcrumbs>
+```
+
+### Dynamic Collections
+
+Use dynamic collections when breadcrumb items come from data sources.
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function DynamicExample() {
+  const paths = [
+    {id: 'home', name: 'Home', href: '/'},
+    {id: 'library', name: 'Library', href: '/library'},
+    {id: 'documents', name: 'Documents', href: '/library/documents'},
+    {id: 'current', name: 'Annual Reports'}
+  ];
+
+  const [selectedId, setSelectedId] = useState(null);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+      <Breadcrumbs 
+        items={paths}
+        onAction={setSelectedId}>
+        {item => (
+          <Breadcrumb href={item.href}>
+            {item.name}
+          </Breadcrumb>
+        )}
+      </Breadcrumbs>
+      {selectedId && (
+        <p style={{fontSize: '14px', color: 'var(--spectrum-neutral-content-color-emphasized)'}}>
+          Navigated to: <strong>{paths.find(p => p.id === selectedId)?.name}</strong>
+        </p>
+      )}
+    </div>
+  );
+}
+
+<DynamicExample />
+```
+
+## Overflow Behavior
+
+Breadcrumbs automatically collapses items into a menu when space is limited. It shows a maximum of 4 visible items including the root and menu button.
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+
+function OverflowExample() {
+  const longPaths = [
+    'Documents',
+    'My Shared Folder',
+    'Projects and Workflows',
+    'Annual Reports 2024',
+    'Marketing Materials',
+    'Q3 Campaign Assets',
+    'Final Deliverables'
+  ];
+
+  return (
+    <div style={{width: '400px', padding: '16px', border: '1px solid var(--spectrum-gray-300)', borderRadius: '8px', resize: 'horizontal', overflow: 'hidden'}}>
+      <p style={{margin: '0 0 16px 0', fontSize: '14px', color: 'var(--spectrum-neutral-content-color-emphasized)'}}>
+        Resize this container to see overflow behavior:
+      </p>
+      <Breadcrumbs>
+        {longPaths.map((path, index) => (
+          <Breadcrumb key={index} href={index < longPaths.length - 1 ? `/${path.toLowerCase().replace(/\s+/g, '-')}` : undefined}>
+            {path}
+          </Breadcrumb>
+        ))}
+      </Breadcrumbs>
+    </div>
+  );
+}
+
+<OverflowExample />
+```
+
+## Links vs Actions
+
+Breadcrumb items can either be links (with `href`) or trigger actions (with `onAction`).
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+  <div>
+    <h4 style={{margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold'}}>With Links</h4>
+    <Breadcrumbs>
+      <Breadcrumb href="/" target="_blank">Home</Breadcrumb>
+      <Breadcrumb href="/products" target="_blank">Products</Breadcrumb>
+      <Breadcrumb href="/products/software" target="_blank">Software</Breadcrumb>
+      <Breadcrumb>Current Page</Breadcrumb>
+    </Breadcrumbs>
+  </div>
+
+  <div>
+    <h4 style={{margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold'}}>With Actions</h4>
+    <Breadcrumbs onAction={(key) => alert(`Navigated to: ${key}`)}>
+      <Breadcrumb key="home">Home</Breadcrumb>
+      <Breadcrumb key="products">Products</Breadcrumb>
+      <Breadcrumb key="software">Software</Breadcrumb>
+      <Breadcrumb>Current Page</Breadcrumb>
+    </Breadcrumbs>
+  </div>
+</div>
+```
+
+## Events
+
+Handle navigation events with the `onAction` callback.
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function EventsExample() {
+  const [lastAction, setLastAction] = useState(null);
+  const [navigationHistory, setNavigationHistory] = useState([]);
+
+  const handleAction = (key) => {
+    setLastAction(key);
+    setNavigationHistory(prev => [...prev, key].slice(-5)); // Keep last 5
+  };
+
+  const folders = [
+    {id: 'home', name: 'Home'},
+    {id: 'projects', name: 'Projects'},
+    {id: 'work', name: 'Work Files'},
+    {id: 'documents', name: 'Documents'}
+  ];
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+      <Breadcrumbs onAction={handleAction}>
+        {folders.map(folder => (
+          <Breadcrumb key={folder.id}>
+            {folder.name}
+          </Breadcrumb>
+        ))}
+        <Breadcrumb>Current Location</Breadcrumb>
+      </Breadcrumbs>
+      
+      <div style={{fontSize: '14px', color: 'var(--spectrum-neutral-content-color-emphasized)'}}>
+        <div>Last action: <strong>{lastAction || 'None'}</strong></div>
+        <div>Navigation history: <strong>{navigationHistory.join(' → ') || 'None'}</strong></div>
+      </div>
+    </div>
+  );
+}
+
+<EventsExample />
+```
+
+## Disabled State
+
+Breadcrumbs can be disabled to prevent navigation while maintaining visual context.
+
+```tsx render expanded
+"use client";
+import {Breadcrumbs, Breadcrumb, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function DisabledExample() {
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+      <ActionButton onClick={() => setIsDisabled(!isDisabled)}>
+        {isDisabled ? 'Enable' : 'Disable'} Breadcrumbs
+      </ActionButton>
+      
+      <Breadcrumbs 
+        isDisabled={isDisabled}
+        onAction={(key) => alert(`Navigated to: ${key}`)}>
+        <Breadcrumb key="home">Home</Breadcrumb>
+        <Breadcrumb key="library">Library</Breadcrumb>
+        <Breadcrumb key="documents">Documents</Breadcrumb>
+        <Breadcrumb>Current File</Breadcrumb>
+      </Breadcrumbs>
+    </div>
+  );
+}
+
+<DisabledExample />
+```
+
+## Props
+
+### Breadcrumbs
+
+<PropTable component={docs.exports.Breadcrumbs} links={docs.links} />
+
+### Breadcrumb
+
+<PropTable component={docs.exports.Breadcrumb} links={docs.links} />

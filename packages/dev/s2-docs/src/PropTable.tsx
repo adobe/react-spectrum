@@ -19,7 +19,7 @@ const GROUPS = {
     'label', 'labelPosition', 'labelAlign', 'contextualHelp'
   ],
   Validation: [
-    'minValue', 'maxValue', 'step', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'necessityIndicator', 'description', 'errorMessage'
+    'minValue', 'maxValue', 'step', 'minLength', 'maxLength', 'pattern', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'validationErrors', 'necessityIndicator', 'description', 'errorMessage'
   ],
   Overlay: [
     'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'menuWidth'

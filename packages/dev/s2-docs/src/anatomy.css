@@ -14,3 +14,16 @@
   --anatomy-radius: 16px;
   --anatomy-font: adobe-clean-spectrum-vf;
 }
+
+#api + svg {
+  display: block;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  margin-bottom: 4px !important;
+}
+
+#api + svg + pre {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+}

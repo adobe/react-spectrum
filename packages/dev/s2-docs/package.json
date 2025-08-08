@@ -20,7 +20,9 @@
         ]
       },
       "includeNodeModules": {
-        "tree-sitter-highlight": false
+        "tree-sitter-highlight": false,
+        "json5": false,
+        "globals-docs": false
       }
     }
   },
@@ -37,6 +39,7 @@
     "fast-glob": "^3.3.3",
     "globals-docs": "^2.4.1",
     "gray-matter": "^4.0.3",
+    "json5": "^2.2.3",
     "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",
     "react": "^19",

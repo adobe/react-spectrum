@@ -1,0 +1,74 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {IllustratedMessage, Heading, Content, Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# IllustratedMessage
+
+<PageDescription>{docs.exports.IllustratedMessage.description}</PageDescription>
+
+```tsx render docs={docs.exports.IllustratedMessage} links={docs.links} props={['size', 'orientation']} initialProps={{}} expanded type="s2"
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<IllustratedMessage/* PROPS */>
+  {/* TODO */}
+</IllustratedMessage>
+```
+
+## Example
+
+```tsx render expanded
+"use client";
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<IllustratedMessage>
+  <Image />
+  <Heading>No results</Heading>
+  <Content>Try another search</Content>
+</IllustratedMessage>
+```
+
+## Content
+
+An IllustratedMessage consists of three areas: an illustration, a title, and a body.
+Each of these sections can be populated by providing the following components to your IllustratedMessage as children:
+`svg`, Heading (title), and Content (body).
+
+```tsx render expanded
+"use client";
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<IllustratedMessage>
+  <Image />
+  <Heading>Drag and Drop your file</Heading>
+  <Content>Select a File from your computer<br /> or Search Adobe Stock</Content>
+</IllustratedMessage>
+```
+
+### With actions
+
+IllustratedMessages can include action buttons to help users resolve the situation.
+
+```tsx render expanded
+"use client";
+import {IllustratedMessage, Heading, Content, Button, ButtonGroup} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<IllustratedMessage>
+  <Image />
+  <Heading>No matching results</Heading>
+  <Content>Try another search or browse our categories.</Content>
+  <ButtonGroup>
+    <Button variant="primary">Browse categories</Button>
+    <Button variant="secondary">Clear search</Button>
+  </ButtonGroup>
+</IllustratedMessage>
+```
+
+## Props
+
+<PropTable component={docs.exports.IllustratedMessage} links={docs.links} />

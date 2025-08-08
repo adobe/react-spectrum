@@ -1,0 +1,118 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ActionButtonGroup, ActionButton, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# ActionButtonGroup
+
+<PageDescription>{docs.exports.ActionButtonGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.ActionButtonGroup} links={docs.links} props={['size', 'density', 'isQuiet', 'isJustified', 'staticColor', 'orientation', 'isDisabled']} expanded type="s2"
+"use client";
+import {ActionButtonGroup, ActionButton, Text} from '@react-spectrum/s2';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<ActionButtonGroup/* PROPS */>
+  <ActionButton>
+    <Cut />
+    <Text>Cut</Text>
+  </ActionButton>
+  <ActionButton>
+    <Copy />
+    <Text>Copy</Text>
+  </ActionButton>
+  <ActionButton>
+    <Paste />
+    <Text>Paste</Text>
+  </ActionButton>
+</ActionButtonGroup>
+```
+
+## Content
+
+ActionButtonGroups contain a collection of related ActionButtons. They provide consistent spacing and alignment for groups of actions that are commonly used together.
+
+### Basic example
+
+```tsx render expanded
+"use client";
+import {ActionButtonGroup, ActionButton, Text} from '@react-spectrum/s2';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<ActionButtonGroup>
+  <ActionButton>
+    <Cut />
+    <Text>Cut</Text>
+  </ActionButton>
+  <ActionButton>
+    <Copy />
+    <Text>Copy</Text>
+  </ActionButton>
+  <ActionButton>
+    <Paste />
+    <Text>Paste</Text>
+  </ActionButton>
+</ActionButtonGroup>
+```
+
+### Icon only
+
+```tsx render expanded
+"use client";
+import {ActionButtonGroup, ActionButton} from '@react-spectrum/s2';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<ActionButtonGroup>
+  <ActionButton aria-label="Cut">
+    <Cut />
+  </ActionButton>
+  <ActionButton aria-label="Copy">
+    <Copy />
+  </ActionButton>
+  <ActionButton aria-label="Paste">
+    <Paste />
+  </ActionButton>
+</ActionButtonGroup>
+```
+
+### Accessibility
+
+When using icon-only action buttons, ensure that each button has a descriptive `aria-label` for screen reader users.
+
+## Events
+
+Action buttons within the group handle their own individual press events.
+
+```tsx render expanded
+"use client";
+import {ActionButtonGroup, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [lastAction, setLastAction] = useState('');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+      <ActionButtonGroup>
+        <ActionButton onPress={() => setLastAction('Cut pressed')}>Cut</ActionButton>
+        <ActionButton onPress={() => setLastAction('Copy pressed')}>Copy</ActionButton>
+        <ActionButton onPress={() => setLastAction('Paste pressed')}>Paste</ActionButton>
+      </ActionButtonGroup>
+      <div>{lastAction}</div>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## Props
+
+<PropTable component={docs.exports.ActionButtonGroup} links={docs.links} />

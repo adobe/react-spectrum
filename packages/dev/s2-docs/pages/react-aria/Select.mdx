@@ -11,7 +11,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 <PageDescription>{docs.exports.Select.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css"]}
   "use client";
   import {Select, SelectItem} from 'vanilla-starter/Select';
 
@@ -40,40 +40,6 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
   ```
 
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy />
-
-A select consists of a label, a [Button](Button.html) which displays a selected value, and a [ListBox](ListBox.html) displayed in a [Popover](Popover.html). Users can press the button to open the popover and select a value.
-
-`Select` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-
-```tsx
-import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
-
-<Select>
-  <Label />
-  <Button>
-    <SelectValue />
-  </Button>
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <ListBox>
-      <ListBoxItem>
-        <Text slot="label" />
-        <Text slot="description" />
-      </ListBoxItem>
-      <ListBoxSection>
-        <Header />
-        <ListBoxItem />
-      </ListBoxSection>
-    </ListBox>
-  </Popover>
-</Select>
-```
 
 ## Content
 
@@ -229,6 +195,22 @@ import {Form} from 'react-aria-components';
 
 ## API
 
+<Anatomy />
+
+```tsx links={{Select: '#select', Button: 'Button.html', SelectValue: '#selectvalue', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+<Select>
+  <Label />
+  <Button>
+    <SelectValue />
+  </Button>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</Select>
+```
+
 ### Select
 
 <PropTable component={docs.exports.Select} links={docs.links} />
@@ -237,8 +219,6 @@ import {Form} from 'react-aria-components';
 
 ### SelectValue
 
-<PropTable component={docs.exports.SelectValue} links={docs.links} />
+<PropTable component={docs.exports.SelectValue} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-SelectValue" properties={docs.exports.SelectValueRenderProps.properties} />
-
-

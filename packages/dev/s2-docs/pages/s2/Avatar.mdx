@@ -1,0 +1,32 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Avatar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# Avatar
+
+<PageDescription>{docs.exports.Avatar.description}</PageDescription>
+
+<VisualExample
+  component={Avatar}
+  docs={docs.exports.Avatar}
+  props={['isOverBackground']}
+  initialProps={{src: 'https://i.imgur.com/xIe7Wlb.png', alt: 'Avatar'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+### Accessibility
+
+By default, avatars are decorative and have an empty `alt` attribute. Standalone avatars with no surrounding context must have a custom `alt` prop defined for accessibility.
+
+```tsx render expanded
+"use client";
+import {Avatar} from '@react-spectrum/s2';
+
+<Avatar src="https://i.imgur.com/xIe7Wlb.png" alt="John Smith's avatar" />
+```
+
+## Props
+
+<PropTable component={docs.exports.Avatar} links={docs.links} />

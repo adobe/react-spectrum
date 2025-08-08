@@ -12,7 +12,7 @@
     </g>
   </g>
   <text id="Button" transform="translate(223 26)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)" font-style="italic" letter-spacing="0.003em"><tspan x="0" y="0">Button</tspan></text>
-  <text id="Landscape_content" data-name="Landscape content" transform="translate(75.397 49.67)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)" font-weight="300"><tspan x="0" y="0">Landscape content</tspan></text>
+  <text id="Landscape_content" data-name="Landscape content" transform="translate(75.397 49.67)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)" font-weight="400"><tspan x="0" y="0">Landscape content</tspan></text>
   <text id="Panel" transform="translate(223 49)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)" font-style="italic" letter-spacing="0.003em"><tspan x="0" y="0">Panel</tspan></text>
   <g id="Group_3" data-name="Group 3" transform="translate(189.405 35.99)">
     <rect id="rectangle-1-2" data-name="rectangle-1" width="24" height="1" transform="translate(5.595 9.01)" fill="var(--anatomy-gray-500)"/>

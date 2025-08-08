@@ -1,0 +1,219 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {SearchField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+# SearchField
+
+<PageDescription>{docs.exports.SearchField.description}</PageDescription>
+
+<VisualExample
+  component={SearchField}
+  docs={docs.exports.SearchField}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isDisabled', 'isReadOnly', 'isRequired']}
+  initialProps={{
+    label: 'Search'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [searchValue, setSearchValue] = useState('react');
+  
+  return (
+    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+      <SearchField
+        defaultValue="react"
+        label="Search (uncontrolled)" />
+      <SearchField
+        value={searchValue}
+        onChange={setSearchValue}
+        label="Search (controlled)" />
+    </div>
+  );
+}
+```
+
+## Events
+
+SearchField supports several event handlers for different user interactions:
+- `onChange` - triggered whenever the value is edited by the user
+- `onSubmit` - triggered when the user presses Enter or submits the search
+- `onClear` - triggered when the user clears the search field
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [currentText, setCurrentText] = useState('');
+  let [submittedText, setSubmittedText] = useState('');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <SearchField
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Search products"
+        value={currentText} />
+      <div>Current text: {currentText}</div>
+      <div>Last submitted: {submittedText}</div>
+    </div>
+  );
+}
+```
+
+## Submit behavior
+
+SearchField automatically handles submit behavior when users press Enter. This is useful for triggering search operations or filtering content.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [submittedText, setSubmittedText] = useState('');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <SearchField
+        label="Product search"
+        onSubmit={setSubmittedText}
+        placeholder="Type and press Enter..." />
+      {submittedText && <div>Searching for: "{submittedText}"</div>}
+    </div>
+  );
+}
+```
+
+## Clear button
+
+SearchField includes an automatic clear button that appears when there's text in the field. This provides an easy way for users to reset their search.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState('initial search');
+  let [clearCount, setClearCount] = useState(0);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <SearchField
+        label="Search with clear tracking"
+        value={value}
+        onChange={setValue}
+        onClear={() => {
+          setValue('');
+          setClearCount(count => count + 1);
+        }} />
+      <div>Clear button clicked: {clearCount} times</div>
+    </div>
+  );
+}
+```
+
+## Validation
+
+SearchField supports HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `minLength`, and `pattern`, as well as custom validation functions and server-side validation.
+
+```tsx render hideImports
+"use client";
+import {SearchField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
+
+<Form validationBehavior="native" style={{maxWidth: 300}}>
+  <SearchField 
+    label="Search" 
+    name="search" 
+    isRequired 
+    minLength={3}
+    placeholder="At least 3 characters..." />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Help text
+
+Both a description and an error message can be supplied to a SearchField. The description is always visible unless an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+
+<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+  <SearchField 
+    label="Search" 
+    defaultValue="react" 
+    description="Search our documentation and examples." />
+  <SearchField 
+    label="Search" 
+    isInvalid
+    errorMessage="Search term must be at least 3 characters." />
+</div>
+```
+
+## Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a SearchField.
+
+```tsx render hideImports
+"use client";
+import {SearchField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+
+<SearchField
+  label="Search"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Search tips</Heading>
+      <Content>You can use quotes for exact phrases and the minus sign to exclude terms.</Content>
+    </ContextualHelp>
+  } />
+```
+
+## HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+
+<form>
+  <SearchField label="Search" name="query" />
+</form>
+```
+
+## Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the SearchField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+```tsx render hideImports
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+
+<SearchField
+  aria-label="Search products"
+  placeholder="Search products..." />
+```
+
+## Props
+
+<PropTable component={docs.exports.SearchField} links={docs.links} />

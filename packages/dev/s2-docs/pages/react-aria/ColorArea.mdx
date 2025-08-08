@@ -19,7 +19,7 @@ import Anatomy from '@react-aria/color/docs/ColorAreaAnatomy.svg';
     props={['colorSpace', 'xChannel', 'yChannel', 'isDisabled']}
     initialProps={{channel: 'hue', defaultValue: 'hsl(0, 100%, 50%)'}}
     type="vanilla"
-    files={["starters/docs/src/ColorArea.tsx", "starters/docs/src/ColorArea.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/ColorArea.tsx", "starters/docs/src/ColorArea.css"]} />
   <VisualExample
     component={TailwindColorArea}
     docs={docs.exports.ColorArea}
@@ -29,22 +29,6 @@ import Anatomy from '@react-aria/color/docs/ColorAreaAnatomy.svg';
     type="tailwind"
     files={["starters/tailwind/src/ColorArea.tsx", "starters/tailwind/src/ColorThumb.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy
-  role="img"
-  aria-label="Color area anatomy diagram: Shows a color area component with labels pointing to its parts, including the area, and thumb elements." />
-
-A color area consists of a two-dimensional background area representing a range of colors, and a `<ColorThumb>` that the user can drag to change the selected value.
-
-```tsx
-import {ColorArea, ColorThumb} from 'react-aria-components';
-
-<ColorArea>
-  <ColorThumb />
-</ColorArea>
-```
 
 ## Value
 
@@ -82,6 +66,16 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy
+  role="img"
+  aria-label="Color area anatomy diagram: Shows a color area component with labels pointing to its parts, including the area, and thumb elements." />
+
+```tsx links={{ColorArea: '#colorarea', ColorThumb: '#colorthumb'}}
+<ColorArea>
+  <ColorThumb />
+</ColorArea>
+```
 
 ### ColorArea
 

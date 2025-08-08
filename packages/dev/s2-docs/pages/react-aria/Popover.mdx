@@ -12,7 +12,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <PageDescription>{docs.exports.Popover.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}  type="vanilla" files={["starters/docs/src/Popover.tsx", "starters/docs/src/Popover.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}  type="vanilla" files={["starters/docs/src/Popover.tsx", "starters/docs/src/Popover.css"]}
   "use client";
   import {DialogTrigger} from 'react-aria-components';
   import {Popover} from 'vanilla-starter/Popover';
@@ -26,13 +26,13 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
         <Button aria-label="Settings">
           <Settings2 size={20} />
         </Button>
-        {/*- begin highlight -*/}
+        {/*- begin focus -*/}
         <Popover {...props}/* PROPS */>
           <Switch defaultSelected>Wi-Fi</Switch>
           <Switch defaultSelected>Bluetooth</Switch>
           <Switch>Mute</Switch>
         </Popover>
-        {/*- end highlight -*/}
+        {/*- end focus -*/}
       </DialogTrigger>
     );
   }
@@ -52,35 +52,18 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
         <Button aria-label="Settings" variant="icon">
           <Settings2 size={20} />
         </Button>
-        {/*- begin highlight -*/}
+        {/*- begin focus -*/}
         <Popover/* PROPS */ className="p-4" {...props}>
           <Switch defaultSelected>Wi-Fi</Switch>
           <Switch defaultSelected>Bluetooth</Switch>
           <Switch>Mute</Switch>
         </Popover>
-        {/*- end highlight -*/}
+        {/*- end focus -*/}
       </DialogTrigger>
     );
   }
   ```
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy />
-
-A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger.
-
-```tsx
-import {DialogTrigger, Popover, Button, OverlayArrow} from 'react-aria-components';
-
-<DialogTrigger>
-  <Button />
-  <Popover>
-    <OverlayArrow />
-  </Popover>
-</DialogTrigger>
-```
 
 ## Custom trigger
 
@@ -147,6 +130,17 @@ function Example() {
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover', OverlayArrow: '#overlayarrow'}}
+<DialogTrigger>
+  <Button />
+  <Popover>
+    <OverlayArrow />
+  </Popover>
+</DialogTrigger>
+```
 
 ### DialogTrigger
 
