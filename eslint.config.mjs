@@ -447,29 +447,6 @@ export default [{
     },
 }, {
     files: [
-        "packages/**/*.ts",
-        "packages/**/*.tsx"
-    ],
-
-    rules: {
-        "@typescript-eslint/explicit-module-boundary-types": ERROR,
-    },
-}, {
-    files: [
-        "**/dev/**",
-        "**/test/**",
-        "**/stories/**",
-        "**/docs/**",
-        "**/chromatic/**",
-        "**/chromatic-fc/**",
-        "**/__tests__/**"
-    ],
-
-    rules: {
-        "@typescript-eslint/explicit-module-boundary-types": OFF,
-    },
-}, {
-    files: [
         "packages/@react-aria/focus/src/**/*.ts",
         "packages/@react-aria/focus/src/**/*.tsx",
     ],
