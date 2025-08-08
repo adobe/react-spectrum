@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
@@ -144,9 +144,9 @@ export const AutocompleteExample: AutocompleteStory = {
 export const AutocompleteSearchfield: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper defaultInputValue="Ba">
+      <AutocompleteWrapper >
         <div>
-          <SearchField autoFocus data-testid="autocomplete-example">
+          <SearchField defaultValue="Ba" autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -402,9 +402,9 @@ const AsyncExample = (args: any): React.ReactElement => {
   }
 
   return (
-    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
+    <Autocomplete>
       <div>
-        <SearchField autoFocus>
+        <SearchField value={list.filterText} onChange={list.setFilterText} autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -479,9 +479,9 @@ export const AutocompleteWithListbox: AutocompleteStory = {
             height: 250
           }}>
           {() => (
-            <AutocompleteWrapper defaultInputValue="Ba">
+            <AutocompleteWrapper >
               <div>
-                <SearchField autoFocus>
+                <SearchField defaultValue="Ba" autoFocus>
                   <Label style={{display: 'block'}}>Test</Label>
                   <Input />
                   <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -1122,6 +1122,67 @@ export const AutocompletePreserveFirstSectionStory: AutocompleteStory = {
   parameters: {
     description: {
       data: 'It should never filter out Open View or Appearance'
+    }
+  }
+};
+
+
+let names = [
+  {id: 1, name: 'David'},
+  {id: 2, name: 'Sam'},
+  {id: 3, name: 'Julia'}
+];
+
+const UserCustomFiltering = (args): React.ReactElement => {
+  let [filterText, setFilterText] = useState('');
+  let [value, setValue] = useState('');
+
+  let onChange = (value: string) => {
+    setValue(value);
+    let index = value.lastIndexOf('@');
+    if (index === -1) {
+      setFilterText('');
+      return;
+    }
+
+    let after = value.slice(index + 1);
+    setFilterText(after);
+  };
+
+  let onAction = (key) => {
+    let index = value.lastIndexOf('@');
+    let name = names.find(person => person.id === key)!.name;
+    setValue(value.slice(0, index).concat(name));
+    setFilterText('');
+  };
+
+  return (
+    <AutocompleteWrapper filterText={filterText}>
+      <div>
+        <TextField value={value} onChange={onChange} autoFocus>
+          <Label style={{display: 'block'}}>Test</Label>
+          <TextArea />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <ListBox {...args} className={styles.menu} items={names} aria-label="test listbox with sections" onAction={onAction} >
+          {(item: any) => (
+            <MyListBoxItem id={item.id}>
+              {item.name}
+            </MyListBoxItem>
+          )}
+
+        </ListBox>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteUserCustomFiltering: AutocompleteStory = {
+  render: (args) => <UserCustomFiltering {...args} />,
+  name: 'Autocomplete, user custom filterText (mentions)',
+  parameters: {
+    description: {
+      data: 'It should only filter if you type @, using the remainder of the string after the @ symbol as the filter text'
     }
   }
 };

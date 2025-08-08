@@ -18,7 +18,7 @@ import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, m
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -40,7 +40,14 @@ export interface AriaAutocompleteProps<T> extends AutocompleteProps {
    * Whether or not to focus the first item in the collection after a filter is performed.
    * @default false
    */
-  disableAutoFocusFirst?: boolean
+  disableAutoFocusFirst?: boolean,
+
+  // TODO: thoughts?
+  /**
+   * If provided, the autocomplete will use this string when filtering the collection rather than the input ref's text. Useful for
+   * custom filtering situations like rich text editors.
+   */
+  filterText?: string
 }
 
 export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'> {
@@ -72,7 +79,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     inputRef,
     collectionRef,
     filter,
-    disableAutoFocusFirst = false
+    disableAutoFocusFirst = false,
+    filterText
   } = props;
 
   let collectionId = useSlotId();
@@ -171,7 +179,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     lastInputType.current = inputType;
   });
 
-  let onChange = (value: string) => {
+  let [updated, setUpdated] = useState(false);
+  let onChange = () => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when modifying the text via
     // copy paste/backspacing/undo/redo for screen reader announcements
     if (lastInputType.current === 'insertText' && !disableAutoFocusFirst) {
@@ -185,8 +194,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         dispatchVirtualFocus(inputRef.current!, null);
       }
     }
-
-    state.setInputValue(value);
+    // TODO: a problem with this is that we can't tell if a programatic change to the input field has happened aka Escape in searchfield
+    // Trigger a state update so that our filter function is updated, reflecting that the user has updated the field
+    setUpdated((last) => !last);
   };
 
   let keyDownTarget = useRef<Element | null>(null);
@@ -209,6 +219,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
         if (e.isDefaultPrevented()) {
+          setUpdated((last) => !last);
           return;
         }
         break;
@@ -254,15 +265,17 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
 
     let shouldPerformDefaultAction = true;
-    if (focusedNodeId == null) {
-      shouldPerformDefaultAction = collectionRef.current?.dispatchEvent(
-        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      ) || false;
-    } else {
-      let item = document.getElementById(focusedNodeId);
-      shouldPerformDefaultAction = item?.dispatchEvent(
-        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      ) || false;
+    if (collectionRef.current !== null) {
+      if (focusedNodeId == null) {
+        shouldPerformDefaultAction = collectionRef.current?.dispatchEvent(
+          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+        ) || false;
+      } else {
+        let item = document.getElementById(focusedNodeId);
+        shouldPerformDefaultAction = item?.dispatchEvent(
+          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+        ) || false;
+      }
     }
 
     if (shouldPerformDefaultAction) {
@@ -282,6 +295,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
           }
           break;
       }
+    } else {
+      // TODO: check if we can do this, want to stop textArea from using its default Enter behavior so items are properly triggered
+      e.preventDefault();
     }
   };
 
@@ -320,12 +336,19 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
   let filterFn = useCallback((nodeTextValue: string, node: Node<T>) => {
     if (filter) {
-      // TODO: perhaps try to use inputRef value instead of state here? I think I tried that before and it was too late?
-      return filter(nodeTextValue, state.inputValue, node);
+      let textToFilterBy;
+      if (filterText != null) {
+        textToFilterBy = filterText;
+      } else {
+        textToFilterBy = inputRef.current?.value || '';
+      }
+
+      return filter(nodeTextValue, textToFilterBy, node);
     }
 
     return true;
-  }, [state.inputValue, filter]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updated, filterText, filter, inputRef]);
 
   // Be sure to clear/restore the virtual + collection focus when blurring/refocusing the field so we only show the
   // focus ring on the virtually focused collection when are actually interacting with the Autocomplete
@@ -358,7 +381,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   // Only apply the autocomplete specific behaviors if the collection component wrapped by it is actually
   // being filtered/allows filtering by the Autocomplete.
   let textFieldProps = {
-    value: state.inputValue,
     onChange
   } as AriaTextFieldProps<HTMLInputElement>;
 
