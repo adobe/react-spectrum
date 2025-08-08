@@ -21,6 +21,7 @@ import userEvent from '@testing-library/user-event';
 describe('Combobox', () => {
   let user;
   let testUtilUser = new User();
+  let warnSpy;
   function DynamicCombobox(props) {
     let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
@@ -40,6 +41,7 @@ describe('Combobox', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     user = userEvent.setup({delay: null, pointerMap});
   });
 
@@ -208,5 +210,32 @@ describe('Combobox', () => {
     expect(tree.getAllByText('Title here')[1]).toBeVisible();
     expect(tree.getAllByText('Contents')[1]).toBeVisible();
     warn.mockRestore();
+  });
+
+  it('should warn if the Combobox renders/blurs without a placeholder', async () => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let items = [{name: 'Chocolate'}, {name: 'Mint'}, {name: 'Chocolate Chip'}];
+    let {rerender} = render(
+      <DynamicCombobox items={items} />
+    );
+
+    expect(warnSpy).toHaveBeenCalledWith('Your ComboBox is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    warnSpy.mockClear();
+
+    await user.tab();
+    await user.tab();
+    expect(warnSpy).toHaveBeenCalledWith('Your ComboBox is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    warnSpy.mockClear();
+
+    rerender(<DynamicCombobox items={items} placeholder="test" />);
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    rerender(<DynamicCombobox items={items} autoFocus />);
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    render(
+      <DynamicCombobox selectedKey="Chocolate" items={items} />
+    );
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 });
