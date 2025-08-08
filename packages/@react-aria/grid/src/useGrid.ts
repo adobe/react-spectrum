@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {useCallback, useMemo} from 'react';
+import {KeyboardEvent, useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';
@@ -64,7 +64,13 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    */
   escapeKeyBehavior?: 'clearSelection' | 'none',
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /**
+   * Whether keyboard navigation to focusable elements within grid list items is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab'
 }
 
 export interface GridAria {
@@ -90,7 +96,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     onRowAction,
     onCellAction,
     escapeKeyBehavior = 'clearSelection',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    keyboardNavigationBehavior = 'arrow'
   } = props;
   let {selectionManager: manager} = state;
 
@@ -123,8 +130,45 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     escapeKeyBehavior
   });
 
+
+  let originalOnKeyDown = collectionProps.onKeyDown;
+  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (keyboardNavigationBehavior === 'tab') {
+      if (e.target === ref.current
+        || (e.target as HTMLElement).getAttribute('role') === 'gridcell'
+        || (e.target as HTMLElement).getAttribute('role') === 'row'
+        || (e.target as HTMLElement).getAttribute('role') === 'presentation' // special case for gridlist thanks to redispatch of keyboard event by gridcell, theoretically no other presentation elements should get focus
+        || (e.target instanceof HTMLInputElement && (e.target as HTMLInputElement).getAttribute('type') === 'checkbox')
+        || e.key === 'Tab') {
+        originalOnKeyDown?.(e);
+      }
+    }
+    if (keyboardNavigationBehavior !== 'tab') {
+      originalOnKeyDown?.(e);
+    }
+  }, [originalOnKeyDown, keyboardNavigationBehavior, ref]);
+  collectionProps.onKeyDown = onKeyDown;
+
+  let originalOnKeyDownCapture = collectionProps.onKeyDownCapture;
+  let onKeyDownCapture = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (keyboardNavigationBehavior === 'tab') {
+      if (e.target === ref.current
+        || (e.target as HTMLElement).getAttribute('role') === 'gridcell'
+        || (e.target as HTMLElement).getAttribute('role') === 'row'
+        || (e.target as HTMLElement).getAttribute('role') === 'presentation' // special case for gridlist thanks to redispatch of keyboard event by gridcell, theoretically no other presentation elements should get focus
+        || (e.target instanceof HTMLInputElement && (e.target as HTMLInputElement).getAttribute('type') === 'checkbox')
+        || e.key === 'Tab') {
+        originalOnKeyDownCapture?.(e);
+      }
+    }
+    if (keyboardNavigationBehavior !== 'tab') {
+      originalOnKeyDownCapture?.(e);
+    }
+  }, [originalOnKeyDownCapture, keyboardNavigationBehavior, ref]);
+  collectionProps.onKeyDownCapture = onKeyDownCapture;
+
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp});
+  gridMap.set(state, {keyboardDelegate: delegate, keyboardNavigationBehavior, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,

@@ -513,7 +513,7 @@ export let GridListWithTextFields: StoryObj<typeof GridList> = {
                 </TextField>
               </>
             )}
-            </GridListItem>
+          </GridListItem>
         )}
       </GridList>
     );

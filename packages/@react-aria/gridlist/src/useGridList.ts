@@ -12,6 +12,7 @@
 
 import {
   AriaLabelingProps,
+  BaseEvent,
   CollectionBase,
   DisabledBehavior,
   DOMAttributes,
@@ -21,16 +22,15 @@ import {
   KeyboardDelegate,
   LayoutDelegate,
   MultipleSelection,
-  RefObject,
-  BaseEvent
+  RefObject
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {KeyboardEvent, useCallback} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
-import {KeyboardEvent, useCallback} from 'react';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether to auto focus the gridlist or an option. */

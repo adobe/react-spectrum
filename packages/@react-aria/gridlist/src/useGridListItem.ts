@@ -256,7 +256,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // Prevent pressing space to select the row.
   let originalOnKeyDown = itemProps.onKeyDown;
   itemProps.onKeyDown = (e) => {
-    if (keyboardNavigationBehavior === 'tab' && e.key === ' ') {
+    if (keyboardNavigationBehavior === 'tab' && e.key === ' ' && e.target !== ref.current) {
       e.stopPropagation();
       return;
     }
@@ -266,7 +266,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // Prevent clicking on a focusable element from selecting the row.
   let originalPointerDown = itemProps.onPointerDown;
   itemProps.onPointerDown = (e) => {
-    if (keyboardNavigationBehavior === 'tab' && isFocusable(e.target as Element)) {
+    if (keyboardNavigationBehavior === 'tab' && isFocusable(e.target as Element) && e.target !== ref.current) {
       e.stopPropagation();
       return;
     }

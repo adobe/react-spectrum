@@ -26,7 +26,8 @@ import {
   TableHeader,
   TableView,
   TableViewProps,
-  Text
+  Text,
+  TextField
 } from '../src';
 import {categorizeArgTypes} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
@@ -928,6 +929,35 @@ export const ColSpan: StoryObj<typeof ColSpanExample> = {
     selectionMode: {
       control: false
     }
+  }
+};
+
+
+export const TableWithTextFields: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
+      <TableHeader columns={manyColumns}>
+        {(column) => (
+          <Column width={200} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={manyRows}>
+        {item => (
+          <Row id={item.id} columns={manyColumns}>
+            {(column) => {
+              if (column.name === 'Column 2') {
+                return <Cell><div style={{display: 'flex'}}><TextField aria-label={`${item[column.id]} 1`} /><TextField aria-label={`${item[column.id]} 2`} /></div></Cell>;
+              }
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  ),
+  args: {
+    ...Example.args,
+    keyboardNavigationBehavior: 'tab'
   }
 };
 
