@@ -11,10 +11,11 @@
  */
 
 import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaLabelingProps, DOMProps, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
+import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
@@ -28,11 +29,32 @@ interface InternalAutocompleteContextValue<T> {
   collectionRef: RefObject<HTMLElement | null>
 }
 
+// TODO: naming
+// IMO I think this could also contain the props that useSelectableCollection takes (minus the selection options?)
+interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean,
+  /** Whether the collection items should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean,
+  /** Whether typeahead is disabled. */
+  disallowTypeAhead?: boolean,
+  collectionRef?: RefObject<HTMLElement | null>
+}
+
+// TODO: may omit value since that is specific to textfields
+// I could see this sending down a input ref
+interface FieldInputContextValue extends
+  DOMProps,
+  FocusEvents,
+  Pick<KeyboardEvents, 'onKeyDown'>,
+  Pick<ValueBase<string>, 'onChange' | 'value'>,
+  Pick<AriaTextFieldProps, 'enterKeyHint' | 'aria-controls' | 'aria-autocomplete' | 'aria-activedescendant' | 'spellCheck' | 'autoCorrect' | 'autoComplete'> {}
+
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
-// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-// TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue<any> | null>(null);
+
+// TODO export from RAC, maybe move up and out of Autocomplete
+export const CollectionContext = createContext<CollectionContextValue<any> | null>(null);
+export const FieldInputContext = createContext<FieldInputContextValue | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -64,11 +86,16 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
         [SearchFieldContext, textFieldProps],
         [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
-          collectionProps,
+        [CollectionContext, {
+          ...collectionProps,
+          filter: filterFn,
           collectionRef: mergedCollectionRef
         }]
+        // [UNSTABLE_InternalAutocompleteContext, {
+        //   filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
+        //   collectionProps,
+        //   collectionRef: mergedCollectionRef
+        // }]
       ]}>
       {props.children}
     </Provider>

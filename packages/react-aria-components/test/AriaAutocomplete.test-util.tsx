@@ -132,7 +132,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           let {getByRole} = renderers.standard!();
           let input = getByRole('searchbox');
           expect(input).toHaveAttribute('aria-controls');
-          expect(input).toHaveAttribute('aria-haspopup', 'listbox');
           expect(input).toHaveAttribute('aria-autocomplete', 'list');
           expect(input).toHaveAttribute('autoCorrect', 'off');
           expect(input).toHaveAttribute('spellCheck', 'false');
@@ -343,7 +342,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           let {getByRole} = renderers.noVirtualFocus!();
           let input = getByRole('searchbox');
           expect(input).toHaveAttribute('aria-controls');
-          expect(input).toHaveAttribute('aria-haspopup', 'listbox');
           expect(input).toHaveAttribute('aria-autocomplete', 'list');
           expect(input).toHaveAttribute('autoCorrect', 'off');
           expect(input).toHaveAttribute('spellCheck', 'false');

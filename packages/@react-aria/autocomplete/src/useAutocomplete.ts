@@ -320,6 +320,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
   let filterFn = useCallback((nodeTextValue: string, node: Node<T>) => {
     if (filter) {
+      // TODO: perhaps try to use inputRef value instead of state here? I think I tried that before and it was too late?
       return filter(nodeTextValue, state.inputValue, node);
     }
 
@@ -366,7 +367,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       ...textFieldProps,
       onKeyDown,
       autoComplete: 'off',
-      'aria-haspopup': collectionId ? 'listbox' : undefined,
       'aria-controls': collectionId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
