@@ -23,8 +23,17 @@ export function usePlaceholderWarning(placeholder: string | undefined, component
   });
 
   useEffect(() => {
-    checkPlaceholder(inputRef.current);
-  }, [checkPlaceholder, inputRef]);
+    let timer;
+    if (componentType === 'ComboBox') {
+      timer = setTimeout(() => {
+        checkPlaceholder(inputRef.current);
+      }, 50);
+    } else {
+      checkPlaceholder(inputRef.current);
+    }
+
+    return () => clearTimeout(timer);
+  }, [checkPlaceholder, inputRef, componentType]);
 
   useEvent(inputRef, 'blur', (e) => checkPlaceholder(e.target as HTMLInputElement));
 }

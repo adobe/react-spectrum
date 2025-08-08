@@ -36,7 +36,7 @@ const meta: Meta<typeof ComboBox<any>> = {
     placeholder: {control: {type: 'text'}}
   },
   args: {
-    // placeholder: 'Select a value'
+    placeholder: 'Select a value'
   },
   title: 'ComboBox'
 };
@@ -46,7 +46,7 @@ type Story = StoryObj<typeof ComboBox<any>>;
 
 export const Example: Story = {
   render: (args: ComboBoxProps<any>) => (
-    <ComboBox selectedKey="1">
+    <ComboBox {...args}>
       <ComboBoxItem id="1">Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
       <ComboBoxItem>Strawberry</ComboBoxItem>

@@ -218,6 +218,9 @@ describe('Combobox', () => {
     let {rerender} = render(
       <DynamicCombobox items={items} />
     );
+    // Since Combobox takes multiple renders to populate its input value if a selected key is provided
+    // we have a delay for the placeholder warning
+    act(() => {jest.runAllTimers();});
 
     expect(warnSpy).toHaveBeenCalledWith('Your ComboBox is empty and not focused but doesn\'t have a placeholder. Please add one.');
     warnSpy.mockClear();
