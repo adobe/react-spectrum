@@ -10,24 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
 import {AriaLabelingProps, DOMProps, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {InputContext} from './Input';
+import {ContextValue, Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import {mergeProps} from '@react-aria/utils';
-import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, RefObject, useRef} from 'react';
-import {SearchFieldContext} from './SearchField';
-import {TextFieldContext} from './TextField';
 
 export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProps {}
-
-interface InternalAutocompleteContextValue<T> {
-  filter?: (nodeTextValue: string, node: Node<T>) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
-}
 
 // TODO: naming
 // IMO I think this could also contain the props that useSelectableCollection takes (minus the selection options?)
@@ -40,11 +31,13 @@ interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
   collectionRef?: RefObject<HTMLElement | null>
 }
 
-// TODO: may omit value since that is specific to textfields
-// I could see this sending down a input ref
+// TODO: naming, may omit value since that is specific controlled textfields
+// for a case like a rich text editor, the specific value to filter against would need to come from
+// the user. Though I guess they could have a separate "filterText" that they pass to Autocomplete that they would
+// only set when the user types a certain symbol. That value wouldn't actually affect the textarea's value, just controlling filtering
 interface FieldInputContextValue extends
   DOMProps,
-  FocusEvents,
+  FocusEvents<HTMLInputElement>,
   Pick<KeyboardEvents, 'onKeyDown'>,
   Pick<ValueBase<string>, 'onChange' | 'value'>,
   Pick<AriaTextFieldProps, 'enterKeyHint' | 'aria-controls' | 'aria-autocomplete' | 'aria-activedescendant' | 'spellCheck' | 'autoCorrect' | 'autoComplete'> {}
@@ -54,7 +47,8 @@ export const AutocompleteStateContext = createContext<AutocompleteState | null>(
 
 // TODO export from RAC, maybe move up and out of Autocomplete
 export const CollectionContext = createContext<CollectionContextValue<any> | null>(null);
-export const FieldInputContext = createContext<FieldInputContextValue | null>(null);
+// TODO: too restrictive to type this as a HTMLInputElement? Needed for the ref merging that happens in TextField/SearchField
+export const FieldInputContext = createContext<ContextValue<FieldInputContextValue, HTMLInputElement>>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -83,19 +77,15 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
     <Provider
       values={[
         [AutocompleteStateContext, state],
-        [SearchFieldContext, textFieldProps],
-        [TextFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
+        [FieldInputContext, {
+          ...textFieldProps,
+          ref: inputRef
+        }],
         [CollectionContext, {
           ...collectionProps,
           filter: filterFn,
           collectionRef: mergedCollectionRef
         }]
-        // [UNSTABLE_InternalAutocompleteContext, {
-        //   filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
-        //   collectionProps,
-        //   collectionRef: mergedCollectionRef
-        // }]
       ]}>
       {props.children}
     </Provider>
