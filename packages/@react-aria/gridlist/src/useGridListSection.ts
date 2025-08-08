@@ -11,12 +11,9 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import {ReactNode} from 'react';
-import {useId, useLabels} from '@react-aria/utils';
+import {useLabels, useSlotId} from '@react-aria/utils';
 
 export interface AriaGridListSectionProps {
-  /** The heading for the section. */
-  heading?: ReactNode,
   /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string
 }
@@ -26,7 +23,7 @@ export interface GridListSectionAria {
   rowProps: DOMAttributes,
 
   /** Props for the heading element, if any. */
-  headingProps: DOMAttributes,
+  rowHeaderProps: DOMAttributes,
 
   /** Props for the grid's row group element. */
   rowGroupProps: DOMAttributes
@@ -38,8 +35,8 @@ export interface GridListSectionAria {
  * @param props - Props for the section.
  */
 export function useGridListSection(props: AriaGridListSectionProps): GridListSectionAria {
-  let {heading, 'aria-label': ariaLabel} = props;
-  let headingId = useId();
+  let {'aria-label': ariaLabel} = props;
+  let headingId = useSlotId();
   let labelProps = useLabels({
     'aria-label': ariaLabel,
     'aria-labelledby': headingId
@@ -49,10 +46,10 @@ export function useGridListSection(props: AriaGridListSectionProps): GridListSec
     rowProps: {
       role: 'row'
     },
-    headingProps: heading ? {
+    rowHeaderProps: {
       id: headingId,
       role: 'rowheader'
-    } : {},
+    },
     rowGroupProps: {
       role: 'rowgroup',
       ...labelProps
