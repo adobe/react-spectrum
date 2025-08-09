@@ -54,8 +54,8 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     return {
       x: container?.scrollLeft ?? 0,
       y: container?.scrollTop ?? 0,
-      width: container?.offsetWidth ?? 0,
-      height: container?.offsetHeight ?? 0
+      width: container?.clientWidth ?? 0,
+      height: container?.clientHeight ?? 0
     };
   }
 }
