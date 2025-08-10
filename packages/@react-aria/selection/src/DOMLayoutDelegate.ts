@@ -33,9 +33,12 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     let containerRect = container.getBoundingClientRect();
     let itemRect = item.getBoundingClientRect();
 
+    let borderAdjustedX = 2 * itemRect.left - 2 * containerRect.left - container.offsetWidth + container.clientWidth;
+    let borderAdjustedY = 2 * itemRect.top - 2 * containerRect.top - container.offsetHeight + container.clientHeight;
+
     return {
-      x: itemRect.left - containerRect.left + container.scrollLeft,
-      y: itemRect.top - containerRect.top + container.scrollTop,
+      x: borderAdjustedX + container.scrollLeft,
+      y: borderAdjustedY + container.scrollTop,
       width: itemRect.width,
       height: itemRect.height
     };
