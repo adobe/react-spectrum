@@ -33,7 +33,7 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     let rect = item.getBoundingClientRect();
 
     return {
-      x: rect.left - container.offsetLeft - container.clientLeft
+      x: rect.left - container.offsetLeft - container.clientLeft,
       y: rect.top - container.offsetTop - container.clientTop,
       width: rect.width,
       height: rect.height
