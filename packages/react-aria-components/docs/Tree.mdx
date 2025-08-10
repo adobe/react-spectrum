@@ -437,20 +437,20 @@ import type {TreeProps} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
 
 let items = [
-  {id: 1, title: 'Documents', type: 'directory', children: [
-    {id: 2, title: 'Project', type: 'directory', children: [
-      {id: 3, title: 'Weekly Report', type: 'file', children: []},
-      {id: 4, title: 'Budget', type: 'file', children: []}
+  {id: '1', title: 'Documents', type: 'directory', children: [
+    {id: '2', title: 'Project', type: 'directory', children: [
+      {id: '3', title: 'Weekly Report', type: 'file', children: []},
+      {id: '4', title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: 5, title: 'Photos', type: 'directory', children: [
-    {id: 6, title: 'Image 1', type: 'file', children: []},
-    {id: 7, title: 'Image 2', type: 'file', children: []}
+  {id: '5', title: 'Photos', type: 'directory', children: [
+    {id: '6', title: 'Image 1', type: 'file', children: []},
+    {id: '7', title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 
 interface FileType {
-  id: number,
+  id: string,
   title: string,
   type: 'directory' | 'file',
   children: FileType[]
@@ -460,7 +460,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
+      defaultExpandedKeys={['1', '4']}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -506,7 +506,7 @@ A user can click on a different item to change the selection or click on the sam
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} />
 ```
 
 ### Multiple selection
@@ -515,7 +515,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="multiple" defaultSelectedKeys={[2, 4]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1']} />
 ```
 
 ### Disallow empty selection
@@ -525,7 +525,7 @@ In this mode, if a single item is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} disallowEmptySelection />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} disallowEmptySelection />
 ```
 
 
