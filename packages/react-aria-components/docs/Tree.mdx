@@ -414,14 +414,14 @@ Now we can render a Tree using far less code.
 
 ```tsx example
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
-  <MyTreeItem title="Documents">
-    <MyTreeItem title="Project">
-      <MyTreeItem title="Weekly Report" />
+  <MyTreeItem id="documents" title="Documents">
+    <MyTreeItem id="project" title="Project">
+      <MyTreeItem id="report" title="Weekly Report" />
     </MyTreeItem>
   </MyTreeItem>
-  <MyTreeItem title="Photos">
-    <MyTreeItem title="Image 1" />
-    <MyTreeItem title="Image 2" />
+  <MyTreeItem id="photos" title="Photos">
+    <MyTreeItem id="one" title="Image 1" />
+    <MyTreeItem id="two" title="Image 2" />
   </MyTreeItem>
 </Tree>
 ```
@@ -437,20 +437,20 @@ import type {TreeProps} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
 
 let items = [
-  {id: '1', title: 'Documents', type: 'directory', children: [
-    {id: '2', title: 'Project', type: 'directory', children: [
-      {id: '3', title: 'Weekly Report', type: 'file', children: []},
-      {id: '4', title: 'Budget', type: 'file', children: []}
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: '5', title: 'Photos', type: 'directory', children: [
-    {id: '6', title: 'Image 1', type: 'file', children: []},
-    {id: '7', title: 'Image 2', type: 'file', children: []}
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 
 interface FileType {
-  id: string,
+  id: number,
   title: string,
   type: 'directory' | 'file',
   children: FileType[]
