@@ -31,14 +31,11 @@ interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
   collectionRef?: RefObject<HTMLElement | null>
 }
 
-// TODO: naming, may omit value since that is specific controlled textfields
-// for a case like a rich text editor, the specific value to filter against would need to come from
-// the user. Though I guess they could have a separate "filterText" that they pass to Autocomplete that they would
-// only set when the user types a certain symbol. That value wouldn't actually affect the textarea's value, just controlling filtering
-interface FieldInputContextValue extends
+// TODO: naming
+interface FieldInputContextValue<T = HTMLInputElement> extends
   DOMProps,
-  FocusEvents<HTMLInputElement>,
-  Pick<KeyboardEvents, 'onKeyDown'>,
+  FocusEvents<T>,
+  KeyboardEvents,
   Pick<ValueBase<string>, 'onChange' | 'value'>,
   Pick<AriaTextFieldProps, 'enterKeyHint' | 'aria-controls' | 'aria-autocomplete' | 'aria-activedescendant' | 'spellCheck' | 'autoCorrect' | 'autoComplete'> {}
 
@@ -46,8 +43,11 @@ export const AutocompleteContext = createContext<SlottedContextValue<Partial<Aut
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 
 // TODO export from RAC, maybe move up and out of Autocomplete
+// also can't make this use ContextValue (so that we can call useContextProps) like FieldInput for a similar reason. The HTMLElement type for the ref
+// makes useContextProps complain since it doesn't mesh up with HTMLDivElement
 export const CollectionContext = createContext<CollectionContextValue<any> | null>(null);
 // TODO: too restrictive to type this as a HTMLInputElement? Needed for the ref merging that happens in TextField/SearchField
+// Attempted to use FocusableElement but as mentioned above, SearchField and TextField complain since they expect HTMLInputElement for their hooks and stuff
 export const FieldInputContext = createContext<ContextValue<FieldInputContextValue, HTMLInputElement>>(null);
 
 /**
@@ -57,7 +57,7 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;
-  let state = useAutocompleteState();
+  let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {

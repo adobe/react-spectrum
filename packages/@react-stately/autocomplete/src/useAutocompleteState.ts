@@ -11,8 +11,13 @@
  */
 
 import {ReactNode, useState} from 'react';
+import {useControlledState} from '@react-stately/utils';
 
 export interface AutocompleteState {
+  /** The current value of the autocomplete input. */
+  inputValue: string,
+  /** Sets the value of the autocomplete input. */
+  setInputValue(value: string): void,
   /** The id of the current aria-activedescendant of the autocomplete input. */
   focusedNodeId: string | null,
   /** Sets the id of the current aria-activedescendant of the autocomplete input. */
@@ -20,6 +25,12 @@ export interface AutocompleteState {
 }
 
 export interface AutocompleteProps {
+  /** The value of the autocomplete input (controlled). */
+  inputValue?: string,
+  /** The default value of the autocomplete input (uncontrolled). */
+  defaultInputValue?: string,
+  /** Handler that is called when the autocomplete input value changes. */
+  onInputChange?: (value: string) => void,
   /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
   children: ReactNode
 }
@@ -30,9 +41,29 @@ export interface AutocompleteStateOptions extends Omit<AutocompleteProps, 'child
 /**
  * Provides state management for an autocomplete component.
  */
-export function useAutocompleteState(): AutocompleteState {
+export function useAutocompleteState(props: AutocompleteStateOptions): AutocompleteState {
+  let {
+    onInputChange: propsOnInputChange,
+    inputValue: propsInputValue,
+    defaultInputValue: propsDefaultInputValue = ''
+  } = props;
+
+  let onInputChange = (value) => {
+    if (propsOnInputChange) {
+      propsOnInputChange(value);
+    }
+  };
+
   let [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+  let [inputValue, setInputValue] = useControlledState(
+    propsInputValue,
+    propsDefaultInputValue!,
+    onInputChange
+  );
+
   return {
+    inputValue,
+    setInputValue,
     focusedNodeId,
     setFocusedNodeId
   };

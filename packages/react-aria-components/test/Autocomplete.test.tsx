@@ -342,8 +342,8 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
   });
 
   return (
-    <Autocomplete {...autocompleteProps}>
-      <SearchField value={list.filterText} onChange={list.setFilterText} {...inputProps}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
+      <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -998,7 +998,7 @@ AriaAutocompleteTests({
       </AutocompleteWrapper>
     ),
     defaultValue: () => render(
-      <AutocompleteWrapper inputProps={{defaultValue: 'Ba'}}>
+      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticMenu />
       </AutocompleteWrapper>
     ),
@@ -1070,7 +1070,7 @@ AriaAutocompleteTests({
       </AutocompleteWrapper>
     ),
     defaultValue: () => render(
-      <AutocompleteWrapper inputProps={{defaultValue: 'Ba'}}>
+      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticListbox />
       </AutocompleteWrapper>
     )

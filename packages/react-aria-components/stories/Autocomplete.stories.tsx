@@ -144,9 +144,9 @@ export const AutocompleteExample: AutocompleteStory = {
 export const AutocompleteSearchfield: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper >
+      <AutocompleteWrapper defaultValue="Ba">
         <div>
-          <SearchField defaultValue="Ba" autoFocus data-testid="autocomplete-example">
+          <SearchField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -402,9 +402,9 @@ const AsyncExample = (args: any): React.ReactElement => {
   }
 
   return (
-    <Autocomplete>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
       <div>
-        <SearchField value={list.filterText} onChange={list.setFilterText} autoFocus>
+        <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -479,9 +479,9 @@ export const AutocompleteWithListbox: AutocompleteStory = {
             height: 250
           }}>
           {() => (
-            <AutocompleteWrapper >
+            <AutocompleteWrapper defaultInputValue="Ba">
               <div>
-                <SearchField defaultValue="Ba" autoFocus>
+                <SearchField autoFocus>
                   <Label style={{display: 'block'}}>Test</Label>
                   <Input />
                   <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -1134,32 +1134,34 @@ let names = [
 ];
 
 const UserCustomFiltering = (args): React.ReactElement => {
-  let [filterText, setFilterText] = useState('');
   let [value, setValue] = useState('');
 
-  let onChange = (value: string) => {
-    setValue(value);
-    let index = value.lastIndexOf('@');
-    if (index === -1) {
-      setFilterText('');
-      return;
+  let {contains} = useFilter({sensitivity: 'base'});
+
+
+  let filter = (textValue, inputValue) => {
+    let index = inputValue.lastIndexOf('@');
+    let filterText = '';
+    if (index > -1) {
+      filterText = value.slice(index + 1);
     }
 
-    let after = value.slice(index + 1);
-    setFilterText(after);
+    return contains(textValue, filterText);
   };
 
   let onAction = (key) => {
     let index = value.lastIndexOf('@');
+    if (index === -1) {
+      index = value.length;
+    }
     let name = names.find(person => person.id === key)!.name;
     setValue(value.slice(0, index).concat(name));
-    setFilterText('');
   };
 
   return (
-    <AutocompleteWrapper filterText={filterText}>
+    <Autocomplete inputValue={value} onInputChange={setValue} filter={filter}>
       <div>
-        <TextField value={value} onChange={onChange} autoFocus>
+        <TextField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
           <TextArea />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -1173,7 +1175,7 @@ const UserCustomFiltering = (args): React.ReactElement => {
 
         </ListBox>
       </div>
-    </AutocompleteWrapper>
+    </Autocomplete>
   );
 };
 
