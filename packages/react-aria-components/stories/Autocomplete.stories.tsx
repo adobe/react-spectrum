@@ -30,7 +30,8 @@ export default {
   args: {
     onAction: action('onAction'),
     selectionMode: 'multiple',
-    escapeKeyBehavior: 'clearSelection'
+    escapeKeyBehavior: 'clearSelection',
+    disallowVirtualFocus: false
   },
   argTypes: {
     onAction: {
@@ -126,7 +127,7 @@ function AutocompleteWrapper(props) {
 export const AutocompleteExample: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -144,7 +145,7 @@ export const AutocompleteExample: AutocompleteStory = {
 export const AutocompleteSearchfield: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper defaultValue="Ba">
+      <AutocompleteWrapper defaultValue="Ba" disallowVirtualFocus={args.disallowVirtualFocus}>
         <div>
           <SearchField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -304,7 +305,7 @@ export const AutocompleteMenuDynamic: AutocompleteStory = {
     return (
       <>
         <input />
-        <AutocompleteWrapper>
+        <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
           <div>
             <SearchField autoFocus>
               <Label style={{display: 'block'}}>Test</Label>
@@ -326,7 +327,7 @@ export const AutocompleteMenuDynamic: AutocompleteStory = {
 export const AutocompleteOnActionOnMenuItems: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -355,7 +356,7 @@ let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'},
 export const AutocompleteDisabledKeys: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -395,14 +396,14 @@ const AsyncExample = (args: any): React.ReactElement => {
       };
     }
   });
-  let {onSelectionChange, selectionMode, includeLoadState, escapeKeyBehavior} = args;
+  let {onSelectionChange, selectionMode, includeLoadState, escapeKeyBehavior, disallowVirtualFocus} = args;
   let renderEmptyState;
   if (includeLoadState) {
     renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
   }
 
   return (
-    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} disallowVirtualFocus={disallowVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -440,7 +441,7 @@ const CaseSensitiveFilter = (args) => {
   let defaultFilter = (itemText, input) => contains(itemText, input);
 
   return (
-    <Autocomplete filter={defaultFilter}>
+    <Autocomplete filter={defaultFilter} disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -479,7 +480,7 @@ export const AutocompleteWithListbox: AutocompleteStory = {
             height: 250
           }}>
           {() => (
-            <AutocompleteWrapper defaultInputValue="Ba">
+            <AutocompleteWrapper defaultInputValue="Ba" disallowVirtualFocus={args.disallowVirtualFocus}>
               <div>
                 <SearchField autoFocus>
                   <Label style={{display: 'block'}}>Test</Label>
@@ -556,7 +557,7 @@ export const AutocompleteWithVirtualizedListbox: AutocompleteStory = {
             height: 250
           }}>
           {() => (
-            <AutocompleteWrapper>
+            <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
               <div>
                 <SearchField autoFocus>
                   <Label style={{display: 'block'}}>Test</Label>
@@ -903,7 +904,7 @@ export const AutocompleteWithAsyncListBox = (args) => {
   });
 
   return (
-    <AutocompleteWrapper>
+    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <TextField autoFocus data-testid="autocomplete-example">
           <Label style={{display: 'block'}}>Test</Label>
@@ -1101,7 +1102,7 @@ function AutocompleteNodeFiltering(args) {
   };
 
   return (
-    <Autocomplete filter={filter}>
+    <Autocomplete filter={filter} disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -1159,7 +1160,7 @@ const UserCustomFiltering = (args): React.ReactElement => {
   };
 
   return (
-    <Autocomplete inputValue={value} onInputChange={setValue} filter={filter}>
+    <Autocomplete inputValue={value} onInputChange={setValue} filter={filter} disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <TextField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>

@@ -40,7 +40,12 @@ export interface AriaAutocompleteProps<T> extends AutocompleteProps {
    * Whether or not to focus the first item in the collection after a filter is performed.
    * @default false
    */
-  disableAutoFocusFirst?: boolean
+  disableAutoFocusFirst?: boolean,
+
+  /**
+   * Whether the autocomplete should disable virtual focus, instead making the wrapped collection directly tabbable.
+   */
+  disallowVirtualFocus?: boolean
 }
 
 export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'> {
@@ -72,7 +77,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     inputRef,
     collectionRef,
     filter,
-    disableAutoFocusFirst = false
+    disableAutoFocusFirst = false,
+    disallowVirtualFocus = false
   } = props;
 
   let collectionId = useSlotId();
@@ -83,7 +89,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
-  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual';
+  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual' && !disallowVirtualFocus;
 
   useEffect(() => {
     return () => clearTimeout(timeout.current);
@@ -366,22 +372,26 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     onChange
   } as AriaTextFieldProps<HTMLInputElement>;
 
+  let virtualFocusProps = {
+    onKeyDown,
+    'aria-activedescendant': state.focusedNodeId ?? undefined,
+    onBlur,
+    onFocus
+  };
+
   if (collectionId) {
     textFieldProps = {
       ...textFieldProps,
-      onKeyDown,
-      autoComplete: 'off',
+      ...(shouldUseVirtualFocus && virtualFocusProps),
+      enterKeyHint: 'go',
       'aria-controls': collectionId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
-      'aria-activedescendant': state.focusedNodeId ?? undefined,
       // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false',
-      enterKeyHint: 'go',
-      onBlur,
-      onFocus
+      autoComplete: 'off'
     };
   }
 
