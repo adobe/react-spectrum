@@ -38,6 +38,10 @@ export interface AriaPositionProps extends PositionProps {
    */
   overlayRef: RefObject<Element | null>,
   /**
+   * The ref for the arrow element.
+   */
+  arrowRef?: RefObject<Element | null>,
+  /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
@@ -68,6 +72,8 @@ export interface PositionAria {
   arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis | null,
+  /** The origin of the target in the overlay's coordinate system. Useful for animations. */
+  triggerOrigin: {x: number, y: number} | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -86,9 +92,10 @@ let visualViewport = typeof document !== 'undefined' ? window.visualViewport : n
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {
-    arrowSize = 0,
+    arrowSize,
     targetRef,
     overlayRef,
+    arrowRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
     containerPadding = 12,
@@ -109,6 +116,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement,
     overlayRef.current,
     targetRef.current,
+    arrowRef?.current,
     scrollRef.current,
     containerPadding,
     shouldFlip,
@@ -138,6 +146,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
 
     if (visualViewport?.scale !== lastScale.current) {
+      return;
+    }
+
+    // Don't update while the overlay is animating.
+    // Things like scale animations can mess up positioning by affecting the overlay's computed size.
+    if (overlayRef.current.getAnimations?.().length > 0) {
       return;
     }
 
@@ -181,7 +195,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize,
+      arrowSize: arrowSize ?? arrowRef?.current?.getBoundingClientRect().width ?? 0,
       arrowBoundaryOffset
     });
 
@@ -287,6 +301,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       }
     },
     placement: position?.placement ?? null,
+    triggerOrigin: position?.triggerOrigin ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
@@ -21,7 +21,7 @@ import {OverlayTriggerStateContext} from './Dialog';
 import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The name of the component that triggered the popover. This is reflected on the element
    * as the `data-trigger` attribute, and can be used to provide specific
@@ -147,20 +147,14 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
-  let [arrowWidth, setArrowWidth] = useState(0);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
-  useLayoutEffect(() => {
-    if (arrowRef.current && state.isOpen) {
-      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
-    }
-  }, [state.isOpen, arrowRef]);
 
-  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+  let {popoverProps, underlayProps, arrowProps, placement, triggerOrigin} = usePopover({
     ...props,
     offset: props.offset ?? 8,
-    arrowSize: arrowWidth,
+    arrowRef,
     // If this is a submenu/subdialog, use the root popover's container
     // to detect outside interaction and add aria-hidden.
     groupRef: isSubPopover ? groupCtx! : containerRef
@@ -190,11 +184,12 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
+  // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && ref.current && !ref.current.contains(document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
     }
-  }, [isDialog, ref]);
+  }, [isDialog, ref, props.trigger]);
 
   let children = useMemo(() => {
     let children = renderProps.children;
@@ -206,10 +201,15 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
     return children;
   }, [renderProps.children, clearContexts]);
 
-  let style = {...popoverProps.style, ...renderProps.style};
+  let style = {
+    ...popoverProps.style,
+    '--trigger-origin': triggerOrigin ? `${triggerOrigin.x}px ${triggerOrigin.y}px` : undefined,
+    ...renderProps.style
+  };
+
   let overlay = (
     <div
-      {...mergeProps(filterDOMProps(props as any), popoverProps)}
+      {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
       tabIndex={isDialog ? -1 : undefined}

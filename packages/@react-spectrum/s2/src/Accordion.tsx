@@ -12,14 +12,14 @@
 
 import {ContextValue, DisclosureGroup, DisclosureGroupProps, SlotProps} from 'react-aria-components';
 import {DisclosureContext} from './Disclosure';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef} from 'react';
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, SlotProps {
+export interface AccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps, SlotProps {
   /** The disclosure elements in the accordion. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */

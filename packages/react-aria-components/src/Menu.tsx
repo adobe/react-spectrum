@@ -14,9 +14,9 @@ import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, u
 import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
+import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
@@ -131,10 +131,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
     <Provider
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        [MenuContext, submenuProps],
+        [MenuContext, {
+          ref: submenuRef,
+          ...submenuProps
+        }],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
-          ref: submenuRef,
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
@@ -156,7 +158,7 @@ export interface MenuRenderProps {
   isEmpty: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: () => ReactNode
 }
@@ -214,12 +216,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     );
   }
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <FocusScope>
       <div
-        {...filterDOMProps(props)}
-        {...menuProps}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, menuProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-empty={state.collection.size === 0 || undefined}
@@ -301,11 +303,12 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   let selectionState = useMultipleSelectionState(props);
   let manager = props.selectionMode != null ? new GroupSelectionManager(parent, selectionState) : parent;
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
   return (
     <section
-      {...filterDOMProps(props as any)}
-      {...groupProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
       <Provider
         values={[
@@ -338,7 +341,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -392,11 +395,13 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   });
 
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <ElementType
-      {...mergeProps(menuItemProps, hoverProps)}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, menuItemProps, hoverProps)}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}

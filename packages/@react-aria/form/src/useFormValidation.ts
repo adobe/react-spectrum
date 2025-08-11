@@ -77,8 +77,11 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     }
   });
 
+  let isIgnoredReset = useRef(false);
   let onReset = useEffectEvent(() => {
-    state.resetValidation();
+    if (!isIgnoredReset.current) {
+      state.resetValidation();
+    }
   });
 
   let onInvalid = useEffectEvent((e: Event) => {
@@ -154,6 +157,20 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     }
 
     let form = input.form;
+    let reset = form?.reset;
+    if (form) {
+      // Try to detect React's automatic form reset behavior so we don't clear
+      // validation errors that are returned by server actions.
+      // To do this, we ignore programmatic form resets that occur outside a user event.
+      // This is best-effort. There may be false positives, e.g. setTimeout.
+      form.reset = () => {
+        // React uses MessageChannel for scheduling, so ignore 'message' events.
+        isIgnoredReset.current = !window.event || (window.event.type === 'message' && window.event.target instanceof MessagePort);
+        reset?.call(form);
+        isIgnoredReset.current = false;
+      };
+    }
+
     input.addEventListener('blur', onBlur);
     input.addEventListener('invalid', onInvalid);
     input.addEventListener('change', onChange);
@@ -168,6 +185,10 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       input!.removeEventListener('invalid', onInvalid);
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
+      if (form) {
+        // @ts-ignore
+        form.reset = reset;
+      }
     };
   }, [onBlur, onChange, onInvalid, onReset, ref, validationBehavior]);
 }

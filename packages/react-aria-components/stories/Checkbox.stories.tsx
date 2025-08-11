@@ -1,14 +1,18 @@
 import {Checkbox} from 'react-aria-components';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Checkbox',
+  component: Checkbox
+} as Meta<typeof Checkbox>;
 
-export const CheckboxExample = () => {
-  return (
+export type CheckboxStory = StoryObj<typeof Checkbox>;
+
+export const CheckboxExample: CheckboxStory = {
+  render: () => (
     <Checkbox>
       <div className="checkbox">
         <svg viewBox="0 0 18 18" aria-hidden="true">
@@ -17,5 +21,5 @@ export const CheckboxExample = () => {
       </div>
       Unsubscribe
     </Checkbox>
-  );
+  )
 };

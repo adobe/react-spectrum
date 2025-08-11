@@ -2,8 +2,6 @@ import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNa
 import type {PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
-import '@react-spectrum/s2/page.css';
-import './font.css';
 import './anatomy.css';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
@@ -12,7 +10,7 @@ import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
 import {MobileHeader} from './MobileHeader';
-import {PickerItem} from '@react-spectrum/s2';
+import {PickerItem, Provider} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -49,7 +47,7 @@ function anchorId(children) {
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   return (
-    <html lang="en" data-background="layer-1">
+    <Provider elementType="html" locale="en" background="layer-1">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -139,7 +137,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           </main>
         </div>
       </body>
-    </html>
+    </Provider>
   );
 }
 

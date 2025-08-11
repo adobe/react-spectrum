@@ -778,10 +778,11 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
 ## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
-of data from a server. You may additionally want to display a spinner to indicate the loading
-state to the user, or support features like infinite scroll to load more data.
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<ListBoxLoadMoreItem>` element at the end of the list.
 
 ```tsx example
+import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -790,26 +791,76 @@ interface Character {
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({signal, cursor, filterText}) {
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
         {signal}
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
 
   return (
     <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      {/*- begin highlight -*/}
+      <Collection items={list.items}>
+        {(item) => (
+          <ListBoxItem id={item.name}>{item.name}</ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <MyProgressCircle isIndeterminate aria-label="Loading more..." />
+      </ListBoxLoadMoreItem>
+      {/*- end highlight -*/}
     </ListBox>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxLoadingIndicator {
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+  display: flex;
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
 
 ## Disabled items
 
@@ -1908,6 +1959,17 @@ A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children
 
 </details>
 
+### ListBoxLoadMoreItem
+
+A `<ListBoxLoadMoreItem>` defines the load more spinner within a `<ListBox>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the list that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} />
+
+</details>
+
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
@@ -2090,7 +2152,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.

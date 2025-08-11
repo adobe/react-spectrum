@@ -23,10 +23,13 @@ import {
   GridList,
   GridListItem,
   GridListItemProps,
+  GridListLoadMoreItem,
+  GridListProps,
   Heading,
   ListLayout,
   Modal,
   ModalOverlay,
+  ModalOverlayProps,
   Popover,
   Size,
   Tag,
@@ -38,15 +41,19 @@ import {
 import {classNames} from '@react-spectrum/utils';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
-import React, {useState} from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/GridList',
+  component: GridList
+} as Meta<typeof GridList>;
 
-export const GridListExample = (args) => (
+export type GridListStory = StoryFn<typeof GridList>;
+
+export const GridListExample: GridListStory = (args) => (
   <GridList
     {...args}
     className={styles.menu}
@@ -138,7 +145,7 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export function VirtualizedGridList() {
+const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -175,15 +182,38 @@ export function VirtualizedGridList() {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         style={{height: 400}}
-        aria-label="virtualized listbox"
+        aria-label="virtualized gridlist"
         items={list.items}>
-        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        <Collection items={list.items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={args.isLoading} />
       </GridList>
     </Virtualizer>
   );
+};
+
+export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
+  render: (args) => <VirtualizedGridListRender {...args} />,
+  args: {
+    isLoading: false
+  }
+};
+
+interface VirtualizedGridListGridProps {
+  maxItemSizeWidth?: number,
+  maxColumns?: number,
+  minHorizontalSpace?: number,
+  maxHorizontalSpace?: number
 }
 
-export function VirtualizedGridListGrid() {
+export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
+  const {
+    maxItemSizeWidth = 65,
+    maxColumns = Infinity,
+    minHorizontalSpace = 0,
+    maxHorizontalSpace = Infinity
+  } = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -193,14 +223,49 @@ export function VirtualizedGridListGrid() {
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40)
+        minItemSize: new Size(40, 40),
+        maxItemSize: new Size(maxItemSizeWidth, 40),
+        minSpace: new Size(minHorizontalSpace, 18),
+        maxColumns,
+        maxHorizontalSpace
       }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
   );
-}
+};
+
+VirtualizedGridListGrid.story = {
+  args: {
+    maxItemSizeWidth: 65,
+    maxColumns: undefined,
+    minHorizontalSpace: 0,
+    maxHorizontalSpace: undefined
+  },
+  argTypes: {
+    maxItemSizeWidth: {
+      control: 'number',
+      description: 'Maximum width of each item in the grid list.',
+      defaultValue: 65
+    },
+    maxColumns: {
+      control: 'number',
+      description: 'Maximum number of columns in the grid list.',
+      defaultValue: undefined
+    },
+    minHorizontalSpace: {
+      control: 'number',
+      description: 'Minimum horizontal space between grid items.',
+      defaultValue: 0
+    },
+    maxHorizontalSpace: {
+      control: 'number',
+      description: 'Maximum horizontal space between grid items.',
+      defaultValue: undefined
+    }
+  }
+};
 
 let renderEmptyState = ({isLoading}) => {
   return  (
@@ -219,7 +284,7 @@ interface Character {
 
 const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       style={{
         height: 30,
         width: '100%',
@@ -229,18 +294,18 @@ const MyGridListLoaderIndicator = (props) => {
       }}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_GridListLoadingSentinel>
+    </GridListLoadMoreItem>
   );
 };
 
-export const AsyncGridList = (args) => {
+function AsyncGridListRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -265,22 +330,23 @@ export const AsyncGridList = (args) => {
       <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </GridList>
   );
-};
+}
 
-AsyncGridList.story = {
+export let AsyncGridList: StoryObj<typeof AsyncGridListRender> = {
+  render: (args) => <AsyncGridListRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export const AsyncGridListVirtualized = (args) => {
+function AsyncGridListVirtualizedRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -311,13 +377,14 @@ export const AsyncGridListVirtualized = (args) => {
   );
 };
 
-AsyncGridListVirtualized.story = {
+export let AsyncGridListVirtualized: StoryObj<typeof AsyncGridListVirtualizedRender> = {
+  render: (args) => <AsyncGridListVirtualizedRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export function TagGroupInsideGridList() {
+export let TagGroupInsideGridList: GridListStory = () => {
   return (
     <GridList
       className={styles.menu}
@@ -359,7 +426,7 @@ export function TagGroupInsideGridList() {
       </MyGridListItem>
     </GridList>
   );
-}
+};
 
 const GridListDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -402,7 +469,7 @@ const GridListDropdown = () => {
   );
 };
 
-function GridListInModalPickerRender(props) {
+function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
   const [mainModalOpen, setMainModalOpen] = useState(true);
   return (
     <>
@@ -447,7 +514,7 @@ function GridListInModalPickerRender(props) {
   );
 }
 
-export const GridListInModalPicker = {
+export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
     docs: {

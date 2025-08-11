@@ -1,0 +1,73 @@
+@import "./theme.css";
+
+.react-aria-Calendar {
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-color);
+
+  header {
+    display: flex;
+    align-items: center;
+    margin: 0 4px 0.4375rem 4px;
+
+    .react-aria-Heading {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: 1.203125rem;
+    }
+  }
+
+  .react-aria-Button {
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+
+.react-aria-CalendarCell {
+  width: 2.00025rem;
+  line-height: 2.00025rem;
+  text-align: center;
+  border-radius: 6px;
+  cursor: default;
+  outline: none;
+  forced-color-adjust: none;
+
+  &[data-outside-month] {
+    display: none;
+  }
+
+  &[data-pressed] {
+    background: var(--gray-100);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  &[data-unavailable] {
+    text-decoration: line-through;
+    color: var(--invalid-color);
+  }
+
+  &[data-invalid] {
+    background: var(--invalid-color);
+    color: var(--highlight-foreground);
+  }
+}

@@ -43,9 +43,7 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {DatePicker, Label, Group, Heading, DateInput, DateSegment, Button, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell} from 'react-aria-components';
 import type {ButtonProps, PopoverProps} from 'react-aria-components';
-import ChevronUpDownIcon from '@spectrum-icons/workflow/ChevronUpDown';
-import ChevronLeftIcon from '@spectrum-icons/workflow/ChevronLeft';
-import ChevronRightIcon from '@spectrum-icons/workflow/ChevronRight';
+import {ChevronLeft, ChevronRight, ChevronsUpDown} from 'lucide-react';
 
 function DatePickerExample() {
   return (
@@ -57,7 +55,7 @@ function DatePickerExample() {
             {(segment) => <DateSegment segment={segment} className="px-0.5 tabular-nums outline-hidden rounded-xs focus:bg-violet-700 focus:text-white caret-transparent placeholder-shown:italic" />}
           </DateInput>
           <Button className="outline-hidden px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-purple-200 bg-transparent rounded-r-lg pressed:bg-purple-100 focus-visible:ring-2 ring-black">
-            <ChevronUpDownIcon size="XS" />
+            <ChevronsUpDown className="w-4 h-4" />
           </Button>
         </Group>
         <MyPopover>
@@ -65,8 +63,8 @@ function DatePickerExample() {
             <Calendar>
               <header className="flex items-center gap-1 pb-4 px-1 font-serif w-full">
                 <Heading className="flex-1 font-semibold text-2xl ml-2" />
-                <RoundButton slot="previous"><ChevronLeftIcon /></RoundButton>
-                <RoundButton slot="next"><ChevronRightIcon /></RoundButton>
+                <RoundButton slot="previous"><ChevronLeft /></RoundButton>
+                <RoundButton slot="next"><ChevronRight /></RoundButton>
               </header>
               <CalendarGrid className="border-spacing-1 border-separate">
                 <CalendarGridHeader>

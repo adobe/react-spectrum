@@ -620,4 +620,25 @@ describe('Tabs', () => {
     act(() => jest.runAllTimers());
     expect(getByRole('tooltip')).toHaveTextContent('Test');
   });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+      await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
+  
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
 });
