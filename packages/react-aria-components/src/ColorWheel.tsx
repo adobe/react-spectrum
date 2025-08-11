@@ -1,6 +1,6 @@
-import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
+import {AriaColorWheelOptions, useColorWheel} from '@react-aria/color';
 import {ColorWheelContext} from './RSPContexts';
-import {ColorWheelState, useColorWheelState} from 'react-stately';
+import {ColorWheelState, useColorWheelState} from '@react-stately/color';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';

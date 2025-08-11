@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
+import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
-import {Collection, Node, SelectState, useSelectState} from 'react-stately';
+import {Collection, forwardRefType, GlobalDOMAttributes, Node} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
@@ -27,7 +27,10 @@ import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {SelectState, useSelectState} from '@react-stately/select';
 import {TextContext} from './Text';
+import {useFocusRing} from '@react-aria/focus';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface SelectRenderProps {
   /**

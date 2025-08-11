@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, AriaSliderThumbProps, HoverEvents, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
+import {AriaSliderProps, AriaSliderThumbProps} from '@react-types/slider';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Orientation, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
-import {SliderState, useSliderState} from 'react-stately';
+import {SliderState, useSliderState} from '@react-stately/slider';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useNumberFormatter} from '@react-aria/i18n';
+import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

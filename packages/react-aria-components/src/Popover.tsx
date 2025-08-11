@@ -11,15 +11,16 @@
  */
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
+import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from '@react-aria/overlays';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
+import {useLocale} from '@react-aria/i18n';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

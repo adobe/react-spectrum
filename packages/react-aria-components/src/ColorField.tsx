@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
-import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
+import {AriaColorFieldProps, ColorChannel, ColorSpace} from '@react-types/color';
 import {ColorFieldContext} from './RSPContexts';
+import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
@@ -22,6 +22,8 @@ import {LabelContext} from './Label';
 import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
+import {useColorChannelField, useColorField} from '@react-aria/color';
+import {useLocale} from '@react-aria/i18n';
 
 export interface ColorFieldRenderProps {
   /**
@@ -47,7 +49,7 @@ export interface ColorFieldRenderProps {
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The color channel that this field edits. If not provided, 
+   * The color channel that this field edits. If not provided,
    * the color is edited as a hex value.
    */
   channel?: ColorChannel,

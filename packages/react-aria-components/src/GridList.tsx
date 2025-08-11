@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {AriaGridListProps, useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
@@ -17,12 +17,38 @@ import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, I
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
+import {
+  DragPreviewRenderer,
+  forwardRefType,
+  GlobalDOMAttributes,
+  HoverEvents,
+  Collection as ICollection,
+  Key,
+  LinkDOMProps,
+  Node,
+  PressEvents,
+  RefObject,
+  SelectionBehavior
+} from '@react-types/shared';
+import {
+  filterDOMProps,
+  inertValue,
+  LoadMoreSentinelProps,
+  mergeProps,
+  useLoadMoreSentinel,
+  useObjectRef
+} from '@react-aria/utils';
+import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListState, useListState} from '@react-stately/list';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
+import {useCollator, useLocale} from '@react-aria/i18n';
+import {useHover} from '@react-aria/interactions';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface GridListRenderProps {
   /**

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
@@ -20,9 +20,11 @@ import {forwardRefType, GlobalDOMAttributes, InputDOMProps} from '@react-types/s
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {NumberFieldState, useNumberFieldState} from 'react-stately';
+import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {useLocale} from '@react-aria/i18n';
+import {useNumberField} from '@react-aria/numberfield';
 
 export interface NumberFieldRenderProps {
   /**

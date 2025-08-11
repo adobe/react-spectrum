@@ -1,5 +1,5 @@
-import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
-import {Color} from 'react-stately';
+import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
+import {Color} from '@react-types/color';
 import {ContextValue, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -30,7 +30,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
   });
 
   let DOMProps = filterDOMProps(props, {global: true});
-  
+
   return (
     <div
       {...mergeProps(DOMProps, colorSwatchProps, renderProps)}

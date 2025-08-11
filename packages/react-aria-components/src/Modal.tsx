@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
+import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from '@react-aria/overlays';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
+import {useIsSSR} from '@react-aria/ssr';
 
 export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

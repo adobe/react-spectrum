@@ -9,20 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, HoverEvents, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
+import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createCalendar} from '@internationalized/date';
-import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {DateFieldState, SegmentType as DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from '@react-stately/datepicker';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {Group, GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
+import {useDateField, useDateSegment, useTimeField} from '@react-aria/datepicker';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 
 export interface DateFieldRenderProps {
   /**
@@ -111,11 +115,11 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined} />
-      <HiddenDateInput 
+      <HiddenDateInput
         autoComplete={props.autoComplete}
         name={props.name}
         isDisabled={props.isDisabled}
-        state={state} />    
+        state={state} />
     </Provider>
   );
 });
@@ -180,7 +184,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-invalid={state.isInvalid || undefined} 
+        data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined} />
     </Provider>
   );

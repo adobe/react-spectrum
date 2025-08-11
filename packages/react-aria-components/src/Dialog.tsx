@@ -9,17 +9,21 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {AriaDialogProps} from '@react-types/dialog';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
-import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
+import {OverlayTriggerProps} from '@react-types/overlays';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {useDialog} from '@react-aria/dialog';
+import {useMenuTriggerState} from '@react-stately/menu';
+import {useOverlayTrigger} from '@react-aria/overlays';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode

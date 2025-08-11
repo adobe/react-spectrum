@@ -11,15 +11,7 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {
-  AriaButtonProps,
-  HoverEvents,
-  mergeProps,
-  useButton,
-  useFocusRing,
-  useHover,
-  useId
-} from 'react-aria';
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import {
   ContextValue,
   RenderProps,
@@ -28,10 +20,12 @@ import {
   useRenderProps
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
+import {HoverEvents, useHover} from '@react-aria/interactions';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import {useFocusRing} from '@react-aria/focus';
 
 export interface ButtonRenderProps {
   /**

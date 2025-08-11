@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
+import {AriaTagGroupProps, useTag, useTagGroup} from '@react-aria/tag';
 import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Node, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {ListState, Node, useListState} from 'react-stately';
+import {ListState, useListState} from '@react-stately/list';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 

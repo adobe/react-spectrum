@@ -1,21 +1,47 @@
-import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DisabledBehavior, DragPreviewRenderer, GlobalDOMAttributes, HoverEvents,
+  Key, LinkDOMProps, Node, PressEvents, RefObject, SelectionBehavior, SelectionMode, SortDirection
+} from '@react-types/shared';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
-import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
+import {
+  buildHeaderRows,
+  TableColumnResizeState,
+  TableState,
+  useTableColumnResizeState,
+  useTableState
+} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
+import {
+  filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps,
+  mergeProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver
+} from '@react-aria/utils';
+import {FocusScope, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListKeyboardDelegate} from '@react-aria/selection';
+import {MultipleSelectionState, useMultipleSelectionState} from '@react-stately/selection';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useHover} from '@react-aria/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {
+  useTable, useTableCell,
+  useTableColumnHeader, useTableColumnResize,
+  useTableHeaderRow, useTableRow,
+  useTableRowGroup,
+  useTableSelectAllCheckbox, useTableSelectionCheckbox
+} from '@react-aria/table';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];

@@ -10,16 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps} from '@react-types/radio';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Orientation, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {RadioGroupState, useRadioGroupState} from 'react-stately';
+import {RadioGroupState, useRadioGroupState} from '@react-stately/radio';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useRadio, useRadioGroup} from '@react-aria/radio';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {

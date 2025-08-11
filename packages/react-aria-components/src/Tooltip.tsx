@@ -11,13 +11,16 @@
  */
 
 import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
+import {AriaPositionProps, OverlayContainer, useOverlayPosition} from '@react-aria/overlays';
 import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, useEnterAnimation, useExitAnimation} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
+import {OverlayTriggerProps, Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
+import {TooltipTriggerProps} from '@react-types/tooltip';
+import {TooltipTriggerState, useTooltipTriggerState} from '@react-stately/tooltip';
+import {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode

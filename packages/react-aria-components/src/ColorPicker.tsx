@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, ColorPickerState, ColorPickerProps as StatelyColorPickerProps, useColorPickerState} from 'react-stately';
+import {
+  Color,
+  ColorPickerState,
+  ColorPickerProps as StatelyColorPickerProps,
+  useColorPickerState
+} from '@react-stately/color';
 import {ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext} from './RSPContexts';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
-import {mergeProps} from 'react-aria';
+import {mergeProps} from '@react-aria/utils';
 import {Provider, RenderProps, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
 import React, {createContext, JSX} from 'react';
 
