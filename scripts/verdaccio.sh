@@ -166,7 +166,7 @@ then
   cd ../../examples/s2-next-macros
   yarn config set npmRegistryServer $registry
   yarn install --no-immutable
-  yarn build
+  VERDACCIO=true yarn build
   mv out ../../$verdaccio_path/s2-next-macros
 
   echo 'test icon builder'

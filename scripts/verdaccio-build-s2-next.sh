@@ -34,7 +34,7 @@ echo 'build Spectrum 2 + Next.js test app'
 cd examples/s2-next-macros
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
-yarn build
+VERDACCIO=true yarn build
 mv out ../../$verdaccio_path/s2-next-macros
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
