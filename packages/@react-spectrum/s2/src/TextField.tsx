@@ -201,7 +201,10 @@ function TextAreaInput() {
         minHeight: controlSize(),
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
-        color: 'inherit',
+        color: {
+          default: 'inherit',
+          '::placeholder': 'gray-600'
+        },
         fontFamily: 'inherit',
         fontSize: 'inherit',
         fontWeight: 'inherit',
