@@ -342,8 +342,8 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
   });
 
   return (
-    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
-      <SearchField {...inputProps}>
+    <Autocomplete {...autocompleteProps}>
+      <SearchField value={list.filterText} onChange={list.setFilterText} {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
@@ -821,7 +821,7 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
   });
 
-  it.skip('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
+  it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
     const DialogExample = (props) => {
       let {contains} = useFilter({sensitivity: 'base'});
 

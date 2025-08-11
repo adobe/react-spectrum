@@ -219,7 +219,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
         if (e.isDefaultPrevented()) {
-          setUpdated((last) => !last);
+          setTimeout(() => {
+            setUpdated((last) => !last);
+          }, 100);
+
           return;
         }
         break;

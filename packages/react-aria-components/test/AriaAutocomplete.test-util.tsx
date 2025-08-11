@@ -600,7 +600,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
     if (renderers.asyncFiltering) {
       describe('async filtering performed outside the autocomplete', function () {
-        it.skip('should properly filter and autofocus the first item when typing forward', async function () {
+        it('should properly filter and autofocus the first item when typing forward', async function () {
           let {getByRole} = (renderers.asyncFiltering!)();
           await act(async () => {
             jest.runAllTimers();
@@ -621,6 +621,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           await act(async () => {
             jest.advanceTimersToNextTimer();
           });
+
           options = within(menu).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(1);
           expect(options[0]).toHaveTextContent('Foo');
