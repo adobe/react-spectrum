@@ -5696,7 +5696,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.30.0"
     "@react-stately/form": "npm:^3.2.0"
     "@react-types/shared": "npm:^3.31.0"
-    "@swc/helpers": "npm:^0.5.17"
+    "@swc/helpers": "npm:^0.5.0"
     dom-accessibility-api: "npm:^0.7.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7047,7 +7047,7 @@ __metadata:
     "@react-types/label": "npm:^3.9.13"
     "@react-types/shared": "npm:^3.31.0"
     "@spectrum-icons/ui": "npm:^3.6.18"
-    "@swc/helpers": "npm:^0.5.17"
+    "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -9961,15 +9961,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.8.0"
   checksum: 10c0/33002f74f6f885f04c132960835fdfc474186983ea567606db62e86acd0680ca82f34647e8e610f4e1e422d1c16fce729dde22cd3b797ab1fd9061a825dabca4
-  languageName: node
-  linkType: hard
-
-"@swc/helpers@npm:^0.5.17":
-  version: 0.5.17
-  resolution: "@swc/helpers@npm:0.5.17"
-  dependencies:
-    tslib: "npm:^2.8.0"
-  checksum: 10c0/fe1f33ebb968558c5a0c595e54f2e479e4609bff844f9ca9a2d1ffd8dd8504c26f862a11b031f48f75c95b0381c2966c3dd156e25942f90089badd24341e7dbb
   languageName: node
   linkType: hard
 
