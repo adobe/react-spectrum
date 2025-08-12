@@ -328,7 +328,7 @@ export default function SearchMenu(props: SearchMenuProps) {
       })}>
       <FakeSearchFieldButton onKeyDown={handleButtonKeyDown} onPress={handleButtonPress} isSearchOpen={isSearchOpen} overlayId={overlayId} />
       <Modal isDismissable isOpen={isSearchOpen} onOpenChange={toggleShowSearchMenu} className={modalStyle}>
-        <Dialog id={overlayId} className={style({height: 'full'})}>
+        <Dialog id={overlayId} className={style({height: 'full'})} aria-label="Search menu">
           <Tabs
             aria-label="Libraries"
             keyboardActivation="manual"
