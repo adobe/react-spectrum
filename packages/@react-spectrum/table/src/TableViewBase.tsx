@@ -110,7 +110,7 @@ export interface TableContextValue<T> {
   state: TableState<T> | TreeGridState<T>,
   dragState: DraggableCollectionState | null,
   dropState: DroppableCollectionState | null,
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   layout: TableViewLayout<T>,
