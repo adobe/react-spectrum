@@ -60,7 +60,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  [props, inputRef] = useContextProps(props, inputRef, FieldInputContext);
+  [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );

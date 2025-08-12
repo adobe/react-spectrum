@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMProps, Node, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
@@ -57,7 +57,7 @@ export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T
 
 export interface AutocompleteAria<T> {
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
-  textFieldProps: AriaTextFieldProps,
+  textFieldProps: AriaTextFieldProps<FocusableElement>,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
   collectionProps: CollectionOptions,
   /** Ref to attach to the wrapped collection. */
@@ -370,7 +370,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let textFieldProps = {
     value: state.inputValue,
     onChange
-  } as AriaTextFieldProps<HTMLInputElement>;
+  } as AriaTextFieldProps<FocusableElement>;
 
   let virtualFocusProps = {
     onKeyDown,

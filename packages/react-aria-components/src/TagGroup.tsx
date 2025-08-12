@@ -75,7 +75,9 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let {filter, ...collectionProps} = useContext(CollectionContext) || {};
+  let contextProps;
+  [contextProps] = useContextProps({}, null, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tagListRef = useRef<HTMLDivElement>(null);

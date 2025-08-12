@@ -16,7 +16,7 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Nod
 import {CollectionContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -202,9 +202,12 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filter, collectionRef, ...autocompleteMenuProps} = useContext(CollectionContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the MenuInnerProps type to
+  // include filter
+  let contextProps;
+  // TODO: still had to use unknown here to stop typescript from complaining...
+  [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
+  let {filter, ...autocompleteMenuProps} = contextProps;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,

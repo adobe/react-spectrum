@@ -106,7 +106,9 @@ interface GridListInnerProps<T extends object> {
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
   // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
-  let {filter, ...collectionProps} = useContext(CollectionContext) || {};
+  let contextProps;
+  [contextProps] = useContextProps({}, null, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;

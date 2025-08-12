@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -120,11 +120,14 @@ interface ListBoxInnerProps<T> {
 }
 
 function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
-  let {filter, collectionRef, ...collectionProps} = useContext(CollectionContext) || {};
+  // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the ListBoxInnerProps type to
+  // include filter
+  let contextProps;
+  // TODO: still had to use unknown here to stop typescript from complaining about the difference in the ref type difference between the menu ref and the more generic ref from the context
+  [contextProps, listBoxRef as unknown] = useContextProps({}, listBoxRef, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   props = useMemo(() => collectionProps ? ({...props, ...collectionProps}) : props, [props, collectionProps]);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
   let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
