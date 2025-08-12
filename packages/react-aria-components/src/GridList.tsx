@@ -13,6 +13,7 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode, ItemNode} from '@react-aria/collections';
+import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -23,7 +24,6 @@ import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Pre
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface GridListRenderProps {
   /**
@@ -104,13 +104,16 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  let {filter, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
+  // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
+  let contextProps;
+  [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
     ...props,
+    ...collectionProps,
     collection,
     children: undefined,
     layoutDelegate
@@ -421,7 +424,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
                 }
               }],
               [CollectionRendererContext, DefaultCollectionRenderer],
-              [ListStateContext, null]
+              [ListStateContext, null],
+              [CollectionContext, null],
+              [FieldInputContext, null]
             ]}>
             {renderProps.children}
           </Provider>

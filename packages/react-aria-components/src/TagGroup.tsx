@@ -13,6 +13,7 @@
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
+import {CollectionContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -22,7 +23,6 @@ import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'reac
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -75,10 +75,10 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let {filter, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let contextProps;
   let tagListRef = useRef<HTMLDivElement>(null);
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  tagListRef = useObjectRef(useMemo(() => mergeRefs(tagListRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, tagListRef]));
+  [contextProps, tagListRef as unknown] = useContextProps({}, tagListRef, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );

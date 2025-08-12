@@ -13,9 +13,10 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
+import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -39,7 +40,6 @@ import React, {
 } from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -202,9 +202,12 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the MenuInnerProps type to
+  // include filter
+  let contextProps;
+  // TODO: still had to use unknown here to stop typescript from complaining about the ref type difference between the menu ref and the more generic ref from the context
+  [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
+  let {filter, ...autocompleteMenuProps} = contextProps;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
@@ -251,7 +254,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [UNSTABLE_InternalAutocompleteContext, null],
+            [CollectionContext, null],
+            [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
