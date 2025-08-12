@@ -376,7 +376,7 @@ export default function SearchMenu(props: SearchMenuProps) {
                   mainItems={filteredComponents}
                   searchRef={searchRef}
                   showCards={showCards}
-                  renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} />}
+                  renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} closeSearchMenu={closeSearchMenu} />}
                   filter={filter}
                   noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
                   closeSearchMenu={closeSearchMenu}

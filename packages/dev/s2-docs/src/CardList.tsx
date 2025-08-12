@@ -162,7 +162,8 @@ interface IExampleItem {
 
 interface CardListProps {
   selectedLibrary: 'react-spectrum' | 'react-aria' | 'internationalized',
-  pages?: Page[]
+  pages?: Page[],
+  closeSearchMenu: () => void
 }
 
 const illustrationStyles = style({
@@ -173,7 +174,7 @@ const illustrationStyles = style({
   pointerEvents: 'none'
 });
 
-export function CardList({selectedLibrary, pages}: CardListProps) {
+export function CardList({selectedLibrary, pages, closeSearchMenu}: CardListProps) {
   let sectionsData = useMemo(() => {
     if (!pages || !Array.isArray(pages)) {
       return [];
@@ -276,6 +277,7 @@ export function CardList({selectedLibrary, pages}: CardListProps) {
 
       {items.length > 0 && (
         <CardView
+          onAction={closeSearchMenu}
           aria-label={`${selectedSectionData?.name || 'Items'}`}
           styles={style({
             flexGrow: 1
