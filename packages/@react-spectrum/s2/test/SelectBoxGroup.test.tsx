@@ -625,28 +625,6 @@ describe('SelectBoxGroup', () => {
       consoleSpy.mockRestore();
     });
 
-    it('validates maximum children', () => {
-      const manyChildren = Array.from({length: 10}, (_, i) => (
-        <SelectBox key={i} value={`option${i}`}>
-          <Text slot="label">Option {i}</Text>
-        </SelectBox>
-      ));
-      
-      render(
-        <SelectBoxGroup 
-          aria-label="Max children test" 
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
-          selectedKeys={new Set()}>
-          {manyChildren}
-        </SelectBoxGroup>
-      );
-      
-      expect(console.warn).toHaveBeenCalledWith(
-        'Invalid content. SelectBoxGroup cannot have more than 9 children.'
-      );
-    });
-
     it('does not warn with valid number of children', () => {
       render(
         <SelectBoxGroup 

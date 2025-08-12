@@ -9,21 +9,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue, Orientation, Selection, GlobalDOMAttributes} from '@react-types/shared';
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
 import {
   ContextValue,
+  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxProps,
-  Provider,
-  DEFAULT_SLOT
+  Provider
 } from 'react-aria-components';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, Orientation, Selection} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
-import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -182,7 +182,7 @@ const selectBoxStyles = style({
       vertical: ['min-content', 8, 'min-content'],
       horizontal: {
         default: ['min-content', 'min-content'],
-        [noIllustration]: ['min-content'],
+        [noIllustration]: ['min-content']
       }
     }
   },

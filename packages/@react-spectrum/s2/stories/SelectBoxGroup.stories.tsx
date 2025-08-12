@@ -445,20 +445,6 @@ export const AllSlotCombinations: Story = {
             </SelectBoxGroup>
           </div>
 
-          {/* Illustration + Description */}
-          <div>
-            <h4 className={sectionHeadingStyles}>Illustration + Description</h4>
-            <SelectBoxGroup 
-              orientation="horizontal" 
-              numColumns={1}
-              onSelectionChange={action('onSelectionChange')}>
-              <SelectBox value="h-illustration-desc">
-                <PaperAirplane />
-                <Text slot="description">Only horizontal description text</Text>
-              </SelectBox>
-            </SelectBoxGroup>
-          </div>
-
           {/* Illustration + Text + Description */}
           <div>
             <h4 className={sectionHeadingStyles}>Illustration + Text + Description</h4>
