@@ -21,19 +21,17 @@ describe('NumberField', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should warn if the NumberField renders/blurs without a placeholder', async () => {
+  it('should not warn if the NumberField renders/blurs without a placeholder', async () => {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, rerender} = render(
       <NumberField label="Quantity" />
     );
 
-    expect(spy).toHaveBeenCalledWith('Your NumberField is empty and not focused but doesn\'t have a placeholder. Please add one.');
-    spy.mockClear();
+    expect(spy).not.toBeCalled();
 
     await user.tab();
     await user.tab();
-    expect(spy).toHaveBeenCalledWith('Your NumberField is empty and not focused but doesn\'t have a placeholder. Please add one.');
-    spy.mockClear();
+    expect(spy).not.toBeCalled();
 
     let input = getByRole('textbox');
     await user.click(input);

@@ -212,23 +212,18 @@ describe('Combobox', () => {
     warn.mockRestore();
   });
 
-  it('should warn if the Combobox renders/blurs without a placeholder', async () => {
+  it('should not warn if the Combobox renders/blurs without a placeholder', async () => {
     warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let items = [{name: 'Chocolate'}, {name: 'Mint'}, {name: 'Chocolate Chip'}];
     let {rerender} = render(
       <DynamicCombobox items={items} />
     );
-    // Since Combobox takes multiple renders to populate its input value if a selected key is provided
-    // we have a delay for the placeholder warning
-    act(() => {jest.runAllTimers();});
 
-    expect(warnSpy).toHaveBeenCalledWith('Your ComboBox is empty and not focused but doesn\'t have a placeholder. Please add one.');
-    warnSpy.mockClear();
+    expect(warnSpy).not.toBeCalled();
 
     await user.tab();
     await user.tab();
-    expect(warnSpy).toHaveBeenCalledWith('Your ComboBox is empty and not focused but doesn\'t have a placeholder. Please add one.');
-    warnSpy.mockClear();
+    expect(warnSpy).not.toBeCalled();
 
     rerender(<DynamicCombobox items={items} placeholder="test" />);
     expect(warnSpy).not.toHaveBeenCalled();
