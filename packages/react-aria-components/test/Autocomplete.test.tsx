@@ -1016,6 +1016,11 @@ AriaAutocompleteTests({
       <AutocompleteWrapper>
         <SubDialogAndMenu />
       </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disallowVirtualFocus: true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
     )
   },
   actionListener: onAction,
@@ -1071,6 +1076,11 @@ AriaAutocompleteTests({
     ),
     defaultValue: () => render(
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
+        <StaticListbox />
+      </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disallowVirtualFocus: true}}>
         <StaticListbox />
       </AutocompleteWrapper>
     )
