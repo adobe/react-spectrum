@@ -92,7 +92,7 @@ export default function SearchResultsMenu({
               className={style({marginX: 'auto', marginY: 8, maxWidth: '[500px]'})}
               role="region"
               aria-label="Main menu search">
-              <Menu autoFocus="first" size="L" items={mainItems} aria-label={`${libraryName} Components`}>
+              <Menu size="L" items={mainItems} aria-label={`${libraryName} Components`}>
                 {section => (
                   <MenuSection key={section.id}>
                     <RSPHeader><Heading>{section.name}</Heading></RSPHeader>
