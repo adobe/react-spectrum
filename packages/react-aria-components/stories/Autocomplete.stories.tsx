@@ -967,16 +967,16 @@ function MyButton() {
   );
 }
 
-export const AutocompleteWithGridList = () => {
+const AutocompleteWithGridList = (args) => {
   return (
-    <AutocompleteWrapper>
+    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <TextField autoFocus data-testid="autocomplete-example">
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
         </TextField>
         <GridList
-          onAction={action('onAction')}
+          {...args}
           className={styles.menu}
           style={{height: 200, width: 200}}
           aria-label="test gridlist">
@@ -1004,9 +1004,14 @@ export const AutocompleteWithGridList = () => {
   );
 };
 
-export const AutocompleteWithTable = () => {
+export const AutocompleteWithGridListStory: AutocompleteStory = {
+  render: (args) => <AutocompleteWithGridList {...args} />,
+  name: 'Autocomplete with Grid List'
+};
+
+const AutocompleteWithTable = (args) => {
   return (
-    <AutocompleteWrapper>
+    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <TextField autoFocus data-testid="autocomplete-example">
           <Label style={{display: 'block'}}>Test</Label>
@@ -1019,7 +1024,7 @@ export const AutocompleteWithTable = () => {
             headingHeight: 25,
             padding: 10
           }}>
-          <Table aria-label="Files" selectionMode="multiple" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+          <Table aria-label="Files" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}} {...args}>
             <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
               <Column>
                 <MyCheckbox slot="selection" />
@@ -1069,15 +1074,20 @@ export const AutocompleteWithTable = () => {
   );
 };
 
-export const AutocompleteWithTagGroup = () => {
+export const AutocompleteWithTableStory: AutocompleteStory = {
+  render: (args) => <AutocompleteWithTable {...args} />,
+  name: 'Autocomplete with Table'
+};
+
+const AutocompleteWithTagGroup = (args) => {
   return (
-    <AutocompleteWrapper>
+    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
       <div>
         <TextField autoFocus data-testid="autocomplete-example">
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
         </TextField>
-        <TagGroup onRemove={action('onRemove')}>
+        <TagGroup onRemove={action('onRemove')} {...args}>
           <Label>Categories</Label>
           <TagList style={{display: 'flex', gap: 4}}>
             <MyTag href="https://nytimes.com" textValue="News">News<Button slot="remove">X</Button></MyTag>
@@ -1107,6 +1117,11 @@ export const AutocompleteWithTagGroup = () => {
       </div>
     </AutocompleteWrapper>
   );
+};
+
+export const AutocompleteWithTagGroupStory: AutocompleteStory = {
+  render: (args) => <AutocompleteWithTagGroup {...args} />,
+  name: 'Autocomplete with Tag Group'
 };
 
 type MenuNode = {

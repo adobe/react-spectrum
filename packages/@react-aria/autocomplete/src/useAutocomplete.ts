@@ -308,6 +308,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       }
     } else {
       // TODO: check if we can do this, want to stop textArea from using its default Enter behavior so items are properly triggered
+      // Note that this prevents the input cursor from moving since the taggroup is consuming the event
       e.preventDefault();
     }
   };

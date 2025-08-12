@@ -173,10 +173,11 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
             focusElement(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
-            // If there is no next focusable child, then return focus back to the row
+            // If there is no next focusable child (aka we are already focused on the row), then wrap around back to the last element of the row
+            // If in rtl OR if we are in virtual focus and the current node isn't the row, no next focusable child means we should focus the row next
             e.preventDefault();
             e.stopPropagation();
-            if (direction === 'rtl') {
+            if (direction === 'rtl' || (walker.currentNode !== ref.current)) {
               focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
@@ -205,7 +206,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           } else {
             e.preventDefault();
             e.stopPropagation();
-            if (direction === 'ltr') {
+            if (direction === 'ltr' || (walker.currentNode !== ref.current)) {
               focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
