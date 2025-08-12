@@ -212,7 +212,7 @@ export function VirtualizedGridListSection() {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 3; i++) {
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});

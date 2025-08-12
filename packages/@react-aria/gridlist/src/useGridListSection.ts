@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, Node as RSNode} from '@react-types/shared';
+import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
 
 export interface AriaGridListSectionProps {
   /** An accessibility label for the section. Required if `heading` is not present. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the list row is contained in a virtual scroller. */
+  isVirtualized?: boolean,
+  /** An object representing the list item. Contains all the relevant information that makes up the list row. */
+  node: RSNode<unknown>
 }
 
 export interface GridListSectionAria {
@@ -34,17 +39,26 @@ export interface GridListSectionAria {
  * See `useGridList` for more details about grid list.
  * @param props - Props for the section.
  */
-export function useGridListSection(props: AriaGridListSectionProps): GridListSectionAria {
-  let {'aria-label': ariaLabel} = props;
+export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>): GridListSectionAria {
+  let {'aria-label': ariaLabel, isVirtualized, node} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({
     'aria-label': ariaLabel,
     'aria-labelledby': headingId
   });
+  let rowIndex: number | undefined =  undefined;
+
+  if (isVirtualized) {
+    let {collection} = state;
+    let filteredCollection = [...collection.getKeys()].filter((key) => collection.getItem(key)?.type !== 'header');
+    let prevItem = node.prevKey ? state.collection.getItem(node.prevKey) : undefined;
+    rowIndex = prevItem ? filteredCollection.findIndex((key) => key === prevItem.key) + 2 : node.index + 1;
+  }
   
   return {
     rowProps: {
-      role: 'row'
+      role: 'row',
+      'aria-rowindex': rowIndex
     },
     rowHeaderProps: {
       id: headingId,
