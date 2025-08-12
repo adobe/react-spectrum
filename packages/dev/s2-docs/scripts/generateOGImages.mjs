@@ -27,7 +27,8 @@ const cssVariables = {
   '--spectrum-global-color-gray-300': '#d3d3d3',
   '--spectrum-global-color-gray-400': '#bcbcbc',
   '--spectrum-global-color-gray-700': '#464646',
-  '--spectrum-alias-border-color-focus': '#0f62fe'
+  '--spectrum-alias-border-color-focus': '#0f62fe',
+  '--anatomy-font': 'adobe-clean'
 };
 
 async function getMdxFiles(dir) {
@@ -174,8 +175,8 @@ for (let file of files) {
                 props: {
                   src: componentSvg,
                   style: {
-                    maxWidth: '340px',
-                    maxHeight: '320px',
+                    width: '340px',
+                    height: '320px',
                     objectFit: 'contain'
                   }
                 }
