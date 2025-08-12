@@ -55,6 +55,11 @@ const getTitle = (currentPage: Page): string => {
   return library ? `${pageTitle} - ${library}` : pageTitle;
 };
 
+const getOgImageUrl = (currentPage: Page): string => {
+  const slug = currentPage.url.replace(/^\//, '').replace(/\.html$/, '');
+  return `/og/${slug}.png`;
+};
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   return (
@@ -63,6 +68,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
+        <meta property="og:image" content={getOgImageUrl(currentPage)} />
         <title>{getTitle(currentPage)}</title>
       </head>
       <body
