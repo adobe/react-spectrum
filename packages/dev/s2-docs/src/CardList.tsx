@@ -1,3 +1,4 @@
+/* eslint-disable monorepo/no-relative-import */
 'use client';
 
 import ActionButtonSvg from '../../docs/pages/assets/component-illustrations/ActionButton.svg';
