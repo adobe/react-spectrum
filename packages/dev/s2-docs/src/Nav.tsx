@@ -7,10 +7,11 @@ import type {PageProps} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = currentPage.url.match(/react-aria|s2/)?.[0];
+  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
+  console.log(currentPage.url, currentLibrary)
   let sections = new Map();
   for (let page of pages) {
-    let library = page.url.match(/react-aria|s2/)?.[0];
+    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
     if (library !== currentLibrary) {
       continue;
     }
