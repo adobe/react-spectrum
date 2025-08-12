@@ -17,7 +17,8 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxProps,
-  Provider
+  Provider,
+  DEFAULT_SLOT
 } from 'react-aria-components';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -93,7 +94,6 @@ interface SelectBoxContextValue {
 export const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
 export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-const descriptionOnly = ':has([slot=description]):not(:has([slot=label]))';
 const labelOnly = ':has([slot=label]):not(:has([slot=description]))';
 const noIllustration = ':not(:has([slot=illustration]))';
 const selectBoxStyles = style({
@@ -169,9 +169,6 @@ const selectBoxStyles = style({
       horizontal: {
         default: [
           'illustration . label',
-          'illustration . description'
-        ],
-        [descriptionOnly]: [
           'illustration . description'
         ],
         [labelOnly]: [
@@ -270,11 +267,6 @@ const labelText = style({
     default: 'center',
     orientation: {
       horizontal: 'start'
-    },
-    [labelOnly]: {
-      orientation: {
-        horizontal: 'center'
-      }
     }
   },
   width: '100%',
@@ -284,11 +276,6 @@ const labelText = style({
     default: 'center',
     orientation: {
       horizontal: 'start'
-    },
-    [labelOnly]: {
-      orientation: {
-        horizontal: 'center'
-      }
     }
   },
   whiteSpace: 'nowrap',
@@ -375,6 +362,9 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
               }],
               [TextContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {
+                    styles: labelText({orientation, isDisabled: renderProps.isDisabled})
+                  },
                   label: {
                     styles: labelText({orientation, isDisabled: renderProps.isDisabled})
                   },

@@ -406,7 +406,7 @@ export const AllSlotCombinations: Story = {
           
           {/* Text Only */}
           <div>
-            <h4 className={sectionHeadingStyles}>Text Only (Optimized)</h4>
+            <h4 className={sectionHeadingStyles}>Text Only</h4>
             <SelectBoxGroup 
               orientation="horizontal" 
               numColumns={1}
