@@ -13,7 +13,7 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode, ItemNode} from '@react-aria/collections';
-import {CollectionContext} from './Autocomplete';
+import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -424,7 +424,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
                 }
               }],
               [CollectionRendererContext, DefaultCollectionRenderer],
-              [ListStateContext, null]
+              [ListStateContext, null],
+              [CollectionContext, null],
+              [FieldInputContext, null]
             ]}>
             {renderProps.children}
           </Provider>

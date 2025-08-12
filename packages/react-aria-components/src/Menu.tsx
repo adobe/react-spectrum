@@ -13,7 +13,7 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
-import {CollectionContext} from './Autocomplete';
+import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -205,7 +205,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the MenuInnerProps type to
   // include filter
   let contextProps;
-  // TODO: still had to use unknown here to stop typescript from complaining...
+  // TODO: still had to use unknown here to stop typescript from complaining about the ref type difference between the menu ref and the more generic ref from the context
   [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
   let {filter, ...autocompleteMenuProps} = contextProps;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
@@ -255,6 +255,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
             [CollectionContext, null],
+            [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */

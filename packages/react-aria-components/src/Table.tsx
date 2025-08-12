@@ -3,7 +3,7 @@ import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBra
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {CollectionContext} from './Autocomplete';
+import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
@@ -493,7 +493,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         [TableStateContext, filteredState],
         [TableColumnResizeStateContext, layoutState],
         [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-        [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
+        [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
+        [CollectionContext, null],
+        [FieldInputContext, null]
       ]}>
       <FocusScope>
         <ElementType
