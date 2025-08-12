@@ -938,7 +938,7 @@ export const TableWithTextFields: StoryObj<typeof TableView> = {
     <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
       <TableHeader columns={manyColumns}>
         {(column) => (
-          <Column allowsResizing width={200} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+          <Column allowsResizing minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={manyRows}>
