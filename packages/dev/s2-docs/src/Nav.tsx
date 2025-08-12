@@ -8,7 +8,6 @@ import React, {createContext, useContext, useEffect, useRef, useState} from 'rea
 
 export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
-  console.log(currentPage.url, currentLibrary)
   let sections = new Map();
   for (let page of pages) {
     let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
