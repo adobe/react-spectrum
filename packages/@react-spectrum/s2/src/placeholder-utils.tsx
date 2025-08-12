@@ -10,30 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useEffect} from 'react';
-import {useEffectEvent, useEvent} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, useEffectEvent, useEvent} from '@react-aria/utils';
+import {RefObject, useEffect, useRef} from 'react';
 
 export function usePlaceholderWarning(placeholder: string | undefined, componentType: string, inputRef: RefObject<HTMLInputElement | null>): void {
   let checkPlaceholder = useEffectEvent((input: HTMLInputElement | null) => {
     if (!placeholder && input) {
-      if (document.activeElement !== input && (!input.value || input.value === '') && process.env.NODE_ENV !== 'production') {
+      if (getActiveElement(getOwnerDocument(input)) !== input && (!input.value || input.value === '')) {
         console.warn(`Your ${componentType} is empty and not focused but doesn't have a placeholder. Please add one.`);
       }
     }
   });
 
+  let hasWarned = useRef(false);
   useEffect(() => {
-    let timer;
-    if (componentType === 'ComboBox') {
-      timer = setTimeout(() => {
-        checkPlaceholder(inputRef.current);
-      }, 50);
-    } else {
+    if (!hasWarned.current && process.env.NODE_ENV !== 'production') {
       checkPlaceholder(inputRef.current);
     }
-
-    return () => clearTimeout(timer);
   }, [checkPlaceholder, inputRef, componentType]);
 
-  useEvent(inputRef, 'blur', (e) => checkPlaceholder(e.target as HTMLInputElement));
+  useEvent(inputRef, 'blur', (e) => {
+    if (!hasWarned.current && process.env.NODE_ENV !== 'production') {
+      checkPlaceholder(e.target as HTMLInputElement);
+    }
+  });
 }

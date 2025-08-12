@@ -64,7 +64,6 @@ import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {usePlaceholderWarning} from './placeholder-utils';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -581,7 +580,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     );
   }
   let scale = useScale();
-  usePlaceholderWarning(props.placeholder, 'ComboBox', inputRef);
 
   return (
     <>
