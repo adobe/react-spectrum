@@ -17,7 +17,7 @@ export function usePlaceholderWarning(placeholder: string | undefined, component
   let checkPlaceholder = useEffectEvent((input: HTMLInputElement | null) => {
     if (!placeholder && input) {
       if (getActiveElement(getOwnerDocument(input)) !== input && (!input.value || input.value === '')) {
-        console.warn(`Your ${componentType} is empty and not focused but doesn't have a placeholder. Please add one.`);
+        console.warn(`Your ${componentType} is empty and not focused but doesn't have a placeholder. Please add one to the element with the following id: ${input.id}.`);
       }
     }
   });

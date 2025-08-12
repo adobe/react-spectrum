@@ -14,6 +14,7 @@ import {
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
   ContextValue,
+  InputProps,
   Provider
 } from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
@@ -31,17 +32,13 @@ import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the SearchField.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * Temporary text that occupies the text input when it is empty.
-   */
-  placeholder?: string
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);

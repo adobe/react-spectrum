@@ -19,6 +19,7 @@ import {
   ButtonRenderProps,
   ContextValue,
   InputContext,
+  InputProps,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
@@ -40,7 +41,8 @@ export interface NumberFieldProps extends
   Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
-  HelpTextProps {
+  HelpTextProps,
+  Pick<InputProps, 'placeholder'> {
   /**
    * Whether to hide the increment and decrement buttons.
    * @default false
@@ -51,11 +53,7 @@ export interface NumberFieldProps extends
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * Temporary text that occupies the text input when it is empty.
-   */
-  placeholder?: string
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);

@@ -18,6 +18,7 @@ import {
   composeRenderProps,
   ContextValue,
   InputContext,
+  InputProps,
   useSlottedContext
 } from 'react-aria-components';
 import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -33,17 +34,13 @@ import {TextFieldRef} from '@react-types/textfield';
 import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the text field.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * Temporary text that occupies the text input when it is empty.
-   */
-  placeholder?: string
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
