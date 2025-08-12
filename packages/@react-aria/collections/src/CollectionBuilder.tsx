@@ -152,7 +152,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback((element: ElementNode<any> | null) => {
-    element?.setProps(props, ref, rendered, render, CollectionNodeClass);
+    element?.setProps(props, ref, CollectionNodeClass, rendered, render);
   }, [props, ref, rendered, render, CollectionNodeClass]);
   let parentNode = useContext(SSRContext);
   if (parentNode) {
@@ -160,7 +160,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
       element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
-      element.setProps(props, ref, rendered, render, CollectionNodeClass);
+      element.setProps(props, ref, CollectionNodeClass, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
       parentNode.ownerDocument.nodesByProps.set(props, element);

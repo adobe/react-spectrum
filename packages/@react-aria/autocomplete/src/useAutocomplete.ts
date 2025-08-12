@@ -29,12 +29,12 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
 }
 
 // TODO; For now go with Node here, but maybe pare it down to just the essentials? Value, key, and maybe type?
-export interface AriaAutocompleteProps extends AutocompleteProps {
+export interface AriaAutocompleteProps<T> extends AutocompleteProps {
   /**
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string, node: Node<unknown>) => boolean,
+  filter?: (textValue: string, inputValue: string, node: Node<T>) => boolean,
 
   /**
    * Whether or not to focus the first item in the collection after a filter is performed.
@@ -43,14 +43,14 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
   disableAutoFocusFirst?: boolean
 }
 
-export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
+export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'> {
   /** The ref for the wrapped collection element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the wrapped collection element. */
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export interface AutocompleteAria {
+export interface AutocompleteAria<T> {
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
   textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
@@ -58,7 +58,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (nodeTextValue: string, node: Node<unknown>) => boolean
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean
 }
 
 /**
@@ -67,7 +67,7 @@ export interface AutocompleteAria {
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: AutocompleteState): AutocompleteAria<T> {
   let {
     inputRef,
     collectionRef,
@@ -325,7 +325,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     'aria-label': stringFormatter.format('collectionLabel')
   });
 
-  let filterFn = useCallback((nodeTextValue: string, node: Node<unknown>) => {
+  let filterFn = useCallback((nodeTextValue: string, node: Node<T>) => {
     if (filter) {
       return filter(nodeTextValue, state.inputValue, node);
     }
