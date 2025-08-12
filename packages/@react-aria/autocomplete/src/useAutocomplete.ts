@@ -226,7 +226,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         }
         break;
       case ' ':
+      case 'Backspace':
         // Space shouldn't trigger onAction so early return.
+        // Backspace shouldn't trigger tag deletion either
         return;
       case 'Tab':
         // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
