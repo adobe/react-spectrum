@@ -9,7 +9,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, DOMRefValue, Orientation, Selection} from '@react-types/shared';
+import {DOMRef, DOMRefValue, Orientation, Selection, GlobalDOMAttributes} from '@react-types/shared';
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
 import {
@@ -27,7 +27,7 @@ import {TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, 'layout' | 'dragAndDropHooks'>, AriaLabelingProps{
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'renderEmptyState' | 'dependencies' | 'items' | 'children' | 'selectionMode'>{
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
@@ -95,6 +95,7 @@ export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBo
 
 const descriptionOnly = ':has([slot=description]):not(:has([slot=label]))';
 const labelOnly = ':has([slot=label]):not(:has([slot=description]))';
+const noIllustration = ':not(:has([slot=illustration]))';
 const selectBoxStyles = style({
   ...focusRing(),
   outlineOffset: {
@@ -182,7 +183,10 @@ const selectBoxStyles = style({
   gridTemplateRows: {
     orientation: {
       vertical: ['min-content', 8, 'min-content'],
-      horizontal: ['min-content', 'min-content']
+      horizontal: {
+        default: ['min-content', 'min-content'],
+        [noIllustration]: ['min-content'],
+      }
     }
   },
   gridTemplateColumns: {
@@ -266,6 +270,11 @@ const labelText = style({
     default: 'center',
     orientation: {
       horizontal: 'start'
+    },
+    [labelOnly]: {
+      orientation: {
+        horizontal: 'center'
+      }
     }
   },
   width: '100%',
@@ -275,6 +284,11 @@ const labelText = style({
     default: 'center',
     orientation: {
       horizontal: 'start'
+    },
+    [labelOnly]: {
+      orientation: {
+        horizontal: 'center'
+      }
     }
   },
   whiteSpace: 'nowrap',
@@ -292,6 +306,7 @@ const labelText = style({
 
 const gridStyles = style({
   display: 'grid',
+  outline: 'none',
   gridAutoRows: '1fr',
   gap: {
     gutterWidth: {
@@ -325,10 +340,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + selectBoxStyles({
         size, 
         orientation, 
-        isDisabled: renderProps.isDisabled,
-        isSelected: renderProps.isSelected,
-        isHovered: renderProps.isHovered,
-        isFocusVisible: renderProps.isFocusVisible
+        ...renderProps
       }, props.styles)}
       style={UNSAFE_style}>
       {(renderProps) => (
@@ -407,13 +419,6 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
     onSelectionChange
   );
 
-  const childrenArray = React.Children.toArray(children).filter((x) => x);
-  useEffect(() => {
-    if (childrenArray.length > 9) {
-      console.warn('Invalid content. SelectBoxGroup cannot have more than 9 children.');
-    }
-  }, [childrenArray.length]);
-
   const selectBoxContextValue = useMemo(
     () => {
       const contextValue = {
@@ -436,7 +441,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
       selectionMode={selectionMode}
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
-      className={UNSAFE_className + gridStyles({gutterWidth, orientation}, props.styles)}
+      className={(UNSAFE_className || '') + gridStyles({gutterWidth, orientation}, props.styles)}
       aria-label="SelectBoxGroup"
       aria-labelledby="SelectBoxGroup"
       style={{

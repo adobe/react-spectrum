@@ -554,68 +554,6 @@ export const AllSlotCombinations: Story = {
   )
 };
 
-export const WithCheckboxes: Story = {
-  args: {
-    defaultSelectedKeys: new Set(['aws', 'gcp'])
-  },
-  render: (args) => (
-    <div style={{maxWidth: 600}}>
-      <h3 className={subheadingStyles}>Checkboxes Enabled</h3>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="aws">
-          <Server />
-          <Text slot="label">Amazon Web Services</Text>
-          <Text slot="description">Reliable cloud infrastructure</Text>
-        </SelectBox>
-        <SelectBox value="azure">
-          <AlertNotice />
-          <Text slot="label">Microsoft Azure</Text>
-          <Text slot="description">Enterprise cloud solutions</Text>
-        </SelectBox>
-        <SelectBox value="gcp">
-          <PaperAirplane />
-          <Text slot="label">Google Cloud Platform</Text>
-          <Text slot="description">Modern cloud services</Text>
-        </SelectBox>
-        <SelectBox value="oracle">
-          <Server />
-          <Text slot="label">Oracle Cloud</Text>
-          <Text slot="description">Database-focused cloud</Text>
-        </SelectBox>
-        <SelectBox value="longtext">
-          <StarFilled1 />
-          <Text slot="label">This is an extremely long service name that should definitely overflow and show ellipsis behavior</Text>
-          <Text slot="description">This is a very long description that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
-        </SelectBox>
-        <SelectBox value="anotherlongone">
-          <StarFilled2 />
-          <Text slot="label">Another extremely long text. This is a very long text that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
-          <Text slot="description">Another extremely long description text that will help us verify how the SelectBox handles text overflow in different scenarios and orientations, ensuring that the text behavior is consistent and user-friendly across all use cases.</Text>
-        </SelectBox>
-        <SelectBox value="shortname">
-          <PaperAirplane />
-          <Text slot="label">Short</Text>
-          <Text slot="description">This description is intentionally very long to create a mixed layout where some boxes have short labels but long descriptions, which will help test how the grid layout handles boxes of different content lengths and whether they maintain consistent heights as expected. This is a very long description that should test the text wrapping and overflow behavior in horizontal orientation. It should wrap naturally until it hits the container boundaries and then show appropriate overflow handling.</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-      
-      <h3 style={{marginTop: 32}} className={subheadingStyles}>Checkboxes Disabled (Default)</h3>
-      <SelectBoxGroup defaultSelectedKeys={new Set(['aws'])} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="aws">
-          <Server />
-          <Text slot="label">Amazon Web Services</Text>
-          <Text slot="description">No checkbox visible</Text>
-        </SelectBox>
-        <SelectBox value="azure">
-          <AlertNotice />
-          <Text slot="label">Microsoft Azure</Text>
-          <Text slot="description">No checkbox on hover</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-    </div>
-  )
-};
-
 export const TextSlots: Story = {
   args: {
     orientation: 'horizontal'
