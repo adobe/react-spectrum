@@ -2657,7 +2657,7 @@ describe('Table', () => {
 
   describe('Editable fields in cells', () => {
     describe.each(['none', 'single', 'multiple'])('selectionMode: %s', (selectionMode) => {
-      it('should support editing a textfield in a cell in a table', async () => {
+      it('should support editing a textfield in a cell in a table with keyboard interactions', async () => {
         let {getByRole, getAllByRole} = render(
           <>
             <Table aria-label="Files" keyboardNavigationBehavior="tab" selectionMode={selectionMode}>
@@ -2756,6 +2756,86 @@ describe('Table', () => {
         } else {
           expect(tableTester.cells({element: tableTester.rows[0]})[3]).toHaveFocus();
         }
+      });
+
+      describe('pointer interactions', () => {
+        installPointerEvent();
+
+        it('should support editing a textfield in a cell in a table with mouse interactions', async () => {
+          let {getByRole, getAllByRole} = render(
+            <>
+              <Table aria-label="Files" keyboardNavigationBehavior="tab" selectionMode={selectionMode}>
+                <MyTableHeader>
+                  <Column>
+                    <MyCheckbox slot="selection" />
+                  </Column>
+                  <MyColumn id="name" isRowHeader>Name</MyColumn>
+                  <MyColumn>Type</MyColumn>
+                  <MyColumn>Description</MyColumn>
+                </MyTableHeader>
+                <TableBody>
+                  <MyRow id="1" textValue="Edit">
+                    <Cell>
+                      <MyCheckbox slot="selection" />
+                    </Cell>
+                    <Cell>Games</Cell>
+                    <Cell>File folder</Cell>
+                    <Cell>
+                      <TextField aria-label="Change description 1">
+                        <Input />
+                      </TextField>
+                      <TextField aria-label="Change description 2">
+                        <Input />
+                      </TextField>
+                    </Cell>
+                  </MyRow>
+                  <MyRow id="2" textValue="Bold">
+                    <Cell>
+                      <MyCheckbox slot="selection" />
+                    </Cell>
+                    <Cell>Fonts</Cell>
+                    <Cell>Font folder</Cell>
+                    <Cell>
+                      <TextField aria-label="Change description 3">
+                        <Input />
+                      </TextField>
+                      <TextField aria-label="Change description 4">
+                        <Input />
+                      </TextField>
+                    </Cell>
+                  </MyRow>
+                </TableBody>
+              </Table>
+              <button>After</button>
+            </>
+          );
+
+          // click on the first textfield in the first row
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          let inputs = getAllByRole('textbox');
+          await user.click(inputs[0]);
+          expect(inputs[0]).toHaveFocus();
+          await user.keyboard('{ArrowRight}');
+          expect(inputs[0]).toHaveFocus();
+          await user.keyboard('{ArrowLeft}');
+          expect(inputs[0]).toHaveFocus();
+          // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+          await user.keyboard('B ');
+          expect(tableTester.selectedRows).toHaveLength(0);
+          expect(inputs[0]).toHaveFocus();
+
+          // click on the second textfield in the first row
+          await user.click(inputs[1]);
+          expect(inputs[1]).toHaveFocus();
+          await user.keyboard('{ArrowRight}');
+          expect(inputs[1]).toHaveFocus();
+          await user.keyboard('{ArrowLeft}');
+          expect(inputs[1]).toHaveFocus();
+          // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+          await user.keyboard('E ');
+          expect(tableTester.selectedRows).toHaveLength(0);
+          expect(inputs[1]).toHaveFocus();
+        });
       });
     });
 
