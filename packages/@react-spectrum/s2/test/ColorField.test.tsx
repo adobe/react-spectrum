@@ -27,12 +27,12 @@ describe('ColorField', () => {
       <ColorField label="Color" />
     );
 
-    expect(spy).toHaveBeenCalledWith('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: '));
     spy.mockClear();
 
     await user.tab();
     await user.tab();
-    expect(spy).toHaveBeenCalledWith('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: '));
     spy.mockClear();
 
     let input = getByRole('textbox');

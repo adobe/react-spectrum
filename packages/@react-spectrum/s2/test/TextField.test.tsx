@@ -24,15 +24,15 @@ describe('TextField', () => {
   it('should warn if the TextField renders/blurs without a placeholder', async () => {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, rerender} = render(
-      <TextField label="Name" />
+      <TextField id="1" label="Name" />
     );
 
-    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: 1.');
     spy.mockClear();
 
     await user.tab();
     await user.tab();
-    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: 1.');
     spy.mockClear();
 
     let input = getByRole('textbox');
@@ -51,15 +51,15 @@ describe('TextField', () => {
   it('should warn if the TextArea renders/blurs without a placeholder', async () => {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, rerender} = render(
-      <TextArea label="Name" />
+      <TextArea id="1" label="Name" />
     );
 
-    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: 1.');
     spy.mockClear();
 
     await user.tab();
     await user.tab();
-    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one.');
+    expect(spy).toHaveBeenCalledWith('Your TextField/Area is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: 1.');
     spy.mockClear();
 
     let input = getByRole('textbox');
