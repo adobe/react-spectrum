@@ -143,9 +143,8 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	node packages/dev/s2-docs/scripts/generateMarkdownDocs.mjs
-	node packages/dev/s2-docs/scripts/generateOGImages.mjs
-	node scripts/extractStarter.mjs
+	yarn workspace @react-spectrum/s2-docs generate:md
+	yarn workspace @react-spectrum/s2-docs generate:og
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
 	mkdir -p dist/$$(git rev-parse HEAD)
