@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.UNSTABLE_ToastContainer.description}</PageDescription>
 
-```tsx render docs={docs.exports.UNSTABLE_ToastContainer} links={docs.links} props={['placement']} initialProps={{placement: 'bottom'}} expanded type="s2"
+```tsx render docs={docs.exports.UNSTABLE_ToastContainer} links={docs.links} props={['placement']} initialProps={{placement: 'bottom'}} type="s2"
 "use client";
 import {UNSTABLE_ToastContainer as ToastContainer, Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
@@ -53,14 +53,6 @@ import {Button, ButtonGroup, UNSTABLE_ToastQueue as ToastQueue} from '@react-spe
   </Button>
 </ButtonGroup>
 ```
-
-### Accessibility
-
-Toasts are automatically displayed in a landmark region labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastContainer` element. Landmark regions can be navigated using the keyboard by pressing the F6 key to move forward, and Shift + F6 to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app.
-
-### Internationalization
-
-To internationalize a Toast, all text content within the toast should be localized. This includes the `actionLabel` option, if provided. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Toast is automatically flipped.
 
 ## Events
 

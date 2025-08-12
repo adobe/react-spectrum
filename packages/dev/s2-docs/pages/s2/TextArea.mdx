@@ -44,20 +44,6 @@ function Example() {
 }
 ```
 
-## Auto-resize
-
-TextArea automatically adjusts its height to fit the content as users type, providing a seamless experience without manual resizing.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<TextArea
-  label="Feedback"
-  placeholder="Type your feedback here. The field will grow as you type..."
-  defaultValue="This is a longer piece of text that demonstrates how the TextArea automatically adjusts its height to accommodate multiple lines of content without requiring manual resizing." />
-```
-
 ## Events
 
 TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user.
@@ -103,44 +89,6 @@ import {TextArea, Form, Button, ButtonGroup} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Help text
-
-Both a description and an error message can be supplied to a TextArea. The description is always visible unless an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
-  <TextArea 
-    label="Feedback" 
-    defaultValue="Great product!" 
-    description="Share your thoughts about our service." />
-  <TextArea 
-    label="Feedback" 
-    isInvalid
-    errorMessage="Feedback must be at least 10 characters long." />
-</div>
-```
-
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextArea.
-
-```tsx render hideImports
-"use client";
-import {TextArea, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<TextArea
-  label="Comment"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Comment guidelines</Heading>
-      <Content>Comments will be reviewed before being published. Please keep them constructive and respectful.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 TextArea supports the `name` prop for integration with HTML forms.
@@ -152,19 +100,6 @@ import {TextArea} from '@react-spectrum/s2';
 <form>
   <TextArea label="Message" name="message" />
 </form>
-```
-
-## Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the TextArea for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<TextArea
-  aria-label="Additional comments"
-  placeholder="Enter any additional comments..." />
 ```
 
 ## Props

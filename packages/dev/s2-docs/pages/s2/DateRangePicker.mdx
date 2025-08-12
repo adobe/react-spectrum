@@ -76,29 +76,6 @@ import {parseZonedDateTime} from '@internationalized/date';
   }} />
 ```
 
-## Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by a DateRangePicker. By default, CalendarDate values are displayed with `"day"` granularity, and CalendarDateTime and ZonedDateTime values are displayed with `"minute"` granularity.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-import {parseAbsoluteToLocal} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DateRangePicker
-    label="Date range"
-    granularity="day" />
-  <DateRangePicker
-    label="Date and time range"
-    granularity="minute"
-    defaultValue={{
-      start: parseAbsoluteToLocal('2024-04-07T18:45:22Z'),
-      end: parseAbsoluteToLocal('2024-04-08T20:00:00Z')
-    }} />
-</div>
-```
-
 ## Validation
 
 DateRangePicker supports validation through the `isRequired` prop, minimum and maximum values, and custom validation functions. It can be integrated with forms and displays error states appropriately.
@@ -149,60 +126,6 @@ function Example() {
       label="Hotel booking"
       minValue={today(getLocalTimeZone())}
       isDateUnavailable={isDateUnavailable} />
-  );
-}
-```
-
-## Multiple months
-
-The calendar popup can display multiple months using the `maxVisibleMonths` prop, if screen space permits.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-
-<DateRangePicker
-  label="Trip dates"
-  maxVisibleMonths={2} />
-```
-
-## Help text
-
-You can provide additional context with the `description` prop, and display errors with `errorMessage`.
-
-```tsx render hideImports
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-import {today, getLocalTimeZone} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DateRangePicker
-    label="Trip dates"
-    description="Select your travel start and end dates."
-    defaultValue={{
-      start: today(getLocalTimeZone()),
-      end: today(getLocalTimeZone()).add({weeks: 1})
-    }} />
-  <DateRangePicker
-    label="Trip dates"
-    isInvalid
-    errorMessage="Please select a valid date range." />
-</div>
-```
-
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.DateRangePicker} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {DateRangePicker} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <DateRangePicker
-      {...props}/* PROPS */
-      label="Trip dates" />
   );
 }
 ```

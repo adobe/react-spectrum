@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
 
-```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} expanded type="s2"
+```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} type="s2"
 import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 
 <Breadcrumbs/* PROPS */>
@@ -21,20 +21,6 @@ import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 ## Content
 
 Breadcrumbs show hierarchy and navigational context for a user's location within an application. They follow the Collection Components API, accepting both static and dynamic collections.
-
-### Basic Usage
-
-```tsx render expanded
-"use client";
-import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
-
-<Breadcrumbs>
-  <Breadcrumb href="/">Home</Breadcrumb>
-  <Breadcrumb href="/documents">Documents</Breadcrumb>
-  <Breadcrumb href="/documents/projects">Projects</Breadcrumb>
-  <Breadcrumb>Current Folder</Breadcrumb>
-</Breadcrumbs>
-```
 
 ### Dynamic Collections
 

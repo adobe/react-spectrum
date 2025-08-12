@@ -11,7 +11,7 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={TimeField}
   docs={docs.exports.TimeField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid']}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid', 'granularity', 'hourCycle']}
   initialProps={{label: 'Event time'}}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -43,37 +43,6 @@ function Example() {
 }
 ```
 
-## Segments
-
-TimeField is composed of individual segments for time parts like hour, minute, and second. Users can navigate between segments with the Tab key and modify values using the arrow keys or by typing.
-
-```tsx render
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-<TimeField label="Meeting time" />
-```
-
-## Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by a TimeField. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
-
-```tsx render hideImports
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-import {parseAbsoluteToLocal} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <TimeField
-    label="Meeting time (minutes)"
-    granularity="minute" />
-  <TimeField
-    label="Event time (seconds)"
-    granularity="second"
-    defaultValue={parseAbsoluteToLocal('2024-04-07T18:45:22Z')} />
-</div>
-```
-
 ## Time zones
 
 TimeField is time zone aware when a ZonedDateTime object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account.
@@ -86,24 +55,6 @@ import {parseZonedDateTime} from '@internationalized/date';
 <TimeField
   label="Event time"
   defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')} />
-```
-
-## Hour cycle
-
-By default, TimeField displays times in either 12 or 24 hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed.
-
-```tsx render hideImports
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <TimeField
-    label="12-hour format"
-    hourCycle={12} />
-  <TimeField
-    label="24-hour format"
-    hourCycle={24} />
-</div>
 ```
 
 ## Validation
@@ -125,50 +76,6 @@ import {Time} from '@internationalized/date';
     description="Select a time between 9 AM and 5 PM." />
   <Button type="submit">Submit</Button>
 </Form>
-```
-
-## Error state
-
-TimeField can display validation errors using the `isInvalid` and `errorMessage` props.
-
-```tsx render
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-<TimeField
-  label="Event time"
-  isInvalid
-  errorMessage="Please enter a valid time." />
-```
-
-## Help text
-
-You can provide additional context with the `description` prop.
-
-```tsx render
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-<TimeField
-  label="Meeting time"
-  description="Enter the meeting time (HH:MM)." />
-```
-
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.TimeField} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <TimeField
-      {...props}/* PROPS */
-      label="Event time" />
-  );
-}
 ```
 
 ## Placeholder value

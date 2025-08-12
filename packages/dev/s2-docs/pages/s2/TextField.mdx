@@ -100,45 +100,6 @@ import {TextField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Help text
-
-Both a description and an error message can be supplied to a TextField. The description is always visible unless an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
-
-```tsx render hideImports
-"use client";
-import {TextField} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
-  <TextField 
-    label="Name" 
-    defaultValue="John" 
-    description="Enter your full name." />
-  <TextField 
-    label="Name" 
-    isInvalid
-    errorMessage="Name is required." />
-</div>
-```
-
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextField.
-
-```tsx render hideImports
-"use client";
-import {TextField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<TextField
-  label="Password"
-  type="password"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Password requirements</Heading>
-      <Content>Passwords must be at least 8 characters long and contain at least one number.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
@@ -150,19 +111,6 @@ import {TextField} from '@react-spectrum/s2';
 <form>
   <TextField label="Email" name="email" type="email" />
 </form>
-```
-
-## Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the TextField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {TextField} from '@react-spectrum/s2';
-
-<TextField
-  aria-label="Search products"
-  placeholder="Search..." />
 ```
 
 ## Props

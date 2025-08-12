@@ -146,22 +146,6 @@ import {NumberField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
 </Form>
 ```
 
-## Labeling
-
-A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
-
-```tsx render hideImports
-"use client";
-import {NumberField} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
-  <NumberField label="Cookies" minValue={0} />
-  <NumberField label="Cookies" isRequired necessityIndicator="icon" minValue={0} />
-  <NumberField label="Cookies" isRequired necessityIndicator="label" minValue={0} />
-  <NumberField label="Cookies" necessityIndicator="label" minValue={0} />
-</div>
-```
-
 ## Events
 
 NumberField accepts an `onChange` prop which is triggered whenever the value is edited by the user. The example below uses `onChange` to update a separate element with the current value.
@@ -187,50 +171,6 @@ function Example() {
 }
 ```
 
-## Help text
-
-Both a description and an error message can be supplied to a NumberField. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error.
-
-```tsx render hideImports
-"use client";
-import {NumberField} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [value, setValue] = useState(12);
-  let isValid = value >= 1 && value <= 10;
-
-  return (
-    <NumberField
-      label="Cookies"
-      description="Please enter the number of cookies."
-      errorMessage={value === 0 ? "Value must be greater than 0." : "Please select a number between 1 and 10."}
-      value={value}
-      onChange={setValue}
-      isInvalid={!isValid}
-      minValue={0} />
-  );
-}
-```
-
-## Contextual help
-
-A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
-
-```tsx render hideImports
-"use client";
-import {NumberField, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
-
-<NumberField
-  label="Quantity"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is quantity?</Heading>
-      <Content>Quantity refers to the amount of items you wish to purchase.</Content>
-    </ContextualHelp>
-  } />
-```
-
 ## HTML forms
 
 NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
@@ -249,17 +189,6 @@ import {NumberField} from '@react-spectrum/s2';
       currency: 'USD'
     }} />
 </form>
-```
-
-## Accessibility
-
-If a visible label isn't specified, an `aria-label` must be provided to the NumberField for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render hideImports
-"use client";
-import {NumberField} from '@react-spectrum/s2';
-
-<NumberField aria-label="Width in pixels" defaultValue={1024} />
 ```
 
 ## Props

@@ -43,17 +43,6 @@ function Example() {
 }
 ```
 
-## Labeling
-
-An `aria-label` must be provided to the Calendar for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
-
-```tsx render
-"use client";
-import {Calendar} from '@react-spectrum/s2';
-
-<Calendar aria-label="Appointment date" />
-```
-
 ## Validation
 
 Calendar supports validation through the `minValue` and `maxValue` props to prevent selecting dates outside a certain range.

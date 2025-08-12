@@ -9,7 +9,7 @@ import docs from 'docs:@react-spectrum/s2';
 <PageDescription>{docs.exports.Form.description}</PageDescription>
 
 
-```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} initialProps={{style: {maxWidth: 400}}} expanded type="s2"
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} initialProps={{style: {maxWidth: 400}}} type="s2"
 import {Form, TextField, Checkbox, Button} from '@react-spectrum/s2';
 
 <Form/* PROPS */>
@@ -162,24 +162,6 @@ function Example() {
     </Form>
   );
 }
-```
-
-## Accessibility
-
-A label should be provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, so that the element will be identified to assistive technology as a form landmark region.
-
-```tsx render hideImports
-"use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
-
-<div>
-  <h3 id="form-label">Personal Information</h3>
-  <Form aria-labelledby="form-label" style={{maxWidth: 300}}>
-    <TextField label="First Name" />
-    <TextField label="Last Name" />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-</div>
 ```
 
 ## Props

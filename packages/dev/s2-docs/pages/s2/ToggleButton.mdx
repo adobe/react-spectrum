@@ -34,29 +34,8 @@ import PinOff from '@react-spectrum/s2/icons/PinOff';
 </ToggleButton>
 ```
 
-### Accessibility
-
-If no visible label is provided (e.g. an icon only button),
-an alternative text label must be provided to identify the control for accessibility. This should be added using
-the `aria-label` prop.
-
-```tsx render hideImports
-"use client";
-import {ToggleButton} from '@react-spectrum/s2';
-import PinOn from '@react-spectrum/s2/icons/PinOn';
-import PinOff from '@react-spectrum/s2/icons/PinOff';
-
-<ToggleButton aria-label="Pin">
-  <PinOn />
-</ToggleButton>
-```
-
 **Note:** `ToggleButton` should not be used when the content of the button changes between selection states, for example,
 mute/unmute or play/pause. In these cases, use an [ActionButton](ActionButton.html) instead.
-
-### Internationalization
-
-In order to internationalize a ToggleButton, a localized string should be passed to the `children` or `aria-label` prop.
 
 ## Value
 

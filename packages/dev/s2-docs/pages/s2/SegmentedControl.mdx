@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.SegmentedControl.description}</PageDescription>
 
-```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} expanded type="s2"
+```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2"
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 
 <SegmentedControl/* PROPS */>
@@ -22,47 +22,6 @@ import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 ## Content
 
 SegmentedControls contain a collection of related SegmentedControlItems that represent mutually exclusive options. Only one option can be selected at a time, making them ideal for view switching and mode selection.
-
-### Basic example
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-
-<SegmentedControl aria-label="Time granularity" onSelectionChange={(key) => console.log(key)}>
-  <SegmentedControlItem id="day">Day</SegmentedControlItem>
-  <SegmentedControlItem id="week">Week</SegmentedControlItem>
-  <SegmentedControlItem id="month">Month</SegmentedControlItem>
-  <SegmentedControlItem id="year">Year</SegmentedControlItem>
-</SegmentedControl>
-```
-
-### With icons
-
-Icons can be combined with text labels to provide additional visual context.
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
-import ListBulleted from '@react-spectrum/s2/icons/ListBulleted';
-import ListNumbered from '@react-spectrum/s2/icons/ListNumbered';
-import ListMultiSelect from '@react-spectrum/s2/icons/ListMultiSelect';
-
-<SegmentedControl aria-label="List organization">
-  <SegmentedControlItem id="unordered">
-    <ListBulleted />
-    <Text>Unordered</Text>
-  </SegmentedControlItem>
-  <SegmentedControlItem id="ordered">
-    <ListNumbered />
-    <Text>Ordered</Text>
-  </SegmentedControlItem>
-  <SegmentedControlItem id="task">
-    <ListMultiSelect />
-    <Text>Task List</Text>
-  </SegmentedControlItem>
-</SegmentedControl>
-```
 
 ### Icon only
 
@@ -87,10 +46,6 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
   </SegmentedControlItem>
 </SegmentedControl>
 ```
-
-### Accessibility
-
-Always provide an `aria-label` for the SegmentedControl to describe the purpose of the control. For icon-only items, each SegmentedControlItem should have its own `aria-label`.
 
 ## Selection
 
@@ -142,26 +97,6 @@ function Example() {
 <Example />
 ```
 
-## Layout
-
-### Justified
-
-Use `isJustified` to make the control items expand to fill the available width equally.
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-
-<div style={{width: '400px'}}>
-  <SegmentedControl isJustified aria-label="Size selection">
-    <SegmentedControlItem id="xs">XS</SegmentedControlItem>
-    <SegmentedControlItem id="s">S</SegmentedControlItem>
-    <SegmentedControlItem id="m">M</SegmentedControlItem>
-    <SegmentedControlItem id="l">L</SegmentedControlItem>
-    <SegmentedControlItem id="xl">XL</SegmentedControlItem>
-  </SegmentedControl>
-</div>
-```
 
 ## States
 
@@ -225,8 +160,8 @@ function Example() {
 
 ## Props
 
-### SegmentedControl Props
+### SegmentedControl
 <PropTable component={docs.exports.SegmentedControl} links={docs.links} />
 
-### SegmentedControlItem Props
+### SegmentedControlItem
 <PropTable component={docs.exports.SegmentedControlItem} links={docs.links} />

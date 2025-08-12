@@ -11,7 +11,7 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={DatePicker}
   docs={docs.exports.DatePicker}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly']}
+  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'granularity']}
   initialProps={{label: 'Event date'}}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -55,30 +55,6 @@ import {parseZonedDateTime} from '@internationalized/date';
 <DatePicker
   label="Event time"
   defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')} />
-```
-
-## Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by a DatePicker. By default, CalendarDate values are displayed with `"day"` granularity, and CalendarDateTime and ZonedDateTime values are displayed with `"minute"` granularity.
-
-```tsx render hideImports
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-import {parseAbsoluteToLocal} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DatePicker
-    label="Date only"
-    granularity="day" />
-  <DatePicker
-    label="Date and time"
-    granularity="minute"
-    defaultValue={parseAbsoluteToLocal('2024-04-07T18:45:22Z')} />
-  <DatePicker
-    label="With seconds"
-    granularity="second"
-    defaultValue={parseAbsoluteToLocal('2024-04-07T18:45:22Z')} />
-</div>
 ```
 
 ## Validation
@@ -134,57 +110,6 @@ function Example() {
       label="Appointment date"
       minValue={today(getLocalTimeZone())}
       isDateUnavailable={isDateUnavailable} />
-  );
-}
-```
-
-## Multiple months
-
-The calendar popup can display multiple months using the `maxVisibleMonths` prop, if screen space permits.
-
-```tsx render hideImports
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-
-<DatePicker
-  label="Event date"
-  maxVisibleMonths={2} />
-```
-
-## Help text
-
-You can provide additional context with the `description` prop, and display errors with `errorMessage`.
-
-```tsx render hideImports
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-import {today, getLocalTimeZone} from '@internationalized/date';
-
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <DatePicker
-    label="Event date"
-    description="Select the date for your event."
-    defaultValue={today(getLocalTimeZone())} />
-  <DatePicker
-    label="Event date"
-    isInvalid
-    errorMessage="Please select a valid date." />
-</div>
-```
-
-## Label positioning
-
-The label can be positioned using the `labelPosition` prop.
-
-```tsx render hideImports docs={docs.exports.DatePicker} links={docs.links} props={['labelPosition', 'labelAlign']}
-"use client";
-import {DatePicker} from '@react-spectrum/s2';
-
-function Example(props) {
-  return (
-    <DatePicker
-      {...props}/* PROPS */
-      label="Event date" />
   );
 }
 ```

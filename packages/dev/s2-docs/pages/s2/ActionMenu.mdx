@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.ActionMenu.description}</PageDescription>
 
-```tsx render docs={docs.exports.ActionMenu} links={docs.links} props={['isQuiet', 'isDisabled', 'size', 'align', 'direction', 'menuSize']} initialProps={{}} expanded type="s2"
+```tsx render docs={docs.exports.ActionMenu} links={docs.links} props={['isQuiet', 'isDisabled', 'size', 'align', 'direction', 'menuSize']} initialProps={{}} type="s2"
 import {ActionMenu, MenuItem} from '@react-spectrum/s2';
 
 <ActionMenu/* PROPS */>
@@ -191,21 +191,6 @@ import {ActionMenu, MenuItem} from '@react-spectrum/s2';
   <MenuItem id="copy">Copy</MenuItem>
   <MenuItem id="paste">Paste</MenuItem>
   <MenuItem id="select-all">Select All</MenuItem>
-</ActionMenu>
-```
-
-## Accessibility
-
-ActionMenu automatically provides an appropriate `aria-label` for the trigger button ("More actions"). You can override this by providing your own `aria-label` prop.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-<ActionMenu aria-label="File actions">
-  <MenuItem>Open</MenuItem>
-  <MenuItem>Save</MenuItem>
-  <MenuItem>Export</MenuItem>
 </ActionMenu>
 ```
 
