@@ -335,7 +335,7 @@ interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'chil
 
 function MyComboBox<T extends object>({label, description, errorMessage, children, ...props}: MyComboBoxProps<T>) {
   return (
-    <ComboBox {...props}>
+    <ComboBox allowsEmptyCollection {...props}>
       <Label>{label}</Label>
       <div className="my-combobox-container">
         <Input />
@@ -344,7 +344,7 @@ function MyComboBox<T extends object>({label, description, errorMessage, childre
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <ListBox>
+        <ListBox renderEmptyState={() => <div className="my-item">No results found</div>}>
           {children}
         </ListBox>
       </Popover>
