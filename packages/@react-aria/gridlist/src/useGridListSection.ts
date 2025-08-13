@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
+import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
 
 export interface AriaGridListSectionProps {
@@ -34,13 +35,14 @@ export interface GridListSectionAria {
  * See `useGridList` for more details about grid list.
  * @param props - Props for the section.
  */
-export function useGridListSection(props: AriaGridListSectionProps): GridListSectionAria {
+export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
   let {'aria-label': ariaLabel} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({
     'aria-label': ariaLabel,
     'aria-labelledby': headingId
   });
+
   return {
     rowProps: {
       role: 'row'
