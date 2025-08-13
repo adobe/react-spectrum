@@ -571,13 +571,11 @@ export interface GridListSectionProps<T> extends SectionProps<T> {}
 export const GridListSection = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
-  let {CollectionBranch, isVirtualized} = useContext(CollectionRendererContext);
+  let {CollectionBranch} = useContext(CollectionRendererContext);
   let headingRef = useRef(null);
   let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
-    'aria-label': props['aria-label'] ?? undefined,
-    isVirtualized,
-    node: item
-  }, state);
+    'aria-label': props['aria-label'] ?? undefined
+  });
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-GridListSection',
     className: props.className,
