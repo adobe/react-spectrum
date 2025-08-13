@@ -61,7 +61,9 @@ export interface NumberFieldState extends FormValidationState {
   /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
   incrementToMax(): void,
   /** Sets the current value to the `minValue` if any, and fires `onChange`. */
-  decrementToMin(): void
+  decrementToMin(): void,
+  /** Attempts to parse a value in the current locale. */
+  parser: NumberParser
 }
 
 export interface NumberFieldStateOptions extends NumberFieldProps {
@@ -281,7 +283,8 @@ export function useNumberFieldState(
     setNumberValue,
     setInputValue,
     inputValue,
-    commit
+    commit,
+    parser: numberParser
   };
 }
 
