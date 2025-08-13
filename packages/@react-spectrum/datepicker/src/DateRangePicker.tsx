@@ -50,9 +50,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
     isDisabled,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1,
-    pageBehavior,
-    firstDayOfWeek
+    maxVisibleMonths = 1
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement | null>(null);
@@ -189,8 +187,6 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
                 <RangeCalendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
-                  pageBehavior={pageBehavior}
-                  firstDayOfWeek={firstDayOfWeek}
                   createCalendar={props.createCalendar}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': validationState === 'invalid'})} />
                 {showTimeField &&
