@@ -15,18 +15,18 @@ import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean | undefined,
   /** The content to display in the button. */
   children?: ReactNode
 }
 
 interface ToggleButtonProps extends ButtonProps {
   /** Whether the element should be selected (controlled). */
-  isSelected?: boolean,
+  isSelected?: boolean | undefined,
   /** Whether the element should be selected (uncontrolled). */
-  defaultSelected?: boolean,
+  defaultSelected?: boolean | undefined,
   /** Handler that is called when the element's selection state changes. */
-  onChange?: (isSelected: boolean) => void
+  onChange?: ((isSelected: boolean) => void) | undefined
 }
 
 export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
@@ -34,64 +34,64 @@ export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
    * @default 'button'
    */
-  elementType?: T | JSXElementConstructor<any>
+  elementType?: T | JSXElementConstructor<any> | undefined
 }
 
 export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaButtonElementTypeProps<T> {
   /** A URL to link to if elementType="a". */
-  href?: string,
+  href?: string | undefined,
   /** The target window for the link. */
-  target?: string,
+  target?: string | undefined,
   /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
-  rel?: string
+  rel?: string | undefined
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
-  'aria-expanded'?: boolean | 'true' | 'false',
+  'aria-expanded'?: boolean | 'true' | 'false' | undefined,
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true' | 'false',
+  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true' | 'false' | undefined,
   /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
-  'aria-controls'?: string,
+  'aria-controls'?: string | undefined,
   /** Indicates the current "pressed" state of toggle buttons. */
-  'aria-pressed'?: boolean | 'true' | 'false' | 'mixed',
+  'aria-pressed'?: boolean | 'true' | 'false' | 'mixed' | undefined,
   /** Indicates whether this element represents the current item within a container or set of related elements. */
-  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time',
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time' | undefined,
   /**
    * The behavior of the button when used in an HTML form.
    * @default 'button'
    */
-  type?: 'button' | 'submit' | 'reset',
+  type?: 'button' | 'submit' | 'reset' | undefined,
   /**
    * Whether to prevent focus from moving to the button when pressing it.
    *
    * Caution, this can make the button inaccessible and should only be used when alternative keyboard interaction is provided,
    * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
    */
-  preventFocusOnPress?: boolean,
+  preventFocusOnPress?: boolean | undefined,
   /**
    * The `<form>` element to associate the button with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button#form).
    */
-  form?: string,
+  form?: string | undefined,
   /**
    * The URL that processes the information submitted by the button.
    * Overrides the action attribute of the button's form owner.
    */
-  formAction?: string,
+  formAction?: string | undefined,
   /** Indicates how to encode the form data that is submitted. */
-  formEncType?: string,
+  formEncType?: string | undefined,
   /** Indicates the HTTP method used to submit the form. */
-  formMethod?: string,
+  formMethod?: string | undefined,
   /** Indicates that the form is not to be validated when it is submitted. */
-  formNoValidate?: boolean,
+  formNoValidate?: boolean | undefined,
   /** Overrides the target attribute of the button's form owner. */
-  formTarget?: string,
+  formTarget?: string | undefined,
   /** Submitted as a pair with the button's value as part of the form data. */
-  name?: string,
+  name?: string | undefined,
   /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string
+  value?: string | undefined
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
@@ -107,25 +107,25 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'accent' | 'primary' | 'secondary' | 'negative' | LegacyButtonVariant,
   /** The background style of the button. */
-  style?: 'fill' | 'outline',
+  style?: 'fill' | 'outline' | undefined,
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | undefined,
   /**
    * Whether to disable events immediately and display a loading spinner after a 1 second delay.
    */
-  isPending?: boolean,
+  isPending?: boolean | undefined,
   /**
    * Whether the button should be displayed with a quiet style.
    * @deprecated
    */
-  isQuiet?: boolean
+  isQuiet?: boolean | undefined
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean,
+  isQuiet?: boolean | undefined,
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black' | undefined
 }
 
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
@@ -135,5 +135,5 @@ export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, Omit<Butt
 
 export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current' | 'type' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value'> {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  isEmphasized?: boolean
+  isEmphasized?: boolean | undefined
 }
