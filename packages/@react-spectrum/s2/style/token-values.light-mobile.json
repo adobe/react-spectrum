@@ -1,0 +1,1977 @@
+{
+  "colors": {
+    "transparent": [
+      "transparent",
+      "#0000"
+    ],
+    "black": [
+      "black",
+      "#000"
+    ],
+    "white": [
+      "white",
+      "#fff"
+    ],
+    "gray-25": [
+      "rgb(255, 255, 255)",
+      "#fff"
+    ],
+    "gray-50": [
+      "rgb(248, 248, 248)",
+      "#f8f8f8"
+    ],
+    "gray-75": [
+      "rgb(243, 243, 243)",
+      "#f3f3f3"
+    ],
+    "gray-100": [
+      "rgb(233, 233, 233)",
+      "#e9e9e9"
+    ],
+    "gray-200": [
+      "rgb(225, 225, 225)",
+      "#e1e1e1"
+    ],
+    "gray-300": [
+      "rgb(218, 218, 218)",
+      "#dadada"
+    ],
+    "gray-400": [
+      "rgb(198, 198, 198)",
+      "#c6c6c6"
+    ],
+    "gray-500": [
+      "rgb(143, 143, 143)",
+      "#8f8f8f"
+    ],
+    "gray-600": [
+      "rgb(113, 113, 113)",
+      "#717171"
+    ],
+    "gray-700": [
+      "rgb(80, 80, 80)",
+      "#505050"
+    ],
+    "gray-800": [
+      "rgb(41, 41, 41)",
+      "#292929"
+    ],
+    "gray-900": [
+      "rgb(19, 19, 19)",
+      "#131313"
+    ],
+    "gray-1000": [
+      "rgb(0, 0, 0)",
+      "#000"
+    ],
+    "blue-100": [
+      "rgb(245, 249, 255)",
+      "#f5f9ff"
+    ],
+    "blue-200": [
+      "rgb(229, 240, 254)",
+      "#e5f0fe"
+    ],
+    "blue-300": [
+      "rgb(203, 226, 254)",
+      "#cbe2fe"
+    ],
+    "blue-400": [
+      "rgb(172, 207, 253)",
+      "#accffd"
+    ],
+    "blue-500": [
+      "rgb(142, 185, 252)",
+      "#8eb9fc"
+    ],
+    "blue-600": [
+      "rgb(114, 158, 253)",
+      "#729efd"
+    ],
+    "blue-700": [
+      "rgb(93, 137, 255)",
+      "#5d89ff"
+    ],
+    "blue-800": [
+      "rgb(75, 117, 255)",
+      "#4b75ff"
+    ],
+    "blue-900": [
+      "rgb(59, 99, 251)",
+      "#3b63fb"
+    ],
+    "blue-1000": [
+      "rgb(39, 77, 234)",
+      "#274dea"
+    ],
+    "blue-1100": [
+      "rgb(29, 62, 207)",
+      "#1d3ecf"
+    ],
+    "blue-1200": [
+      "rgb(21, 50, 173)",
+      "#1532ad"
+    ],
+    "blue-1300": [
+      "rgb(16, 40, 140)",
+      "#10288c"
+    ],
+    "blue-1400": [
+      "rgb(12, 31, 105)",
+      "#0c1f69"
+    ],
+    "blue-1500": [
+      "rgb(14, 24, 67)",
+      "#0e1843"
+    ],
+    "blue-1600": [
+      "rgb(7, 11, 30)",
+      "#070b1e"
+    ],
+    "red-100": [
+      "rgb(255, 246, 245)",
+      "#fff6f5"
+    ],
+    "red-200": [
+      "rgb(255, 235, 232)",
+      "#ffebe8"
+    ],
+    "red-300": [
+      "rgb(255, 214, 209)",
+      "#ffd6d1"
+    ],
+    "red-400": [
+      "rgb(255, 188, 180)",
+      "#ffbcb4"
+    ],
+    "red-500": [
+      "rgb(255, 157, 145)",
+      "#ff9d91"
+    ],
+    "red-600": [
+      "rgb(255, 118, 101)",
+      "#ff7665"
+    ],
+    "red-700": [
+      "rgb(255, 81, 61)",
+      "#ff513d"
+    ],
+    "red-800": [
+      "rgb(240, 56, 35)",
+      "#f03823"
+    ],
+    "red-900": [
+      "rgb(215, 50, 32)",
+      "#d73220"
+    ],
+    "red-1000": [
+      "rgb(183, 40, 24)",
+      "#b72818"
+    ],
+    "red-1100": [
+      "rgb(156, 33, 19)",
+      "#9c2113"
+    ],
+    "red-1200": [
+      "rgb(129, 27, 14)",
+      "#811b0e"
+    ],
+    "red-1300": [
+      "rgb(104, 21, 10)",
+      "#68150a"
+    ],
+    "red-1400": [
+      "rgb(80, 16, 6)",
+      "#501006"
+    ],
+    "red-1500": [
+      "rgb(59, 11, 4)",
+      "#3b0b04"
+    ],
+    "red-1600": [
+      "rgb(29, 5, 2)",
+      "#1d0502"
+    ],
+    "orange-100": [
+      "rgb(255, 246, 231)",
+      "#fff6e7"
+    ],
+    "orange-200": [
+      "rgb(255, 236, 207)",
+      "#ffeccf"
+    ],
+    "orange-300": [
+      "rgb(255, 218, 158)",
+      "#ffda9e"
+    ],
+    "orange-400": [
+      "rgb(255, 193, 94)",
+      "#ffc15e"
+    ],
+    "orange-500": [
+      "rgb(255, 162, 19)",
+      "#ffa213"
+    ],
+    "orange-600": [
+      "rgb(252, 125, 0)",
+      "#fc7d00"
+    ],
+    "orange-700": [
+      "rgb(232, 106, 0)",
+      "#e86a00"
+    ],
+    "orange-800": [
+      "rgb(212, 91, 0)",
+      "#d45b00"
+    ],
+    "orange-900": [
+      "rgb(194, 78, 0)",
+      "#c24e00"
+    ],
+    "orange-1000": [
+      "rgb(167, 62, 0)",
+      "#a73e00"
+    ],
+    "orange-1100": [
+      "rgb(144, 51, 0)",
+      "#903300"
+    ],
+    "orange-1200": [
+      "rgb(118, 41, 0)",
+      "#762900"
+    ],
+    "orange-1300": [
+      "rgb(95, 32, 0)",
+      "#5f2000"
+    ],
+    "orange-1400": [
+      "rgb(73, 24, 0)",
+      "#491800"
+    ],
+    "orange-1500": [
+      "rgb(52, 18, 0)",
+      "#341200"
+    ],
+    "orange-1600": [
+      "rgb(25, 8, 0)",
+      "#190800"
+    ],
+    "yellow-100": [
+      "rgb(255, 248, 204)",
+      "#fff8cc"
+    ],
+    "yellow-200": [
+      "rgb(255, 241, 151)",
+      "#fff197"
+    ],
+    "yellow-300": [
+      "rgb(255, 222, 44)",
+      "#ffde2c"
+    ],
+    "yellow-400": [
+      "rgb(245, 199, 0)",
+      "#f5c700"
+    ],
+    "yellow-500": [
+      "rgb(230, 175, 0)",
+      "#e6af00"
+    ],
+    "yellow-600": [
+      "rgb(210, 149, 0)",
+      "#d29500"
+    ],
+    "yellow-700": [
+      "rgb(193, 131, 0)",
+      "#c18300"
+    ],
+    "yellow-800": [
+      "rgb(175, 116, 0)",
+      "#af7400"
+    ],
+    "yellow-900": [
+      "rgb(158, 102, 0)",
+      "#9e6600"
+    ],
+    "yellow-1000": [
+      "rgb(134, 85, 0)",
+      "#865500"
+    ],
+    "yellow-1100": [
+      "rgb(114, 72, 0)",
+      "#724800"
+    ],
+    "yellow-1200": [
+      "rgb(93, 59, 0)",
+      "#5d3b00"
+    ],
+    "yellow-1300": [
+      "rgb(75, 47, 0)",
+      "#4b2f00"
+    ],
+    "yellow-1400": [
+      "rgb(56, 35, 0)",
+      "#382300"
+    ],
+    "yellow-1500": [
+      "rgb(40, 25, 0)",
+      "#281900"
+    ],
+    "yellow-1600": [
+      "rgb(18, 11, 0)",
+      "#120b00"
+    ],
+    "chartreuse-100": [
+      "rgb(246, 251, 222)",
+      "#f6fbde"
+    ],
+    "chartreuse-200": [
+      "rgb(234, 246, 173)",
+      "#eaf6ad"
+    ],
+    "chartreuse-300": [
+      "rgb(208, 236, 70)",
+      "#d0ec46"
+    ],
+    "chartreuse-400": [
+      "rgb(182, 219, 0)",
+      "#b6db00"
+    ],
+    "chartreuse-500": [
+      "rgb(163, 196, 0)",
+      "#a3c400"
+    ],
+    "chartreuse-600": [
+      "rgb(143, 172, 0)",
+      "#8fac00"
+    ],
+    "chartreuse-700": [
+      "rgb(128, 153, 0)",
+      "#809900"
+    ],
+    "chartreuse-800": [
+      "rgb(114, 137, 0)",
+      "#728900"
+    ],
+    "chartreuse-900": [
+      "rgb(102, 122, 0)",
+      "#667a00"
+    ],
+    "chartreuse-1000": [
+      "rgb(86, 103, 0)",
+      "#566700"
+    ],
+    "chartreuse-1100": [
+      "rgb(73, 87, 0)",
+      "#495700"
+    ],
+    "chartreuse-1200": [
+      "rgb(60, 71, 0)",
+      "#3c4700"
+    ],
+    "chartreuse-1300": [
+      "rgb(47, 57, 0)",
+      "#2f3900"
+    ],
+    "chartreuse-1400": [
+      "rgb(35, 43, 0)",
+      "#232b00"
+    ],
+    "chartreuse-1500": [
+      "rgb(25, 30, 0)",
+      "#191e00"
+    ],
+    "chartreuse-1600": [
+      "rgb(11, 14, 0)",
+      "#0b0e00"
+    ],
+    "celery-100": [
+      "rgb(235, 255, 220)",
+      "#ebffdc"
+    ],
+    "celery-200": [
+      "rgb(197, 255, 156)",
+      "#c5ff9c"
+    ],
+    "celery-300": [
+      "rgb(157, 247, 92)",
+      "#9df75c"
+    ],
+    "celery-400": [
+      "rgb(129, 228, 58)",
+      "#81e43a"
+    ],
+    "celery-500": [
+      "rgb(110, 206, 42)",
+      "#6ece2a"
+    ],
+    "celery-600": [
+      "rgb(93, 180, 31)",
+      "#5db41f"
+    ],
+    "celery-700": [
+      "rgb(82, 161, 25)",
+      "#52a119"
+    ],
+    "celery-800": [
+      "rgb(72, 144, 20)",
+      "#489014"
+    ],
+    "celery-900": [
+      "rgb(64, 129, 17)",
+      "#408111"
+    ],
+    "celery-1000": [
+      "rgb(52, 109, 12)",
+      "#346d0c"
+    ],
+    "celery-1100": [
+      "rgb(44, 92, 9)",
+      "#2c5c09"
+    ],
+    "celery-1200": [
+      "rgb(35, 75, 6)",
+      "#234b06"
+    ],
+    "celery-1300": [
+      "rgb(27, 60, 3)",
+      "#1b3c03"
+    ],
+    "celery-1400": [
+      "rgb(19, 46, 0)",
+      "#132e00"
+    ],
+    "celery-1500": [
+      "rgb(12, 33, 0)",
+      "#0c2100"
+    ],
+    "celery-1600": [
+      "rgb(4, 15, 0)",
+      "#040f00"
+    ],
+    "green-100": [
+      "rgb(237, 252, 241)",
+      "#edfcf1"
+    ],
+    "green-200": [
+      "rgb(215, 247, 225)",
+      "#d7f7e1"
+    ],
+    "green-300": [
+      "rgb(173, 238, 197)",
+      "#adeec5"
+    ],
+    "green-400": [
+      "rgb(107, 227, 162)",
+      "#6be3a2"
+    ],
+    "green-500": [
+      "rgb(43, 209, 125)",
+      "#2bd17d"
+    ],
+    "green-600": [
+      "rgb(18, 184, 103)",
+      "#12b867"
+    ],
+    "green-700": [
+      "rgb(11, 164, 93)",
+      "#0ba45d"
+    ],
+    "green-800": [
+      "rgb(7, 147, 85)",
+      "#079355"
+    ],
+    "green-900": [
+      "rgb(5, 131, 78)",
+      "#05834e"
+    ],
+    "green-1000": [
+      "rgb(3, 110, 69)",
+      "#036e45"
+    ],
+    "green-1100": [
+      "rgb(2, 93, 60)",
+      "#025d3c"
+    ],
+    "green-1200": [
+      "rgb(1, 76, 52)",
+      "#014c34"
+    ],
+    "green-1300": [
+      "rgb(0, 61, 44)",
+      "#003d2c"
+    ],
+    "green-1400": [
+      "rgb(0, 46, 34)",
+      "#002e22"
+    ],
+    "green-1500": [
+      "rgb(0, 33, 25)",
+      "#002119"
+    ],
+    "green-1600": [
+      "rgb(0, 15, 12)",
+      "#000f0c"
+    ],
+    "seafoam-100": [
+      "rgb(235, 251, 246)",
+      "#ebfbf6"
+    ],
+    "seafoam-200": [
+      "rgb(211, 246, 234)",
+      "#d3f6ea"
+    ],
+    "seafoam-300": [
+      "rgb(169, 237, 216)",
+      "#a9edd8"
+    ],
+    "seafoam-400": [
+      "rgb(92, 225, 194)",
+      "#5ce1c2"
+    ],
+    "seafoam-500": [
+      "rgb(16, 207, 169)",
+      "#10cfa9"
+    ],
+    "seafoam-600": [
+      "rgb(13, 181, 149)",
+      "#0db595"
+    ],
+    "seafoam-700": [
+      "rgb(11, 162, 134)",
+      "#0ba286"
+    ],
+    "seafoam-800": [
+      "rgb(9, 144, 120)",
+      "#099078"
+    ],
+    "seafoam-900": [
+      "rgb(7, 129, 109)",
+      "#07816d"
+    ],
+    "seafoam-1000": [
+      "rgb(5, 108, 92)",
+      "#056c5c"
+    ],
+    "seafoam-1100": [
+      "rgb(3, 92, 80)",
+      "#035c50"
+    ],
+    "seafoam-1200": [
+      "rgb(1, 75, 67)",
+      "#014b43"
+    ],
+    "seafoam-1300": [
+      "rgb(0, 60, 54)",
+      "#003c36"
+    ],
+    "seafoam-1400": [
+      "rgb(0, 46, 40)",
+      "#002e28"
+    ],
+    "seafoam-1500": [
+      "rgb(0, 33, 29)",
+      "#00211d"
+    ],
+    "seafoam-1600": [
+      "rgb(0, 15, 14)",
+      "#000f0e"
+    ],
+    "cyan-100": [
+      "rgb(238, 250, 254)",
+      "#eefafe"
+    ],
+    "cyan-200": [
+      "rgb(217, 244, 253)",
+      "#d9f4fd"
+    ],
+    "cyan-300": [
+      "rgb(183, 231, 252)",
+      "#b7e7fc"
+    ],
+    "cyan-400": [
+      "rgb(138, 213, 255)",
+      "#8ad5ff"
+    ],
+    "cyan-500": [
+      "rgb(92, 192, 255)",
+      "#5cc0ff"
+    ],
+    "cyan-600": [
+      "rgb(48, 167, 254)",
+      "#30a7fe"
+    ],
+    "cyan-700": [
+      "rgb(29, 149, 231)",
+      "#1d95e7"
+    ],
+    "cyan-800": [
+      "rgb(18, 134, 205)",
+      "#1286cd"
+    ],
+    "cyan-900": [
+      "rgb(11, 120, 179)",
+      "#0b78b3"
+    ],
+    "cyan-1000": [
+      "rgb(4, 102, 145)",
+      "#046691"
+    ],
+    "cyan-1100": [
+      "rgb(0, 87, 121)",
+      "#005779"
+    ],
+    "cyan-1200": [
+      "rgb(0, 71, 98)",
+      "#004762"
+    ],
+    "cyan-1300": [
+      "rgb(0, 57, 78)",
+      "#00394e"
+    ],
+    "cyan-1400": [
+      "rgb(0, 43, 59)",
+      "#002b3b"
+    ],
+    "cyan-1500": [
+      "rgb(0, 31, 43)",
+      "#001f2b"
+    ],
+    "cyan-1600": [
+      "rgb(0, 14, 20)",
+      "#000e14"
+    ],
+    "indigo-100": [
+      "rgb(247, 248, 255)",
+      "#f7f8ff"
+    ],
+    "indigo-200": [
+      "rgb(235, 238, 255)",
+      "#ebeeff"
+    ],
+    "indigo-300": [
+      "rgb(216, 222, 255)",
+      "#d8deff"
+    ],
+    "indigo-400": [
+      "rgb(192, 201, 255)",
+      "#c0c9ff"
+    ],
+    "indigo-500": [
+      "rgb(167, 178, 255)",
+      "#a7b2ff"
+    ],
+    "indigo-600": [
+      "rgb(145, 151, 254)",
+      "#9197fe"
+    ],
+    "indigo-700": [
+      "rgb(132, 128, 254)",
+      "#8480fe"
+    ],
+    "indigo-800": [
+      "rgb(122, 106, 253)",
+      "#7a6afd"
+    ],
+    "indigo-900": [
+      "rgb(113, 85, 250)",
+      "#7155fa"
+    ],
+    "indigo-1000": [
+      "rgb(99, 56, 238)",
+      "#6338ee"
+    ],
+    "indigo-1100": [
+      "rgb(84, 36, 219)",
+      "#5424db"
+    ],
+    "indigo-1200": [
+      "rgb(69, 19, 191)",
+      "#4513bf"
+    ],
+    "indigo-1300": [
+      "rgb(55, 6, 160)",
+      "#3706a0"
+    ],
+    "indigo-1400": [
+      "rgb(42, 0, 129)",
+      "#2a0081"
+    ],
+    "indigo-1500": [
+      "rgb(31, 0, 98)",
+      "#1f0062"
+    ],
+    "indigo-1600": [
+      "rgb(17, 0, 54)",
+      "#110036"
+    ],
+    "purple-100": [
+      "rgb(251, 247, 254)",
+      "#fbf7fe"
+    ],
+    "purple-200": [
+      "rgb(244, 235, 252)",
+      "#f4ebfc"
+    ],
+    "purple-300": [
+      "rgb(235, 218, 249)",
+      "#ebdaf9"
+    ],
+    "purple-400": [
+      "rgb(221, 193, 246)",
+      "#ddc1f6"
+    ],
+    "purple-500": [
+      "rgb(208, 167, 243)",
+      "#d0a7f3"
+    ],
+    "purple-600": [
+      "rgb(191, 138, 238)",
+      "#bf8aee"
+    ],
+    "purple-700": [
+      "rgb(178, 114, 235)",
+      "#b272eb"
+    ],
+    "purple-800": [
+      "rgb(166, 92, 231)",
+      "#a65ce7"
+    ],
+    "purple-900": [
+      "rgb(154, 71, 226)",
+      "#9a47e2"
+    ],
+    "purple-1000": [
+      "rgb(134, 40, 217)",
+      "#8628d9"
+    ],
+    "purple-1100": [
+      "rgb(115, 13, 204)",
+      "#730dcc"
+    ],
+    "purple-1200": [
+      "rgb(93, 0, 177)",
+      "#5d00b1"
+    ],
+    "purple-1300": [
+      "rgb(75, 0, 144)",
+      "#4b0090"
+    ],
+    "purple-1400": [
+      "rgb(59, 0, 111)",
+      "#3b006f"
+    ],
+    "purple-1500": [
+      "rgb(44, 0, 84)",
+      "#2c0054"
+    ],
+    "purple-1600": [
+      "rgb(23, 0, 45)",
+      "#17002d"
+    ],
+    "fuchsia-100": [
+      "rgb(254, 246, 255)",
+      "#fef6ff"
+    ],
+    "fuchsia-200": [
+      "rgb(253, 233, 255)",
+      "#fde9ff"
+    ],
+    "fuchsia-300": [
+      "rgb(250, 211, 255)",
+      "#fad3ff"
+    ],
+    "fuchsia-400": [
+      "rgb(247, 181, 255)",
+      "#f7b5ff"
+    ],
+    "fuchsia-500": [
+      "rgb(243, 147, 255)",
+      "#f393ff"
+    ],
+    "fuchsia-600": [
+      "rgb(236, 105, 255)",
+      "#ec69ff"
+    ],
+    "fuchsia-700": [
+      "rgb(223, 77, 245)",
+      "#df4df5"
+    ],
+    "fuchsia-800": [
+      "rgb(200, 68, 220)",
+      "#c844dc"
+    ],
+    "fuchsia-900": [
+      "rgb(181, 57, 200)",
+      "#b539c8"
+    ],
+    "fuchsia-1000": [
+      "rgb(156, 40, 175)",
+      "#9c28af"
+    ],
+    "fuchsia-1100": [
+      "rgb(135, 27, 154)",
+      "#871b9a"
+    ],
+    "fuchsia-1200": [
+      "rgb(113, 15, 131)",
+      "#710f83"
+    ],
+    "fuchsia-1300": [
+      "rgb(92, 4, 109)",
+      "#5c046d"
+    ],
+    "fuchsia-1400": [
+      "rgb(72, 0, 88)",
+      "#480058"
+    ],
+    "fuchsia-1500": [
+      "rgb(54, 0, 66)",
+      "#360042"
+    ],
+    "fuchsia-1600": [
+      "rgb(29, 0, 35)",
+      "#1d0023"
+    ],
+    "magenta-100": [
+      "rgb(255, 245, 248)",
+      "#fff5f8"
+    ],
+    "magenta-200": [
+      "rgb(255, 232, 240)",
+      "#ffe8f0"
+    ],
+    "magenta-300": [
+      "rgb(255, 213, 227)",
+      "#ffd5e3"
+    ],
+    "magenta-400": [
+      "rgb(255, 185, 208)",
+      "#ffb9d0"
+    ],
+    "magenta-500": [
+      "rgb(255, 152, 187)",
+      "#ff98bb"
+    ],
+    "magenta-600": [
+      "rgb(255, 112, 159)",
+      "#ff709f"
+    ],
+    "magenta-700": [
+      "rgb(255, 72, 133)",
+      "#ff4885"
+    ],
+    "magenta-800": [
+      "rgb(240, 45, 110)",
+      "#f02d6e"
+    ],
+    "magenta-900": [
+      "rgb(217, 35, 97)",
+      "#d92361"
+    ],
+    "magenta-1000": [
+      "rgb(186, 22, 80)",
+      "#ba1650"
+    ],
+    "magenta-1100": [
+      "rgb(163, 5, 62)",
+      "#a3053e"
+    ],
+    "magenta-1200": [
+      "rgb(136, 0, 51)",
+      "#803"
+    ],
+    "magenta-1300": [
+      "rgb(111, 0, 40)",
+      "#6f0028"
+    ],
+    "magenta-1400": [
+      "rgb(86, 0, 30)",
+      "#56001e"
+    ],
+    "magenta-1500": [
+      "rgb(64, 0, 22)",
+      "#400016"
+    ],
+    "magenta-1600": [
+      "rgb(35, 0, 12)",
+      "#23000c"
+    ],
+    "pink-100": [
+      "rgb(255, 246, 252)",
+      "#fff6fc"
+    ],
+    "pink-200": [
+      "rgb(255, 232, 247)",
+      "#ffe8f7"
+    ],
+    "pink-300": [
+      "rgb(255, 211, 240)",
+      "#ffd3f0"
+    ],
+    "pink-400": [
+      "rgb(255, 181, 230)",
+      "#ffb5e6"
+    ],
+    "pink-500": [
+      "rgb(255, 148, 219)",
+      "#ff94db"
+    ],
+    "pink-600": [
+      "rgb(255, 103, 204)",
+      "#ff67cc"
+    ],
+    "pink-700": [
+      "rgb(242, 76, 184)",
+      "#f24cb8"
+    ],
+    "pink-800": [
+      "rgb(228, 52, 163)",
+      "#e434a3"
+    ],
+    "pink-900": [
+      "rgb(206, 42, 146)",
+      "#ce2a92"
+    ],
+    "pink-1000": [
+      "rgb(176, 31, 123)",
+      "#b01f7b"
+    ],
+    "pink-1100": [
+      "rgb(152, 22, 104)",
+      "#981668"
+    ],
+    "pink-1200": [
+      "rgb(128, 12, 85)",
+      "#800c55"
+    ],
+    "pink-1300": [
+      "rgb(105, 3, 68)",
+      "#690344"
+    ],
+    "pink-1400": [
+      "rgb(83, 0, 53)",
+      "#530035"
+    ],
+    "pink-1500": [
+      "rgb(62, 0, 39)",
+      "#3e0027"
+    ],
+    "pink-1600": [
+      "rgb(33, 0, 21)",
+      "#210015"
+    ],
+    "turquoise-100": [
+      "rgb(238, 251, 251)",
+      "#eefbfb"
+    ],
+    "turquoise-200": [
+      "rgb(209, 245, 245)",
+      "#d1f5f5"
+    ],
+    "turquoise-300": [
+      "rgb(169, 236, 237)",
+      "#a9eced"
+    ],
+    "turquoise-400": [
+      "rgb(111, 221, 228)",
+      "#6fdde4"
+    ],
+    "turquoise-500": [
+      "rgb(39, 202, 216)",
+      "#27cad8"
+    ],
+    "turquoise-600": [
+      "rgb(15, 177, 192)",
+      "#0fb1c0"
+    ],
+    "turquoise-700": [
+      "rgb(12, 158, 171)",
+      "#0c9eab"
+    ],
+    "turquoise-800": [
+      "rgb(10, 141, 153)",
+      "#0a8d99"
+    ],
+    "turquoise-900": [
+      "rgb(8, 126, 137)",
+      "#087e89"
+    ],
+    "turquoise-1000": [
+      "rgb(5, 107, 116)",
+      "#056b74"
+    ],
+    "turquoise-1100": [
+      "rgb(3, 90, 98)",
+      "#035a62"
+    ],
+    "turquoise-1200": [
+      "rgb(1, 74, 81)",
+      "#014a51"
+    ],
+    "turquoise-1300": [
+      "rgb(0, 59, 65)",
+      "#003b41"
+    ],
+    "turquoise-1400": [
+      "rgb(0, 44, 49)",
+      "#002c31"
+    ],
+    "turquoise-1500": [
+      "rgb(0, 32, 35)",
+      "#002023"
+    ],
+    "turquoise-1600": [
+      "rgb(0, 15, 17)",
+      "#000f11"
+    ],
+    "brown-100": [
+      "rgb(252, 247, 242)",
+      "#fcf7f2"
+    ],
+    "brown-200": [
+      "rgb(247, 238, 225)",
+      "#f7eee1"
+    ],
+    "brown-300": [
+      "rgb(239, 221, 195)",
+      "#efddc3"
+    ],
+    "brown-400": [
+      "rgb(229, 200, 157)",
+      "#e5c89d"
+    ],
+    "brown-500": [
+      "rgb(214, 177, 123)",
+      "#d6b17b"
+    ],
+    "brown-600": [
+      "rgb(190, 155, 104)",
+      "#be9b68"
+    ],
+    "brown-700": [
+      "rgb(171, 138, 90)",
+      "#ab8a5a"
+    ],
+    "brown-800": [
+      "rgb(154, 123, 77)",
+      "#9a7b4d"
+    ],
+    "brown-900": [
+      "rgb(139, 109, 66)",
+      "#8b6d42"
+    ],
+    "brown-1000": [
+      "rgb(119, 91, 50)",
+      "#775b32"
+    ],
+    "brown-1100": [
+      "rgb(103, 76, 35)",
+      "#674c23"
+    ],
+    "brown-1200": [
+      "rgb(88, 61, 21)",
+      "#583d15"
+    ],
+    "brown-1300": [
+      "rgb(70, 49, 17)",
+      "#463111"
+    ],
+    "brown-1400": [
+      "rgb(52, 37, 13)",
+      "#34250d"
+    ],
+    "brown-1500": [
+      "rgb(38, 26, 9)",
+      "#261a09"
+    ],
+    "brown-1600": [
+      "rgb(16, 12, 4)",
+      "#100c04"
+    ],
+    "silver-100": [
+      "rgb(247, 247, 247)",
+      "#f7f7f7"
+    ],
+    "silver-200": [
+      "rgb(239, 239, 239)",
+      "#efefef"
+    ],
+    "silver-300": [
+      "rgb(223, 223, 223)",
+      "#dfdfdf"
+    ],
+    "silver-400": [
+      "rgb(204, 204, 204)",
+      "#ccc"
+    ],
+    "silver-500": [
+      "rgb(183, 183, 183)",
+      "#b7b7b7"
+    ],
+    "silver-600": [
+      "rgb(160, 160, 160)",
+      "#a0a0a0"
+    ],
+    "silver-700": [
+      "rgb(143, 143, 143)",
+      "#8f8f8f"
+    ],
+    "silver-800": [
+      "rgb(128, 128, 128)",
+      "#808080"
+    ],
+    "silver-900": [
+      "rgb(114, 114, 114)",
+      "#727272"
+    ],
+    "silver-1000": [
+      "rgb(96, 96, 96)",
+      "#606060"
+    ],
+    "silver-1100": [
+      "rgb(81, 81, 81)",
+      "#515151"
+    ],
+    "silver-1200": [
+      "rgb(66, 66, 66)",
+      "#424242"
+    ],
+    "silver-1300": [
+      "rgb(52, 52, 52)",
+      "#343434"
+    ],
+    "silver-1400": [
+      "rgb(39, 39, 39)",
+      "#272727"
+    ],
+    "silver-1500": [
+      "rgb(28, 28, 28)",
+      "#1c1c1c"
+    ],
+    "silver-1600": [
+      "rgb(12, 12, 12)",
+      "#0c0c0c"
+    ],
+    "cinnamon-100": [
+      "rgb(253, 247, 243)",
+      "#fdf7f3"
+    ],
+    "cinnamon-200": [
+      "rgb(249, 236, 229)",
+      "#f9ece5"
+    ],
+    "cinnamon-300": [
+      "rgb(244, 218, 203)",
+      "#f4dacb"
+    ],
+    "cinnamon-400": [
+      "rgb(237, 196, 172)",
+      "#edc4ac"
+    ],
+    "cinnamon-500": [
+      "rgb(229, 170, 136)",
+      "#e5aa88"
+    ],
+    "cinnamon-600": [
+      "rgb(212, 145, 108)",
+      "#d4916c"
+    ],
+    "cinnamon-700": [
+      "rgb(198, 126, 88)",
+      "#c67e58"
+    ],
+    "cinnamon-800": [
+      "rgb(184, 109, 70)",
+      "#b86d46"
+    ],
+    "cinnamon-900": [
+      "rgb(170, 94, 56)",
+      "#aa5e38"
+    ],
+    "cinnamon-1000": [
+      "rgb(147, 77, 43)",
+      "#934d2b"
+    ],
+    "cinnamon-1100": [
+      "rgb(128, 62, 32)",
+      "#803e20"
+    ],
+    "cinnamon-1200": [
+      "rgb(110, 48, 21)",
+      "#6e3015"
+    ],
+    "cinnamon-1300": [
+      "rgb(92, 35, 11)",
+      "#5c230b"
+    ],
+    "cinnamon-1400": [
+      "rgb(72, 25, 6)",
+      "#481906"
+    ],
+    "cinnamon-1500": [
+      "rgb(52, 18, 4)",
+      "#341204"
+    ],
+    "cinnamon-1600": [
+      "rgb(24, 8, 2)",
+      "#180802"
+    ],
+    "accent-100": [
+      "rgb(245, 249, 255)",
+      "#f5f9ff"
+    ],
+    "accent-200": [
+      "rgb(229, 240, 254)",
+      "#e5f0fe"
+    ],
+    "accent-300": [
+      "rgb(203, 226, 254)",
+      "#cbe2fe"
+    ],
+    "accent-400": [
+      "rgb(172, 207, 253)",
+      "#accffd"
+    ],
+    "accent-500": [
+      "rgb(142, 185, 252)",
+      "#8eb9fc"
+    ],
+    "accent-600": [
+      "rgb(114, 158, 253)",
+      "#729efd"
+    ],
+    "accent-700": [
+      "rgb(93, 137, 255)",
+      "#5d89ff"
+    ],
+    "accent-800": [
+      "rgb(75, 117, 255)",
+      "#4b75ff"
+    ],
+    "accent-900": [
+      "rgb(59, 99, 251)",
+      "#3b63fb"
+    ],
+    "accent-1000": [
+      "rgb(39, 77, 234)",
+      "#274dea"
+    ],
+    "accent-1100": [
+      "rgb(29, 62, 207)",
+      "#1d3ecf"
+    ],
+    "accent-1200": [
+      "rgb(21, 50, 173)",
+      "#1532ad"
+    ],
+    "accent-1300": [
+      "rgb(16, 40, 140)",
+      "#10288c"
+    ],
+    "accent-1400": [
+      "rgb(12, 31, 105)",
+      "#0c1f69"
+    ],
+    "accent-1500": [
+      "rgb(14, 24, 67)",
+      "#0e1843"
+    ],
+    "accent-1600": [
+      "rgb(7, 11, 30)",
+      "#070b1e"
+    ],
+    "informative-100": [
+      "rgb(245, 249, 255)",
+      "#f5f9ff"
+    ],
+    "informative-200": [
+      "rgb(229, 240, 254)",
+      "#e5f0fe"
+    ],
+    "informative-300": [
+      "rgb(203, 226, 254)",
+      "#cbe2fe"
+    ],
+    "informative-400": [
+      "rgb(172, 207, 253)",
+      "#accffd"
+    ],
+    "informative-500": [
+      "rgb(142, 185, 252)",
+      "#8eb9fc"
+    ],
+    "informative-600": [
+      "rgb(114, 158, 253)",
+      "#729efd"
+    ],
+    "informative-700": [
+      "rgb(93, 137, 255)",
+      "#5d89ff"
+    ],
+    "informative-800": [
+      "rgb(75, 117, 255)",
+      "#4b75ff"
+    ],
+    "informative-900": [
+      "rgb(59, 99, 251)",
+      "#3b63fb"
+    ],
+    "informative-1000": [
+      "rgb(39, 77, 234)",
+      "#274dea"
+    ],
+    "informative-1100": [
+      "rgb(29, 62, 207)",
+      "#1d3ecf"
+    ],
+    "informative-1200": [
+      "rgb(21, 50, 173)",
+      "#1532ad"
+    ],
+    "informative-1300": [
+      "rgb(16, 40, 140)",
+      "#10288c"
+    ],
+    "informative-1400": [
+      "rgb(12, 31, 105)",
+      "#0c1f69"
+    ],
+    "informative-1500": [
+      "rgb(14, 24, 67)",
+      "#0e1843"
+    ],
+    "informative-1600": [
+      "rgb(7, 11, 30)",
+      "#070b1e"
+    ],
+    "negative-100": [
+      "rgb(255, 246, 245)",
+      "#fff6f5"
+    ],
+    "negative-200": [
+      "rgb(255, 235, 232)",
+      "#ffebe8"
+    ],
+    "negative-300": [
+      "rgb(255, 214, 209)",
+      "#ffd6d1"
+    ],
+    "negative-400": [
+      "rgb(255, 188, 180)",
+      "#ffbcb4"
+    ],
+    "negative-500": [
+      "rgb(255, 157, 145)",
+      "#ff9d91"
+    ],
+    "negative-600": [
+      "rgb(255, 118, 101)",
+      "#ff7665"
+    ],
+    "negative-700": [
+      "rgb(255, 81, 61)",
+      "#ff513d"
+    ],
+    "negative-800": [
+      "rgb(240, 56, 35)",
+      "#f03823"
+    ],
+    "negative-900": [
+      "rgb(215, 50, 32)",
+      "#d73220"
+    ],
+    "negative-1000": [
+      "rgb(183, 40, 24)",
+      "#b72818"
+    ],
+    "negative-1100": [
+      "rgb(156, 33, 19)",
+      "#9c2113"
+    ],
+    "negative-1200": [
+      "rgb(129, 27, 14)",
+      "#811b0e"
+    ],
+    "negative-1300": [
+      "rgb(104, 21, 10)",
+      "#68150a"
+    ],
+    "negative-1400": [
+      "rgb(80, 16, 6)",
+      "#501006"
+    ],
+    "negative-1500": [
+      "rgb(59, 11, 4)",
+      "#3b0b04"
+    ],
+    "negative-1600": [
+      "rgb(29, 5, 2)",
+      "#1d0502"
+    ],
+    "notice-100": [
+      "rgb(255, 246, 231)",
+      "#fff6e7"
+    ],
+    "notice-200": [
+      "rgb(255, 236, 207)",
+      "#ffeccf"
+    ],
+    "notice-300": [
+      "rgb(255, 218, 158)",
+      "#ffda9e"
+    ],
+    "notice-400": [
+      "rgb(255, 193, 94)",
+      "#ffc15e"
+    ],
+    "notice-500": [
+      "rgb(255, 162, 19)",
+      "#ffa213"
+    ],
+    "notice-600": [
+      "rgb(252, 125, 0)",
+      "#fc7d00"
+    ],
+    "notice-700": [
+      "rgb(232, 106, 0)",
+      "#e86a00"
+    ],
+    "notice-800": [
+      "rgb(212, 91, 0)",
+      "#d45b00"
+    ],
+    "notice-900": [
+      "rgb(194, 78, 0)",
+      "#c24e00"
+    ],
+    "notice-1000": [
+      "rgb(167, 62, 0)",
+      "#a73e00"
+    ],
+    "notice-1100": [
+      "rgb(144, 51, 0)",
+      "#903300"
+    ],
+    "notice-1200": [
+      "rgb(118, 41, 0)",
+      "#762900"
+    ],
+    "notice-1300": [
+      "rgb(95, 32, 0)",
+      "#5f2000"
+    ],
+    "notice-1400": [
+      "rgb(73, 24, 0)",
+      "#491800"
+    ],
+    "notice-1500": [
+      "rgb(52, 18, 0)",
+      "#341200"
+    ],
+    "notice-1600": [
+      "rgb(25, 8, 0)",
+      "#190800"
+    ],
+    "positive-100": [
+      "rgb(237, 252, 241)",
+      "#edfcf1"
+    ],
+    "positive-200": [
+      "rgb(215, 247, 225)",
+      "#d7f7e1"
+    ],
+    "positive-300": [
+      "rgb(173, 238, 197)",
+      "#adeec5"
+    ],
+    "positive-400": [
+      "rgb(107, 227, 162)",
+      "#6be3a2"
+    ],
+    "positive-500": [
+      "rgb(43, 209, 125)",
+      "#2bd17d"
+    ],
+    "positive-600": [
+      "rgb(18, 184, 103)",
+      "#12b867"
+    ],
+    "positive-700": [
+      "rgb(11, 164, 93)",
+      "#0ba45d"
+    ],
+    "positive-800": [
+      "rgb(7, 147, 85)",
+      "#079355"
+    ],
+    "positive-900": [
+      "rgb(5, 131, 78)",
+      "#05834e"
+    ],
+    "positive-1000": [
+      "rgb(3, 110, 69)",
+      "#036e45"
+    ],
+    "positive-1100": [
+      "rgb(2, 93, 60)",
+      "#025d3c"
+    ],
+    "positive-1200": [
+      "rgb(1, 76, 52)",
+      "#014c34"
+    ],
+    "positive-1300": [
+      "rgb(0, 61, 44)",
+      "#003d2c"
+    ],
+    "positive-1400": [
+      "rgb(0, 46, 34)",
+      "#002e22"
+    ],
+    "positive-1500": [
+      "rgb(0, 33, 25)",
+      "#002119"
+    ],
+    "positive-1600": [
+      "rgb(0, 15, 12)",
+      "#000f0c"
+    ],
+    "transparent-white-25": [
+      "rgba(255, 255, 255, 0)",
+      "#fff0"
+    ],
+    "transparent-white-50": [
+      "rgba(255, 255, 255, 0.04)",
+      "#ffffff0a"
+    ],
+    "transparent-white-75": [
+      "rgba(255, 255, 255, 0.07)",
+      "#ffffff12"
+    ],
+    "transparent-white-100": [
+      "rgba(255, 255, 255, 0.11)",
+      "#ffffff1c"
+    ],
+    "transparent-white-200": [
+      "rgba(255, 255, 255, 0.14)",
+      "#ffffff24"
+    ],
+    "transparent-white-300": [
+      "rgba(255, 255, 255, 0.17)",
+      "#ffffff2b"
+    ],
+    "transparent-white-400": [
+      "rgba(255, 255, 255, 0.21)",
+      "#ffffff36"
+    ],
+    "transparent-white-500": [
+      "rgba(255, 255, 255, 0.39)",
+      "#ffffff63"
+    ],
+    "transparent-white-600": [
+      "rgba(255, 255, 255, 0.51)",
+      "#ffffff82"
+    ],
+    "transparent-white-700": [
+      "rgba(255, 255, 255, 0.66)",
+      "#ffffffa8"
+    ],
+    "transparent-white-800": [
+      "rgba(255, 255, 255, 0.85)",
+      "#ffffffd9"
+    ],
+    "transparent-white-900": [
+      "rgba(255, 255, 255, 0.94)",
+      "#fffffff0"
+    ],
+    "transparent-white-1000": [
+      "rgb(255, 255, 255)",
+      "#fff"
+    ],
+    "transparent-black-25": [
+      "rgba(0, 0, 0, 0)",
+      "#0000"
+    ],
+    "transparent-black-50": [
+      "rgba(0, 0, 0, 0.03)",
+      "#00000008"
+    ],
+    "transparent-black-75": [
+      "rgba(0, 0, 0, 0.05)",
+      "#0000000d"
+    ],
+    "transparent-black-100": [
+      "rgba(0, 0, 0, 0.09)",
+      "#00000017"
+    ],
+    "transparent-black-200": [
+      "rgba(0, 0, 0, 0.12)",
+      "#0000001f"
+    ],
+    "transparent-black-300": [
+      "rgba(0, 0, 0, 0.15)",
+      "#00000026"
+    ],
+    "transparent-black-400": [
+      "rgba(0, 0, 0, 0.22)",
+      "#00000038"
+    ],
+    "transparent-black-500": [
+      "rgba(0, 0, 0, 0.44)",
+      "#00000070"
+    ],
+    "transparent-black-600": [
+      "rgba(0, 0, 0, 0.56)",
+      "#0000008f"
+    ],
+    "transparent-black-700": [
+      "rgba(0, 0, 0, 0.69)",
+      "#000000b0"
+    ],
+    "transparent-black-800": [
+      "rgba(0, 0, 0, 0.84)",
+      "#000000d6"
+    ],
+    "transparent-black-900": [
+      "rgba(0, 0, 0, 0.93)",
+      "#000000ed"
+    ],
+    "transparent-black-1000": [
+      "rgb(0, 0, 0)",
+      "#000"
+    ],
+    "transparent-overlay-25": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0)",
+    "transparent-overlay-50": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.04)",
+    "transparent-overlay-75": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.07)",
+    "transparent-overlay-100": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.11)",
+    "transparent-overlay-200": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.14)",
+    "transparent-overlay-300": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.17)",
+    "transparent-overlay-400": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.21)",
+    "transparent-overlay-500": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.39)",
+    "transparent-overlay-600": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.51)",
+    "transparent-overlay-700": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.66)",
+    "transparent-overlay-800": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.85)",
+    "transparent-overlay-900": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 0.94)",
+    "transparent-overlay-1000": "lch(from gray-25 calc((49.44 - l) * infinity) 0 0 / 1)",
+    "Background": "Background",
+    "ButtonBorder": "ButtonBorder",
+    "ButtonFace": "ButtonFace",
+    "ButtonText": "ButtonText",
+    "Field": "Field",
+    "Highlight": "Highlight",
+    "HighlightText": "HighlightText",
+    "GrayText": "GrayText",
+    "Mark": "Mark",
+    "LinkText": "LinkText"
+  },
+  "typography": {
+    "ui-xs": "13px",
+    "ui-sm": "15px",
+    "ui": "17px",
+    "ui-lg": "19px",
+    "ui-xl": "22px",
+    "ui-2xl": "24px",
+    "ui-3xl": "27px",
+    "heading-2xs": "17px",
+    "heading-xs": "22px",
+    "heading-sm": "24px",
+    "heading": "27px",
+    "heading-lg": "34px",
+    "heading-xl": "44px",
+    "heading-2xl": "55px",
+    "heading-3xl": "70px",
+    "title-xs": "15px",
+    "title-sm": "17px",
+    "title": "19px",
+    "title-lg": "22px",
+    "title-xl": "24px",
+    "title-2xl": "27px",
+    "title-3xl": "31px",
+    "body-2xs": "13px",
+    "body-xs": "15px",
+    "body-sm": "17px",
+    "body": "19px",
+    "body-lg": "22px",
+    "body-xl": "24px",
+    "body-2xl": "27px",
+    "body-3xl": "31px",
+    "detail-sm": "15px",
+    "detail": "17px",
+    "detail-lg": "19px",
+    "detail-xl": "22px",
+    "code-xs": "15px",
+    "code-sm": "17px",
+    "code": "19px",
+    "code-lg": "22px",
+    "code-xl": "24px"
+  },
+  "fontFamily": {
+    "sans": "adobe-clean-spectrum-vf, adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif",
+    "serif": "adobe-clean-spectrum-srf-vf, adobe-clean-serif, \"Source Serif\", Georgia, serif",
+    "code": "source-code-pro, \"Source Code Pro\", Monaco, monospace"
+  },
+  "fontWeight": {
+    "normal": "400",
+    "medium": "500",
+    "bold": "700",
+    "extra-bold": "800",
+    "black": "900"
+  },
+  "breakpoints": {
+    "sm": [
+      "40rem",
+      "640px"
+    ],
+    "md": [
+      "48rem",
+      "768px"
+    ],
+    "lg": [
+      "64rem",
+      "1024px"
+    ],
+    "xl": [
+      "80rem",
+      "1280px"
+    ],
+    "2xl": [
+      "96rem",
+      "1536px"
+    ]
+  },
+  "textDecoration": {
+    "underlineThickness": "1px",
+    "underlineGap": "1px"
+  },
+  "spacing": {
+    "0": [
+      "0rem",
+      "0px"
+    ],
+    "2": [
+      "0.125rem",
+      "2px"
+    ],
+    "4": [
+      "0.25rem",
+      "4px"
+    ],
+    "8": [
+      "0.5rem",
+      "8px"
+    ],
+    "12": [
+      "0.75rem",
+      "12px"
+    ],
+    "16": [
+      "1rem",
+      "16px"
+    ],
+    "20": [
+      "1.25rem",
+      "20px"
+    ],
+    "24": [
+      "1.5rem",
+      "24px"
+    ],
+    "28": [
+      "1.75rem",
+      "28px"
+    ],
+    "32": [
+      "2rem",
+      "32px"
+    ],
+    "36": [
+      "2.25rem",
+      "36px"
+    ],
+    "40": [
+      "2.5rem",
+      "40px"
+    ],
+    "44": [
+      "2.75rem",
+      "44px"
+    ],
+    "48": [
+      "3rem",
+      "48px"
+    ],
+    "56": [
+      "3.5rem",
+      "56px"
+    ],
+    "64": [
+      "4rem",
+      "64px"
+    ],
+    "80": [
+      "5rem",
+      "80px"
+    ],
+    "96": [
+      "6rem",
+      "96px"
+    ]
+  },
+  "negativeSpacing": {
+    "-2": [
+      "-0.125rem",
+      "-2px"
+    ],
+    "-4": [
+      "-0.25rem",
+      "-4px"
+    ],
+    "-8": [
+      "-0.5rem",
+      "-8px"
+    ],
+    "-12": [
+      "-0.75rem",
+      "-12px"
+    ],
+    "-16": [
+      "-1rem",
+      "-16px"
+    ],
+    "-20": [
+      "-1.25rem",
+      "-20px"
+    ],
+    "-24": [
+      "-1.5rem",
+      "-24px"
+    ],
+    "-28": [
+      "-1.75rem",
+      "-28px"
+    ],
+    "-32": [
+      "-2rem",
+      "-32px"
+    ],
+    "-36": [
+      "-2.25rem",
+      "-36px"
+    ],
+    "-40": [
+      "-2.5rem",
+      "-40px"
+    ],
+    "-44": [
+      "-2.75rem",
+      "-44px"
+    ],
+    "-48": [
+      "-3rem",
+      "-48px"
+    ],
+    "-56": [
+      "-3.5rem",
+      "-56px"
+    ],
+    "-64": [
+      "-4rem",
+      "-64px"
+    ],
+    "-80": [
+      "-5rem",
+      "-80px"
+    ],
+    "-96": [
+      "-6rem",
+      "-96px"
+    ]
+  },
+  "padding": {
+    "0": "0px",
+    "2": "2px",
+    "4": "4px",
+    "8": "8px",
+    "12": "12px",
+    "16": "16px",
+    "20": "20px",
+    "24": "24px",
+    "28": "28px",
+    "32": "32px",
+    "36": "36px",
+    "40": "40px",
+    "44": "44px",
+    "48": "48px",
+    "56": "56px",
+    "64": "64px",
+    "80": "80px",
+    "96": "96px"
+  },
+  "negativePadding": {
+    "-2": "-2px",
+    "-4": "-4px",
+    "-8": "-8px",
+    "-12": "-12px",
+    "-16": "-16px",
+    "-20": "-20px",
+    "-24": "-24px",
+    "-28": "-28px",
+    "-32": "-32px",
+    "-36": "-36px",
+    "-40": "-40px",
+    "-44": "-44px",
+    "-48": "-48px",
+    "-56": "-56px",
+    "-64": "-64px",
+    "-80": "-80px",
+    "-96": "-96px"
+  },
+  "borderWidth": {
+    "0": "0px",
+    "1": "1px",
+    "2": "2px",
+    "4": "4px"
+  },
+  "radius": {
+    "none": "0px",
+    "sm": "0.25rem",
+    "default": "0.5rem",
+    "lg": "0.625rem",
+    "xl": "1rem",
+    "full": "9999px",
+    "pill": "calc(self(height, self(minHeight, 9999px)) / 2)"
+  },
+  "strokeWidth": {
+    "0": "0",
+    "1": "1",
+    "2": "2"
+  },
+  "transitionProperty": {
+    "default": "color, background-color, color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter",
+    "colors": "color, background-color, color, border-color, text-decoration-color, fill, stroke",
+    "opacity": "opacity",
+    "shadow": "box-shadow",
+    "transform": "transform, translate, scale, rotate",
+    "all": "all",
+    "none": "none"
+  },
+  "timingFunction": {
+    "default": "cubic-bezier(0.45, 0, 0.4, 1)",
+    "linear": "linear",
+    "in": "cubic-bezier(0.5, 0, 1, 1)",
+    "out": "cubic-bezier(0, 0, 0.40, 1)",
+    "in-out": "cubic-bezier(0.45, 0, 0.4, 1)"
+  },
+  "boxShadow": {
+    "emphasized": "0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36))",
+    "elevated": "0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48))",
+    "dragged": "0px 6px 16px light-dark(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6))",
+    "none": "none"
+  },
+  "filter": {
+    "emphasized": "drop-shadow(0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36)))",
+    "elevated": "drop-shadow(0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48)))",
+    "dragged": "drop-shadow0px 6px 16px light-dark(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6))",
+    "none": "none"
+  }
+}
