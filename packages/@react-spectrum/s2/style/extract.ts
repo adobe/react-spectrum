@@ -1,4 +1,4 @@
-import {baseColors, resolveColorToken, fontSize, transitionProperty, timingFunction, baseSpacing, negativeSpacing, basePadding, negativePadding, borderWidth, radius, fontWeight, themeProperties} from './spectrum-theme';
+import {baseColors, resolveColorToken, fontSize, fontWeight, themeProperties} from './spectrum-theme';
 import {getToken, colorToken} from './tokens';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -97,35 +97,46 @@ function computeTypographyMap(baseFontSize: number): Record<string, string> {
   return out;
 }
 
-function normalizeRecord<T extends Record<string | number, string>>(obj: T): Record<string, string> {
-  let out: Record<string, string> = {};
-  for (let [k, v] of Object.entries(obj as any)) {
-    out[String(k)] = v as string;
-  }
+const stripVars = (s: string) => s.replace(/var\(\s*--[a-zA-Z0-9_-]+\s*,\s*([^\)]+)\)/g, (_m, fb) => String(fb).trim());
+
+function mapStringValues(input: unknown, transform: (v: string) => string = v => v): Record<string, string> | undefined {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return undefined;
+  const entries = Object.entries(input as Record<string, unknown>);
+  if (entries.length === 0 || !entries.every(([, v]) => typeof v === 'string')) return undefined;
+  const out: Record<string, string> = {};
+  for (const [k, v] of entries) out[String(k)] = transform(String(v));
   return out;
 }
 
+function cloneArrayIfAny(input: unknown): unknown[] | undefined {
+  return Array.isArray(input) ? input.slice() : undefined;
+}
+
 function computeCommonTokens() {
-  const strokeWidthScale = { 0: '0', 1: '1', 2: '2' };
-  const boxShadowValues = (themeProperties as any).properties.boxShadow as Record<string, string>;
-  const filterValues = (themeProperties as any).properties.filter as Record<string, string>;
-  const stripVars = (s: string) => s.replace(/var\(\s*--[a-zA-Z0-9_-]+\s*,\s*([^\)]+)\)/g, (_m, fb) => String(fb).trim());
-  const transitionPropertyValues = normalizeRecord(transitionProperty as any);
-  for (const key of Object.keys(transitionPropertyValues)) {
-    transitionPropertyValues[key] = stripVars(transitionPropertyValues[key]);
+  const props = (themeProperties as any).properties as Record<string, unknown>;
+  const {transitionProperty, timingFunction, boxShadow, filter, ...rest} = props as Record<string, unknown>;
+
+  // Special handling
+  const transitionPropertyValues = mapStringValues(transitionProperty, stripVars) ?? {};
+  const timingFunctionValues = mapStringValues(timingFunction) ?? {};
+  const boxShadowValues = mapStringValues(boxShadow) ?? {};
+  const filterValues = mapStringValues(filter) ?? {};
+
+  // Remaining properties
+  const processedRest: Record<string, any> = {};
+  for (const [name, def] of Object.entries(rest)) {
+    const arr = cloneArrayIfAny(def);
+    if (arr) { processedRest[name] = arr; continue; }
+    const map = mapStringValues(def, stripVars);
+    if (map) { processedRest[name] = map; }
   }
+
   return {
-    spacing: normalizeRecord(baseSpacing),
-    negativeSpacing: normalizeRecord(negativeSpacing),
-    padding: normalizeRecord(basePadding),
-    negativePadding: normalizeRecord(negativePadding),
-    borderWidth: normalizeRecord(borderWidth as any),
-    radius: normalizeRecord(radius as any),
-    strokeWidth: normalizeRecord(strokeWidthScale as any),
     transitionProperty: transitionPropertyValues,
-    timingFunction: normalizeRecord(timingFunction as any),
-    boxShadow: {...boxShadowValues},
-    filter: {...filterValues}
+    timingFunction: timingFunctionValues,
+    boxShadow: boxShadowValues,
+    filter: filterValues,
+    ...processedRest
   };
 }
 
@@ -212,25 +223,7 @@ function computeTextDecorationMetrics(): Record<string, string> {
   };
 }
 
-function generateTokenValueMap(): Record<ThemeDeviceKey, {
-  colors: Record<string, string | [string, string]>,
-  typography: Record<string, string>,
-  fontFamily: Record<string, string>,
-  fontWeight: Record<string, string>,
-  breakpoints: Record<string, [string, string] | string>,
-  textDecoration: Record<string, string>,
-  spacing: Record<string, string>,
-  negativeSpacing: Record<string, string>,
-  padding: Record<string, string>,
-  negativePadding: Record<string, string>,
-  borderWidth: Record<string, string>,
-  radius: Record<string, string>,
-  strokeWidth: Record<string, string>,
-  transitionProperty: Record<string, string>,
-  timingFunction: Record<string, string>,
-  boxShadow: Record<string, string>,
-  filter: Record<string, string>
-}> {
+function generateTokenValueMap(): Record<ThemeDeviceKey, any> {
   const desktopBase = 14;
   const mobileBase = 17;
   const common = computeCommonTokens();
