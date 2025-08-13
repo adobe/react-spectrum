@@ -35,6 +35,7 @@ export interface GridListSectionAria {
  * See `useGridList` for more details about grid list.
  * @param props - Props for the section.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
   let {'aria-label': ariaLabel} = props;
   let headingId = useSlotId();
