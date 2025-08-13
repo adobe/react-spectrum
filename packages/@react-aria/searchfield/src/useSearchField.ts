@@ -79,6 +79,8 @@ export function useSearchField(
         e.continuePropagation();
       } else {
         e.preventDefault();
+        // by default textfield will continue this one because it doesn't do anything there, so we have to explicitly stop it here
+        e.stopPropagation();
         state.setValue('');
         if (onClear) {
           onClear();

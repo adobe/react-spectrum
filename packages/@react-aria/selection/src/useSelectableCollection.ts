@@ -135,7 +135,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
     if (!ref.current?.contains(e.target as Element)) {
-      // e.continuePropagation();
+      e.continuePropagation();
       return;
     }
 
@@ -170,7 +170,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
-    console.log('onKeyDown', e.key);
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
@@ -288,9 +287,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       case 'Escape':
         if (escapeKeyBehavior === 'clearSelection' && !disallowEmptySelection && manager.selectedKeys.size !== 0) {
-          e.stopPropagation();
           e.preventDefault();
           manager.clearSelection();
+        } else {
+          e.continuePropagation();
         }
         break;
       case 'Tab': {
@@ -316,9 +316,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
             if (next && !next.contains(document.activeElement)) {
               focusWithoutScrolling(next);
+            } else {
+              e.continuePropagation();
             }
           }
           break;
+        } else {
+          e.continuePropagation();
         }
       }
       default:
@@ -581,12 +585,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   });
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown,
-    onKeyUp: useCallback(() => {}, [])
+    onKeyDown
   });
+  handlers = mergeProps(handlers, keyboardProps);
 
   if (!disallowTypeAhead) {
-    handlers = mergeProps(typeSelectProps, handlers, keyboardProps);
+    handlers = mergeProps(typeSelectProps, handlers);
   }
 
   // If nothing is focused within the collection, make the collection itself tabbable.

@@ -703,10 +703,7 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[1]);
 
     await user.tab();
-    expect(document.activeElement).toBe(buttonRef.current);
-
-    await user.tab();
-    expect(document.activeElement).toBe(document.body);
+    expect(document.body).toHaveFocus();
   });
 
   it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {
@@ -1341,10 +1338,12 @@ describe('GridList', () => {
 
   describe('editing', () => {
     it('should render a gridlist with edit mode', async () => {
+      let onSelectionChange = jest.fn();
       let tree = render(
         <GridList
           aria-label="Actors named Chris"
           keyboardNavigationBehavior="tab"
+          onSelectionChange={onSelectionChange}
           items={[
             {id: '1', name: 'Chris Pine'},
             {id: '2', name: 'Chris Hemsworth'},
@@ -1353,15 +1352,15 @@ describe('GridList', () => {
           {(item) => (
             <GridListItem textValue={item.name}>
               <TextField>
-                <Label>{item.name}</Label>
+                <Label>first {item.name}</Label>
                 <Input />
               </TextField>
               <TextField>
-                <Label>{item.name}</Label>
+                <Label>second {item.name}</Label>
                 <Input />
               </TextField>
               <TextField>
-                <Label>{item.name}</Label>
+                <Label>third {item.name}</Label>
                 <Input />
               </TextField>
             </GridListItem>
@@ -1376,6 +1375,20 @@ describe('GridList', () => {
       await user.keyboard('Chris E');
       expect(row1Inputs[0]).toHaveFocus();
       expect(row1Inputs[0]).toHaveValue('Chris E');
+
+      await user.tab();
+      expect(row1Inputs[1]).toHaveFocus();
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.tab();
+      expect(row1Inputs[2]).toHaveFocus();
+
+      await user.keyboard('{ArrowLeft}');
+      expect(row1Inputs[2]).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      expect(row1Inputs[2]).toHaveFocus();
     });
   });
 });

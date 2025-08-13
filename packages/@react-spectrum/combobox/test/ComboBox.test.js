@@ -361,7 +361,7 @@ describe('ComboBox', function () {
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it.only('features default behavior of completionMode suggest and menuTrigger input', async function () {
+  it('features default behavior of completionMode suggest and menuTrigger input', async function () {
     let tree = renderComboBox();
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
 

@@ -109,7 +109,7 @@ export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultEle
   errorMessageProps: DOMAttributes
 }
 
-let KEYS_TO_CONTINUE_PROPAGATION = new Set(['Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
+let KEYS_TO_CONTINUE_PROPAGATION = new Set(['Tab', 'Escape', 'Enter']);
 
 /**
  * Provides the behavior and accessibility implementation for a text field.
