@@ -223,51 +223,27 @@ function computeTextDecorationMetrics(): Record<string, string> {
   };
 }
 
-function generateTokenValueMap(): Record<ThemeDeviceKey, any> {
+function generateTokenValueMap(theme: ThemeMode, device: DeviceKind): any {
   const desktopBase = 14;
   const mobileBase = 17;
   const common = computeCommonTokens();
   return {
-    'light-desktop': {
-      colors: computeColorMap('light'),
-      typography: computeTypographyMap(desktopBase),
-      fontFamily: computeFontFamilyMap(),
-      fontWeight: computeFontWeightMap(),
-      breakpoints: computeBreakpoints(),
-      textDecoration: computeTextDecorationMetrics(),
-      ...common
-    },
-    'light-mobile': {
-      colors: computeColorMap('light'),
-      typography: computeTypographyMap(mobileBase),
-      fontFamily: computeFontFamilyMap(),
-      fontWeight: computeFontWeightMap(),
-      breakpoints: computeBreakpoints(),
-      textDecoration: computeTextDecorationMetrics(),
-      ...common
-    },
-    'dark-desktop': {
-      colors: computeColorMap('dark'),
-      typography: computeTypographyMap(desktopBase),
-      fontFamily: computeFontFamilyMap(),
-      fontWeight: computeFontWeightMap(),
-      breakpoints: computeBreakpoints(),
-      textDecoration: computeTextDecorationMetrics(),
-      ...common
-    },
-    'dark-mobile': {
-      colors: computeColorMap('dark'),
-      typography: computeTypographyMap(mobileBase),
-      fontFamily: computeFontFamilyMap(),
-      fontWeight: computeFontWeightMap(),
-      breakpoints: computeBreakpoints(),
-      textDecoration: computeTextDecorationMetrics(),
-      ...common
-    }
+    colors: computeColorMap(theme),
+    typography: computeTypographyMap(device === 'desktop' ? desktopBase : mobileBase),
+    fontFamily: computeFontFamilyMap(),
+    fontWeight: computeFontWeightMap(),
+    breakpoints: computeBreakpoints(),
+    textDecoration: computeTextDecorationMetrics(),
+    ...common
   };
 }
 
-const data = generateTokenValueMap();
+const data: Record<ThemeDeviceKey, any> = {
+  'light-desktop': generateTokenValueMap('light', 'desktop'),
+  'light-mobile': generateTokenValueMap('light', 'mobile'),
+  'dark-desktop': generateTokenValueMap('dark', 'desktop'),
+  'dark-mobile': generateTokenValueMap('dark', 'mobile')
+};
 
 // Ensure target directory exists.
 fs.mkdirSync(baseDir, {recursive: true});
