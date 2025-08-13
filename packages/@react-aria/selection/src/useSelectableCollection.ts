@@ -12,10 +12,10 @@
 
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
-import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
-import {focusSafely, getInteractionModality} from '@react-aria/interactions';
+import {FocusEvent, KeyboardEvent, useCallback, useEffect, useRef} from 'react';
+import {focusSafely, getInteractionModality, useKeyboard} from '@react-aria/interactions';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -126,7 +126,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let {direction} = useLocale();
   let router = useRouter();
 
-  let onKeyDown = (e: KeyboardEvent) => {
+  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
     if (e.altKey && e.key === 'Tab') {
       e.preventDefault();
@@ -135,6 +135,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
     if (!ref.current?.contains(e.target as Element)) {
+      // e.continuePropagation();
       return;
     }
 
@@ -169,6 +170,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
+    console.log('onKeyDown', e.key);
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
@@ -319,6 +321,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           break;
         }
       }
+      default:
+        e.continuePropagation();
     }
   };
 
@@ -560,7 +564,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   });
 
   let handlers = {
-    onKeyDown,
     onFocus,
     onBlur,
     onMouseDown(e) {
@@ -577,8 +580,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     selectionManager: manager
   });
 
+  let {keyboardProps} = useKeyboard({
+    onKeyDown,
+    onKeyUp: useCallback(() => {}, [])
+  });
+
   if (!disallowTypeAhead) {
-    handlers = mergeProps(typeSelectProps, handlers);
+    handlers = mergeProps(typeSelectProps, handlers, keyboardProps);
   }
 
   // If nothing is focused within the collection, make the collection itself tabbable.

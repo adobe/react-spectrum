@@ -11,14 +11,16 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
+  KeyboardEvent,
   LabelHTMLAttributes,
   RefObject,
+  useCallback,
   useEffect,
   useState
 } from 'react';
@@ -107,6 +109,8 @@ export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultEle
   errorMessageProps: DOMAttributes
 }
 
+let KEYS_TO_CONTINUE_PROPAGATION = new Set(['Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
+
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
@@ -122,10 +126,24 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isRequired = false,
     isReadOnly = false,
     type = 'text',
-    validationBehavior = 'aria'
+    validationBehavior = 'aria',
+    onKeyDown: onKeyDownProp,
+    onKeyUp: onKeyUpProp
   } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
+  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      e.continuePropagation();
+    };
+    onKeyDownProp?.(e);
+  }, [onKeyDownProp]);
+  let onKeyUp = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      e.continuePropagation();
+    };
+    onKeyUpProp?.(e);
+  }, [onKeyUpProp]);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>({...props, onKeyDown, onKeyUp}, ref);
   let validationState = useFormValidationState({
     ...props,
     value

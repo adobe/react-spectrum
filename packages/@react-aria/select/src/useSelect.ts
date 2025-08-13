@@ -19,7 +19,7 @@ import {FocusEvent, useMemo} from 'react';
 import {HiddenSelectProps} from './HiddenSelect';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
-import {setInteractionModality} from '@react-aria/interactions';
+import {setInteractionModality, useKeyboard} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -136,9 +136,6 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     errorMessage: props.errorMessage || validationErrors
   });
 
-  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
-  delete typeSelectProps.onKeyDownCapture;
-
   let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
@@ -150,6 +147,11 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     name,
     form,
     validationBehavior
+  });
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
+    onKeyUp: props.onKeyUp
   });
 
   return {
@@ -166,9 +168,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      ...keyboardProps,
       isDisabled,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
-      onKeyUp: props.onKeyUp,
       'aria-labelledby': [
         valueId,
         triggerProps['aria-labelledby'],

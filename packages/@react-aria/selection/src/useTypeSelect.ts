@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
-import {KeyboardEvent, useRef} from 'react';
+import {KeyboardEvent, useEffect, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 /**
@@ -51,21 +51,45 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     timeout: undefined
   }).current;
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    let character = getStringForKey(e.key);
-    if (!character || e.ctrlKey || e.metaKey || !e.currentTarget.contains(e.target as HTMLElement) || (state.search.length === 0 && character === ' ')) {
-      return;
-    }
-
-    // Do not propagate the Spacebar event if it's meant to be part of the search.
-    // When we time out, the search term becomes empty, hence the check on length.
-    // Trimming is to account for the case of pressing the Spacebar more than once,
-    // which should cycle through the selection/deselection of the focused item.
-    if (character === ' ' && state.search.trim().length > 0) {
+  let onKeyDownCapture = (e: KeyboardEvent) => {
+    // if we're in the middle of a search, then a spacebar should be treated as a search and we should not propagate the event
+    // since we handle this one in a capture phase, we should ignore it in the bubble phase
+    if (state.search.length > 0 && e.key === ' ') {
       e.preventDefault();
       if (!('continuePropagation' in e)) {
         e.stopPropagation();
       }
+      state.search += ' ';
+
+      if (keyboardDelegate.getKeyForSearch != null) {
+        // Use the delegate to find a key to focus.
+        // Prioritize items after the currently focused item, falling back to searching the whole list.
+        let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
+
+        // If no key found, search from the top.
+        if (key == null) {
+          key = keyboardDelegate.getKeyForSearch(state.search);
+        }
+
+        if (key != null) {
+          selectionManager.setFocusedKey(key);
+          if (onTypeSelect) {
+            onTypeSelect(key);
+          }
+        }
+      }
+    }
+
+    clearTimeout(state.timeout);
+    state.timeout = setTimeout(() => {
+      state.search = '';
+    }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
+  };
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    let character = getStringForKey(e.key);
+    if (!character || e.ctrlKey || e.metaKey || character === ' ' || !e.currentTarget.contains(e.target as HTMLElement)) {
+      return;
     }
 
     state.search += character;
@@ -94,11 +118,18 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
   };
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(state.timeout);
+    };
+  }, []);
+
   return {
     typeSelectProps: {
       // Using a capturing listener to catch the keydown event before
       // other hooks in order to handle the Spacebar event.
-      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : undefined
+      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDownCapture : undefined,
+      onKeyDown: keyboardDelegate.getKeyForSearch ? onKeyDown : undefined
     }
   };
 }
