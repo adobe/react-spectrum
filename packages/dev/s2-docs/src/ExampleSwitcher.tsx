@@ -1,6 +1,6 @@
 'use client';
 
-import {createContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import {Key} from 'react-aria-components';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -28,22 +28,33 @@ export const ExampleSwitcherContext = createContext<Key | null>(null);
 
 const DEFAULT_EXAMPLES = ['Vanilla CSS', 'Tailwind'] as Key[];
 
-export function ExampleSwitcher({examples = DEFAULT_EXAMPLES, children}) {
+export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, children}) {
   let [selected, setSelected] = useState<Key>(examples[0]);
 
   useEffect(() => {
     let search = new URLSearchParams(location.search);
-    let exampleType = search.get('exampleType') ?? localStorage.getItem('exampleType');
+    let exampleType = search.get(type) ?? localStorage.getItem(type);
     if (exampleType && examples.includes(exampleType)) {
       setSelected(exampleType);
     }
-  }, []);
+
+    let controller = new AbortController();
+    window.addEventListener('storage', e => {
+      if (e.key === type && e.newValue && examples.includes(e.newValue)) {
+        setSelected(e.newValue);
+      }
+    }, {signal: controller.signal});
+    return () => controller.abort();
+  }, [type, examples]);
 
   let onSelectionChange = key => {
     setSelected(key);
-    if (DEFAULT_EXAMPLES.includes(key)) {
-      localStorage.setItem('exampleType', key);
-    }
+    localStorage.setItem(type, key);
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: type,
+      oldValue: String(selected),
+      newValue: String(key)
+    }));
   };
 
   return (

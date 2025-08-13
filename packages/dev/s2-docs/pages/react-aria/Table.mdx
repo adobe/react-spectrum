@@ -88,7 +88,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 ## Content
 
-`Table` follows the **Collection Components API**, accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html), accepting both static and dynamic collections. 
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -592,7 +592,7 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Table) to learn more.
 
 ```tsx render
 "use client";

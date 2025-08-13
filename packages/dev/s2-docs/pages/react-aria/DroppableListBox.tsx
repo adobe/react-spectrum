@@ -1,9 +1,9 @@
 'use client';
 import {useState} from 'react';
 import {isTextDropItem, useDragAndDrop} from 'react-aria-components';
-import {PokemonGridList, Pokemon} from './PokemonGridList';
+import {PokemonListBox, Pokemon} from './PokemonListBox';
 
-export function DroppableGridList() {
+export function DroppableListBox() {
   let [items, setItems] = useState<Pokemon[]>([]);
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -18,5 +18,5 @@ export function DroppableGridList() {
     }
   });
 
-  return <PokemonGridList items={items} dragAndDropHooks={dragAndDropHooks} />;
+  return <PokemonListBox items={items} dragAndDropHooks={dragAndDropHooks} />;
 }

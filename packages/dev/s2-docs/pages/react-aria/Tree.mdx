@@ -19,8 +19,7 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
   <Tree
     /* PROPS */
-    aria-label="Files"
-    defaultExpandedKeys={['documents', 'photos', 'project']}>
+    aria-label="Files">
     <TreeItem title="Documents">
       <TreeItem title="Project">
         <TreeItem title="Weekly Report" />
@@ -39,8 +38,7 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
   <Tree
     /* PROPS */
-    aria-label="Files"
-    defaultExpandedKeys={['documents', 'photos', 'project']}>
+    aria-label="Files">
     <TreeItem title="Documents">
       <TreeItem title="Project">
         <TreeItem title="Weekly Report" />
@@ -288,7 +286,7 @@ function Example(props) {
 
 ## Drag and drop
 
-Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Tree) to learn more.
 
 ```tsx render
 "use client";

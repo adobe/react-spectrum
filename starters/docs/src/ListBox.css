@@ -29,6 +29,7 @@
   .react-aria-Header {
     font-size: 1.000125rem;
     font-weight: bold;
+    font-variation-settings: initial;
     padding: 0 0.6247499999999999rem;
   }
 
