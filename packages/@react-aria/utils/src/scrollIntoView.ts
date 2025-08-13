@@ -71,16 +71,12 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): v
   let targetTop = offsetY - scrollMarginTopNumber;
   let targetBottom = offsetY + height + scrollMarginBottomNumber;
 
-  // convenience vars for padded viewport edges (content coords)
-  let viewportLeft = x + parseInt(borderLeftWidth, 10) + scrollPaddingLeftNumber;
-  let viewportRight = maxX - scrollPaddingRightNumber;
-  let viewportTop = y + parseInt(borderTopWidth, 10) + scrollPaddingTopNumber;
-  let viewportBottom = maxY - scrollPaddingBottomNumber;
+  let scrollPortLeft = x + parseInt(borderLeftWidth, 10) + scrollPaddingLeftNumber;
+  let scrollPortRight = maxX - scrollPaddingRightNumber;
+  let scrollPortTop = y + parseInt(borderTopWidth, 10) + scrollPaddingTopNumber;
+  let scrollPortBottom = maxY - scrollPaddingBottomNumber;
 
-  const spansBothX =
-    targetLeft <= viewportLeft && targetRight >= viewportRight;
-
-  if (!spansBothX) {
+  if (targetLeft > scrollPortLeft || targetRight < scrollPortRight) {
     if (targetLeft <= x + scrollPaddingLeftNumber) {
       x = targetLeft - parseInt(borderLeftWidth, 10) - scrollPaddingLeftNumber;
     } else if (targetRight > maxX - scrollPaddingRightNumber) {
@@ -88,10 +84,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): v
     }
   }
 
-  const spansBothY =
-    targetTop <= viewportTop && targetBottom >= viewportBottom;
-
-  if (!spansBothY) {
+  if (targetTop > scrollPortTop || targetBottom < scrollPortBottom) {
     if (targetTop <= borderAdjustedY + scrollPaddingTopNumber) {
       y = targetTop - parseInt(borderTopWidth, 10) - scrollPaddingTopNumber;
     } else if (targetBottom > maxY - scrollPaddingBottomNumber) {
