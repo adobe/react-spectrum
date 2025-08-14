@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+'use client';
+
 import {ClientProviders} from './provider';
 import type { Metadata } from "next";
 import { Provider } from '@react-spectrum/s2';
