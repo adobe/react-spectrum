@@ -20,7 +20,8 @@ interface GridMapShared {
     onRowAction?: (key: Key) => void,
     onCellAction?: (key: Key) => void
   },
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
 // Used to share:

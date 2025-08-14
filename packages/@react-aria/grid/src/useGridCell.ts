@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {getFocusableTreeWalker, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
@@ -62,7 +62,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   } = props;
 
   let {direction} = useLocale();
-  let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state)!;
+  let {keyboardDelegate, actions: {onCellAction}, shouldUseVirtualFocus} = gridMap.get(state)!;
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -70,29 +70,32 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
+  // TODO: throughly test these changes
   let focus = () => {
     if (ref.current) {
       let treeWalker = getFocusableTreeWalker(ref.current);
+      let activeElement = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) : document.activeElement;
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+        if (ref.current.contains(activeElement) && ref.current !== activeElement) {
           return;
         }
 
         let focusable = state.selectionManager.childFocusStrategy === 'last'
           ? last(treeWalker)
           : treeWalker.firstChild() as FocusableElement;
+
         if (focusable) {
-          focusSafely(focusable);
+          focusElement(focusable);
           return;
         }
       }
 
       if (
         (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !ref.current.contains(document.activeElement)
+        !ref.current.contains(activeElement)
       ) {
-        focusSafely(ref.current);
+        focusElement(ref.current);
       }
     }
   };
@@ -105,8 +108,17 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     focus,
     shouldSelectOnPressUp,
     onAction: onCellAction ? () => onCellAction(node.key) : onAction,
-    isDisabled: state.collection.size === 0
+    isDisabled: state.collection.size === 0,
+    shouldUseVirtualFocus
   });
+
+  let focusElement = (element: FocusableElement) => {
+    if (!shouldUseVirtualFocus) {
+      focusSafely(element);
+    } else {
+      moveVirtualFocus(element);
+    }
+  };
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
@@ -114,7 +126,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) as FocusableElement : document.activeElement;
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -131,7 +143,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         e.preventDefault();
         e.stopPropagation();
         if (focusable) {
-          focusSafely(focusable);
+          focusElement(focusable);
           scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then move to the next cell to the left of this one.
@@ -150,8 +162,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             break;
           }
 
+          // TODO: may need the same handling as in GridList with the currentNode check
           if (focusMode === 'cell' && direction === 'rtl') {
-            focusSafely(ref.current);
+            focusElement(ref.current);
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
@@ -159,7 +172,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               ? walker.firstChild() as FocusableElement
               : last(walker);
             if (focusable) {
-              focusSafely(focusable);
+              focusElement(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }
@@ -178,7 +191,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         e.preventDefault();
         e.stopPropagation();
         if (focusable) {
-          focusSafely(focusable);
+          focusElement(focusable);
           scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           let next = keyboardDelegate.getKeyRightOf?.(node.key);
@@ -192,8 +205,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             break;
           }
 
+           // TODO: may need the same handling as in GridList with the currentNode check
           if (focusMode === 'cell' && direction === 'ltr') {
-            focusSafely(ref.current);
+            focusElement(ref.current);
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
@@ -201,7 +215,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               ? last(walker)
               : walker.firstChild() as FocusableElement;
             if (focusable) {
-              focusSafely(focusable);
+              focusElement(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }

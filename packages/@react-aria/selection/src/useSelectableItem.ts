@@ -168,15 +168,27 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused) {
-      if (!shouldUseVirtualFocus) {
-        if (focus) {
-          focus();
-        } else if (document.activeElement !== ref.current && ref.current) {
-          focusSafely(ref.current);
-        }
-      } else {
+      // TODO: might have to change this condition? Table provides focus so maybe can rely on that handling virtual focus?
+      // running assumption is that the user has accounted for virtual focus in their "focus" logic, but that doesn't feel great...
+      // However, how else can useGridCell handle virtual focus for its specific focusMode logic
+      if (focus) {
+        focus();
+      } else if (shouldUseVirtualFocus) {
         moveVirtualFocus(ref.current);
+      } else if (document.activeElement !== ref.current && ref.current) {
+        focusSafely(ref.current);
       }
+
+
+      // if (!shouldUseVirtualFocus) {
+      //   if (focus) {
+      //     focus();
+      //   } else if (document.activeElement !== ref.current && ref.current) {
+      //     focusSafely(ref.current);
+      //   }
+      // } else {
+      //   moveVirtualFocus(ref.current);
+      // }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);

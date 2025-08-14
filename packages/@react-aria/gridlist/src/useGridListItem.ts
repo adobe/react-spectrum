@@ -73,15 +73,17 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
+  // TODO: need to update this to handle virtual focus
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
+    let activeElement = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) : document.activeElement;
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current?.contains(document.activeElement))
+      !ref.current?.contains(activeElement))
     ) {
-      focusSafely(ref.current);
+      focusElement(ref.current);
     }
   };
 

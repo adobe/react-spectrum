@@ -372,10 +372,10 @@ interface TableInnerProps {
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   let contextProps;
-  [contextProps] = useContextProps({}, null, CollectionContext);
+  [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
   let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
+  // let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
   let tableState = useTableState({
@@ -390,7 +390,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
-    ...DOMCollectionProps,
+    ...collectionProps,
     layoutDelegate,
     isVirtualized
   }, filteredState, ref);
