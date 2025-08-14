@@ -33,6 +33,7 @@ const EXPANSION_KEYS = {
   }
 };
 
+// TODO: will need to test expandable rows with autocomplete
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
  * @param props - Props for the row.

@@ -12,7 +12,7 @@
 
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, getFocusableTreeWalker, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -67,21 +67,23 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp, shouldUseVirtualFocus} = listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
+  // TODO: need to update this to handle virtual focus
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
+    let activeElement = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) : document.activeElement;
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current?.contains(document.activeElement))
+      !ref.current?.contains(activeElement))
     ) {
-      focusSafely(ref.current);
+      focusElement(ref.current);
     }
   };
 
@@ -127,8 +129,17 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldSelectOnPressUp: props.shouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
-    linkBehavior
+    linkBehavior,
+    shouldUseVirtualFocus
   });
+
+  let focusElement = (element: FocusableElement) => {
+    if (!shouldUseVirtualFocus) {
+      focusSafely(element);
+    } else {
+      moveVirtualFocus(element);
+    }
+  };
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
@@ -136,7 +147,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) as FocusableElement : document.activeElement;
 
     if ('expandedKeys' in state && document.activeElement === ref.current) {
       if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
@@ -161,20 +172,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           if (focusable) {
             e.preventDefault();
             e.stopPropagation();
-            focusSafely(focusable);
+            focusElement(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
-            // If there is no next focusable child, then return focus back to the row
+            // If there is no next focusable child (aka we are already focused on the row), then wrap around back to the last element of the row
+            // If in rtl OR if we are in virtual focus and the current node isn't the row, no next focusable child means we should focus the row next
             e.preventDefault();
             e.stopPropagation();
-            if (direction === 'rtl') {
-              focusSafely(ref.current);
+            if (direction === 'rtl' || (walker.currentNode !== ref.current)) {
+              focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
               if (lastElement) {
-                focusSafely(lastElement);
+                focusElement(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
               }
             }
@@ -191,19 +203,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           if (focusable) {
             e.preventDefault();
             e.stopPropagation();
-            focusSafely(focusable);
+            focusElement(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
             e.preventDefault();
             e.stopPropagation();
-            if (direction === 'ltr') {
-              focusSafely(ref.current);
+            if (direction === 'ltr' || (walker.currentNode !== ref.current)) {
+              focusElement(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
               if (lastElement) {
-                focusSafely(lastElement);
+                focusElement(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
               }
             }

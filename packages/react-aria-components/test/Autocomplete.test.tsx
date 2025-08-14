@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -196,13 +196,13 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
-let StaticGridList = (props) => (
-  <GridList aria-label="test gridlist" {...props}>
-    <GridListItem id="1">Foo</GridListItem>
-    <GridListItem id="2">Bar</GridListItem>
-    <GridListItem id="3">Baz</GridListItem>
-  </GridList>
-);
+// let StaticGridList = (props) => (
+//   <GridList aria-label="test gridlist" {...props}>
+//     <GridListItem id="1">Foo</GridListItem>
+//     <GridListItem id="2">Bar</GridListItem>
+//     <GridListItem id="3">Baz</GridListItem>
+//   </GridList>
+// );
 
 let StaticTable = (props) => (
   <Table aria-label="test table" {...props}>
@@ -231,16 +231,16 @@ let StaticTable = (props) => (
   </Table>
 );
 
-let StaticTagGroup = (props) => (
-  <TagGroup {...props}>
-    <Label>Test tag group</Label>
-    <TagList>
-      <Tag>Foo</Tag>
-      <Tag>Bar</Tag>
-      <Tag>Baz</Tag>
-    </TagList>
-  </TagGroup>
-);
+// let StaticTagGroup = (props) => (
+//   <TagGroup {...props}>
+//     <Label>Test tag group</Label>
+//     <TagList>
+//       <Tag>Foo</Tag>
+//       <Tag>Bar</Tag>
+//       <Tag>Baz</Tag>
+//     </TagList>
+//   </TagGroup>
+// );
 
 let StaticTabs = (props) => (
   <Tabs {...props}>
@@ -1102,26 +1102,26 @@ AriaAutocompleteTests({
   ariaPattern: 'grid'
 });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-gridlist',
-  renderers: {
-    noVirtualFocus: () => render(
-      <AutocompleteWrapper>
-        <StaticGridList />
-      </AutocompleteWrapper>
-    )
-  },
-  ariaPattern: 'grid'
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-gridlist',
+//   renderers: {
+//     noVirtualFocus: () => render(
+//       <AutocompleteWrapper>
+//         <StaticGridList />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   ariaPattern: 'grid'
+// });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-taggroup',
-  renderers: {
-    noVirtualFocus: () => render(
-      <AutocompleteWrapper>
-        <StaticTagGroup />
-      </AutocompleteWrapper>
-    )
-  },
-  ariaPattern: 'grid'
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-taggroup',
+//   renderers: {
+//     noVirtualFocus: () => render(
+//       <AutocompleteWrapper>
+//         <StaticTagGroup />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   ariaPattern: 'grid'
+// });

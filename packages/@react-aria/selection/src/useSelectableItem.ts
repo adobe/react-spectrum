@@ -12,7 +12,7 @@
 
 import {chain, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
+import {focusSafely, isFocusVisible, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -78,6 +78,8 @@ export interface SelectableItemStates {
   isSelected: boolean,
   /** Whether the item is currently focused. */
   isFocused: boolean,
+  /** Whether the item is keyboard focused. */
+  isFocusVisible: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
@@ -166,15 +168,27 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused) {
-      if (!shouldUseVirtualFocus) {
-        if (focus) {
-          focus();
-        } else if (document.activeElement !== ref.current && ref.current) {
-          focusSafely(ref.current);
-        }
-      } else {
+      // TODO: might have to change this condition? Table provides focus so maybe can rely on that handling virtual focus?
+      // running assumption is that the user has accounted for virtual focus in their "focus" logic, but that doesn't feel great...
+      // However, how else can useGridCell handle virtual focus for its specific focusMode logic
+      if (focus) {
+        focus();
+      } else if (shouldUseVirtualFocus) {
         moveVirtualFocus(ref.current);
+      } else if (document.activeElement !== ref.current && ref.current) {
+        focusSafely(ref.current);
       }
+
+
+      // if (!shouldUseVirtualFocus) {
+      //   if (focus) {
+      //     focus();
+      //   } else if (document.activeElement !== ref.current && ref.current) {
+      //     focusSafely(ref.current);
+      //   }
+      // } else {
+      //   moveVirtualFocus(ref.current);
+      // }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
@@ -399,6 +413,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isPressed,
     isSelected: manager.isSelected(key),
     isFocused: manager.isFocused && manager.focusedKey === key,
+    isFocusVisible: manager.isFocused && manager.focusedKey === key && isFocusVisible(),
     isDisabled,
     allowsSelection,
     hasAction

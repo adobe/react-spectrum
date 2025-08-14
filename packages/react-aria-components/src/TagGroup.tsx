@@ -16,12 +16,12 @@ import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@rea
 import {CollectionContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -76,11 +76,9 @@ interface TagGroupInnerProps {
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
   let contextProps;
-  [contextProps] = useContextProps({}, null, CollectionContext);
-  let {filter, ...collectionProps} = contextProps;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tagListRef = useRef<HTMLDivElement>(null);
+  [contextProps, tagListRef as unknown] = useContextProps({}, tagListRef, CollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -103,7 +101,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
   } = useTagGroup({
     ...props,
     ...domPropOverrides,
-    ...DOMCollectionProps,
+    ...collectionProps,
     label
   }, filteredState, tagListRef);
 
@@ -213,7 +211,6 @@ export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagPro
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
-
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection,
     onHoverStart: item.props.onHoverStart,
@@ -228,7 +225,8 @@ export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagPro
     defaultClassName: 'react-aria-Tag',
     values: {
       ...states,
-      isFocusVisible,
+      // TODO: check if I can get rid of useFocusRing
+      isFocusVisible: isFocusVisible || states.isFocusVisible,
       isHovered,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
@@ -253,7 +251,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagPro
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
+      data-focus-visible={isFocusVisible || states.isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-allows-removing={states.allowsRemoving || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>

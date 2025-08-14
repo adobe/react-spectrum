@@ -219,27 +219,39 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         }
         break;
       case ' ':
+      case 'Backspace':
         // Space shouldn't trigger onAction so early return.
+        // Backspace shouldn't trigger tag deletion either
         return;
       case 'Tab':
-        // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
-        // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
-        if ('continuePropagation' in e) {
+        // Propagate Tab down to the collection so that tabbing foward will hit our special logic to treat the collection
+        // as a single tab stop. We want FocusScope to handle Shift Tab if one exists (aka sub dialog), so special case propogate
+        // Otherwise, we don't want useSeletableCollection to handle that anyways since focus is actually on an input outside the
+        // wrapped collection and thus the browser can handle that for us
+        if ('continuePropagation' in e && e.shiftKey) {
           e.continuePropagation();
+          return;
         }
-        return;
+        break;
       case 'Home':
       case 'End':
       case 'PageDown':
       case 'PageUp':
       case 'ArrowUp':
-      case 'ArrowDown': {
+      case 'ArrowDown':
+      case 'ArrowLeft':
+      case 'ArrowRight':  {
         if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
         }
 
         // Prevent these keys from moving the text cursor in the input
-        e.preventDefault();
+        // TODO: special case ArrowLeft/Right so they still do move the text cursor
+        // However, this should really depend on the primary wrapped component's layout orientation (aka maybe shouldn't happen if TagGroup?)
+        if (!(e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+          e.preventDefault();
+        }
+
         // Move virtual focus into the wrapped collection
         let focusCollection = new CustomEvent(FOCUS_EVENT, {
           cancelable: true,
@@ -292,6 +304,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       }
     } else {
       // TODO: check if we can do this, want to stop textArea from using its default Enter behavior so items are properly triggered
+      // Note that this prevents the input cursor from moving since the taggroup is consuming the event
       e.preventDefault();
     }
   };
