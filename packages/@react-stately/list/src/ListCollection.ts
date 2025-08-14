@@ -22,11 +22,15 @@ export class ListCollection<T> implements Collection<Node<T>> {
     this.iterable = nodes;
 
     let visit = (node: Node<T>) => {
-      this.keyMap.set(node.key, node);
+      // Skip the loader node so it isn't added to the keymap and thus
+      // doesn't influence the size count. This should only matter for RAC and S2
+      if (node.type !== 'loader') {
+        this.keyMap.set(node.key, node);
 
-      if (node.childNodes && node.type === 'section') {
-        for (let child of node.childNodes) {
-          visit(child);
+        if (node.childNodes && node.type === 'section') {
+          for (let child of node.childNodes) {
+            visit(child);
+          }
         }
       }
     };
