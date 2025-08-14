@@ -132,14 +132,6 @@ then
   mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
-  echo 'build RAC Tailwind app'
-  # Install/build RAC Tailwind app
-  cd ../../examples/rac-tailwind
-  yarn config set npmRegistryServer $registry
-  yarn install --no-immutable
-  yarn build --public-url ./
-  mv dist ../../$verdaccio_path/rac-tailwind
-
   echo 'build RAC Spectrum Tailwind app'
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind

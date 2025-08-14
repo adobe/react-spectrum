@@ -209,7 +209,8 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   overflowY: 'auto',
   overflowX: 'hidden',
   fontFamily: 'sans',
-  fontSize: controlFont()
+  fontSize: controlFont(),
+  outlineStyle: 'none'
 });
 
 export let listboxItem = style({
