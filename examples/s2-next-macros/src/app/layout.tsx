@@ -10,11 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-'use client';
-
 import {ClientProviders} from './provider';
 import type { Metadata } from "next";
-import { Provider } from '@react-spectrum/s2';
 
 export const metadata: Metadata = {
   title: "Spectrum 2 + Next.js",
@@ -27,12 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Provider elementType="html" locale="en-US">
-      <body>
-        <ClientProviders>
-          {children}
-        </ClientProviders>
-      </body>
-    </Provider>
+    <ClientProviders>
+      {children}
+    </ClientProviders>
   );
 }
