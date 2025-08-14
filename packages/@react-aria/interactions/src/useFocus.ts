@@ -18,6 +18,8 @@
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
 import {getActiveElement, getEventTarget, getOwnerDocument} from '@react-aria/utils';
+// TODO: circular dependency
+import {getVirtuallyFocusedElement} from '../../focus';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
@@ -63,9 +65,18 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     // Double check that document.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
 
+    // if (e.target.nodeName === 'BUTTON') {
+    //   console.log('focusing specific node', e.target)
+    //   console.trace()
+    // }
     const ownerDocument = getOwnerDocument(e.target);
     const activeElement = ownerDocument ? getActiveElement(ownerDocument) : getActiveElement();
-    if (e.target === e.currentTarget && activeElement === getEventTarget(e.nativeEvent)) {
+
+    // TODO the below check on getVirtuallyFocusedElement isn't accurate because at this point when focus is called, the virtually focused element
+    // that we detect is still the old one and thus we cant really distinguish if the element recieveing focus here will be the newly virtually focused element
+    // or if we are outside the component using virtual focus and focus is landing on something else? Maybe that doesn't matter since if we are landing on
+    // an element with real focus outside the component using virtual focus, then activeElement === getEventTarget(e.nativeEvent) resolves as true
+    if (e.target === e.currentTarget && (activeElement === getEventTarget(e.nativeEvent) || getVirtuallyFocusedElement(ownerDocument))) {
       if (onFocusProp) {
         onFocusProp(e);
       }

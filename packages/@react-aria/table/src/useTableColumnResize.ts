@@ -53,6 +53,7 @@ export interface AriaTableColumnResizeProps<T> {
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
+// TODO: will need to test table column resizing with autocomplete
 /**
  * Provides the behavior and accessibility implementation for a table column resizer element.
  * @param props - Props for the resizer.

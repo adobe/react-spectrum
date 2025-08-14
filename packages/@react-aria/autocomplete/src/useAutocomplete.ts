@@ -231,12 +231,15 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // Backspace shouldn't trigger tag deletion either
         return;
       case 'Tab':
-        // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
-        // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
-        if ('continuePropagation' in e) {
+        // Propagate Tab down to the collection so that tabbing foward will hit our special logic to treat the collection
+        // as a single tab stop. We want FocusScope to handle Shift Tab if one exists (aka sub dialog), so special case propogate
+        // Otherwise, we don't want useSeletableCollection to handle that anyways since focus is actually on an input outside the
+        // wrapped collection and thus the browser can handle that for us
+        if ('continuePropagation' in e && e.shiftKey) {
           e.continuePropagation();
+          return;
         }
-        return;
+        break;
       case 'Home':
       case 'End':
       case 'PageDown':

@@ -219,6 +219,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }
+          // console.log('next key in selectable', nextKey)
           if (nextKey != null) {
             e.preventDefault();
             navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
@@ -300,7 +301,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           // in the collection, so that the browser default behavior will apply starting from that element
           // rather than the currently focused one.
           if (e.shiftKey) {
-            ref.current.focus();
+            // Do not handle shift focus in virtual focus, just let the browser handle it since focus isn't actually in the collection
+            if (shouldUseVirtualFocus) {
+              ref.current.focus();
+            }
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
             let next: FocusableElement | undefined = undefined;
@@ -311,7 +315,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
                 next = last;
               }
             } while (last);
-
             if (next && !next.contains(document.activeElement)) {
               focusWithoutScrolling(next);
             }
@@ -586,6 +589,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
+  } else {
+    // Make sure the collection itself isn't focusable when using virtual focus
+    tabIndex = -1;
   }
 
   let collectionId = useCollectionId(manager.collection);

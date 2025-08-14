@@ -90,6 +90,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
+
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: props.isDisabled || isPending

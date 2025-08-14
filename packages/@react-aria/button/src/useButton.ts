@@ -105,8 +105,15 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   if (allowFocusWhenDisabled) {
     focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
   }
+
+  // TODO: need to make the button (and really any elements within a virtual focus collection) non tabbable
+  // if we don't do this then real focus can move inside the collection and breaks the virtual focus logic
+  // (can get cases where multiple things get focus visible styles)
+  // Ideally useSelectableCollection can do the same thing where it coerces focus past the entire collection
+  // focusableProps.tabIndex = -1;
+
   let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
-  // TODO: will need to support virtual focus on the button
+
   return {
     isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(additionalProps, buttonProps, {

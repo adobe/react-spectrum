@@ -969,38 +969,33 @@ function MyButton() {
 
 const AutocompleteWithGridList = (args) => {
   return (
-    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
-      <div>
-        <TextField autoFocus data-testid="autocomplete-example">
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-        </TextField>
-        <GridList
-          {...args}
-          className={styles.menu}
-          style={{height: 200, width: 200}}
-          aria-label="test gridlist">
-          <GridListSection>
-            <GridListHeader>Section 1</GridListHeader>
-            <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
-          </GridListSection>
-          <GridListSection>
-            <GridListHeader>Section 2</GridListHeader>
-            <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
-          </GridListSection>
-          <GridListSection>
-            <GridListHeader>Section 3</GridListHeader>
-            <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
-          </GridListSection>
-        </GridList>
-      </div>
-    </AutocompleteWrapper>
+    <>
+      <input />
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+        <div>
+          <TextField autoFocus data-testid="autocomplete-example">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+          </TextField>
+          <GridList
+            {...args}
+            className={styles.menu}
+            style={{height: 200, width: 200}}
+            aria-label="test gridlist">
+            <MyGridListItem textValue="Foo">Foo <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Bar">Bar <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Baz">Baz <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Charizard">Charizard<MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Blastoise">Blastoise <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Pikachu">Pikachu <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Venusaur">Venusaur<MyButton /></MyGridListItem>
+            <MyGridListItem textValue="text value check">textValue is "text value check" <MyButton /></MyGridListItem>
+            <MyGridListItem textValue="Blah">Blah <MyButton /></MyGridListItem>
+          </GridList>
+        </div>
+      </AutocompleteWrapper>
+      <input />
+    </>
   );
 };
 
@@ -1009,68 +1004,79 @@ export const AutocompleteWithGridListStory: AutocompleteStory = {
   name: 'Autocomplete with Grid List'
 };
 
+
+let columns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
+];
+
+let rows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
+];
+
+
+// TODO: make dynamic and update the styling
+// TODO: row outline with negative offset
+
+function MyRow(props) {
+  return (
+    <Row {...props}>
+      <Cell style={{width: 'inherit', height: 'inherit'}}>
+        <MyCheckbox style={{paddingTop: 10}} slot="selection" />
+      </Cell>
+      <Collection items={props.columns}>
+        {props.children}
+      </Collection>
+    </Row>
+  );
+}
+
 const AutocompleteWithTable = (args) => {
   return (
-    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
-      <div>
-        <TextField autoFocus data-testid="autocomplete-example">
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-        </TextField>
-        <Virtualizer
-          layout={TableLayout}
-          layoutOptions={{
-            rowHeight: 25,
-            headingHeight: 25,
-            padding: 10
-          }}>
-          <Table aria-label="Files" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}} {...args}>
-            <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
-              <Column>
-                <MyCheckbox slot="selection" />
-              </Column>
-              <Column isRowHeader>Name</Column>
-              <Column>Type</Column>
-              <Column>Date Modified</Column>
-            </TableHeader>
-            <TableBody>
-              <Row id="1" style={{width: 'inherit', height: 'inherit'}}>
-                <Cell>
-                  <MyCheckbox slot="selection" />
-                </Cell>
-                <Cell>Games</Cell>
-                <Cell>File folder</Cell>
-                <Cell>6/7/2020</Cell>
-              </Row>
-              <Row id="2" style={{width: 'inherit', height: 'inherit'}}>
-                <Cell>
-                  <MyCheckbox slot="selection" />
-                </Cell>
-                <Cell>Program Files</Cell>
-                <Cell>File folder</Cell>
-                <Cell>4/7/2021</Cell>
-              </Row>
-              <Row id="3" style={{width: 'inherit', height: 'inherit'}}>
-                <Cell>
-                  <MyCheckbox slot="selection" />
-                </Cell>
-                <Cell>bootmgr</Cell>
-                <Cell>System file</Cell>
-                <Cell>11/20/2010</Cell>
-              </Row>
-              <Row id="4" style={{width: 'inherit', height: 'inherit'}}>
-                <Cell>
-                  <MyCheckbox slot="selection" />
-                </Cell>
-                <Cell>log.txt</Cell>
-                <Cell>Text Document</Cell>
-                <Cell>1/18/2016</Cell>
-              </Row>
-            </TableBody>
-          </Table>
-        </Virtualizer>
-      </div>
-    </AutocompleteWrapper>
+    <>
+      <input />
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+        <div>
+          <TextField autoFocus data-testid="autocomplete-example">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+          </TextField>
+          <Virtualizer
+            layout={TableLayout}
+            layoutOptions={{
+              rowHeight: 40,
+              headingHeight: 25,
+              padding: 10,
+              gap: 4
+            }}>
+            <Table aria-label="Files" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}} {...args}>
+              <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+                <Column className={styles.columnheader}><MyCheckbox slot="selection" /></Column>
+                <Collection items={columns}>
+                  {(column) => (
+                    <Column className={styles.columnheader} isRowHeader={column.isRowHeader}>{column.name}</Column>
+                  )}
+                </Collection>
+              </TableHeader>
+              <TableBody items={rows}>
+                {(item) => (
+                  <MyRow id={item.id} className={styles.row} columns={columns}>
+                    {(column) => {
+                      return <Cell className={styles.cell}>{item[column.id]}</Cell>;
+                    }}
+                  </MyRow>
+                )}
+              </TableBody>
+            </Table>
+          </Virtualizer>
+        </div>
+      </AutocompleteWrapper>
+      <input />
+    </>
   );
 };
 
@@ -1081,41 +1087,45 @@ export const AutocompleteWithTableStory: AutocompleteStory = {
 
 const AutocompleteWithTagGroup = (args) => {
   return (
-    <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
-      <div>
-        <TextField autoFocus data-testid="autocomplete-example">
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-        </TextField>
-        <TagGroup onRemove={action('onRemove')} {...args}>
-          <Label>Categories</Label>
-          <TagList style={{display: 'flex', gap: 4}}>
-            <MyTag href="https://nytimes.com" textValue="News">News<Button slot="remove">X</Button></MyTag>
-            <MyTag textValue="Travel">Travel<Button slot="remove">X</Button></MyTag>
-            <MyTag textValue="Gaming">Gaming<Button slot="remove">X</Button></MyTag>
-            <TooltipTrigger>
-              <MyTag textValue="Shopping">Shopping<Button slot="remove">X</Button></MyTag>
-              <Tooltip
-                offset={5}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 5,
-                  borderRadius: 4
-                }}>
-                <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-                  <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                I am a tooltip
-              </Tooltip>
-            </TooltipTrigger>
-          </TagList>
-        </TagGroup>
-      </div>
-    </AutocompleteWrapper>
+    <>
+      <input />
+      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+        <div>
+          <TextField autoFocus data-testid="autocomplete-example">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+          </TextField>
+          <TagGroup onRemove={action('onRemove')} {...args}>
+            <Label>Categories</Label>
+            <TagList style={{display: 'flex', gap: 4}}>
+              <MyTag href="https://nytimes.com" textValue="News">News<Button slot="remove">X</Button></MyTag>
+              <MyTag textValue="Travel">Travel<Button slot="remove">X</Button></MyTag>
+              <MyTag textValue="Gaming">Gaming<Button slot="remove">X</Button></MyTag>
+              <TooltipTrigger>
+                <MyTag textValue="Shopping">Shopping<Button slot="remove">X</Button></MyTag>
+                <Tooltip
+                  offset={5}
+                  style={{
+                    background: 'Canvas',
+                    color: 'CanvasText',
+                    border: '1px solid gray',
+                    padding: 5,
+                    borderRadius: 4
+                  }}>
+                  <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                    <svg width="8" height="8" style={{display: 'block'}}>
+                      <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    </svg>
+                  </OverlayArrow>
+                  I am a tooltip
+                </Tooltip>
+              </TooltipTrigger>
+            </TagList>
+          </TagGroup>
+        </div>
+      </AutocompleteWrapper>
+      <input />
+    </>
   );
 };
 

@@ -105,8 +105,6 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
-  // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
   let contextProps;
   [contextProps] = useContextProps({}, null, SelectableCollectionContext);
   let {filter, ...collectionProps} = contextProps;
@@ -115,6 +113,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
+    // TODO: perhaps merge the props with collection props here in useContextProps
+    // actually might not need the collectionProps here, just in useGridList
     ...props,
     collection,
     children: undefined,

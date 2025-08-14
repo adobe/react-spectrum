@@ -31,6 +31,7 @@ export function focusSafely(element: FocusableElement): void {
   // from off the screen.
   const ownerDocument = getOwnerDocument(element);
   const activeElement = getActiveElement(ownerDocument);
+
   if (getInteractionModality() === 'virtual') {
     let lastFocusedElement = activeElement;
     runAfterTransition(() => {

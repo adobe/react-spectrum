@@ -508,3 +508,24 @@ input {
   top: 50%;
   left: 50%;
 }
+
+.row {
+  outline: none;
+  height: 100%;
+  width: 100%;
+  &[data-focus-visible] {
+    outline: 2px solid blue;
+    outline-offset: -2px;
+  }
+}
+
+.columnheader,
+.cell {
+  outline: none;
+  height: 100%;
+  width: 100%;
+  &[data-focus-visible] {
+    outline: 2px solid blue;
+    outline-offset: -2px;
+  }
+}

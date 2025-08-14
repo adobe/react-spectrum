@@ -64,7 +64,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    */
   escapeKeyBehavior?: 'clearSelection' | 'none',
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /**
+   * Whether the table cells should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 export interface GridAria {
@@ -90,7 +94,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     onRowAction,
     onCellAction,
     escapeKeyBehavior = 'clearSelection',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    shouldUseVirtualFocus
   } = props;
   let {selectionManager: manager} = state;
 
@@ -120,11 +125,12 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     scrollRef,
     disallowTypeAhead,
-    escapeKeyBehavior
+    escapeKeyBehavior,
+    shouldUseVirtualFocus
   });
 
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp});
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp, shouldUseVirtualFocus});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,
@@ -169,6 +175,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
     state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    // TODO: may need to change this tabIndex here for virtual focus
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
     (state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0}) || undefined,
     descriptionProps
