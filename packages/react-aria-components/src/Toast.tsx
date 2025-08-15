@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
+import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from '@react-aria/toast';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
 import {useIsSSR} from '@react-aria/ssr';
+import {useLocale} from '@react-aria/i18n';
 import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
 export const ToastStateContext = createContext<ToastState<any> | null>(null);

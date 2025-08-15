@@ -12,8 +12,10 @@
 
 import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {HoverProps, useHover} from '@react-aria/interactions';
+import {mergeProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {useFocusRing} from '@react-aria/focus';
 
 export interface GroupRenderProps {
   /**

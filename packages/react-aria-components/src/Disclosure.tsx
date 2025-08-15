@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, useDisclosure, useFocusRing} from 'react-aria';
+import {AriaDisclosureProps, useDisclosure} from '@react-aria/disclosure';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DisclosureGroupState, DisclosureState, DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState} from 'react-stately';
+import {
+  DisclosureGroupState,
+  DisclosureState,
+  DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState
+} from '@react-stately/disclosure';
 import {DOMProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import {useFocusRing} from '@react-aria/focus';
 
 export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {}
 

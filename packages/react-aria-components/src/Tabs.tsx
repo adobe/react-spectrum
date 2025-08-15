@@ -10,14 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
+import {
+  AriaLabelingProps,
+  forwardRefType, GlobalDOMAttributes,
+  HoverEvents, Collection as ICollection, Key, LinkDOMProps, Node,
+  Orientation, PressEvents, RefObject
+} from '@react-types/shared';
+import {AriaTabListProps, AriaTabPanelProps} from '@react-types/tabs';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
-import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
+import {filterDOMProps, inertValue, mergeProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import {TabListState, useTabListState} from '@react-stately/tabs';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 

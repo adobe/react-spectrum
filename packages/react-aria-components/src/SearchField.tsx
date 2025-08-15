@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps, useSearchField} from 'react-aria';
+import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
@@ -22,8 +22,9 @@ import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, useRef} from 'react';
-import {SearchFieldState, useSearchFieldState} from 'react-stately';
+import {SearchFieldState, useSearchFieldState} from '@react-stately/searchfield';
 import {TextContext} from './Text';
+import {useSearchField} from '@react-aria/searchfield';
 
 export interface SearchFieldRenderProps {
   /**

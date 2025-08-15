@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
-import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
+import {Collection, forwardRefType, GlobalDOMAttributes, Node, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
+import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -26,6 +26,8 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import {useComboBox} from '@react-aria/combobox';
+import {useFilter} from '@react-aria/i18n';
 
 export interface ComboBoxRenderProps {
   /**

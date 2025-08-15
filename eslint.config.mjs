@@ -504,4 +504,19 @@ export default [{
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/react-aria-components/src/**"],
+
+    rules: {
+      "no-restricted-imports": [ERROR, {
+        "name": "react-aria",
+        "message": "Use individual packages from @react-aria scope instead."
+      }, {
+        "name": "react-stately",
+        "message": "Use individual packages from @react-stately scope instead"
+      }, {
+        "name": "react-spectrum",
+        "message": "Use individual packages from @react-spectrum scope instead."
+      }]
+    },
 }];

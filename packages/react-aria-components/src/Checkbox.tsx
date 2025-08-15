@@ -9,17 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
 import {CheckboxContext} from './RSPContexts';
-import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
+import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
+import {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useToggleState} from '@react-stately/toggle';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {

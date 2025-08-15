@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
+import {AriaLinkOptions, useLink} from '@react-aria/link';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
 
 export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {}
 

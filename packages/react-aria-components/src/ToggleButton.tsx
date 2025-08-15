@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from 'react-aria';
+import {AriaToggleButtonProps} from '@react-types/button';
 import {ButtonRenderProps} from './Button';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
-import {ToggleState, useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from '@react-stately/toggle';
+import {useFocusRing} from '@react-aria/focus';
+import {useHover} from '@react-aria/interactions';
+import {useToggleButton, useToggleButtonGroupItem} from '@react-aria/button';
 
 export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
   /**

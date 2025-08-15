@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMeterProps, useMeter} from 'react-aria';
+import {AriaMeterProps, useMeter} from '@react-aria/meter';
 import {clamp} from '@react-stately/utils';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';

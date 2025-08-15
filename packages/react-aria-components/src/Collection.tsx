@@ -9,9 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
+import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, Collection as ICollection, ItemDropTarget, Key, LayoutDelegate, Node, RefObject, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from '@react-types/shared';
 import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
-import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import React, {cloneElement, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
 import {StyleProps} from './utils';
 

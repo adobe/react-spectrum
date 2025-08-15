@@ -1,7 +1,9 @@
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {HoverEvents, useHover} from '@react-aria/interactions';
 import {InputRenderProps} from './Input';
+import {mergeProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} from 'react';
+import {useFocusRing} from '@react-aria/focus';
 
 export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {}
 
