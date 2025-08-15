@@ -310,7 +310,8 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       role: 'gridcell',
       'aria-disabled': !isSelectable || undefined,
       'aria-selected': isSelected || undefined,
-      'aria-invalid': isInvalid || undefined
+      'aria-invalid': isInvalid || undefined,
+      'aria-current': isDateToday ? 'date' : undefined
     },
     buttonProps: mergeProps(pressProps, {
       onFocus() {
