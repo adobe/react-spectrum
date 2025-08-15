@@ -31,10 +31,11 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     }
 
     let rect = item.getBoundingClientRect();
+    let containerRect = container.getBoundingClientRect();
 
     return {
-      x: rect.left - container.offsetLeft - container.clientLeft + container.scrollLeft,
-      y: rect.top - container.offsetTop - container.clientTop + container.scrollTop,
+      x: rect.left - containerRect.left - container.clientLeft + container.scrollLeft,
+      y: rect.top - containerRect.top - container.clientTop + container.scrollTop,
       width: rect.width,
       height: rect.height
     };
