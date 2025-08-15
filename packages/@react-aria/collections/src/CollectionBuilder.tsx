@@ -133,10 +133,9 @@ export type CollectionNodeClass<T> = {
 };
 
 function createCollectionNodeClass(type: string): CollectionNodeClass<any> {
-  let NodeClass = function (key: Key) {
-    return new CollectionNode(type, key);
-  } as any;
-  NodeClass.type = type;
+  let NodeClass = class extends CollectionNode<any> {
+    static readonly type = type;
+  };
   return NodeClass;
 }
 

@@ -563,10 +563,6 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
 
 class TableHeaderNode<T> extends FilterLessNode<T> {
   static readonly type = 'tableheader';
-
-  constructor(key: Key) {
-    super(TableHeaderNode.type, key);
-  }
 }
 
 /**
@@ -708,10 +704,6 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAt
 
 class TableColumnNode extends FilterLessNode<unknown> {
   static readonly type = 'column';
-
-  constructor(key: Key) {
-    super(TableColumnNode.type, key);
-  }
 }
 
 /**
@@ -952,10 +944,6 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
 
 class TableBodyNode<T> extends CollectionNode<T> {
   static readonly type = 'tablebody';
-
-  constructor(key: Key) {
-    super(TableBodyNode.type, key);
-  }
 }
 
 /**
@@ -1061,10 +1049,6 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
 
 class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(TableRowNode.type, key);
-  }
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
@@ -1264,10 +1248,6 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
 
 class TableCellNode extends FilterLessNode<unknown> {
   static readonly type = 'cell';
-
-  constructor(key: Key) {
-    super(TableCellNode.type, key);
-  }
 }
 
 /**
@@ -1430,10 +1410,6 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
 
 class TableLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(TableLoaderNode.type, key);
-  }
 }
 
 export const TableLoadMoreItem = createLeafComponent(TableLoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {

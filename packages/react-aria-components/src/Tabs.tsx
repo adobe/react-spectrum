@@ -237,10 +237,6 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 
 class TabItemNode extends FilterLessNode<unknown> {
   static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(TabItemNode.type, key);
-  }
 }
 
 /**

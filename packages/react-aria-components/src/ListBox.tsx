@@ -473,10 +473,6 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 class ListBoxLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(ListBoxLoaderNode.type, key);
-  }
 }
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);

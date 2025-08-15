@@ -21,6 +21,7 @@ type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
 
 /** An immutable object representing a Node in a Collection. */
 export class CollectionNode<T> implements Node<T> {
+  static readonly type;
   readonly type: string;
   readonly key: Key;
   readonly value: T | null = null;
@@ -40,8 +41,8 @@ export class CollectionNode<T> implements Node<T> {
   readonly colSpan: number | null = null;
   readonly colIndex: number | null = null;
 
-  constructor(type: string, key: Key) {
-    this.type = type;
+  constructor(key: Key) {
+    this.type = (this.constructor as typeof CollectionNode).type;
     this.key = key;
   }
 
@@ -50,7 +51,7 @@ export class CollectionNode<T> implements Node<T> {
   }
 
   clone(): CollectionNode<T> {
-    let node: Mutable<CollectionNode<T>> = new CollectionNode(this.type, this.key);
+    let node: Mutable<CollectionNode<T>> = new (this.constructor as typeof CollectionNode)(this.key);
     node.value = this.value;
     node.level = this.level;
     node.hasChildNodes = this.hasChildNodes;
@@ -67,7 +68,6 @@ export class CollectionNode<T> implements Node<T> {
     node.render = this.render;
     node.colSpan = this.colSpan;
     node.colIndex = this.colIndex;
-    node.filter = this.filter;
     return node;
   }
 
@@ -92,10 +92,6 @@ export class FilterLessNode<T> extends CollectionNode<T> {
 export class ItemNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
-  constructor(key: Key) {
-    super(ItemNode.type, key);
-  }
-
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
     if (filterFn(this.textValue, this)) {
       return this.clone();
@@ -107,10 +103,6 @@ export class ItemNode<T> extends CollectionNode<T> {
 
 export class SectionNode<T> extends CollectionNode<T> {
   static readonly type = 'section';
-
-  constructor(key: Key) {
-    super(SectionNode.type, key);
-  }
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): SectionNode<T> | null {
     let filteredSection = super.filter(collection, newCollection, filterFn);

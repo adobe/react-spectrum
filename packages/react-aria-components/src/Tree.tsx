@@ -450,10 +450,6 @@ export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRe
 
 class TreeContentNode extends FilterLessNode<any> {
   static readonly type = 'content';
-
-  constructor(key: Key) {
-    super(TreeContentNode.type, key);
-  }
 }
 
 export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode, function TreeItemContent(props: TreeItemContentProps) {
@@ -493,10 +489,6 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 
 class TreeItemNode extends FilterLessNode<any> {
   static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(TreeItemNode.type, key);
-  }
 }
 
 /**
@@ -737,10 +729,6 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
 
 class TreeLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(TreeLoaderNode.type, key);
-  }
 }
 
 export const TreeLoadMoreItem = createLeafComponent(TreeLoaderNode, function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {

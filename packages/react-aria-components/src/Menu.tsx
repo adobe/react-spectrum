@@ -110,10 +110,6 @@ const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElemen
 class SubmenuTriggerNode<T> extends CollectionNode<T> {
   static readonly type = 'submenutrigger';
 
-  constructor(key: Key) {
-    super(SubmenuTriggerNode.type, key);
-  }
-
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): CollectionNode<T> | null {
     let triggerNode = collection.getItem(this.firstChildKey!);
     // Note that this provides the SubmenuTrigger node rather than the MenuItemNode it wraps to the filter function. Probably more useful

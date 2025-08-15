@@ -530,10 +530,6 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
 // TODO: maybe make a general loader node
 class GridListLoaderNode extends FilterLessNode<any> {
   static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(GridListLoaderNode.type, key);
-  }
 }
 
 export const GridListLoadMoreItem = createLeafComponent(GridListLoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
