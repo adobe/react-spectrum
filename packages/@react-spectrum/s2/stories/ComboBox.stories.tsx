@@ -32,7 +32,11 @@ const meta: Meta<typeof ComboBox<any>> = {
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
+  },
+  args: {
+    placeholder: 'Select a value'
   },
   title: 'ComboBox'
 };
@@ -43,7 +47,7 @@ type Story = StoryObj<typeof ComboBox<any>>;
 export const Example: Story = {
   render: (args: ComboBoxProps<any>) => (
     <ComboBox {...args}>
-      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem id="1">Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
       <ComboBoxItem>Strawberry</ComboBoxItem>
       <ComboBoxItem>Vanilla</ComboBoxItem>

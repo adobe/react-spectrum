@@ -10,59 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete} from 'react-aria-components';
-import {Menu, MenuItem, SearchField} from '../src';
+import {ColorField} from '../src';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-describe('SearchField', () => {
+describe('ColorField', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should not apply the focus visible styles on the group when typing in the Autocomplete wrapped SearchField', async () => {
-    let {getByRole} = render(
-      <Autocomplete>
-        <SearchField autoFocus label="Search" />
-        <Menu aria-label="test menu">
-          <MenuItem>Foo</MenuItem>
-          <MenuItem>Bar</MenuItem>
-          <MenuItem>Baz</MenuItem>
-        </Menu>
-      </Autocomplete>
-    );
-
-    let input = getByRole('searchbox');
-    await user.click(input);
-    let group = getByRole('group');
-    expect(group).not.toHaveAttribute('data-focus-visible');
-    await user.keyboard('Foo');
-    expect(group).not.toHaveAttribute('data-focus-visible');
-  });
-
-  it('should not warn if the SearchField renders/blurs without a placeholder', async () => {
+  it('should warn if the ColorField renders/blurs without a placeholder', async () => {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, rerender} = render(
-      <SearchField label="Search" />
+      <ColorField label="Color" />
     );
 
-    expect(spy).not.toBeCalled();
-    await user.tab();
-    await user.tab();
-    expect(spy).not.toBeCalled();
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: '));
+    spy.mockClear();
 
-    let input = getByRole('searchbox');
+    await user.tab();
+    await user.tab();
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('Your ColorField is empty and not focused but doesn\'t have a placeholder. Please add one to the element with the following id: '));
+    spy.mockClear();
+
+    let input = getByRole('textbox');
     await user.click(input);
-    await user.keyboard('Foo');
+    await user.keyboard('AAAAAA');
     await user.tab();
     expect(spy).not.toHaveBeenCalled();
 
-    rerender(<SearchField label="Search" placeholder="test" />);
+    rerender(<ColorField label="Color" placeholder="test" />);
     expect(spy).not.toHaveBeenCalled();
 
-    rerender(<SearchField label="Search" autoFocus />);
+    rerender(<ColorField label="Color" autoFocus />);
     expect(spy).not.toHaveBeenCalled();
   });
 });
