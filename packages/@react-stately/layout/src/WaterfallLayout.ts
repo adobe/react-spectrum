@@ -137,7 +137,6 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
       let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
       let x = horizontalSpacing + column * (itemWidth + horizontalSpacing) + this.margin;
-      // let x = horizontalSpacing + column * (itemWidth + horizontalSpacing);
       let y = columnHeights[column];
 
       let rect = new Rect(x, y, itemWidth, height);
