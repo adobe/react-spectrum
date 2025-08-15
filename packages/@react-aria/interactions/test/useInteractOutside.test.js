@@ -17,18 +17,18 @@ import {
   installPointerEvent,
   pointerMap,
   render,
-  waitFor,
-} from "@react-spectrum/test-utils-internal";
-import { enableShadowDOM } from "@react-stately/flags";
-import React, { useEffect, useRef } from "react";
-import ReactDOM, { createPortal } from "react-dom";
-import { UNSAFE_PortalProvider } from "@react-aria/overlays";
-import { useInteractOutside } from "../";
-import userEvent from "@testing-library/user-event";
+  waitFor
+} from '@react-spectrum/test-utils-internal';
+import {enableShadowDOM} from '@react-stately/flags';
+import React, {useEffect, useRef} from 'react';
+import ReactDOM, {createPortal} from 'react-dom';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {useInteractOutside} from '../';
+import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let ref = useRef();
-  useInteractOutside({ ref, ...props });
+  useInteractOutside({ref, ...props});
   return (
     <div ref={ref} data-testid="example">
       test
@@ -37,67 +37,67 @@ function Example(props) {
 }
 
 function pointerEvent(type, opts) {
-  let evt = new Event(type, { bubbles: true, cancelable: true });
+  let evt = new Event(type, {bubbles: true, cancelable: true});
   Object.assign(evt, opts);
   return evt;
 }
 
-describe("useInteractOutside", function () {
+describe('useInteractOutside', function () {
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
-  describe("pointer events", function () {
+  describe('pointer events', function () {
     installPointerEvent();
 
-    it("should fire interact outside events based on pointer events", function () {
+    it('should fire interact outside events based on pointer events', function () {
       let onInteractOutside = jest.fn();
       let res = render(<Example onInteractOutside={onInteractOutside} />);
 
-      let el = res.getByText("test");
-      fireEvent(el, pointerEvent("pointerdown"));
-      fireEvent(el, pointerEvent("pointerup"));
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown'));
+      fireEvent(el, pointerEvent('pointerup'));
       fireEvent.click(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(document.body, pointerEvent("pointerdown"));
-      fireEvent(document.body, pointerEvent("pointerup"));
+      fireEvent(document.body, pointerEvent('pointerdown'));
+      fireEvent(document.body, pointerEvent('pointerup'));
       fireEvent.click(document.body);
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should only listen for the left mouse button", function () {
+    it('should only listen for the left mouse button', function () {
       let onInteractOutside = jest.fn();
       render(<Example onInteractOutside={onInteractOutside} />);
 
-      fireEvent(document.body, pointerEvent("pointerdown", { button: 1 }));
-      fireEvent(document.body, pointerEvent("pointerup", { button: 1 }));
-      fireEvent.click(document.body, { button: 1 });
+      fireEvent(document.body, pointerEvent('pointerdown', {button: 1}));
+      fireEvent(document.body, pointerEvent('pointerup', {button: 1}));
+      fireEvent.click(document.body, {button: 1});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(document.body, pointerEvent("pointerdown", { button: 0 }));
-      fireEvent(document.body, pointerEvent("pointerup", { button: 0 }));
-      fireEvent.click(document.body, { button: 0 });
+      fireEvent(document.body, pointerEvent('pointerdown', {button: 0}));
+      fireEvent(document.body, pointerEvent('pointerup', {button: 0}));
+      fireEvent.click(document.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a pointer up event without a pointer down first", function () {
+    it('should not fire interact outside if there is a pointer up event without a pointer down first', function () {
       // Fire pointer down before component with useInteractOutside is mounted
-      fireEvent(document.body, pointerEvent("pointerdown"));
+      fireEvent(document.body, pointerEvent('pointerdown'));
 
       let onInteractOutside = jest.fn();
       render(<Example onInteractOutside={onInteractOutside} />);
 
-      fireEvent(document.body, pointerEvent("pointerup"));
+      fireEvent(document.body, pointerEvent('pointerup'));
       fireEvent.click(document.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
 
-  describe("mouse events", function () {
-    it("should fire interact outside events based on mouse events", function () {
+  describe('mouse events', function () {
+    it('should fire interact outside events based on mouse events', function () {
       let onInteractOutside = jest.fn();
       let res = render(<Example onInteractOutside={onInteractOutside} />);
 
-      let el = res.getByText("test");
+      let el = res.getByText('test');
       fireEvent.mouseDown(el);
       fireEvent.mouseUp(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -107,20 +107,20 @@ describe("useInteractOutside", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should only listen for the left mouse button", function () {
+    it('should only listen for the left mouse button', function () {
       let onInteractOutside = jest.fn();
       render(<Example onInteractOutside={onInteractOutside} />);
 
-      fireEvent.mouseDown(document.body, { button: 1 });
-      fireEvent.mouseUp(document.body, { button: 1 });
+      fireEvent.mouseDown(document.body, {button: 1});
+      fireEvent.mouseUp(document.body, {button: 1});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent.mouseDown(document.body, { button: 0 });
-      fireEvent.mouseUp(document.body, { button: 0 });
+      fireEvent.mouseDown(document.body, {button: 0});
+      fireEvent.mouseUp(document.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a mouse up event without a mouse down first", function () {
+    it('should not fire interact outside if there is a mouse up event without a mouse down first', function () {
       // Fire mouse down before component with useInteractOutside is mounted
       fireEvent.mouseDown(document.body);
 
@@ -132,12 +132,12 @@ describe("useInteractOutside", function () {
     });
   });
 
-  describe("touch events", function () {
-    it("should fire interact outside events based on mouse events", function () {
+  describe('touch events', function () {
+    it('should fire interact outside events based on mouse events', function () {
       let onInteractOutside = jest.fn();
       let res = render(<Example onInteractOutside={onInteractOutside} />);
 
-      let el = res.getByText("test");
+      let el = res.getByText('test');
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -147,11 +147,11 @@ describe("useInteractOutside", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should ignore emulated mouse events", function () {
+    it('should ignore emulated mouse events', function () {
       let onInteractOutside = jest.fn();
       let res = render(<Example onInteractOutside={onInteractOutside} />);
 
-      let el = res.getByText("test");
+      let el = res.getByText('test');
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
       fireEvent.mouseUp(el);
@@ -163,7 +163,7 @@ describe("useInteractOutside", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a touch end event without a touch start first", function () {
+    it('should not fire interact outside if there is a touch end event without a touch start first', function () {
       // Fire mouse down before component with useInteractOutside is mounted
       fireEvent.touchStart(document.body);
 
@@ -174,17 +174,17 @@ describe("useInteractOutside", function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
-  describe("disable interact outside events", function () {
-    it("does not handle pointer events if disabled", function () {
+  describe('disable interact outside events', function () {
+    it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
-      fireEvent(document.body, pointerEvent("mousedown"));
-      fireEvent(document.body, pointerEvent("mouseup"));
+      fireEvent(document.body, pointerEvent('mousedown'));
+      fireEvent(document.body, pointerEvent('mouseup'));
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it("does not handle touch events if disabled", function () {
+    it('does not handle touch events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
@@ -193,7 +193,7 @@ describe("useInteractOutside", function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it("does not handle mouse events if disabled", function () {
+    it('does not handle mouse events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
@@ -204,15 +204,15 @@ describe("useInteractOutside", function () {
   });
 });
 
-describe("useInteractOutside (iframes)", function () {
+describe('useInteractOutside (iframes)', function () {
   let iframe;
   let iframeRoot;
   let iframeDocument;
   beforeEach(() => {
-    iframe = document.createElement("iframe");
+    iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
     iframeDocument = iframe.contentWindow.document;
-    iframeRoot = iframeDocument.createElement("div");
+    iframeRoot = iframeDocument.createElement('div');
     iframeDocument.body.appendChild(iframeRoot);
   });
 
@@ -220,79 +220,73 @@ describe("useInteractOutside (iframes)", function () {
     iframe.remove();
   });
 
-  const IframeExample = (props) => {
+  const IframeExample = props => {
     return createPortal(<Example {...props} />, iframeRoot);
   };
 
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
-  describe("pointer events", function () {
+  describe('pointer events', function () {
     installPointerEvent();
 
-    it("should fire interact outside events based on pointer events", async function () {
+    it('should fire interact outside events based on pointer events', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
       const el = document
-        .querySelector("iframe")
+        .querySelector('iframe')
         .contentWindow.document.body.querySelector(
-          'div[data-testid="example"]',
+          'div[data-testid="example"]'
         );
-      fireEvent(el, pointerEvent("pointerdown"));
-      fireEvent(el, pointerEvent("pointerup"));
+      fireEvent(el, pointerEvent('pointerdown'));
+      fireEvent(el, pointerEvent('pointerup'));
       fireEvent.click(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(iframeDocument.body, pointerEvent("pointerdown"));
-      fireEvent(iframeDocument.body, pointerEvent("pointerup"));
+      fireEvent(iframeDocument.body, pointerEvent('pointerdown'));
+      fireEvent(iframeDocument.body, pointerEvent('pointerup'));
       fireEvent.click(iframeDocument.body);
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should only listen for the left mouse button", async function () {
+    it('should only listen for the left mouse button', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
-      fireEvent(
-        iframeDocument.body,
-        pointerEvent("pointerdown", { button: 1 }),
-      );
-      fireEvent(iframeDocument.body, pointerEvent("pointerup", { button: 1 }));
-      fireEvent.click(iframeDocument.body, { button: 0 });
+      fireEvent(iframeDocument.body, pointerEvent('pointerdown', {button: 1}));
+      fireEvent(iframeDocument.body, pointerEvent('pointerup', {button: 1}));
+      fireEvent.click(iframeDocument.body, {button: 0});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent(
-        iframeDocument.body,
-        pointerEvent("pointerdown", { button: 0 }),
-      );
-      fireEvent(iframeDocument.body, pointerEvent("pointerup", { button: 0 }));
-      fireEvent.click(iframeDocument.body, { button: 0 });
+      fireEvent(iframeDocument.body, pointerEvent('pointerdown', {button: 0}));
+      fireEvent(iframeDocument.body, pointerEvent('pointerup', {button: 0}));
+      fireEvent.click(iframeDocument.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a pointer up event without a pointer down first", async function () {
+    it('should not fire interact outside if there is a pointer up event without a pointer down first', async function () {
       // Fire pointer down before component with useInteractOutside is mounted
-      fireEvent(iframeDocument.body, pointerEvent("pointerdown"));
+      fireEvent(iframeDocument.body, pointerEvent('pointerdown'));
 
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
@@ -300,37 +294,37 @@ describe("useInteractOutside (iframes)", function () {
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
-      fireEvent(iframeDocument.body, pointerEvent("pointerup"));
+      fireEvent(iframeDocument.body, pointerEvent('pointerup'));
       fireEvent.click(iframeDocument.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
 
-  describe("mouse events", function () {
-    it("should fire interact outside events based on mouse events", async function () {
+  describe('mouse events', function () {
+    it('should fire interact outside events based on mouse events', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
       const el = document
-        .querySelector("iframe")
+        .querySelector('iframe')
         .contentWindow.document.body.querySelector(
-          'div[data-testid="example"]',
+          'div[data-testid="example"]'
         );
       fireEvent.mouseDown(el);
       fireEvent.mouseUp(el);
@@ -341,30 +335,30 @@ describe("useInteractOutside (iframes)", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should only listen for the left mouse button", async function () {
+    it('should only listen for the left mouse button', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
-      fireEvent.mouseDown(iframeDocument.body, { button: 1 });
-      fireEvent.mouseUp(iframeDocument.body, { button: 1 });
+      fireEvent.mouseDown(iframeDocument.body, {button: 1});
+      fireEvent.mouseUp(iframeDocument.body, {button: 1});
       expect(onInteractOutside).not.toHaveBeenCalled();
 
-      fireEvent.mouseDown(iframeDocument.body, { button: 0 });
-      fireEvent.mouseUp(iframeDocument.body, { button: 0 });
+      fireEvent.mouseDown(iframeDocument.body, {button: 0});
+      fireEvent.mouseUp(iframeDocument.body, {button: 0});
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a mouse up event without a mouse down first", async function () {
+    it('should not fire interact outside if there is a mouse up event without a mouse down first', async function () {
       // Fire mouse down before component with useInteractOutside is mounted
       fireEvent.mouseDown(iframeDocument.body);
 
@@ -374,10 +368,10 @@ describe("useInteractOutside (iframes)", function () {
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
       fireEvent.mouseUp(iframeDocument.body);
@@ -385,25 +379,25 @@ describe("useInteractOutside (iframes)", function () {
     });
   });
 
-  describe("touch events", function () {
-    it("should fire interact outside events based on mouse events", async function () {
+  describe('touch events', function () {
+    it('should fire interact outside events based on mouse events', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
       const el = document
-        .querySelector("iframe")
+        .querySelector('iframe')
         .contentWindow.document.body.querySelector(
-          'div[data-testid="example"]',
+          'div[data-testid="example"]'
         );
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
@@ -414,24 +408,24 @@ describe("useInteractOutside (iframes)", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should ignore emulated mouse events", async function () {
+    it('should ignore emulated mouse events', async function () {
       let onInteractOutside = jest.fn();
       render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
         expect(
           document
-            .querySelector("iframe")
+            .querySelector('iframe')
             .contentWindow.document.body.querySelector(
-              'div[data-testid="example"]',
-            ),
+              'div[data-testid="example"]'
+            )
         ).toBeTruthy();
       });
 
       const el = document
-        .querySelector("iframe")
+        .querySelector('iframe')
         .contentWindow.document.body.querySelector(
-          'div[data-testid="example"]',
+          'div[data-testid="example"]'
         );
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
@@ -444,7 +438,7 @@ describe("useInteractOutside (iframes)", function () {
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
 
-    it("should not fire interact outside if there is a touch end event without a touch start first", function () {
+    it('should not fire interact outside if there is a touch end event without a touch start first', function () {
       // Fire mouse down before component with useInteractOutside is mounted
       fireEvent.touchStart(iframeDocument.body);
 
@@ -456,22 +450,22 @@ describe("useInteractOutside (iframes)", function () {
     });
   });
 
-  describe("disable interact outside events", function () {
-    it("does not handle pointer events if disabled", function () {
+  describe('disable interact outside events', function () {
+    it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />,
+        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
       );
 
-      fireEvent(iframeDocument.body, pointerEvent("mousedown"));
-      fireEvent(iframeDocument.body, pointerEvent("mouseup"));
+      fireEvent(iframeDocument.body, pointerEvent('mousedown'));
+      fireEvent(iframeDocument.body, pointerEvent('mouseup'));
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it("does not handle touch events if disabled", function () {
+    it('does not handle touch events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />,
+        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
       );
 
       fireEvent.touchStart(iframeDocument.body);
@@ -479,10 +473,10 @@ describe("useInteractOutside (iframes)", function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
 
-    it("does not handle mouse events if disabled", function () {
+    it('does not handle mouse events if disabled', function () {
       let onInteractOutside = jest.fn();
       render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />,
+        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
       );
 
       fireEvent.mouseDown(iframeDocument.body);
@@ -492,24 +486,24 @@ describe("useInteractOutside (iframes)", function () {
   });
 });
 
-describe("useInteractOutside shadow DOM", function () {
+describe('useInteractOutside shadow DOM', function () {
   // Helper function to create a shadow root and render the component inside it
   function createShadowRootAndRender(ui) {
-    const shadowHost = document.createElement("div");
+    const shadowHost = document.createElement('div');
     document.body.appendChild(shadowHost);
-    const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+    const shadowRoot = shadowHost.attachShadow({mode: 'open'});
 
     function WrapperComponent() {
       return ReactDOM.createPortal(ui, shadowRoot);
     }
 
     render(<WrapperComponent />);
-    return { shadowRoot, cleanup: () => document.body.removeChild(shadowHost) };
+    return {shadowRoot, cleanup: () => document.body.removeChild(shadowHost)};
   }
 
-  function App({ onInteractOutside }) {
+  function App({onInteractOutside}) {
     const ref = useRef(null);
-    useInteractOutside({ ref, onInteractOutside });
+    useInteractOutside({ref, onInteractOutside});
 
     return (
       <div>
@@ -521,13 +515,13 @@ describe("useInteractOutside shadow DOM", function () {
     );
   }
 
-  it("does not trigger when clicking inside popover", function () {
+  it('does not trigger when clicking inside popover', function () {
     const onInteractOutside = jest.fn();
-    const { shadowRoot, cleanup } = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />,
+    const {shadowRoot, cleanup} = createShadowRootAndRender(
+      <App onInteractOutside={onInteractOutside} />
     );
 
-    const insidePopover = shadowRoot.getElementById("inside-popover");
+    const insidePopover = shadowRoot.getElementById('inside-popover');
     fireEvent.mouseDown(insidePopover);
     fireEvent.mouseUp(insidePopover);
 
@@ -535,13 +529,13 @@ describe("useInteractOutside shadow DOM", function () {
     cleanup();
   });
 
-  it("does not trigger when clicking the popover", function () {
+  it('does not trigger when clicking the popover', function () {
     const onInteractOutside = jest.fn();
-    const { shadowRoot, cleanup } = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />,
+    const {shadowRoot, cleanup} = createShadowRootAndRender(
+      <App onInteractOutside={onInteractOutside} />
     );
 
-    const popover = shadowRoot.getElementById("popover");
+    const popover = shadowRoot.getElementById('popover');
     fireEvent.mouseDown(popover);
     fireEvent.mouseUp(popover);
 
@@ -549,10 +543,10 @@ describe("useInteractOutside shadow DOM", function () {
     cleanup();
   });
 
-  it("triggers when clicking outside the popover", function () {
+  it('triggers when clicking outside the popover', function () {
     const onInteractOutside = jest.fn();
-    const { cleanup } = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />,
+    const {cleanup} = createShadowRootAndRender(
+      <App onInteractOutside={onInteractOutside} />
     );
 
     // Clicking on the document body outside the shadow DOM
@@ -563,13 +557,13 @@ describe("useInteractOutside shadow DOM", function () {
     cleanup();
   });
 
-  it("triggers when clicking a button outside the shadow dom altogether", function () {
+  it('triggers when clicking a button outside the shadow dom altogether', function () {
     const onInteractOutside = jest.fn();
-    const { cleanup } = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />,
+    const {cleanup} = createShadowRootAndRender(
+      <App onInteractOutside={onInteractOutside} />
     );
     // Button outside shadow DOM and component
-    const button = document.createElement("button");
+    const button = document.createElement('button');
     document.body.appendChild(button);
 
     fireEvent.mouseDown(button);
@@ -581,29 +575,29 @@ describe("useInteractOutside shadow DOM", function () {
   });
 });
 
-describe("useInteractOutside shadow DOM extended tests", function () {
+describe('useInteractOutside shadow DOM extended tests', function () {
   // Setup function similar to previous tests, but includes a dynamic element scenario
   function createShadowRootAndRender(ui) {
-    const shadowHost = document.createElement("div");
+    const shadowHost = document.createElement('div');
     document.body.appendChild(shadowHost);
-    const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+    const shadowRoot = shadowHost.attachShadow({mode: 'open'});
 
     function WrapperComponent() {
       return ReactDOM.createPortal(ui, shadowRoot);
     }
 
     render(<WrapperComponent />);
-    return { shadowRoot, cleanup: () => document.body.removeChild(shadowHost) };
+    return {shadowRoot, cleanup: () => document.body.removeChild(shadowHost)};
   }
 
-  function App({ onInteractOutside, includeDynamicElement = false }) {
+  function App({onInteractOutside, includeDynamicElement = false}) {
     const ref = useRef(null);
-    useInteractOutside({ ref, onInteractOutside });
+    useInteractOutside({ref, onInteractOutside});
 
     useEffect(() => {
       if (includeDynamicElement) {
-        const dynamicEl = document.createElement("div");
-        dynamicEl.id = "dynamic-outside";
+        const dynamicEl = document.createElement('div');
+        dynamicEl.id = 'dynamic-outside';
         document.body.appendChild(dynamicEl);
 
         return () => document.body.removeChild(dynamicEl);
@@ -620,14 +614,14 @@ describe("useInteractOutside shadow DOM extended tests", function () {
     );
   }
 
-  it("correctly identifies interaction with dynamically added external elements", function () {
+  it('correctly identifies interaction with dynamically added external elements', function () {
     jest.useFakeTimers();
     const onInteractOutside = jest.fn();
-    const { cleanup } = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} includeDynamicElement />,
+    const {cleanup} = createShadowRootAndRender(
+      <App onInteractOutside={onInteractOutside} includeDynamicElement />
     );
 
-    const dynamicEl = document.getElementById("dynamic-outside");
+    const dynamicEl = document.getElementById('dynamic-outside');
     fireEvent.mouseDown(dynamicEl);
     fireEvent.mouseUp(dynamicEl);
 
@@ -637,12 +631,12 @@ describe("useInteractOutside shadow DOM extended tests", function () {
   });
 });
 
-describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
+describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
   let user;
 
   beforeAll(() => {
     enableShadowDOM();
-    user = userEvent.setup({ delay: null, pointerMap });
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   beforeEach(() => {
@@ -655,13 +649,13 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     });
   });
 
-  it("should handle interact outside events with UNSAFE_PortalProvider in shadow DOM", async () => {
-    const { shadowRoot } = createShadowRoot();
+  it('should handle interact outside events with UNSAFE_PortalProvider in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
     let interactOutsideTriggered = false;
 
     // Create portal container within the shadow DOM for the popover
-    const popoverPortal = document.createElement("div");
-    popoverPortal.setAttribute("data-testid", "popover-portal");
+    const popoverPortal = document.createElement('div');
+    popoverPortal.setAttribute('data-testid', 'popover-portal');
     shadowRoot.appendChild(popoverPortal);
 
     function ShadowInteractOutsideExample() {
@@ -670,7 +664,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref,
         onInteractOutside: () => {
           interactOutsideTriggered = true;
-        },
+        }
       });
 
       return (
@@ -681,28 +675,28 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
                 <div
                   ref={ref}
                   data-testid="target"
-                  style={{ padding: "20px", background: "lightblue" }}
+                  style={{padding: '20px', background: 'lightblue'}}
                 >
                   <button data-testid="inner-button">Inner Button</button>
                   <input data-testid="inner-input" placeholder="Inner Input" />
                 </div>
                 <button data-testid="outside-button">Outside Button</button>
               </>,
-              popoverPortal,
+              popoverPortal
             )}
           </div>
         </UNSAFE_PortalProvider>
       );
     }
 
-    const { unmount } = render(<ShadowInteractOutsideExample />);
+    const {unmount} = render(<ShadowInteractOutsideExample />);
 
     const target = shadowRoot.querySelector('[data-testid="target"]');
     const innerButton = shadowRoot.querySelector(
-      '[data-testid="inner-button"]',
+      '[data-testid="inner-button"]'
     );
     const outsideButton = shadowRoot.querySelector(
-      '[data-testid="outside-button"]',
+      '[data-testid="outside-button"]'
     );
 
     // Click inside the target - should NOT trigger interact outside
@@ -722,8 +716,8 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     document.body.removeChild(shadowRoot.host);
   });
 
-  it("should correctly identify interactions across shadow DOM boundaries (issue #8675)", async () => {
-    const { shadowRoot } = createShadowRoot();
+  it('should correctly identify interactions across shadow DOM boundaries (issue #8675)', async () => {
+    const {shadowRoot} = createShadowRoot();
     let popoverClosed = false;
 
     function MenuPopoverExample() {
@@ -732,7 +726,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref: popoverRef,
         onInteractOutside: () => {
           popoverClosed = true;
-        },
+        }
       });
 
       return (
@@ -742,7 +736,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
             <div
               ref={popoverRef}
               data-testid="menu-popover"
-              style={{ border: "1px solid gray", padding: "10px" }}
+              style={{border: '1px solid gray', padding: '10px'}}
             >
               <div role="menu" data-testid="menu">
                 <button
@@ -750,7 +744,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
                   data-testid="menu-item-1"
                   onClick={() => {
                     // This click should NOT trigger interact outside
-                    console.log("Menu item 1 clicked");
+                    console.log('Menu item 1 clicked');
                   }}
                 >
                   Save Document
@@ -759,7 +753,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
                   role="menuitem"
                   data-testid="menu-item-2"
                   onClick={() => {
-                    console.log("Menu item 2 clicked");
+                    console.log('Menu item 2 clicked');
                   }}
                 >
                   Export Document
@@ -771,14 +765,14 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
       );
     }
 
-    const { unmount } = render(<MenuPopoverExample />);
+    const {unmount} = render(<MenuPopoverExample />);
 
     const menuItem1 = shadowRoot.querySelector('[data-testid="menu-item-1"]');
     const menuTrigger = shadowRoot.querySelector(
-      '[data-testid="menu-trigger"]',
+      '[data-testid="menu-trigger"]'
     );
     const menuPopover = shadowRoot.querySelector(
-      '[data-testid="menu-popover"]',
+      '[data-testid="menu-popover"]'
     );
 
     // Click menu item - should NOT close popover (this is the bug being tested)
@@ -798,10 +792,10 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     document.body.removeChild(shadowRoot.host);
   });
 
-  it("should handle nested portal scenarios with interact outside in shadow DOM", async () => {
-    const { shadowRoot } = createShadowRoot();
-    const modalPortal = document.createElement("div");
-    modalPortal.setAttribute("data-testid", "modal-portal");
+  it('should handle nested portal scenarios with interact outside in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
+    const modalPortal = document.createElement('div');
+    modalPortal.setAttribute('data-testid', 'modal-portal');
     shadowRoot.appendChild(modalPortal);
 
     let modalInteractOutside = false;
@@ -815,14 +809,14 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref: modalRef,
         onInteractOutside: () => {
           modalInteractOutside = true;
-        },
+        }
       });
 
       useInteractOutside({
         ref: popoverRef,
         onInteractOutside: () => {
           popoverInteractOutside = true;
-        },
+        }
       });
 
       return (
@@ -835,7 +829,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
               <div
                 ref={modalRef}
                 data-testid="modal"
-                style={{ background: "rgba(0,0,0,0.5)", padding: "20px" }}
+                style={{background: 'rgba(0,0,0,0.5)', padding: '20px'}}
               >
                 <div role="dialog">
                   <button data-testid="modal-button">Modal Button</button>
@@ -845,30 +839,30 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
                     ref={popoverRef}
                     data-testid="popover-in-modal"
                     style={{
-                      background: "white",
-                      border: "1px solid gray",
-                      padding: "10px",
+                      background: 'white',
+                      border: '1px solid gray',
+                      padding: '10px'
                     }}
                   >
                     <button data-testid="popover-button">Popover Button</button>
                   </div>
                 </div>
               </div>,
-              modalPortal,
+              modalPortal
             )}
           </div>
         </UNSAFE_PortalProvider>
       );
     }
 
-    const { unmount } = render(<NestedPortalsExample />);
+    const {unmount} = render(<NestedPortalsExample />);
 
     const mainButton = shadowRoot.querySelector('[data-testid="main-button"]');
     const modalButton = shadowRoot.querySelector(
-      '[data-testid="modal-button"]',
+      '[data-testid="modal-button"]'
     );
     const popoverButton = shadowRoot.querySelector(
-      '[data-testid="popover-button"]',
+      '[data-testid="popover-button"]'
     );
 
     // Click popover button - should NOT trigger either interact outside
@@ -893,10 +887,10 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     document.body.removeChild(shadowRoot.host);
   });
 
-  it("should handle pointer events correctly in shadow DOM with portal provider", async () => {
+  it('should handle pointer events correctly in shadow DOM with portal provider', async () => {
     installPointerEvent();
 
-    const { shadowRoot } = createShadowRoot();
+    const {shadowRoot} = createShadowRoot();
     let interactOutsideCount = 0;
 
     function PointerEventsExample() {
@@ -905,7 +899,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref,
         onInteractOutside: () => {
           interactOutsideCount++;
-        },
+        }
       });
 
       return (
@@ -920,24 +914,24 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
       );
     }
 
-    const { unmount } = render(<PointerEventsExample />);
+    const {unmount} = render(<PointerEventsExample />);
 
     const targetButton = shadowRoot.querySelector(
-      '[data-testid="target-button"]',
+      '[data-testid="target-button"]'
     );
     const outsideButton = shadowRoot.querySelector(
-      '[data-testid="outside-button"]',
+      '[data-testid="outside-button"]'
     );
 
     // Simulate pointer events on target - should NOT trigger interact outside
-    fireEvent(targetButton, pointerEvent("pointerdown"));
-    fireEvent(targetButton, pointerEvent("pointerup"));
+    fireEvent(targetButton, pointerEvent('pointerdown'));
+    fireEvent(targetButton, pointerEvent('pointerup'));
     fireEvent.click(targetButton);
     expect(interactOutsideCount).toBe(0);
 
     // Simulate pointer events outside - should trigger interact outside
-    fireEvent(outsideButton, pointerEvent("pointerdown"));
-    fireEvent(outsideButton, pointerEvent("pointerup"));
+    fireEvent(outsideButton, pointerEvent('pointerdown'));
+    fireEvent(outsideButton, pointerEvent('pointerup'));
     fireEvent.click(outsideButton);
     expect(interactOutsideCount).toBe(1);
 
@@ -946,8 +940,8 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     document.body.removeChild(shadowRoot.host);
   });
 
-  it("should handle interact outside with dynamic content in shadow DOM", async () => {
-    const { shadowRoot } = createShadowRoot();
+  it('should handle interact outside with dynamic content in shadow DOM', async () => {
+    const {shadowRoot} = createShadowRoot();
     let interactOutsideCount = 0;
 
     function DynamicContentExample() {
@@ -958,7 +952,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref,
         onInteractOutside: () => {
           interactOutsideCount++;
-        },
+        }
       });
 
       return (
@@ -983,16 +977,16 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
       );
     }
 
-    const { unmount } = render(<DynamicContentExample />);
+    const {unmount} = render(<DynamicContentExample />);
 
     const toggleButton = shadowRoot.querySelector(
-      '[data-testid="toggle-button"]',
+      '[data-testid="toggle-button"]'
     );
     const dynamicButton = shadowRoot.querySelector(
-      '[data-testid="dynamic-button"]',
+      '[data-testid="dynamic-button"]'
     );
     const outsideButton = shadowRoot.querySelector(
-      '[data-testid="outside-button"]',
+      '[data-testid="outside-button"]'
     );
 
     // Click dynamic content - should NOT trigger interact outside
@@ -1007,7 +1001,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     // Toggle content back and click it - should still NOT trigger interact outside
     await user.click(toggleButton);
     const newDynamicButton = shadowRoot.querySelector(
-      '[data-testid="dynamic-button"]',
+      '[data-testid="dynamic-button"]'
     );
     await user.click(newDynamicButton);
     expect(interactOutsideCount).toBe(1); // Should remain 1
@@ -1017,14 +1011,14 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
     document.body.removeChild(shadowRoot.host);
   });
 
-  it("should handle interact outside across mixed shadow DOM and regular DOM boundaries", async () => {
-    const { shadowRoot } = createShadowRoot();
+  it('should handle interact outside across mixed shadow DOM and regular DOM boundaries', async () => {
+    const {shadowRoot} = createShadowRoot();
     let interactOutsideTriggered = false;
 
     // Create a regular DOM button outside the shadow DOM
-    const regularDOMButton = document.createElement("button");
-    regularDOMButton.textContent = "Regular DOM Button";
-    regularDOMButton.setAttribute("data-testid", "regular-dom-button");
+    const regularDOMButton = document.createElement('button');
+    regularDOMButton.textContent = 'Regular DOM Button';
+    regularDOMButton.setAttribute('data-testid', 'regular-dom-button');
     document.body.appendChild(regularDOMButton);
 
     function MixedDOMExample() {
@@ -1033,7 +1027,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
         ref,
         onInteractOutside: () => {
           interactOutsideTriggered = true;
-        },
+        }
       });
 
       return (
@@ -1048,13 +1042,13 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
       );
     }
 
-    const { unmount } = render(<MixedDOMExample />);
+    const {unmount} = render(<MixedDOMExample />);
 
     const shadowButton = shadowRoot.querySelector(
-      '[data-testid="shadow-button"]',
+      '[data-testid="shadow-button"]'
     );
     const shadowOutside = shadowRoot.querySelector(
-      '[data-testid="shadow-outside"]',
+      '[data-testid="shadow-outside"]'
     );
 
     // Click inside shadow target - should NOT trigger
@@ -1078,7 +1072,7 @@ describe("useInteractOutside with Shadow DOM and UNSAFE_PortalProvider", () => {
 });
 
 function pointerEvent(type, opts) {
-  let evt = new Event(type, { bubbles: true, cancelable: true });
+  let evt = new Event(type, {bubbles: true, cancelable: true});
   Object.assign(evt, opts);
   return evt;
 }
