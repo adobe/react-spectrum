@@ -14,7 +14,7 @@ import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {FieldInputContext} from './Autocomplete';
+import {FieldInputContext} from './context';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';

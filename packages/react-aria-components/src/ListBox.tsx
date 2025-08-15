@@ -12,7 +12,6 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, FilterLessNode, ItemNode, SectionNode} from '@react-aria/collections';
-import {CollectionContext, CollectionContextValue} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -22,6 +21,7 @@ import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, 
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './context';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -115,12 +115,12 @@ function StandaloneListBox({props, listBoxRef, collection}) {
 
 interface ListBoxInnerProps<T> {
   state: ListState<T>,
-  props: ListBoxProps<T> & AriaListBoxOptions<T> & {filter?: CollectionContextValue<T>['filter']},
+  props: ListBoxProps<T> & AriaListBoxOptions<T> & {filter?: SelectableCollectionContextValue<T>['filter']},
   listBoxRef: RefObject<HTMLElement | null>
 }
 
 function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
-  [props, listBoxRef] = useContextProps(props, listBoxRef, CollectionContext);
+  [props, listBoxRef] = useContextProps(props, listBoxRef, SelectableCollectionContext);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical', filter} = props;
   let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;

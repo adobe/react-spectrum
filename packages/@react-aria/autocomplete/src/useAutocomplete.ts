@@ -28,7 +28,6 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   disallowTypeAhead: boolean
 }
 
-// TODO; For now go with Node here, but maybe pare it down to just the essentials? Value, key, and maybe type?
 export interface AriaAutocompleteProps<T> extends AutocompleteProps {
   /**
    * An optional filter function used to determine if a option should be included in the autocomplete list.
@@ -37,15 +36,17 @@ export interface AriaAutocompleteProps<T> extends AutocompleteProps {
   filter?: (textValue: string, inputValue: string, node: Node<T>) => boolean,
 
   /**
-   * Whether or not to focus the first item in the collection after a filter is performed.
+   * Whether or not to focus the first item in the collection after a filter is performed. Note this is only applicable
+   * if virtual focus behavior is not turned off via `disableVirtualFocus`.
    * @default false
    */
   disableAutoFocusFirst?: boolean,
 
   /**
    * Whether the autocomplete should disable virtual focus, instead making the wrapped collection directly tabbable.
+   * @default false
    */
-  disallowVirtualFocus?: boolean
+  disableVirtualFocus?: boolean
 }
 
 export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'> {
@@ -78,7 +79,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     collectionRef,
     filter,
     disableAutoFocusFirst = false,
-    disallowVirtualFocus = false
+    disableVirtualFocus = false
   } = props;
 
   let collectionId = useSlotId();
@@ -89,7 +90,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
-  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual' && !disallowVirtualFocus;
+  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual' && !disableVirtualFocus;
 
   useEffect(() => {
     return () => clearTimeout(timeout.current);

@@ -13,7 +13,6 @@
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
-import {CollectionContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
@@ -22,6 +21,7 @@ import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
+import {SelectableCollectionContext} from './context';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -76,7 +76,7 @@ interface TagGroupInnerProps {
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
   let contextProps;
-  [contextProps] = useContextProps({}, null, CollectionContext);
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
   let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};

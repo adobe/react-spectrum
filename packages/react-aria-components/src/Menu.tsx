@@ -13,9 +13,9 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
-import {CollectionContext, CollectionContextValue, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
@@ -194,13 +194,13 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 interface MenuInnerProps<T> {
   // For now we append filter and other autocomplete context props here for typescript, but eventually we can consider exposing these
   // as top level props for users to use with standalone Menus
-  props: MenuProps<T> & {filter?: CollectionContextValue<object>['filter'], shouldUseVirtualFocus?: boolean},
+  props: MenuProps<T> & {filter?: SelectableCollectionContextValue<object>['filter'], shouldUseVirtualFocus?: boolean},
   collection: BaseCollection<object>,
   menuRef: RefObject<HTMLElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  [props, ref] = useContextProps(props, ref, CollectionContext);
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   let {filter, ...autocompleteMenuProps} = props;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
@@ -248,7 +248,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [CollectionContext, null],
+            [SelectableCollectionContext, null],
             [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */

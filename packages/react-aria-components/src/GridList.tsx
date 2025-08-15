@@ -13,12 +13,12 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode, ItemNode} from '@react-aria/collections';
-import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
+import {FieldInputContext, SelectableCollectionContext} from './context';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
@@ -107,7 +107,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
   // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
   let contextProps;
-  [contextProps] = useContextProps({}, null, CollectionContext);
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
   let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
@@ -425,7 +425,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
               }],
               [CollectionRendererContext, DefaultCollectionRenderer],
               [ListStateContext, null],
-              [CollectionContext, null],
+              [SelectableCollectionContext, null],
               [FieldInputContext, null]
             ]}>
             {renderProps.children}

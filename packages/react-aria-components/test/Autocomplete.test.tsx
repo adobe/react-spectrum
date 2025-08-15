@@ -1018,7 +1018,7 @@ AriaAutocompleteTests({
       </AutocompleteWrapper>
     ),
     noVirtualFocus: () => render(
-      <AutocompleteWrapper autocompleteProps={{disallowVirtualFocus: true}}>
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
         <StaticMenu />
       </AutocompleteWrapper>
     )
@@ -1080,7 +1080,7 @@ AriaAutocompleteTests({
       </AutocompleteWrapper>
     ),
     noVirtualFocus: () => render(
-      <AutocompleteWrapper autocompleteProps={{disallowVirtualFocus: true}}>
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
         <StaticListbox />
       </AutocompleteWrapper>
     )

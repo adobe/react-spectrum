@@ -3,7 +3,6 @@ import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBra
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {CollectionContext, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
@@ -11,6 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {FieldInputContext, SelectableCollectionContext} from './context';
 import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -372,7 +372,7 @@ interface TableInnerProps {
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   let contextProps;
-  [contextProps] = useContextProps({}, null, CollectionContext);
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
   let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
@@ -494,7 +494,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         [TableColumnResizeStateContext, layoutState],
         [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
         [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
-        [CollectionContext, null],
+        [SelectableCollectionContext, null],
         [FieldInputContext, null]
       ]}>
       <FocusScope>
