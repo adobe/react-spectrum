@@ -5690,11 +5690,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/form@workspace:packages/@react-aria/form"
   dependencies:
+    "@react-aria/i18n": "npm:^3.12.11"
     "@react-aria/interactions": "npm:^3.25.4"
+    "@react-aria/live-announcer": "npm:^3.4.4"
     "@react-aria/utils": "npm:^3.30.0"
     "@react-stately/form": "npm:^3.2.0"
     "@react-types/shared": "npm:^3.31.0"
     "@swc/helpers": "npm:^0.5.0"
+    dom-accessibility-api: "npm:^0.7.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7036,6 +7039,7 @@ __metadata:
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/i18n": "npm:^3.12.11"
+    "@react-aria/live-announcer": "npm:^3.4.4"
     "@react-aria/utils": "npm:^3.30.0"
     "@react-spectrum/form": "npm:^3.7.17"
     "@react-spectrum/layout": "npm:^3.6.17"
@@ -15032,6 +15036,13 @@ __metadata:
   version: 0.6.3
   resolution: "dom-accessibility-api@npm:0.6.3"
   checksum: 10c0/10bee5aa514b2a9a37c87cd81268db607a2e933a050074abc2f6fa3da9080ebed206a320cbc123567f2c3087d22292853bdfdceaffdd4334ffe2af9510b29360
+  languageName: node
+  linkType: hard
+
+"dom-accessibility-api@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "dom-accessibility-api@npm:0.7.0"
+  checksum: 10c0/51d3fe283b0b4882442ba7cd7c76d27aa96b57e1854f0373be62c0abfaa95e89f4c1a1b883712814dc52b0a0853147f6de681fae20467a29d3a485df9b7329d8
   languageName: node
   linkType: hard
 

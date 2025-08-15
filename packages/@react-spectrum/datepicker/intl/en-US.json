@@ -1,5 +1,6 @@
 {
   "time": "Time",
   "startTime": "Start time",
-  "endTime": "End time"
+  "endTime": "End time",
+  "valid": "(valid)"
 }

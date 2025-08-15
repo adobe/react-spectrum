@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.12.11",
+    "@react-aria/live-announcer": "^3.4.4",
     "@react-aria/utils": "^3.30.0",
     "@react-spectrum/form": "^3.7.17",
     "@react-spectrum/layout": "^3.6.17",
