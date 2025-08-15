@@ -201,6 +201,7 @@ export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
 };
 
 interface VirtualizedGridListGridProps {
+  minItemSizeWidth?: number,
   maxItemSizeWidth?: number,
   maxColumns?: number,
   minHorizontalSpace?: number,
@@ -209,13 +210,14 @@ interface VirtualizedGridListGridProps {
 
 export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
   const {
+    minItemSizeWidth = 40,
     maxItemSizeWidth = 65,
     maxColumns = Infinity,
     minHorizontalSpace = 0,
     maxHorizontalSpace = Infinity
   } = args;
   let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 1000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
 
@@ -223,7 +225,7 @@ export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (arg
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40),
+        minItemSize: new Size(minItemSizeWidth, 40),
         maxItemSize: new Size(maxItemSizeWidth, 40),
         minSpace: new Size(minHorizontalSpace, 18),
         maxColumns,
@@ -238,12 +240,18 @@ export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (arg
 
 VirtualizedGridListGrid.story = {
   args: {
+    minItemSizeWidth: 40,
     maxItemSizeWidth: 65,
     maxColumns: undefined,
     minHorizontalSpace: 0,
     maxHorizontalSpace: undefined
   },
   argTypes: {
+    minItemSizeWidth: {
+      control: 'number',
+      description: 'The minimum width of each item in the grid list',
+      defaultValue: 40
+    },
     maxItemSizeWidth: {
       control: 'number',
       description: 'Maximum width of each item in the grid list.',
