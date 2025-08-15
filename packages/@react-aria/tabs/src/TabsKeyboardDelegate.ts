@@ -16,13 +16,17 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private flipDirection: boolean;
   private disabledKeys: Set<Key>;
-  private tabDirection: boolean;
+  private orientation: Orientation;
 
   constructor(collection: Collection<Node<T>>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
-    this.tabDirection = orientation === 'horizontal';
+    this.orientation = orientation;
+  }
+
+  getOrientation(): Orientation {
+    return this.orientation;
   }
 
   getKeyLeftOf(key: Key): Key | null {
@@ -61,14 +65,14 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyAbove(key: Key): Key | null {
-    if (this.tabDirection) {
+    if (this.getOrientation() === 'horizontal') {
       return null;
     }
     return this.getPreviousKey(key);
   }
 
   getKeyBelow(key: Key): Key | null {
-    if (this.tabDirection) {
+    if (this.getOrientation() === 'horizontal') {
       return null;
     }
     return this.getNextKey(key);

@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, LayoutDelegate, Orientation, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
@@ -55,7 +55,12 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'override'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+
+  /**
+   * The orientation of the listbox.
+   */
+  orientation?: Orientation
 }
 
 /**
@@ -68,6 +73,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   // Use props instead of state here. We don't want this to change due to long press.
   let selectionBehavior = props.selectionBehavior || 'toggle';
+  let orientation = props.orientation || props.keyboardDelegate?.getOrientation?.();
   let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
   if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
@@ -117,6 +123,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
       'aria-multiselectable': 'true'
     } : {}, {
       role: 'listbox',
+      'aria-orientation': orientation === 'horizontal' ? orientation : undefined,
       ...mergeProps(fieldProps, listProps)
     })
   };
