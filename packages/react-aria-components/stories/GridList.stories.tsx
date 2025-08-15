@@ -21,10 +21,12 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
   GridListItem,
   GridListItemProps,
   GridListLoadMoreItem,
   GridListProps,
+  GridListSection,
   Heading,
   ListLayout,
   Modal,
@@ -144,6 +146,105 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
     </Checkbox>
   );
 };
+
+
+export const GridListSectionExample = (args) => (
+  <GridList
+    {...args}
+    className={styles.menu}
+    aria-label="test gridlist"
+    style={{
+      width: 400,
+      height: 400
+    }}>
+    <GridListSection>
+      <GridListHeader>Section 1</GridListHeader>
+      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 2</GridListHeader>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 3</GridListHeader>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+  </GridList>
+);
+
+GridListSectionExample.story = {
+  args: {
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  }
+};
+
+export function VirtualizedGridListSection() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 3; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        // selectionMode="multiple"
+        style={{height: 400}}
+        aria-label="virtualized with grid section"
+        items={sections}>
+        <Collection items={sections}>
+          {section => (
+            <GridListSection>
+              <GridListHeader>{section.name}</GridListHeader>
+              <Collection items={section.children} >
+                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+              </Collection>
+            </GridListSection>
+          )}
+        </Collection>
+      </GridList>
+    </Virtualizer>
+  );
+}
+
 
 const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
