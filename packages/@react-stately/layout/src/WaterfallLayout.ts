@@ -30,6 +30,11 @@ export interface WaterfallLayoutOptions {
    */
   minSpace?: Size,
   /**
+   * The maximum allowed horizontal space between items.
+   * @default Infinity
+   */
+  maxHorizontalSpace?: number,
+  /**
    * The maximum number of columns.
    * @default Infinity
    */
@@ -55,6 +60,7 @@ const DEFAULT_OPTIONS = {
   minItemSize: new Size(200, 200),
   maxItemSize: new Size(Infinity, Infinity),
   minSpace: new Size(18, 18),
+  maxSpace: Infinity,
   maxColumns: Infinity,
   dropIndicatorThickness: 2
 };
@@ -64,13 +70,15 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
   private layoutInfos: Map<Key, WaterfallLayoutInfo> = new Map();
   protected numColumns = 0;
   protected dropIndicatorThickness = 2;
+  private margin: number = 0;
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return newOptions.maxColumns !== oldOptions.maxColumns
       || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
-      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace));
+      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
+      || (newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace);
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -78,6 +86,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       minItemSize = DEFAULT_OPTIONS.minItemSize,
       maxItemSize = DEFAULT_OPTIONS.maxItemSize,
       minSpace = DEFAULT_OPTIONS.minSpace,
+      maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
     } = invalidationContext.layoutOptions || {};
@@ -107,8 +116,9 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     let itemHeight = minItemSize.height +  Math.floor((maxItemHeight - minItemSize.height) * t);
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
-    // Compute the horizontal spacing and content height
-    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
+    // Compute the horizontal spacing, content height and horizontal margin
+    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
+    this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
     // Setup an array of column heights
     let columnHeights = Array(numColumns).fill(minSpace.height);
@@ -126,7 +136,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       // Preserve the previous column index so items don't jump around during resizing unless the number of columns changed.
       let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
       let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
-      let x = horizontalSpacing + column * (itemWidth + horizontalSpacing);
+      let x = horizontalSpacing + column * (itemWidth + horizontalSpacing) + this.margin;
       let y = columnHeights[column];
 
       let rect = new Rect(x, y, itemWidth, height);
