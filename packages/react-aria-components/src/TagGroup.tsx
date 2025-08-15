@@ -12,16 +12,17 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {ListState, Node, useListState} from 'react-stately';
+import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -74,15 +75,20 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
+  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tagListRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
-  let state = useListState({
+  let tagGroupState = useListState({
     ...props,
     children: undefined,
     collection
   });
+
+  let filteredState = UNSTABLE_useFilteredListState(tagGroupState, filter);
 
   // Prevent DOM props from going to two places.
   let domProps = filterDOMProps(props, {global: true});
@@ -95,8 +101,9 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
   } = useTagGroup({
     ...props,
     ...domPropOverrides,
+    ...DOMCollectionProps,
     label
-  }, state, tagListRef);
+  }, filteredState, tagListRef);
 
   return (
     <div
@@ -109,7 +116,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
           [TagListContext, {...gridProps, ref: tagListRef}],
-          [ListStateContext, state],
+          [ListStateContext, filteredState],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -194,10 +201,12 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
   isDisabled?: boolean
 }
 
+class TagItemNode extends ItemNode<unknown> {}
+
 /**
  * A Tag is an individual item within a TagList.
  */
-export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});

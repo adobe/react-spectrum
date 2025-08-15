@@ -24,7 +24,7 @@ import './styles.css';
 export default {
   title: 'React Aria Components/Table',
   component: Table,
-  excludeStories: ['DndTable', 'makePromise']
+  excludeStories: ['DndTable', 'makePromise', 'MyCheckbox']
 } as Meta<typeof Table>;
 
 export type TableStory = StoryFn<typeof Table>;
@@ -529,7 +529,7 @@ DndTableExample.args = {
   isLoading: false
 };
 
-const MyCheckbox = ({children, ...props}: CheckboxProps) => {
+export const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => (
