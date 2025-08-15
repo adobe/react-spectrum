@@ -171,7 +171,6 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   }
 
   // @ts-ignore
-  // TODO: could just make this a div perhaps, but keep it in line with how it used to work
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 

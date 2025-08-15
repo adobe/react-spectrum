@@ -89,11 +89,16 @@ export class FilterLessNode<T> extends CollectionNode<T> {
   }
 }
 
+export class LoaderNode extends FilterLessNode<any> {
+  static readonly type = 'loader';
+}
+
 export class ItemNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
     if (filterFn(this.textValue, this)) {
+      // TODO: returning just this instead of cloning broke filtering, investigate
       return this.clone();
     }
 

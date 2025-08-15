@@ -17,7 +17,7 @@ import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, useRef} from 'react';
 
-export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProps {}
+export interface AutocompleteProps<T = object> extends AriaAutocompleteProps<T>, SlotProps {}
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 
