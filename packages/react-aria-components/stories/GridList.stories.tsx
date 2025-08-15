@@ -217,7 +217,7 @@ export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (arg
     maxHorizontalSpace = Infinity
   } = args;
   let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
 
