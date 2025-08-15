@@ -37,6 +37,7 @@ const attributes = {
     ['focus', 'focused'],
     'focus-visible',
     'pressed',
+    'active',
     'selected',
     'selection-start',
     'selection-end',
@@ -69,6 +70,7 @@ const nativeVariantSelectors = new Map([
   ...nativeVariants.map((variant) => [variant, `:${variant}`]),
   ['hovered', ':hover'],
   ['focused', ':focus'],
+  ['active', ':active'],
   ['readonly', ':read-only'],
   ['open', '[open]'],
   ['expanded', '[expanded]']
