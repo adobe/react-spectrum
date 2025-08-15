@@ -18,6 +18,7 @@ import {MyCheckbox} from './Table.stories';
 import {MyGridListItem} from './GridList.stories';
 import {MyListBoxLoaderIndicator} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
+import {Node} from '@react-types/shared';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
@@ -167,7 +168,7 @@ export const AutocompleteSearchfield: AutocompleteStory = {
 
 // Note that the trigger items in this array MUST have an id, even if the underlying MenuItem might apply its own
 // id. If it is omitted, we can't build the collection node for the trigger node and an error will throw
-let dynamicAutocompleteSubdialog = [
+let dynamicAutocompleteSubdialog: MenuNode[] = [
   {name: 'Section 1', isSection: true, children: [
     {name: 'Command Palette'},
     {name: 'Open View'}
@@ -441,7 +442,7 @@ const CaseSensitiveFilter = (args) => {
   let defaultFilter = (itemText, input) => contains(itemText, input);
 
   return (
-    <Autocomplete filter={defaultFilter} disableVirtualFocus={args.disableVirtualFocus}>
+    <Autocomplete<AutocompleteItem> filter={defaultFilter} disableVirtualFocus={args.disableVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -1092,17 +1093,26 @@ export const AutocompleteWithTagGroup = () => {
   );
 };
 
+type MenuNode = {
+  name: string,
+  id?: string,
+  isSection?: boolean,
+  isMenu?: boolean,
+  children?: MenuNode[]
+}
+
 function AutocompleteNodeFiltering(args) {
   let {contains} = useFilter({sensitivity: 'base'});
-  let filter = (textValue, inputValue, node) => {
+  let filter = (textValue: string, inputValue: string, node: Node<MenuNode>) => {
     if ((node.parentKey === 'Section 1' && textValue === 'Open View') || (node.parentKey === 'Section 2' && textValue === 'Appearance')) {
       return true;
     }
+
     return contains(textValue, inputValue);
   };
 
   return (
-    <Autocomplete filter={filter} disableVirtualFocus={args.disableVirtualFocus}>
+    <Autocomplete<MenuNode> filter={filter} disableVirtualFocus={args.disableVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
