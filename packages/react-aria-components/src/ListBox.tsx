@@ -12,7 +12,7 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, FilterLessNode, ItemNode, SectionNode} from '@react-aria/collections';
-import {CollectionContext} from './Autocomplete';
+import {CollectionContext, CollectionContextValue} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -115,19 +115,13 @@ function StandaloneListBox({props, listBoxRef, collection}) {
 
 interface ListBoxInnerProps<T> {
   state: ListState<T>,
-  props: ListBoxProps<T> & AriaListBoxOptions<T>,
-  listBoxRef: RefObject<HTMLDivElement | null>
+  props: ListBoxProps<T> & AriaListBoxOptions<T> & {filter?: CollectionContextValue<T>['filter']},
+  listBoxRef: RefObject<HTMLElement | null>
 }
 
 function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
-  // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the ListBoxInnerProps type to
-  // include filter
-  let contextProps;
-  // TODO: still had to use unknown here to stop typescript from complaining about the difference in the ref type difference between the menu ref and the more generic ref from the context
-  [contextProps, listBoxRef as unknown] = useContextProps({}, listBoxRef, CollectionContext);
-  let {filter, ...collectionProps} = contextProps;
-  props = useMemo(() => collectionProps ? ({...props, ...collectionProps}) : props, [props, collectionProps]);
-  let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
+  [props, listBoxRef] = useContextProps(props, listBoxRef, CollectionContext);
+  let {dragAndDropHooks, layout = 'stack', orientation = 'vertical', filter} = props;
   let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -242,7 +236,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, listBoxProps, focusProps, droppableCollection?.collectionProps)}
-        ref={listBoxRef}
+        ref={listBoxRef as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}

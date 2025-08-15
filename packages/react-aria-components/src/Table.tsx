@@ -23,8 +23,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   columns: GridNode<T>[] = [];
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: CollectionNode<T> = new CollectionNode('tableheader', -1);
-  body: CollectionNode<T> = new CollectionNode('tablebody', -2);
+  head = new TableHeaderNode<T>(-1);
+  body = new TableBodyNode<T>(-2);
   columnsDirty = true;
 
   addNode(node: CollectionNode<T>) {
@@ -561,7 +561,7 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
   dependencies?: ReadonlyArray<any>
 }
 
-class TableHeaderNode extends FilterLessNode<unknown> {
+class TableHeaderNode<T> extends FilterLessNode<T> {
   static readonly type = 'tableheader';
 
   constructor(key: Key) {
@@ -950,7 +950,7 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-class TableBodyNode extends CollectionNode<any> {
+class TableBodyNode<T> extends CollectionNode<T> {
   static readonly type = 'tablebody';
 
   constructor(key: Key) {

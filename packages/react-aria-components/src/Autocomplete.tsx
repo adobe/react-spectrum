@@ -22,7 +22,7 @@ export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProp
 
 // TODO: naming
 // IMO I think this could also contain the props that useSelectableCollection takes (minus the selection options?)
-interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
+export interface CollectionContextValue<T> extends DOMProps, AriaLabelingProps {
   filter?: (nodeTextValue: string, node: Node<T>) => boolean,
   /** Whether the collection items should use virtual focus instead of being focused directly. */
   shouldUseVirtualFocus?: boolean,

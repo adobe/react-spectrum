@@ -13,7 +13,7 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
-import {CollectionContext, FieldInputContext} from './Autocomplete';
+import {CollectionContext, CollectionContextValue, FieldInputContext} from './Autocomplete';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -196,18 +196,16 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 });
 
 interface MenuInnerProps<T> {
-  props: MenuProps<T>,
+  // For now we append filter and other autocomplete context props here for typescript, but eventually we can consider exposing these
+  // as top level props for users to use with standalone Menus
+  props: MenuProps<T> & {filter?: CollectionContextValue<object>['filter'], shouldUseVirtualFocus?: boolean},
   collection: BaseCollection<object>,
-  menuRef: RefObject<HTMLDivElement | null>
+  menuRef: RefObject<HTMLElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  // TODO: bit silly that I have to do this, alternative is to use "props" in useContextProps and update the MenuInnerProps type to
-  // include filter
-  let contextProps;
-  // TODO: still had to use unknown here to stop typescript from complaining about the ref type difference between the menu ref and the more generic ref from the context
-  [contextProps, ref as unknown] = useContextProps({}, ref, CollectionContext);
-  let {filter, ...autocompleteMenuProps} = contextProps;
+  [props, ref] = useContextProps(props, ref, CollectionContext);
+  let {filter, ...autocompleteMenuProps} = props;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
@@ -216,7 +214,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -243,7 +241,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, menuProps)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         data-empty={state.collection.size === 0 || undefined}
         onScroll={props.onScroll}>
