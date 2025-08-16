@@ -148,8 +148,8 @@ export const ListBoxDnd: AlbumListBoxStory = (props) => {
     initialItems: albums
   });
 
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+  let {dragAndDropHooks} = useDragAndDrop<Album>({
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.title ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);

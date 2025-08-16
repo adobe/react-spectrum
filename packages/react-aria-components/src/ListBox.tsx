@@ -64,7 +64,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
    */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
-  dragAndDropHooks?: DragAndDropHooks,
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: ListBoxRenderProps) => ReactNode,
   /**
