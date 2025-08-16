@@ -60,7 +60,7 @@ export {ProgressBar, ProgressBarContext} from './ProgressBar';
 export {RadioGroup, Radio, RadioGroupContext, RadioContext, RadioGroupStateContext} from './RadioGroup';
 export {SearchField, SearchFieldContext} from './SearchField';
 export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateContext} from './Select';
-export {Separator, SeparatorContext, SeparatorNode} from './Separator';
+export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
 export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';

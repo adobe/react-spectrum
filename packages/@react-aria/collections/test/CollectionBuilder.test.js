@@ -4,10 +4,6 @@ import {render} from '@testing-library/react';
 
 class ItemNode extends CollectionNode {
   static type = 'item';
-
-  constructor(key) {
-    super(ItemNode.type, key);
-  }
 }
 
 const Item = createLeafComponent(ItemNode, () => {
