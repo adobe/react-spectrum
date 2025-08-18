@@ -43,13 +43,13 @@ export interface TreeData<T extends object> {
   selectedKeys: Set<Key>,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Set<Key>): void,
+  setSelectedKeys: (keys: Set<Key>) => void,
 
   /**
    * Gets a node from the tree by key.
    * @param key - The key of the item to retrieve.
    */
-  getItem(key: Key): TreeNode<T> | undefined,
+  getItem: (key: Key) => TreeNode<T> | undefined,
 
   /**
    * Inserts an item into a parent node as a child.
@@ -57,47 +57,47 @@ export interface TreeData<T extends object> {
    * @param index - The index within the parent to insert into.
    * @param value - The value to insert.
    */
-  insert(parentKey: Key | null, index: number, ...values: T[]): void,
+  insert: (parentKey: Key | null, index: number, ...values: T[]) => void,
 
   /**
    * Inserts items into the list before the item at the given key.
    * @param key - The key of the item to insert before.
    * @param values - The values to insert.
    */
-  insertBefore(key: Key, ...values: T[]): void,
+  insertBefore: (key: Key, ...values: T[]) => void,
 
   /**
    * Inserts items into the list after the item at the given key.
    * @param key - The key of the item to insert after.
    * @param values - The values to insert.
    */
-  insertAfter(key: Key, ...values: T[]): void,
+  insertAfter: (key: Key, ...values: T[]) => void,
 
   /**
    * Appends an item into a parent node as a child.
    * @param parentKey - The key of the parent item to insert into. `null` for the root.
    * @param value - The value to insert.
    */
-  append(parentKey: Key | null, ...values: T[]): void,
+  append: (parentKey: Key | null, ...values: T[]) => void,
 
   /**
    * Prepends an item into a parent node as a child.
    * @param parentKey - The key of the parent item to insert into. `null` for the root.
    * @param value - The value to insert.
    */
-  prepend(parentKey: Key | null, ...value: T[]): void,
+  prepend: (parentKey: Key | null, ...value: T[]) => void,
 
   /**
    * Removes an item from the tree by its key.
    * @param key - The key of the item to remove.
    */
-  remove(...keys: Key[]): void,
+  remove: (...keys: Key[]) => void,
 
   /**
    * Removes all items from the tree that are currently
    * in the set of selected items.
    */
-  removeSelectedItems(): void,
+  removeSelectedItems: () => void,
 
   /**
    * Moves an item within the tree.
@@ -105,28 +105,28 @@ export interface TreeData<T extends object> {
    * @param toParentKey - The key of the new parent to insert into. `null` for the root.
    * @param index - The index within the new parent to insert at.
    */
-  move(key: Key, toParentKey: Key | null, index: number): void,
+  move: (key: Key, toParentKey: Key | null, index: number) => void,
 
   /**
    * Moves one or more items before a given key.
    * @param key - The key of the item to move the items before.
    * @param keys - The keys of the items to move.
    */
-  moveBefore(key: Key, keys: Iterable<Key>): void,
+  moveBefore: (key: Key, keys: Iterable<Key>) => void,
 
   /**
    * Moves one or more items after a given key.
    * @param key - The key of the item to move the items after.
    * @param keys - The keys of the items to move.
    */
-  moveAfter(key: Key, keys: Iterable<Key>): void,
+  moveAfter: (key: Key, keys: Iterable<Key>) => void,
 
   /**
    * Updates an item in the tree.
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
    */
-  update(key: Key, newValue: T): void
+  update: (key: Key, newValue: T) => void
 }
 
 interface TreeDataState<T extends object> {
