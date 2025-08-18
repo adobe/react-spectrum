@@ -24,7 +24,9 @@ interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement
+  option: number | string | HTMLElement,
+
+  shouldStayOpen?: boolean
 }
 
 export class SelectTester {
@@ -164,6 +166,7 @@ export class SelectTester {
   async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
     let {
       option,
+      shouldStayOpen = false,
       interactionType = this._interactionType
     } = opts || {};
     let trigger = this.trigger;
@@ -203,7 +206,7 @@ export class SelectTester {
         }
       }
 
-      if (option?.getAttribute('href') == null) {
+      if (option?.getAttribute('href') == null && !shouldStayOpen) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
