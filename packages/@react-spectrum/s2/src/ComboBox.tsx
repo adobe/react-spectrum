@@ -705,7 +705,9 @@ class SeparatorNode extends CollectionNode<any> {
   filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
     let prevItem = newCollection.getItem(this.prevKey!);
     if (prevItem && prevItem.type !== 'separator') {
-      return this.clone();
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
     }
 
     return null;

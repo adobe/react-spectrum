@@ -66,7 +66,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     this.rowHeaderColumnKeys = new Set();
     this.columns = [];
-
     let columnKeyMap = new Map();
     let visit = (node: Node<T>) => {
       switch (node.type) {
@@ -161,7 +160,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
     collection.body = this.body;
-    collection.updateColumns = this.updateColumns;
     return collection;
   }
 
@@ -191,12 +189,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     return text.join(' ');
-  }
-
-  filter(filterFn: (textValue: string, node: Node<T>) => boolean): TableCollection<T> {
-    let clone = this.clone();
-    return super.filter(filterFn, clone) as TableCollection<T>;
-
   }
 }
 
@@ -1054,7 +1046,9 @@ class TableRowNode<T> extends CollectionNode<T> {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
       if (filterFn(cell.textValue, cell)) {
-        return this.clone();
+        let clone = this.clone();
+        newCollection.addDescendants(clone, collection);
+        return clone;
       }
     }
 

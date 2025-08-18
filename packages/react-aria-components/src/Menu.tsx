@@ -112,11 +112,10 @@ class SubmenuTriggerNode<T> extends CollectionNode<T> {
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): CollectionNode<T> | null {
     let triggerNode = collection.getItem(this.firstChildKey!);
-    // Note that this provides the SubmenuTrigger node rather than the MenuItemNode it wraps to the filter function. Probably more useful
-    // because that node has the proper parentKey information (aka the section if any, the menu item will just point to the SubmenuTrigger node)
     if (triggerNode && filterFn(triggerNode.textValue, this)) {
-      newCollection.addNode(triggerNode as CollectionNode<T>);
-      return this.clone();
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
     }
 
     return null;

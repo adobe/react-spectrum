@@ -260,7 +260,6 @@ export class ElementNode<T> extends BaseNode<T> {
   private _node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
-  hasSetProps = false;
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {

@@ -50,8 +50,8 @@ export class CollectionNode<T> implements Node<T> {
     throw new Error('childNodes is not supported');
   }
 
-  clone(): CollectionNode<T> {
-    let node: Mutable<CollectionNode<T>> = new (this.constructor as typeof CollectionNode)(this.key);
+  clone(): this {
+    let node: Mutable<this> = new (this.constructor as any)(this.key);
     node.value = this.value;
     node.level = this.level;
     node.hasChildNodes = this.hasChildNodes;
@@ -85,7 +85,9 @@ export class CollectionNode<T> implements Node<T> {
 export class FilterLessNode<T> extends CollectionNode<T> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): FilterLessNode<T> | null {
-    return this.clone();
+    let clone = this.clone();
+    newCollection.addDescendants(clone, collection);
+    return clone;
   }
 }
 
@@ -98,8 +100,9 @@ export class ItemNode<T> extends CollectionNode<T> {
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
     if (filterFn(this.textValue, this)) {
-      // TODO: returning just this instead of cloning broke filtering, investigate
-      return this.clone();
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
     }
 
     return null;
@@ -256,6 +259,15 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.set(node.key, node);
   }
 
+  // Deeply add a node and its children to the collection from another collection, primarily used when filtering a collection
+  addDescendants(node: CollectionNode<T>, oldCollection: BaseCollection<T>): void {
+    this.addNode(node);
+    let children = oldCollection.getChildren(node.key);
+    for (let child of children) {
+      this.addDescendants(child as CollectionNode<T>, oldCollection);
+    }
+  }
+
   removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
@@ -279,14 +291,10 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  filter(filterFn: FilterFn<T>, newCollection?: BaseCollection<T>): BaseCollection<T> {
-    if (newCollection == null) {
-      newCollection = new BaseCollection<T>();
-    }
-
+  filter(filterFn: FilterFn<T>): this {
+    let newCollection = new (this.constructor as any)();
     let [firstKey, lastKey] = filterChildren(this, newCollection, this.firstKey, filterFn);
-    newCollection.firstKey = firstKey;
-    newCollection.lastKey = lastKey;
+    newCollection?.commit(firstKey, lastKey);
     return newCollection;
   }
 }
