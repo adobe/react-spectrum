@@ -10,29 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {InputContext} from './Input';
+import {FieldInputContext, SelectableCollectionContext} from './context';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, JSX, RefObject, useRef} from 'react';
-import {SearchFieldContext} from './SearchField';
-import {TextFieldContext} from './TextField';
+import React, {createContext, JSX, useRef} from 'react';
 
-export interface AutocompleteProps<T> extends AriaAutocompleteProps<T>, SlotProps {}
-
-interface InternalAutocompleteContextValue<T> {
-  filter?: (nodeTextValue: string, node: Node<T>) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
-}
-
+export interface AutocompleteProps<T = object> extends AriaAutocompleteProps<T>, SlotProps {}
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
-// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-// TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue<any> | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -61,13 +48,14 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
     <Provider
       values={[
         [AutocompleteStateContext, state],
-        [SearchFieldContext, textFieldProps],
-        [TextFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn as (nodeTextValue: string, node: Node<T>) => boolean,
-          collectionProps,
-          collectionRef: mergedCollectionRef
+        [FieldInputContext, {
+          ...textFieldProps,
+          ref: inputRef
+        }],
+        [SelectableCollectionContext, {
+          ...collectionProps,
+          filter: filterFn,
+          ref: mergedCollectionRef
         }]
       ]}>
       {props.children}

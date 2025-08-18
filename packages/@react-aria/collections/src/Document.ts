@@ -260,7 +260,6 @@ export class ElementNode<T> extends BaseNode<T> {
   private _node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
-  hasSetProps = false;
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
@@ -285,10 +284,11 @@ export class ElementNode<T> extends BaseNode<T> {
     return 0;
   }
 
-  get node(): CollectionNode<T> | null {
-    if (this._node == null && process.env.NODE_ENV !== 'production') {
-      console.error('Attempted to access node before it was defined. Check if setProps wasn\'t called before attempting to access the node.');
+  get node(): CollectionNode<T> {
+    if (this._node == null) {
+      throw Error('Attempted to access node before it was defined. Check if setProps wasn\'t called before attempting to access the node.');
     }
+
     return this._node;
   }
 
@@ -302,12 +302,12 @@ export class ElementNode<T> extends BaseNode<T> {
    */
   private getMutableNode(): Mutable<CollectionNode<T>> {
     if (!this.isMutated) {
-      this.node = this.node!.clone();
+      this.node = this.node.clone();
       this.isMutated = true;
     }
 
     this.ownerDocument.markDirty(this);
-    return this.node!;
+    return this.node;
   }
 
   updateNode(): void {
@@ -315,18 +315,18 @@ export class ElementNode<T> extends BaseNode<T> {
     let node = this.getMutableNode();
     node.index = this.index;
     node.level = this.level;
-    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node!.key : null;
-    node.prevKey = this.previousVisibleSibling?.node!.key ?? null;
-    node.nextKey = nextSibling?.node!.key ?? null;
+    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
+    node.prevKey = this.previousVisibleSibling?.node.key ?? null;
+    node.nextKey = nextSibling?.node.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstVisibleChild?.node!.key ?? null;
-    node.lastChildKey = this.lastVisibleChild?.node!.key ?? null;
+    node.firstChildKey = this.firstVisibleChild?.node.key ?? null;
+    node.lastChildKey = this.lastVisibleChild?.node.key ?? null;
 
     // Update the colIndex of sibling nodes if this node has a colSpan.
     if ((node.colSpan != null || node.colIndex != null) && nextSibling) {
       // This queues the next sibling for update, which means this happens recursively.
       let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
-      if (nextColIndex !== nextSibling.node!.colIndex) {
+      if (nextColIndex !== nextSibling.node.colIndex) {
         let siblingNode = nextSibling.getMutableNode();
         siblingNode.colIndex = nextColIndex;
       }
@@ -455,7 +455,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     let collection = this.getMutableCollection();
-    if (!collection.getItem(element.node!.key)) {
+    if (!collection.getItem(element.node.key)) {
       for (let child of element) {
         this.addNode(child);
       }
@@ -470,7 +470,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     let collection = this.getMutableCollection();
-    collection.removeNode(node.node!.key);
+    collection.removeNode(node.node.key);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -516,7 +516,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     // Finally, update the collection.
     if (this.nextCollection) {
-      this.nextCollection.commit(this.firstVisibleChild?.node!.key ?? null, this.lastVisibleChild?.node!.key ?? null, this.isSSR);
+      this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
         this.nextCollection = null;

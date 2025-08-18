@@ -21,8 +21,8 @@ import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
+import {SelectableCollectionContext} from './context';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -75,7 +75,9 @@ interface TagGroupInnerProps {
 }
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let contextProps;
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tagListRef = useRef<HTMLDivElement>(null);
@@ -201,12 +203,10 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
   isDisabled?: boolean
 }
 
-class TagItemNode extends ItemNode<unknown> {}
-
 /**
  * A Tag is an individual item within a TagList.
  */
-export const Tag = /*#__PURE__*/ createLeafComponent(TagItemNode, (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: false});

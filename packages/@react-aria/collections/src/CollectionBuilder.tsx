@@ -133,10 +133,9 @@ export type CollectionNodeClass<T> = {
 };
 
 function createCollectionNodeClass(type: string): CollectionNodeClass<any> {
-  let NodeClass = function (key: Key) {
-    return new CollectionNode(type, key);
-  } as any;
-  NodeClass.type = type;
+  let NodeClass = class extends CollectionNode<any> {
+    static readonly type = type;
+  };
   return NodeClass;
 }
 
@@ -172,7 +171,6 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   }
 
   // @ts-ignore
-  // TODO: could just make this a div perhaps, but keep it in line with how it used to work
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 

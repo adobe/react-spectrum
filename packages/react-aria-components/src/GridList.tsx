@@ -12,19 +12,19 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, FilterLessNode, ItemNode} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, ItemNode, LoaderNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
+import {FieldInputContext, SelectableCollectionContext} from './context';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface GridListRenderProps {
   /**
@@ -107,7 +107,9 @@ interface GridListInnerProps<T extends object> {
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
   // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
-  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let contextProps;
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
@@ -288,12 +290,10 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   onAction?: () => void
 }
 
-class GridListNode<T> extends ItemNode<T> {}
-
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
@@ -423,7 +423,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(GridListNode, func
                 }
               }],
               [CollectionRendererContext, DefaultCollectionRenderer],
-              [ListStateContext, null]
+              [ListStateContext, null],
+              [SelectableCollectionContext, null],
+              [FieldInputContext, null]
             ]}>
             {renderProps.children}
           </Provider>
@@ -524,16 +526,7 @@ export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, '
   isLoading?: boolean
 }
 
-// TODO: maybe make a general loader node
-class GridListLoaderNode extends FilterLessNode<any> {
-  static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(GridListLoaderNode.type, key);
-  }
-}
-
-export const GridListLoadMoreItem = createLeafComponent(GridListLoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

@@ -1,5 +1,5 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterLessNode, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterLessNode, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
@@ -10,21 +10,21 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {FieldInputContext, SelectableCollectionContext} from './context';
 import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: CollectionNode<T> = new CollectionNode('tableheader', -1);
-  body: CollectionNode<T> = new CollectionNode('tablebody', -2);
+  head = new TableHeaderNode<T>(-1);
+  body = new TableBodyNode<T>(-2);
   columnsDirty = true;
 
   addNode(node: CollectionNode<T>) {
@@ -66,7 +66,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     this.rowHeaderColumnKeys = new Set();
     this.columns = [];
-
     let columnKeyMap = new Map();
     let visit = (node: Node<T>) => {
       switch (node.type) {
@@ -161,7 +160,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
     collection.body = this.body;
-    collection.updateColumns = this.updateColumns;
     return collection;
   }
 
@@ -191,12 +189,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     return text.join(' ');
-  }
-
-  filter(filterFn: (textValue: string, node: Node<T>) => boolean): TableCollection<T> {
-    let clone = this.clone();
-    return super.filter(filterFn, clone) as TableCollection<T>;
-
   }
 }
 
@@ -371,7 +363,9 @@ interface TableInnerProps {
 
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
-  let {filter, collectionProps} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let contextProps;
+  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
+  let {filter, ...collectionProps} = contextProps;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
   let tableContainerContext = useContext(ResizableTableContainerContext);
@@ -491,7 +485,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         [TableStateContext, filteredState],
         [TableColumnResizeStateContext, layoutState],
         [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-        [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
+        [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
+        [SelectableCollectionContext, null],
+        [FieldInputContext, null]
       ]}>
       <FocusScope>
         <ElementType
@@ -557,12 +553,8 @@ export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderP
   dependencies?: ReadonlyArray<any>
 }
 
-class TableHeaderNode extends FilterLessNode<unknown> {
+class TableHeaderNode<T> extends FilterLessNode<T> {
   static readonly type = 'tableheader';
-
-  constructor(key: Key) {
-    super(TableHeaderNode.type, key);
-  }
 }
 
 /**
@@ -704,10 +696,6 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAt
 
 class TableColumnNode extends FilterLessNode<unknown> {
   static readonly type = 'column';
-
-  constructor(key: Key) {
-    super(TableColumnNode.type, key);
-  }
 }
 
 /**
@@ -946,12 +934,8 @@ export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKey
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-class TableBodyNode extends CollectionNode<any> {
+class TableBodyNode<T> extends CollectionNode<T> {
   static readonly type = 'tablebody';
-
-  constructor(key: Key) {
-    super(TableBodyNode.type, key);
-  }
 }
 
 /**
@@ -1058,15 +1042,13 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
 class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
-  constructor(key: Key) {
-    super(TableRowNode.type, key);
-  }
-
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
       if (filterFn(cell.textValue, cell)) {
-        return this.clone();
+        let clone = this.clone();
+        newCollection.addDescendants(clone, collection);
+        return clone;
       }
     }
 
@@ -1260,10 +1242,6 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
 
 class TableCellNode extends FilterLessNode<unknown> {
   static readonly type = 'cell';
-
-  constructor(key: Key) {
-    super(TableCellNode.type, key);
-  }
 }
 
 /**
@@ -1424,15 +1402,7 @@ export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'col
   isLoading?: boolean
 }
 
-class TableLoaderNode extends FilterLessNode<any> {
-  static readonly type = 'loader';
-
-  constructor(key: Key) {
-    super(TableLoaderNode.type, key);
-  }
-}
-
-export const TableLoadMoreItem = createLeafComponent(TableLoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
+export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;

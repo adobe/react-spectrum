@@ -15,7 +15,8 @@ import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBra
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -39,7 +40,6 @@ import React, {
 } from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -110,17 +110,12 @@ const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElemen
 class SubmenuTriggerNode<T> extends CollectionNode<T> {
   static readonly type = 'submenutrigger';
 
-  constructor(key: Key) {
-    super(SubmenuTriggerNode.type, key);
-  }
-
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): CollectionNode<T> | null {
     let triggerNode = collection.getItem(this.firstChildKey!);
-    // Note that this provides the SubmenuTrigger node rather than the MenuItemNode it wraps to the filter function. Probably more useful
-    // because that node has the proper parentKey information (aka the section if any, the menu item will just point to the SubmenuTrigger node)
     if (triggerNode && filterFn(triggerNode.textValue, this)) {
-      newCollection.addNode(triggerNode as CollectionNode<T>);
-      return this.clone();
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
     }
 
     return null;
@@ -198,15 +193,16 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 });
 
 interface MenuInnerProps<T> {
-  props: MenuProps<T>,
+  // For now we append filter and other autocomplete context props here for typescript, but eventually we can consider exposing these
+  // as top level props for users to use with standalone Menus
+  props: MenuProps<T> & {filter?: SelectableCollectionContextValue<object>['filter'], shouldUseVirtualFocus?: boolean},
   collection: BaseCollection<object>,
-  menuRef: RefObject<HTMLDivElement | null>
+  menuRef: RefObject<HTMLElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
+  let {filter, ...autocompleteMenuProps} = props;
   let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
@@ -215,7 +211,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -242,7 +238,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, menuProps)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         data-empty={state.collection.size === 0 || undefined}
         onScroll={props.onScroll}>
@@ -253,7 +249,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [UNSTABLE_InternalAutocompleteContext, null],
+            [SelectableCollectionContext, null],
+            [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
@@ -341,12 +338,10 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   );
 }
 
-class MenuSectionNode<T> extends SectionNode<T> {}
-
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent(MenuSectionNode, MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent(SectionNode, MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -380,12 +375,10 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
-class MenuItemNode<T> extends ItemNode<T> {}
-
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent(MenuItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
