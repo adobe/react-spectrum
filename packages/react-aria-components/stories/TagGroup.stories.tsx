@@ -110,3 +110,13 @@ export const TagGroupExampleWithRemove: Story = {
     </TagGroup>
   )
 };
+
+export const EmptyTagGroup: Story = {
+  render: (props: TagGroupProps) => (
+    <TagGroup {...props} aria-label="Categories" >
+      <TagList renderEmptyState={() => 'No categories.'}>
+        {[]}
+      </TagList>
+    </TagGroup>
+  )
+};

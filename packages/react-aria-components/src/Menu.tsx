@@ -151,10 +151,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubmenuTrigge
     <Provider
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        [MenuContext, submenuProps],
+        [MenuContext, {
+          ref: submenuRef,
+          ...submenuProps
+        }],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
-          ref: submenuRef,
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',

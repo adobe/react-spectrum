@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridListLoadMoreItem, GridList, GridListItem, GridListContext} from './GridList';
+export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListSection} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
@@ -79,7 +79,7 @@ export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeStat
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';
-export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable} from 'react-aria';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable, VisuallyHidden} from 'react-aria';
 export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTABLE_ToastQueue} from 'react-stately';
 export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';

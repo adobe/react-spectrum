@@ -210,7 +210,8 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   overflowY: 'auto',
   overflowX: 'hidden',
   fontFamily: 'sans',
-  fontSize: controlFont()
+  fontSize: controlFont(),
+  outlineStyle: 'none'
 });
 
 export let listboxItem = style({
@@ -339,14 +340,13 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
     labelPosition = 'top',
     UNSAFE_className = '',
     UNSAFE_style,
-    loadingState,
     ...comboBoxProps
   } = props;
 
   return (
     <AriaComboBox
       {...comboBoxProps}
-      allowsEmptyCollection={loadingState != null}
+      allowsEmptyCollection
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
