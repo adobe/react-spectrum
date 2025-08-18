@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, RefObject, Size} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation, Rect, RefObject, Size} from '@react-types/shared';
 import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
@@ -48,6 +48,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
     this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref!));
     this.focusMode = options.focusMode ?? 'row';
+  }
+
+  getOrientation(): Orientation | null {
+    return this.layoutDelegate.getOrientation?.() || 'vertical';
   }
 
   protected isCell(node: Node<T>): boolean {
@@ -468,6 +472,10 @@ class DeprecatedLayoutDelegate implements LayoutDelegate {
 
   constructor(layout: DeprecatedLayout) {
     this.layout = layout;
+  }
+
+  getOrientation(): Orientation {
+    return 'vertical';
   }
 
   getContentSize(): Size {

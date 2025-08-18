@@ -43,12 +43,10 @@ export class OverscanManager {
       overscanned.y -= overscanY;
     }
 
-    if (this.velocity.x !== 0) {
-      let overscanX = this.visibleRect.width / 3;
-      overscanned.width += overscanX;
-      if (this.velocity.x < 0) {
-        overscanned.x -= overscanX;
-      }
+    let overscanX = this.visibleRect.width / 3;
+    overscanned.width += overscanX;
+    if (this.velocity.x < 0) {
+      overscanned.x -= overscanX;
     }
 
     return overscanned;

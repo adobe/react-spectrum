@@ -11,11 +11,15 @@
  */
 
 import {InvalidationContext} from './types';
-import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
+import {ItemDropTarget, Key, LayoutDelegate, Node, Orientation} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
 import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
+
+export interface LayoutOptions {
+  orientation?: Orientation
+}
 
 /**
  * Virtualizer supports arbitrary layout objects, which compute what items are visible, and how
@@ -28,6 +32,8 @@ import {Virtualizer} from './Virtualizer';
  * `getLayoutInfo`, and `getContentSize` methods. All other methods can be optionally overridden to implement custom behavior.
  */
 export abstract class Layout<T extends object = Node<any>, O = any> implements LayoutDelegate {
+  protected orientation: Orientation;
+
   /** The Virtualizer the layout is currently attached to. */
   virtualizer: Virtualizer<T, any> | null = null;
 
@@ -49,6 +55,17 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    * Returns size of the content. By default, it returns virtualizer's size.
    */
   abstract getContentSize(): Size;  
+
+  constructor(options: LayoutOptions = {}) {
+    this.orientation = options.orientation ?? 'vertical';
+  }
+
+  /**
+   * Returns the orientation of the layout.
+   */
+  getOrientation?(): Orientation | null {
+    return this.orientation;
+  }
 
   /**
    * Returns whether the layout should invalidate in response to

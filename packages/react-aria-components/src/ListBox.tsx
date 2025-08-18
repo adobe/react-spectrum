@@ -52,6 +52,12 @@ export interface ListBoxRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
+   * The primary orientation of the items. Usually this is the
+   * direction that the collection scrolls.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
+  /**
    * State of the listbox.
    */
   state: ListState<unknown>
@@ -212,6 +218,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
+    orientation: keyboardDelegate.getOrientation?.() || 'vertical',
     state
   };
   let renderProps = useRenderProps({
@@ -247,7 +254,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={props.orientation || 'vertical'}>
+        data-orientation={renderValues.orientation}>
         <Provider
           values={[
             [ListBoxContext, props],
