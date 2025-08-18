@@ -13,7 +13,7 @@
 export {CollectionBuilder, Collection, createLeafComponent, createBranchComponent} from './CollectionBuilder';
 export {createHideableComponent, useIsHidden} from './Hidden';
 export {useCachedChildren} from './useCachedChildren';
-export {BaseCollection, CollectionNode, ItemNode, SectionNode, FilterLessNode, LoaderNode} from './BaseCollection';
+export {BaseCollection, CollectionNode, ItemNode, SectionNode, FilterLessNode, LoaderNode, HeaderNode} from './BaseCollection';
 
 export type {CollectionBuilderProps, CollectionProps} from './CollectionBuilder';
 export type {CachedChildrenOptions} from './useCachedChildren';

@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
@@ -973,15 +973,24 @@ export const AutocompleteWithGridList = () => {
           className={styles.menu}
           style={{height: 200, width: 200}}
           aria-label="test gridlist">
-          <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
-          <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
+          <GridListSection>
+            <GridListHeader>Section 1</GridListHeader>
+            <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
+          </GridListSection>
+          <GridListSection>
+            <GridListHeader>Section 2</GridListHeader>
+            <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
+          </GridListSection>
+          <GridListSection>
+            <GridListHeader>Section 3</GridListHeader>
+            <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
+          </GridListSection>
         </GridList>
       </div>
     </AutocompleteWrapper>

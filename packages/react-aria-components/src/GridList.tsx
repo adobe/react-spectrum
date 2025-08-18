@@ -12,7 +12,7 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, ItemNode, LoaderNode} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, HeaderNode, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -580,7 +580,7 @@ export interface GridListSectionProps<T> extends SectionProps<T> {}
 /**
  * A GridListSection represents a section within a GridList.
  */
-export const GridListSection = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
   let state = useContext(ListStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let headingRef = useRef(null);
@@ -617,7 +617,7 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent('section', <T
 
 const GridListHeaderContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
 
-export const GridListHeader = /*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
+export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);
   let rowHeaderProps = useContext(GridListHeaderContext);
 

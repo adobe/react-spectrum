@@ -91,7 +91,11 @@ export class FilterLessNode<T> extends CollectionNode<T> {
   }
 }
 
-export class LoaderNode extends FilterLessNode<any> {
+export class HeaderNode extends FilterLessNode<unknown> {
+  static readonly type = 'header';
+}
+
+export class LoaderNode extends FilterLessNode<unknown> {
   static readonly type = 'loader';
 }
 
