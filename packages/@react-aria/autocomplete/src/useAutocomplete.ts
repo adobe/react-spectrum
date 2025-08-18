@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useEvent, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -90,8 +90,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
-  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual' && !disableVirtualFocus;
-
+  let isMobileScreenReader = getInteractionModality() === 'virtual' && (isIOS() || isAndroid());
+  let shouldUseVirtualFocus = !isMobileScreenReader && !disableVirtualFocus;
   useEffect(() => {
     return () => clearTimeout(timeout.current);
   }, []);
