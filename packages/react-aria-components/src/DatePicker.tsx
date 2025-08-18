@@ -9,12 +9,17 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
+import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {
+  DatePickerState,
+  DatePickerStateOptions,
+  DateRangePickerState,
+  DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState
+} from '@react-stately/datepicker';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
@@ -26,6 +31,8 @@ import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import {useDatePicker, useDateRangePicker} from '@react-aria/datepicker';
+import {useFocusRing} from '@react-aria/focus';
 
 export interface DatePickerRenderProps {
   /**

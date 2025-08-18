@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {SeparatorProps as AriaSeparatorProps, useSeparator} from '@react-aria/separator';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {createLeafComponent} from '@react-aria/collections';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';

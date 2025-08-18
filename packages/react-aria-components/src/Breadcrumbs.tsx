@@ -9,14 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from '@react-aria/breadcrumbs';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Key, Node} from '@react-types/shared';
 import {LinkContext} from './Link';
-import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLOListElement> {

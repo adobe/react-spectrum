@@ -1,6 +1,6 @@
-import {AriaColorAreaProps, useColorArea} from 'react-aria';
+import {AriaColorAreaProps, useColorArea} from '@react-aria/color';
 import {ColorAreaContext} from './RSPContexts';
-import {ColorAreaState, useColorAreaState} from 'react-stately';
+import {ColorAreaState, useColorAreaState} from '@react-stately/color';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';

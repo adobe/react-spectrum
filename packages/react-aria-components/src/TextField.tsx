@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useTextField} from 'react-aria';
+import {AriaTextFieldProps} from '@react-types/textfield';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
@@ -23,6 +23,7 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
+import {useTextField} from '@react-aria/textfield';
 
 export interface TextFieldRenderProps {
   /**

@@ -10,20 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, useTree, useTreeItem} from '@react-aria/tree';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Collection as ICollection, Key, LinkDOMProps, MultipleSelection, Node, PressEvents, RefObject, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import {DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult} from '@react-aria/dnd';
+import {
+  filterDOMProps,
+  inertValue,
+  LoadMoreSentinelProps,
+  mergeProps, useId,
+  useLoadMoreSentinel,
+  useObjectRef
+} from '@react-aria/utils';
+import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
+import {TreeState, useTreeState} from '@react-stately/tree';
+import {useCollator, useLocale} from '@react-aria/i18n';
 import {useControlledState} from '@react-stately/utils';
+import {useGridListSelectionCheckbox} from '@react-aria/gridlist';
+import {useHover} from '@react-aria/interactions';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
