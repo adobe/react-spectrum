@@ -14,7 +14,7 @@ import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {GlobalDOMAttributes, Key} from '@react-types/shared';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {}
@@ -24,14 +24,12 @@ export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLE
 export class SeparatorNode extends CollectionNode<any> {
   static readonly type = 'separator';
 
-  constructor(key: Key) {
-    super(SeparatorNode.type, key);
-  }
-
   filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
     let prevItem = newCollection.getItem(this.prevKey!);
     if (prevItem && prevItem.type !== 'separator') {
-      return this.clone();
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
     }
 
     return null;

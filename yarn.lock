@@ -25957,6 +25957,7 @@ __metadata:
     "@react-aria/live-announcer": "npm:^3.4.4"
     "@react-aria/overlays": "npm:^3.28.0"
     "@react-aria/ssr": "npm:^3.9.10"
+    "@react-aria/textfield": "npm:^3.18.0"
     "@react-aria/toolbar": "npm:3.0.0-beta.19"
     "@react-aria/utils": "npm:^3.30.0"
     "@react-aria/virtualizer": "npm:^4.1.8"

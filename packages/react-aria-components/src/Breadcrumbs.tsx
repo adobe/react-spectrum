@@ -75,10 +75,6 @@ export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, Glo
 
 class BreadcrumbNode extends FilterLessNode<unknown> {
   static readonly type = 'item';
-
-  constructor(key: Key) {
-    super(BreadcrumbNode.type, key);
-  }
 }
 
 /**
