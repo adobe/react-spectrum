@@ -26,14 +26,18 @@ export default {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['single', 'multiple']
     }
   }
 } as Meta<typeof Select>;
 
 export type SelectStory = StoryFn<typeof Select>;
 
-export const SelectExample: SelectStory = () => (
-  <Select data-testid="select-example" id="select-example-id">
+export const SelectExample: SelectStory = (args) => (
+  <Select {...args} data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -53,13 +57,17 @@ export const SelectExample: SelectStory = () => (
   </Select>
 );
 
-export const SelectRenderProps: SelectStory = () => (
-  <Select data-testid="select-render-props">
+export const SelectRenderProps: SelectStory = (args) => (
+  <Select {...args} data-testid="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <Button>
-          <SelectValue />
+          <SelectValue>
+            {({selectedItems, defaultChildren}) => (
+              selectedItems.length <= 1 ? defaultChildren : `${selectedItems.length} selected items`
+            )}
+          </SelectValue>
           <span aria-hidden="true" style={{paddingLeft: 5}}>{isOpen ? '▲' : '▼'}</span>
         </Button>
         <Popover>
@@ -143,8 +151,8 @@ const usStateOptions = [
   {id: 'WY', name: 'Wyoming'}
 ];
 
-export const SelectManyItems: SelectStory = () => (
-  <Select>
+export const SelectManyItems: SelectStory = (args) => (
+  <Select {...args}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -161,8 +169,8 @@ export const SelectManyItems: SelectStory = () => (
   </Select>
 );
 
-export const VirtualizedSelect: SelectStory = () => (
-  <Select>
+export const VirtualizedSelect: SelectStory = (args) => (
+  <Select {...args}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -253,7 +261,7 @@ export const AsyncVirtualizedCollectionRenderSelect: StoryObj<typeof AsyncVirtua
   }
 };
 
-export const SelectSubmitExample: SelectStory = () => (
+export const SelectSubmitExample: SelectStory = (args) => (
   <Form>
     <TextField
       isRequired
@@ -264,7 +272,7 @@ export const SelectSubmitExample: SelectStory = () => (
       <Input />
       <FieldError className={styles.errorMessage} />
     </TextField>
-    <Select isRequired autoComplete="organization" name="company">
+    <Select {...args} isRequired autoComplete="organization" name="company">
       <Label style={{display: 'block'}}>Company</Label>
       <Button>
         <SelectValue />
@@ -303,6 +311,7 @@ export const RequiredSelectWithManyItems = (props) => (
         <SelectValue />
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
       </Button>
+      <FieldError />
       <Popover>
         <ListBox items={makeItems(301)} className={styles.menu}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
