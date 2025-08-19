@@ -30,7 +30,6 @@
     "@react-stately/form": "^3.2.0",
     "@react-stately/list": "^3.12.4",
     "@react-stately/overlays": "^3.6.18",
-    "@react-stately/select": "^3.7.0",
     "@react-stately/utils": "^3.10.8",
     "@react-types/combobox": "^3.13.7",
     "@react-types/shared": "^3.31.0",

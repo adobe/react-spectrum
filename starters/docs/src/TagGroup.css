@@ -26,6 +26,9 @@
   display: flex;
   align-items: center;
   transition: border-color 200ms;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &[data-hovered] {
     border-color: var(--border-color-hover);

@@ -36,7 +36,7 @@ export function TagGroup<T extends object>(
   return (
     (
       <AriaTagGroup {...props}>
-        <Label>{label}</Label>
+        {label && <Label>{label}</Label>}
         <TagList items={items} renderEmptyState={renderEmptyState}>
           {children}
         </TagList>

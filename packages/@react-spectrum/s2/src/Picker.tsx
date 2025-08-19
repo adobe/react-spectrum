@@ -91,8 +91,9 @@ export interface PickerStyleProps {
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
+type SelectionMode = 'single' | 'multiple';
+export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -262,7 +263,7 @@ let InsideSelectValueContext = createContext(false);
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object, M extends SelectionMode = 'single'>(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -507,7 +508,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         {(renderProps) => (
           <>
             <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-              {({defaultChildren}) => {
+              {({selectedItems, defaultChildren, selectedText}) => {
                 return (
                   <Provider
                     values={[
@@ -531,7 +532,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {defaultChildren}
+                    {selectedItems.length <= 1 ? defaultChildren : <Text slot="label">{selectedText}</Text>}
                   </Provider>
                 );
               }}
