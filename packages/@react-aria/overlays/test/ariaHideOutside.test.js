@@ -353,36 +353,6 @@ describe('ariaHideOutside', function () {
     expect(() => getByRole('button')).not.toThrow();
   });
 
-  it('should unhide the element even if it was hidden via inert first, then via hideOutside', function () {
-    let {getByRole} = render(
-      <>
-        <input type="radio" />
-        <button>Button</button>
-      </>
-    );
-
-    let button = getByRole('button');
-    let revert1 = ariaHideOutside([button], {shouldUseInert: true});
-
-    expect(getByRole('radio', {hidden: true}).inert).toBeTruthy();
-    expect(() => getByRole('button')).not.toThrow();
-
-    let revert2 = ariaHideOutside([button]);
-
-    expect(getByRole('radio', {hidden: true}).inert).toBeTruthy();
-    expect(() => getByRole('button')).not.toThrow();
-
-    revert1();
-
-    expect(getByRole('radio', {hidden: true}).inert).toBeTruthy();
-    expect(() => getByRole('button')).not.toThrow();
-
-    revert2();
-
-    expect(getByRole('radio', {hidden: true}).inert).toBeFalsy();
-    expect(() => getByRole('button')).not.toThrow();
-  });
-
   it('should hide everything except the provided element [row]', function () {
     let {getAllByRole, getByTestId} = render(
       <div role="grid">

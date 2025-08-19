@@ -109,13 +109,3 @@ beforeEach(() => {
 afterEach(() => {
   delete window.IntersectionObserver;
 });
-
-Object.defineProperty(HTMLElement.prototype, 'inert', {
-  configurable: true,
-  get() {
-    return this._inert || false;
-  },
-  set(value) {
-    this._inert = value;
-  }
-});
