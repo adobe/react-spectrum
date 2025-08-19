@@ -11,14 +11,14 @@
  */
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
+import {Button, Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
 import {Collection, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import {fn} from '@storybook/test';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {style} from '../style' with { type: 'macro' };
-import {Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -147,4 +147,63 @@ export const Dynamic: Story = {
       </Tabs>
     </div>
   )
+};
+
+function AddRemoveTabsExample(props) {
+  let [tabs, setTabs] = React.useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}, 
+    {id: 4, title: 'Tab 4', content: 'Tab body 4'},
+    {id: 5, title: 'Tab 5', content: 'Tab body 5'},
+    {id: 6, title: 'Tab 6', content: 'Tab body 6'},
+    {id: 7, title: 'Tab 7', content: 'Tab body 7'},
+    {id: 8, title: 'Tab 8', content: 'Tab body 8'},
+    {id: 9, title: 'Tab 9', content: 'Tab body 9'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <div className={style({width: 600})}>
+      <Tabs {...props} aria-label="Tabs">
+        <div className={style({display: 'flex', alginSelf: 'stretch'})}>
+          <TabList items={tabs} styles={style({flexShrink: 1, flexGrow: 1, flexBasis: 'auto'})}>
+            {tab => <Tab id={tab.id}>{tab.title}</Tab>}
+          </TabList>
+          <div className={style({display: 'flex', alignItems: 'center', flexShrink: 0, flexGrow: 0, flexBasis: 'auto'})}>
+            <Button onPress={addTab}>Add tab</Button>
+            <Button onPress={removeTab}>Remove tab</Button>
+          </div>
+        </div>
+        <Collection items={tabs}>
+          {tab => (
+            <TabPanel id={tab.id}>
+              {tab.content}
+            </TabPanel>
+          )}
+        </Collection>
+      </Tabs>
+    </div>
+  );
+}
+
+export const CustomizedLayout: Story = {
+  render: (args) => <AddRemoveTabsExample {...args} />,
+  tags: ['!autodocs']
 };

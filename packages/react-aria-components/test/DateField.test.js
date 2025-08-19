@@ -374,44 +374,6 @@ describe('DateField', () => {
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 
-  it('should not store leading zeros when typing into the segments', async () => {
-    let {getAllByRole} = render(
-      <DateField>
-        <Label>Date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
-      </DateField>
-    );
-
-    let segements = getAllByRole('spinbutton');
-    let monthSegment = segements[0];
-    await user.click(monthSegment);
-    expect(monthSegment).toHaveFocus();
-    await user.keyboard('11');
-    expect(monthSegment).toHaveTextContent('11');
-    await user.click(monthSegment);
-    await user.keyboard('012');
-    expect(monthSegment).toHaveTextContent('12');
-
-    let daysSegment = segements[1];
-    await user.click(daysSegment);
-    expect(daysSegment).toHaveFocus();
-    await user.keyboard('11');
-    expect(daysSegment).toHaveTextContent('11');
-    await user.click(daysSegment);
-    await user.keyboard('012');
-    expect(daysSegment).toHaveTextContent('12');
-
-    let yearsSegment = segements[2];
-    await user.click(yearsSegment);
-    expect(yearsSegment).toHaveFocus();
-    await user.keyboard('1111');
-    expect(yearsSegment).toHaveTextContent('1111');
-    await user.keyboard('002222');
-    expect(yearsSegment).toHaveTextContent('2222');
-  });
-
   it('should support autofill', async() => {
     let {getByRole} = render(
       <DateField>

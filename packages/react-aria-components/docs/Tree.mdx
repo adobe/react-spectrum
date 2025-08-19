@@ -414,14 +414,14 @@ Now we can render a Tree using far less code.
 
 ```tsx example
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
-  <MyTreeItem title="Documents">
-    <MyTreeItem title="Project">
-      <MyTreeItem title="Weekly Report" />
+  <MyTreeItem id="documents" title="Documents">
+    <MyTreeItem id="project" title="Project">
+      <MyTreeItem id="report" title="Weekly Report" />
     </MyTreeItem>
   </MyTreeItem>
-  <MyTreeItem title="Photos">
-    <MyTreeItem title="Image 1" />
-    <MyTreeItem title="Image 2" />
+  <MyTreeItem id="photos" title="Photos">
+    <MyTreeItem id="one" title="Image 1" />
+    <MyTreeItem id="two" title="Image 2" />
   </MyTreeItem>
 </Tree>
 ```
@@ -460,7 +460,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
+      defaultExpandedKeys={['1']}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -506,7 +506,7 @@ A user can click on a different item to change the selection or click on the sam
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} />
 ```
 
 ### Multiple selection
@@ -515,7 +515,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="multiple" defaultSelectedKeys={[2, 4]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1', '2']} />
 ```
 
 ### Disallow empty selection
@@ -525,7 +525,7 @@ In this mode, if a single item is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} disallowEmptySelection />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} disallowEmptySelection />
 ```
 
 
