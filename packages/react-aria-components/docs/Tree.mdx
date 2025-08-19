@@ -460,7 +460,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
-      defaultExpandedKeys={['1', '4']}
+      defaultExpandedKeys={['1']}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -515,7 +515,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1']} />
+<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1', '2']} />
 ```
 
 ### Disallow empty selection
