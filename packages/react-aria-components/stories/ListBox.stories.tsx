@@ -66,6 +66,16 @@ ListBoxExample.story = {
   }
 };
 
+export const ListBoxDisabledSelected: ListBoxStory = (args) => (
+  <ListBox className={styles.menu} {...args} aria-label="test listbox" selectedKeys={['1']} disabledKeys={['1', '2', '3', '4']}>
+    <MyListBoxItem id="1">Foo</MyListBoxItem>
+    <MyListBoxItem id="2">Bar</MyListBoxItem>
+    <MyListBoxItem id="3">Baz</MyListBoxItem>
+    <MyListBoxItem id="4" href="http://google.com">Google</MyListBoxItem>
+  </ListBox>
+);
+
+
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
 export const ListBoxSections: ListBoxStory = () => (
