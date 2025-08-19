@@ -21,7 +21,7 @@ type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
 
 /** An immutable object representing a Node in a Collection. */
 export class CollectionNode<T> implements Node<T> {
-  static readonly type;
+  static readonly type: string;
   readonly type: string;
   readonly key: Key;
   readonly value: T | null = null;
