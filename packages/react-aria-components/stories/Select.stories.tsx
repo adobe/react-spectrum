@@ -16,6 +16,7 @@ import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import styles from '../example/index.css';
+import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
 import {useAsyncList} from 'react-stately';
 import './styles.css';
 
@@ -80,6 +81,35 @@ export const SelectRenderProps: SelectStory = (args) => (
         </Popover>
       </>
     )}
+  </Select>
+);
+
+export const SelectWithTagGroup: SelectStory = (args) => (
+  <Select {...args} data-testid="select-example" id="select-example-id">
+    <Label style={{display: 'block'}}>States</Label>
+    <div style={{display: 'flex', gap: 8, alignItems: 'start', maxWidth: 250}}>
+      <SelectValue>
+        {({selectedItems, state}) => (
+          <TagGroup
+            aria-label="Selected states"
+            items={selectedItems as {name: string}[]}
+            renderEmptyState={() => 'No selected items'}
+            onRemove={(keys) => {
+              for (let key of keys) {
+                state.selectionManager.toggleSelection(key);
+              }
+            }}>
+            {item => <Tag>{item.name}</Tag>}
+          </TagGroup>
+        )}
+      </SelectValue>
+      <Button>+</Button>
+    </div>
+    <Popover placement="bottom end">
+      <ListBox className={styles.menu} items={usStateOptions}>
+        {state => <MyListBoxItem>{state.name}</MyListBoxItem>}
+      </ListBox>
+    </Popover>
   </Select>
 );
 

@@ -13,7 +13,7 @@
 import {AriaSelectProps, HiddenSelect, useFocusRing, useListFormatter, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, Node, SelectState, useSelectState} from 'react-stately';
-import {CollectionBuilder} from '@react-aria/collections';
+import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
@@ -238,7 +238,9 @@ export interface SelectValueRenderProps<T> {
   /** The object values of the currently selected items. */
   selectedItems: (T | null)[],
   /** The textValue of the currently selected items. */
-  selectedText: string
+  selectedText: string,
+  /** The state of the select. */
+  state: SelectState<T, 'single' | 'multiple'>
 }
 
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
@@ -249,9 +251,9 @@ export const SelectValueContext = createContext<ContextValue<SelectValueProps<an
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+export const SelectValue = /*#__PURE__*/ createHideableComponent(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
-  let state = useContext(SelectStateContext)!;
+  let state = useContext(SelectStateContext)! as SelectState<T, 'single' | 'multiple'>;
   let {placeholder} = useSlottedContext(SelectContext)!;
   let rendered = state.selectedItems.map((item) => {
     let rendered = item.props?.children;
@@ -312,7 +314,8 @@ export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       selectedItem: state.selectedItems[0]?.value as T ?? null,
       selectedItems: useMemo(() => state.selectedItems.map(item => item.value as T ?? null), [state.selectedItems]),
       selectedText,
-      isPlaceholder: state.selectedItems.length === 0
+      isPlaceholder: state.selectedItems.length === 0,
+      state
     }
   });
 

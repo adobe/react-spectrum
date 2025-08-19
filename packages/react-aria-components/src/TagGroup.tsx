@@ -61,9 +61,11 @@ export const TagListContext = createContext<ContextValue<TagListProps<any>, HTML
 export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
   return (
-    <CollectionBuilder content={props.children}>
-      {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
-    </CollectionBuilder>
+    <ListStateContext.Provider value={null}>
+      <CollectionBuilder content={props.children}>
+        {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
+      </CollectionBuilder>
+    </ListStateContext.Provider>
   );
 });
 
