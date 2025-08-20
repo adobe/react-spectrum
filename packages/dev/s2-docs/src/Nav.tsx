@@ -1,10 +1,10 @@
 'use client';
 
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
 import {Link} from 'react-aria-components';
+import {Menu, MenuItem, Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import type {PageProps} from '@parcel/rsc';
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = currentPage.url.slice(0, currentPage.url.indexOf('/', 1));
@@ -56,27 +56,305 @@ export function Nav({pages, currentPage}: PageProps) {
 }
 
 export function MobileNav({pages, currentPage}: PageProps) {
-  let sections = new Map();
-  for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
-    let sectionPages = sections.get(section) ?? [];
-    sectionPages.push(page);
-    sections.set(section, sectionPages);
-  }
+  let [searchFocused, setSearchFocused] = useState(false);
+  let [searchValue, setSearchValue] = useState('');
+  let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
+  let menuContainerRef = useRef<HTMLDivElement>(null);
+  let isScrollingProgrammatically = useRef(false);
+
+  let getCurrentLibrary = (page: any) => {
+    if (page.url.includes('react-aria')) {
+      return 'react-aria';
+    } else if (page.url.includes('react-internationalized')) {
+      return 'internationalized';
+    }
+    return 'react-spectrum';
+  };
+
+  let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(getCurrentLibrary(currentPage));
+
+  let getSectionsForLibrary = useCallback((libraryId: string) => {
+    let sectionsMap = new Map();
+    
+    let filteredPages = pages.filter(page => {
+      let pageLibrary: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
+      if (page.url.includes('react-aria')) {
+        pageLibrary = 'react-aria';
+      } else if (page.url.includes('react-internationalized')) {
+        pageLibrary = 'internationalized';
+      }
+      
+      return pageLibrary === libraryId;
+    });
+
+    for (let page of filteredPages) {
+      let section = page.exports?.section ?? 'Components';
+      let sectionPages = sectionsMap.get(section) ?? [];
+      sectionPages.push(page);
+      sectionsMap.set(section, sectionPages);
+    }
+    return sectionsMap;
+  }, [pages]);
+
+  let currentLibrarySectionArray = useMemo(() => {
+    let librarySections = getSectionsForLibrary(selectedLibrary);
+    return [...librarySections.keys()];
+  }, [getSectionsForLibrary, selectedLibrary]);
+  let showAllTab = searchFocused;
+
+  useEffect(() => {
+      // Auto-select first section initially or when library changes
+    if (currentLibrarySectionArray.length > 0 && !selectedSection) {
+      setSelectedSection(currentLibrarySectionArray[0]);
+    }
+  }, [currentLibrarySectionArray, selectedSection]);
+
+  // Auto-select first section when switching libraries (if not focused on search field)
+  useEffect(() => {
+    if (currentLibrarySectionArray.length > 0 && !searchFocused) {
+      setSelectedSection(currentLibrarySectionArray[0]);
+      // Scroll to first section when library changes
+      setTimeout(() => scrollToSection(0), 100);
+    }
+  }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
+
+  // Remove "All" section when search field is blurred and empty
+  useEffect(() => {
+    if (!searchFocused && searchValue === '' && selectedSection === 'All') {
+      // Switch to first regular section if "All" was selected
+      setSelectedSection(currentLibrarySectionArray[0]);
+      // Scroll to first regular section
+      setTimeout(() => scrollToSection(0), 100);
+    }
+  }, [searchFocused, searchValue, selectedSection, currentLibrarySectionArray]);
+
+  // Create ordered libraries array with current library first
+  let getOrderedLibraries = () => {
+    let allLibraries = [
+      {id: 'react-aria', label: 'React Aria'}, 
+      {id: 'react-spectrum', label: 'React Spectrum'}
+    ];
+    
+    let currentLibrary = getCurrentLibrary(currentPage);
+    
+    // Find current library and move it to first position
+    let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibrary);
+    if (currentLibraryIndex > 0) {
+      let currentLib = allLibraries.splice(currentLibraryIndex, 1)[0];
+      allLibraries.unshift(currentLib);
+    }
+    
+    return allLibraries;
+  };
+
+  let libraries = getOrderedLibraries();
+
+  let handleSearchFocus = () => {
+    setSearchFocused(true);
+    // Only auto-select "All" if the first tag was already selected
+    if (selectedSection === currentLibrarySectionArray[0]) {
+      setSelectedSection('All');
+      // Scroll to "All" section (which will be at index 0)
+      setTimeout(() => scrollToSection(0), 100);
+    }
+  };
+
+  let handleSearchBlur = () => {
+    if (searchValue === '') {
+      setSearchFocused(false);
+    }
+  };
+
+  let handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    if (value === '' && !searchFocused) {
+      setSearchFocused(false);
+    }
+  };
+
+  let filterPages = (pages: any[], searchValue: string) => {
+    if (!searchValue.trim()) {
+      return pages;
+    }
+    
+    let searchLower = searchValue.toLowerCase();
+    return pages.filter(page => {
+      let pageTitle = title(page).toLowerCase();
+      return pageTitle.includes(searchLower);
+    });
+  };
+
+  let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = '') => {
+    let librarySections = getSectionsForLibrary(libraryId);
+    let pages;
+    
+    if (sectionName === 'All') {
+      pages = Array.from(librarySections.values()).flat();
+    } else {
+      pages = librarySections.get(sectionName) ?? [];
+    }
+    
+    let filteredPages = filterPages(pages, searchValue);
+    
+    return filteredPages.sort((a, b) => title(a).localeCompare(title(b))).map(page => ({...page, id: page.url}));
+  };
+
+  let getSectionNamesForLibrary = (libraryId: string) => {
+    let librarySections = getSectionsForLibrary(libraryId);
+    let sectionArray = [...librarySections.keys()];
+    
+    // Show 'Components' first
+    sectionArray.sort((a, b) => {
+      if (a === 'Components') {
+        return -1;
+      }
+      if (b === 'Components') {
+        return 1;
+      }
+      return a.localeCompare(b);
+    });
+    
+    return showAllTab ? ['All', ...sectionArray] : sectionArray;
+  };
+
+  let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
+
+  let scrollToSection = (sectionIndex: number) => {
+    if (menuContainerRef.current) {
+      let container = menuContainerRef.current;
+      let scrollPosition = sectionIndex * container.clientWidth;
+      
+      // Set flag to disable intersection observer updates during programmatic scroll
+      isScrollingProgrammatically.current = true;
+      
+      container.scrollTo({left: scrollPosition, behavior: 'smooth'});
+      
+      // Clear flag after scroll animation completes
+      setTimeout(() => {
+        isScrollingProgrammatically.current = false;
+      }, 600);
+    }
+  };
+
+  let handleTagSelection = (keys: any) => {
+    let key = [...keys][0] as string;
+    setSelectedSection(key);
+    
+    // Find the index of the selected section and scroll to it
+    let sectionIndex = currentLibrarySections.indexOf(key);
+    if (sectionIndex !== -1) {
+      scrollToSection(sectionIndex);
+    }
+  };
+
+  useEffect(() => {
+    if (!menuContainerRef.current) {
+      return;
+    }
+
+    let container = menuContainerRef.current;
+    // Detect visible menu
+    let observer = new IntersectionObserver(
+      (entries) => {
+        // Don't update selection if we're programmatically scrolling
+        if (isScrollingProgrammatically.current) {
+          return;
+        }
+        
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            let sectionIndex = parseInt(entry.target.getAttribute('data-section-index') || '0', 10);
+            let sectionName = currentLibrarySections[sectionIndex];
+            if (sectionName && sectionName !== selectedSection) {
+              setSelectedSection(sectionName);
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.5,
+        rootMargin: '0px'
+      }
+    );
+
+    let menuItems = container.querySelectorAll('[data-section-index]');
+    menuItems.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, [currentLibrarySections, selectedSection]);
+
+  // Initial scroll to selected section on mount or when sections change
+  useEffect(() => {
+    if (selectedSection && currentLibrarySections.length > 0) {
+      let sectionIndex = currentLibrarySections.indexOf(selectedSection);
+      if (sectionIndex !== -1) {
+        setTimeout(() => scrollToSection(sectionIndex), 100);
+      }
+    }
+  }, [currentLibrarySections, selectedSection]);
 
   return (
-    <Menu size="L" selectionMode="single" selectedKeys={[currentPage.url]}>
-      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
-        <MenuSection key={name}>
-          <Header>
-            <Heading>{name}</Heading>
-          </Header>
-          {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-            <MenuItem key={page.url} id={page.url} href={page.url}>{title(page)}</MenuItem>
+    <div className={style({padding: 24})}>
+      <Tabs 
+        aria-label="Libraries"
+        density="compact"
+        selectedKey={selectedLibrary}
+        onSelectionChange={(key) => setSelectedLibrary(key as 'react-spectrum' | 'react-aria' | 'internationalized')}>
+        <TabList>
+          {libraries.map(library => (
+            <Tab key={library.id} id={library.id}>{library.label}</Tab>
           ))}
-        </MenuSection>
-      ))}
-    </Menu>
+        </TabList>
+        {libraries.map(library => (
+          <TabPanel key={library.id} id={library.id}>
+            <SearchField 
+              aria-label="Search" 
+              value={searchValue}
+              onChange={handleSearchChange}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
+              styles={style({marginY: 12})} />
+            <TagGroup 
+              aria-label="Navigation sections" 
+              selectionMode="single" 
+              selectedKeys={selectedSection ? [selectedSection] : []}
+              onSelectionChange={handleTagSelection}>
+              {currentLibrarySections.map(sectionName => (
+                <Tag key={sectionName} id={sectionName}>{sectionName}</Tag>
+              ))}
+            </TagGroup>
+            <div
+              ref={menuContainerRef}
+              style={{
+                display: 'flex',
+                overflowX: 'auto',
+                scrollSnapType: 'x mandatory',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              } as React.CSSProperties}>
+              {currentLibrarySections.map((sectionName, index) => (
+                <div
+                  key={sectionName}
+                  data-section-index={index}
+                  style={{
+                    minWidth: '100%',
+                    scrollSnapAlign: 'start'
+                  } as React.CSSProperties}>
+                  <Menu aria-label="Pages" size="L" items={getSectionContent(sectionName, library.id, searchValue)}>
+                    {page => (
+                      <MenuItem id={page.id} href={page.url}>
+                        {title(page)}
+                      </MenuItem>
+                    )}
+                  </Menu>
+                </div>
+              ))}
+            </div>
+          </TabPanel>
+        ))}
+      </Tabs>
+    </div>
   );
 }
 

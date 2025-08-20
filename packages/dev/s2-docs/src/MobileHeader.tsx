@@ -1,10 +1,10 @@
 'use client';
 
-import {ActionButton, MenuTrigger} from '@react-spectrum/s2';
+import {ActionButton, CloseButton, CustomDialog, DialogTrigger} from '@react-spectrum/s2';
 import {AdobeLogo} from './AdobeLogo';
-import {CSSProperties, useEffect, useRef} from 'react';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
+import React, {CSSProperties, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let fadeOut = keyframes(`
@@ -92,7 +92,7 @@ export function MobileHeader({toc, nav}) {
         },
         alignItems: 'center',
         gap: 12,
-        zIndex: 100,
+        // zIndex: 100, // TODO: should be behind custom dialog
         overflow: 'clip',
         '--base-bg': {
           type: 'backgroundColor',
@@ -149,12 +149,15 @@ export function MobileHeader({toc, nav}) {
         } as CSSProperties}>
         {toc}
       </div>
-      <MenuTrigger align="end">
+      <DialogTrigger>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        {nav}
-      </MenuTrigger>
+        <CustomDialog size="fullscreenTakeover" padding="none">
+          <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
+          {nav}
+        </CustomDialog>
+      </DialogTrigger>
     </div>
   );
 }
