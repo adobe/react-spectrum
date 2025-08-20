@@ -12,7 +12,7 @@
 
 import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox, Modal, ModalOverlay, Popover, TextField} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
-import React, {useEffect} from 'react';
+import React from 'react';
 import './styles.css';
 import {MyListBoxItem} from './utils';
 import styles from '../example/index.css';
