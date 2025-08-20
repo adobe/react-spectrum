@@ -132,7 +132,6 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
     switch (e.key) {
       case 'Enter':
-      case 'Tab':
         // Prevent form submission if menu is open since we may be selecting a option
         if (state.isOpen && e.key === 'Enter') {
           e.preventDefault();
