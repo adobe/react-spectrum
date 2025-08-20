@@ -698,6 +698,18 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
   );
 };
 
+export const ListBoxScrollMargin: ListBoxStory = (args) => {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+  return (
+    <ListBox className={styles.menu} {...args} aria-label="test listbox" style={{height: 200, overflow: 'scroll'}} items={items}>
+      {item => <MyListBoxItem style={{scrollMargin: 10}}>{item.name}</MyListBoxItem>}
+    </ListBox>
+  );
+};
+
 AsyncListBoxVirtualized.story = {
   args: {
     delay: 50
