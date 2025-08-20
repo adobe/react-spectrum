@@ -45,7 +45,7 @@ export {useEffectEvent} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
 export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
-export {useLoadMoreSentinel} from './useLoadMoreSentinel';
+export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel} from './useLoadMoreSentinel';
 export {inertValue} from './inertValue';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed} from './keyboard';
