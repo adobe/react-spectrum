@@ -23,7 +23,8 @@ import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/ListBox',
-  component: ListBox
+  component: ListBox,
+  excludeStories: ['MyListBoxLoaderIndicator']
 } as Meta<typeof ListBox>;
 
 export type ListBoxStory = StoryFn<typeof ListBox>;
@@ -604,7 +605,7 @@ interface Character {
   birth_year: number
 }
 
-const MyListBoxLoaderIndicator = (props) => {
+export const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
     <ListBoxLoadMoreItem
