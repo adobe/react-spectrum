@@ -102,8 +102,8 @@ export class CalendarDate {
    * Returns a new `CalendarDate` with the given field adjusted by a specified amount.
    * When the resulting value reaches the limits of the field, it wraps around.
    */
-  cycle(field: DateField, amount: number, options?: CycleOptions): CalendarDate {
-    return cycleDate(this, field, amount, options);
+  cycle(field: DateField, amount: number, options?: CycleOptions, ignoreDay?: boolean): CalendarDate {
+    return cycleDate(this, field, amount, options, ignoreDay);
   }
 
   /** Converts the date to a native JavaScript Date object, with the time set to midnight in the given time zone. */
@@ -216,10 +216,10 @@ export class CalendarDateTime {
   /** The millisecond in the second. */
   public readonly millisecond: number;
 
-  constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
-  constructor(era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
-  constructor(calendar: Calendar, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
-  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, ignoreDay?: boolean);
+  constructor(era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, ignoreDay?: boolean);
+  constructor(calendar: Calendar, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, ignoreDay?: boolean);
+  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, ignoreDay?: boolean);
   constructor(...args: any[]) {
     let [calendar, era, year, month, day] = shiftArgs(args);
     this.calendar = calendar;
@@ -231,16 +231,17 @@ export class CalendarDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
+    const ignoreDay = args.shift() || 0;
 
-    constrain(this);
+    constrain(this, ignoreDay);
   }
 
   /** Returns a copy of this date. */
-  copy(): CalendarDateTime {
+  copy(ignoreDay?: boolean): CalendarDateTime {
     if (this.era) {
-      return new CalendarDateTime(this.calendar, this.era, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond);
+      return new CalendarDateTime(this.calendar, this.era, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond, ignoreDay);
     } else {
-      return new CalendarDateTime(this.calendar, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond);
+      return new CalendarDateTime(this.calendar, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond, ignoreDay);
     }
   }
 
@@ -255,8 +256,8 @@ export class CalendarDateTime {
   }
 
   /** Returns a new `CalendarDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields & TimeFields): CalendarDateTime {
-    return set(setTime(this, fields), fields);
+  set(fields: DateFields & TimeFields, ignoreDay?: boolean): CalendarDateTime {
+    return set(setTime(this, fields), fields, ignoreDay);
   }
 
   /**
