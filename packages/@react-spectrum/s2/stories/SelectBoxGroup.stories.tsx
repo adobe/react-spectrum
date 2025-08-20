@@ -72,24 +72,13 @@ const meta: Meta<typeof SelectBoxGroup> = {
       control: 'select',
       options: ['vertical', 'horizontal']
     },
-    numColumns: {
-      control: {type: 'number', min: 1, max: 4}
-    },
-    gutterWidth: {
-      control: 'select',
-      options: ['compact', 'default', 'spacious']
-    },
-    showCheckbox: {
-      control: 'boolean'
-    }
+    selectedKeys: {control: false, table: {disable: true}},
+    defaultSelectedKeys: {control: false, table: {disable: true}}
   },
   args: {
     selectionMode: 'single',
     orientation: 'vertical',
-    numColumns: 2,
-    gutterWidth: 'default',
-    isDisabled: false,
-    showCheckbox: false
+    isDisabled: false
   }
 };
 
@@ -97,116 +86,35 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="aws">
-        <Server />
-        <Text slot="label">Amazon Web Services</Text>
-        <Text slot="description">Reliable cloud infrastructure</Text>
-      </SelectBox>
-      <SelectBox value="azure">
-        <AlertNotice />
-        <Text slot="label">Microsoft Azure</Text>
-      </SelectBox>
-      <SelectBox value="gcp">
-        <PaperAirplane />
-        <Text slot="label">Google Cloud Platform</Text>
-      </SelectBox>
-      <SelectBox value="ibm">
-        <StarFilled1 />
-        <Text slot="label">IBM Cloud</Text>
-        <Text slot="description">Hybrid cloud solutions</Text>
-      </SelectBox>
-    </SelectBoxGroup>
-  )
-};
-
-export const MultipleSelection: Story = {
-  args: {
-    selectionMode: 'multiple',
-    defaultSelectedKeys: new Set(['aws', 'gcp']),
-    numColumns: 3,
-    gutterWidth: 'default'
-  },
-  render: (args) => (
-    <div style={{maxWidth: 800}}>
-      <p style={{marginBottom: 16, fontSize: 14, color: '#666'}}>
-        Focus any item and use arrow keys for grid navigation:
-      </p>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
+  render: (args) => {
+    const {selectionMode, orientation, isDisabled} = args as any;
+    return (
+      <SelectBoxGroup selectionMode={selectionMode} orientation={orientation} isDisabled={isDisabled} UNSAFE_style={{gridTemplateColumns: 'repeat(2, 1fr)'}}>
         <SelectBox value="aws">
           <Server />
           <Text slot="label">Amazon Web Services</Text>
-          {/* <Text slot="description">Reliable cloud infrastructure</Text> */}
+          <Text slot="description">Reliable cloud infrastructure</Text>
         </SelectBox>
         <SelectBox value="azure">
           <AlertNotice />
           <Text slot="label">Microsoft Azure</Text>
-          <Text slot="description">Enterprise cloud solutions</Text>
         </SelectBox>
         <SelectBox value="gcp">
           <PaperAirplane />
           <Text slot="label">Google Cloud Platform</Text>
-          <Text slot="description">Modern cloud services</Text>
-        </SelectBox>
-        <SelectBox value="oracle">
-          <Server />
-          <Text slot="label">Oracle Cloud</Text>
-          <Text slot="description">Database-focused cloud</Text>
         </SelectBox>
         <SelectBox value="ibm">
-          <Server />
+          <StarFilled1 />
           <Text slot="label">IBM Cloud</Text>
           <Text slot="description">Hybrid cloud solutions</Text>
         </SelectBox>
-        <SelectBox value="alibaba">
-          <PaperAirplane />
-          <Text slot="label">Alibaba Cloud</Text>
-          <Text slot="description">Asia-focused services</Text>
-        </SelectBox>
-        <SelectBox value="digitalocean">
-          <Server />
-          <Text slot="label">DigitalOcean</Text>
-          <Text slot="description">Developer-friendly platform</Text>
-        </SelectBox>
-        <SelectBox value="linode">
-          <AlertNotice />
-          <Text slot="label">Linode</Text>
-          <Text slot="description">Simple cloud computing</Text>
-        </SelectBox>
-        <SelectBox value="vultr">
-          <PaperAirplane />
-          <Text slot="label">Vultr</Text>
-          <Text slot="description">High performance cloud</Text>
-        </SelectBox>
       </SelectBoxGroup>
-    </div>
-  )
+    );
+  }
 };
 
-export const DisabledGroup: Story = {
-  args: {
-    isDisabled: true,
-    defaultSelectedKeys: new Set(['option1']),
-    isCheckboxSelection: true
-  },
-  render: (args) => (
-    <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-      <SelectBox value="option1">
-        <Server />
-        <Text slot="label">Selected then Disabled</Text>
-      </SelectBox>
-      <SelectBox value="option2">
-        <AlertNotice />
-        <Text slot="label">Disabled</Text>
-      </SelectBox>
-    </SelectBoxGroup>
-  )
-};
-
-function InteractiveExamplesStory() {
+function InteractiveExamplesStory(args: any) {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['enabled1', 'starred2']));
-
   return (
     <div style={{maxWidth: 800}}>
       <h3 className={subheadingStyles}>Interactive Features Combined</h3>
@@ -217,13 +125,12 @@ function InteractiveExamplesStory() {
       <SelectBoxGroup
         selectionMode="multiple"
         selectedKeys={selectedKeys}
-        numColumns={4}
-        gutterWidth="default"
         onSelectionChange={(selection) => {
           setSelectedKeys(selection);
           action('onSelectionChange')(selection);
-        }}>
-        {/* Enabled items with dynamic illustrations */}
+        }}
+        {...args}
+        UNSAFE_style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
         <SelectBox value="enabled1">
           {selectedKeys !== 'all' && selectedKeys.has('enabled1') ? (
             <StarFilled1 />
@@ -313,7 +220,7 @@ function InteractiveExamplesStory() {
 }
 
 export const InteractiveExamples: Story = {
-  render: () => <InteractiveExamplesStory />
+  render: (args) => <InteractiveExamplesStory {...args} />
 };
 
 export const AllSlotCombinations: Story = {
@@ -331,7 +238,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text Only</h4>
             <SelectBoxGroup 
               orientation="vertical" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="text-only">
                 <Text slot="label">Simple Text</Text>
@@ -344,7 +250,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Text</h4>
             <SelectBoxGroup 
               orientation="vertical" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="illustration-text">
                 <Server />
@@ -358,7 +263,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text + Description</h4>
             <SelectBoxGroup 
               orientation="vertical" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="text-desc">
                 <Text slot="label">Main Text</Text>
@@ -372,7 +276,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Description</h4>
             <SelectBoxGroup 
               orientation="vertical" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="illustration-desc">
                 <PaperAirplane />
@@ -386,7 +289,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Text + Description</h4>
             <SelectBoxGroup 
               orientation="vertical" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="all-vertical">
                 <AlertNotice />
@@ -409,7 +311,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text Only</h4>
             <SelectBoxGroup 
               orientation="horizontal" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="h-text-only">
                 <Text slot="label">Simple Horizontal Text</Text>
@@ -422,7 +323,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Text</h4>
             <SelectBoxGroup 
               orientation="horizontal" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="h-illustration-text">
                 <PaperAirplane />
@@ -436,7 +336,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text + Description</h4>
             <SelectBoxGroup 
               orientation="horizontal" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="h-text-desc">
                 <Text slot="label">Main Horizontal Text</Text>
@@ -450,7 +349,6 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Text + Description</h4>
             <SelectBoxGroup 
               orientation="horizontal" 
-              numColumns={1}
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox value="h-all">
                 <Server />
@@ -467,8 +365,6 @@ export const AllSlotCombinations: Story = {
       <div style={{marginTop: 40}}>
         <h3 className={subheadingStyles}>Side-by-Side Comparison</h3>
         <SelectBoxGroup 
-          numColumns={5}
-          gutterWidth="spacious"
           onSelectionChange={action('onSelectionChange')}>
           
           {/* Vertical examples */}
@@ -502,8 +398,6 @@ export const AllSlotCombinations: Story = {
         <div style={{marginTop: 20}}>
           <SelectBoxGroup 
             orientation="horizontal"
-            numColumns={5}
-            gutterWidth="spacious"
             onSelectionChange={action('onSelectionChange')}>
             
             {/* Horizontal examples */}
@@ -536,60 +430,6 @@ export const AllSlotCombinations: Story = {
         </div>
       </div>
 
-    </div>
-  )
-};
-
-export const TextSlots: Story = {
-  args: {
-    orientation: 'horizontal'
-  },
-  render: (args) => (
-    <div style={{maxWidth: 600}}>
-      <h3 className={subheadingStyles}>Text Slots Example</h3>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="aws">
-          <Server />
-          <Text slot="label">Amazon Web Services</Text>
-          <Text slot="description">Reliable cloud infrastructure</Text>
-        </SelectBox>
-        <SelectBox value="azure">
-          <AlertNotice />
-          <Text slot="label">Microsoft Azure</Text>
-          <Text slot="description">Enterprise cloud solutions</Text>
-        </SelectBox>
-        <SelectBox value="gcp">
-          <PaperAirplane />
-          <Text slot="label">Google Cloud Platform</Text>
-          <Text slot="description">Modern cloud services</Text>
-        </SelectBox>
-        <SelectBox value="oracle">
-          <Server />
-          <Text slot="label">Oracle Cloud</Text>
-          <Text slot="description">Database-focused cloud</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-    </div>
-  )
-};
-
-export const WithDescription: Story = {
-  args: {
-    orientation: 'horizontal'
-  },
-  render: (args) => (
-    <div style={{maxWidth: 600}}>
-      <h3 className={subheadingStyles}>With Description</h3>
-      <SelectBoxGroup {...args} onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="aws">
-          <Server />
-          <Text slot="description">Reliable cloud infrastructure</Text>
-        </SelectBox>
-        <SelectBox value="azure">
-          <AlertNotice />
-          <Text slot="label">Microsoft Azure</Text>
-        </SelectBox>
-      </SelectBoxGroup>
     </div>
   )
 };

@@ -1,11 +1,11 @@
-import {act, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import Calendar from '../spectrum-illustrations/linear/Calendar';
 import React from 'react';
 import {SelectBox, SelectBoxGroup, Text} from '../src';
 import {Selection} from '@react-types/shared';
 import userEvent from '@testing-library/user-event';
 
-function SingleSelectBox() {
+function ControlledSingleSelectBox() {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
   return (
     <SelectBoxGroup
@@ -26,7 +26,7 @@ function SingleSelectBox() {
   );
 }
 
-function MultiSelectBox() {
+function ControlledMultiSelectBox() {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
   return (
     <SelectBoxGroup
@@ -34,6 +34,24 @@ function MultiSelectBox() {
       selectionMode="multiple"
       onSelectionChange={setSelectedKeys}
       selectedKeys={selectedKeys}>
+      <SelectBox value="option1">
+        <Text slot="label">Option 1</Text>
+      </SelectBox>
+      <SelectBox value="option2">
+        <Text slot="label">Option 2</Text>
+      </SelectBox>
+      <SelectBox value="option3">
+        <Text slot="label">Option 3</Text>
+      </SelectBox>
+    </SelectBoxGroup>
+  );
+}
+
+function UncontrolledSelectBox({selectionMode = 'single'}: {selectionMode?: 'single' | 'multiple'}) {
+  return (
+    <SelectBoxGroup
+      aria-label="Uncontrolled selection test"
+      selectionMode={selectionMode}>
       <SelectBox value="option1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
@@ -66,44 +84,187 @@ function DisabledSelectBox() {
 }
 
 describe('SelectBoxGroup', () => {
+  let user;
+
+  beforeAll(function () {
+    jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
+  });
+
   describe('Basic functionality', () => {
     it('renders as a listbox with options', () => {
-      render(<SingleSelectBox />);
+      render(<ControlledSingleSelectBox />);
       expect(screen.getByRole('listbox')).toBeInTheDocument();
       expect(screen.getAllByRole('option')).toHaveLength(3);
       expect(screen.getByText('Option 1')).toBeInTheDocument();
     });
 
     it('renders multiple selection mode', () => {
-      render(<MultiSelectBox />);
+      render(<ControlledMultiSelectBox />);
       expect(screen.getByRole('listbox')).toBeInTheDocument();
       expect(screen.getAllByRole('option')).toHaveLength(3);
       expect(screen.getByText('Option 1')).toBeInTheDocument();
     });
+  });
 
-    it('handles selection in single mode', async () => {
-      render(<SingleSelectBox />);
+  describe('Uncontrolled behavior', () => {
+    it('handles uncontrolled click selection in single mode', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
       const options = screen.getAllByRole('option');
       const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
       
-      await userEvent.click(option1);
+      await user.click(option1);
       expect(option1).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('handles multiple selection', async () => {
-      render(<MultiSelectBox />);
+    it('handles uncontrolled click selection in multiple mode', async () => {
+      render(<UncontrolledSelectBox selectionMode="multiple" />);
       const options = screen.getAllByRole('option');
       const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
       const option2 = options.find(option => option.textContent?.includes('Option 2'))!;
       
-      await userEvent.click(option1);
-      await userEvent.click(option2);
+      await user.click(option1);
+      await user.click(option2);
       
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('handles disabled state', () => {
+    it('handles uncontrolled selection toggle', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
+      const options = screen.getAllByRole('option');
+      const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
+      
+      // Select
+      await user.click(option1);
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      
+      // Toggle off in single mode by selecting another
+      const option2 = options.find(option => option.textContent?.includes('Option 2'))!;
+      await user.click(option2);
+      expect(option1).toHaveAttribute('aria-selected', 'false');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('handles uncontrolled keyboard selection', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
+      const listbox = screen.getByRole('listbox');
+      
+      await act(async () => {
+        listbox.focus();
+      });
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
+      
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  describe('Controlled behavior', () => {
+    it('handles controlled selection in single mode', async () => {
+      render(<ControlledSingleSelectBox />);
+      const options = screen.getAllByRole('option');
+      const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
+      
+      await user.click(option1);
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('handles controlled multiple selection', async () => {
+      render(<ControlledMultiSelectBox />);
+      const options = screen.getAllByRole('option');
+      const option1 = options.find(option => option.textContent?.includes('Option 1'))!;
+      const option2 = options.find(option => option.textContent?.includes('Option 2'))!;
+      
+      await user.click(option1);
+      await user.click(option2);
+      
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('calls onSelectionChange when selection changes in controlled mode', async () => {
+      const onSelectionChange = jest.fn();
+      const TestComponent = () => {
+        const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
+        return (
+          <SelectBoxGroup
+            aria-label="Selection change test"
+            selectionMode="single"
+            onSelectionChange={(keys) => {
+              setSelectedKeys(keys);
+              onSelectionChange(keys);
+            }}
+            selectedKeys={selectedKeys}>
+            <SelectBox value="option1">
+              <Text slot="label">Option 1</Text>
+            </SelectBox>
+            <SelectBox value="option2">
+              <Text slot="label">Option 2</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+        );
+      };
+
+      render(<TestComponent />);
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      await user.click(option1);
+      
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      const receivedSelection = onSelectionChange.mock.calls[0][0];
+      expect(Array.from(receivedSelection)).toEqual(['option1']);
+    });
+
+    it('calls onSelectionChange with Set for multiple selection in controlled mode', async () => {
+      const onSelectionChange = jest.fn();
+      const TestComponent = () => {
+        const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
+        return (
+          <SelectBoxGroup
+            aria-label="Multiple selection change test"
+            selectionMode="multiple"
+            onSelectionChange={(keys) => {
+              setSelectedKeys(keys);
+              onSelectionChange(keys);
+            }}
+            selectedKeys={selectedKeys}>
+            <SelectBox value="option1">
+              <Text slot="label">Option 1</Text>
+            </SelectBox>
+            <SelectBox value="option2">
+              <Text slot="label">Option 2</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+        );
+      };
+
+      render(<TestComponent />);
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      await user.click(option1);
+      
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      const receivedSelection = onSelectionChange.mock.calls[0][0];
+      expect(Array.from(receivedSelection)).toEqual(['option1']);
+    });
+  });
+
+  describe('Disabled behavior', () => {
+    it('renders disabled state correctly', () => {
       render(<DisabledSelectBox />);
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
@@ -132,27 +293,51 @@ describe('SelectBoxGroup', () => {
 
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
-      await userEvent.click(option1);
-      await userEvent.click(option2);
-      
+      await user.click(option1);
+      await user.click(option2);
       expect(onSelectionChange).not.toHaveBeenCalled();
       
-      // Items should have disabled attributes
       expect(option1).toHaveAttribute('aria-disabled', 'true');
       expect(option2).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('prevents uncontrolled interaction when group is disabled', async () => {
+      render(
+        <SelectBoxGroup
+          aria-label="Uncontrolled disabled test"
+          selectionMode="single"
+          isDisabled>
+          <SelectBox value="option1">
+            <Text slot="label">Option 1</Text>
+          </SelectBox>
+          <SelectBox value="option2">
+            <Text slot="label">Option 2</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      
+      await user.click(option1);
+      await user.click(option2);
+      
+      // should have disabled attributes and no selection
+      expect(option1).toHaveAttribute('aria-disabled', 'true');
+      expect(option2).toHaveAttribute('aria-disabled', 'true');
+      expect(option1).toHaveAttribute('aria-selected', 'false');
+      expect(option2).toHaveAttribute('aria-selected', 'false');
     });
   });
 
   describe('Checkbox functionality', () => {
-    it('shows checkbox when showCheckbox=true and item is selected', async () => {
+    it('shows checkbox when item is selected in controlled mode', async () => {
       render(
         <SelectBoxGroup 
           aria-label="Checkbox test"
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          selectedKeys={new Set(['option1'])}
-          showCheckbox>
+          selectedKeys={new Set(['option1'])}>
           <SelectBox value="option1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -169,14 +354,24 @@ describe('SelectBoxGroup', () => {
       expect(checkboxDiv).toBeInTheDocument();
     });
 
-    it('shows checkbox on hover when showCheckbox=true for non-disabled items', async () => {
+    it('shows checkbox when item is selected in uncontrolled mode', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
+      
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      await user.click(option1);
+      
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      const checkboxDiv = option1.querySelector('[aria-hidden="true"]');
+      expect(checkboxDiv).toBeInTheDocument();
+    });
+
+    it('shows checkbox on hover for non-disabled items in controlled mode', async () => {
       render(
         <SelectBoxGroup 
           aria-label="Hover checkbox test"
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          selectedKeys={new Set()}
-          showCheckbox>
+          selectedKeys={new Set()}>
           <SelectBox value="option1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -185,40 +380,32 @@ describe('SelectBoxGroup', () => {
 
       const row = screen.getByRole('option', {name: 'Option 1'});
       
-      await userEvent.hover(row);
+      await user.hover(row);
       await waitFor(() => {
         const checkboxDiv = row.querySelector('[aria-hidden="true"]');
         expect(checkboxDiv).toBeInTheDocument();
       });
     });
 
-    it('does not show checkbox when showCheckbox=false', async () => {
-      render(
-        <SelectBoxGroup 
-          aria-label="No checkbox test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
-          selectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1">
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
+    it('shows checkbox on hover for non-disabled items in uncontrolled mode', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
 
       const row = screen.getByRole('option', {name: 'Option 1'});
       
-      const checkboxDiv = row.querySelector('[aria-hidden="true"]');
-      expect(checkboxDiv).not.toBeInTheDocument();
+      await user.hover(row);
+      await waitFor(() => {
+        const checkboxDiv = row.querySelector('[aria-hidden="true"]');
+        expect(checkboxDiv).toBeInTheDocument();
+      });
     });
 
-    it('shows checkbox for disabled but selected items when showCheckbox=true', () => {
+    it('shows checkbox for disabled but selected items', () => {
       render(
         <SelectBoxGroup 
           aria-label="Disabled selected checkbox test"
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          defaultSelectedKeys={new Set(['option1'])}
-          showCheckbox>
+          defaultSelectedKeys={new Set(['option1'])}>
           <SelectBox value="option1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -237,8 +424,7 @@ describe('SelectBoxGroup', () => {
           aria-label="Disabled hover test"
           selectionMode="single" 
           onSelectionChange={() => {}} 
-          selectedKeys={new Set()}
-          showCheckbox>
+          selectedKeys={new Set()}>
           <SelectBox value="option1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -247,7 +433,7 @@ describe('SelectBoxGroup', () => {
 
       const row = screen.getByRole('option', {name: 'Option 1'});
       
-      await userEvent.hover(row);
+      await user.hover(row);
       
       await waitFor(() => {
         const checkboxDiv = row.querySelector('[aria-hidden="true"]');
@@ -273,44 +459,55 @@ describe('SelectBoxGroup', () => {
       expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
 
-    it('supports different gutter widths', () => {
+    it('auto-fits columns based on orientation (vertical)', () => {
       render(
-        <SelectBoxGroup 
-          aria-label="Gutter width test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
-          selectedKeys={new Set()}
-          gutterWidth="compact">
-          <SelectBox value="option1">
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
-    });
-
-    it('supports custom number of columns', () => {
-      render(
-        <SelectBoxGroup 
-          aria-label="Columns test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
-          selectedKeys={new Set()}
-          numColumns={3}>
-          <SelectBox value="option1">
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-          <SelectBox value="option2">
-            <Text slot="label">Option 2</Text>
-          </SelectBox>
-          <SelectBox value="option3">
-            <Text slot="label">Option 3</Text>
-          </SelectBox>
-        </SelectBoxGroup>
+        <div style={{width: 600}}>
+          <SelectBoxGroup 
+            aria-label="Auto-fit test vertical"
+            selectionMode="single" 
+            onSelectionChange={() => {}} 
+            selectedKeys={new Set()}
+            orientation="vertical">
+            <SelectBox value="option1">
+              <Text slot="label">Option 1</Text>
+            </SelectBox>
+            <SelectBox value="option2">
+              <Text slot="label">Option 2</Text>
+            </SelectBox>
+            <SelectBox value="option3">
+              <Text slot="label">Option 3</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+        </div>
       );
       
       const listbox = screen.getByRole('listbox');
-      expect(listbox).toHaveStyle('grid-template-columns: repeat(3, 1fr)');
+      expect(listbox).toBeInTheDocument();
+      // Grid template columns are now handled via CSS classes from the style macro
+    });
+
+    it('auto-fits columns based on orientation (horizontal)', () => {
+      render(
+        <div style={{width: 800}}>
+          <SelectBoxGroup 
+            aria-label="Auto-fit test horizontal"
+            selectionMode="single" 
+            onSelectionChange={() => {}} 
+            selectedKeys={new Set()}
+            orientation="horizontal">
+            <SelectBox value="option1">
+              <Text slot="label">Option 1</Text>
+            </SelectBox>
+            <SelectBox value="option2">
+              <Text slot="label">Option 2</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+        </div>
+      );
+      
+      const listbox = screen.getByRole('listbox');
+      expect(listbox).toBeInTheDocument();
+      // Grid template columns are now handled via CSS classes from the style macro
     });
   });
 
@@ -366,14 +563,12 @@ describe('SelectBoxGroup', () => {
       expect(option3).toHaveAttribute('aria-selected', 'false');
     });
 
-    it('calls onSelectionChange when selection changes', async () => {
-      const onSelectionChange = jest.fn();
+    it('handles uncontrolled selection with defaultSelectedKeys', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Selection change test"
-          selectionMode="single"
-          onSelectionChange={onSelectionChange}
-          selectedKeys={new Set()}>
+        <SelectBoxGroup 
+          aria-label="Uncontrolled defaultSelectedKeys test"
+          selectionMode="single" 
+          defaultSelectedKeys={new Set(['option1'])}>
           <SelectBox value="option1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -382,38 +577,58 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
-
-      const option1 = screen.getByRole('option', {name: 'Option 1'});
-      await userEvent.click(option1);
       
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      const receivedSelection = onSelectionChange.mock.calls[0][0];
-      expect(Array.from(receivedSelection)).toEqual(['option1']);
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      
+      // Should start with option1 selected
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      expect(option2).toHaveAttribute('aria-selected', 'false');
+      
+      // Click should update selection
+      await user.click(option2);
+      expect(option1).toHaveAttribute('aria-selected', 'false');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('calls onSelectionChange with Set for multiple selection', async () => {
-      const onSelectionChange = jest.fn();
+    it('handles uncontrolled multiple selection with defaultSelectedKeys', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Multiple selection change test"
-          selectionMode="multiple"
-          onSelectionChange={onSelectionChange}
-          selectedKeys={new Set()}>
+        <SelectBoxGroup 
+          aria-label="Uncontrolled multiple defaultSelectedKeys test"
+          selectionMode="multiple" 
+          defaultSelectedKeys={new Set(['option1', 'option2'])}>
           <SelectBox value="option1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
           <SelectBox value="option2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
+          <SelectBox value="option3">
+            <Text slot="label">Option 3</Text>
+          </SelectBox>
         </SelectBoxGroup>
       );
-
-      const option1 = screen.getByRole('option', {name: 'Option 1'});
-      await userEvent.click(option1);
       
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      const receivedSelection = onSelectionChange.mock.calls[0][0];
-      expect(Array.from(receivedSelection)).toEqual(['option1']);
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      const option2 = screen.getByRole('option', {name: 'Option 2'});
+      const option3 = screen.getByRole('option', {name: 'Option 3'});
+      
+      // Should start with option1 and option2 selected
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+      expect(option3).toHaveAttribute('aria-selected', 'false');
+      
+      // Click should add to selection
+      await user.click(option3);
+      expect(option1).toHaveAttribute('aria-selected', 'true');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+      expect(option3).toHaveAttribute('aria-selected', 'true');
+      
+      // Click should remove from selection
+      await user.click(option1);
+      expect(option1).toHaveAttribute('aria-selected', 'false');
+      expect(option2).toHaveAttribute('aria-selected', 'true');
+      expect(option3).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles controlled component updates', async () => {
@@ -444,8 +659,8 @@ describe('SelectBoxGroup', () => {
       render(<ControlledTest />);
       
       const button = screen.getByRole('button', {name: 'Select Option 2'});
-      await userEvent.click(button);
-      
+      await user.click(button);
+
       const option2 = screen.getByRole('option', {name: 'Option 2'});
       expect(option2).toHaveAttribute('aria-selected', 'true');
     });
@@ -474,51 +689,6 @@ describe('SelectBoxGroup', () => {
     });
   });
 
-  describe('Individual SelectBox behavior', () => {
-    it('handles disabled individual items', () => {
-      render(
-        <SelectBoxGroup
-          aria-label="Individual disabled test"
-          selectionMode="single"
-          onSelectionChange={() => {}}
-          selectedKeys={new Set()}>
-          <SelectBox value="option1" isDisabled>
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-          <SelectBox value="option2">
-            <Text slot="label">Option 2</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
-
-      const rows = screen.getAllByRole('option');
-      expect(rows.length).toBe(2);
-      
-      const option1 = screen.getByRole('option', {name: 'Option 1'});
-      expect(option1).toHaveAttribute('aria-disabled', 'true');
-    });
-
-    it('prevents interaction with disabled items', async () => {
-      const onSelectionChange = jest.fn();
-      render(
-        <SelectBoxGroup
-          aria-label="Disabled interaction test"
-          selectionMode="single"
-          onSelectionChange={onSelectionChange}
-          selectedKeys={new Set()}>
-          <SelectBox value="option1" isDisabled>
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
-
-      const option1 = screen.getByRole('option', {name: 'Option 1'});
-      await userEvent.click(option1);
-      
-      expect(onSelectionChange).not.toHaveBeenCalled();
-    });
-  });
-
   describe('Grid navigation', () => {
     it('supports keyboard navigation and grid layout', async () => {
       render(
@@ -526,8 +696,7 @@ describe('SelectBoxGroup', () => {
           aria-label="Grid navigation test"
           selectionMode="single"
           onSelectionChange={() => {}}
-          selectedKeys={new Set()}
-          numColumns={2}>
+          selectedKeys={new Set()}>
           <SelectBox value="option1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -548,40 +717,19 @@ describe('SelectBoxGroup', () => {
       
       expect(listbox).toBeInTheDocument();
       expect(options).toHaveLength(4);
-      
-      expect(listbox).toHaveStyle('grid-template-columns: repeat(2, 1fr)');
-      
-      expect(screen.getByRole('option', {name: 'Option 1'})).toBeInTheDocument();
-      expect(screen.getByRole('option', {name: 'Option 2'})).toBeInTheDocument();
-      expect(screen.getByRole('option', {name: 'Option 3'})).toBeInTheDocument();
-      expect(screen.getByRole('option', {name: 'Option 4'})).toBeInTheDocument();
     });
 
-    it('supports space key selection', async () => {
-      const onSelectionChange = jest.fn();
-      render(
-        <SelectBoxGroup
-          aria-label="Space key test"
-          selectionMode="single"
-          onSelectionChange={onSelectionChange}
-          selectedKeys={new Set()}>
-          <SelectBox value="option1">
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
-
+    it('supports space key selection in uncontrolled mode', async () => {
+      render(<UncontrolledSelectBox selectionMode="single" />);
       const listbox = screen.getByRole('listbox');
-      await act(async () => {
-        listbox.focus();
-      });
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
       
       await act(async () => {
-        await userEvent.keyboard(' ');
+        listbox.focus();
+        await user.keyboard(' ');
       });
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      const receivedSelection = onSelectionChange.mock.calls[0][0];
-      expect(Array.from(receivedSelection)).toEqual(['option1']);
+      
+      expect(option1).toHaveAttribute('aria-selected', 'true');
     });
 
     it('supports arrow key navigation', async () => {
@@ -605,43 +753,11 @@ describe('SelectBoxGroup', () => {
         listbox.focus();
       });
       
-      // Navigate to second option
-      await userEvent.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
       
-      // Check that navigation works by verifying an option has focus
+      // check that navigation works by verifying an option has focus
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       expect(option1).toHaveFocus();
-    });
-  });
-
-  describe('Children validation', () => {
-    let consoleSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-      consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    });
-
-    afterEach(() => {
-      consoleSpy.mockRestore();
-    });
-
-    it('does not warn with valid number of children', () => {
-      render(
-        <SelectBoxGroup 
-          aria-label="Valid children test" 
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
-          selectedKeys={new Set()}>
-          <SelectBox value="option1">
-            <Text slot="label">Option 1</Text>
-          </SelectBox>
-          <SelectBox value="option2">
-            <Text slot="label">Option 2</Text>
-          </SelectBox>
-        </SelectBoxGroup>
-      );
-      
-      expect(console.warn).not.toHaveBeenCalled();
     });
   });
 
@@ -683,7 +799,7 @@ describe('SelectBoxGroup', () => {
       );
       
       const listbox = screen.getByRole('listbox');
-      // Just verify the listbox has an aria-labelledby attribute  
+      // verify the listbox has an aria-labelledby attribute  
       expect(listbox).toHaveAttribute('aria-labelledby');
       expect(listbox.getAttribute('aria-labelledby')).toBeTruthy();
     });
@@ -753,15 +869,14 @@ describe('SelectBoxGroup', () => {
       expect(screen.getByText('Valid Option')).toBeInTheDocument();
     });
 
-    it('handles uncontrolled selection with defaultSelectedKeys', async () => {
-      const onSelectionChange = jest.fn();
+    it('handles individual disabled items', () => {
       render(
-        <SelectBoxGroup 
-          aria-label="Uncontrolled test"
-          selectionMode="single" 
-          onSelectionChange={onSelectionChange}
-          defaultSelectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1">
+        <SelectBoxGroup
+          aria-label="Individual disabled test"
+          selectionMode="single"
+          onSelectionChange={() => {}}
+          selectedKeys={new Set()}>
+          <SelectBox value="option1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
           <SelectBox value="option2">
@@ -769,19 +884,58 @@ describe('SelectBoxGroup', () => {
           </SelectBox>
         </SelectBoxGroup>
       );
+
+      const rows = screen.getAllByRole('option');
+      expect(rows.length).toBe(2);
       
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      expect(option1).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('prevents interaction with individually disabled items', async () => {
+      const onSelectionChange = jest.fn();
+      render(
+        <SelectBoxGroup
+          aria-label="Disabled interaction test"
+          selectionMode="single"
+          onSelectionChange={onSelectionChange}
+          selectedKeys={new Set()}>
+          <SelectBox value="option1" isDisabled>
+            <Text slot="label">Option 1</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
+      const option1 = screen.getByRole('option', {name: 'Option 1'});
+      await user.click(option1);
+      
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('prevents uncontrolled interaction with individually disabled items', async () => {
+      render(
+        <SelectBoxGroup
+          aria-label="Uncontrolled disabled interaction test"
+          selectionMode="single">
+          <SelectBox value="option1" isDisabled>
+            <Text slot="label">Option 1</Text>
+          </SelectBox>
+          <SelectBox value="option2">
+            <Text slot="label">Option 2</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      );
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
       
-      expect(option1).toHaveAttribute('aria-selected', 'true');
-      expect(option2).toHaveAttribute('aria-selected', 'false');
+      await user.click(option1);
+      expect(option1).toHaveAttribute('aria-disabled', 'true');
+      expect(option1).toHaveAttribute('aria-selected', 'false');
       
-      await userEvent.click(option2);
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      const receivedSelection = onSelectionChange.mock.calls[0][0];
-      expect(Array.from(receivedSelection)).toEqual(['option2']);
+      // Clicking enabled item should still work
+      await user.click(option2);
+      expect(option2).toHaveAttribute('aria-selected', 'true');
     });
   });
 });
-
-
