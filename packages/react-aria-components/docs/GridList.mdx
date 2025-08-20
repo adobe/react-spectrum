@@ -585,21 +585,21 @@ import {GridListSection, GridListHeader} from 'react-aria-components';
 <GridList aria-label="Sandwich contents" selectionMode="multiple">
   <GridListSection>
     <GridListHeader>Veggies</GridListHeader>
-    <GridListItem id="lettuce">Lettuce</GridListItem>
-    <GridListItem id="tomato">Tomato</GridListItem>
-    <GridListItem id="onion">Onion</GridListItem>
+    <MyItem id="lettuce">Lettuce</MyItem>
+    <MyItem id="tomato">Tomato</MyItem>
+    <MyItem id="onion">Onion</MyItem>
   </GridListSection>
   <GridListSection>
     <GridListHeader>Protein</GridListHeader>
-    <GridListItem id="ham">Ham</GridListItem>
-    <GridListItem id="tuna">Tuna</GridListItem>
-    <GridListItem id="tofu">Tofu</GridListItem>
+    <MyItem id="ham">Ham</MyItem>
+    <MyItem id="tuna">Tuna</MyItem>
+    <MyItem id="tofu">Tofu</MyItem>
   </GridListSection>
   <GridListSection>
     <GridListHeader>Condiments</GridListHeader>
-    <GridListItem id="mayo">Mayonaise</GridListItem>
-    <GridListItem id="mustard">Mustard</GridListItem>
-    <GridListItem id="ranch">Ranch</GridListItem>
+    <MyItem id="mayo">Mayonaise</MyItem>
+    <MyItem id="mustard">Mustard</MyItem>
+    <MyItem id="ranch">Ranch</MyItem>
   </GridListSection>
 </GridList>
 ```
@@ -660,7 +660,7 @@ function Example() {
         <GridListSection id={section.name}>
           <GridListHeader>{section.name}</GridListHeader>
           <Collection items={section.children}>
-            {item => <GridListItem>{item.name}</GridListItem>}
+            {item => <MyItem >{item.name}</MyItem>}
           </Collection>
         </GridListSection>
       )}
