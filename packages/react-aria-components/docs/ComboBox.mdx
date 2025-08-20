@@ -335,7 +335,7 @@ interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'chil
 
 function MyComboBox<T extends object>({label, description, errorMessage, children, ...props}: MyComboBoxProps<T>) {
   return (
-    <ComboBox {...props}>
+    <ComboBox allowsEmptyCollection {...props}>
       <Label>{label}</Label>
       <div className="my-combobox-container">
         <Input />
@@ -344,7 +344,7 @@ function MyComboBox<T extends object>({label, description, errorMessage, childre
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <ListBox>
+        <ListBox renderEmptyState={() => <div className="my-item">No results found</div>}>
           {children}
         </ListBox>
       </Popover>
@@ -1544,7 +1544,7 @@ If you need to customize things even further, such as accessing internal state, 
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the combobox tester and a sample of how you could use it in your test suite.

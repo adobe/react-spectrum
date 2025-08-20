@@ -13,9 +13,6 @@
     "@svgr/core": "^8.1.0",
     "fs-extra": "^11.0.0"
   },
-  "devDependencies": {
-    "prettier": "^3.3.3"
-  },
   "publishConfig": {
     "access": "public"
   }

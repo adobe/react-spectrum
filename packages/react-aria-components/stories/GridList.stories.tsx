@@ -21,10 +21,12 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
   GridListItem,
   GridListItemProps,
   GridListLoadMoreItem,
   GridListProps,
+  GridListSection,
   Heading,
   ListLayout,
   Modal,
@@ -145,6 +147,105 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
+
+export const GridListSectionExample = (args) => (
+  <GridList
+    {...args}
+    className={styles.menu}
+    aria-label="test gridlist"
+    style={{
+      width: 400,
+      height: 400
+    }}>
+    <GridListSection>
+      <GridListHeader>Section 1</GridListHeader>
+      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 2</GridListHeader>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 3</GridListHeader>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+  </GridList>
+);
+
+GridListSectionExample.story = {
+  args: {
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  }
+};
+
+export function VirtualizedGridListSection() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 3; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        // selectionMode="multiple"
+        style={{height: 400}}
+        aria-label="virtualized with grid section"
+        items={sections}>
+        <Collection items={sections}>
+          {section => (
+            <GridListSection>
+              <GridListHeader>{section.name}</GridListHeader>
+              <Collection items={section.children} >
+                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+              </Collection>
+            </GridListSection>
+          )}
+        </Collection>
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+
 const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
@@ -200,7 +301,22 @@ export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
   }
 };
 
-export let VirtualizedGridListGrid: GridListStory = () => {
+interface VirtualizedGridListGridProps {
+  minItemSizeWidth?: number,
+  maxItemSizeWidth?: number,
+  maxColumns?: number,
+  minHorizontalSpace?: number,
+  maxHorizontalSpace?: number
+}
+
+export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
+  const {
+    minItemSizeWidth = 40,
+    maxItemSizeWidth = 65,
+    maxColumns = Infinity,
+    minHorizontalSpace = 0,
+    maxHorizontalSpace = Infinity
+  } = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -210,13 +326,54 @@ export let VirtualizedGridListGrid: GridListStory = () => {
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40)
+        minItemSize: new Size(minItemSizeWidth, 40),
+        maxItemSize: new Size(maxItemSizeWidth, 40),
+        minSpace: new Size(minHorizontalSpace, 18),
+        maxColumns,
+        maxHorizontalSpace
       }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
   );
+};
+
+VirtualizedGridListGrid.story = {
+  args: {
+    minItemSizeWidth: 40,
+    maxItemSizeWidth: 65,
+    maxColumns: undefined,
+    minHorizontalSpace: 0,
+    maxHorizontalSpace: undefined
+  },
+  argTypes: {
+    minItemSizeWidth: {
+      control: 'number',
+      description: 'The minimum width of each item in the grid list',
+      defaultValue: 40
+    },
+    maxItemSizeWidth: {
+      control: 'number',
+      description: 'Maximum width of each item in the grid list.',
+      defaultValue: 65
+    },
+    maxColumns: {
+      control: 'number',
+      description: 'Maximum number of columns in the grid list.',
+      defaultValue: undefined
+    },
+    minHorizontalSpace: {
+      control: 'number',
+      description: 'Minimum horizontal space between grid items.',
+      defaultValue: 0
+    },
+    maxHorizontalSpace: {
+      control: 'number',
+      description: 'Maximum horizontal space between grid items.',
+      defaultValue: undefined
+    }
+  }
 };
 
 let renderEmptyState = ({isLoading}) => {

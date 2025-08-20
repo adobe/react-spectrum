@@ -13,11 +13,11 @@
 import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, useEnterAnimation, useExitAnimation} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
@@ -121,27 +121,19 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
-
-  // Calculate the arrow size internally
-  // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
-  let [arrowWidth, setArrowWidth] = useState(0);
-  useLayoutEffect(() => {
-    if (arrowRef.current && state.isOpen) {
-      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
-    }
-  }, [state.isOpen, arrowRef]);
 
-  let {overlayProps, arrowProps, placement} = useOverlayPosition({
+  let {overlayProps, arrowProps, placement, triggerOrigin} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: props.triggerRef!,
     overlayRef: props.tooltipRef,
+    arrowRef,
     offset: props.offset,
     crossOffset: props.crossOffset,
     isOpen: state.isOpen,
-    arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
     shouldFlip: props.shouldFlip,
+    containerPadding: props.containerPadding,
     onClose: () => state.close(true)
   });
 
@@ -166,7 +158,11 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     <div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
-      style={{...overlayProps.style, ...renderProps.style}}
+      style={{
+        ...overlayProps.style,
+        '--trigger-origin': triggerOrigin ? `${triggerOrigin.x}px ${triggerOrigin.y}px` : undefined,
+        ...renderProps.style
+      } as CSSProperties}
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>

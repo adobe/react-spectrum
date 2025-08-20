@@ -1,6 +1,0 @@
-@import 'tailwindcss' source("./");
-@plugin 'tailwindcss-animate';
-
-* {
-  -webkit-tap-highlight-color: transparent;
-}
