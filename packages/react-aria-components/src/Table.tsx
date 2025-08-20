@@ -742,7 +742,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
   }
 
   let TH = useElementType('th');
-  let DOMProps = filterDOMProps(props as any, {global: true});
+  let DOMProps = filterDOMProps(props as any, {global: true, labelable: true});
   delete DOMProps.id;
 
   return (
@@ -1234,7 +1234,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   });
 
   let TD = useElementType('td');
-  let DOMProps = filterDOMProps(props as any, {global: true});
+  let DOMProps = filterDOMProps(props as any, {global: true, labelable: true});
   delete DOMProps.id;
 
   return (
