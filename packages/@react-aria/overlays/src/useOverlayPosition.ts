@@ -149,6 +149,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
+    // Delay updating the position until children are finished rendering (e.g. collections).
+    if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
+      return;
+    }
+
     // Don't update while the overlay is animating.
     // Things like scale animations can mess up positioning by affecting the overlay's computed size.
     if (overlayRef.current.getAnimations?.().length > 0) {
