@@ -1452,7 +1452,7 @@ let editButton = style({
   }
 });
 
-export const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void}, ref: DOMRef<HTMLDivElement>) {
+const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void}, ref: DOMRef<HTMLDivElement>) {
   let {value, onChange, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isOpen, setIsOpen] = useState(false);
@@ -1522,7 +1522,7 @@ export const EditableCell = forwardRef(function EditableCell(props: Omit<CellPro
   );
 });
 
-export const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: number, onChange: (value: number) => void}, ref: DOMRef<HTMLDivElement>) {
+const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: number, onChange: (value: number) => void}, ref: DOMRef<HTMLDivElement>) {
   let {value, onChange, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isOpen, setIsOpen] = useState(false);
