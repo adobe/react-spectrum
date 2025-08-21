@@ -12,7 +12,7 @@
 
 import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox, Modal, ModalOverlay, Popover, TextField} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
-import React, {useEffect} from 'react';
+import React from 'react';
 import './styles.css';
 import {MyListBoxItem} from './utils';
 import styles from '../example/index.css';
@@ -68,129 +68,6 @@ export const ModalExample: ModalStory = () => (
     </ModalOverlay>
   </DialogTrigger>
 );
-
-export const ModalInteractionOutsideExample: ModalStory = () => {
-
-  useEffect(() => {
-    let button = document.createElement('button');
-    button.id = 'test-button';
-    button.textContent = 'Click to close';
-    button.style.position = 'fixed';
-    button.style.top = '0';
-    button.style.right = '0';
-    button.style.zIndex = '200';
-    document.body.appendChild(button);
-
-    return () => {
-      document.body.removeChild(button);
-    };
-  }, []);
-
-  return (
-    <DialogTrigger>
-      <Button>Open modal</Button>
-      <ModalOverlay
-        isDismissable
-        shouldCloseOnInteractOutside={el => {
-          if (el.id === 'test-button') {return true;}
-          return false;
-        }}
-        style={{
-          position: 'fixed',
-          zIndex: 100,
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-        <Modal
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 30
-          }}>
-          <Dialog>
-            {({close}) => (
-              <form style={{display: 'flex', flexDirection: 'column'}}>
-                <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
-                <label>
-                  First Name: <input placeholder="John" />
-                </label>
-                <label>
-                  Last Name: <input placeholder="Smith" />
-                </label>
-                <Button onPress={close} style={{marginTop: 10}}>
-                  Submit
-                </Button>
-              </form>
-        )}
-          </Dialog>
-        </Modal>
-      </ModalOverlay>
-    </DialogTrigger>
-  );
-};
-
-export const ModalInteractionOutsideDefaultOverlayExample: ModalStory = () => {
-
-  useEffect(() => {
-    let button = document.createElement('button');
-    button.id = 'test-button';
-    button.textContent = 'Click to close';
-    button.style.position = 'fixed';
-    button.style.top = '0';
-    button.style.right = '0';
-    button.style.zIndex = '200';
-    document.body.appendChild(button);
-    return () => {
-      document.body.removeChild(button);
-    };
-  }, []);
-
-  return (
-    <DialogTrigger>
-      <Button>Open modal</Button>
-      <Modal
-        isDismissable
-        shouldCloseOnInteractOutside={el => {
-          if (el.id === 'test-button') {return true;}
-          return false;
-        }}
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'Canvas',
-          color: 'CanvasText',
-          border: '1px solid gray',
-          padding: 30
-        }}>
-        <Dialog>
-          {({close}) => (
-            <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
-              <label>
-                First Name: <input placeholder="John" />
-              </label>
-              <label>
-                Last Name: <input placeholder="Smith" />
-              </label>
-              <Button onPress={close} style={{marginTop: 10}}>
-                Submit
-              </Button>
-            </form>
-        )}
-        </Dialog>
-      </Modal>
-    </DialogTrigger>
-  );
-};
 
 function InertTest() {
   return (
