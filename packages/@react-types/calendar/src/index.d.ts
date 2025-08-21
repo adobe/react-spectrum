@@ -66,7 +66,9 @@ export interface CalendarPropsBase {
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
+  /** Determines how to align the initial selection relative to the visible date range. */
+  selectionAlignment?: 'start' | 'center' | 'end'
 }
 
 export type DateRange = RangeValue<DateValue> | null;
