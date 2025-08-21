@@ -28,7 +28,22 @@ import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef
 import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'renderEmptyState' | 'dependencies' | 'items' | 'children' | 'selectionMode'>{
+type ExcludedListBoxProps = 
+  | keyof GlobalDOMAttributes 
+  | 'layout' 
+  | 'dragAndDropHooks' 
+  | 'renderEmptyState' 
+  | 'dependencies' 
+  | 'items' 
+  | 'onAction'
+  | 'children' 
+  | 'selectionMode' 
+  | 'shouldSelectOnPress' 
+  | 'shouldFocusWrap' 
+  | 'selectionBehavior' 
+  | 'shouldSelectOnFocus';
+
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, ExcludedListBoxProps> {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
@@ -87,7 +102,7 @@ const selectBoxStyles = style({
   height: {
     default: 170,
     orientation: {
-      horizontal: '100%'
+      horizontal: 'auto'
     }
   },
   minWidth: {
@@ -115,19 +130,19 @@ const selectBoxStyles = style({
     }
   },
   padding: {
-    default: 16,
+    default: 24,
     orientation: {
       horizontal: 16
     }
   },
   paddingStart: {
     orientation: {
-      horizontal: 24
+      horizontal: 32
     }
   },
   paddingEnd: {
     orientation: {
-      horizontal: 32
+      horizontal: 24
     }
   },
   gridTemplateAreas: {
@@ -152,14 +167,14 @@ const selectBoxStyles = style({
     orientation: {
       vertical: ['min-content', 8, 'min-content'],
       horizontal: {
-        default: ['min-content', 'min-content'],
+        default: ['min-content', 2, 'min-content'],
         [noIllustration]: ['min-content']
       }
     }
   },
   gridTemplateColumns: {
     orientation: {
-      horizontal: ['min-content', 12, '1fr']
+      horizontal: 'min-content 10px 1fr'
     }
   },
   alignContent: {
@@ -185,8 +200,7 @@ const selectBoxStyles = style({
     default: 'emphasized',
     isHovered: 'elevated',
     isSelected: 'elevated',
-    forcedColors: 'none',
-    isDisabled: 'emphasized'
+    isDisabled: 'none'
   },
   borderWidth: 2,
   transition: 'default'
@@ -198,7 +212,8 @@ const illustrationContainer = style({
   justifySelf: 'center',
   minSize: 48,
   color: {
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    isHovered: 'gray-900'
   },
   opacity: {
     isDisabled: 0.4
@@ -223,6 +238,7 @@ const descriptionText = style({
   },
   color: {
     default: 'neutral',
+    isHovered: 'gray-900',
     isDisabled: 'disabled'
   }
 });
@@ -254,6 +270,7 @@ const labelText = style({
   },
   color: {
     default: 'neutral',
+    isHovered: 'gray-900',
     isDisabled: 'disabled'
   }
 });
@@ -296,48 +313,46 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       }, styles)}
       style={pressScale(ref, UNSAFE_style)}
       {...otherProps}>
-      {({isSelected, isHovered, isDisabled}) => {
+      {({isSelected, isDisabled, isHovered}) => {
         return (
           <>
-            {(isSelected || (!isDisabled && isHovered)) && (
             <div 
               className={style({
                 position: 'absolute',
-                top: 12,
-                left: 12,
+                top: 8,
+                left: 8,
                 pointerEvents: 'none'
               })}
               aria-hidden="true">
-              <div
-                className={box({
-                  isSelected,
-                  isDisabled,
-                  size: 'M'
-                } as any)}>
-                {isSelected && (
+              {!isDisabled && (
+                <div
+                  className={box({
+                    isSelected,
+                    isDisabled,
+                    size: 'M'
+                  } as any)}>
                   <Checkmark 
                     size="S" 
                     className={iconStyles} />
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
             <Provider
               values={[
                 [IllustrationContext, {
                   size: 'S',
-                  styles: illustrationContainer({size: 'S', orientation, isDisabled})
+                  styles: illustrationContainer({size: 'S', orientation, isDisabled, isHovered})
                 }],
                 [TextContext, {
                   slots: {
                     [DEFAULT_SLOT]: {
-                      styles: labelText({orientation, isDisabled})
+                      styles: labelText({orientation, isDisabled, isHovered})
                     },
                     label: {
-                      styles: labelText({orientation, isDisabled})
+                      styles: labelText({orientation, isDisabled, isHovered})
                     },
                     description: {
-                      styles: descriptionText({orientation, isDisabled})
+                      styles: descriptionText({orientation, isDisabled, isHovered})
                     }
                   }
                 }]
@@ -381,10 +396,10 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
   return (
     <ListBox
       selectionMode={selectionMode}
-      {...otherProps}
       layout="grid"
       className={(UNSAFE_className || '') + gridStyles({orientation})}
-      style={UNSAFE_style}>
+      style={UNSAFE_style}
+      {...otherProps}>
       <SelectBoxContext.Provider value={selectBoxContextValue}>
         {children}
       </SelectBoxContext.Provider>

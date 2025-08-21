@@ -17,14 +17,12 @@
 
 import {action} from '@storybook/addon-actions';
 import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
-import {Button, SelectBox, SelectBoxGroup, Text} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
-import React, {useState} from 'react';
-import type {Selection} from 'react-aria-components';
+import React from 'react';
+import {SelectBox, SelectBoxGroup, Text} from '../src';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilled1 from '../spectrum-illustrations/gradient/generic1/Star';
-import StarFilled2 from '../spectrum-illustrations/gradient/generic2/Star';
 import {style} from '../style' with {type: 'macro'};
 
 const headingStyles = style({
@@ -46,14 +44,6 @@ const sectionHeadingStyles = style({
   color: 'gray-600',
   margin: 0,
   marginBottom: 8
-});
-
-const descriptionStyles = style({
-  font: 'body',
-  fontSize: 'body-sm',
-  color: 'gray-600',
-  margin: 0,
-  marginBottom: 16
 });
 
 const meta: Meta<typeof SelectBoxGroup> = {
@@ -83,144 +73,35 @@ const meta: Meta<typeof SelectBoxGroup> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof SelectBoxGroup>;
 
 export const Default: Story = {
   render: (args) => {
-    const {selectionMode, orientation, isDisabled} = args as any;
     return (
-      <SelectBoxGroup selectionMode={selectionMode} orientation={orientation} isDisabled={isDisabled} UNSAFE_style={{gridTemplateColumns: 'repeat(2, 1fr)'}}>
-        <SelectBox value="aws">
-          <Server />
-          <Text slot="label">Amazon Web Services</Text>
-          <Text slot="description">Reliable cloud infrastructure</Text>
-        </SelectBox>
-        <SelectBox value="azure">
-          <AlertNotice />
-          <Text slot="label">Microsoft Azure</Text>
-        </SelectBox>
-        <SelectBox value="gcp">
-          <PaperAirplane />
-          <Text slot="label">Google Cloud Platform</Text>
-        </SelectBox>
-        <SelectBox value="ibm">
-          <StarFilled1 />
-          <Text slot="label">IBM Cloud</Text>
-          <Text slot="description">Hybrid cloud solutions</Text>
-        </SelectBox>
-      </SelectBoxGroup>
+      <div style={{width: 800}}>
+        <SelectBoxGroup {...args}>
+          <SelectBox value="aws">
+            <Server />
+            <Text slot="label">Amazon Web Services</Text>
+            <Text slot="description">Reliable cloud infrastructure</Text>
+          </SelectBox>
+          <SelectBox value="azure">
+            <AlertNotice />
+            <Text slot="label">Microsoft Azure</Text>
+          </SelectBox>
+          <SelectBox value="gcp">
+            <PaperAirplane />
+            <Text slot="label">Google Cloud Platform</Text>
+          </SelectBox>
+          <SelectBox value="ibm">
+            <StarFilled1 />
+            <Text slot="label">IBM Cloud</Text>
+            <Text slot="description">Hybrid cloud solutions</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+      </div>
     );
   }
-};
-
-function InteractiveExamplesStory(args: any) {
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['enabled1', 'starred2']));
-  return (
-    <div style={{maxWidth: 800}}>
-      <h3 className={subheadingStyles}>Interactive Features Combined</h3>
-      <p className={descriptionStyles}>
-        Current selection: {selectedKeys === 'all' ? 'All' : Array.from(selectedKeys).join(', ') || 'None'}
-      </p>
-      
-      <SelectBoxGroup
-        selectionMode="multiple"
-        selectedKeys={selectedKeys}
-        onSelectionChange={(selection) => {
-          setSelectedKeys(selection);
-          action('onSelectionChange')(selection);
-        }}
-        {...args}
-        UNSAFE_style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
-        <SelectBox value="enabled1">
-          {selectedKeys !== 'all' && selectedKeys.has('enabled1') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Enabled Item 1</Text>
-          <Text slot="description">Status updates</Text>
-        </SelectBox>
-        <SelectBox value="enabled2">
-          {selectedKeys !== 'all' && selectedKeys.has('enabled2') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Enabled Item 2</Text>
-          <Text slot="description">Click to toggle</Text>
-        </SelectBox>
-        {/* Disabled item */}
-        <SelectBox value="disabled1" isDisabled>
-          <AlertNotice />
-          <Text slot="label">Disabled Item</Text>
-          <Text slot="description">Cannot select</Text>
-        </SelectBox>
-        <SelectBox value="starred1">
-          {selectedKeys !== 'all' && selectedKeys.has('starred1') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Starred Item 1</Text>
-          <Text slot="description">Click to star</Text>
-        </SelectBox>
-        <SelectBox value="starred2">
-          {selectedKeys !== 'all' && selectedKeys.has('starred2') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Starred Item 2</Text>
-          <Text slot="description">Click to star</Text>
-        </SelectBox>
-        <SelectBox value="disabled2" isDisabled>
-          <Server />
-          <Text slot="label">Disabled Service</Text>
-          <Text slot="description">Cannot select</Text>
-        </SelectBox>
-        <SelectBox value="dynamic1">
-          {selectedKeys !== 'all' && selectedKeys.has('dynamic1') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Dynamic Illustration</Text>
-          <Text slot="description">Click to activate</Text>
-        </SelectBox>
-        <SelectBox value="controllable">
-          {selectedKeys !== 'all' && selectedKeys.has('controllable') ? (
-            <StarFilled1 />
-          ) : (
-            <StarFilled2 />
-          )}
-          <Text slot="label">Controllable</Text>
-          <Text slot="description">External control available</Text>
-        </SelectBox>
-      </SelectBoxGroup>
-      
-      <div style={{marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-        <Button 
-          onPress={() => setSelectedKeys(new Set(['starred1', 'starred2', 'dynamic1']))}
-          variant="secondary">
-          Select Favorites
-        </Button>
-        <Button 
-          onPress={() => setSelectedKeys(new Set())}
-          variant="secondary">
-          Clear All
-        </Button>
-        <Button 
-          onPress={() => setSelectedKeys(new Set(['enabled1', 'enabled2', 'controllable']))}
-          variant="secondary">
-          Select Enabled Only
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-export const InteractiveExamples: Story = {
-  render: (args) => <InteractiveExamplesStory {...args} />
 };
 
 export const AllSlotCombinations: Story = {
