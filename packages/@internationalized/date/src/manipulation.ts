@@ -173,10 +173,10 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields, i
   return mutableDate;
 }
 
-export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields): Mutable<Time | CalendarDateTime> {
-  let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
+export function setTime(value: CalendarDateTime, fields: TimeFields, ignoreDay?: boolean): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields, ignoreDay?: boolean): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields, ignoreDay?: boolean): Mutable<Time | CalendarDateTime> {
+  let mutableValue: Mutable<Time | CalendarDateTime> = value.copy(ignoreDay);
 
   if (fields.hour != null) {
     mutableValue.hour = fields.hour;
@@ -404,7 +404,7 @@ export function subtractZoned(dateTime: ZonedDateTime, duration: DateTimeDuratio
   return addZoned(dateTime, invertDuration(duration));
 }
 
-export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions): ZonedDateTime {
+export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions, ignoreDay?: boolean): ZonedDateTime {
   // For date fields, we want the time to remain consistent and the UTC offset to potentially change to account for DST changes.
   // For time fields, we want the time to change by the amount given. This may result in the hour field staying the same, but the UTC
   // offset changing in the case of a backward DST transition, or skipping an hour in the case of a forward DST transition.
@@ -458,7 +458,7 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
     case 'year':
     case 'month':
     case 'day': {
-      let res = cycleDate(toCalendarDateTime(dateTime), field, amount, options);
+      let res = cycleDate(toCalendarDateTime(dateTime), field, amount, options, ignoreDay);
       let ms = toAbsolute(res, dateTime.timeZone);
       return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
     }
@@ -467,11 +467,11 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
   }
 }
 
-export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
+export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation, ignoreDay?: boolean): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
   let plainDateTime = toCalendarDateTime(dateTime);
-  let res = setTime(set(plainDateTime, fields), fields);
+  let res = setTime(set(plainDateTime, fields, ignoreDay), fields);
 
   // If the resulting plain date time values are equal, return the original time.
   // We don't want to change the offset when setting the time to the same value.
