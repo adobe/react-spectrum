@@ -299,7 +299,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   return {
     overlayProps: {
       style: {
-        position: 'absolute',
+        position: position ? 'absolute' : 'fixed',
+        top: !position ? 0 : undefined,
+        left: !position ? 0 : undefined,
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position?.position,
         maxHeight: position?.maxHeight ?? '100vh'
