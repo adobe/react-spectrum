@@ -29,6 +29,8 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * The ref for the popover element.
    */
   popoverRef: RefObject<Element | null>,
+  /** A ref for the popover arrow element. */
+  arrowRef?: RefObject<Element | null>,
   /**
    * An optional ref for a group of popovers, e.g. submenus.
    * When provided, this element is used to detect outside interactions
@@ -70,7 +72,9 @@ export interface PopoverAria {
   /** Props to apply to the underlay element, if any. */
   underlayProps: DOMAttributes,
   /** Placement of the popover with respect to the trigger. */
-  placement: PlacementAxis | null
+  placement: PlacementAxis | null,
+  /** The origin of the target in the overlay's coordinate system. Useful for animations. */
+  triggerOrigin: {x: number, y: number} | null
 }
 
 /**
@@ -102,7 +106,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     groupRef ?? popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement, triggerOrigin: origin} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
@@ -128,6 +132,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverProps: mergeProps(overlayProps, positionProps),
     arrowProps,
     underlayProps,
-    placement
+    placement,
+    triggerOrigin: origin
   };
 }

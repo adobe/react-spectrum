@@ -249,7 +249,7 @@ describe('DateField', function () {
           <DateField label="Date" showFormatHelpText />
         </Provider>
       );
-
+  
       let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
       let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
       expect(segmentTypes).toEqual(['year', 'month', 'day']);
