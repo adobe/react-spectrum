@@ -14,7 +14,7 @@ import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragI
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useRef, useState} from 'react';
 
-export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
+export interface DraggableCollectionStateOptions<T = object> extends DraggableCollectionProps<T> {
   /** A collection of items. */
   collection: Collection<Node<unknown>>,
   /** An interface for reading and updating multiple selection state. */
@@ -55,7 +55,7 @@ export interface DraggableCollectionState {
 /**
  * Manages state for a draggable collection.
  */
-export function useDraggableCollectionState(props: DraggableCollectionStateOptions): DraggableCollectionState {
+export function useDraggableCollectionState<T = object>(props: DraggableCollectionStateOptions<T>): DraggableCollectionState {
   let {
     getItems,
     isDisabled,
@@ -118,7 +118,16 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      return getItems(getKeys(key));
+      let keys = getKeys(key);
+      let items: any[] = [];
+      for (let key of keys) {
+        let value = collection.getItem(key)?.value;
+        if (value != null) {
+          items.push(value);
+        }
+      }
+
+      return getItems(getKeys(key), items);
     },
     isDisabled,
     preview,
