@@ -69,6 +69,7 @@ const placeholders = new LocalizedStringDictionary({
   meh: {year: 'aaaa', month: 'mm', day: 'dd'},
   ml: {year: 'വർഷം', month: 'മാസം', day: 'തീയതി'},
   ms: {year: 'tttt', month: 'mm', day: 'hh'},
+  nb: {year: 'åååå', month: 'mm', day: 'dd'},
   nl: {year: 'jjjj', month: 'mm', day: 'dd'},
   nn: {year: 'åååå', month: 'mm', day: 'dd'},
   no: {year: 'åååå', month: 'mm', day: 'dd'},

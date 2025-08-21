@@ -154,12 +154,7 @@ function AddRemoveTabsExample(props) {
     {id: 1, title: 'Tab 1', content: 'Tab body 1'},
     {id: 2, title: 'Tab 2', content: 'Tab body 2'},
     {id: 3, title: 'Tab 3', content: 'Tab body 3'}, 
-    {id: 4, title: 'Tab 4', content: 'Tab body 4'},
-    {id: 5, title: 'Tab 5', content: 'Tab body 5'},
-    {id: 6, title: 'Tab 6', content: 'Tab body 6'},
-    {id: 7, title: 'Tab 7', content: 'Tab body 7'},
-    {id: 8, title: 'Tab 8', content: 'Tab body 8'},
-    {id: 9, title: 'Tab 9', content: 'Tab body 9'}
+    {id: 4, title: 'Tab 4', content: 'Tab body 4'}
   ]);
 
   let addTab = () => {
@@ -180,9 +175,9 @@ function AddRemoveTabsExample(props) {
   };
 
   return (
-    <div className={style({width: 600})}>
+    <div className={style({width: 350})}>
       <Tabs {...props} aria-label="Tabs">
-        <div className={style({display: 'flex', alginSelf: 'stretch'})}>
+        <div className={style({display: 'flex'})}>
           <TabList items={tabs} styles={style({flexShrink: 1, flexGrow: 1, flexBasis: 'auto'})}>
             {tab => <Tab id={tab.id}>{tab.title}</Tab>}
           </TabList>

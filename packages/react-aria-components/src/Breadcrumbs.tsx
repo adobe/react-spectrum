@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent, FilterLessNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -73,10 +73,14 @@ export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, Glo
   id?: Key
 }
 
+class BreadcrumbNode extends FilterLessNode<unknown> {
+  static readonly type = 'item';
+}
+
 /**
  * A Breadcrumb represents an individual item in a `<Breadcrumbs>` list.
  */
-export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
+export const Breadcrumb = /*#__PURE__*/ createLeafComponent(BreadcrumbNode, function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
   let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;

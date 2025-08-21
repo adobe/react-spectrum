@@ -149,14 +149,14 @@ export default function SearchMenu(props: SearchMenuProps) {
       },
       {
         id: 'react-aria',
-        label: 'React Aria', 
+        label: 'React Aria',
         description: 'Style-free components and hooks for building accessible UIs',
         icon: <ReactAriaLogo />
       },
       {
         id: 'internationalized',
         label: 'Internationalized',
-        description: 'Framework-agnostic internationalization utilities', 
+        description: 'Framework-agnostic internationalization utilities',
         icon: <InternationalizedLogo />
       }
     ];
@@ -167,7 +167,7 @@ export default function SearchMenu(props: SearchMenuProps) {
       const currentTab = allTabs.splice(currentTabIndex, 1)[0];
       allTabs.unshift(currentTab);
     }
-    
+
     return allTabs;
   };
 
@@ -193,7 +193,7 @@ export default function SearchMenu(props: SearchMenuProps) {
         } else if (page.url.includes('react-internationalized')) {
           library = 'internationalized';
         }
-        
+
         return library === selectedLibrary;
       })
       .map(page => {
@@ -283,7 +283,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   let {contains} = useFilter({sensitivity: 'base'});
 
-  let filter: AutocompleteProps['filter'] = (textValue, inputValue) => {
+  let filter: AutocompleteProps<any>['filter'] = (textValue, inputValue) => {
     return textValue != null && contains(textValue, inputValue);
   };
 
@@ -320,7 +320,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   return (
     <div
-      className={style({ 
+      className={style({
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         alignItems: 'center',
