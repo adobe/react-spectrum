@@ -323,7 +323,45 @@ function TagGroupInner<T>({
                       style={item.props.UNSAFE_style}
                       key={item.key}
                       className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
-                      {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
+                      <div
+                        className={style({
+                          display: 'flex',
+                          minWidth: 0,
+                          alignItems: 'center',
+                          gap: 'text-to-visual',
+                          forcedColorAdjust: 'none',
+                          backgroundColor: 'transparent'
+                        })}>
+                        <Provider
+                          values={[
+                            [TextContext, {styles: style({order: 1, truncate: true})}],
+                            [IconContext, {
+                              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+                            }],
+                            [AvatarContext, {
+                              size: avatarSize[size],
+                              styles: style({order: 0})
+                            }],
+                            [ImageContext, {
+                              styles: style({
+                                size: fontRelative(20),
+                                flexShrink: 0,
+                                order: 0,
+                                aspectRatio: 'square',
+                                objectFit: 'contain',
+                                borderRadius: 'sm'
+                              })
+                            }]
+                          ]}>
+                          {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
+                        </Provider>
+                      </div>
+                      {Boolean(onRemove) && (
+                        <ClearButton
+                          slot="remove"
+                          size={size} />
+                      )}
                     </div>
                   );
                 })}
@@ -516,41 +554,41 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
   return (
     <>
       {isInRealDOM && (
-      <div
-        className={style({
-          display: 'flex',
-          minWidth: 0,
-          alignItems: 'center',
-          gap: 'text-to-visual',
-          forcedColorAdjust: 'none',
-          backgroundColor: 'transparent'
-        })}>
-        <Provider
-          values={[
-            [TextContext, {styles: style({order: 1, truncate: true})}],
-            [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-            }],
-            [AvatarContext, {
-              size: avatarSize[size],
-              styles: style({order: 0})
-            }],
-            [ImageContext, {
-              styles: style({
-                size: fontRelative(20),
-                flexShrink: 0,
-                order: 0,
-                aspectRatio: 'square',
-                objectFit: 'contain',
-                borderRadius: 'sm'
-              })
-            }]
-          ]}>
-          {children}
-        </Provider>
-      </div>
-        )}
+        <div
+          className={style({
+            display: 'flex',
+            minWidth: 0,
+            alignItems: 'center',
+            gap: 'text-to-visual',
+            forcedColorAdjust: 'none',
+            backgroundColor: 'transparent'
+          })}>
+          <Provider
+            values={[
+              [TextContext, {styles: style({order: 1, truncate: true})}],
+              [IconContext, {
+                render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+              }],
+              [AvatarContext, {
+                size: avatarSize[size],
+                styles: style({order: 0})
+              }],
+              [ImageContext, {
+                styles: style({
+                  size: fontRelative(20),
+                  flexShrink: 0,
+                  order: 0,
+                  aspectRatio: 'square',
+                  objectFit: 'contain',
+                  borderRadius: 'sm'
+                })
+              }]
+            ]}>
+            {children}
+          </Provider>
+        </div>
+      )}
       {!isInRealDOM && children}
       {allowsRemoving && isInRealDOM && (
         <ClearButton
