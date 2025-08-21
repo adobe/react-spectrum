@@ -320,7 +320,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
               className={style({
                 position: 'absolute',
                 top: 8,
-                left: 8,
+                insetStart: 8,
                 pointerEvents: 'none'
               })}
               aria-hidden="true">
