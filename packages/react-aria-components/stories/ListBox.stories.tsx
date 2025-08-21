@@ -23,7 +23,8 @@ import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/ListBox',
-  component: ListBox
+  component: ListBox,
+  excludeStories: ['MyListBoxLoaderIndicator']
 } as Meta<typeof ListBox>;
 
 export type ListBoxStory = StoryFn<typeof ListBox>;
@@ -148,8 +149,8 @@ export const ListBoxDnd: AlbumListBoxStory = (props) => {
     initialItems: albums
   });
 
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+  let {dragAndDropHooks} = useDragAndDrop<Album>({
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.title ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -514,7 +515,7 @@ export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExamp
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
 
-export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}: {minSize: number, maxSize: number}): JSX.Element {
+function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColumns = undefined, minSpace = undefined, maxSpace = undefined}: {minSize: number, maxSize: number, maxColumns?: number, minSpace?: number, maxSpace?: number}): JSX.Element {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 1000; i++) {
     let words = Math.max(2, Math.floor(Math.random() * 25));
@@ -527,8 +528,11 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}: {minS
       <Virtualizer
         layout={WaterfallLayout}
         layoutOptions={{
-          minItemSize: new Size(minSize, minSize),
-          maxItemSize: new Size(maxSize, maxSize)
+          minItemSize: new Size(minSize, 40),
+          maxItemSize: new Size(maxSize, 65),
+          maxColumns,
+          minSpace: new Size(minSpace, 18),
+          maxHorizontalSpace: maxSpace
         }}>
         <ListBox
           className={styles.menu}
@@ -545,6 +549,47 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}: {minS
   );
 }
 
+export const VirtualizedListBoxWaterfall: StoryObj<typeof VirtualizedListBoxWaterfallExample> = {
+  render: (args) => {
+    return <VirtualizedListBoxWaterfallExample {...args} />;
+  },
+  args: {
+    minSize: 40,
+    maxSize: 65,
+    maxColumns: undefined,
+    minSpace: undefined,
+    maxSpace: undefined
+  },
+  argTypes: {
+    minSize: {
+      control: 'number',
+      description: 'The minimum width of each item in the grid list',
+      defaultValue: 40
+    },
+    maxSize: {
+      control: 'number',
+      description: 'Maximum width of each item in the grid list.',
+      defaultValue: 65
+    },
+    maxColumns: {
+      control: 'number',
+      description: 'Maximum number of columns in the grid list.',
+      defaultValue: undefined
+    },
+    minSpace: {
+      control: 'number',
+      description: 'Minimum horizontal space between grid items.',
+      defaultValue: undefined
+    },
+    maxSpace: {
+      control: 'number',
+      description: 'Maximum horizontal space between grid items.',
+      defaultValue: undefined
+    }
+  }
+};
+
+
 let renderEmptyState = ({isLoading}) => {
   return  (
     <div style={{height: 30, width: '100%'}}>
@@ -560,7 +605,7 @@ interface Character {
   birth_year: number
 }
 
-const MyListBoxLoaderIndicator = (props) => {
+export const MyListBoxLoaderIndicator = (props) => {
   let {orientation, ...otherProps} = props;
   return (
     <ListBoxLoadMoreItem
