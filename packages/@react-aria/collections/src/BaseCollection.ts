@@ -142,6 +142,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
   private itemCount: number = 0;
+  isComplete = true;
 
   get size(): number {
     return this.itemCount;
