@@ -47,8 +47,6 @@ export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaB
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
-  /** Indicates whether the element is disabled to users of assistive technology. */
-  'aria-disabled'?: boolean | 'true' | 'false',
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
   'aria-expanded'?: boolean | 'true' | 'false',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
