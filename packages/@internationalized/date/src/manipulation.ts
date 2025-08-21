@@ -115,9 +115,9 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
 
 function constrainMonthDay(date: Mutable<AnyCalendarDate>, ignoreDay?: boolean) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
-  if(ignoreDay) {
+  if (ignoreDay) {
     date.day = Math.max(1, Math.min(date.calendar.getMaxDays(), date.day));
-  }else {
+  } else {
     date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
   }
 }
@@ -288,9 +288,9 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
       break;
     case 'day':
-      if(ignoreDay) {
-         mutable.day = cycleValue(value.day, amount, 1, value.calendar.getMaxDays(), options?.round);
-      }else {
+      if (ignoreDay) {
+        mutable.day = cycleValue(value.day, amount, 1, value.calendar.getMaxDays(), options?.round);
+      } else {
         mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
       }
       break;
