@@ -1,0 +1,666 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+# TableView
+
+<PageDescription>{docs.exports.TableView.description}</PageDescription>
+
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TableView/* PROPS */ styles={style({width: 320})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row id="1">
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row id="2">
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row id="3">
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row id="4">
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Content
+
+TableView follows the **Collection Components API**, accepting both static and dynamic collections.
+In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell, CheckboxGroup, Checkbox, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const columns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+const initialRows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+///- end collapse -///
+
+function FileTable() {
+  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let visibleColumns = columns.filter(column => showColumns.includes(column.id));
+
+  let [rows, setRows] = useState(initialRows);
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: 'full'})}>
+      <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
+        <Checkbox value="type">Type</Checkbox>
+        <Checkbox value="date">Date Modified</Checkbox>
+      </CheckboxGroup>
+      <TableView aria-label="Files" styles={style({width: 'full'})}>
+        <TableHeader columns={visibleColumns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        {/*- begin highlight -*/}
+        <TableBody items={rows} dependencies={[visibleColumns]}>
+          {item => (
+            /*- end highlight -*/
+            <Row columns={visibleColumns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionButton onPress={addRow}>Add row</ActionButton>
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Memoization</Heading>
+  <Content>Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example).</Content>
+</InlineAlert>
+
+
+### Asynchronous loading
+
+To enable infinite scrolling, provide `loadingState` and `onLoadMore` to the TableView. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
+}
+
+function AsyncSortTable() {
+  let list = useAsyncList<Character>({
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        { signal }
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <TableView
+      aria-label="Star Wars characters"
+      ///- begin highlight -///
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      ///- end highlight -///
+      styles={style({height: 320})}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="height">Height</Column>
+        <Column id="mass">Mass</Column>
+        <Column id="birth_year">Birth Year</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {(item) => (
+          <Row id={item.name}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.height}</Cell>
+            <Cell>{item.mass}</Cell>
+            <Cell>{item.birth_year}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a Row to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2" hideImports
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TableView/* PROPS */>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </TableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <Row href="https://adobe.com/" target="_blank">
+      {/*- end highlight -*/}
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </Row>
+    <Row href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </Row>
+    <Row href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Empty state
+
+```tsx render hideImports type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TableView aria-label="Search results" styles={style({height: 320})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  {/*- begin highlight -*/}
+  <TableBody renderEmptyState={() => 'No results found.'}>
+  {/*- end highlight -*/}
+    {[]}
+  </TableBody>
+</TableView>
+```
+
+### Column/Cell alignment and dividers
+
+Use the `align` prop on a Column and Cell to control the horizontal alignment of the content within. Similarly, use the `showDivider` prop to
+render a visual divider between columns and cells for increased clarity.
+
+```tsx render hideImports type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+///- end collapse -///
+
+const columns = [
+  {id: 'name', name: 'Name', isRowHeader: true, showDivider: true},
+  {id: 'type', name: 'Type', align: 'center', showDivider: true},
+  {id: 'level', name: 'Level', align: 'end'}
+];
+
+function TableWithDividers() {
+  return (
+    <TableView
+      aria-label="Favorite pokemon"
+      styles={style({width: 400})}
+    >
+      <TableHeader columns={columns}>
+        {/*- begin highlight -*/}
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader} showDivider={column?.showDivider} align={column?.align}>{column.name}</Column>
+        )}
+        {/*- end highlight -*/}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              {/*- begin highlight -*/}
+              return <Cell showDivider={column?.showDivider} align={column?.align as 'start' | 'center' | 'end'}>{item[column.id]}</Cell>;
+              {/*- end highlight -*/}
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+### Custom menus
+
+{/* TODO: Add link to S2 Menu when available. */}
+Custom column menus can be added via the `menuItems` prop. This prop accepts the same contents that a Menu accepts, please see the docs for
+more details.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell, MenuSection, MenuItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+///- end collapse -///
+
+///- begin collapse -///
+const columns = [
+  {id: 'name', name: 'Name', isRowHeader: true},
+  {id: 'type', name: 'Type'},
+  {id: 'level', name: 'Level'}
+];
+///- end collapse -///
+
+function CustomMenusTable() {
+  return (
+    <TableView aria-label="Favorite pokemon" styles={style({width: 400})}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column
+            ///- begin highlight -///
+            menuItems={
+              <>
+                <MenuSection>
+                  <MenuItem onAction={() => alert(`Filtering "${column.name}" column`)}>Filter</MenuItem>
+                </MenuSection>
+                <MenuSection>
+                  <MenuItem onAction={() => alert(`Hiding "${column.name}" column`)}>Hide column</MenuItem>
+                  <MenuItem onAction={() => alert(`Managing the "${column.name}" column`)}>Manage columns</MenuItem>
+                </MenuSection>
+              </>
+            }
+            ///- end highlight -///
+            isRowHeader={column?.isRowHeader}
+            >
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. Similarly, rows can be disabled via the `disabledKeys` prop. The `onAction` event handles item actions. See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'escapeKeyBehavior', 'disallowEmptySelection', 'shouldSelectOnPressUp']} initialProps={{selectionMode: 'multiple'}} wide hideImports type="s2"
+"use client";
+import type {Selection} from 'react-aria-components';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <TableView
+        {...props}
+        aria-label="Favorite pokemon"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        disabledKeys={['venusaur']}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        ///- end highlight -///
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Level</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="charizard">
+            <Cell>Charizard</Cell>
+            <Cell>Fire, Flying</Cell>
+            <Cell>67</Cell>
+          </Row>
+          <Row id="blastoise">
+            <Cell>Blastoise</Cell>
+            <Cell>Water</Cell>
+            <Cell>56</Cell>
+          </Row>
+          <Row id="venusaur">
+            <Cell>Venusaur</Cell>
+            <Cell>Grass, Poison</Cell>
+            <Cell>83</Cell>
+          </Row>
+          <Row id="pikachu">
+            <Cell>Pikachu</Cell>
+            <Cell>Electric</Cell>
+            <Cell>100</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+
+## Sorting
+
+Set the `allowsSorting` prop on a Column to make it sortable. When the column header is pressed, the table will call `onSortChange` with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the TableView to display the sorted column.
+
+```tsx render hideImports type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {type SortDescriptor} from 'react-aria-components';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+///- end collapse -///
+
+function SortableTable() {
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | null>(null);
+  let sortedRows = rows;
+  if (sortDescriptor) {
+    sortedRows = rows.toSorted((a, b) => {
+      let first = a[sortDescriptor.column];
+      let second = b[sortDescriptor.column];
+      let cmp = first < second ? -1 : 1;
+      if (sortDescriptor.direction === 'descending') {
+        cmp = -cmp;
+      }
+      return cmp;
+    });
+  }
+
+  return (
+    <TableView
+      aria-label="Favorite pokemon"
+      styles={style({width: 400})}
+      ///- begin highlight -///
+      sortDescriptor={sortDescriptor}
+      onSortChange={setSortDescriptor}
+      ///- end highlight -///
+    >
+      <TableHeader>
+        {/*- begin highlight -*/}
+        <Column id="name" isRowHeader allowsSorting>Name</Column>
+        <Column id="type" allowsSorting>Type</Column>
+        <Column id="level" allowsSorting>Level</Column>
+        {/*- end highlight -*/}
+      </TableHeader>
+      <TableBody items={sortedRows}>
+        {item => (
+          <Row>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.level}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+
+## Column resizing
+
+Set the `allowsResizing` prop on a Column to make it resizable. Use the `defaultWidth`, `width`, `minWidth`, and `maxWidth` props on a Column to control resizing behavior. These accept pixels, percentages, or fractional values (the [fr](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) unit). The default column width is `1fr`.
+
+```tsx render hideImports type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: '2022 Roadmap Proposal Revision 012822 Copy (2)', date: 'November 27, 2022 at 4:56PM', size: '214 KB'},
+  {id: 2, name: 'Budget', date: 'January 27, 2021 at 1:56AM', size: '14 MB'},
+  {id: 3, name: 'Welcome Email Template', date: 'July 24, 2022 at 2:48 PM', size: '20 KB'},
+  {id: 4, name: 'Job Posting_8301', date: 'May 30, 2025', size: '139 KB'}
+];
+///- end collapse -///
+
+<TableView aria-label="Table with resizable columns" styles={style({height: 320, width: 400})}>
+  <TableHeader>
+    {/*- begin highlight -*/}
+    <Column id="file" isRowHeader maxWidth={500} allowsResizing>
+      File Name
+    </Column>
+    <Column id="size" width={80}>Size</Column>
+    <Column id="date" minWidth={100} allowsResizing>
+      Date Modified
+    </Column>
+    {/*- end highlight -*/}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.size}</Cell>
+        <Cell>{item.date}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```
+
+### Resize events
+
+The TableView's `onResize` event is called when a column resizer is moved by the user. The `onResizeEnd` event is called when the user finishes resizing. These receive a `Map` containing the widths of all columns in the TableView. This example persists the column widths in `localStorage`.
+
+```tsx render hideImports type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useSyncExternalStore} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: '2022 Roadmap Proposal Revision 012822 Copy (2)', date: 'November 27, 2022 at 4:56PM', size: '214 KB'},
+  {id: 2, name: 'Budget', date: 'January 27, 2021 at 1:56AM', size: '14 MB'},
+  {id: 3, name: 'Welcome Email Template', date: 'July 24, 2022 at 2:48 PM', size: '20 KB'},
+  {id: 4, name: 'Job Posting_8301', date: 'May 30, 2025', size: '139 KB'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+const columns = [
+  {id: 'file', name: 'File Name'},
+  {id: 'size', name: 'Size'},
+  {id: 'date', name: 'Date'}
+];
+///- end collapse -///
+
+const initialWidths = new Map([
+  ['file', '1fr'],
+  ['size', 80],
+  ['date', 100]
+]);
+
+export default function ResizableTable() {
+  let columnWidths = useSyncExternalStore(subscribe, getColumnWidths, getInitialWidths);
+
+  return (
+    <TableView
+      aria-label="Table with resizable columns"
+      ///- begin highlight -///
+      onResize={setColumnWidths}
+      ///- end highlight -///
+      styles={style({width: 400})}>
+      <TableHeader columns={columns} dependencies={[columnWidths]}>
+        {column => (
+          <Column
+            isRowHeader={column.id === 'file'}
+            allowsResizing
+            ///- begin highlight -///
+            width={columnWidths.get(column.id)}
+            ///- end highlight -///
+          >
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.size}</Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+let parsedWidths;
+function getColumnWidths() {
+  // Parse column widths from localStorage.
+  if (!parsedWidths) {
+    let data = localStorage.getItem('table-widths');
+    if (data) {
+      parsedWidths = new Map(JSON.parse(data));
+    }
+  }
+  return parsedWidths || initialWidths;
+}
+
+function setColumnWidths(widths) {
+  // Store new widths in localStorage, and trigger subscriptions.
+  localStorage.setItem('table-widths', JSON.stringify(Array.from(widths)));
+  window.dispatchEvent(new Event('storage'));
+}
+
+function getInitialWidths() {
+  return initialWidths;
+}
+
+function subscribe(fn) {
+  let onStorage = () => {
+    // Invalidate cache.
+    parsedWidths = null;
+    fn();
+  };
+
+  window.addEventListener('storage', onStorage);
+  return () => window.removeEventListener('storage', onStorage);
+}
+```
+
+## API
+
+### TableView
+
+<PropTable component={docs.exports.TableView} links={docs.links} />
+
+### TableHeader
+
+<PropTable component={docs.exports.TableHeader} links={docs.links} />
+
+### Column
+
+<PropTable component={docs.exports.Column} links={docs.links} />
+
+### TableBody
+
+<PropTable component={docs.exports.TableBody} links={docs.links} />
+
+### Row
+
+<PropTable component={docs.exports.Row} links={docs.links} />
+
+### Cell
+
+<PropTable component={docs.exports.Cell} links={docs.links} />

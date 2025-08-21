@@ -408,7 +408,7 @@ function SortableTable() {
   }
 
   return (
-    <Table 
+    <Table
       aria-label="Favorite pokemon"
       ///- begin highlight -///
       sortDescriptor={sortDescriptor}
@@ -529,14 +529,14 @@ export default function ResizableTable() {
       <Table aria-label="Table with resizable columns">
         <TableHeader columns={columns} dependencies={[columnWidths]}>
           {column => (
-            <Column 
+            <Column
               isRowHeader={column.id === 'file'}
               ///- begin highlight -///
               width={columnWidths.get(column.id)}
               ///- end highlight -///
             >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <span tabIndex={-1} className="column-name">File Name</span>
+                <span tabIndex={-1} className="column-name">{column.name}</span>
                 <ColumnResizer />
               </div>
             </Column>
