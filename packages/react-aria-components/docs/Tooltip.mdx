@@ -396,12 +396,12 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM. The `--trigger-origin` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations. See the [animation guide](styling.html#animation) for more details.
+Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
 .react-aria-Tooltip {
   transition: opacity 300ms, scale 300ms;
-  transform-origin: var(--trigger-origin);
+  transform-origin: var(--trigger-anchor-point);
 
   &[data-entering],
   &[data-exiting] {
