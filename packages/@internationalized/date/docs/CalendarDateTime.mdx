@@ -280,6 +280,8 @@ A `CalendarDateTime` can be converted to a native JavaScript `Date` object using
 
 Because a `Date` represents an exact time, a time zone identifier is required to be passed to the `toDate` method. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
 
+Note: the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
+
 ```tsx
 import {getLocalTimeZone} from '@internationalized/date';
 

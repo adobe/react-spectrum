@@ -1039,7 +1039,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   id?: Key
 }
 
-class TableRowNode<T> extends FilterableNode<T> {
+class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {

@@ -50,6 +50,8 @@ let date = parseDate('2022-02-03');
 
 Today's date can be retrieved using the <TypeLink links={docs.links} type={docs.exports.today} /> function. This requires a time zone identifier to be provided, which is used to determine the local date. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
 
+Note: the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
+
 ```tsx
 import {today, getLocalTimeZone} from '@internationalized/date';
 
@@ -205,6 +207,8 @@ date.toString(); // '2022-02-03'
 A `CalendarDate` can be converted to a native JavaScript `Date` object using the `toDate` method. In general, the `Date` object should be avoided because it has many internationalization issues and other flaws. However, it is necessary to use some functionality like date formatting.
 
 Because a `Date` represents an exact time, a time zone identifier is required to be passed to the `toDate` method. The time of the returned date will be set to midnight in that time zone. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
+
+Note: the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
 
 ```tsx
 import {getLocalTimeZone} from '@internationalized/date';
