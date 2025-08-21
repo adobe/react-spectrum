@@ -1,0 +1,80 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: 
+
+date: 2025-08-25
+---
+
+# August 25, 2025 Release
+
+
+## Enhancements
+
+* Collection:
+  * Add additional selection methods to `useListData` - [@rbuzatto](https://github.com/rbuzatto) - [PR](https://github.com/adobe/react-spectrum/pull/8656)
+  * Add `maxHorizontalSpace` prop to `GridLayout` and `WaterfallLayout` - [@e-krebs](https://github.com/e-krebs) - [PR](https://github.com/adobe/react-spectrum/pull/8654), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8731)
+  * Implement filtering on a per CollectionNode basis  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8641)
+* Drag and Drop:
+  * Pass item objects to `useDragAndDrop` `getItems` in addition to `keys` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8711)
+* Miscellaneous:
+  * Add `onscrollend` event listener to ScrollView - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8573)
+  * Add support for origin-aware overlay animations - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8681)
+
+## Fixes
+
+* ComboBox:
+  * Ensure that React Aria ComboBox's empty state is rendered when items aren't directly provided to the ComboBox - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8720)
+* Date and Time:
+  * Add `firstDayOfWeek` and `pageBehavior` to `calendarProps` in `useDatePicker` and `useDateRangePicker` - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8587)
+  * Restore date segment autoadvance when typing leading zeros - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8684)
+  * Add DatePicker placeholder for Norwegian Bokmål - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8742)
+  * Allow user to reset timezone - [@jasonvarga](https://github.com/jasonvarga) - [PR](https://github.com/adobe/react-spectrum/pull/8054)
+  * Fallback to `en-US` when locale resolution fails - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/8589)
+* Drag and Drop:
+  * Call `clearData` in `useDrag` and `onDragStart` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8683)
+* Tabs:
+  * Warn users when Tab components are in the wrong order - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8508)
+  * Fix backward compatibility with old versions of `@types/react` in Tabs - [@MukulAppDev](https://github.com/MukulAppDev) - [PR](https://github.com/adobe/react-spectrum/pull/8651)
+* TagGroup:
+  * Add role to React Aria TagGroup when there are no items - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8723)
+* Tooltip:
+  * Allow user to set `containerPadding` in React Aria Tooltip - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8625)
+  * Prevent `useTooltipTrigger` from setting `tabIndex` - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/8622)
+* Menu:
+  * Fix pressing `Enter` key to trigger Menu item links - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8721)
+  * Properly close all Submenu levels when root Menu item is focused and retain focus on hovered Menu items - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8666)
+* Number Parser:
+  * Fix currency parsing in Swiss locale - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8546)
+* Miscellaneous:
+  * Export `isRTL` utility function - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8619)
+  * Prevent extraneous re-render in SSR when locale is provided to `useLocale` - [@herkulano](https://github.com/herkulano) - [PR](https://github.com/adobe/react-spectrum/pull/8524)
+  * Avoid showing placeholder warning on every render - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8682)
+  * Fix `:active` selector in `tailwindcss-react-aria-components` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8680)
+  * Replace deprecated `mozInputSource` check for virtual click detection - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8677)
+  * Support backcompatibility for `react-aria/util` versions referencing `UNSTABLE_useLoadMoreSentinel` API - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8710)
+  * Export `VisuallyHidden` in `react-aria-component` package - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/8676)
+  * Update element focusablity checks so that keyboard navigation can skip over specific non-focusable elements - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8642)
+  * Properly clean up `inert` on elements when nested non modal dialogs and popovers close at the same time - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8739)
+
+## Docs
+
+* Update the React Aria Command-Palette example to fix SSR - [@souporserious](https://github.com/souporserious) - [PR](https://github.com/adobe/react-spectrum/pull/8638)
+* Update `framer-motion` version in React Aria examples - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8586)
+* Fix React Aria Tree doc examples - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8698), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8736)
+
+## Under Construction
+
+* GridList
+  * Support Sections and Headers in React Aria GridList - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8667)
+  * Add React Aria GridList Section docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8749)
