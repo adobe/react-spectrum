@@ -259,7 +259,7 @@ export function useSpinButton(
           if (_async.current) {
             clearAsync();
           }
-          // For touch users, don't trigger an increment on press start, we'll wait for the press end to trigger it if
+          // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
           // the control isn't spinning.
           _async.current = window.setTimeout(() => {
             onDecrementPressStart(60);
