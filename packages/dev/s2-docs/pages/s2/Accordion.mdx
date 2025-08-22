@@ -1,14 +1,13 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton, TextField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 # Accordion
 
 <PageDescription>{docs.exports.Accordion.description}</PageDescription>
 
-```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled']} type="s2"
+```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled', 'allowsMultipleExpanded']} type="s2"
 "use client";
 import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 
@@ -24,163 +23,51 @@ import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-sp
 </Accordion>
 ```
 
-## Content
+## Expanding
 
-Accordion accepts multiple [Disclosure](Disclosure.html) elements as children. Each disclosure should have an `id` prop which is passed to the `onExpandedChange` handler to identify the expanded disclosure within the accordion.
+Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, TextField} from '@react-spectrum/s2';
-
-<Accordion defaultExpandedKeys={['account']}>
-  <Disclosure id="account">
-    <DisclosureTitle>Account Settings</DisclosureTitle>
-    <DisclosurePanel>
-      <TextField label="Username" />
-    </DisclosurePanel>
-  </Disclosure>
-  <Disclosure id="security">
-    <DisclosureTitle>Security</DisclosureTitle>
-    <DisclosurePanel>
-      Configure your security preferences here.
-    </DisclosurePanel>
-  </Disclosure>
-  <Disclosure id="notifications">
-    <DisclosureTitle>Notifications</DisclosureTitle>
-    <DisclosurePanel>
-      Manage your notification settings.
-    </DisclosurePanel>
-  </Disclosure>
-</Accordion>
-```
-
-## Controlled state
-
-Accordion can be controlled using the `expandedKeys` prop along with `onExpandedChange` to manage which disclosures are expanded.
-
-```tsx render hideImports
-"use client";
+import type {Key} from 'react-aria-components';
 import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [expandedKeys, setExpandedKeys] = useState(new Set(['settings']));
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['system']));
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <Accordion 
-        expandedKeys={expandedKeys} 
-        onExpandedChange={setExpandedKeys}>
-        <Disclosure id="settings">
-          <DisclosureTitle>Settings</DisclosureTitle>
-          <DisclosurePanel>Application settings content</DisclosurePanel>
-        </Disclosure>
-        <Disclosure id="preferences">
-          <DisclosureTitle>Preferences</DisclosureTitle>
-          <DisclosurePanel>User preferences content</DisclosurePanel>
-        </Disclosure>
-        <Disclosure id="advanced">
-          <DisclosureTitle>Advanced</DisclosureTitle>
-          <DisclosurePanel>Advanced configuration options</DisclosurePanel>
-        </Disclosure>
-      </Accordion>
-      
-      <div>
-        Expanded items: {expandedKeys.size > 0 ? Array.from(expandedKeys).join(', ') : 'none'}
-      </div>
-    </div>
+    <Accordion
+      /*- begin highlight -*/
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}>
+      {/*- end highlight -*/}
+      <Disclosure id="settings">
+        <DisclosureTitle>Settings</DisclosureTitle>
+        <DisclosurePanel>Application settings content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="preferences">
+        <DisclosureTitle>Preferences</DisclosureTitle>
+        <DisclosurePanel>User preferences content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="advanced">
+        <DisclosureTitle>Advanced</DisclosureTitle>
+        <DisclosurePanel>Advanced configuration options</DisclosurePanel>
+      </Disclosure>
+    </Accordion>
   );
 }
 ```
 
-## Header customization
+## API
 
-Use `DisclosureHeader` to add additional elements alongside disclosure titles, such as action buttons or status indicators.
-
-```tsx render hideImports
-"use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
-import AddIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Add_20_N.svg';
-
+```tsx links={{Accordion: '#accordion', Disclosure: 'Disclosure.html'}}
 <Accordion>
-  <Disclosure id="files">
-    <DisclosureHeader>
-      <DisclosureTitle>Files</DisclosureTitle>
-      <ActionButton>
-        Add
-      </ActionButton>
-    </DisclosureHeader>
-    <DisclosurePanel>
-      File management content here.
-    </DisclosurePanel>
-  </Disclosure>
-  <Disclosure id="projects">
-    <DisclosureHeader>
-      <DisclosureTitle>Projects</DisclosureTitle>
-      <ActionButton>
-        Edit
-      </ActionButton>
-    </DisclosureHeader>
-    <DisclosurePanel>
-      Project management content here.
-    </DisclosurePanel>
-  </Disclosure>
+  <Disclosure />
+  <Disclosure />
 </Accordion>
 ```
-
-## Events
-
-Accordion accepts an `onExpandedChange` prop which is triggered when any disclosure is expanded or collapsed. The handler receives a Set of expanded keys.
-
-```tsx render hideImports
-"use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [lastAction, setLastAction] = useState('none');
-
-  let handleExpandedChange = (keys) => {
-    setLastAction(`Changed to: ${Array.from(keys).join(', ') || 'none'}`);
-  };
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <Accordion onExpandedChange={handleExpandedChange}>
-        <Disclosure id="section1">
-          <DisclosureTitle>Section 1</DisclosureTitle>
-          <DisclosurePanel>Content for section 1</DisclosurePanel>
-        </Disclosure>
-        <Disclosure id="section2">
-          <DisclosureTitle>Section 2</DisclosureTitle>
-          <DisclosurePanel>Content for section 2</DisclosurePanel>
-        </Disclosure>
-      </Accordion>
-      
-      <div>Last action: {lastAction}</div>
-    </div>
-  );
-}
-```
-
-## Props
 
 ### Accordion
 
 <PropTable component={docs.exports.Accordion} links={docs.links} />
-
-### Disclosure
-
-<PropTable component={docs.exports.Disclosure} links={docs.links} />
-
-### DisclosureTitle
-
-<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
-
-### DisclosurePanel
-
-<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
-
-### DisclosureHeader
-
-<PropTable component={docs.exports.DisclosureHeader} links={docs.links} />

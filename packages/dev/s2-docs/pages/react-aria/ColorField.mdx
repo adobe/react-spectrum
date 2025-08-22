@@ -1,21 +1,33 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {ColorField} from '@react-spectrum/s2';
-import docs from 'docs:@react-spectrum/s2';
+import {ColorField as VanillaColorField} from 'vanilla-starter/ColorField';
+import {ColorField as TailwindColorField} from 'tailwind-starter/ColorField';
+import '../../tailwind/tailwind.css';
+import vanillaDocs from 'docs:vanilla-starter/ColorField';
+import docs from 'docs:react-aria-components';
+import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
 
 # ColorField
 
 <PageDescription>{docs.exports.ColorField.description}</PageDescription>
 
-<VisualExample
-  component={ColorField}
-  docs={docs.exports.ColorField}
-  links={docs.links}
-  props={['label', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
-  initialProps={{label: 'Color', defaultValue: '#ff0000'}}
-  importSource="@react-spectrum/s2"
-  type="s2" />
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaColorField}
+    docs={vanillaDocs.exports.ColorField}
+    links={vanillaDocs.links}
+    props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
+    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    type="vanilla" />
+  <VisualExample
+    component={TailwindColorField}
+    docs={vanillaDocs.exports.ColorField}
+    links={vanillaDocs.links}
+    props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
+    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    type="tailwind" />
+</ExampleSwitcher>
 
 ## Value
 
@@ -23,9 +35,9 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 
 ```tsx render
 "use client";
-import {ColorField} from '@react-spectrum/s2';
+import {ColorField} from 'vanilla-starter/ColorField';
+import {parseColor} from 'react-aria-components';
 import {useState} from 'react';
-import {parseColor} from '@react-stately/color';
 
 function Example() {
   let [value, setValue] = useState(parseColor('#e73623'));
@@ -48,7 +60,8 @@ By default, ColorField displays a hex value. Set the `colorSpace` and `channel` 
 
 ```tsx render
 "use client";
-import {ColorField, parseColor} from '@react-spectrum/s2';
+import {ColorField} from 'vanilla-starter/ColorField';
+import {parseColor} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
@@ -86,9 +99,11 @@ function Example() {
 
 Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render docs={docs.exports.ColorField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}}
+```tsx render
 "use client";
-import {ColorField, Button, Form} from '@react-spectrum/s2';
+import {ColorField, Button, Form} from 'vanilla-starter/ColorField';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
 
 function Example(props) {
   return (
@@ -98,15 +113,27 @@ function Example(props) {
         label="Brand color"
         ///- begin highlight -///
         name="brandColor"
-        /* PROPS */
-        ///- end highlight -///
-      />
-      <Button type="submit">Submit</Button>
+        isRequired />
+        {/*- end highlight -*/}
+      <Button type="submit" style={{marginTop: 8}}>Submit</Button>
     </Form>
   );
 }
 ```
 
 ## API
+
+<Anatomy />
+
+```tsx links={{ColorField: '#colorfield'}}
+<ColorField>
+  <Label />
+  <Input />
+  <Text slot="description" />
+  <FieldError />
+</ColorField>
+```
+
+### ColorField
 
 <PropTable component={docs.exports.ColorField} links={docs.links} />

@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/ProgressBar';
 import progressCircleDocs from 'docs:vanilla-starter/ProgressCircle';
 import {ProgressBar as VanillaProgressBar} from 'vanilla-starter/ProgressBar';
 import {ProgressCircle as VanillaProgressCircle} from 'vanilla-starter/ProgressCircle';
@@ -16,18 +17,18 @@ import Anatomy from '@react-aria/progress/docs/anatomy.svg';
 <ExampleSwitcher>
   <VisualExample
     component={VanillaProgressBar}
-    docs={docs.exports.ProgressBar}
-    links={docs.links}
-    props={['value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
+    docs={vanillaDocs.exports.ProgressBar}
+    links={vanillaDocs.links}
+    props={['label', 'value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
     initialProps={{label: 'Loading…', value: 80}}
     controlOptions={{value: {control: 'slider'}}}
     type="vanilla"
     files={["starters/docs/src/ProgressBar.tsx", "starters/docs/src/ProgressBar.css"]} />
   <VisualExample
     component={TailwindProgressBar}
-    docs={docs.exports.ProgressBar}
-    links={docs.links}
-    props={['value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
+    docs={vanillaDocs.exports.ProgressBar}
+    links={vanillaDocs.links}
+    props={['label', 'value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
     initialProps={{label: 'Loading…', value: 80}}
     controlOptions={{value: {control: 'slider'}}}
     type="tailwind"

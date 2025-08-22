@@ -139,7 +139,7 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 
 function Example(props) {
-  let [value, setValue] = useState("Kangaroo");
+  let [value, setValue] = useState<Key>('Kangaroo');
 
   return (
     <div>
@@ -243,7 +243,13 @@ import {Button} from 'vanilla-starter/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
-  <ComboBox name="animal" isRequired description="Please select an animal.">
+  <ComboBox
+    label="Animal"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <ComboBoxItem id="aardvark">Aardvark</ComboBoxItem>
     <ComboBoxItem id="cat">Cat</ComboBoxItem>
     <ComboBoxItem id="dog">Dog</ComboBoxItem>

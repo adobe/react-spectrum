@@ -1,205 +1,55 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {ActionMenu, MenuItem, MenuSection, Text, Keyboard, Header, Heading} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 # ActionMenu
 
 <PageDescription>{docs.exports.ActionMenu.description}</PageDescription>
 
-```tsx render docs={docs.exports.ActionMenu} links={docs.links} props={['isQuiet', 'isDisabled', 'size', 'align', 'direction', 'menuSize']} initialProps={{}} type="s2"
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-<ActionMenu/* PROPS */>
-  <MenuItem id="cut">Cut</MenuItem>
-  <MenuItem id="copy">Copy</MenuItem>
-  <MenuItem id="paste">Paste</MenuItem>
-</ActionMenu>
-```
-
-## Content
-
-ActionMenu follows the Collection Components API, accepting both static and dynamic collections. It combines an ActionButton with a Menu for simple "more actions" use cases.
-
-### Basic Usage
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-<ActionMenu onAction={(key) => alert(`Selected: ${key}`)}>
-  <MenuItem id="cut">Cut</MenuItem>
-  <MenuItem id="copy">Copy</MenuItem>
-  <MenuItem id="paste">Paste</MenuItem>
-</ActionMenu>
-```
-
-### Dynamic Items
-
-Items can be generated dynamically using a function based on data.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-let actionItems = [
-  {id: 'cut', name: 'Cut'},
-  {id: 'copy', name: 'Copy'},
-  {id: 'paste', name: 'Paste'},
-  {id: 'select-all', name: 'Select All'}
-];
-
-<ActionMenu items={actionItems} onAction={(key) => alert(`Selected: ${key}`)}>
-  {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
-</ActionMenu>
-```
-
-## Complex Items
-
-ActionMenu items can include additional content such as icons, descriptions, and keyboard shortcuts.
-
-```tsx render expanded
+```tsx render docs={docs.exports.ActionMenu} links={docs.links} props={[ 'size', 'align', 'direction', 'menuSize', 'isQuiet', 'isDisabled']} initialProps={{}} type="s2"
 "use client";
 import {ActionMenu, MenuItem, Text, Keyboard} from '@react-spectrum/s2';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Paste from '@react-spectrum/s2/icons/Paste';
 
-<ActionMenu>
-  <MenuItem id="cut" textValue="Cut">
-    <Text slot="label">Cut</Text>
-    <Keyboard>⌘X</Keyboard>
-  </MenuItem>
-  <MenuItem id="copy" textValue="Copy">
+<ActionMenu/* PROPS */>
+  <MenuItem
+    textValue="Copy"
+    onAction={() => alert('copy')}>
+    <Copy />
     <Text slot="label">Copy</Text>
+    <Text slot="description">Copy the selected text</Text>
     <Keyboard>⌘C</Keyboard>
   </MenuItem>
-  <MenuItem id="paste" textValue="Paste">
+  <MenuItem
+    textValue="Cut"
+    onAction={() => alert('cut')}>
+    <Cut />
+    <Text slot="label">Cut</Text>
+    <Text slot="description">Cut the selected text</Text>
+    <Keyboard>⌘X</Keyboard>
+  </MenuItem>
+  <MenuItem
+    textValue="Paste"
+    onAction={() => alert('paste')}>
+    <Paste />
     <Text slot="label">Paste</Text>
+    <Text slot="description">Paste the copied text</Text>
     <Keyboard>⌘V</Keyboard>
   </MenuItem>
 </ActionMenu>
 ```
 
-## Sections
+## API
 
-ActionMenu supports sections to group related items together.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem, MenuSection, Header, Heading} from '@react-spectrum/s2';
-
+```tsx links={{ActionMenu: '#actionmenu', MenuItem: 'Menu.html#menuitem'}}
 <ActionMenu>
-  <MenuSection>
-    <Header>
-      <Heading>File</Heading>
-    </Header>
-    <MenuItem id="new">New</MenuItem>
-    <MenuItem id="open">Open...</MenuItem>
-  </MenuSection>
-  <MenuSection>
-    <Header>
-      <Heading>Edit</Heading>
-    </Header>
-    <MenuItem id="cut">Cut</MenuItem>
-    <MenuItem id="copy">Copy</MenuItem>
-    <MenuItem id="paste">Paste</MenuItem>
-  </MenuSection>
+  <MenuItem />
 </ActionMenu>
 ```
-
-## Links
-
-ActionMenu items can be links to other pages or websites.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-<ActionMenu>
-  <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
-  <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
-  <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
-  <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
-</ActionMenu>
-```
-
-## Events
-
-### Action Events
-
-Handle item selection using the `onAction` callback.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [action, setAction] = useState('');
-
-  return (
-    <div>
-      <ActionMenu onAction={setAction}>
-        <MenuItem id="cut">Cut</MenuItem>
-        <MenuItem id="copy">Copy</MenuItem>
-        <MenuItem id="paste">Paste</MenuItem>
-      </ActionMenu>
-      <p>Last action: {action}</p>
-    </div>
-  );
-}
-
-<Example />
-```
-
-### Open/Close Events
-
-Handle menu open/close state with `onOpenChange`.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div>
-      <ActionMenu onOpenChange={setIsOpen}>
-        <MenuItem>Cut</MenuItem>
-        <MenuItem>Copy</MenuItem>
-        <MenuItem>Paste</MenuItem>
-      </ActionMenu>
-      <p>Menu is: {isOpen ? 'open' : 'closed'}</p>
-    </div>
-  );
-}
-
-<Example />
-```
-
-## Disabled Items
-
-Disable specific menu items using the `disabledKeys` prop.
-
-```tsx render expanded
-"use client";
-import {ActionMenu, MenuItem} from '@react-spectrum/s2';
-
-<ActionMenu disabledKeys={['copy', 'paste']}>
-  <MenuItem id="cut">Cut</MenuItem>
-  <MenuItem id="copy">Copy</MenuItem>
-  <MenuItem id="paste">Paste</MenuItem>
-  <MenuItem id="select-all">Select All</MenuItem>
-</ActionMenu>
-```
-
-## Props
 
 ### ActionMenu
 
 <PropTable component={docs.exports.ActionMenu} links={docs.links} />
-
-### MenuItem
-
-<PropTable component={docs.exports.MenuItem} links={docs.links} />

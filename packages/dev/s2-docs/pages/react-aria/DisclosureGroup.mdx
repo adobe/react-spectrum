@@ -47,7 +47,7 @@ import Anatomy from 'react-aria-components/docs/DisclosureGroupAnatomy.svg';
 
 ## Expanding
 
-Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
+Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
 
 ```tsx render
 "use client";
@@ -65,13 +65,17 @@ function Example() {
       expandedKeys={expandedKeys}
       onExpandedChange={setExpandedKeys}>
       {/*- end highlight -*/}
-      <Disclosure id="system">
-        <DisclosureHeader>System Requirements</DisclosureHeader>
-        <DisclosurePanel>Details about system requirements here</DisclosurePanel>
+      <Disclosure id="settings">
+        <DisclosureHeader>Settings</DisclosureHeader>
+        <DisclosurePanel>Application settings content</DisclosurePanel>
       </Disclosure>
-      <Disclosure id="personal">
-        <DisclosureHeader>Personal Information</DisclosureHeader>
-        <DisclosurePanel>Details about personal information here</DisclosurePanel>
+      <Disclosure id="preferences">
+        <DisclosureHeader>Preferences</DisclosureHeader>
+        <DisclosurePanel>User preferences content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="advanced">
+        <DisclosureHeader>Advanced</DisclosureHeader>
+        <DisclosurePanel>Advanced configuration options</DisclosurePanel>
       </Disclosure>
     </DisclosureGroup>
   );

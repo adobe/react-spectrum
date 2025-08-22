@@ -11,76 +11,52 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={ToggleButton}
   docs={docs.exports.ToggleButton}
-  props={['children', 'isEmphasized', 'staticColor', 'isQuiet', 'size', 'isDisabled', 'isSelected']}
+  props={['children', 'size', 'staticColor', 'isQuiet', 'isEmphasized', 'isDisabled']}
   initialProps={{children: 'Pin'}}
-  slots={{icon: true}}
+  slots={{icon: true, avatar: true, badge: true}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Content
+## Selection
 
-ToggleButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ToggleButton.
-A visible label can be provided by passing a string or a Text component as a child, depending on whether the ToggleButton has an accompanying icon.
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
 
-```tsx render expanded
-"use client";
-import {ToggleButton, Text} from '@react-spectrum/s2';
-import PinOn from '@react-spectrum/s2/icons/PinOn';
-import PinOff from '@react-spectrum/s2/icons/PinOff';
-
-<ToggleButton>
-  <PinOn />
-  <Text>Icon + Label</Text>
-</ToggleButton>
-```
-
-**Note:** `ToggleButton` should not be used when the content of the button changes between selection states, for example,
-mute/unmute or play/pause. In these cases, use an [ActionButton](ActionButton.html) instead.
-
-## Value
-
-ToggleButtons are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
-Alternatively, the `isSelected` prop can be used to make the selected state controlled.
-
-```tsx render hideImports
+```tsx render
 "use client";
 import {ToggleButton} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 20}}>
-  <ToggleButton>Default</ToggleButton>
-  <ToggleButton defaultSelected>Default Selected</ToggleButton>
-</div>
-```
-
-## Events
-
-ToggleButtons support user interactions via mouse, keyboard, and touch. When pressing the button, the selection
-state is toggled, and the `onChange` event is fired.
-
-```tsx render hideImports
-"use client";
-import {ToggleButton} from '@react-spectrum/s2';
-import PinOn from '@react-spectrum/s2/icons/PinOn';
 import {useState} from 'react';
+import Star from '@react-spectrum/s2/icons/Star';
 
-function Example() {
-  let [isSelected, setSelected] = useState(false);
+function Example(props) {
+  let [selected, setSelection] = useState(false);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+    <>
       <ToggleButton
-        isEmphasized
-        isSelected={isSelected}
-        onChange={setSelected}
-        aria-label="Pin">
-        <PinOn />
+        {...props}
+        aria-label="Star"
+        /*- begin highlight -*/
+        isSelected={selected}
+        onChange={setSelection}>
+        {/*- end highlight -*/}
+        <Star />
       </ToggleButton>
-      <p>Selected: {isSelected ? 'true' : 'false'}</p>
-    </div>
+      <p>{selected ? 'Starred' : 'Not starred'}</p>
+    </>
   );
 }
 ```
 
-## Props
+## API
+
+```tsx links={{ToggleButton: '#toggleButton', Avatar: 'Avatar.html'}}
+<ToggleButton>
+  <Icon /> or <Avatar />
+  <Text />
+  <NotificationBadge />
+</ToggleButton>
+```
+
+### ToggleButton
 
 <PropTable component={docs.exports.ToggleButton} links={docs.links} />

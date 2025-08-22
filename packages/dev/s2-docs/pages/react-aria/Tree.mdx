@@ -64,41 +64,37 @@ import {Collection} from 'react-aria-components';
 
 ///- begin collapse -///
 let items = [
-  {id: '1', title: 'Documents', type: 'directory', children: [
-    {id: '2', title: 'Project', type: 'directory', children: [
-      {id: '3', title: 'Weekly Report', type: 'file', children: []},
-      {id: '4', title: 'Budget', type: 'file', children: []}
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: '5', title: 'Photos', type: 'directory', children: [
-    {id: '6', title: 'Image 1', type: 'file', children: []},
-    {id: '7', title: 'Image 2', type: 'file', children: []}
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 ///- end collapse -///
 
-function Example() {
-  return (
-   <Tree
-      aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
-      items={items}
-      selectionMode="multiple">
-      {function renderItem(item) {
-        return (
-          <TreeItem title={item.title}>
-            {/*- begin highlight -*/}
-            {/* recursively render children */}
-            <Collection items={item.children}>
-              {renderItem}
-            </Collection>
-            {/*- end highlight -*/}
-          </TreeItem>
-        );
-      }}
-    </Tree>
-  );
-}
+<Tree
+  aria-label="Files"
+  defaultExpandedKeys={[1, 4]}
+  items={items}
+  selectionMode="multiple">
+  {function renderItem(item) {
+    return (
+      <TreeItem title={item.title}>
+        {/*- begin highlight -*/}
+        {/* recursively render children */}
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+        {/*- end highlight -*/}
+      </TreeItem>
+    );
+  }}
+</Tree>
 ```
 
 ### Asynchronous loading
@@ -110,7 +106,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 import {Collection, TreeLoadMoreItem} from 'react-aria-components';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string
@@ -155,10 +151,7 @@ function AsyncLoadingExample() {
   return (
     <Tree
       aria-label="Async loading tree"
-      style={{height: 300}}
-      renderEmptyState={() => (
-        <ProgressCircle isIndeterminate aria-label="Loading..." />
-      )}>
+      style={{height: 300}}>
       <TreeItem title="Pokemon">
         <Collection items={pokemonList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
@@ -192,7 +185,7 @@ function AsyncLoadingExample() {
 
 Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=Tree#selection-behavior) for more details.
 
-```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
+```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 
@@ -224,9 +217,9 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 
 ### Empty state
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Tree} from 'vanilla-starter/Tree';
 
 <Tree
   aria-label="Search results"

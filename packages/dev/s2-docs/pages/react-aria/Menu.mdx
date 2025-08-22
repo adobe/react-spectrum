@@ -91,24 +91,24 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-components';
 
 function Example() {
-  let options = [
-    { id: 1, name: 'Aardvark' },
-    { id: 2, name: 'Cat' },
-    { id: 3, name: 'Dog' },
-    { id: 4, name: 'Kangaroo' },
-    { id: 5, name: 'Koala' },
-    { id: 6, name: 'Penguin' },
-    { id: 7, name: 'Snake' },
-    { id: 8, name: 'Turtle' },
-    { id: 9, name: 'Wombat' }
+  let items = [
+    { id: 1, name: 'New file…' },
+    { id: 2, name: 'New window' },
+    { id: 3, name: 'Open…' },
+    { id: 4, name: 'Save' },
+    { id: 5, name: 'Save as…' },
+    { id: 6, name: 'Revert file' },
+    { id: 7, name: 'Print…' },
+    { id: 8, name: 'Close window' },
+    { id: 9, name: 'Quit' }
   ];
 
   return (
     <MenuTrigger>
-      <Button>Animals</Button>
+      <Button>File</Button>
       <Popover>
         {/*- begin highlight -*/}
-        <Menu items={options}>
+        <Menu items={items}>
           {(item) => <MenuItem>{item.name}</MenuItem>}
         </Menu>
         {/*- end highlight -*/}
@@ -153,7 +153,7 @@ import {MenuTrigger, Menu, MenuItem, Text, Keyboard, Button, Popover} from 'reac
 ```
 
 <InlineAlert variant="notice">
-  <Heading>Accessibility warning</Heading>
+  <Heading>Accessibility</Heading>
   <Content>Interactive elements (e.g. buttons) within menu items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children.</Content>
 </InlineAlert>
 
@@ -207,22 +207,20 @@ import {MenuItem} from 'vanilla-starter/Menu';
       {/*- begin highlight -*/}
       <SubmenuTrigger>
         <MenuItem>Share</MenuItem>
-        <Popover>
         {/*- end highlight -*/}
-          <Menu>
-            <MenuItem>SMS</MenuItem>
-            <MenuItem>Instagram</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem>Email</MenuItem>
-              <Popover>
-                <Menu>
-                  <MenuItem>Work</MenuItem>
-                  <MenuItem>Personal</MenuItem>
-                </Menu>
-              </Popover>
-            </SubmenuTrigger>
-          </Menu>
-        </Popover>
+        <Menu>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Instagram</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Email</MenuItem>
+            <Popover>
+              <Menu>
+                <MenuItem>Work</MenuItem>
+                <MenuItem>Personal</MenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+        </Menu>
       </SubmenuTrigger>
     </Menu>
   </Popover>
@@ -282,12 +280,14 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 ### Autocomplete
 
-Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](../react-aria/Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
 
 ```tsx render
 "use client";
-import {MenuTrigger, Button, Menu, Popover, SubmenuTrigger, Autocomplete, useFilter} from 'react-aria-components';
-import {MenuItem} from 'vanilla-starter/Menu';
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
 import {SearchField} from 'vanilla-starter/SearchField';
 
 function Example() {
@@ -330,12 +330,12 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 import {useState} from 'react';
 
 function Example(props) {
-  let [selected, setSelected] = useState<Selection>(new Set(['cheese']));
+  let [selected, setSelected] = useState<Selection>(new Set(['rulers']));
 
   return (
-    <div>
+    <>
       <MenuTrigger>
-        <Button>Sandwich contents</Button>
+        <Button>View</Button>
         <Popover>
           <Menu
             {...props}
@@ -345,17 +345,16 @@ function Example(props) {
             onSelectionChange={setSelected}
             ///- end highlight -///
           >
-            <MenuItem id="lettuce">Lettuce</MenuItem>
-            <MenuItem id="tomato">Tomato</MenuItem>
-            <MenuItem id="cheese">Cheese</MenuItem>
-            <MenuItem id="tuna" isDisabled>Tuna Salad</MenuItem>
-            <MenuItem id="egg">Egg Salad</MenuItem>
-            <MenuItem id="ham">Ham</MenuItem>
+            <MenuItem id="grid">Pixel grid</MenuItem>
+            <MenuItem id="rulers">Rulers</MenuItem>
+            <MenuItem id="comments" isDisabled>Comments</MenuItem>
+            <MenuItem id="layout">Layout guides</MenuItem>
+            <MenuItem id="toolbar">Toolbar</MenuItem>
           </Menu>
         </Popover>
       </MenuTrigger>
       <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -379,7 +378,7 @@ function Example() {
       <Popover>
         <Menu>
           <MenuSection>
-            <Header>Actions</Header>
+            <Header>Clipboard</Header>
             <MenuItem>Cut</MenuItem>
             <MenuItem>Copy</MenuItem>
             <MenuItem>Paste</MenuItem>

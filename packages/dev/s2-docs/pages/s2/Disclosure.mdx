@@ -11,121 +11,88 @@ import docs from 'docs:@react-spectrum/s2';
 ```tsx render docs={docs.exports.Disclosure} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled']} type="s2"
 "use client";
 import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<Disclosure/* PROPS */>
+<Disclosure
+  styles={style({width: 250})}
+  /* PROPS */>
   <DisclosureTitle>System Requirements</DisclosureTitle>
   <DisclosurePanel>Details about system requirements here.</DisclosurePanel>
 </Disclosure>
 ```
 
+## Expanding
+
+Use the `isExpanded` or `defaultExpanded` prop to set the expanded state, and `onExpandedChange` to handle user interactions.
+
+```tsx render
+"use client";
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  let [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <Disclosure
+      styles={style({width: 250})}
+      /*- begin highlight -*/
+      isExpanded={isExpanded}
+      onExpandedChange={setIsExpanded}>
+      {/*- end highlight -*/}
+      <DisclosureTitle>Download, Install, and Set Up</DisclosureTitle>
+      <DisclosurePanel>Instructions on how to download, install, and set up</DisclosurePanel>
+    </Disclosure>
+  );
+}
+```
 
 ## Content
 
-Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureTitle` and `DisclosurePanel`. The `DisclosureTitle` controls the expansion of the `DisclosurePanel` and the contents inside.
-
-```tsx render hideImports
-"use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
-
-<Disclosure>
-  <DisclosureTitle>Installation</DisclosureTitle>
-  <DisclosurePanel>
-    Install the package using npm or yarn: npm install @react-spectrum/s2
-  </DisclosurePanel>
-</Disclosure>
-```
-
-## Header customization
-
 Use `DisclosureHeader` to add additional elements alongside the title, such as action buttons or icons.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<Disclosure>
+<Disclosure styles={style({width: 250})}>
+  {/*- begin highlight -*/}
   <DisclosureHeader>
     <DisclosureTitle>Project Settings</DisclosureTitle>
-    <ActionButton>
-      Edit
-    </ActionButton>
+    <ActionButton>Edit</ActionButton>
   </DisclosureHeader>
+  {/*- end highlight -*/}
   <DisclosurePanel>
     Configure your project settings including name, description, and permissions.
   </DisclosurePanel>
 </Disclosure>
 ```
 
-## Expansion state
+## API
 
-Disclosure can be controlled or uncontrolled. Use `defaultExpanded` for uncontrolled behavior, or `isExpanded` with `onExpandedChange` for controlled behavior.
-
-```tsx render hideImports
-"use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [isExpanded, setExpanded] = useState(false);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <Disclosure defaultExpanded>
-        <DisclosureTitle>Auto-expanded (Uncontrolled)</DisclosureTitle>
-        <DisclosurePanel>This disclosure starts expanded by default.</DisclosurePanel>
-      </Disclosure>
-      
-      <Disclosure isExpanded={isExpanded} onExpandedChange={setExpanded}>
-        <DisclosureTitle>Controlled Expansion</DisclosureTitle>
-        <DisclosurePanel>This disclosure is controlled by state.</DisclosurePanel>
-      </Disclosure>
-      
-      <div>Controlled disclosure is: {isExpanded ? 'expanded' : 'collapsed'}</div>
-    </div>
-  );
-}
+```tsx links={{Disclosure: '#disclosure', DisclosureHeader: '#disclosureheader', DisclosureTitle: '#disclosuretitle', DisclosurePanel: '#disclosurepanel'}}
+<Disclosure>
+  <DisclosureHeader>
+    <DisclosureTitle />
+  </DisclosureHeader>
+  <DisclosurePanel />
+</Disclosure>
 ```
-
-## Events
-
-Disclosure accepts an `onExpandedChange` prop which is triggered when it is expanded or collapsed.
-
-```tsx render hideImports
-"use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [expandCount, setExpandCount] = useState(0);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <Disclosure onExpandedChange={() => setExpandCount(count => count + 1)}>
-        <DisclosureTitle>FAQ Item</DisclosureTitle>
-        <DisclosurePanel>
-          This is the answer to the frequently asked question.
-        </DisclosurePanel>
-      </Disclosure>
-      <div>Expanded {expandCount} times</div>
-    </div>
-  );
-}
-```
-
-## Props
 
 ### Disclosure
 
-<PropTable component={docs.exports.Disclosure} links={docs.links} />
-
-### DisclosureTitle
-
-<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
-
-### DisclosurePanel
-
-<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} showDescription />
 
 ### DisclosureHeader
 
-<PropTable component={docs.exports.DisclosureHeader} links={docs.links} />
+<PropTable component={docs.exports.DisclosureHeader} links={docs.links} showDescription />
+
+### DisclosureTitle
+
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} showDescription />
+
+### DisclosurePanel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} showDescription />

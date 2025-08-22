@@ -6,86 +6,67 @@ import docs from 'docs:@react-spectrum/s2';
 
 # Checkbox
 
+<PageDescription>{docs.exports.Checkbox.description}</PageDescription>
+
 <VisualExample
   component={Checkbox}
   docs={docs.exports.Checkbox}
-  props={['size', 'isEmphasized', 'isIndeterminate']}
+  props={['children', 'size', 'isEmphasized', 'isIndeterminate', 'isDisabled']}
   initialProps={{children: 'Unsubscribe'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Value
+## Selection
 
-Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled). Alternatively, the `isSelected` prop can be used to make the selected state controlled.
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes. The `isIndeterminate` prop overrides the selection state regardless of user interaction.
 
-```tsx render hideImports
+```tsx render wide docs={docs.exports.Checkbox} links={docs.links} props={['isIndeterminate']}
 "use client";
 import {Checkbox} from '@react-spectrum/s2';
 import {useState} from 'react';
 
-function Example() {
-  let [selected, setSelected] = useState(true);
+function Example(props) {
+  let [selected, setSelection] = useState(false);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <Checkbox defaultSelected>Subscribe (uncontrolled)</Checkbox>
-      <Checkbox isSelected={selected} onChange={setSelected}>
-        Subscribe (controlled)
+    <>
+      <Checkbox 
+        {...props}
+        ///- begin highlight -///
+        isSelected={selected}
+        onChange={setSelection}
+        /* PROPS */
+        ///- end highlight -///
+      >
+        Subscribe
       </Checkbox>
-    </div>
+      <p>{`You are ${props.isIndeterminate ? 'partially subscribed' : selected ? 'subscribed' : 'unsubscribed'}`}</p>
+    </>
   );
 }
 ```
 
-## Events
+## Forms
 
-Checkboxes accept a user defined `onChange` prop, triggered whenever the Checkbox is clicked. The example below uses `onChange` to update state and show the current selection status.
+Use the `name` and `value` props to submit the checkbox to the server. Set the `isRequired` prop to validate the user selects the checkbox, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Checkbox} from '@react-spectrum/s2';
-import {useState} from 'react';
+import {Checkbox, Button, Form} from '@react-spectrum/s2';
 
-function Example() {
-  let [selected, setSelected] = useState(false);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <Checkbox isSelected={selected} onChange={setSelected}>
-        Subscribe to updates
-      </Checkbox>
-      <div>You are {selected ? 'subscribed' : 'unsubscribed'}</div>
-    </div>
-  );
-}
-```
-
-## Validation
-
-Checkboxes can display a validation state to communicate to the user if the current value is invalid. Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
-
-```tsx render hideImports
-"use client";
-import {Checkbox} from '@react-spectrum/s2';
-
-<Checkbox isInvalid>I accept the terms and conditions</Checkbox>
-```
-
-## HTML forms
-
-Checkbox supports the `name` and `value` props for integration with HTML forms.
-
-```tsx render hideImports
-"use client";
-import {Checkbox} from '@react-spectrum/s2';
-
-<form>
-  <Checkbox name="newsletter" value="subscribe">
-    Subscribe to newsletter
+<Form>
+  <Checkbox
+    ///- begin highlight -///
+    name="terms"
+    value="agree"
+    isRequired>
+    {/*- end highlight -*/}
+    I agree to the terms
   </Checkbox>
-</form>
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
-## Props
+## API
 
 <PropTable component={docs.exports.Checkbox} links={docs.links} />

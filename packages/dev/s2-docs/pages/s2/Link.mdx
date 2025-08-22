@@ -12,38 +12,21 @@ import docs from 'docs:@react-spectrum/s2';
   component={Link}
   docs={docs.exports.Link}
   props={['children', 'variant', 'staticColor', 'isStandalone', 'isQuiet']}
-  initialProps={{children: 'The missing link.', href: 'https://example.com'}}
+  initialProps={{children: 'The missing link', href: 'https://www.imdb.com/title/tt6348138/', target: '_blank'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Content
+## Events
 
-Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
+Links with an `href` will be handled by the browser, or via a [client side router](routing.html). Links without an `href` will be rendered as a `<span role="link">` instead of an `<a>`. Use the `onPress` event to handle user interaction.
 
-```tsx render expanded
+```tsx render
 "use client";
 import {Link} from '@react-spectrum/s2';
 
-<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
+<Link onPress={() => alert('Pressed link')}>Link</Link>
 ```
 
-### JavaScript handled links
-
-When a Link does not have an `href` prop, it is rendered as a `<span role="link">` instead of an `<a>`. Events will need to be handled in JavaScript with the `onPress` prop.
-
-Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
-
-```tsx render expanded
-"use client";
-import {Link} from '@react-spectrum/s2';
-
-<Link onPress={() => alert('Pressed link')}>Adobe</Link>
-```
-
-### Client side routing
-
-The Link component works with frameworks and client side routers like Next.js and React Router. This works via the Provider component at the root of your app.
-
-## Props
+## API
 
 <PropTable component={docs.exports.Link} links={docs.links} />

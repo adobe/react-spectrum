@@ -18,23 +18,43 @@ import {ButtonGroup, Button} from '@react-spectrum/s2';
 </ButtonGroup>
 ```
 
-## Content
+## Overflow
 
-ButtonGroup expects Buttons as children and handles overflow automatically. When horizontal space is limited, the ButtonGroup switches to a vertical layout. ButtonGroup should be used when there are two or more related Buttons in a group.
+When horizontal space is limited, ButtonGroup switches to a vertical layout.
 
-```tsx render expanded
+```tsx render
 "use client";
 import {ButtonGroup, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<ButtonGroup>
-  <Button variant="primary">Rate Now</Button>
-  <Button variant="secondary">No, thanks</Button>
-  <Button variant="secondary">Remind me later</Button>
-</ButtonGroup>
+<div
+  className={style({
+    width: 300,
+    padding: 16,
+    borderWidth: 1,
+    borderStyle: 'solid', 
+    borderColor: 'gray-300',
+    borderRadius: 'default',
+    resize: 'horizontal',
+    overflow: 'hidden'
+  })}>
+  {/*- begin focus -*/}
+  <ButtonGroup>
+    <Button variant="primary">Rate Now</Button>
+    <Button variant="secondary">No, thanks</Button>
+    <Button variant="secondary">Remind me later</Button>
+  </ButtonGroup>
+  {/*- end focus -*/}
+</div>
 ```
 
-To see the orientation switch in the example above, resize the width of your window.
+## API
 
-## Props
+```tsx links={{ButtonGroup: '#buttongroup', Button: 'Button.html', LinkButton: 'LinkButton.html'}}
+<ButtonGroup>
+  <Button />
+  <LinkButton />
+</ButtonGroup>
+```
 
 <PropTable component={docs.exports.ButtonGroup} links={docs.links} />

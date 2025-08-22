@@ -375,7 +375,7 @@ function Example(props) {
 
 ## Sorting
 
-Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, the table will call `onSortChange` with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
+Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, `onSortChange` is called with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
 
 ```tsx render
 "use client";

@@ -11,14 +11,16 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={ColorWheel}
   docs={docs.exports.ColorWheel}
+  links={docs.links}
   props={['size', 'isDisabled']}
-  initialProps={{defaultValue: 'hsl(30, 100%, 50%)', size: 192}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-A ColorWheel's value can be controlled using the `value` or `defaultValue` prop. The `onChange` event is called as the user drags, and `onChangeEnd` is called when dragging ends.
+Use the `value` or `defaultValue` prop to set the color value. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
+
+The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released. These are always called with a `Color` object.
 
 ```tsx render
 "use client";
@@ -27,103 +29,27 @@ import {useState} from 'react';
 import {parseColor} from '@react-stately/color';
 
 function Example() {
-  let [value, setValue] = useState(parseColor('hsl(0, 100%, 50%)'));
+  let [currentValue, setCurrentValue] = useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = useState(currentValue);
 
   return (
     <>
       <ColorWheel
-        value={value}
-        onChange={setValue} />
-      <p>Current value: {value.toString('hsl')}</p>
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        onChange value: {currentValue.toString('hex')}{'\n'}
+        onChangeEnd value: {finalValue.toString('hex')}
+      </pre>
     </>
   );
 }
 ```
 
-## Color spaces
-
-ColorWheel works with HSL and HSB color spaces to adjust the hue while maintaining saturation and lightness/brightness values.
-
-```tsx render hideImports
-"use client";
-import {ColorWheel} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
-  <div style={{textAlign: 'center'}}>
-    <ColorWheel defaultValue="hsl(0, 75%, 60%)" />
-    <div style={{fontSize: 12, marginTop: 8}}>HSL</div>
-  </div>
-  <div style={{textAlign: 'center'}}>
-    <ColorWheel defaultValue="hsb(120, 75%, 80%)" />
-    <div style={{fontSize: 12, marginTop: 8}}>HSB</div>
-  </div>
-</div>
-```
-
-## Events
-
-ColorWheel supports user interactions via mouse, keyboard, and touch. You can handle color changes via the `onChange` and `onChangeEnd` props.
-
-```tsx render hideImports
-"use client";
-import {ColorWheel} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [events, setEvents] = useState([]);
-
-  let addEvent = (type, value) => {
-    setEvents(prev => [...prev.slice(-2), `${type}: ${value}`]);
-  };
-
-  return (
-    <>
-      <ColorWheel
-        defaultValue="hsl(180, 100%, 50%)"
-        onChange={(value) => addEvent('onChange', value.toString('hsl'))}
-        onChangeEnd={(value) => addEvent('onChangeEnd', value.toString('hsl'))} />
-      <div style={{marginTop: 10}}>
-        {events.map((event, i) => (
-          <div key={i} style={{fontSize: 12, fontFamily: 'monospace'}}>
-            {event}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-```
-
-## Controlled hue
-
-ColorWheel is particularly useful for selecting hue values while keeping other color components constant. Here's an example that updates multiple color representations.
-
-```tsx render hideImports
-"use client";
-import {ColorWheel, ColorSwatch} from '@react-spectrum/s2';
-import {useState} from 'react';
-import {parseColor} from '@react-stately/color';
-
-function Example() {
-  let [color, setColor] = useState(parseColor('hsl(0, 80%, 60%)'));
-
-  return (
-    <div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
-      <ColorWheel
-        value={color}
-        onChange={setColor} />
-      <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <ColorSwatch color={color} size="L" />
-        <div style={{fontSize: 12, fontFamily: 'monospace'}}>
-          {color.toString('hsl')}
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-## Integration
+{/* ## Integration
 
 ColorWheel works well alongside other color components to create complete color picking experiences.
 
@@ -156,8 +82,8 @@ function Example() {
     </div>
   );
 }
-```
+``` */}
 
-## Props
+## API
 
 <PropTable component={docs.exports.ColorWheel} links={docs.links} />

@@ -174,14 +174,20 @@ function Example() {
 
 Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
-  <Select name="animal" isRequired description="Please select an animal.">
+  <Select
+    label="Animal"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <SelectItem id="aardvark">Aardvark</SelectItem>
     <SelectItem id="cat">Cat</SelectItem>
     <SelectItem id="dog">Dog</SelectItem>

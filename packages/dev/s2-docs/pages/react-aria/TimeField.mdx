@@ -38,13 +38,11 @@ Use the `value` or `defaultValue` prop to set the time value, using objects in t
 ```tsx render
 "use client";
 import {Time} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
 import {TimeField} from 'vanilla-starter/TimeField';
 import {useState} from 'react';
 
 function Example() {
   let [time, setTime] = useState(new Time(11, 45));
-  let formatter = useDateFormatter({ timeStyle: 'full' });
   
   return (
     <>

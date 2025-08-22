@@ -11,7 +11,8 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={ProgressBar}
   docs={docs.exports.ProgressBar}
-  props={['value', 'isIndeterminate', 'size', 'staticColor', 'labelPosition', 'label']}
+  links={docs.links}
+  props={['label', 'value', 'isIndeterminate', 'size', 'staticColor', 'labelPosition', 'formatOptions', 'valueLabel']}
   initialProps={{label: "Loading…", value: 50}}
   controlOptions={{value: {control: 'slider'}}}
   importSource="@react-spectrum/s2"
@@ -19,51 +20,20 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-ProgressBars are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
 
-```tsx render expanded
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
+<VisualExample
+  component={ProgressBar}
+  docs={docs.exports.ProgressBar}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
 
-<ProgressBar label="Loading…" value={25} />
-```
-
-Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx render hideImports
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
-
-<ProgressBar label="Loading…" minValue={50} maxValue={150} value={100} />
-```
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format. `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx render hideImports
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
-
-<ProgressBar 
-  label="Loading…" 
-  formatOptions={{style: 'currency', currency: 'JPY'}} 
-  value={60} />
-```
-
-## Labeling
-
-You can customize the format of the value using `formatOptions`, provide a custom `valueLabel`, or hide the value label entirely with `showValueLabel={false}`.
-
-```tsx render hideImports
-"use client";
-import {ProgressBar} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
-  <ProgressBar label="Loading…" valueLabel="30 of 60 items" value={30} />
-  <ProgressBar label="Loading…" formatOptions={{style: 'percent', minimumFractionDigits: 2}} value={30.123} />
-</div>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.ProgressBar} links={docs.links} />

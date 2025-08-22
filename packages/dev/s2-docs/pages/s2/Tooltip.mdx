@@ -1,77 +1,99 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Tooltip, TooltipTrigger, Button, ActionButton} from '@react-spectrum/s2';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
 
 # Tooltip
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
 
-```tsx render docs={docs.exports.Tooltip} links={docs.links} props={[]} type="s2"
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="s2"
 "use client";
-import {Tooltip, TooltipTrigger, Button} from '@react-spectrum/s2';
+import {Tooltip, TooltipTrigger, ActionButton} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
 
 <TooltipTrigger>
-  <Button aria-label="Edit Name"><Edit /></Button>
-  <Tooltip/* PROPS */>Change Name</Tooltip>
+  <ActionButton aria-label="Edit name"><Edit /></ActionButton>
+  <Tooltip/* PROPS */>Edit name</Tooltip>
 </TooltipTrigger>
 ```
 
-## Events
+## Interactions
 
-TooltipTrigger accepts an `onOpenChange` handler which is triggered whenever the Tooltip is shown or hidden.
+Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
 
-```tsx render expanded
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="vanilla"
 "use client";
-import {Tooltip, TooltipTrigger, Button, Text} from '@react-spectrum/s2';
-import {useState} from 'react';
-import Resize from '@react-spectrum/s2/icons/Resize';
+import {TooltipTrigger, Tooltip, ActionButton} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Save from '@react-spectrum/s2/icons/SaveFloppy';
 
-function Example() {
-  let [isOpen, setOpen] = useState(false);
-
+function Example(props) {
   return (
-    <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
-        <Button aria-label="Resize"><Resize /></Button>
-        <Tooltip>Resize text.</Tooltip>
+    <div style={{display: 'flex', gap: 8}}>
+      {/*- begin highlight -*/}
+      <TooltipTrigger {...props}/* PROPS */>
+      {/*- end highlight -*/}
+        <ActionButton aria-label="Edit">
+          <Edit />
+        </ActionButton>
+        <Tooltip>
+          Edit
+        </Tooltip>
       </TooltipTrigger>
-      <Text>Tooltip is {isOpen ? 'showing' : 'not showing'}</Text>
+      <TooltipTrigger {...props}/* PROPS */>
+        <ActionButton aria-label="Save">
+          <Save />
+        </ActionButton>
+        <Tooltip>
+          Save
+        </Tooltip>
+      </TooltipTrigger>
     </div>
   );
 }
-
-<Example />
 ```
 
-## Usage on disabled or non-interactive elements
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Accessibility</Heading>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+</InlineAlert>
 
-Tooltips need to be accessible to keyboard and screen reader users, so we ensure that they are only placed on focusable and hoverable elements. For example, plain text and disabled buttons aren't focusable, meaning keyboard and screen reader users would be unable to access the information in that tooltip.
+## Non-interactive elements
 
-If you need to display additional context for disabled elements, consider using alternative patterns or ensuring the trigger remains focusable.
+Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp.html) to provide context for non-interactive elements such as plain text or disabled buttons.
 
-```tsx render expanded
+```tsx render
 "use client";
 import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
 
 <div style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
-  <TooltipTrigger>
-    <Button isDisabled>Delete resource</Button>
-    <Tooltip>This tooltip works because the button is still focusable when disabled.</Tooltip>
-  </TooltipTrigger>
+  <Button isDisabled>Delete resource</Button>
+  {/*- begin highlight -*/}
   <ContextualHelp variant="info">
-      <Heading>Permission required</Heading>
-      <Content>Your admin must grant you permission before you can delete resources.</Content>
+    <Heading>Permission required</Heading>
+    <Content>
+      Your admin must grant you permission before you can delete resources.
+    </Content>
   </ContextualHelp>
+  {/*- end highlight -*/}
 </div>
 ```
 
-## Props
+## API
+
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button.html'}}
+<TooltipTrigger>
+  <Button />
+  <Tooltip />
+</TooltipTrigger>
+```
 
 ### TooltipTrigger
-<PropTable component={docs.exports.TooltipTrigger} links={docs.links} />
+
+<PropTable component={docs.exports.TooltipTrigger} links={docs.links} showDescription />
 
 ### Tooltip
-<PropTable component={docs.exports.Tooltip} links={docs.links} />
+
+<PropTable component={docs.exports.Tooltip} links={docs.links} showDescription />

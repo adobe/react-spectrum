@@ -11,138 +11,81 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={TimeField}
   docs={docs.exports.TimeField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid', 'granularity', 'hourCycle']}
+  links={docs.links}
+  props={['label', 'granularity', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{label: 'Event time'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-A TimeField displays a placeholder by default. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
-
-Time values are provided using objects from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package. This library handles correct international time manipulation across time zones and other localization concerns.
+Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDate), but only displays the time.
 
 ```tsx render
 "use client";
-import {TimeField} from '@react-spectrum/s2';
 import {Time} from '@internationalized/date';
-import {useState} from 'react';
-
-function Example() {
-  let [value, setValue] = useState(new Time(11, 45));
-
-  return (
-    <>
-      <TimeField
-        label="Event time"
-        value={value}
-        onChange={setValue} />
-      <p>Selected time: {value.toString()}</p>
-    </>
-  );
-}
-```
-
-## Time zones
-
-TimeField is time zone aware when a ZonedDateTime object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account.
-
-```tsx render hideImports
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-import {parseZonedDateTime} from '@internationalized/date';
-
-<TimeField
-  label="Event time"
-  defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')} />
-```
-
-## Validation
-
-TimeField supports validation through the `isRequired` prop, minimum and maximum values, and custom validation functions. It can be integrated with forms and displays error states appropriately.
-
-```tsx render hideImports
-"use client";
-import {TimeField, Button, Form} from '@react-spectrum/s2';
-import {Time} from '@internationalized/date';
-
-<Form>
-  <TimeField
-    label="Meeting time"
-    name="meetingTime"
-    isRequired
-    minValue={new Time(9)}
-    maxValue={new Time(17)}
-    description="Select a time between 9 AM and 5 PM." />
-  <Button type="submit">Submit</Button>
-</Form>
-```
-
-## Placeholder value
-
-When no value is set, a placeholder is shown. The `placeholderValue` prop controls the default values of each segment when the user first interacts with them.
-
-```tsx render hideImports
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-import {Time} from '@internationalized/date';
-
-<TimeField
-  label="Appointment time"
-  placeholderValue={new Time(9)} />
-```
-
-## Events
-
-TimeField accepts an `onChange` prop which is triggered whenever the time is edited by the user.
-
-```tsx render hideImports
-"use client";
-import {TimeField} from '@react-spectrum/s2';
-import {Time} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-import {useState} from 'react';
-
-function Example() {
-  let [time, setTime] = useState(new Time(14, 30));
-  let formatter = useDateFormatter({timeStyle: 'short'});
-
-  return (
-    <>
-      <TimeField
-        label="Meeting time"
-        value={time}
-        onChange={setTime} />
-      {/* <p>Selected time: {time ? formatter.format(time.toDate()) : '--'}</p> */}
-    </>
-  );
-}
-```
-
-## International time formats
-
-TimeField supports different time formats used around the world. Times are automatically displayed in the appropriate format for the user's locale.
-
-```tsx render hideImports
-"use client";
 import {TimeField} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [time, setTime] = useState(null);
+  let [time, setTime] = useState(new Time(11, 45));
   
   return (
-    <div style={{fontFamily: 'system-ui'}}>
+    <>
       <TimeField
-        label="زمان رویداد"
+        ///- begin highlight -///
         value={time}
         onChange={setTime} />
-      <p>Selected time: {time?.toString()}</p>
-    </div>
+      {/*- end highlight -*/}
+      <p>Selected time: {time ? time.toString() : '--'}</p>
+    </>
   );
 }
 ```
 
-## Props
+### Format options
+
+The time format is automatically determined based on the user's locale. `TimeField` supports several props to control how values are displayed.
+
+```tsx render docs={docs.exports.TimeField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Time'}} type="s2"
+"use client";
+import {parseZonedDateTime} from '@internationalized/date';
+import {TimeField} from '@react-spectrum/s2';
+
+<TimeField
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T17:45:00[America/Los_Angeles]')} />
+```
+
+## Forms
+
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+"use client";
+import {Time} from '@internationalized/date';
+import {TimeField, Form, Button} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <TimeField
+        {...props}
+        label="Appointment time"
+        ///- begin highlight -///
+        name="time"
+        /* PROPS */
+        minValue={new Time(9)}
+        maxValue={new Time(17)}
+        validate={time => time?.minute % 15 !== 0 ? 'Appointments start every 15 minutes.' : null}
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
 
 <PropTable component={docs.exports.TimeField} links={docs.links} />

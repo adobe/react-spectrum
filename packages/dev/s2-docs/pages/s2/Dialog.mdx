@@ -8,31 +8,43 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.Dialog.description}</PageDescription>
 
-```tsx render docs={docs.exports.Dialog} links={docs.links} props={['isDismissible', 'isKeyboardDismissDisabled']} type="s2"
+```tsx render docs={docs.exports.Dialog} links={docs.links} props={['size', 'isDismissible', 'isKeyboardDismissDisabled']} type="s2"
 "use client";
-import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox} from '@react-spectrum/s2';
+import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox, Image, Form, TextField} from '@react-spectrum/s2';
+import heroImage from 'url:./assets/preview.png';
 
-<DialogTrigger>
-  <Button variant="primary">Open Dialog</Button>
-  <Dialog/* PROPS */>
-    {({close}) => (
-      <>
-        <Heading slot="title">Newsletter Signup</Heading>
-        <Header>Stay updated with our latest news</Header>
-        <Content>
-          <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
-        </Content>
-        <Footer>
-          <Checkbox>I agree to receive marketing emails</Checkbox>
-        </Footer>
-        <ButtonGroup>
-          <Button onPress={close} variant="secondary">Cancel</Button>
-          <Button onPress={close} variant="accent">Subscribe</Button>
-        </ButtonGroup>
-      </>
-    )}
-  </Dialog>
-</DialogTrigger>
+function Example(props) {
+  return (
+    <DialogTrigger>
+      <Button variant="primary">Open Dialog</Button>
+      {/*- begin focus -*/}
+      <Dialog {...props}/* PROPS */>
+        {({close}) => (
+          <>
+            <Image slot="hero" src={heroImage} />
+            <Heading slot="title">Subscribe to our newsletter</Heading>
+            <Header>Header</Header>
+            <Content>
+              <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
+              <Form>
+                <TextField label="Name" />
+                <TextField label="Email" type="email" />
+              </Form>
+            </Content>
+            <Footer>
+              <Checkbox>Don't show this again</Checkbox>
+            </Footer>
+            <ButtonGroup>
+              <Button onPress={close} variant="secondary">Cancel</Button>
+              <Button onPress={close} variant="accent">Subscribe</Button>
+            </ButtonGroup>
+          </>
+        )}
+      </Dialog>
+      {/*- end focus -*/}
+    </DialogTrigger>
+  );
+}
 ```
 
 ## Content
@@ -43,70 +55,11 @@ Dialogs are windows containing contextual information, tasks, or workflows that 
 - **FullscreenDialog** - Fullscreen dialogs for complex workflows
 - **CustomDialog** - Dialogs with complete layout control
 
-### Standard Dialog
-
-The standard Dialog component follows the Collection Components API with predefined sections for consistent layout.
-
-```tsx render expanded
-"use client";
-import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox} from '@react-spectrum/s2';
-
-<DialogTrigger>
-  <Button variant="primary">Open Dialog</Button>
-  <Dialog>
-    {({close}) => (
-      <>
-        <Heading slot="title">Newsletter Signup</Heading>
-        <Header>Stay updated with our latest news</Header>
-        <Content>
-          <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
-        </Content>
-        <Footer>
-          <Checkbox>I agree to receive marketing emails</Checkbox>
-        </Footer>
-        <ButtonGroup>
-          <Button onPress={close} variant="secondary">Cancel</Button>
-          <Button onPress={close} variant="accent">Subscribe</Button>
-        </ButtonGroup>
-      </>
-    )}
-  </Dialog>
-</DialogTrigger>
-```
-
-### Dialog with Hero Image
-
-Dialogs can include hero images using the `hero` slot.
-
-```tsx render expanded
-"use client";
-import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Content, Image} from '@react-spectrum/s2';
-
-<DialogTrigger>
-  <Button variant="primary">View Details</Button>
-  <Dialog>
-    {({close}) => (
-      <>
-        <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Mountain landscape" />
-        <Heading slot="title">Beautiful Landscape</Heading>
-        <Content>
-          This stunning mountain landscape showcases the natural beauty of the region. Perfect for outdoor enthusiasts and nature lovers.
-        </Content>
-        <ButtonGroup>
-          <Button onPress={close} variant="secondary">Close</Button>
-          <Button onPress={close} variant="accent">Learn More</Button>
-        </ButtonGroup>
-      </>
-    )}
-  </Dialog>
-</DialogTrigger>
-```
-
 ## Fullscreen Dialog
 
 Use FullscreenDialog for complex workflows that require more space.
 
-```tsx render expanded
+```tsx render
 "use client";
 import {FullscreenDialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content} from '@react-spectrum/s2';
 
@@ -137,7 +90,7 @@ import {FullscreenDialog, DialogTrigger, Button, ButtonGroup, Heading, Header, C
 
 Use the `fullscreenTakeover` variant to cover the entire screen.
 
-```tsx render expanded
+```tsx render
 "use client";
 import {FullscreenDialog, DialogTrigger, Button, ButtonGroup, Heading, Content} from '@react-spectrum/s2';
 
@@ -171,15 +124,15 @@ CustomDialog provides complete control over the dialog layout for specialized us
 
 ## DialogContainer
 
-DialogContainer is useful when you need to display dialogs that are triggered by components that may unmount, such as menu items.
+Use `DialogContainer` to show a dialog programmatically or mount in a different part of the JSX tree (e.g. outside a menu).
 
-```tsx render expanded
+```tsx render
 "use client";
 import {DialogContainer, Dialog, Button, ButtonGroup, Heading, Content, ActionMenu, MenuItem} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function DialogContainerExample() {
-  const [dialogType, setDialogType] = useState(null);
+  let [dialogType, setDialogType] = useState(null);
 
   return (
     <>
@@ -189,7 +142,9 @@ function DialogContainerExample() {
         <MenuItem id="share">Share Item</MenuItem>
       </ActionMenu>
       
+      {/*- begin highlight -*/}
       <DialogContainer onDismiss={() => setDialogType(null)}>
+      {/*- end highlight -*/}
         {dialogType === 'edit' && (
           <Dialog>
             {({close}) => (
@@ -236,58 +191,20 @@ function DialogContainerExample() {
     </>
   );
 }
-
-<DialogContainerExample />
 ```
 
-## Events
+## API
 
-Dialogs support various event handlers for interaction management.
-
-```tsx render expanded
-"use client";
-import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Content} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function EventExample() {
-  const [lastAction, setLastAction] = useState('None');
-
-  const handleSave = (close) => {
-    setLastAction('Saved');
-    close();
-  };
-
-  const handleCancel = (close) => {
-    setLastAction('Cancelled');
-    close();
-  };
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-      <DialogTrigger onOpenChange={(isOpen) => isOpen && setLastAction('Dialog opened')}>
-        <Button variant="primary">Open Dialog</Button>
-        <Dialog>
-          {({close}) => (
-            <>
-              <Heading slot="title">Confirm Action</Heading>
-              <Content>Choose an action to see event handling in action.</Content>
-              <ButtonGroup>
-                <Button onPress={() => handleCancel(close)} variant="secondary">Cancel</Button>
-                <Button onPress={() => handleSave(close)} variant="accent">Save</Button>
-              </ButtonGroup>
-            </>
-          )}
-        </Dialog>
-      </DialogTrigger>
-      <p>Last action: <strong>{lastAction}</strong></p>
-    </div>
-  );
-}
-
-<EventExample />
+```tsx links={{Dialog: '#dialog'}}
+<Dialog>
+  <Image slot="hero">
+  <Heading slot="title" />
+  <Header />
+  <Content />
+  <Footer />
+  <ButtonGroup />
+</Dialog>
 ```
-
-## Props
 
 ### Dialog
 

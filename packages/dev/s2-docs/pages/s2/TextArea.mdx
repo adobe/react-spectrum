@@ -11,7 +11,8 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={TextArea}
   docs={docs.exports.TextArea}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isDisabled', 'isReadOnly', 'isRequired']}
+  links={docs.links}
+  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
     label: 'Description'
   }}
@@ -20,88 +21,56 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-A TextArea's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {TextArea} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState('This is a sample description.');
-
+  let [name, setName] = useState('');
+  
   return (
-    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+    <>
       <TextArea
-        label="Notes (Uncontrolled)"
-        defaultValue="This is a sample description." />
-      <TextArea
-        label="Notes (Controlled)"
-        value={value}
-        onChange={setValue} />
-    </div>
+        label="Comment"
+        ///- begin highlight -///
+        value={name}
+        onChange={setName} />
+      {/*- end highlight -*/}
+      <p>Your comment: {name}</p>
+    </>
   );
 }
 ```
 
-## Events
+## Forms
 
-TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, or `maxLength` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.TextArea} links={docs.links} props={['isRequired', 'necessityIndicator', 'minLength', 'maxLength']} initialProps={{isRequired: true, minLength: 10}}
 "use client";
-import {TextArea} from '@react-spectrum/s2';
-import {useState} from 'react';
+import {TextArea, Button, Form} from '@react-spectrum/s2';
 
-function Example() {
-  let [text, setText] = useState('');
-
+function Example(props) {
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+    <Form>
       <TextArea
-        onChange={setText}
-        label="Your comment" />
-      <div>Character count: {text.length}</div>
-    </div>
+        {...props}
+        label="Comment"
+        ///- begin highlight -///
+        name="email"
+        description="Please provide at least 10 characters."
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
   );
 }
 ```
 
-## Validation
-
-TextArea supports HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired` and `minLength`, as well as custom validation functions and server-side validation.
-
-```tsx render hideImports
-"use client";
-import {TextArea, Form, Button, ButtonGroup} from '@react-spectrum/s2';
-
-<Form validationBehavior="native" style={{maxWidth: 300}}>
-  <TextArea 
-    label="Comment" 
-    name="comment" 
-    isRequired 
-    minLength={10} 
-    placeholder="Please provide at least 10 characters..." />
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
-</Form>
-```
-
-## HTML forms
-
-TextArea supports the `name` prop for integration with HTML forms.
-
-```tsx render hideImports
-"use client";
-import {TextArea} from '@react-spectrum/s2';
-
-<form>
-  <TextArea label="Message" name="message" />
-</form>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.TextArea} links={docs.links} />

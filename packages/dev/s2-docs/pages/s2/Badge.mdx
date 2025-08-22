@@ -17,21 +17,15 @@ import docs from 'docs:@react-spectrum/s2';
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Content
+## API
 
-Badges can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the Badge. A visible label can be provided by passing a string or a Text component as a child, depending on whether the Badge has an accompanying icon.
-
-```tsx render expanded
-"use client";
-import {Badge, Text} from '@react-spectrum/s2';
-import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-
-<Badge variant="positive">
-  <CheckmarkCircle aria-label="Done" />
-  <Text>Icon + Label</Text>
+```tsx links={{Badge: '#badge'}}
+<Badge>
+  <Icon />
+  <Text />
 </Badge>
 ```
 
-## Props
+### Badge
 
 <PropTable component={docs.exports.Badge} links={docs.links} />

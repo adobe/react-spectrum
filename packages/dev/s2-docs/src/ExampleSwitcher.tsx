@@ -7,7 +7,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
-  marginTop: 20,
+  marginY: 20,
   borderRadius: 'xl',
   display: 'flex',
   flexDirection: 'column'
@@ -32,6 +32,10 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
   let [selected, setSelected] = useState<Key>(examples[0]);
 
   useEffect(() => {
+    if (!type) {
+      return;
+    }
+
     let search = new URLSearchParams(location.search);
     let exampleType = search.get(type) ?? localStorage.getItem(type);
     if (exampleType && examples.includes(exampleType)) {
@@ -49,12 +53,15 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
 
   let onSelectionChange = key => {
     setSelected(key);
-    localStorage.setItem(type, key);
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: type,
-      oldValue: String(selected),
-      newValue: String(key)
-    }));
+    
+    if (type) {
+      localStorage.setItem(type, key);
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: type,
+        oldValue: String(selected),
+        newValue: String(key)
+      }));
+    }
   };
 
   return (

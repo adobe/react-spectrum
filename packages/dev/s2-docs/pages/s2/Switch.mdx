@@ -11,77 +11,58 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={Switch}
   docs={docs.exports.Switch}
-  props={['size', 'isEmphasized']}
+  props={['children', 'size', 'isEmphasized']}
   initialProps={{
     children: 'Low power mode'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Value
+## Selection
 
-Switches are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled). Alternatively, the `isSelected` prop can be used to make the selected state controlled.
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Switch} from '@react-spectrum/s2';
 import {useState} from 'react';
 
-function Example() {
-  let [selected, setSelected] = useState(false);
+function Example(props) {
+  let [selected, setSelection] = useState(false);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <Switch defaultSelected>
-        Low power mode (uncontrolled)
-      </Switch>
-
-      <Switch
+    <>
+      <Switch 
+        {...props}
+        ///- begin highlight -///
         isSelected={selected}
-        onChange={setSelected}>
-        Low power mode (controlled)
+        onChange={setSelection}
+        ///- end highlight -///
+      >
+        Low power mode
       </Switch>
-    </div>
+      <p>{selected ? 'Low' : 'High'} power mode active.</p>
+    </>
   );
 }
 ```
 
-## Events
+## Forms
 
-Switches accept a user defined `onChange` prop, triggered whenever the Switch is pressed. The example below uses `onChange` to update state and show the current switch status.
+Use the `name` and `value` props to submit the switch to the server. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Switch} from '@react-spectrum/s2';
-import {useState} from 'react';
+import {Switch, Button, Form} from '@react-spectrum/s2';
 
-function Example() {
-  let [selected, setSelected] = useState(false);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <Switch onChange={setSelected}>
-        Wi-Fi
-      </Switch>
-      <div>Wi-Fi is: {selected ? 'On' : 'Off'}</div>
-    </div>
-  );
-}
+<Form>
+  {/*- begin highlight -*/}
+  <Switch name="wifi">Wi-Fi</Switch>
+  {/*- end highlight -*/}
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
-## HTML forms
-
-Switch supports the `name` and `value` props for integration with HTML forms.
-
-```tsx render hideImports
-"use client";
-import {Switch} from '@react-spectrum/s2';
-
-<form>
-  <Switch name="power" value="low">Low power mode</Switch>
-</form>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.Switch} links={docs.links} />

@@ -1,14 +1,13 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 # ActionBar
 
 <PageDescription>{docs.exports.ActionBar.description}</PageDescription>
 
-```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} initialProps={{selectedItemCount: 3}} type="s2"
+```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2"
 "use client";
 import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -17,25 +16,23 @@ import Delete from '@react-spectrum/s2/icons/Delete';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+let rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+  {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+];
 
-function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set(['row2']));
-  let rows = [
-    {id: 'row1', name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: 'row2', name: 'Blastoise', type: 'Water', level: '56'},
-    {id: 'row3', name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: 'row4', name: 'Pikachu', type: 'Electric', level: '100'}
-  ];
-
+function Example(props) {
   return (
     <TableView 
       aria-label="Table with action bar"
       selectionMode="multiple"
-      selectedKeys={selectedKeys}
-      onSelectionChange={setSelectedKeys}
-      styles={style({minWidth: 432})}
+      defaultSelectedKeys={[2]}
+      styles={style({width: 'full', height: 250})}
       renderActionBar={(selectedKeys) => (
-        <ActionBar/* PROPS */>
+        /*- begin focus -*/
+        <ActionBar {...props}/* PROPS */>
           <ActionButton onPress={() => alert('Edit action')}>
             <Edit />
             <Text>Edit</Text>
@@ -49,6 +46,7 @@ function Example() {
             <Text>Delete</Text>
           </ActionButton>
         </ActionBar>
+        /*- end focus -*/
       )}>
       <TableHeader>
         <Column key="name" isRowHeader>Name</Column>
@@ -69,134 +67,15 @@ function Example() {
 }
 ```
 
-## Content
+## API
 
-An ActionBar is a companion component intended to facilitate bulk actions on selected items within a collection component. It consists of action buttons, a clear button, and a count of selected items. The ActionBar appears when items are selected and floats above the collection.
-
-```tsx render
-"use client";
-import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
-import Edit from '@react-spectrum/s2/icons/Edit';
-import Copy from '@react-spectrum/s2/icons/Copy';
-import Delete from '@react-spectrum/s2/icons/Delete';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set(['row2']));
-  let rows = [
-    {id: 'row1', name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: 'row2', name: 'Blastoise', type: 'Water', level: '56'},
-    {id: 'row3', name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: 'row4', name: 'Pikachu', type: 'Electric', level: '100'}
-  ];
-
-  return (
-    <TableView 
-      aria-label="Table with action bar"
-      selectionMode="multiple"
-      selectedKeys={selectedKeys}
-      onSelectionChange={setSelectedKeys}
-      styles={style({minWidth: 432})}
-      renderActionBar={(selectedKeys) => (
-        <ActionBar
-          selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
-          onClearSelection={() => setSelectedKeys(new Set())}>
-          <ActionButton onPress={() => alert('Edit action')}>
-            <Edit />
-            <Text>Edit</Text>
-          </ActionButton>
-          <ActionButton onPress={() => alert('Copy action')}>
-            <Copy />
-            <Text>Copy</Text>
-          </ActionButton>
-          <ActionButton onPress={() => alert('Delete action')}>
-            <Delete />
-            <Text>Delete</Text>
-          </ActionButton>
-        </ActionBar>
-      )}>
-      <TableHeader>
-        <Column key="name" isRowHeader>Name</Column>
-        <Column key="type">Type</Column>
-        <Column key="level">Level</Column>
-      </TableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <Row>
-            <Cell key="name">{item.name}</Cell>
-            <Cell key="type">{item.type}</Cell>
-            <Cell key="level">{item.level}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </TableView>
-  );
-}
+```tsx links={{ActionBar: '#actionbar', ActionButton: 'ActionButton.html'}}
+<ActionBar>
+  <ActionButton />
+  <ActionButton />
+</ActionBar>
 ```
 
-## Events
-
-Use the `onClearSelection` prop as a callback to handle when the clear button in the ActionBar is pressed. Individual ActionButtons should have their own `onPress` handlers to perform actions on the selected items.
-
-```tsx render hideImports
-"use client";
-import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell} from '@react-spectrum/s2';
-import {useState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set(['row1']));
-  let rows = [
-    {id: 'row1', name: 'Document 1', status: 'Draft'},
-    {id: 'row2', name: 'Document 2', status: 'Published'},
-    {id: 'row3', name: 'Document 3', status: 'Archived'}
-  ];
-
-  return (
-    <TableView 
-      aria-label="Documents"
-      selectionMode="multiple"
-      selectedKeys={selectedKeys}
-      onSelectionChange={setSelectedKeys}
-      renderActionBar={(selectedKeys) => (
-        <ActionBar
-          selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
-          onClearSelection={() => {
-            setSelectedKeys(new Set());
-            alert('Selection cleared');
-          }}>
-          <ActionButton onPress={() => alert(`Publishing ${selectedKeys.size} documents`)}>
-            Publish
-          </ActionButton>
-          <ActionButton onPress={() => alert(`Archiving ${selectedKeys.size} documents`)}>
-            Archive
-          </ActionButton>
-          <ActionButton onPress={() => alert(`Deleting ${selectedKeys.size} documents`)}>
-            Delete
-          </ActionButton>
-        </ActionBar>
-      )}>
-      <TableHeader>
-        <Column key="id" isRowHeader>ID</Column>
-        <Column key="name">Name</Column>
-        <Column key="status">Status</Column>
-      </TableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <Row>
-            <Cell key="id">{item.id}</Cell>
-            <Cell key="name">{item.name}</Cell>
-            <Cell>{item.status}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </TableView>
-  );
-}
-```
-
-## Props
+### ActionBar
 
 <PropTable component={docs.exports.ActionBar} links={docs.links} />
