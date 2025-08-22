@@ -28,22 +28,7 @@ import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef
 import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-type ExcludedListBoxProps = 
-  | keyof GlobalDOMAttributes 
-  | 'layout' 
-  | 'dragAndDropHooks' 
-  | 'renderEmptyState' 
-  | 'dependencies' 
-  | 'items' 
-  | 'onAction'
-  | 'children' 
-  | 'selectionMode' 
-  | 'shouldSelectOnPress' 
-  | 'shouldFocusWrap' 
-  | 'selectionBehavior' 
-  | 'shouldSelectOnFocus';
-
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, ExcludedListBoxProps> {
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'style' | 'className'> {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
@@ -67,7 +52,7 @@ export interface SelectBoxProps extends StyleProps {
   /**
    * The label for the element.
    */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * Whether the SelectBox is disabled.
    */
@@ -320,7 +305,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
               className={style({
                 position: 'absolute',
                 top: 8,
-                left: 8,
+                insetStart: 8,
                 pointerEvents: 'none'
               })}
               aria-hidden="true">
@@ -369,7 +354,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
 /*
  * SelectBoxGroup allows users to select one or more options from a list.
  */
-export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 
   let {
