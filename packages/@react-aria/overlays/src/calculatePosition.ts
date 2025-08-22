@@ -67,6 +67,7 @@ export interface PositionResult {
   position: Position,
   arrowOffsetLeft?: number,
   arrowOffsetTop?: number,
+  triggerAnchorPoint: {x: number, y: number},
   maxHeight: number,
   placement: PlacementAxis
 }
@@ -419,7 +420,8 @@ export function calculatePositionInternal(
   // childOffset[crossAxis] + .5 * childOffset[crossSize] = absolute position with respect to the trigger's coordinate system that would place the arrow in the center of the trigger
   // position[crossAxis] - margins[AXIS[crossAxis]] = value use to transform the position to a value with respect to the overlay's coordinate system. A child element's (aka arrow) position absolute's "0"
   // is positioned after the margin of its parent (aka overlay) so we need to subtract it to get the proper coordinate transform
-  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - position[crossAxis]! - margins[AXIS[crossAxis]];
+  let origin = childOffset[crossAxis] - position[crossAxis]! - margins[AXIS[crossAxis]];
+  let preferredArrowPosition = origin + .5 * childOffset[crossSize];
 
   // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
@@ -436,12 +438,30 @@ export function calculatePositionInternal(
   const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
   arrowPosition[crossAxis] = clamp(arrowPositionOverlappingChild, arrowMinPosition, arrowMaxPosition);
 
+  // If there is an arrow, use that as the origin so that animations are smooth.
+  // Otherwise use the target edge.
+  ({placement, crossPlacement} = placementInfo);
+  if (arrowSize) {
+    origin = arrowPosition[crossAxis];
+  } else if (crossPlacement === 'right') {
+    origin += childOffset[crossSize];
+  } else if (crossPlacement === 'center') {
+    origin += childOffset[crossSize] / 2;
+  }
+
+  let crossOrigin = placement === 'left' || placement === 'top' ? overlaySize[size] : 0;
+  let triggerAnchorPoint = {
+    x: placement === 'top' || placement === 'bottom' ? origin : crossOrigin,
+    y: placement === 'left' || placement === 'right' ? origin : crossOrigin
+  };
+
   return {
     position,
     maxHeight: maxHeight,
     arrowOffsetLeft: arrowPosition.left,
     arrowOffsetTop: arrowPosition.top,
-    placement: placementInfo.placement
+    placement,
+    triggerAnchorPoint
   };
 }
 

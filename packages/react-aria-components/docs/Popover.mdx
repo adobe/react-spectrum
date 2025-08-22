@@ -438,15 +438,17 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM. See the [animation guide](styling.html#animation) for more details.
+Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
 .react-aria-Popover {
-  transition: opacity 300ms;
+  transition: opacity 300ms, scale 300ms;
+  transform-origin: var(--trigger-anchor-point);
 
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
+    scale: 0.85;
   }
 }
 ```
@@ -459,7 +461,7 @@ A `Popover` can be targeted with the `.react-aria-Popover` CSS selector, or by o
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
-Within a DialogTrigger, the popover will have the `data-trigger="DialogTrigger"` attribute. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the trigger button.
+Within a DialogTrigger, the popover will have the `data-trigger="DialogTrigger"` attribute. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the trigger button. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations.
 
 ```css render=false
 .react-aria-Popover[data-trigger=DialogTrigger] {

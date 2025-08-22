@@ -573,6 +573,102 @@ Items in a GridList may also be links to another page or website. This can be ac
 
 The `<GridListItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
+## Sections <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+GridList supports sections in order to group options. Sections can be used by wrapping groups of items in a `GridListSection` element. A `<GridListHeader>` element may also be included to label the section.
+
+### Static items
+
+```tsx example
+import {GridListSection, GridListHeader} from 'react-aria-components';
+
+<GridList aria-label="Sandwich contents" selectionMode="multiple">
+  <GridListSection>
+    <GridListHeader>Veggies</GridListHeader>
+    <MyItem id="lettuce">Lettuce</MyItem>
+    <MyItem id="tomato">Tomato</MyItem>
+    <MyItem id="onion">Onion</MyItem>
+  </GridListSection>
+  <GridListSection>
+    <GridListHeader>Protein</GridListHeader>
+    <MyItem id="ham">Ham</MyItem>
+    <MyItem id="tuna">Tuna</MyItem>
+    <MyItem id="tofu">Tofu</MyItem>
+  </GridListSection>
+  <GridListSection>
+    <GridListHeader>Condiments</GridListHeader>
+    <MyItem id="mayo">Mayonaise</MyItem>
+    <MyItem id="mustard">Mustard</MyItem>
+    <MyItem id="ranch">Ranch</MyItem>
+  </GridListSection>
+</GridList>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList {
+  .react-aria-GridListSection:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-GridListHeader {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
+
+### Dynamic items
+
+The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
+Similarly to the props on GridList, `<GridListSection>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
+
+```tsx example
+import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Australian', children: [
+      {id: 2, name: 'Koala'},
+      {id: 3, name: 'Kangaroo'},
+      {id: 4, name: 'Platypus'}
+    ]},
+    {name: 'American', children: [
+      {id: 6, name: 'Bald Eagle'},
+      {id: 7, name: 'Bison'},
+      {id: 8, name: 'Skunk'}
+    ]}
+  ];
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+
+  return (
+    <GridList
+      aria-label="Pick an animal"
+      items={options}
+      selectedKeys={selected}
+      selectionMode="single"
+      onSelectionChange={setSelected}>
+      {section => (
+        <GridListSection id={section.name}>
+          <GridListHeader>{section.name}</GridListHeader>
+          <Collection items={section.children}>
+            {item => <MyItem >{item.name}</MyItem>}
+          </Collection>
+        </GridListSection>
+      )}
+    </GridList>
+  );
+}
+```
+
 ## Disabled items
 
 A `GridListItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
@@ -1756,6 +1852,21 @@ function DndGridList(props: DndGridListProps) {
 ### GridList
 
 <PropTable component={docs.exports.GridList} links={docs.links} />
+
+### GridListSection
+
+A `<GridListSection>` defines the child items for a section within a `<GridList>`. It may also contain an optional `<GridListHeader>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.GridListSection} links={docs.links} />
+
+</details>
+
+### GridListHeader
+
+A `<GridListHeader>` defines the title for a `<GridListSection>`. It accepts all DOM attributes.
 
 ### GridListItem
 
