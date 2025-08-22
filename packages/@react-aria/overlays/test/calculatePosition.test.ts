@@ -128,7 +128,7 @@ describe('calculatePosition', function () {
       arrowOffsetTop: expected[3],
       maxHeight,
       placement: calculatedPlacement,
-      triggerOrigin: {
+      triggerAnchorPoint: {
         x: expected[2] ?? (calculatedPlacement === 'left' ? overlaySize.width : 0),
         y: expected[3] ?? (calculatedPlacement === 'top' ? Math.min(overlaySize.height, maxHeight) : 0)
       }

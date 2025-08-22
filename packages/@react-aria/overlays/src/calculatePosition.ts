@@ -67,7 +67,7 @@ export interface PositionResult {
   position: Position,
   arrowOffsetLeft?: number,
   arrowOffsetTop?: number,
-  triggerOrigin: {x: number, y: number},
+  triggerAnchorPoint: {x: number, y: number},
   maxHeight: number,
   placement: PlacementAxis
 }
@@ -450,7 +450,7 @@ export function calculatePositionInternal(
   }
 
   let crossOrigin = placement === 'left' || placement === 'top' ? overlaySize[size] : 0;
-  let triggerOrigin = {
+  let triggerAnchorPoint = {
     x: placement === 'top' || placement === 'bottom' ? origin : crossOrigin,
     y: placement === 'left' || placement === 'right' ? origin : crossOrigin
   };
@@ -461,7 +461,7 @@ export function calculatePositionInternal(
     arrowOffsetLeft: arrowPosition.left,
     arrowOffsetTop: arrowPosition.top,
     placement,
-    triggerOrigin
+    triggerAnchorPoint
   };
 }
 

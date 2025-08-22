@@ -402,8 +402,8 @@
 .popover,
 .tooltip {
   transition: scale 300ms, opacity 300ms;
-  transform-origin: var(--trigger-origin);
-  
+  transform-origin: var(--trigger-anchor-point);
+
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
