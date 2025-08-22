@@ -5,7 +5,7 @@ import {AutocompleteProps, Button, ButtonProps, Dialog, Modal, useFilter} from '
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
 // @ts-ignore
 import reactAriaDocs from 'docs:react-aria-components';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
@@ -15,8 +15,6 @@ import Search from '@react-spectrum/s2/icons/Search';
 import SearchResultsMenu from './SearchResultsMenu';
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
-
-const CardList = lazy(() => import('./CardList'));
 
 interface SearchMenuProps {
   pages: Page[],
@@ -229,15 +227,13 @@ export default function SearchMenu(props: SearchMenuProps) {
     return components;
   }, [pages, selectedLibrary]);
 
-  // Create sections structure expected by the existing code
-  const componentSections = useMemo(() => {
-    const sections = [{
-      id: 'components',
-      name: 'Components',
-      children: transformedComponents
-    }];
-    return sections;
-  }, [transformedComponents]);
+  const componentSections = useMemo(() => [{
+    id: 'components',
+    name: 'Components',
+    children: transformedComponents
+  }], [transformedComponents]);
+
+  const [selectedSectionId, setSelectedSectionId] = useState<string>('components');
 
   useEffect(() => {
     let isMac = /Mac/.test(navigator.platform);
@@ -376,7 +372,9 @@ export default function SearchMenu(props: SearchMenuProps) {
                   mainItems={filteredComponents}
                   searchRef={searchRef}
                   showCards={showCards}
-                  renderCardList={() => <CardList selectedLibrary={selectedLibrary} pages={pages} closeSearchMenu={closeSearchMenu} />}
+                  cardSections={componentSections as any}
+                  selectedCardSectionId={selectedSectionId}
+                  onSelectedCardSectionChange={setSelectedSectionId}
                   filter={filter}
                   noResultsText={(value) => `No results for "${value}" in ${tab.label}`}
                   closeSearchMenu={closeSearchMenu}

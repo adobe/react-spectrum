@@ -1,9 +1,10 @@
 'use client';
 
+import ComponentCardView, {ComponentCardItem} from './ComponentCardView';
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link} from 'react-aria-components';
-import {Menu, MenuItem, Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import type {PageProps} from '@parcel/rsc';
+import {Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
@@ -206,7 +207,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
     });
   };
 
-  let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = '') => {
+  let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
     let pages;
     
@@ -218,7 +219,9 @@ export function MobileNav({pages, currentPage}: PageProps) {
     
     let filteredPages = filterPages(pages, searchValue);
     
-    return filteredPages.sort((a, b) => title(a).localeCompare(title(b))).map(page => ({...page, id: page.url}));
+    return filteredPages
+      .sort((a, b) => title(a).localeCompare(title(b)))
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
   };
 
   let getSectionNamesForLibrary = (libraryId: string) => {
@@ -394,13 +397,10 @@ export function MobileNav({pages, currentPage}: PageProps) {
                       overflowY: 'auto',
                       WebkitOverflowScrolling: 'touch'
                     } as React.CSSProperties}>
-                    <Menu aria-label="Pages" size="L" items={getSectionContent(sectionName, library.id, searchValue)}>
-                      {page => (
-                        <MenuItem id={page.id} href={page.url}>
-                          {title(page)}
-                        </MenuItem>
-                      )}
-                    </Menu>
+                    <ComponentCardView
+                      items={getSectionContent(sectionName, library.id, searchValue)}
+                      ariaLabel="Pages"
+                      size="S" />
                   </div>
                 </div>
               ))}

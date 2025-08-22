@@ -1,8 +1,9 @@
 'use client';
 
-import {ActionButton, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Text} from '@react-spectrum/s2';
+import {ActionButton, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Tag, TagGroup, Text} from '@react-spectrum/s2';
 import {Autocomplete, AutocompleteProps, Collection, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
+import ComponentCardView, {ComponentCardItem} from './ComponentCardView';
 import React, {CSSProperties} from 'react';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import type {TextFieldRef} from '@react-types/textfield';
@@ -29,7 +30,10 @@ interface SearchResultsMenuProps {
   libraryKey: 'react-spectrum' | 'react-aria' | 'internationalized',
   searchRef: React.RefObject<TextFieldRef<HTMLInputElement> | null>,
   showCards: boolean,
-  renderCardList: () => React.ReactNode,
+  cardItems?: ComponentCardItem[],
+  cardSections?: { id: string, name: string, children: ComponentCardItem[] }[],
+  selectedCardSectionId?: string,
+  onSelectedCardSectionChange?: (id: string) => void,
   filter?: AutocompleteProps['filter'],
   noResultsText?: (value: string) => string,
   closeSearchMenu: () => void,
@@ -39,11 +43,7 @@ interface SearchResultsMenuProps {
 function CloseButton({closeSearchMenu}: {closeSearchMenu: () => void}) {
   return (
     <div style={{position: 'absolute', top: 8, right: 8}}>
-      <Provider
-        values={[
-          // Remove the pressed state. S2/RAC bug?
-          [OverlayTriggerStateContext, null]
-        ]}>
+      <Provider values={[[OverlayTriggerStateContext, null]]}>
         <ActionButton isQuiet onPress={closeSearchMenu}>
           <Close />
         </ActionButton>
@@ -60,7 +60,10 @@ export default function SearchResultsMenu({
   libraryKey,
   searchRef,
   showCards,
-  renderCardList,
+  cardItems,
+  cardSections,
+  selectedCardSectionId,
+  onSelectedCardSectionChange,
   filter,
   noResultsText = (value) => `No results for "${value}" in ${libraryName}`, // Default with library name
   closeSearchMenu,
@@ -84,7 +87,33 @@ export default function SearchResultsMenu({
 
         <CloseButton closeSearchMenu={closeSearchMenu} />
 
-        {showCards && renderCardList()}
+        {showCards && (
+          <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+            {cardSections && cardSections.length > 0 ? (
+              <>
+                <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingY: 8})}>
+                  <TagGroup
+                    selectionMode="single"
+                    disallowEmptySelection
+                    selectedKeys={selectedCardSectionId ? [selectedCardSectionId] : []}
+                    onSelectionChange={(keys) => onSelectedCardSectionChange?.(Array.from(keys)[0] as string)}
+                    aria-label="Select section">
+                    {cardSections.map((section) => (
+                      <Tag key={section.id} id={section.id}>
+                        {section.name}
+                      </Tag>
+                    ))}
+                  </TagGroup>
+                </div>
+                <ComponentCardView
+                  items={(cardSections.find(s => s.id === selectedCardSectionId)?.children || []) as ComponentCardItem[]}
+                  ariaLabel={cardSections.find(s => s.id === selectedCardSectionId)?.name || 'Items'} />
+              </>
+            ) : (
+              <ComponentCardView items={cardItems || []} ariaLabel={`${libraryName} Components`} />
+            )}
+          </div>
+        )}
 
         <div style={{display: showCards ? 'none' : 'block'}} className={style({height: 'full', overflow: 'auto'})}>
           {mainItems.length > 0 ? (
