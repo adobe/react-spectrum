@@ -232,7 +232,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      firstDayOfWeek: props.firstDayOfWeek,
+      pageBehavior: props.pageBehavior
     },
     isInvalid,
     validationErrors,

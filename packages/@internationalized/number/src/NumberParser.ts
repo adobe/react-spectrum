@@ -239,8 +239,9 @@ class NumberParserImpl {
       }
     }
 
-    // Some locales, such as swiss when using currency, use a single quote as a group character
-    if (this.symbols.group && value.includes("'")) {
+    // In some locale styles, such as swiss currency, the group character can be a special single quote
+    // that keyboards don't typically have. This expands the character to include the easier to type single quote.
+    if (this.symbols.group === '’' && value.includes("'")) {
       value = replaceAll(value, "'", this.symbols.group);
     }
 
