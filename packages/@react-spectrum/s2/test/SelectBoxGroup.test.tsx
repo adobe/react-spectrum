@@ -14,13 +14,13 @@ function ControlledSingleSelectBox() {
       selectionMode="single"
       onSelectionChange={setSelectedKeys}
       selectedKeys={selectedKeys}>
-      <SelectBox value="option1">
+      <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
-      <SelectBox value="option2">
+      <SelectBox id="option2" textValue="Option 2">
         <Text slot="label">Option 2</Text>
       </SelectBox>
-      <SelectBox value="option3">
+      <SelectBox id="option3" textValue="Option 3">
         <Text slot="label">Option 3</Text>
       </SelectBox>
     </SelectBoxGroup>
@@ -35,13 +35,13 @@ function ControlledMultiSelectBox() {
       selectionMode="multiple"
       onSelectionChange={setSelectedKeys}
       selectedKeys={selectedKeys}>
-      <SelectBox value="option1">
+      <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
-      <SelectBox value="option2">
+      <SelectBox id="option2" textValue="Option 2">
         <Text slot="label">Option 2</Text>
       </SelectBox>
-      <SelectBox value="option3">
+      <SelectBox id="option3" textValue="Option 3">
         <Text slot="label">Option 3</Text>
       </SelectBox>
     </SelectBoxGroup>
@@ -53,13 +53,13 @@ function UncontrolledSelectBox({selectionMode = 'single'}: {selectionMode?: 'sin
     <SelectBoxGroup
       aria-label="Uncontrolled selection test"
       selectionMode={selectionMode}>
-      <SelectBox value="option1">
+      <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
-      <SelectBox value="option2">
+      <SelectBox id="option2" textValue="Option 2">
         <Text slot="label">Option 2</Text>
       </SelectBox>
-      <SelectBox value="option3">
+      <SelectBox id="option3" textValue="Option 3">
         <Text slot="label">Option 3</Text>
       </SelectBox>
     </SelectBoxGroup>
@@ -74,10 +74,10 @@ function DisabledSelectBox() {
       onSelectionChange={() => {}}
       selectedKeys={new Set()}
       isDisabled>
-      <SelectBox value="option1">
+      <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
-      <SelectBox value="option2">
+      <SelectBox id="option2" textValue="Option 2">
         <Text slot="label">Option 2</Text>
       </SelectBox>
     </SelectBoxGroup>
@@ -122,7 +122,7 @@ describe('SelectBoxGroup', () => {
     it('handles uncontrolled click selection in single mode', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
-      
+
       await listboxTester.toggleOptionSelection({option: 0});
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
     });
@@ -130,10 +130,10 @@ describe('SelectBoxGroup', () => {
     it('handles uncontrolled click selection in multiple mode', async () => {
       render(<UncontrolledSelectBox selectionMode="multiple" />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
-      
+
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
-      
+
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
       expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
     });
@@ -141,10 +141,10 @@ describe('SelectBoxGroup', () => {
     it('handles uncontrolled selection toggle', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
-      
+
       await listboxTester.toggleOptionSelection({option: 0});
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
-      
+
       // Toggle off in single mode by selecting another
       await listboxTester.toggleOptionSelection({option: 1});
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
@@ -154,15 +154,15 @@ describe('SelectBoxGroup', () => {
     it('handles uncontrolled keyboard selection', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
       const listbox = screen.getByRole('listbox');
-      
+
       await act(async () => {
         listbox.focus();
       });
-      
+
       await act(async () => {
         await user.keyboard(' ');
       });
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       expect(option1).toHaveAttribute('aria-selected', 'true');
     });
@@ -172,7 +172,7 @@ describe('SelectBoxGroup', () => {
     it('handles controlled selection in single mode', async () => {
       render(<ControlledSingleSelectBox />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
-      
+
       await listboxTester.toggleOptionSelection({option: 0});
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
     });
@@ -180,10 +180,10 @@ describe('SelectBoxGroup', () => {
     it('handles controlled multiple selection', async () => {
       render(<ControlledMultiSelectBox />);
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
-      
+
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
-      
+
       expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
       expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
     });
@@ -201,10 +201,10 @@ describe('SelectBoxGroup', () => {
               onSelectionChange(keys);
             }}
             selectedKeys={selectedKeys}>
-            <SelectBox value="option1">
+            <SelectBox id="option1" textValue="Option 1">
               <Text slot="label">Option 1</Text>
             </SelectBox>
-            <SelectBox value="option2">
+            <SelectBox id="option2" textValue="Option 2">
               <Text slot="label">Option 2</Text>
             </SelectBox>
           </SelectBoxGroup>
@@ -214,7 +214,7 @@ describe('SelectBoxGroup', () => {
       render(<TestComponent />);
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       await user.click(option1);
-      
+
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       const receivedSelection = onSelectionChange.mock.calls[0][0];
       expect(Array.from(receivedSelection)).toEqual(['option1']);
@@ -233,10 +233,10 @@ describe('SelectBoxGroup', () => {
               onSelectionChange(keys);
             }}
             selectedKeys={selectedKeys}>
-            <SelectBox value="option1">
+            <SelectBox id="option1" textValue="Option 1">
               <Text slot="label">Option 1</Text>
             </SelectBox>
-            <SelectBox value="option2">
+            <SelectBox id="option2" textValue="Option 2">
               <Text slot="label">Option 2</Text>
             </SelectBox>
           </SelectBoxGroup>
@@ -246,7 +246,7 @@ describe('SelectBoxGroup', () => {
       render(<TestComponent />);
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       await user.click(option1);
-      
+
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       const receivedSelection = onSelectionChange.mock.calls[0][0];
       expect(Array.from(receivedSelection)).toEqual(['option1']);
@@ -258,7 +258,7 @@ describe('SelectBoxGroup', () => {
       render(<DisabledSelectBox />);
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
-      
+
       const options = screen.getAllByRole('option');
       expect(options.length).toBeGreaterThan(0);
     });
@@ -272,10 +272,10 @@ describe('SelectBoxGroup', () => {
           onSelectionChange={onSelectionChange}
           selectedKeys={new Set()}
           isDisabled>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -286,7 +286,7 @@ describe('SelectBoxGroup', () => {
       await user.click(option1);
       await user.click(option2);
       expect(onSelectionChange).not.toHaveBeenCalled();
-      
+
       expect(option1).toHaveAttribute('aria-disabled', 'true');
       expect(option2).toHaveAttribute('aria-disabled', 'true');
     });
@@ -297,10 +297,10 @@ describe('SelectBoxGroup', () => {
           aria-label="Uncontrolled disabled test"
           selectionMode="single"
           isDisabled>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -308,10 +308,10 @@ describe('SelectBoxGroup', () => {
 
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
+
       await user.click(option1);
       await user.click(option2);
-      
+
       // should have disabled attributes and no selection
       expect(option1).toHaveAttribute('aria-disabled', 'true');
       expect(option2).toHaveAttribute('aria-disabled', 'true');
@@ -323,15 +323,15 @@ describe('SelectBoxGroup', () => {
   describe('Checkbox functionality', () => {
     it('shows checkbox when item is selected in controlled mode', async () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Checkbox test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -339,17 +339,17 @@ describe('SelectBoxGroup', () => {
 
       const selectedRow = screen.getByRole('option', {name: 'Option 1'});
       expect(selectedRow).toHaveAttribute('aria-selected', 'true');
-      
+
       const checkboxDiv = selectedRow.querySelector('[aria-hidden="true"]');
       expect(checkboxDiv).toBeInTheDocument();
     });
 
     it('shows checkbox when item is selected in uncontrolled mode', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       await user.click(option1);
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       const checkboxDiv = option1.querySelector('[aria-hidden="true"]');
       expect(checkboxDiv).toBeInTheDocument();
@@ -357,19 +357,19 @@ describe('SelectBoxGroup', () => {
 
     it('shows checkbox on hover for non-disabled items in controlled mode', async () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Hover checkbox test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
 
       const row = screen.getByRole('option', {name: 'Option 1'});
-      
+
       await user.hover(row);
       await waitFor(() => {
         const checkboxDiv = row.querySelector('[aria-hidden="true"]');
@@ -381,7 +381,7 @@ describe('SelectBoxGroup', () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
 
       const row = screen.getByRole('option', {name: 'Option 1'});
-      
+
       await user.hover(row);
       await waitFor(() => {
         const checkboxDiv = row.querySelector('[aria-hidden="true"]');
@@ -391,38 +391,38 @@ describe('SelectBoxGroup', () => {
 
     it('shows checkbox for disabled but selected items', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Disabled selected checkbox test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           defaultSelectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1" isDisabled>
+          <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
 
       const row = screen.getByRole('option', {name: 'Option 1'});
-      
+
       const checkboxDiv = row.querySelector('[aria-hidden="true"]');
       expect(checkboxDiv).toBeInTheDocument();
     });
 
     it('shows checkbox for disabled items (always show checkboxes)', async () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Disabled hover test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1" isDisabled>
+          <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
 
       const row = screen.getByRole('option', {name: 'Option 1'});
-      
+
       // checkbox always present
       const checkboxDiv = row.querySelector('[aria-hidden="true"]');
       expect(checkboxDiv).toBeInTheDocument();
@@ -432,13 +432,13 @@ describe('SelectBoxGroup', () => {
   describe('Props and configuration', () => {
     it('supports different orientations', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Horizontal test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}
           orientation="horizontal">
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -449,25 +449,25 @@ describe('SelectBoxGroup', () => {
     it('auto-fits columns based on orientation (vertical)', () => {
       render(
         <div style={{width: 600}}>
-          <SelectBoxGroup 
+          <SelectBoxGroup
             aria-label="Auto-fit test vertical"
-            selectionMode="single" 
-            onSelectionChange={() => {}} 
+            selectionMode="single"
+            onSelectionChange={() => {}}
             selectedKeys={new Set()}
             orientation="vertical">
-            <SelectBox value="option1">
+            <SelectBox id="option1" textValue="Option 1">
               <Text slot="label">Option 1</Text>
             </SelectBox>
-            <SelectBox value="option2">
+            <SelectBox id="option2" textValue="Option 2">
               <Text slot="label">Option 2</Text>
             </SelectBox>
-            <SelectBox value="option3">
+            <SelectBox id="option3" textValue="Option 3">
               <Text slot="label">Option 3</Text>
             </SelectBox>
           </SelectBoxGroup>
         </div>
       );
-      
+
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
     });
@@ -475,39 +475,39 @@ describe('SelectBoxGroup', () => {
     it('auto-fits columns based on orientation (horizontal)', () => {
       render(
         <div style={{width: 800}}>
-          <SelectBoxGroup 
+          <SelectBoxGroup
             aria-label="Auto-fit test horizontal"
-            selectionMode="single" 
-            onSelectionChange={() => {}} 
+            selectionMode="single"
+            onSelectionChange={() => {}}
             selectedKeys={new Set()}
             orientation="horizontal">
-            <SelectBox value="option1">
+            <SelectBox id="option1" textValue="Option 1">
               <Text slot="label">Option 1</Text>
             </SelectBox>
-            <SelectBox value="option2">
+            <SelectBox id="option2" textValue="Option 2">
               <Text slot="label">Option 2</Text>
             </SelectBox>
           </SelectBoxGroup>
         </div>
       );
-      
+
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
     });
   });
 
   describe('Controlled behavior', () => {
-    it('handles initial value selection', () => {
+    it('handles initial id selection', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Initial selection test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -515,25 +515,25 @@ describe('SelectBoxGroup', () => {
 
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'false');
     });
 
-    it('handles multiple selection with initial values', () => {
+    it('handles multiple selection with initial ids', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Multiple initial selection test"
-          selectionMode="multiple" 
+          selectionMode="multiple"
           onSelectionChange={() => {}}
           selectedKeys={new Set(['option1', 'option2'])}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
-          <SelectBox value="option3">
+          <SelectBox id="option3" textValue="Option 3">
             <Text slot="label">Option 3</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -542,7 +542,7 @@ describe('SelectBoxGroup', () => {
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
       const option3 = screen.getByRole('option', {name: 'Option 3'});
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
       expect(option3).toHaveAttribute('aria-selected', 'false');
@@ -550,25 +550,25 @@ describe('SelectBoxGroup', () => {
 
     it('handles uncontrolled selection with defaultSelectedKeys', async () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Uncontrolled defaultSelectedKeys test"
-          selectionMode="single" 
+          selectionMode="single"
           defaultSelectedKeys={new Set(['option1'])}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'false');
-      
+
       // click should update selection
       await user.click(option2);
       expect(option1).toHaveAttribute('aria-selected', 'false');
@@ -577,35 +577,35 @@ describe('SelectBoxGroup', () => {
 
     it('handles uncontrolled multiple selection with defaultSelectedKeys', async () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Uncontrolled multiple defaultSelectedKeys test"
-          selectionMode="multiple" 
+          selectionMode="multiple"
           defaultSelectedKeys={new Set(['option1', 'option2'])}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
-          <SelectBox value="option3">
+          <SelectBox id="option3" textValue="Option 3">
             <Text slot="label">Option 3</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
       const option3 = screen.getByRole('option', {name: 'Option 3'});
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
       expect(option3).toHaveAttribute('aria-selected', 'false');
-      
+
       await user.click(option3);
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
       expect(option3).toHaveAttribute('aria-selected', 'true');
-      
+
       // click should remove from selection
       await user.click(option1);
       expect(option1).toHaveAttribute('aria-selected', 'false');
@@ -616,21 +616,21 @@ describe('SelectBoxGroup', () => {
     it('handles controlled component updates', async () => {
       function ControlledTest() {
         const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
-        
+
         return (
           <div>
             <button onClick={() => setSelectedKeys(new Set(['option2']))}>
               Select Option 2
             </button>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Controlled test"
-              selectionMode="single" 
-              onSelectionChange={setSelectedKeys} 
+              selectionMode="single"
+              onSelectionChange={setSelectedKeys}
               selectedKeys={selectedKeys}>
-              <SelectBox value="option1">
+              <SelectBox id="option1" textValue="Option 1">
                 <Text slot="label">Option 1</Text>
               </SelectBox>
-              <SelectBox value="option2">
+              <SelectBox id="option2" textValue="Option 2">
                 <Text slot="label">Option 2</Text>
               </SelectBox>
             </SelectBoxGroup>
@@ -639,7 +639,7 @@ describe('SelectBoxGroup', () => {
       }
 
       render(<ControlledTest />);
-      
+
       const button = screen.getByRole('button', {name: 'Select Option 2'});
       await user.click(button);
 
@@ -649,23 +649,23 @@ describe('SelectBoxGroup', () => {
 
     it('handles "all" selection', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="All selection test"
-          selectionMode="multiple" 
-          onSelectionChange={() => {}} 
+          selectionMode="multiple"
+          onSelectionChange={() => {}}
           selectedKeys="all">
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
       expect(option2).toHaveAttribute('aria-selected', 'true');
     });
@@ -679,16 +679,16 @@ describe('SelectBoxGroup', () => {
           selectionMode="single"
           onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
-          <SelectBox value="option3">
+          <SelectBox id="option3" textValue="Option 3">
             <Text slot="label">Option 3</Text>
           </SelectBox>
-          <SelectBox value="option4">
+          <SelectBox id="option4" textValue="Option 4">
             <Text slot="label">Option 4</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -696,7 +696,7 @@ describe('SelectBoxGroup', () => {
 
       const listbox = screen.getByRole('listbox');
       const options = screen.getAllByRole('option');
-      
+
       expect(listbox).toBeInTheDocument();
       expect(options).toHaveLength(4);
     });
@@ -705,12 +705,12 @@ describe('SelectBoxGroup', () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
       const listbox = screen.getByRole('listbox');
       const option1 = screen.getByRole('option', {name: 'Option 1'});
-      
+
       await act(async () => {
         listbox.focus();
         await user.keyboard(' ');
       });
-      
+
       expect(option1).toHaveAttribute('aria-selected', 'true');
     });
 
@@ -721,10 +721,10 @@ describe('SelectBoxGroup', () => {
           selectionMode="single"
           onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -734,9 +734,9 @@ describe('SelectBoxGroup', () => {
       await act(async () => {
         listbox.focus();
       });
-      
+
       await user.keyboard('{ArrowDown}');
-      
+
       // check that navigation works by verifying an option has focus
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       expect(option1).toHaveFocus();
@@ -746,20 +746,20 @@ describe('SelectBoxGroup', () => {
   describe('Accessibility', () => {
     it('has proper listbox structure', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Accessibility test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       expect(screen.getByRole('listbox')).toBeInTheDocument();
       expect(screen.getAllByRole('option')).toHaveLength(2);
     });
@@ -768,20 +768,20 @@ describe('SelectBoxGroup', () => {
       render(
         <div>
           <h2 id="test-label">My SelectBoxGroup</h2>
-          <SelectBoxGroup 
+          <SelectBoxGroup
             aria-labelledby="test-label"
-            selectionMode="single" 
-            onSelectionChange={() => {}} 
+            selectionMode="single"
+            onSelectionChange={() => {}}
             selectedKeys={new Set()}>
-            <SelectBox value="option1">
+            <SelectBox id="option1" textValue="Option 1">
               <Text slot="label">Option 1</Text>
             </SelectBox>
           </SelectBoxGroup>
         </div>
       );
-      
+
       const listbox = screen.getByRole('listbox');
-      // verify the listbox has an aria-labelledby attribute  
+      // verify the listbox has an aria-labelledby attribute
       expect(listbox).toHaveAttribute('aria-labelledby');
       expect(listbox.getAttribute('aria-labelledby')).toBeTruthy();
     });
@@ -790,40 +790,40 @@ describe('SelectBoxGroup', () => {
   describe('Edge cases', () => {
     it('handles complex children with slots', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Complex children test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}
           orientation="horizontal">
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Calendar slot="illustration" />
             <Text slot="label">Complex Option</Text>
             <Text slot="description">With description</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       expect(screen.getByText('Complex Option')).toBeInTheDocument();
       expect(screen.getByText('With description')).toBeInTheDocument();
     });
 
-    it('handles different value types', () => {
+    it('handles different id types', () => {
       render(
-        <SelectBoxGroup 
-          aria-label="Value types test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+        <SelectBoxGroup
+          aria-label="id types test"
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
       );
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
       expect(option1).toBeInTheDocument();
@@ -832,20 +832,20 @@ describe('SelectBoxGroup', () => {
 
     it('handles empty children gracefully', () => {
       render(
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Empty children test"
-          selectionMode="single" 
-          onSelectionChange={() => {}} 
+          selectionMode="single"
+          onSelectionChange={() => {}}
           selectedKeys={new Set()}>
           {null}
           {undefined}
-          <SelectBox value="option1">
+          <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Valid Option</Text>
           </SelectBox>
           {false}
         </SelectBoxGroup>
       );
-      
+
       expect(screen.getByRole('listbox')).toBeInTheDocument();
       expect(screen.getAllByRole('option')).toHaveLength(1);
       expect(screen.getByText('Valid Option')).toBeInTheDocument();
@@ -858,10 +858,10 @@ describe('SelectBoxGroup', () => {
           selectionMode="single"
           onSelectionChange={() => {}}
           selectedKeys={new Set()}>
-          <SelectBox value="option1" isDisabled>
+          <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -869,7 +869,7 @@ describe('SelectBoxGroup', () => {
 
       const rows = screen.getAllByRole('option');
       expect(rows.length).toBe(2);
-      
+
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       expect(option1).toHaveAttribute('aria-disabled', 'true');
     });
@@ -882,7 +882,7 @@ describe('SelectBoxGroup', () => {
           selectionMode="single"
           onSelectionChange={onSelectionChange}
           selectedKeys={new Set()}>
-          <SelectBox value="option1" isDisabled>
+          <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -890,7 +890,7 @@ describe('SelectBoxGroup', () => {
 
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       await user.click(option1);
-      
+
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
@@ -899,10 +899,10 @@ describe('SelectBoxGroup', () => {
         <SelectBoxGroup
           aria-label="Uncontrolled disabled interaction test"
           selectionMode="single">
-          <SelectBox value="option1" isDisabled>
+          <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>
-          <SelectBox value="option2">
+          <SelectBox id="option2" textValue="Option 2">
             <Text slot="label">Option 2</Text>
           </SelectBox>
         </SelectBoxGroup>
@@ -910,11 +910,11 @@ describe('SelectBoxGroup', () => {
 
       const option1 = screen.getByRole('option', {name: 'Option 1'});
       const option2 = screen.getByRole('option', {name: 'Option 2'});
-      
+
       await user.click(option1);
       expect(option1).toHaveAttribute('aria-disabled', 'true');
       expect(option1).toHaveAttribute('aria-selected', 'false');
-      
+
       // clicking enabled item should still work
       await user.click(option2);
       expect(option2).toHaveAttribute('aria-selected', 'true');
