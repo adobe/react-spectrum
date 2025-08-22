@@ -146,8 +146,8 @@ export function useSpinButton(
       prevTouchPosition.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
     }
     let touchPosition = {x: e.touches[0].clientX, y: e.touches[0].clientY};
-    // Arbitrary distance that worked in testing.
-    if (Math.abs(touchPosition.x - prevTouchPosition.current.x) > 10 || Math.abs(touchPosition.y - prevTouchPosition.current.y) > 10) {
+    // Arbitrary distance that worked in testing, even with slight movements or a slow-ish start to scrolling.
+    if (Math.abs(touchPosition.x - prevTouchPosition.current.x) > 1 || Math.abs(touchPosition.y - prevTouchPosition.current.y) > 1) {
       clearAsync();
     }
     prevTouchPosition.current = touchPosition;
@@ -225,7 +225,7 @@ export function useSpinButton(
           // the control isn't spinning.
           _async.current = window.setTimeout(() => {
             onIncrementPressStart(60);
-          }, 400);
+          }, 600);
 
           addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
           isUp.current = false;
@@ -263,7 +263,7 @@ export function useSpinButton(
           // the control isn't spinning.
           _async.current = window.setTimeout(() => {
             onDecrementPressStart(60);
-          }, 400);
+          }, 600);
 
           addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
           isUp.current = false;
