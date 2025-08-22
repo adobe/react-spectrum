@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent, FilterLessNode} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
@@ -235,7 +235,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
   );
 }
 
-class TabItemNode extends FilterLessNode<unknown> {
+class TabItemNode extends CollectionNode<unknown> {
   static readonly type = 'item';
 }
 

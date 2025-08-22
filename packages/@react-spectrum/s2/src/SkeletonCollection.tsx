@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createLeafComponent, FilterLessNode} from '@react-aria/collections';
+import {CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 
@@ -20,7 +20,7 @@ export interface SkeletonCollectionProps {
 
 let cache = new WeakMap();
 
-class SkeletonNode extends FilterLessNode<unknown> {
+class SkeletonNode extends CollectionNode<unknown> {
   static readonly type = 'skeleton';
 }
 
