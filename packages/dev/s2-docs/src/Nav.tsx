@@ -61,6 +61,9 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
   let menuContainerRef = useRef<HTMLDivElement>(null);
   let isScrollingProgrammatically = useRef(false);
+  let headerRef = useRef<HTMLDivElement>(null);
+  let sectionScrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  let [sectionViewportHeight, setSectionViewportHeight] = useState<number | null>(null);
 
   let getCurrentLibrary = (page: any) => {
     if (page.url.includes('react-aria')) {
@@ -101,6 +104,25 @@ export function MobileNav({pages, currentPage}: PageProps) {
     return [...librarySections.keys()];
   }, [getSectionsForLibrary, selectedLibrary]);
   let showAllTab = searchFocused;
+
+  // Compute available viewport height for the vertical scrolling area below the sticky header
+  useEffect(() => {
+    let computeAvailableHeight = () => {
+      if (!headerRef.current) {
+        return;
+      }
+      let rect = headerRef.current.getBoundingClientRect();
+      let viewportHeight = window.innerHeight;
+      // Account for bottom padding used on the MobileNav container
+      let bottomPadding = 24;
+      let available = viewportHeight - rect.bottom - bottomPadding;
+      setSectionViewportHeight(Math.max(100, available));
+    };
+
+    computeAvailableHeight();
+    window.addEventListener('resize', computeAvailableHeight);
+    return () => window.removeEventListener('resize', computeAvailableHeight);
+  }, [selectedLibrary, searchFocused, searchValue, currentLibrarySectionArray.length]);
 
   useEffect(() => {
       // Auto-select first section initially or when library changes
@@ -284,6 +306,22 @@ export function MobileNav({pages, currentPage}: PageProps) {
     return () => observer.disconnect();
   }, [currentLibrarySections, selectedSection]);
 
+  // Ensure newly selected section starts at the top of its own vertical scroll area
+  useEffect(() => {
+    if (!selectedSection) {
+      return;
+    }
+    let el = sectionScrollRefs.current[selectedSection];
+    if (el) {
+      el.scrollTo({top: 0, behavior: 'auto'});
+    } else {
+      let id = requestAnimationFrame(() => {
+        sectionScrollRefs.current[selectedSection!]?.scrollTo({top: 0, behavior: 'auto'});
+      });
+      return () => cancelAnimationFrame(id);
+    }
+  }, [selectedSection, selectedLibrary]);
+
   // Initial scroll to selected section on mount or when sections change
   useEffect(() => {
     if (selectedSection && currentLibrarySections.length > 0) {
@@ -295,12 +333,13 @@ export function MobileNav({pages, currentPage}: PageProps) {
   }, [currentLibrarySections, selectedSection]);
 
   return (
-    <div className={style({padding: 24})}>
+    <div>
       <Tabs 
         aria-label="Libraries"
         density="compact"
         selectedKey={selectedLibrary}
-        onSelectionChange={(key) => setSelectedLibrary(key as 'react-spectrum' | 'react-aria' | 'internationalized')}>
+        onSelectionChange={(key) => setSelectedLibrary(key as 'react-spectrum' | 'react-aria' | 'internationalized')}
+        styles={style({margin: 12})}>
         <TabList>
           {libraries.map(library => (
             <Tab key={library.id} id={library.id}>{library.label}</Tab>
@@ -308,27 +347,33 @@ export function MobileNav({pages, currentPage}: PageProps) {
         </TabList>
         {libraries.map(library => (
           <TabPanel key={library.id} id={library.id}>
-            <SearchField 
-              aria-label="Search" 
-              value={searchValue}
-              onChange={handleSearchChange}
-              onFocus={handleSearchFocus}
-              onBlur={handleSearchBlur}
-              styles={style({marginY: 12})} />
-            <TagGroup 
-              aria-label="Navigation sections" 
-              selectionMode="single" 
-              selectedKeys={selectedSection ? [selectedSection] : []}
-              onSelectionChange={handleTagSelection}>
-              {currentLibrarySections.map(sectionName => (
-                <Tag key={sectionName} id={sectionName}>{sectionName}</Tag>
-              ))}
-            </TagGroup>
+            <div
+              ref={headerRef}
+              className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white'})}>
+              <SearchField 
+                aria-label="Search" 
+                value={searchValue}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
+                styles={style({marginY: 12})} />
+              <TagGroup
+                aria-label="Navigation sections" 
+                selectionMode="single" 
+                selectedKeys={selectedSection ? [selectedSection] : []}
+                onSelectionChange={handleTagSelection}
+                styles={style({margin: 12})}>
+                {currentLibrarySections.map(sectionName => (
+                  <Tag key={sectionName} id={sectionName}>{sectionName}</Tag>
+                ))}
+              </TagGroup>
+            </div>
             <div
               ref={menuContainerRef}
               style={{
                 display: 'flex',
                 overflowX: 'auto',
+                overflowY: 'hidden',
                 scrollSnapType: 'x mandatory',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none'
@@ -341,13 +386,22 @@ export function MobileNav({pages, currentPage}: PageProps) {
                     minWidth: '100%',
                     scrollSnapAlign: 'start'
                   } as React.CSSProperties}>
-                  <Menu aria-label="Pages" size="L" items={getSectionContent(sectionName, library.id, searchValue)}>
-                    {page => (
-                      <MenuItem id={page.id} href={page.url}>
-                        {title(page)}
-                      </MenuItem>
-                    )}
-                  </Menu>
+                  <div
+                    ref={el => { sectionScrollRefs.current[sectionName] = el; }}
+                    style={{
+                      height: sectionViewportHeight ?? undefined,
+                      maxHeight: sectionViewportHeight ?? undefined,
+                      overflowY: 'auto',
+                      WebkitOverflowScrolling: 'touch'
+                    } as React.CSSProperties}>
+                    <Menu aria-label="Pages" size="L" items={getSectionContent(sectionName, library.id, searchValue)}>
+                      {page => (
+                        <MenuItem id={page.id} href={page.url}>
+                          {title(page)}
+                        </MenuItem>
+                      )}
+                    </Menu>
+                  </div>
                 </div>
               ))}
             </div>
