@@ -197,16 +197,6 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledWith(1024);
   });
 
-  it('should support pasting', async () => {
-    let {getByRole} = render(<TestNumberField defaultValue={200} />);
-    let input = getByRole('textbox');
-    await user.tab();
-    await user.clear(input);
-    await user.paste('1024');
-    expect(input).toHaveValue('1,024');
-    expect(announce).toHaveBeenCalledWith('Pasted value: 1,024', 'polite');
-  });
-
   it('should support pasting into a format', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} formatOptions={{style: 'currency', currency: 'USD'}} />);
@@ -215,34 +205,9 @@ describe('NumberField', () => {
     await user.clear(input);
     await user.paste('1,024');
     expect(input).toHaveValue('$1,024.00');
-    expect(announce).toHaveBeenCalledWith('Pasted value: $1,024.00', 'polite');
-    expect(onChange).not.toHaveBeenCalled();
-    await user.keyboard('{Enter}');
+    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenLastCalledWith('$1,024.00', 'assertive');
     expect(onChange).toHaveBeenCalledWith(1024);
-  });
-
-  it('should tell users if their paste failed', async () => {
-    let {getByRole} = render(<TestNumberField defaultValue={200} />);
-    let input = getByRole('textbox');
-    await user.tab();
-    await user.clear(input);
-    await user.paste('$1.00 024 5.6');
-    expect(input).toHaveValue('');
-    expect(announce).toHaveBeenCalledWith('Could not understand value: $1.00 024 5.6, try another format perhaps', 'polite');
-  });
-
-  it('should support paste announcements for a controlled numberfield', async () => {
-    function ControlledNumberField({value, ...props}) {
-      let [numberValue, setNumberValue] = useState(value);
-      return <TestNumberField value={numberValue} onChange={setNumberValue} {...props} />;
-    }
-    let {getByRole} = render(<ControlledNumberField value={200} />);
-    let input = getByRole('textbox');
-    await user.tab();
-    await user.clear(input);
-    await user.paste('1024');
-    expect(input).toHaveValue('1,024');
-    expect(announce).toHaveBeenCalledWith('Pasted value: 1,024', 'polite');
   });
 
   it('should not change the input value if the new value is not accepted', async () => {
@@ -251,7 +216,8 @@ describe('NumberField', () => {
     await user.tab();
     await user.clear(input);
     await user.paste('1024');
-    expect(input).toHaveValue('1,024');
+    expect(input).toHaveValue('200');
+    expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('200');
   });

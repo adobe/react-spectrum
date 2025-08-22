@@ -36,6 +36,7 @@ import {
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
+import { flushSync } from 'react-dom';
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
@@ -94,12 +95,24 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   } = state;
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
+  let commitAndAnnounce = useCallback(() => {
+    let oldValue = inputRef.current?.value ?? '';
+    // Set input value to normalized valid value
+    flushSync(() => {
+      commit();
+    });
+    // Note: this announcement will be skipped if the user is keyboard navigating to a new
+    // focusable element because that target will be announced instead, even though this is
+    // assertive. This is expected VO behaviour.
+    if (inputRef.current?.value !== oldValue) {
+      announce(inputRef.current?.value ?? '', 'assertive');
+    }
+  }, [commit, inputRef]);
 
   let inputId = useId(id);
   let {focusProps} = useFocus({
     onBlur() {
-      // Set input value to normalized valid value
-      commit();
+      commitAndAnnounce();
     }
   });
 
@@ -187,27 +200,17 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onPaste: ClipboardEventHandler<HTMLInputElement> = (e: ClipboardEvent<HTMLInputElement>) => {
     props.onPaste?.(e);
     let inputElement = e.target as HTMLInputElement;
-    if (
-      inputElement &&
-      (
-        ((inputElement.selectionEnd ?? -1) - (inputElement.selectionStart ?? 0)) === inputElement.value.length
-      )
+    // we can only handle the case where the paste takes over the entire input, otherwise things get very complicated
+    // trying to calculate the new string based on what the paste is replacing and where in the source string it is
+    if (inputElement &&
+      ((inputElement.selectionEnd ?? -1) - (inputElement.selectionStart ?? 0)) === inputElement.value.length
     ) {
       e.preventDefault();
-      let pastedText = e.clipboardData?.getData?.('text/plain')?.trim() ?? '';
-      let isValid = state.validate(pastedText);
-      if (isValid) {
-        let value = state.parser.parse(pastedText);
-        let reformattedValue = numberFormatter.format(value);
-        if (state.validate(reformattedValue)) {
-          state.setInputValue(reformattedValue);
-          if (reformattedValue !== pastedText) {
-            announce(stringFormatter.format('pastedValue', {value: reformattedValue}), 'polite');
-          }
-        }
-      } else {
-        announce(stringFormatter.format('couldNotParseValue', {value: pastedText}), 'polite');
-      }
+      // commit so that the user gets to see what it formats to immediately
+      // paste happens before inputRef's value is updated, so have to prevent the default and do it ourselves
+      // spin button will then handle announcing the new value, this should work with controlled state as well
+      // because the announcement is done as a result of the new rendered input value if there is one
+      commit(e.clipboardData?.getData?.('text/plain')?.trim() ?? '');
     }
   };
 

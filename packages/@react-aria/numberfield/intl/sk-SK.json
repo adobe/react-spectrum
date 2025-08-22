@@ -1,7 +1,5 @@
 {
   "decrease": "Znížiť {fieldLabel}",
   "increase": "Zvýšiť {fieldLabel}",
-  "numberField": "Číselné pole",
-  "pastedValue": "Pasted value: {value}",
-  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
+  "numberField": "Číselné pole"
 }

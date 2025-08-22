@@ -1,7 +1,5 @@
 {
   "decrease": "Reduser {fieldLabel}",
   "increase": "Øk {fieldLabel}",
-  "numberField": "Tallfelt",
-  "pastedValue": "Pasted value: {value}",
-  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
+  "numberField": "Tallfelt"
 }

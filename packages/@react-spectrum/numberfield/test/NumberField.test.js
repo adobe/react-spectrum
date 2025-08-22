@@ -925,17 +925,21 @@ describe('NumberField', function () {
     expect(announce).toHaveBeenCalledTimes(5);
     expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     act(() => {textField.blur();});
+    expect(announce).toHaveBeenCalledTimes(6);
+    expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     expect(textField).toHaveAttribute('value', '$18.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(18);
 
     act(() => {textField.focus();});
     await user.clear(textField);
-    expect(announce).toHaveBeenCalledTimes(6);
+    expect(announce).toHaveBeenCalledTimes(7);
     expect(announce).toHaveBeenLastCalledWith('Empty', 'assertive');
     await user.keyboard('($32)');
     expect(textField).toHaveAttribute('value', '($32)');
-    expect(announce).toHaveBeenCalledTimes(9);
+    expect(announce).toHaveBeenNthCalledWith(8, '$3.00', 'assertive');
+    expect(announce).toHaveBeenNthCalledWith(9, '$32.00', 'assertive');
+    expect(announce).toHaveBeenCalledTimes(10);
     expect(announce).toHaveBeenLastCalledWith('−$32.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '($32.00)');
@@ -2314,7 +2318,7 @@ describe('NumberField', function () {
     it('resets to defaultValue when submitting form action', async () => {
       function Test() {
         const [value, formAction] = React.useActionState(() => 33, 22);
-        
+
         return (
           <Provider theme={theme}>
             <form action={formAction}>

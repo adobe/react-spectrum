@@ -1,7 +1,5 @@
 {
   "decrease": "Sumažinti {fieldLabel}",
   "increase": "Padidinti {fieldLabel}",
-  "numberField": "Numerio laukas",
-  "pastedValue": "Pasted value: {value}",
-  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
+  "numberField": "Numerio laukas"
 }

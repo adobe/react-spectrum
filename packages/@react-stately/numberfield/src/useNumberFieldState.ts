@@ -52,8 +52,9 @@ export interface NumberFieldState extends FormValidationState {
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
    * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
    * Typically this is called when the field is blurred.
+   * @param value - The value to commit. If not provided, the current input value is used.
    */
-  commit(): void,
+  commit(value?: string): void,
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
   increment(): void,
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
@@ -61,9 +62,7 @@ export interface NumberFieldState extends FormValidationState {
   /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
   incrementToMax(): void,
   /** Sets the current value to the `minValue` if any, and fires `onChange`. */
-  decrementToMin(): void,
-  /** Attempts to parse a value in the current locale. */
-  parser: NumberParser
+  decrementToMin(): void
 }
 
 export interface NumberFieldStateOptions extends NumberFieldProps {
@@ -148,16 +147,21 @@ export function useNumberFieldState(
   }
 
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
-  let commit = () => {
+  let commit = (overrideValue?: string) => {
+    let newInputValue = overrideValue === undefined ? inputValue : overrideValue;
+    let newParsedValue = parsedValue;
+    if (overrideValue !== undefined) {
+      newParsedValue = numberParser.parse(newInputValue);
+    }
     // Set to empty state if input value is empty
-    if (!inputValue.length) {
+    if (!newInputValue.length) {
       setNumberValue(NaN);
       setInputValue(value === undefined ? '' : format(numberValue));
       return;
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(parsedValue)) {
+    if (isNaN(newParsedValue)) {
       setInputValue(format(numberValue));
       return;
     }
@@ -165,9 +169,9 @@ export function useNumberFieldState(
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
     if (step === undefined || isNaN(step)) {
-      clampedValue = clamp(parsedValue, minValue, maxValue);
+      clampedValue = clamp(newParsedValue, minValue, maxValue);
     } else {
-      clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
+      clampedValue = snapValueToStep(newParsedValue, minValue, maxValue, step);
     }
 
     clampedValue = numberParser.parse(format(clampedValue));
@@ -283,8 +287,7 @@ export function useNumberFieldState(
     setNumberValue,
     setInputValue,
     inputValue,
-    commit,
-    parser: numberParser
+    commit
   };
 }
 

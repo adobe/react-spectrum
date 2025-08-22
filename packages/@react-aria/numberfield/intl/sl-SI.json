@@ -1,7 +1,5 @@
 {
   "decrease": "Upadati {fieldLabel}",
   "increase": "Povečajte {fieldLabel}",
-  "numberField": "Številčno polje",
-  "pastedValue": "Pasted value: {value}",
-  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
+  "numberField": "Številčno polje"
 }

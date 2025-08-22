@@ -1,7 +1,5 @@
 {
   "decrease": "Samazināšana {fieldLabel}",
   "increase": "Palielināšana {fieldLabel}",
-  "numberField": "Skaitļu lauks",
-  "pastedValue": "Pasted value: {value}",
-  "couldNotParseValue": "Could not understand value: {value}, try another format perhaps"
+  "numberField": "Skaitļu lauks"
 }
