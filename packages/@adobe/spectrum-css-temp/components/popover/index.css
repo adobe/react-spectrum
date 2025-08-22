@@ -60,6 +60,11 @@ governing permissions and limitations under the License.
   touch-action: auto;
 }
 
+.spectrum-Popover:not(.is-open) * {
+  pointer-events: none;
+  touch-action: none;
+}
+
 .spectrum-Popover--withTip {
   overflow: visible;
 }
