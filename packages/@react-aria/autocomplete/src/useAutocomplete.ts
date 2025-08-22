@@ -28,7 +28,7 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   disallowTypeAhead: boolean
 }
 
-export interface InputProps<T = FocusableElement> extends  DOMProps,
+export interface InputProps<T = FocusableElement> extends DOMProps,
   FocusEvents<T>,
   KeyboardEvents,
   Pick<ValueBase<string>, 'onChange' | 'value'>,
@@ -64,7 +64,7 @@ export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T
 
 export interface AutocompleteAria<T> {
   /** Props for the autocomplete input element. These should be passed to the input's aria hooks (e.g. useTextField/useSearchField/etc) respectively. */
-  inputProps: AriaTextFieldProps<FocusableElement>,
+  inputProps: InputProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
   collectionProps: CollectionOptions,
   /** Ref to attach to the wrapped collection. */
