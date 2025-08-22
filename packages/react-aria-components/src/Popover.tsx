@@ -151,7 +151,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
 
-  let {popoverProps, underlayProps, arrowProps, placement, triggerOrigin} = usePopover({
+  let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover({
     ...props,
     offset: props.offset ?? 8,
     arrowRef,
@@ -203,7 +203,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
 
   let style = {
     ...popoverProps.style,
-    '--trigger-origin': triggerOrigin ? `${triggerOrigin.x}px ${triggerOrigin.y}px` : undefined,
+    '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
     ...renderProps.style
   };
 
