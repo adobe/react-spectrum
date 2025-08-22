@@ -25,6 +25,7 @@ import {
   useState
 } from 'react';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
@@ -36,7 +37,6 @@ import {
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
-import { flushSync } from 'react-dom';
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
