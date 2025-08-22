@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -57,7 +57,12 @@ export function useSpinButton(
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/spinbutton');
 
-  const clearAsync = () => clearTimeout(_async.current);
+  let prevTouchPosition = useRef<{x: number, y: number} | null>(null);
+  let isSpinning = useRef(false);
+  const clearAsync = () => {
+    clearTimeout(_async.current);
+    isSpinning.current = false;
+  };
 
 
   useEffect(() => {
@@ -135,9 +140,23 @@ export function useSpinButton(
     }
   }, [ariaTextValue]);
 
+  // For touch users, if they move their finger like they're scrolling, we don't want to trigger a spin.
+  let onTouchMove = useCallback((e) => {
+    if (!prevTouchPosition.current) {
+      prevTouchPosition.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    }
+    let touchPosition = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    // Arbitrary distance that worked in testing.
+    if (Math.abs(touchPosition.x - prevTouchPosition.current.x) > 10 || Math.abs(touchPosition.y - prevTouchPosition.current.y) > 10) {
+      clearAsync();
+    }
+    prevTouchPosition.current = touchPosition;
+  }, []);
+
   const onIncrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
+      isSpinning.current = true;
       onIncrement?.();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
@@ -154,6 +173,7 @@ export function useSpinButton(
   const onDecrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
+      isSpinning.current = true;
       onDecrement?.();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
@@ -173,6 +193,12 @@ export function useSpinButton(
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
+  // Tracks in touch if the press end event was preceded by a press up.
+  // If it wasn't, then we know the finger left the button while still in contact with the screen.
+  // This means that the user is trying to scroll or interact in some way that shouldn't trigger
+  // an increment or decrement.
+  let isUp = useRef(false);
+
   return {
     spinButtonProps: {
       role: 'spinbutton',
@@ -188,25 +214,76 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: () => {
-        onIncrementPressStart(400);
+      onPressStart: (e) => {
+        if (e.pointerType !== 'touch') {
+          onIncrementPressStart(400);
+        } else {
+          if (_async.current) {
+            clearAsync();
+          }
+          // For touch users, don't trigger an increment on press start, we'll wait for the press end to trigger it if
+          // the control isn't spinning.
+          _async.current = window.setTimeout(() => {
+            onIncrementPressStart(60);
+          }, 400);
+
+          addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
+          isUp.current = false;
+        }
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
-      onPressEnd: () => {
+      onPressUp: (e) => {
+        if (e.pointerType === 'touch') {
+          isUp.current = true;
+        }
+        prevTouchPosition.current = null;
         clearAsync();
         removeAllGlobalListeners();
+      },
+      onPressEnd: (e) => {
+        if (e.pointerType === 'touch') {
+          if (!isSpinning.current && isUp.current) {
+            onIncrement?.();
+          }
+        }
+        isUp.current = false;
       },
       onFocus,
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: () => {
-        onDecrementPressStart(400);
-        addGlobalListener(window, 'contextmenu', cancelContextMenu);
+      onPressStart: (e) => {
+        if (e.pointerType !== 'touch') {
+          onDecrementPressStart(400);
+        } else {
+          if (_async.current) {
+            clearAsync();
+          }
+          // For touch users, don't trigger an increment on press start, we'll wait for the press end to trigger it if
+          // the control isn't spinning.
+          _async.current = window.setTimeout(() => {
+            onDecrementPressStart(60);
+          }, 400);
+
+          addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
+          isUp.current = false;
+        }
       },
-      onPressEnd: () => {
+      onPressUp: (e) => {
+        if (e.pointerType === 'touch') {
+          isUp.current = true;
+        }
+        prevTouchPosition.current = null;
         clearAsync();
         removeAllGlobalListeners();
+      },
+      onPressEnd: (e) => {
+        if (e.pointerType === 'touch') {
+          if (!isSpinning.current && isUp.current) {
+            onDecrement?.();
+          }
+        }
+        isUp.current = false;
       },
       onFocus,
       onBlur
