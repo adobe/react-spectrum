@@ -65,7 +65,7 @@ interface SelectBoxContextValue {
   isDisabled?: boolean
 }
 
-export const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
+const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
 export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const labelOnly = ':has([slot=label]):not(:has([slot=description]))';
