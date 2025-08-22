@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -70,7 +70,7 @@ describe('NumberField', function () {
       incrementButton,
       decrementButton,
       debug,
-      rerender: (props = {}, locale) => rerender(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>)
+      rerender: (props = {}, locale) => rerender(<Provider theme={theme} scale={scale} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>)
     };
   }
 
@@ -871,7 +871,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '€10.00');
     rerender({defaultValue: 10, formatOptions: {style: 'currency', currency: 'USD'}});
-    expect(textField).toHaveAttribute('value', '$10.00');
+    expect(screen.getByRole('textbox')).toHaveAttribute('value', '$10.00');
   });
 
   it.each`
@@ -2284,7 +2284,7 @@ describe('NumberField', function () {
     expect(hiddenInput).toHaveValue('30');
 
     rerender({name: 'age', value: null});
-    expect(hiddenInput).toHaveValue('');
+    expect(document.querySelector('input[type=hidden]')).toHaveValue('');
   });
 
   it('supports form reset', async () => {

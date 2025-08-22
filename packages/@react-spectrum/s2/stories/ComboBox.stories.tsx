@@ -27,7 +27,7 @@ const meta: Meta<typeof ComboBox<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange']),
+    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore']),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},

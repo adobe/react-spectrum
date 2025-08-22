@@ -412,7 +412,7 @@ This example uses [Framer Motion](https://www.framer.com/motion/) to create an `
 import type {ButtonProps} from 'react-aria-components';
 import {ButtonContext, useContextProps} from 'react-aria-components';
 import {useButton} from 'react-aria';
-import {motion} from 'framer-motion';
+import {motion} from 'motion/react';
 
 const AnimatedButton = React.forwardRef((props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
   // Merge the local props and ref with the ones provided via context.

@@ -17,8 +17,11 @@ export type Mutable<T> = {
   -readonly[P in keyof T]: T[P]
 }
 
+type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
+
 /** An immutable object representing a Node in a Collection. */
 export class CollectionNode<T> implements Node<T> {
+  static readonly type: string;
   readonly type: string;
   readonly key: Key;
   readonly value: T | null = null;
@@ -38,8 +41,8 @@ export class CollectionNode<T> implements Node<T> {
   readonly colSpan: number | null = null;
   readonly colIndex: number | null = null;
 
-  constructor(type: string, key: Key) {
-    this.type = type;
+  constructor(key: Key) {
+    this.type = (this.constructor as typeof CollectionNode).type;
     this.key = key;
   }
 
@@ -47,8 +50,8 @@ export class CollectionNode<T> implements Node<T> {
     throw new Error('childNodes is not supported');
   }
 
-  clone(): CollectionNode<T> {
-    let node: Mutable<CollectionNode<T>> = new CollectionNode(this.type, this.key);
+  clone(): this {
+    let node: Mutable<this> = new (this.constructor as any)(this.key);
     node.value = this.value;
     node.level = this.level;
     node.hasChildNodes = this.hasChildNodes;
@@ -67,6 +70,63 @@ export class CollectionNode<T> implements Node<T> {
     node.colIndex = this.colIndex;
     return node;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
+    let clone = this.clone();
+    newCollection.addDescendants(clone, collection);
+    return clone;
+  }
+}
+
+export class FilterableNode<T> extends CollectionNode<T> {
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
+    let [firstKey, lastKey] = filterChildren(collection, newCollection, this.firstChildKey, filterFn);
+    let newNode: Mutable<CollectionNode<T>> = this.clone();
+    newNode.firstChildKey = firstKey;
+    newNode.lastChildKey = lastKey;
+    return newNode;
+  }
+}
+
+export class HeaderNode extends CollectionNode<unknown> {
+  static readonly type = 'header';
+}
+
+export class LoaderNode extends CollectionNode<unknown> {
+  static readonly type = 'loader';
+}
+
+export class ItemNode<T> extends FilterableNode<T> {
+  static readonly type = 'item';
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
+    if (filterFn(this.textValue, this)) {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
+}
+
+export class SectionNode<T> extends FilterableNode<T> {
+  static readonly type = 'section';
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): SectionNode<T> | null {
+    let filteredSection = super.filter(collection, newCollection, filterFn);
+    if (filteredSection) {
+      if (filteredSection.lastChildKey !== null) {
+        let lastChild = collection.getItem(filteredSection.lastChildKey);
+        if (lastChild && lastChild.type !== 'header') {
+          return filteredSection;
+        }
+      }
+    }
+
+    return null;
+  }
 }
 
 /**
@@ -80,6 +140,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
   private itemCount: number = 0;
+  isComplete = true;
 
   get size(): number {
     return this.itemCount;
@@ -201,6 +262,15 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.set(node.key, node);
   }
 
+  // Deeply add a node and its children to the collection from another collection, primarily used when filtering a collection
+  addDescendants(node: CollectionNode<T>, oldCollection: BaseCollection<T>): void {
+    this.addNode(node);
+    let children = oldCollection.getChildren(node.key);
+    for (let child of children) {
+      this.addDescendants(child as CollectionNode<T>, oldCollection);
+    }
+  }
+
   removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
@@ -224,134 +294,61 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.frozen = !isSSR;
   }
 
-  // TODO: this is pretty specific to menu, will need to check if it is generic enough
-  // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
-  // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
-  // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
-  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
-    let newCollection = new BaseCollection<T>();
-    // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
-    // for updating the next/prevKey for every non-filtered node.
-    let lastNode: Mutable<CollectionNode<T>> | null = null;
-
-    for (let node of this) {
-      if (node.type === 'section' && node.hasChildNodes) {
-        let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-        let lastChildInSection: Mutable<CollectionNode<T>> | null = null;
-        for (let child of this.getChildren(node.key)) {
-          if (shouldKeepNode(child, filterFn, this, newCollection)) {
-            let clonedChild: Mutable<CollectionNode<T>> = (child as CollectionNode<T>).clone();
-            // eslint-disable-next-line max-depth
-            if (lastChildInSection == null) {
-              clonedSection.firstChildKey = clonedChild.key;
-            }
-
-            // eslint-disable-next-line max-depth
-            if (newCollection.firstKey == null) {
-              newCollection.firstKey = clonedSection.key;
-            }
-
-            // eslint-disable-next-line max-depth
-            if (lastChildInSection && lastChildInSection.parentKey === clonedChild.parentKey) {
-              lastChildInSection.nextKey = clonedChild.key;
-              clonedChild.prevKey = lastChildInSection.key;
-            } else {
-              clonedChild.prevKey = null;
-            }
-
-            clonedChild.nextKey = null;
-            newCollection.addNode(clonedChild);
-            lastChildInSection = clonedChild;
-          }
-        }
-
-        // Add newly filtered section to collection if it has any valid child nodes, otherwise remove it and its header if any
-        if (lastChildInSection) {
-          if (lastChildInSection.type !== 'header') {
-            clonedSection.lastChildKey = lastChildInSection.key;
-
-            // If the old prev section was filtered out, will need to attach to whatever came before
-            // eslint-disable-next-line max-depth
-            if (lastNode == null) {
-              clonedSection.prevKey = null;
-            } else if (lastNode.type === 'section' || lastNode.type === 'separator') {
-              lastNode.nextKey = clonedSection.key;
-              clonedSection.prevKey = lastNode.key;
-            }
-            clonedSection.nextKey = null;
-            lastNode = clonedSection;
-            newCollection.addNode(clonedSection);
-          } else {
-            if (newCollection.firstKey === clonedSection.key) {
-              newCollection.firstKey = null;
-            }
-            newCollection.removeNode(lastChildInSection.key);
-          }
-        }
-      } else if (node.type === 'separator') {
-        // will need to check if previous section key exists, if it does then we add the separator to the collection.
-        // After the full collection is created we'll need to remove it it is the last node in the section (aka no following section after the separator)
-        let clonedSeparator: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-        clonedSeparator.nextKey = null;
-        if (lastNode?.type === 'section') {
-          lastNode.nextKey = clonedSeparator.key;
-          clonedSeparator.prevKey = lastNode.key;
-          lastNode = clonedSeparator;
-          newCollection.addNode(clonedSeparator);
-        }
-      } else {
-        // At this point, the node is either a subdialogtrigger node or a standard row/item
-        let clonedNode: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-        if (shouldKeepNode(clonedNode, filterFn, this, newCollection)) {
-          if (newCollection.firstKey == null) {
-            newCollection.firstKey = clonedNode.key;
-          }
-
-          if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
-            lastNode.nextKey = clonedNode.key;
-            clonedNode.prevKey = lastNode.key;
-          } else {
-            clonedNode.prevKey = null;
-          }
-
-          clonedNode.nextKey = null;
-          newCollection.addNode(clonedNode);
-          lastNode = clonedNode;
-        }
-      }
-    }
-
-    if (lastNode?.type === 'separator' && lastNode.nextKey === null) {
-      let lastSection;
-      if (lastNode.prevKey != null) {
-        lastSection = newCollection.getItem(lastNode.prevKey) as Mutable<CollectionNode<T>>;
-        lastSection.nextKey = null;
-      }
-      newCollection.removeNode(lastNode.key);
-      lastNode = lastSection;
-    }
-
-    newCollection.lastKey = lastNode?.key || null;
-
+  filter(filterFn: FilterFn<T>): this {
+    let newCollection = new (this.constructor as any)();
+    let [firstKey, lastKey] = filterChildren(this, newCollection, this.firstKey, filterFn);
+    newCollection?.commit(firstKey, lastKey);
     return newCollection;
   }
 }
 
-function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boolean, oldCollection: BaseCollection<T>, newCollection: BaseCollection<T>): boolean {
-  if (node.type === 'subdialogtrigger' || node.type === 'submenutrigger') {
-    // Subdialog wrapper should only have one child, if it passes the filter add it to the new collection since we don't need to
-    // do any extra handling for its first/next key
-    let triggerChild = [...oldCollection.getChildren(node.key)][0];
-    if (triggerChild && filterFn(triggerChild.textValue)) {
-      let clonedChild: Mutable<CollectionNode<T>> = (triggerChild as CollectionNode<T>).clone();
-      newCollection.addNode(clonedChild);
-      return true;
-    } else {
-      return false;
-    }
-  } else if (node.type === 'header') {
-    return true;
-  } else {
-    return filterFn(node.textValue);
+function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: FilterFn<T>): [Key | null, Key | null] {
+  // loop over the siblings for firstChildKey
+  // create new nodes based on calling node.filter for each child
+  // if it returns null then don't include it, otherwise update its prev/next keys
+  // add them to the newCollection
+  if (firstChildKey == null) {
+    return [null, null];
   }
+
+  let firstNode: Node<T> | null = null;
+  let lastNode: Node<T> | null = null;
+  let currentNode = collection.getItem(firstChildKey);
+
+  while (currentNode != null) {
+    let newNode: Mutable<CollectionNode<T>> | null = (currentNode as CollectionNode<T>).filter(collection, newCollection, filterFn);
+    if (newNode != null) {
+      newNode.nextKey = null;
+      if (lastNode) {
+        newNode.prevKey = lastNode.key;
+        lastNode.nextKey = newNode.key;
+      }
+
+      if (firstNode == null) {
+        firstNode = newNode;
+      }
+
+      newCollection.addNode(newNode);
+      lastNode = newNode;
+    }
+
+    currentNode = currentNode.nextKey ? collection.getItem(currentNode.nextKey) : null;
+  }
+
+  // TODO: this is pretty specific to dividers but doesn't feel like there is a good way to get around it since we only can know
+  // to filter the last separator in a collection only after performing a filter for the rest of the contents after it
+  // Its gross that it needs to live here, might be nice if somehow we could have this live in the separator code
+  if (lastNode && lastNode.type === 'separator') {
+    let prevKey = lastNode.prevKey;
+    newCollection.removeNode(lastNode.key);
+
+    if (prevKey) {
+      lastNode = newCollection.getItem(prevKey) as Mutable<CollectionNode<T>>;
+      lastNode.nextKey = null;
+    } else {
+      lastNode = null;
+    }
+  }
+
+  return [firstNode?.key ?? null, lastNode?.key ?? null];
 }
