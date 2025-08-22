@@ -57,6 +57,18 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-current', 'page');
   });
 
+  it('should not have aria-disabled defined by default', () => {
+    let {getByRole} = render(<Button>Test</Button>);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('should support aria-disabled passthrough', () => {
+    let {getByRole} = render(<Button aria-disabled="true">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -111,7 +123,8 @@ describe('Button', () => {
 
   it('should support press state', async () => {
     let onPress = jest.fn();
-    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress}>Test</Button>);
+    let onClick = jest.fn();
+    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -126,6 +139,7 @@ describe('Button', () => {
     expect(button).not.toHaveClass('pressed');
 
     expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {

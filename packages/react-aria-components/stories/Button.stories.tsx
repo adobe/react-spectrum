@@ -13,21 +13,26 @@
 import {action} from '@storybook/addon-actions';
 import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Button',
+  component: Button
+} as Meta<typeof Button>;
 
-export const ButtonExample = () => {
-  return (
+export type ButtonStory = StoryObj<typeof Button>;
+
+export const ButtonExample: ButtonStory = {
+  render: () => (
     <Button data-testid="button-example" onPress={action('onPress')} onClick={action('onClick')}>Press me</Button>
-  );
+  )
 };
 
-export const PendingButton = {
+export const PendingButton: ButtonStory = {
   render: (args) => <PendingButtonExample {...args} />,
   args: {
     children: 'Press me'
@@ -79,10 +84,10 @@ function PendingButtonExample(props) {
   );
 }
 
-export const RippleButtonExample = () => {
-  return (
+export const RippleButtonExample: ButtonStory = {
+  render: () => (
     <RippleButton data-testid="button-example">Press me</RippleButton>
-  );
+  )
 };
 
 function RippleButton(props) {
@@ -148,7 +153,7 @@ function ButtonPerformanceExample() {
   );
 }
 
-export const ButtonPerformance = {
+export const ButtonPerformance: ButtonStory = {
   render: (args) => <ButtonPerformanceExample {...args} />,
   parameters: {
     description: {

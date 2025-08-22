@@ -18,7 +18,8 @@ import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX, SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
@@ -29,29 +30,31 @@ export default {
   decorators: [
     (story, {parameters, args}) => (
       <>
-        {!parameters.disableToastContainer && <ToastContainer placement={args.placement} />}
+        {!parameters.disableToastContainer && <ToastContainer placement={(args as any).placement} />}
         <MainLandmark>{story()}</MainLandmark>
       </>
     )
   ],
   args: {
     shouldCloseOnAction: false,
-    timeout: null,
+    timeout: undefined,
     placement: undefined
   },
   argTypes: {
     timeout: {
       control: 'radio',
-      options: [null, 5000]
+      options: [undefined, 5000]
     },
     placement: {
       control: 'select',
       options: [undefined, 'top', 'top end', 'bottom', 'bottom end']
     }
   }
-};
+} as Meta<typeof RenderProvider>;
 
-export const Default = (args) => <RenderProvider {...args} />;
+export type ToastStory = StoryFn<typeof RenderProvider>;
+
+export const Default: ToastStory = (args) => <RenderProvider {...args} />;
 Default.story = {
   parameters: {
     a11y: {
@@ -69,7 +72,7 @@ Default.story = {
 };
 
 
-export const WithAction = (args) => (
+export const WithAction: ToastStory = (args) => (
   <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
 );
 
@@ -89,7 +92,7 @@ WithAction.story = {
 };
 
 
-export const WithTestId = (args) => (
+export const WithTestId: ToastStory = (args) => (
   <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} data-testid="hello i am a test id" />
 );
 
@@ -108,7 +111,7 @@ WithTestId.story = {
   }
 };
 
-export const WithDialog = (args) => (
+export const WithDialog: ToastStory = (args) => (
   <DialogTrigger isDismissable>
     <Button variant="accent">Open dialog</Button>
     <Dialog>
@@ -135,7 +138,7 @@ WithDialog.story = {
   }
 };
 
-export const MultipleToastContainers = (args) => <Multiple {...args} />;
+export const MultipleToastContainers: StoryFn<typeof Multiple> = (args) => <Multiple {...args} />;
 
 MultipleToastContainers.story = {
   name: 'multiple ToastContainers',
@@ -153,7 +156,7 @@ MultipleToastContainers.story = {
   }
 };
 
-export const ProgrammaticallyClosing = (args) => <ToastToggle {...args} />;
+export const ProgrammaticallyClosing: ToastStory = (args) => <ToastToggle {...args} />;
 
 ProgrammaticallyClosing.story = {
   name: 'programmatically closing',
@@ -170,7 +173,7 @@ ProgrammaticallyClosing.story = {
   }
 };
 
-export const WithIframe = () => <IframeExample />;
+export const WithIframe: ToastStory = () => <IframeExample />;
 
 WithIframe.story = {
   name: 'with iframe',
@@ -188,7 +191,7 @@ WithIframe.story = {
   }
 };
 
-function RenderProvider(options: SpectrumToastOptions) {
+function RenderProvider(options: SpectrumToastOptions): JSX.Element {
   return (
     <ButtonGroup>
       <Button
@@ -235,7 +238,7 @@ function ToastToggle(options: SpectrumToastOptions) {
   );
 }
 
-function Multiple(options: SpectrumToastOptions & {placement: ToastPlacement}) {
+function Multiple(options: SpectrumToastOptions & {placement: ToastPlacement}): JSX.Element {
   let [isMounted1, setMounted1] = useState(true);
 
   return (
@@ -360,14 +363,14 @@ function MainLandmark(props) {
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
 }
 
-export const withFullscreen = {
+export const withFullscreen: StoryObj<typeof FullscreenApp> = {
   render: (args) => <FullscreenApp {...args} />,
   parameters: {
     disableToastContainer: true
   }
 };
 
-function FullscreenApp(props) {
+function FullscreenApp(props: SpectrumToastOptions & {placement: ToastPlacement}): JSX.Element {
   let ref = useRef<HTMLDivElement | null>(null);
   let [isFullscreen, setFullscreen] = useState(false);
   let fullscreenPress = () => {

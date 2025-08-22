@@ -24,15 +24,16 @@ import {
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   ListStateContext,
   Provider,
   SectionProps,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -48,7 +49,6 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
-import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -76,7 +76,7 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -209,7 +209,8 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   overflowY: 'auto',
   overflowX: 'hidden',
   fontFamily: 'sans',
-  fontSize: controlFont()
+  fontSize: controlFont(),
+  outlineStyle: 'none'
 });
 
 export let listboxItem = style({
@@ -338,14 +339,13 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
     labelPosition = 'top',
     UNSAFE_className = '',
     UNSAFE_style,
-    loadingState,
     ...comboBoxProps
   } = props;
 
   return (
     <AriaComboBox
       {...comboBoxProps}
-      allowsEmptyCollection={loadingState != null}
+      allowsEmptyCollection
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
@@ -359,7 +359,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -409,7 +409,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
@@ -542,7 +542,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 
   let renderer;
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       // Only show the spinner in the list when loading more
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
@@ -553,7 +553,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function') {
@@ -699,7 +699,22 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   );
 });
 
-export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+    let prevItem = newCollection.getItem(this.prevKey!);
+    if (prevItem && prevItem.type !== 'separator') {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
+}
+
+export const Divider = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
   let listState = useContext(ListStateContext)!;
 
   let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);

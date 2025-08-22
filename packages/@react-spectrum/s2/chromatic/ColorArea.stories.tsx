@@ -11,7 +11,7 @@
  */
 
 import {ColorArea} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
@@ -23,15 +23,16 @@ const meta: Meta<typeof ColorArea> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorArea>;
 
-export const Default = {
+export const Default: Story = {
   render: (args) => <ColorArea {...args} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }
 };
 
-export const Disabled = {
+export const Disabled: Story = {
   ...Default,
   args: {
     ...Default.args,

@@ -11,16 +11,38 @@
  */
 
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
+import styles from './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Tooltip',
+  component: Tooltip,
+  args: {
+    placement: 'top',
+    hideArrow: false
+  },
+  argTypes: {
+    placement: {
+      control: 'select',
+      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
+        'top', 'top left', 'top right', 'top start', 'top end',
+        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
+        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      ]
+    }
+  }
+} as Meta<typeof Tooltip>;
 
-export const TooltipExample = () => (
+export type TooltipStory = StoryFn<typeof Tooltip>;
+export type TooltipStoryObj = StoryObj<typeof Tooltip>;
+
+export const TooltipExample: TooltipStory = (args) => (
   <TooltipTrigger>
     <Button>Tooltip trigger</Button>
     <Tooltip
+      {...args}
+      className={styles.tooltip}
       offset={5}
       style={{
         background: 'Canvas',
@@ -29,17 +51,234 @@ export const TooltipExample = () => (
         padding: 5,
         borderRadius: 4
       }}>
-      <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+      {!(args as any).hideArrow && <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
           <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
-      </OverlayArrow>
+      </OverlayArrow>}
       I am a tooltip
     </Tooltip>
   </TooltipTrigger>
 );
 
-export const TooltipArrowBoundaryOffsetExample = {
+function TooltipArrowBoundaryOffsetExampleRender(args: {
+  topLeft: number,
+  topRight: number,
+  leftTop: number,
+  leftBottom: number,
+  rightTop: number,
+  rightBottom: number,
+  bottomLeft: number,
+  bottomRight: number
+}): JSX.Element {
+  let {topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight} = args;
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Top left</Button>
+            <Tooltip
+              placement="top left"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={topLeft}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Top left
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Top right</Button>
+            <Tooltip
+              placement="top right"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={topRight}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Top right
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Left top</Button>
+            <Tooltip
+              placement="left top"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={leftTop}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Left top
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Left bottom</Button>
+            <Tooltip
+              placement="left bottom"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={leftBottom}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Left bottom
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Right top</Button>
+            <Tooltip
+              placement="right top"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={rightTop}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Right top
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Right bottom</Button>
+            <Tooltip
+              placement="right bottom"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={rightBottom}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Right bottom
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Bottom left</Button>
+            <Tooltip
+              placement="bottom left"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={bottomLeft}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Bottom left
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <TooltipTrigger isOpen delay={0} closeDelay={0}>
+            <Button style={{width: 200, height: 100}}>Bottom right</Button>
+            <Tooltip
+              placement="bottom right"
+              shouldFlip={false}
+              offset={7}
+              arrowBoundaryOffset={bottomRight}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                borderRadius: 9999
+              }}>
+              <OverlayArrow>
+                <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              Bottom right
+            </Tooltip>
+          </TooltipTrigger>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoundaryOffsetExampleRender> = {
   args: {
     topLeft: 25,
     topRight: 25,
@@ -72,7 +311,7 @@ export const TooltipArrowBoundaryOffsetExample = {
         max: 100
       }
     },
-    leftBotton: {
+    leftBottom: {
       control: {
         type: 'range',
         min: -100,
@@ -108,210 +347,19 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     }
   },
-  render: ({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
-    return (
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Top left</Button>
-              <Tooltip
-                placement="top left"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={topLeft}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Top left
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Top right</Button>
-              <Tooltip
-                placement="top right"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={topRight}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Top right
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Left top</Button>
-              <Tooltip
-                placement="left top"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={leftTop}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Left top
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Left bottom</Button>
-              <Tooltip
-                placement="left bottom"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={leftBottom}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Left bottom
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Right top</Button>
-              <Tooltip
-                placement="right top"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={rightTop}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Right top
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Right bottom</Button>
-              <Tooltip
-                placement="right bottom"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={rightBottom}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Right bottom
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Bottom left</Button>
-              <Tooltip
-                placement="bottom left"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={bottomLeft}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Bottom left
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <TooltipTrigger isOpen delay={0} closeDelay={0}>
-              <Button style={{width: 200, height: 100}}>Bottom right</Button>
-              <Tooltip
-                placement="bottom right"
-                shouldFlip={false}
-                offset={7}
-                arrowBoundaryOffset={bottomRight}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  borderRadius: 9999
-                }}>
-                <OverlayArrow>
-                  <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                Bottom right
-              </Tooltip>
-            </TooltipTrigger>
-          </div>
-        </div>
-      </div>
-    );
+  render: (args) => <TooltipArrowBoundaryOffsetExampleRender {...args} />
+};
+
+export const TooltipContainerPaddingExample: StoryObj<typeof Tooltip> = {
+  render: (args) => (
+    <TooltipTrigger>
+      <Button style={{position: 'absolute', top: 0, left: 0}}>Tooltip trigger</Button>
+      <Tooltip {...args}>
+        I am a tooltip
+      </Tooltip>
+    </TooltipTrigger>
+  ),
+  args: {
+    containerPadding: 10
   }
 };

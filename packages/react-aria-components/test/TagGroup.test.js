@@ -14,6 +14,7 @@ import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spect
 import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {useListData} from '@react-stately/data';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
@@ -44,6 +45,7 @@ let renderTagGroup = (tagGroupProps, tagListProps, itemProps) => render(<TestTag
 
 describe('TagGroup', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -304,6 +306,7 @@ describe('TagGroup', () => {
     let grid = getByTestId('list');
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
+    expect(grid).toHaveAttribute('role', 'group');
   });
 
   it('supports tooltips', async function () {
@@ -553,6 +556,27 @@ describe('TagGroup', () => {
   
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('press events', () => {
+    it.only.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+      await tester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

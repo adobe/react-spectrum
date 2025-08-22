@@ -43,9 +43,10 @@ type: component
 
 ```tsx example
 import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-components';
+import {Edit} from 'lucide-react';
 
 <TooltipTrigger>
-  <Button>✏️</Button>
+  <Button><Edit size={18} /></Button>
   <Tooltip>
     <OverlayArrow>
       <svg width={8} height={8} viewBox="0 0 8 8"><path d="M0 0 L4 4 L8 0" /></svg>
@@ -170,6 +171,7 @@ This example wraps `Tooltip` and all of its children together into a single comp
 
 ```tsx example export=true
 import type {TooltipProps} from 'react-aria-components';
+import {Save} from 'lucide-react';
 
 interface MyTooltipProps extends Omit<TooltipProps, 'children'> {
   children: React.ReactNode
@@ -187,7 +189,7 @@ function MyTooltip({children, ...props}: MyTooltipProps) {
 }
 
 <TooltipTrigger>
-  <Button>💾</Button>
+  <Button><Save size={18} /></Button>
   <MyTooltip>Save</MyTooltip>
 </TooltipTrigger>
 ```
@@ -215,7 +217,7 @@ The delay can be adjusted for hover using the `delay` prop.
 
 ```tsx example
 <TooltipTrigger delay={0}>
-  <Button>💾</Button>
+  <Button><Save size={18} /></Button>
   <MyTooltip>Save</MyTooltip>
 </TooltipTrigger>
 ```
@@ -225,8 +227,9 @@ The delay can be adjusted for hover using the `delay` prop.
 By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.
 
 ```tsx example
+import {Disc} from 'lucide-react';
 <TooltipTrigger trigger="focus">
-  <Button>💿</Button>
+  <Button><Disc size={18} /></Button>
   <MyTooltip>Burn CD</MyTooltip>
 </TooltipTrigger>
 ```
@@ -237,13 +240,14 @@ The open state of the tooltip can be controlled via the `defaultOpen` and `isOpe
 
 
 ```tsx example
+import {Bell} from 'lucide-react';
 function Example() {
   let [isOpen, setOpen] = React.useState(false);
 
   return (
     <>
       <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
-        <Button>📣</Button>
+        <Button><Bell size={18} /></Button>
         <MyTooltip>Notifications</MyTooltip>
       </TooltipTrigger>
       <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
@@ -260,21 +264,22 @@ The Tooltip's placement with respect to its trigger element can be adjusted usin
 prop. See the props table for a full list of available placement combinations.
 
 ```tsx example
+import {ArrowUp, ArrowDown, ArrowRight, ArrowLeft} from 'lucide-react';
 <div style={{display: 'flex', gap: 8}}>
   <TooltipTrigger>
-    <Button>⬅️</Button>
+    <Button><ArrowLeft size={18} /></Button>
     <MyTooltip placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyTooltip>
   </TooltipTrigger>
   <TooltipTrigger>
-    <Button>⬆️</Button>
+    <Button><ArrowUp size={18} /></Button>
     <MyTooltip placement="top">This tooltip is above the button.</MyTooltip>
   </TooltipTrigger>
   <TooltipTrigger>
-    <Button>⬇️</Button>
+    <Button><ArrowDown size={18} /></Button>
     <MyTooltip placement="bottom">This tooltip is below the button.</MyTooltip>
   </TooltipTrigger>
   <TooltipTrigger>
-    <Button>➡️</Button>
+    <Button><ArrowRight size={18} /></Button>
     <MyTooltip placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyTooltip>
   </TooltipTrigger>
 </div>
@@ -290,7 +295,7 @@ Below is a tooltip offset by an additional 50px above the trigger.
 
 ```tsx example
 <TooltipTrigger>
-  <Button>☝️</Button>
+  <Button><ArrowUp size={18} /></Button>
   <MyTooltip offset={50}>This will shift up.</MyTooltip>
 </TooltipTrigger>
 ```
@@ -299,7 +304,7 @@ Below is a tooltip cross offset by an additional 100px to the right of the trigg
 
 ```tsx example
 <TooltipTrigger>
-  <Button>👉</Button>
+  <Button><ArrowRight size={18} /></Button>
   <MyTooltip crossOffset={60} placement="bottom">This will shift over to the right.</MyTooltip>
 </TooltipTrigger>
 ```
@@ -309,8 +314,9 @@ Below is a tooltip cross offset by an additional 100px to the right of the trigg
 The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip, without disabling the trigger it displays on.
 
 ```tsx example
+import {Printer} from 'lucide-react';
 <TooltipTrigger isDisabled>
-  <Button>🖨</Button>
+  <Button><Printer size={18} /></Button>
   <MyTooltip>Print</MyTooltip>
 </TooltipTrigger>
 ```
@@ -390,15 +396,17 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM. See the [animation guide](styling.html#animation) for more details.
+Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
 .react-aria-Tooltip {
-  transition: opacity 300ms;
+  transition: opacity 300ms, scale 300ms;
+  transform-origin: var(--trigger-anchor-point);
 
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
+    scale: 0.85;
   }
 }
 ```
