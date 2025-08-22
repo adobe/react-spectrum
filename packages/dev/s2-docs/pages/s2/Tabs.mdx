@@ -1,0 +1,294 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+import docs from 'docs:@react-spectrum/s2';
+
+# Tabs
+
+<PageDescription>{docs.exports.Tabs.description}</PageDescription>
+```tsx render docs={docs.exports.Tabs} props={['density', 'isDisabled', 'orientation', 'keyboardActivation']} initialProps={{'aria-label': 'Tabs'}} links={docs.links} expanded type="s2"
+import {Tabs, TabList, TabPanel, Tab} from '@react-spectrum/s2';
+<Tabs/* PROPS */>
+  <TabList>
+    <Tab id="explore">Explore</Tab>
+    <Tab id="shop">Shop</Tab>
+    <Tab id="profile">Profile</Tab>
+  </TabList>
+  <TabPanel id="explore">
+    Content for Explore tab.
+  </TabPanel>
+  <TabPanel id="shop">
+    Content for Shop tab.
+  </TabPanel>
+  <TabPanel id="profile">
+    Content for Profile tab.
+  </TabPanel>
+</Tabs>
+```
+
+## Content
+
+`TabList` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+```tsx render
+"use client";
+import {ActionButton, Tabs, TabList, Tab, TabPanel, Button, ButtonGroup} from '@react-spectrum/s2';
+import {Collection} from 'react-aria-components';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+interface Item {
+  id: number,
+  title: string,
+  description: string
+}
+
+function Example() {
+  ///- begin collapse -///
+  let [tabs, setTabs] = useState([
+    {id: 1, title: 'Tab 1', description: 'Tab 1'},
+    {id: 2, title: 'Tab 2', description: 'Tab 2'},
+    {id: 3, title: 'Tab 3', description: 'Tab 3'}
+  ]);
+  ///- end collapse -///
+
+  ///- begin collapse -///
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        description: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+  ///- end collapse -///
+
+  ///- begin collapse -///
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+  ///- end collapse -///
+
+  return (
+    <div className={style({display: 'block', width: 600})}>
+      <Tabs aria-label="Tabs">
+        <div className={style({display: 'flex', alignSelf: 'stretch'})}>
+          {/*- begin highlight -*/}
+          <TabList styles={style({flexShrink: 1, flexGrow: 1, flexBasis: 'auto'})} items={tabs}>
+            {item => <Tab>{item.title}</Tab>}
+          </TabList>
+          {/*- end highlight -*/}
+          <div orientation="horizontal" className={style({display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, flexGrow: 0, flexBasis: 'auto'})}>
+            <ActionButton onPress={addTab}>Add tab</ActionButton>
+            <ActionButton onPress={removeTab}>Remove tab</ActionButton>
+          </div>
+        </div>
+        {/*- begin highlight -*/}
+        <Collection items={tabs}>
+          {item => <TabPanel>{item.description}</TabPanel>}
+        </Collection>
+        {/*- end highlight -*/}
+      </Tabs>
+    </div>
+  )
+}
+```
+### Links
+
+Use the `href` prop on a `<Tab>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
+```tsx render
+"use client";
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {useSyncExternalStore} from 'react';
+
+export default function Example() {
+  let hash = useSyncExternalStore(subscribe, getHash, getHashServer);
+  return (
+    <Tabs aria-label="Tabs" selectedKey={hash} aria-label="Tabs">
+      <TabList>
+        {/*- begin highlight -*/}
+        <Tab id="#/" href="#/">Home</Tab>
+        {/*- end highlight -*/}
+        <Tab id="#/shared" href="#/shared">Shared</Tab>
+        <Tab id="#/deleted" href="#/deleted">Deleted</Tab>
+      </TabList>
+      <TabPanel id="#/">Home</TabPanel>
+      <TabPanel id="#/shared">Shared</TabPanel>
+      <TabPanel id="#/deleted">Deleted</TabPanel>
+    </Tabs>
+  );
+}
+function getHash() {
+  return location.hash.startsWith('#/') ? location.hash : '#/';
+}
+function getHashServer() {
+  return '#/';
+}
+function subscribe(fn) {
+  addEventListener('hashchange', fn);
+  return () => removeEventListener('hashchange', fn);
+}
+```
+### Icons
+Icons can also be used in Tabs in addition to a text label. 
+```tsx render
+"use client"
+import {Tabs, TabList, Tab, TabPanel, Text} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Bell from '@react-spectrum/s2/icons/Bell';
+import Heart from '@react-spectrum/s2/icons/Heart';
+
+function Example() {
+  return (
+    <div>
+      <Tabs aria-label="History of Ancient Rome">
+        <TabList>
+        {/*- begin highlight -*/}
+          <Tab id="edit"><Edit /><Text>Edit</Text></Tab>
+          <Tab id="bell"><Bell /><Text>Notifications</Text></Tab>
+          <Tab id="heart"><Heart /><Text>Likes</Text></Tab>
+        {/*- end highlight -*/}
+        </TabList>
+        <TabPanel id="edit">
+          Review your edits
+        </TabPanel>
+        <TabPanel id="bell">
+          Check your notifications
+        </TabPanel>
+        <TabPanel id="heart">
+          See your likes
+        </TabPanel>
+      </Tabs>
+    </div>
+  )
+}
+```
+### Internationalization
+To internationalize Tabs, a localized string should be passed as children to the TabList `<Tab>`. Any text content within the Tab's panel should also be localized accordingly. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Tabs is automatically flipped.
+
+### Accessibility
+While an `aria-label` is not explicitly required for a tab list, Tabs must be labeled using a aria-label in the absence of an ancestor landmark. This will prevent screen readers from announcing non-focused tabs, allowing for a more focused experience.
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The selected key corresponds to the `id` prop of a `<Tab>`. Tabs can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
+import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSetting';
+import {useState} from 'react';
+function Example() {
+  let [tab, setTab] = useState<Key>("files");
+  return (
+    <div>
+      <Tabs
+        aria-label="Tabs"
+        ///- begin highlight -///
+        selectedKey={tab}
+        onSelectionChange={setTab}
+        ///- end highlight -///
+      >
+        <TabList aria-label="Tabs">
+          <Tab id="home">Home</Tab>
+          <Tab id="files">Files</Tab>
+          <Tab id="search" isDisabled>Search</Tab>
+          <Tab id="settings">Settings</Tab>
+        </TabList>
+        <TabPanel id="home">
+          <Home />
+        </TabPanel>
+        <TabPanel id="files">
+          <Folder />
+        </TabPanel>
+        <TabPanel id="search">
+          <Search />
+        </TabPanel>
+        <TabPanel id="settings">
+          <Settings />
+        </TabPanel>
+      </Tabs>
+      <p>Selected tab: {tab}</p>
+    </div>
+  );
+}
+```
+
+## Collaspe behavior
+
+If there isn't enough horizontal room to render every tab on a single line, the component will collapse all tabs into a `Picker`. Note that this does not apply to vertical Tabs.
+Try the example below to see the above behavior.
+```tsx render
+"use client";
+import {ToggleButton, Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  let [isCollasped, setCollaspe] = useState(false);
+  return (
+    <div className={style({
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+      width: 600
+    })}>
+      <Tabs
+        styles={style({
+          width: {
+            default: 'full',
+            isCollasped: 200
+          }
+        })({isCollasped})}
+        aria-label="Tabs">
+        <TabList>
+          <Tab id="home">Home</Tab>
+          <Tab id="profile">Profile</Tab>
+          <Tab id="contact" isDisabled>Contact</Tab>
+          <Tab id="about">About</Tab>
+        </TabList>
+        <TabPanel id="home">
+          <div>
+            Welcome home
+          </div>
+        </TabPanel>
+        <TabPanel id="profile">
+          <div>
+            View your profile
+          </div>
+        </TabPanel>
+        <TabPanel id="contact">
+          <div>
+            Find your contacts
+          </div>
+          </TabPanel>
+        <TabPanel id="about">
+          <div>
+            Learn more
+          </div>
+        </TabPanel>
+      </Tabs>
+      <ToggleButton styles={style({maxWidth: 'fit'})} onPress={() => setCollaspe((isCollasped) => !isCollasped)}>
+        Toggle tab container size
+      </ToggleButton>
+    </div>
+  );
+}
+```
+## API
+
+### Tabs
+<PropTable component={docs.exports.Tabs} links={docs.links} showDescription />
+
+### TabList
+<PropTable component={docs.exports.TabList} links={docs.links} showDescription />
+
+### Tab
+<PropTable component={docs.exports.Tab} links={docs.links} showDescription />
+
+### TabPanel
+<PropTable component={docs.exports.TabPanel} links={docs.links} showDescription />
