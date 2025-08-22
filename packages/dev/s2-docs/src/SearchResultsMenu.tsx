@@ -3,7 +3,7 @@
 import {ActionButton, Heading, Image, Menu, MenuItem, MenuSection, Header as RSPHeader, SearchField, Tag, TagGroup, Text} from '@react-spectrum/s2';
 import {Autocomplete, AutocompleteProps, Collection, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
-import ComponentCardView, {ComponentCardItem} from './ComponentCardView';
+import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import React, {CSSProperties} from 'react';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import type {TextFieldRef} from '@react-types/textfield';

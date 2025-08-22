@@ -1,6 +1,6 @@
 'use client';
 
-import ComponentCardView, {ComponentCardItem} from './ComponentCardView';
+import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';

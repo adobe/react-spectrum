@@ -175,7 +175,7 @@ interface ComponentCardGridProps {
   styles?: any
 }
 
-export function ComponentCardGrid({items, ariaLabel = 'Items', size = 'S', onAction, styles}: ComponentCardGridProps) {
+export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, styles}: ComponentCardGridProps) {
   return (
     <CardView aria-label={ariaLabel} onAction={onAction} styles={styles}>
       <Collection items={items}>
@@ -201,7 +201,3 @@ export function ComponentCardGrid({items, ariaLabel = 'Items', size = 'S', onAct
     </CardView>
   );
 }
-
-export default ComponentCardGrid;
-
-
