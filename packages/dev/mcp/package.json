@@ -1,0 +1,25 @@
+{
+  "name": "@react-spectrum/mcp-s2-docs",
+  "version": "0.1.0",
+  "description": "MCP server exposing React Spectrum S2 docs as tools",
+  "type": "module",
+  "bin": {
+    "s2-docs-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "node --enable-source-maps dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "fast-glob": "^3.3.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
