@@ -9,6 +9,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
 import {
@@ -19,8 +20,7 @@ import {
   ListBoxProps,
   Provider
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, Orientation} from '@react-types/shared';
-import {focusRing, style} from '../style' with {type: 'macro'};
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
 import {pressScale} from './pressScale';
@@ -28,11 +28,16 @@ import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef
 import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'style' | 'className'> {
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className'> {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
   children: ReactNode,
+  /**
+   * The layout direction of the content in each SelectBox.
+   * @default 'vertical'
+   */
+  orientation?: Orientation,
   /**
    * The selection mode for the SelectBoxGroup.
    * @default 'single'
@@ -45,12 +50,14 @@ export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>
 }
 
 export interface SelectBoxProps extends StyleProps {
+  /** The unique id of the SelectBox. */
+  id?: Key,
+  /** A string representation of the SelectBox's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string,
   /**
-   * The value of the SelectBox.
-   */
-  value: string,
-  /**
-   * The label for the element.
+   * The contents of the SelectBox.
    */
   children: ReactNode,
   /**
@@ -76,6 +83,7 @@ const selectBoxStyles = style({
   gridAutoRows: '1fr',
   position: 'relative',
   font: 'ui',
+  cursor: 'default',
   boxSizing: 'border-box',
   overflow: 'hidden',
   width: {
@@ -176,7 +184,7 @@ const selectBoxStyles = style({
   },
   backgroundColor: {
     default: 'layer-2',
-    isDisabled: 'layer-1'
+    isDisabled: 'disabled'
   },
   color: {
     isDisabled: 'disabled'
@@ -196,12 +204,12 @@ const illustrationContainer = style({
   alignSelf: 'center',
   justifySelf: 'center',
   minSize: 48,
-  color: {
-    isDisabled: 'disabled',
-    isHovered: 'gray-900'
-  },
-  opacity: {
-    isDisabled: 0.4
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      default: baseColor('neutral'),
+      isDisabled: 'disabled'
+    }
   }
 });
 
@@ -222,8 +230,7 @@ const descriptionText = style({
     }
   },
   color: {
-    default: 'neutral',
-    isHovered: 'gray-900',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   }
 });
@@ -254,8 +261,7 @@ const labelText = style({
     }
   },
   color: {
-    default: 'neutral',
-    isHovered: 'gray-900',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   }
 });
@@ -263,11 +269,21 @@ const labelText = style({
 const gridStyles = style<{orientation?: Orientation}>({
   display: 'grid',
   gridAutoRows: '1fr',
-  gap: 16,
+  gap: 24,
+  justifyContent: 'center',
+  '--size': {
+    type: 'width',
+    value: {
+      orientation: {
+        horizontal: 368,
+        vertical: 170
+      }
+    }
+  },
   gridTemplateColumns: {
     orientation: {
-      horizontal: 'repeat(auto-fit, minmax(368px, 1fr))',
-      vertical: 'repeat(auto-fit, minmax(170px, 1fr))'
+      horizontal: 'repeat(auto-fit, var(--size))',
+      vertical: 'repeat(auto-fit, var(--size))'
     }
   }
 }, getAllowedOverrides());
@@ -276,7 +292,7 @@ const gridStyles = style<{orientation?: Orientation}>({
  * SelectBox is a single selectable item in a SelectBoxGroup.
  */
 export function SelectBox(props: SelectBoxProps): ReactNode {
-  let {children, value, isDisabled: individualDisabled = false, UNSAFE_style, UNSAFE_className, styles, ...otherProps} = props;
+  let {children, isDisabled: individualDisabled = false, UNSAFE_style, UNSAFE_className, styles, ...otherProps} = props;
   
   let {
     orientation = 'vertical',
@@ -288,8 +304,6 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
 
   return (
     <ListBoxItem
-      id={value}
-      textValue={value}
       isDisabled={isDisabled}
       ref={ref}
       className={renderProps => (UNSAFE_className || '') + selectBoxStyles({
@@ -364,6 +378,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
     isDisabled = false,
     UNSAFE_className,
     UNSAFE_style,
+    styles,
     ...otherProps
   } = props;
 
@@ -382,7 +397,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
     <ListBox
       selectionMode={selectionMode}
       layout="grid"
-      className={(UNSAFE_className || '') + gridStyles({orientation})}
+      className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
       style={UNSAFE_style}
       {...otherProps}>
       <SelectBoxContext.Provider value={selectBoxContextValue}>
