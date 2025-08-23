@@ -36,7 +36,9 @@ export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isRe
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  /** Should the menu be closed when an item is selected? */
+  shouldCloseOnSelect?: boolean
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {

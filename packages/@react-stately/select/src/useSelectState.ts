@@ -54,7 +54,9 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
         props.onSelectionChange(key);
       }
 
-      triggerState.close();
+      if (props.shouldCloseOnSelect ?? true) {
+        triggerState.close();
+      }
       validationState.commitValidation();
     }
   });

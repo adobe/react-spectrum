@@ -192,6 +192,34 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('close');
   });
 
+  it('should stay open on selecting an option if shouldCloseOnSelect is false', async () => {
+    let {getByTestId} = render(
+      <Select data-testid="select" shouldCloseOnSelect={false}>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox>
+            <ListBoxItem>Cat</ListBoxItem>
+            <ListBoxItem>Dog</ListBoxItem>
+            <ListBoxItem>Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+
+    await selectTester.open();
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+
+    await selectTester.selectOption({option: 'Dog', shouldStayOpen: true});
+    expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+  });
+
   it('should send disabled prop to the hidden field', () => {
     render(
       <TestSelect name="select" isDisabled />
