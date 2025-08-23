@@ -113,18 +113,22 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
   }
 }
 
-function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
+function constrainMonthDay(date: Mutable<AnyCalendarDate>, ignoreDay?: boolean) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
-  date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
+  if (ignoreDay) {
+    date.day = Math.max(1, Math.min(date.calendar.getMaxDays(), date.day));
+  } else {
+    date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
+  }
 }
 
-export function constrain(date: Mutable<AnyCalendarDate>): void {
+export function constrain(date: Mutable<AnyCalendarDate>, ignoreDay?: boolean): void {
   if (date.calendar.constrainDate) {
-    date.calendar.constrainDate(date);
+    date.calendar.constrainDate(date); 
   }
 
   date.year = Math.max(1, Math.min(date.calendar.getYearsInEra(date), date.year));
-  constrainMonthDay(date);
+  constrainMonthDay(date, ignoreDay);
 }
 
 export function invertDuration(duration: DateTimeDuration): DateTimeDuration {
@@ -144,10 +148,10 @@ export function subtract(date: CalendarDate | CalendarDateTime, duration: DateTi
   return add(date, invertDuration(duration));
 }
 
-export function set(date: CalendarDateTime, fields: DateFields): CalendarDateTime;
-export function set(date: CalendarDate, fields: DateFields): CalendarDate;
-export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): Mutable<AnyCalendarDate> {
-  let mutableDate: Mutable<AnyCalendarDate> = date.copy();
+export function set(date: CalendarDateTime, fields: DateFields, ignoreDay?: boolean): CalendarDateTime;
+export function set(date: CalendarDate, fields: DateFields, ignoreDay?: boolean): CalendarDate;
+export function set(date: CalendarDate | CalendarDateTime, fields: DateFields, ignoreDay?: boolean): Mutable<AnyCalendarDate> {
+  let mutableDate: Mutable<AnyCalendarDate> = date.copy(ignoreDay);
 
   if (fields.era != null) {
     mutableDate.era = fields.era;
@@ -165,14 +169,14 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): 
     mutableDate.day = fields.day;
   }
 
-  constrain(mutableDate);
+  constrain(mutableDate, ignoreDay);
   return mutableDate;
 }
 
-export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields): Mutable<Time | CalendarDateTime> {
-  let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
+export function setTime(value: CalendarDateTime, fields: TimeFields, ignoreDay?: boolean): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields, ignoreDay?: boolean): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields, ignoreDay?: boolean): Mutable<Time | CalendarDateTime> {
+  let mutableValue: Mutable<Time | CalendarDateTime> = value.copy(ignoreDay);
 
   if (fields.hour != null) {
     mutableValue.hour = fields.hour;
@@ -243,9 +247,9 @@ export function subtractTime(time: Time, duration: TimeDuration): Time {
   return addTime(time, invertDuration(duration));
 }
 
-export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): CalendarDateTime;
-export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions): CalendarDate;
-export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): Mutable<CalendarDate | CalendarDateTime> {
+export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions, ignoreDay?: boolean): CalendarDateTime;
+export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions, ignoreDay?: boolean): CalendarDate;
+export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateField, amount: number, options?: CycleOptions, ignoreDay?: boolean): Mutable<CalendarDate | CalendarDateTime> {
   let mutable: Mutable<CalendarDate | CalendarDateTime> = value.copy();
 
   switch (field) {
@@ -259,7 +263,7 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       mutable.era = eras[eraIndex];
 
       // Constrain the year and other fields within the era, so the era doesn't change when we balance below.
-      constrain(mutable);
+      constrain(mutable, ignoreDay);
       break;
     }
     case 'year': {
@@ -284,7 +288,11 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
       break;
     case 'day':
-      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      if (ignoreDay) {
+        mutable.day = cycleValue(value.day, amount, 1, value.calendar.getMaxDays(), options?.round);
+      } else {
+        mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      }
       break;
     default:
       throw new Error('Unsupported field ' + field);
@@ -294,7 +302,7 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
     value.calendar.balanceDate(mutable);
   }
 
-  constrain(mutable);
+  constrain(mutable, ignoreDay);
   return mutable;
 }
 
@@ -396,7 +404,7 @@ export function subtractZoned(dateTime: ZonedDateTime, duration: DateTimeDuratio
   return addZoned(dateTime, invertDuration(duration));
 }
 
-export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions): ZonedDateTime {
+export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions, ignoreDay?: boolean): ZonedDateTime {
   // For date fields, we want the time to remain consistent and the UTC offset to potentially change to account for DST changes.
   // For time fields, we want the time to change by the amount given. This may result in the hour field staying the same, but the UTC
   // offset changing in the case of a backward DST transition, or skipping an hour in the case of a forward DST transition.
@@ -450,7 +458,7 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
     case 'year':
     case 'month':
     case 'day': {
-      let res = cycleDate(toCalendarDateTime(dateTime), field, amount, options);
+      let res = cycleDate(toCalendarDateTime(dateTime), field, amount, options, ignoreDay);
       let ms = toAbsolute(res, dateTime.timeZone);
       return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
     }
@@ -459,11 +467,11 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
   }
 }
 
-export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
+export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation, ignoreDay?: boolean): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
   let plainDateTime = toCalendarDateTime(dateTime);
-  let res = setTime(set(plainDateTime, fields), fields);
+  let res = setTime(set(plainDateTime, fields, ignoreDay), fields);
 
   // If the resulting plain date time values are equal, return the original time.
   // We don't want to change the offset when setting the time to the same value.
