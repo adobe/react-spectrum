@@ -2145,7 +2145,6 @@ describe('TableView', function () {
           });
           act(() => jest.runAllTimers());
           await user.tab({shift: true});
-          await user.tab({shift: true});
           await user.keyboard('{ArrowLeft}');
 
           // Drop on folder in same table
@@ -2301,10 +2300,6 @@ describe('TableView', function () {
           await user.keyboard('{Escape}');
 
           tree.rerender(<DragBetweenTablesComplex secondTableDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          await user.tab({shift: true});
-          await user.tab({shift: true});
-          await user.keyboard('{ArrowLeft}');
-          await user.keyboard('{ArrowRight}');
 
           let grids = tree.getAllByRole('grid');
           let rowgroup = within(grids[0]).getAllByRole('rowgroup')[1];
