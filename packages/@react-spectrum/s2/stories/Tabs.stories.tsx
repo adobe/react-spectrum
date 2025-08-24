@@ -47,9 +47,9 @@ export const Example: Story = {
     <div className={style({width: 700, maxWidth: 'calc(100vw - 60px)', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
       <Tabs {...args} styles={tabs} aria-label="History of Ancient Rome">
         <TabList styles={tabList({orientation: args.orientation})}>
-          <Tab id="FoR">Founding of Rome</Tab>
-          <Tab id="MaR">Monarchy and Republic</Tab>
-          <Tab id="Emp">Empire</Tab>
+          <Tab id="FoR">Home</Tab>
+          <Tab id="MaR">Search</Tab>
+          <Tab id="Emp">Settings</Tab>
         </TabList>
         <TabPanel id="FoR">
           <div className={style({overflow: 'auto', height: 'full'})}>

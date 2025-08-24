@@ -13,7 +13,7 @@
 import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterLessNode, LoaderNode, useCachedChildren} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
@@ -448,7 +448,7 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-class TreeContentNode extends FilterLessNode<any> {
+class TreeContentNode extends CollectionNode<any> {
   static readonly type = 'content';
 }
 
@@ -487,7 +487,7 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   onAction?: () => void
 }
 
-class TreeItemNode extends FilterLessNode<any> {
+class TreeItemNode extends CollectionNode<any> {
   static readonly type = 'item';
 }
 

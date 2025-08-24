@@ -123,7 +123,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
   let state = useContext(TooltipTriggerStateContext)!;
   let arrowRef = useRef<HTMLDivElement>(null);
 
-  let {overlayProps, arrowProps, placement, triggerOrigin} = useOverlayPosition({
+  let {overlayProps, arrowProps, placement, triggerAnchorPoint} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: props.triggerRef!,
     overlayRef: props.tooltipRef,
@@ -160,7 +160,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       ref={props.tooltipRef}
       style={{
         ...overlayProps.style,
-        '--trigger-origin': triggerOrigin ? `${triggerOrigin.x}px ${triggerOrigin.y}px` : undefined,
+        '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
         ...renderProps.style
       } as CSSProperties}
       data-placement={placement ?? undefined}
