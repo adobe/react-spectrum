@@ -13,12 +13,18 @@
 import {Collection, Key} from '@react-types/shared';
 import {InvalidationContext} from './types';
 import {Layout} from './Layout';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
-import {useCallback, useMemo, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {Virtualizer} from './Virtualizer';
+
+// During SSR, React emits a warning when calling useLayoutEffect.
+// Since neither useLayoutEffect nor useEffect run on the server,
+// we can suppress this by replace it with a noop on the server.
+export const useLayoutEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
+  ? React.useLayoutEffect
+  : () => {};
 
 interface VirtualizerProps<T extends object, V, O> {
   renderView(type: string, content: T | null): V,
