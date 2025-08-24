@@ -21,7 +21,7 @@ export default {
 } as Meta<typeof Calendar>;
 
 export type CalendarStory = StoryObj<typeof Calendar>;
-
+export type RangeCalendarStory = StoryObj<typeof RangeCalendar>;
 
 function Footer() {
   const state = useContext(CalendarStateContext);
@@ -74,8 +74,8 @@ export const CalendarResetValue: CalendarStory = {
 };
 
 export const CalendarMultiMonth: CalendarStory = {
-  render: () => (
-    <Calendar style={{width: 500}} visibleDuration={{months: 2}}>
+  render: (args) => (
+    <Calendar style={{width: 500}} visibleDuration={{months: 3}} {...args}>
       <div style={{display: 'flex', alignItems: 'center'}}>
         <Button slot="previous">&lt;</Button>
         <Heading style={{flex: 1, textAlign: 'center'}} />
@@ -88,12 +88,24 @@ export const CalendarMultiMonth: CalendarStory = {
         <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
           {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
         </CalendarGrid>
+        <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
+          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+        </CalendarGrid>
       </div>
     </Calendar>
-  )
+  ),
+  args: {
+    selectionAlignment: 'center'
+  },
+  argTypes: {
+    selectionAlignment: {
+      control: 'select',
+      options: ['start', 'center', 'end']
+    }
+  }
 };
 
-export const RangeCalendarExample: CalendarStory = {
+export const RangeCalendarExample: RangeCalendarStory = {
   render: () => (
     <RangeCalendar style={{width: 220}}>
       <div style={{display: 'flex', alignItems: 'center'}}>
@@ -106,4 +118,35 @@ export const RangeCalendarExample: CalendarStory = {
       </CalendarGrid>
     </RangeCalendar>
   )
+};
+
+
+export const RangeCalendarMultiMonthExample: RangeCalendarStory = {
+  render: (args) => (
+    <RangeCalendar style={{width: 500}} visibleDuration={{months: 3}} {...args} >
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button slot="previous">&lt;</Button>
+        <Heading style={{flex: 1, textAlign: 'center'}} />
+        <Button slot="next">&gt;</Button>
+      </div>
+      <CalendarGrid style={{flex: 1}}>
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+      </CalendarGrid>
+      <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+      </CalendarGrid>
+      <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+      </CalendarGrid>
+    </RangeCalendar>
+  ),
+  args: {
+    selectionAlignment: 'center'
+  },
+  argTypes: {
+    selectionAlignment: {
+      control: 'select',
+      options: ['start', 'center', 'end']
+    }
+  }
 };

@@ -84,6 +84,10 @@ export default {
     },
     errorMessage: {
       control: 'text'
+    },
+    selectionAlignment: {
+      control: 'select',
+      options: ['start', 'center', 'end']
     }
   }
 } as Meta<typeof RangeCalendar>;
