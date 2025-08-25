@@ -102,7 +102,18 @@ export function MobileNav({pages, currentPage}: PageProps) {
 
   let currentLibrarySectionArray = useMemo(() => {
     let librarySections = getSectionsForLibrary(selectedLibrary);
-    return [...librarySections.keys()];
+    let sectionArray = [...librarySections.keys()];
+    // Ensure order matches TagGroup: 'Components' first, then alphabetical
+    sectionArray.sort((a, b) => {
+      if (a === 'Components') {
+        return -1;
+      }
+      if (b === 'Components') {
+        return 1;
+      }
+      return a.localeCompare(b);
+    });
+    return sectionArray;
   }, [getSectionsForLibrary, selectedLibrary]);
   
 
@@ -321,7 +332,24 @@ export function MobileNav({pages, currentPage}: PageProps) {
         aria-label="Libraries"
         density="compact"
         selectedKey={selectedLibrary}
-        onSelectionChange={(key) => setSelectedLibrary(key as 'react-spectrum' | 'react-aria' | 'internationalized')}
+        onSelectionChange={(key) => {
+          let newLib = key as 'react-spectrum' | 'react-aria' | 'internationalized';
+          setSelectedLibrary(newLib);
+          if (!searchFocused) {
+            let nextSections = getSectionNamesForLibrary(newLib);
+            if (nextSections.length > 0) {
+              setSelectedSection(nextSections[0]);
+            }
+          }
+          if (menuContainerRef.current) {
+            isScrollingProgrammatically.current = true;
+            menuContainerRef.current.scrollTo({left: 0, behavior: 'auto'});
+            // Clear the flag on the next tick to ignore initial observer updates
+            setTimeout(() => {
+              isScrollingProgrammatically.current = false;
+            }, 0);
+          }
+        }}
         styles={style({margin: 12})}>
         <TabList>
           {libraries.map(library => (
