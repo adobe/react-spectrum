@@ -1559,24 +1559,26 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
       <div
         className={style({
           flexGrow: 1,
+          flexShrink: 1,
+          minWidth: 0,
           display: 'flex',
           width: 'full',
           height: 'full',
           alignItems: 'center',
           color: {
-            isSaving: 'gray-500'
+            isSaving: 'neutral-subdued'
           }
         })({isSaving})}>
-        <div className={style({flexGrow: 1, display: 'flex', alignItems: 'center'})}>
+        <div className={style({flexGrow: 1, flexShrink: 1, minWidth: 0, display: 'flex', alignItems: 'center', truncate: true})}>
           {value}
         </div>
-        {isSaving && showSpinner && (
-          <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8})} aria-label="Saving..." />
+        {(
+          <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8, flexShrink: 0})} aria-label="Saving..." />
         )}
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <div className={editButton({isShown: isHovered || isOpen || editButtonFocused || isMobile})}>
-          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused}>
+          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused} styles={style({flexShrink: 0})}>
             <Edit />
           </ActionButton>
         </div>
