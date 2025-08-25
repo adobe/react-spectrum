@@ -182,7 +182,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
         {(item) => {
           let IllustrationComponent = componentIllustrations[item.name];
           return (
-            <Card key={item.id} id={item.id} href={item.href} size={size}>
+            <Card key={item.id} id={item.id} href={item.href} size={size} textValue={item.name}>
               {IllustrationComponent && (
                 <CardPreview>
                   <IllustrationComponent
