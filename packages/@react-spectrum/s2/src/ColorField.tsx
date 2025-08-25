@@ -13,7 +13,8 @@
 import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps,
-  ContextValue
+  ContextValue,
+  InputProps
 } from 'react-aria-components';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
@@ -23,9 +24,10 @@ import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from '@react-types/textfield';
+import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the color field.
    *
@@ -70,6 +72,8 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
       return inputRef.current;
     }
   }));
+
+  usePlaceholderWarning(props.placeholder, 'ColorField', inputRef);
 
   return (
     <AriaColorField

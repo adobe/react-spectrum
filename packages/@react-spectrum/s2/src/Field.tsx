@@ -231,7 +231,10 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
       className={UNSAFE_className + mergeStyles(style({
         padding: 0,
         backgroundColor: 'transparent',
-        color: 'inherit',
+        color: {
+          default: 'inherit',
+          '::placeholder': 'gray-600'
+        },
         fontFamily: 'inherit',
         fontSize: 'inherit',
         fontWeight: 'inherit',

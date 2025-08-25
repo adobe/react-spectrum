@@ -67,9 +67,9 @@ type Story = StoryObj<typeof Form>;
 export const Example: Story = {
   render: (args) => (
     <Form {...args}>
-      <TextField label="First Name" name="firstName" />
-      <TextField label="Last Name" name="firstName" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <TextField label="First Name" name="firstName" placeholder="John" />
+      <TextField label="Last Name" name="lastName" placeholder="Doe" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="123@abc.com" />
       <Picker label="Country" name="country">
         <PickerItem id="canada">Canada</PickerItem>
         <PickerItem id="united-states">United States</PickerItem>
@@ -86,10 +86,10 @@ export const Example: Story = {
         <Radio value="dog">Dog</Radio>
         <Radio value="plant" isDisabled>Plant</Radio>
       </RadioGroup>
-      <TextField label="City" name="city" description="A long description to test help text wrapping." />
-      <TextField label="A long label to test wrapping behavior" name="long" />
+      <TextField label="City" name="city" description="A long description to test help text wrapping." placeholder="Some city" />
+      <TextField label="A long label to test wrapping behavior" name="long" placeholder="loooooooooooooooooooooog" />
       <SearchField label="Search" name="search" />
-      <TextArea label="Comment" name="comment" />
+      <TextArea label="Comment" name="comment" placeholder="Enter your comment here" />
       <Switch>Wi-Fi</Switch>
       <Checkbox>I agree to the terms</Checkbox>
       <Slider label="Cookies"  defaultValue={30} />
@@ -102,9 +102,9 @@ export const Example: Story = {
 export const MixedForm: Story = {
   render: (args) => (
     <Form {...args}>
-      <TextField label="First Name" name="firstName" />
-      <TextField label="Last Name" name="firstName" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <TextField label="First Name" name="firstName" placeholder="John" />
+      <TextField label="Last Name" name="lastName" placeholder="Doe" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="123@abc.com" />
       <CheckboxGroup aria-label="Favorite sports">
         <Checkbox value="soccer">Soccer</Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
@@ -155,7 +155,7 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
         <ToggleButton>
           Enable color
         </ToggleButton>
-        <ColorField aria-label="Fill color" styles={style({width: 144})} />
+        <ColorField aria-label="Fill color" styles={style({width: 144})} placeholder="######" />
         <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
       <Divider size="S" />
@@ -164,7 +164,7 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
         <ToggleButton>
           Enable search
         </ToggleButton>
-        <TextField aria-label="Query" styles={style({width: 144})} />
+        <TextField aria-label="Query" styles={style({width: 144})} placeholder="Enter your name" />
         <ComboBox aria-label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>

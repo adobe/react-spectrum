@@ -10,59 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete} from 'react-aria-components';
-import {Menu, MenuItem, SearchField} from '../src';
+import {NumberField} from '../src';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-describe('SearchField', () => {
+describe('NumberField', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should not apply the focus visible styles on the group when typing in the Autocomplete wrapped SearchField', async () => {
-    let {getByRole} = render(
-      <Autocomplete>
-        <SearchField autoFocus label="Search" />
-        <Menu aria-label="test menu">
-          <MenuItem>Foo</MenuItem>
-          <MenuItem>Bar</MenuItem>
-          <MenuItem>Baz</MenuItem>
-        </Menu>
-      </Autocomplete>
-    );
-
-    let input = getByRole('searchbox');
-    await user.click(input);
-    let group = getByRole('group');
-    expect(group).not.toHaveAttribute('data-focus-visible');
-    await user.keyboard('Foo');
-    expect(group).not.toHaveAttribute('data-focus-visible');
-  });
-
-  it('should not warn if the SearchField renders/blurs without a placeholder', async () => {
+  it('should not warn if the NumberField renders/blurs without a placeholder', async () => {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, rerender} = render(
-      <SearchField label="Search" />
+      <NumberField label="Quantity" />
     );
 
     expect(spy).not.toBeCalled();
+
     await user.tab();
     await user.tab();
     expect(spy).not.toBeCalled();
 
-    let input = getByRole('searchbox');
+    let input = getByRole('textbox');
     await user.click(input);
-    await user.keyboard('Foo');
+    await user.keyboard('1');
     await user.tab();
     expect(spy).not.toHaveBeenCalled();
 
-    rerender(<SearchField label="Search" placeholder="test" />);
+    rerender(<NumberField label="Quantity" placeholder="test" />);
     expect(spy).not.toHaveBeenCalled();
 
-    rerender(<SearchField label="Search" autoFocus />);
+    rerender(<NumberField label="Quantity" autoFocus />);
     expect(spy).not.toHaveBeenCalled();
   });
 });
