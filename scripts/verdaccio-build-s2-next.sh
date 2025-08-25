@@ -7,7 +7,7 @@ touch $output
 
 set -e
 
-echo "Building docs with verdaccio"
+echo "Building s2-next with verdaccio"
 
 # Wait for verdaccio to start
 grep -q 'http address' <(tail -f $output)
@@ -30,12 +30,11 @@ npm set registry $registry
 verdaccio_path=verdaccio_dist/`git rev-parse HEAD~0`/verdaccio
 mkdir -p $verdaccio_path
 
-echo 'build RAC Tailwind app'
-# Install/build RAC Tailwind app
-cd examples/rac-tailwind
+echo 'build Spectrum 2 + Next.js test app'
+cd examples/s2-next-macros
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
-yarn build --public-url ./
-mv dist ../../$verdaccio_path/rac-tailwind
+VERDACCIO=true yarn build
+mv out ../../$verdaccio_path/s2-next-macros
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill

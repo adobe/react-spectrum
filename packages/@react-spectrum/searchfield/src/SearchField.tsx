@@ -13,7 +13,7 @@
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import React, {forwardRef, ReactElement, Ref, useRef} from 'react';
+import React, {forwardRef, ReactElement, Ref, useEffect, useRef} from 'react';
 import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -42,9 +42,13 @@ export const SearchField = forwardRef(function SearchField(props: SpectrumSearch
     ...otherProps
   } = props;
 
-  if (placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
-  }
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
+      hasWarned.current = true;
+    }
+  }, [placeholder]);
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement>(null);

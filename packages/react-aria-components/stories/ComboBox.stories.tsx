@@ -28,7 +28,7 @@ export type ComboBoxStory = StoryFn<typeof ComboBox>;
 export type ComboBoxStoryObj = StoryObj<typeof ComboBox>;
 
 export const ComboBoxExample: ComboBoxStory = () => (
-  <ComboBox name="combo-box-example" data-testid="combo-box-example">
+  <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
@@ -38,12 +38,14 @@ export const ComboBoxExample: ComboBoxStory = () => (
     </div>
     <Popover placement="bottom end">
       <ListBox
+        renderEmptyState={renderEmptyState}
         data-testid="combo-box-list-box"
         className={styles.menu}>
         <MyListBoxItem>Foo</MyListBoxItem>
         <MyListBoxItem>Bar</MyListBoxItem>
         <MyListBoxItem>Baz</MyListBoxItem>
         <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+        <MyListBoxLoaderIndicator />
       </ListBox>
     </Popover>
   </ComboBox>

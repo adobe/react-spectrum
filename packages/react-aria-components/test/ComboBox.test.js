@@ -11,11 +11,17 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
+import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let renderEmptyState = () => {
+  return  (
+    <div>No results</div>
+  );
+};
 
 let TestComboBox = (props) => (
   <ComboBox name="test-combobox" defaultInputValue="C" data-foo="bar" {...props}>
@@ -25,10 +31,13 @@ let TestComboBox = (props) => (
     <Text slot="description">Description</Text>
     <Text slot="errorMessage">Error</Text>
     <Popover>
-      <ListBox>
+      <ListBox renderEmptyState={renderEmptyState}>
         <ListBoxItem id="1">Cat</ListBoxItem>
         <ListBoxItem id="2">Dog</ListBoxItem>
         <ListBoxItem id="3">Kangaroo</ListBoxItem>
+        <ListBoxLoadMoreItem>
+          loading
+        </ListBoxLoadMoreItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -383,5 +392,20 @@ describe('ComboBox', () => {
     let {getByRole} = render(<TestComboBox form="test" />);
     let input = getByRole('combobox');
     expect(input).toHaveAttribute('form', 'test');
+  });
+
+  it('should render empty state even when there is a loader provided and allowsEmptyCollection is true', async () => {
+    let tree = render(<TestComboBox allowsEmptyCollection />);
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    act(() => {
+      comboboxTester.combobox.focus();
+    });
+    await user.keyboard('p');
+
+    let options = comboboxTester.options();
+    expect(options).toHaveLength(1);
+    expect(comboboxTester.listbox).toBeTruthy();
+    expect(options[0]).toHaveTextContent('No results');
   });
 });

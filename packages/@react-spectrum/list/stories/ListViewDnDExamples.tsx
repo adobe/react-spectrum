@@ -16,8 +16,7 @@ import {useListData} from '@react-stately/data';
 
 export function DragExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {listViewProps, dragHookOptions} = props;
-  let getItems = (keys) => [...keys].map(key => {
-    let item = items.find(item => item.key === key);
+  let getItems = (keys, items) => items.map(item => {
     return {
       'text/plain': item.name
     };

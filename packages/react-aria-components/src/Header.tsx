@@ -11,14 +11,10 @@
  */
 
 import {ContextValue, useContextProps} from './utils';
-import {createLeafComponent, FilterLessNode} from '@react-aria/collections';
+import {createLeafComponent, HeaderNode} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
-
-class HeaderNode extends FilterLessNode<unknown> {
-  static readonly type = 'header';
-}
 
 export const Header = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);

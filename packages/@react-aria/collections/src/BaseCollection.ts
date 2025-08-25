@@ -21,7 +21,7 @@ type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
 
 /** An immutable object representing a Node in a Collection. */
 export class CollectionNode<T> implements Node<T> {
-  static readonly type;
+  static readonly type: string;
   readonly type: string;
   readonly key: Key;
   readonly value: T | null = null;
@@ -71,6 +71,15 @@ export class CollectionNode<T> implements Node<T> {
     return node;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
+    let clone = this.clone();
+    newCollection.addDescendants(clone, collection);
+    return clone;
+  }
+}
+
+export class FilterableNode<T> extends CollectionNode<T> {
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
     let [firstKey, lastKey] = filterChildren(collection, newCollection, this.firstChildKey, filterFn);
     let newNode: Mutable<CollectionNode<T>> = this.clone();
@@ -80,22 +89,15 @@ export class CollectionNode<T> implements Node<T> {
   }
 }
 
-// TODO: naming, but essentially these nodes shouldn't be affected by filtering (BaseNode)?
-// Perhaps this filter logic should be in CollectionNode instead and the current logic of CollectionNode's filter should move to Table
-export class FilterLessNode<T> extends CollectionNode<T> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): FilterLessNode<T> | null {
-    let clone = this.clone();
-    newCollection.addDescendants(clone, collection);
-    return clone;
-  }
+export class HeaderNode extends CollectionNode<unknown> {
+  static readonly type = 'header';
 }
 
-export class LoaderNode extends FilterLessNode<any> {
+export class LoaderNode extends CollectionNode<unknown> {
   static readonly type = 'loader';
 }
 
-export class ItemNode<T> extends CollectionNode<T> {
+export class ItemNode<T> extends FilterableNode<T> {
   static readonly type = 'item';
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
@@ -109,7 +111,7 @@ export class ItemNode<T> extends CollectionNode<T> {
   }
 }
 
-export class SectionNode<T> extends CollectionNode<T> {
+export class SectionNode<T> extends FilterableNode<T> {
   static readonly type = 'section';
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): SectionNode<T> | null {
@@ -138,6 +140,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
   private itemCount: number = 0;
+  isComplete = true;
 
   get size(): number {
     return this.itemCount;

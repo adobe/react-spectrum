@@ -147,20 +147,14 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
-  let [arrowWidth, setArrowWidth] = useState(0);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
-  useLayoutEffect(() => {
-    if (arrowRef.current && state.isOpen) {
-      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
-    }
-  }, [state.isOpen, arrowRef]);
 
-  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+  let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover({
     ...props,
     offset: props.offset ?? 8,
-    arrowSize: arrowWidth,
+    arrowRef,
     // If this is a submenu/subdialog, use the root popover's container
     // to detect outside interaction and add aria-hidden.
     groupRef: isSubPopover ? groupCtx! : containerRef
@@ -190,11 +184,12 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
+  // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && ref.current && !ref.current.contains(document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
     }
-  }, [isDialog, ref]);
+  }, [isDialog, ref, props.trigger]);
 
   let children = useMemo(() => {
     let children = renderProps.children;
@@ -206,7 +201,12 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
     return children;
   }, [renderProps.children, clearContexts]);
 
-  let style = {...popoverProps.style, ...renderProps.style};
+  let style = {
+    ...popoverProps.style,
+    '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
+    ...renderProps.style
+  };
+
   let overlay = (
     <div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
