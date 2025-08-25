@@ -1572,7 +1572,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
         <div className={style({flexGrow: 1, flexShrink: 1, minWidth: 0, display: 'flex', alignItems: 'center', truncate: true})}>
           {value}
         </div>
-        {(
+        {isSaving && showSpinner && (
           <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8, flexShrink: 0})} aria-label="Saving..." />
         )}
       </div>
