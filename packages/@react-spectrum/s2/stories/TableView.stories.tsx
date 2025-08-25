@@ -1472,6 +1472,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     setInternalValue(value);
   }, [value]);
 
+  // Full row hover state
   useEffect(() => {
     if (domRef.current) {
       let row = domRef.current.closest('[role="row"]');
@@ -1492,6 +1493,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     }
   }, [domRef]);
 
+  // Popover positioning
   useLayoutEffect(() => {
     let width = domRef.current?.clientWidth || 0;
     let boundingRect = domRef.current?.getBoundingClientRect();
@@ -1500,8 +1502,8 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     setVerticalOffset(verticalOffset - 4);
   }, [domRef]);
 
+  // Validation, save if valid, otherwise error message is shown and popover remains open
   let [valid, setValid] = useState(value.length > 0);
-
   let validateAndCommit = () => {
     if (internalValue.length > 0) {
       setValid(true);
@@ -1513,11 +1515,13 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     return false;
   };
 
+  // Cancel, don't save the value
   let cancel = () => {
     setIsOpen(false);
     setInternalValue(value);
   };
 
+  // Special keyboard shortcut handling
   let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
       case 'Enter':
@@ -1826,25 +1830,24 @@ export const EditableTable: StoryObj<EditableTableProps> = {
       } else {
         setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: prevValue, isSaving: false} : i));
       }
-      currentRequests.current = currentRequests.current.filter(r => r.id !== id);
+      currentRequests.current.delete(id);
     }, []);
-    let currentRequests = useRef<Array<{request: ReturnType<typeof setTimeout>, id: Key}>>([]);
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
     let onChange = useCallback((value: any, id: Key, columnId: Key) => {
-      let alreadySaving = currentRequests.current.find(r => r.id === id);
+      let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
-        // remove and cancel the timeout
-        currentRequests.current = currentRequests.current.filter(r => r.id !== id);
+        // remove and cancel the previous request
+        currentRequests.current.delete(id);
         clearTimeout(alreadySaving.request);
-        return;
       }
       setEditableItems(prev => {
         let prevValue = prev.find(i => i.id === id)?.[columnId];
-        let newItems = prev.map(i => i.id === id ? {...i, [columnId]: value, isSaving: true} : i);
+        let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value, isSaving: true} : i);
         // set a timeout between 0 and 10s
         let timeout = setTimeout(() => {
-          saveItem(id, columnId, prevValue);
+          saveItem(id, columnId, alreadySaving?.prevValue ?? prevValue);
         }, Math.random() * 10000);
-        currentRequests.current.push({request: timeout, id});
+        currentRequests.current.set(id, {request: timeout, prevValue});
         return newItems;
       });
     }, []);
