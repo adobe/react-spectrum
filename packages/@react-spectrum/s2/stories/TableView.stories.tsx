@@ -40,7 +40,7 @@ import {categorizeArgTypes} from './utils';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
-import {DialogTrigger, Popover, SortDescriptor} from 'react-aria-components';
+import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
 import {DOMRef, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
@@ -1554,27 +1554,35 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
             offset={verticalOffset}
             style={{minWidth: `${triggerWidth}px`}}
             className={popover}>
-            <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
-              <TextField
-                autoFocus
-                isInvalid={!valid}
-                errorMessage="Please enter a valid non empty value"
-                value={internalValue}
-                onChange={setInternalValue}
-                onKeyDown={onKeyDown}
-                styles={style({width: 'full'})} />
-              {showButtons && (
-                <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
-                  <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
-                  <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
-                </div>
-              )}
-            </div>
+            <Provider
+              values={[
+                [OverlayTriggerStateContext, null]
+              ]}>
+              <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+                <TextField
+                  autoFocus
+                  isInvalid={!valid}
+                  errorMessage="Please enter a valid non empty value"
+                  value={internalValue}
+                  onChange={setInternalValue}
+                  onKeyDown={onKeyDown}
+                  styles={style({width: 'full'})} />
+                {showButtons && (
+                  <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                    <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                    <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+                  </div>
+                )}
+              </div>
+            </Provider>
           </Popover>
         ) : (
           <Dialog>
             {({close}) => (
-              <>
+              <Provider
+                values={[
+                  [OverlayTriggerStateContext, null]
+                ]}>
                 <Heading>Edit cell</Heading>
                 <Content>
                   <div className={style({display: 'flex', flexDirection: 'column', gap: 24, padding: 4})}>
@@ -1598,7 +1606,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
                     </div>
                   </div>
                 </Content>
-              </>
+              </Provider>
             )}
           </Dialog>
         )}
@@ -1703,23 +1711,28 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
           offset={verticalOffset}
           style={{minWidth: `${triggerWidth}px`}}
           className={popover}>
-          <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
-            <NumberField
-              autoFocus
-              isInvalid={!valid}
-              errorMessage="Please enter a valid number"
-              hideStepper
-              value={internalValue}
-              onChange={setInternalValue}
-              onKeyDown={onKeyDown}
-              styles={style({width: 'full'})} />
-            {showButtons && (
-              <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
-                <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
-                <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
-              </div>
-            )}
-          </div>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+              <NumberField
+                autoFocus
+                isInvalid={!valid}
+                errorMessage="Please enter a valid number"
+                hideStepper
+                value={internalValue}
+                onChange={setInternalValue}
+                onKeyDown={onKeyDown}
+                styles={style({width: 'full'})} />
+              {showButtons && (
+                <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                  <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                  <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+                </div>
+              )}
+            </div>
+          </Provider>
         </Popover>
       </DialogTrigger>
     </div>
