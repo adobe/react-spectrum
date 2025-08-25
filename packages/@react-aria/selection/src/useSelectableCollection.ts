@@ -118,7 +118,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
-    isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action'
