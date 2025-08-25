@@ -27,6 +27,7 @@ import {
   MenuItem,
   MenuSection,
   NumberField,
+  ProgressCircle,
   Row,
   StatusLight,
   TableBody,
@@ -45,7 +46,7 @@ import {DOMRef, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
-import {forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useState} from 'react';
+import {forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
@@ -1455,8 +1456,8 @@ let editButton = style({
   }
 });
 
-const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void, showButtons?: boolean}, ref: DOMRef<HTMLDivElement>) {
-  let {value, onChange, showButtons = true, ...otherProps} = props;
+const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void, showButtons?: boolean, isSaving?: boolean}, ref: DOMRef<HTMLDivElement>) {
+  let {value, onChange, showButtons = true, isSaving, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isOpen, setIsOpen] = useState(false);
   let [triggerWidth, setTriggerWidth] = useState(0);
@@ -1465,6 +1466,11 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
   let [editButtonFocused, setEditButtonFocused] = useState(false);
   let isMobile = useIsMobileDevice();
   let [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    // sync controlled value in case it's updated outside of this workflow
+    setInternalValue(value);
+  }, [value]);
 
   useEffect(() => {
     if (domRef.current) {
@@ -1523,6 +1529,27 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     }
   };
 
+  let [showSpinner, setShowSpinner] = useState(false);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let wasSpinning = useRef(false);
+  useEffect(() => {
+    if (isSaving && !wasSpinning.current) {
+      wasSpinning.current = true;
+      timeout.current = setTimeout(() => {
+        setShowSpinner(true);
+      }, 5000);
+    } else if (!isSaving) {
+      wasSpinning.current = false;
+      setShowSpinner(false);
+      timeout.current && clearTimeout(timeout.current);
+    }
+  }, [isSaving]);
+  useEffect(() => {
+    return () => {
+      timeout.current && clearTimeout(timeout.current);
+    };
+  }, []);
+
   return (
     <div
       ref={domRef}
@@ -1534,13 +1561,22 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
           flexGrow: 1,
           display: 'flex',
           width: 'full',
-          height: 'full'
-        })}>
-        {value}
+          height: 'full',
+          alignItems: 'center',
+          color: {
+            isSaving: 'gray-500'
+          }
+        })({isSaving})}>
+        <div className={style({flexGrow: 1, display: 'flex', alignItems: 'center'})}>
+          {value}
+        </div>
+        {isSaving && showSpinner && (
+          <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8})} aria-label="Saving..." />
+        )}
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <div className={editButton({isShown: isHovered || isOpen || editButtonFocused || isMobile})}>
-          <ActionButton onFocusChange={setEditButtonFocused}>
+          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused}>
             <Edit />
           </ActionButton>
         </div>
@@ -1560,6 +1596,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
               ]}>
               <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
                 <TextField
+                  aria-label="Edit cell"
                   autoFocus
                   isInvalid={!valid}
                   errorMessage="Please enter a valid non empty value"
@@ -1587,6 +1624,7 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
                 <Content>
                   <div className={style({display: 'flex', flexDirection: 'column', gap: 24, padding: 4})}>
                     <TextField
+                      aria-label="Edit cell"
                       autoFocus
                       isInvalid={!valid}
                       errorMessage="Please enter a valid non empty value"
@@ -1595,9 +1633,9 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
                       onKeyDown={onKeyDown}
                       styles={style({width: 'full'})} />
                     <div className={style({display: 'flex', flexDirection: 'row', gap: 8, marginX: 4, alignItems: 'center', justifyContent: 'end'})}>
-                      <Button variant="secondary" onPress={() => {cancel(); close();}}>Cancel</Button>
+                      <Button variant="secondary" fillStyle="outline" onPress={() => {cancel(); close();}}>Cancel</Button>
                       <Button
-                        variant="primary"
+                        variant="accent"
                         onPress={() => {
                           if (validateAndCommit()) {
                             close();
@@ -1701,7 +1739,7 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <div className={editButton({isShown: isHovered || isOpen || editButtonFocused})}>
-          <ActionButton onFocusChange={setEditButtonFocused}>
+          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused}>
             <Edit />
           </ActionButton>
         </div>
@@ -1717,6 +1755,7 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
             ]}>
             <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
               <NumberField
+                aria-label="Edit cell"
                 autoFocus
                 isInvalid={!valid}
                 errorMessage="Please enter a valid number"
@@ -1740,16 +1779,16 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
 });
 
 let defaultItems = [
-  {id: 1, fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2},
-  {id: 2, fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5},
-  {id: 3, fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10},
-  {id: 4, fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12},
-  {id: 5, fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25},
-  {id: 6, fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33},
-  {id: 7, fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42},
-  {id: 8, fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53},
-  {id: 9, fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64},
-  {id: 10, fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78}
+  {id: 1, fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2, isSaving: false},
+  {id: 2, fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5, isSaving: false},
+  {id: 3, fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10, isSaving: false},
+  {id: 4, fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12, isSaving: false},
+  {id: 5, fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25, isSaving: false},
+  {id: 6, fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33, isSaving: false},
+  {id: 7, fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42, isSaving: false},
+  {id: 8, fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53, isSaving: false},
+  {id: 9, fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64, isSaving: false},
+  {id: 10, fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78, isSaving: false}
 ];
 
 let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
@@ -1778,8 +1817,34 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     let {showButtons, ...props} = args;
     let isMobile = useIsMobileDevice();
     let [editableItems, setEditableItems] = useState(defaultItems);
+    let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
+      let succeeds = Math.random() > 0.5;
+      if (succeeds) {
+        setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: false} : i));
+      } else {
+        setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: prevValue, isSaving: false} : i));
+      }
+      currentRequests.current = currentRequests.current.filter(r => r.id !== id);
+    }, []);
+    let currentRequests = useRef<Array<{request: ReturnType<typeof setTimeout>, id: Key}>>([]);
     let onChange = useCallback((value: any, id: Key, columnId: Key) => {
-      setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: value} : i));
+      let alreadySaving = currentRequests.current.find(r => r.id === id);
+      if (alreadySaving) {
+        // remove and cancel the timeout
+        currentRequests.current = currentRequests.current.filter(r => r.id !== id);
+        clearTimeout(alreadySaving.request);
+        return;
+      }
+      setEditableItems(prev => {
+        let prevValue = prev.find(i => i.id === id)?.[columnId];
+        let newItems = prev.map(i => i.id === id ? {...i, [columnId]: value, isSaving: true} : i);
+        // set a timeout between 0 and 10s
+        let timeout = setTimeout(() => {
+          saveItem(id, columnId, prevValue);
+        }, Math.random() * 10000);
+        currentRequests.current.push({request: timeout, id});
+        return newItems;
+      });
     }, []);
     let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
     let onSortChange = (sortDescriptor: SortDescriptor) => {
@@ -1817,7 +1882,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                 if (column.id === 'fruits') {
                   return (
                     <Cell align={column.align} showDivider={column.showDivider}>
-                      <EditableCell showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
+                      <EditableCell isSaving={item.isSaving} showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
                     </Cell>
                   );
                 }
