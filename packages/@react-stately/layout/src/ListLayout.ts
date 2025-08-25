@@ -194,9 +194,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let options = invalidationContext.layoutOptions;
     return invalidationContext.sizeChanged
       || this.rowHeight !== (options?.rowHeight ?? this.rowHeight)
-      || this.estimatedRowHeight !== (options?.estimatedRowHeight ?? this.estimatedRowHeight)
       || this.headingHeight !== (options?.headingHeight ?? this.headingHeight)
-      || this.estimatedHeadingHeight !== (options?.estimatedHeadingHeight ?? this.estimatedHeadingHeight)
       || this.loaderHeight !== (options?.loaderHeight ?? this.loaderHeight)
       || this.gap !== (options?.gap ?? this.gap)
       || this.padding !== (options?.padding ?? this.padding);
@@ -225,11 +223,11 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     }
 
     let options = invalidationContext.layoutOptions;
-    this.rowHeight = options?.rowHeight ?? null;
-    this.estimatedRowHeight = options?.estimatedRowHeight ?? null;
-    this.headingHeight = options?.headingHeight ?? null;
-    this.estimatedHeadingHeight = options?.estimatedHeadingHeight ?? null;
-    this.loaderHeight = options?.loaderHeight ?? null;
+    this.rowHeight = options?.rowHeight ?? this.rowHeight;
+    this.estimatedRowHeight = options?.estimatedRowHeight ?? this.estimatedRowHeight;
+    this.headingHeight = options?.headingHeight ?? this.headingHeight;
+    this.estimatedHeadingHeight = options?.estimatedHeadingHeight ?? this.estimatedHeadingHeight;
+    this.loaderHeight = options?.loaderHeight ?? this.loaderHeight;
     this.dropIndicatorThickness = options?.dropIndicatorThickness ?? this.dropIndicatorThickness;
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;

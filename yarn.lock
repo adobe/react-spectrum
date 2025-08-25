@@ -7392,6 +7392,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2-docs@workspace:packages/dev/s2-docs"
   dependencies:
+    "@parcel/plugin": "npm:^2.15.4"
     "@parcel/rsc": "npm:^2.15.4"
     "@react-aria/focus": "npm:^3.20.4"
     "@react-aria/i18n": "npm:^3.12.10"

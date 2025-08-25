@@ -1,6 +1,6 @@
 'use client';
 
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useEffect, useState} from 'react';
 import {Key} from 'react-aria-components';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
