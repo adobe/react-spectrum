@@ -175,8 +175,8 @@ function generatePropTable(componentName, file) {
   const body = rows
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((r) => {
-      const typeStr = r.type.includes('|') || r.type.includes('&') ? `<code>${r.type}</code>` : `\`${r.type}\``;
-      return `| ${r.name} | ${typeStr} | ${r.defVal || '—'} | ${r.description} |`;
+      const typeStr = `\`${r.type}\``;
+      return `| \`${r.name}\` | ${typeStr} | ${r.defVal || '—'} | ${r.description} |`;
     })
     .join('\n');
 
@@ -241,8 +241,8 @@ function generateInterfaceTable(interfaceName, file) {
   const body = rows
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((r) => {
-      const typeStr = r.type.includes('|') || r.type.includes('&') ? `<code>${r.type}</code>` : `\`${r.type}\``;
-      return `| ${r.name} | ${typeStr} | ${r.description || '—'} |`;
+      const typeStr = `\`${r.type}\``;
+      return `| \`${r.name}\` | ${typeStr} | ${r.description || '—'} |`;
     })
     .join('\n');
 
