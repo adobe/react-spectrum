@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
@@ -971,7 +971,7 @@ const AutocompleteWithGridList = (args) => {
   return (
     <>
       <input />
-      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -1039,7 +1039,7 @@ const AutocompleteWithTable = (args) => {
   return (
     <>
       <input />
-      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -1089,7 +1089,7 @@ const AutocompleteWithTagGroup = (args) => {
   return (
     <>
       <input />
-      <AutocompleteWrapper disallowVirtualFocus={args.disallowVirtualFocus}>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>

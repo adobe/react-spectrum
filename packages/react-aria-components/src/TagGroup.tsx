@@ -15,13 +15,13 @@ import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
-import {SelectableCollectionContext} from './context';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './context';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -68,31 +68,26 @@ export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ta
   );
 });
 
-interface TagGroupInnerProps {
-  props: TagGroupProps,
+interface TagGroupInnerProps<T> {
+  props: TagGroupProps & {filter?: SelectableCollectionContextValue<T>['filter']},
   forwardedRef: ForwardedRef<HTMLDivElement>,
   collection
 }
 
-function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let contextProps;
-  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
-  let {filter, ...collectionProps} = contextProps;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
-  let tagListRef = useRef<HTMLDivElement>(null);
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  tagListRef = useObjectRef(useMemo(() => mergeRefs(tagListRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, tagListRef]));
+function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}: TagGroupInnerProps<T>) {
+  let tagListRef = useRef<HTMLElement>(null);
+  [props, tagListRef] = useContextProps(props, tagListRef, SelectableCollectionContext);
+  let {filter, ...collectionProps} = props;
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
   let tagGroupState = useListState({
-    ...props,
+    ...collectionProps,
     children: undefined,
     collection
   });
 
-  let filteredState = UNSTABLE_useFilteredListState(tagGroupState, filter);
+  let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.
   let domProps = filterDOMProps(props, {global: true});
@@ -105,7 +100,6 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
   } = useTagGroup({
     ...props,
     ...domPropOverrides,
-    ...collectionProps,
     label
   }, filteredState, tagListRef);
 
@@ -119,7 +113,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
       <Provider
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
-          [TagListContext, {...gridProps, ref: tagListRef}],
+          [TagListContext, {...gridProps, ref: tagListRef as RefObject<HTMLDivElement>}],
           [ListStateContext, filteredState],
           [TextContext, {
             slots: {

@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {FieldInputContext, SelectableCollectionContext} from './context';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
@@ -99,29 +99,23 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
 });
 
 interface GridListInnerProps<T extends object> {
-  props: GridListProps<T>,
+  props: GridListProps<T> & {filter?: SelectableCollectionContextValue<T>['filter']},
   collection: ICollection<Node<object>>,
-  gridListRef: RefObject<HTMLDivElement | null>
+  gridListRef: RefObject<HTMLElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  let contextProps;
-  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
-  let {filter, ...collectionProps} = contextProps;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
-  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack', filter, ...otherProps} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
-    // TODO: perhaps merge the props with collection props here in useContextProps
-    // actually might not need the collectionProps here, just in useGridList
-    ...props,
+    ...otherProps,
     collection,
     children: undefined,
     layoutDelegate
   });
 
-  let filteredState = UNSTABLE_useFilteredListState(gridlistState, filter);
+  let filteredState = UNSTABLE_useFilteredListState(gridlistState as ListState<T>, filter);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {disabledBehavior, disabledKeys} = filteredState.selectionManager;
   let {direction} = useLocale();
@@ -140,7 +134,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let {gridProps} = useGridList({
     ...props,
-    ...collectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
@@ -244,7 +237,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}

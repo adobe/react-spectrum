@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {FieldInputContext, SelectableCollectionContext} from './context';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
 import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -355,19 +355,15 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
 });
 
 interface TableInnerProps {
-  props: TableProps,
-  forwardedRef: ForwardedRef<HTMLTableElement>,
+  props: TableProps & {filter?: SelectableCollectionContextValue<unknown>['filter']},
+  forwardedRef: ForwardedRef<HTMLElement>,
   selectionState: MultipleSelectionState,
   collection: ITableCollection<Node<object>>
 }
 
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
-  let contextProps;
-  [contextProps, ref as unknown] = useContextProps({}, ref, SelectableCollectionContext);
-  let {filter, ...collectionProps} = contextProps;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
   let tableState = useTableState({
@@ -377,12 +373,11 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     UNSAFE_selectionState: selectionState
   });
 
-  let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
+  let filteredState = UNSTABLE_useFilteredTableState(tableState, props.filter);
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
-    ...collectionProps,
     layoutDelegate,
     isVirtualized
   }, filteredState, ref);
@@ -493,7 +488,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         <ElementType
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           style={style}
-          ref={ref}
+          ref={ref as RefObject<HTMLTableElement>}
           slot={props.slot || undefined}
           onScroll={props.onScroll}
           data-allows-dragging={isListDraggable || undefined}
