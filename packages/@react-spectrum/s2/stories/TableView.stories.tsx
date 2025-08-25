@@ -13,29 +13,46 @@
 import {action} from '@storybook/addon-actions';
 import {
   ActionButton,
+  Avatar,
+  Button,
   Cell,
+  CellProps,
   Column,
+  ColumnProps,
   Content,
+  Dialog,
   Heading,
   IllustratedMessage,
   Link,
   MenuItem,
   MenuSection,
+  NumberField,
+  ProgressCircle,
   Row,
+  StatusLight,
   TableBody,
   TableHeader,
   TableView,
   TableViewProps,
-  Text
+  Text,
+  TextField
 } from '../src';
 import {categorizeArgTypes} from './utils';
+import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
+import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
+import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
+import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
+import {DOMRef, Key} from '@react-types/shared';
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement, useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useIsMobileDevice} from '../src/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -78,7 +95,7 @@ export default meta;
 const StaticTable = (args: any) => (
   <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
     <TableHeader>
-      <Column isRowHeader>Name</Column>
+      <Column minWidth={250} isRowHeader>Name</Column>
       <Column>Type</Column>
       <Column>Date Modified</Column>
       <Column>Size</Column>
@@ -1386,5 +1403,514 @@ const ResizableTable = () => {
         `;
       }
     }
+  }
+};
+
+const editableCell = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: 'full',
+  height: 'full',
+  flexDirection: {
+    default: 'row',
+    isReversed: 'row-reverse'
+  }
+});
+
+
+let popover = style({
+  ...colorScheme(),
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: 'layer-2'
+  },
+  backgroundColor: '--s2-container-bg',
+  borderRadius: 'default',
+  // Use box-shadow instead of filter when an arrow is not shown.
+  // This fixes the shadow stacking problem with submenus.
+  boxShadow: 'elevated',
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  boxSizing: 'content-box',
+  isolation: 'isolate',
+  pointerEvents: {
+    isExiting: 'none'
+  },
+  outlineStyle: 'none',
+  minWidth: '--trigger-width',
+  padding: 8,
+  display: 'flex',
+  alignItems: 'center'
+}, getAllowedOverrides());
+
+let editButton = style({
+  flexShrink: 0,
+  opacity: {
+    default: 0.001,
+    isShown: 1
+  }
+});
+
+const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void, showButtons?: boolean, isSaving?: boolean}, ref: DOMRef<HTMLDivElement>) {
+  let {value, onChange, showButtons = true, isSaving, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let [isOpen, setIsOpen] = useState(false);
+  let [triggerWidth, setTriggerWidth] = useState(0);
+  let [verticalOffset, setVerticalOffset] = useState(0);
+  let [internalValue, setInternalValue] = useState(value);
+  let [editButtonFocused, setEditButtonFocused] = useState(false);
+  let isMobile = useIsMobileDevice();
+  let [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    // sync controlled value in case it's updated outside of this workflow
+    setInternalValue(value);
+  }, [value]);
+
+  // Full row hover state
+  useEffect(() => {
+    if (domRef.current) {
+      let row = domRef.current.closest('[role="row"]');
+      let onHover = () => {
+        setIsHovered(true);
+      };
+      let onLeave = () => {
+        setIsHovered(false);
+      };
+      if (row) {
+        row.addEventListener('pointerenter', onHover);
+        row.addEventListener('pointerleave', onLeave);
+      }
+      return () => {
+        row?.removeEventListener('pointerenter', onHover);
+        row?.removeEventListener('pointerleave', onLeave);
+      };
+    }
+  }, [domRef]);
+
+  // Popover positioning
+  useLayoutEffect(() => {
+    let width = domRef.current?.clientWidth || 0;
+    let boundingRect = domRef.current?.getBoundingClientRect();
+    let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
+    setTriggerWidth(width);
+    setVerticalOffset(verticalOffset - 4);
+  }, [domRef]);
+
+  // Validation, save if valid, otherwise error message is shown and popover remains open
+  let [valid, setValid] = useState(value.length > 0);
+  let validateAndCommit = () => {
+    if (internalValue.length > 0) {
+      setValid(true);
+      onChange(internalValue);
+      setIsOpen(false);
+      return true;
+    }
+    setValid(false);
+    return false;
+  };
+
+  // Cancel, don't save the value
+  let cancel = () => {
+    setIsOpen(false);
+    setInternalValue(value);
+  };
+
+  // Special keyboard shortcut handling
+  let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case 'Enter':
+        validateAndCommit();
+        break;
+      case 'Escape':
+        cancel();
+        break;
+    }
+  };
+
+  let [showSpinner, setShowSpinner] = useState(false);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let wasSpinning = useRef(false);
+  useEffect(() => {
+    if (isSaving && !wasSpinning.current) {
+      wasSpinning.current = true;
+      timeout.current = setTimeout(() => {
+        setShowSpinner(true);
+      }, 5000);
+    } else if (!isSaving) {
+      wasSpinning.current = false;
+      setShowSpinner(false);
+      timeout.current && clearTimeout(timeout.current);
+    }
+  }, [isSaving]);
+  useEffect(() => {
+    return () => {
+      timeout.current && clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      // @ts-expect-error
+      className={editableCell({})}
+      {...otherProps}>
+      <div
+        className={style({
+          flexGrow: 1,
+          flexShrink: 1,
+          minWidth: 0,
+          display: 'flex',
+          width: 'full',
+          height: 'full',
+          alignItems: 'center',
+          color: {
+            isSaving: 'neutral-subdued'
+          }
+        })({isSaving})}>
+        <div className={style({flexGrow: 1, flexShrink: 1, minWidth: 0, display: 'flex', alignItems: 'center', truncate: true})}>
+          {value}
+        </div>
+        {isSaving && showSpinner && (
+          <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8, flexShrink: 0})} aria-label="Saving..." />
+        )}
+      </div>
+      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <div className={editButton({isShown: isHovered || isOpen || editButtonFocused || isMobile})}>
+          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused} styles={style({flexShrink: 0})}>
+            <Edit />
+          </ActionButton>
+        </div>
+        {!isMobile ? (
+          <Popover
+            shouldCloseOnInteractOutside={() => {
+              return validateAndCommit();
+            }}
+            triggerRef={domRef}
+            aria-label="Edit cell"
+            offset={verticalOffset}
+            style={{minWidth: `${triggerWidth}px`}}
+            className={popover}>
+            <Provider
+              values={[
+                [OverlayTriggerStateContext, null]
+              ]}>
+              <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+                <TextField
+                  aria-label="Edit cell"
+                  autoFocus
+                  isInvalid={!valid}
+                  errorMessage="Please enter a valid non empty value"
+                  value={internalValue}
+                  onChange={setInternalValue}
+                  onKeyDown={onKeyDown}
+                  styles={style({width: 'full'})} />
+                {showButtons && (
+                  <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                    <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                    <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+                  </div>
+                )}
+              </div>
+            </Provider>
+          </Popover>
+        ) : (
+          <Dialog>
+            {({close}) => (
+              <Provider
+                values={[
+                  [OverlayTriggerStateContext, null]
+                ]}>
+                <Heading>Edit cell</Heading>
+                <Content>
+                  <div className={style({display: 'flex', flexDirection: 'column', gap: 24, padding: 4})}>
+                    <TextField
+                      aria-label="Edit cell"
+                      autoFocus
+                      isInvalid={!valid}
+                      errorMessage="Please enter a valid non empty value"
+                      value={internalValue}
+                      onChange={setInternalValue}
+                      onKeyDown={onKeyDown}
+                      styles={style({width: 'full'})} />
+                    <div className={style({display: 'flex', flexDirection: 'row', gap: 8, marginX: 4, alignItems: 'center', justifyContent: 'end'})}>
+                      <Button variant="secondary" fillStyle="outline" onPress={() => {cancel(); close();}}>Cancel</Button>
+                      <Button
+                        variant="accent"
+                        onPress={() => {
+                          if (validateAndCommit()) {
+                            close();
+                          }
+                        }}>Confirm</Button>
+                    </div>
+                  </div>
+                </Content>
+              </Provider>
+            )}
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+});
+
+const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: number, onChange: (value: number) => void, showButtons?: boolean}, ref: DOMRef<HTMLDivElement>) {
+  let {value, onChange, showButtons = true, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let [isOpen, setIsOpen] = useState(false);
+  let [triggerWidth, setTriggerWidth] = useState(0);
+  let [verticalOffset, setVerticalOffset] = useState(0);
+  let [internalValue, setInternalValue] = useState(value);
+  let [editButtonFocused, setEditButtonFocused] = useState(false);
+  let [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (domRef.current) {
+      let row = domRef.current.closest('[role="row"]');
+      let onHover = () => {
+        setIsHovered(true);
+      };
+      let onLeave = () => {
+        setIsHovered(false);
+      };
+      if (row) {
+        row.addEventListener('pointerenter', onHover);
+        row.addEventListener('pointerleave', onLeave);
+      }
+      return () => {
+        row?.removeEventListener('pointerenter', onHover);
+        row?.removeEventListener('pointerleave', onLeave);
+      };
+    }
+  }, [domRef]);
+
+  useLayoutEffect(() => {
+    let width = domRef.current?.clientWidth || 0;
+    let boundingRect = domRef.current?.getBoundingClientRect();
+    let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
+    setTriggerWidth(width);
+    setVerticalOffset(verticalOffset - 4);
+  }, [domRef]);
+
+  let [valid, setValid] = useState(internalValue > 0 && !Number.isNaN(internalValue));
+
+  let validateAndCommit = () => {
+    if (internalValue > 0 && !Number.isNaN(internalValue)) {
+      setValid(true);
+      onChange(internalValue);
+      setIsOpen(false);
+      return;
+    }
+    setValid(false);
+  };
+
+  let cancel = () => {
+    setIsOpen(false);
+    setInternalValue(value);
+  };
+
+  let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case 'Enter':
+        setIsOpen(false);
+        onChange(internalValue);
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setInternalValue(value);
+        break;
+    }
+  };
+
+  return (
+    <div
+      ref={domRef}
+      // @ts-expect-error
+      className={editableCell({isReversed: true})}
+      {...otherProps}>
+      <div
+        className={style({
+          flexGrow: 1,
+          display: 'flex',
+          width: 'full',
+          height: 'full',
+          justifyContent: 'end'
+        })}>
+        {value}
+      </div>
+      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <div className={editButton({isShown: isHovered || isOpen || editButtonFocused})}>
+          <ActionButton aria-label="Edit cell" onFocusChange={setEditButtonFocused}>
+            <Edit />
+          </ActionButton>
+        </div>
+        <Popover
+          triggerRef={domRef}
+          aria-label="Edit cell"
+          offset={verticalOffset}
+          style={{minWidth: `${triggerWidth}px`}}
+          className={popover}>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+              <NumberField
+                aria-label="Edit cell"
+                autoFocus
+                isInvalid={!valid}
+                errorMessage="Please enter a valid number"
+                hideStepper
+                value={internalValue}
+                onChange={setInternalValue}
+                onKeyDown={onKeyDown}
+                styles={style({width: 'full'})} />
+              {showButtons && (
+                <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                  <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                  <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+                </div>
+              )}
+            </div>
+          </Provider>
+        </Popover>
+      </DialogTrigger>
+    </div>
+  );
+});
+
+let defaultItems = [
+  {id: 1, fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2, isSaving: false},
+  {id: 2, fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5, isSaving: false},
+  {id: 3, fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10, isSaving: false},
+  {id: 4, fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12, isSaving: false},
+  {id: 5, fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25, isSaving: false},
+  {id: 6, fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33, isSaving: false},
+  {id: 7, fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42, isSaving: false},
+  {id: 8, fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53, isSaving: false},
+  {id: 9, fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64, isSaving: false},
+  {id: 10, fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78, isSaving: false}
+];
+
+let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr'},
+  {name: 'Task', id: 'task', width: '2fr'},
+  {name: 'Status', id: 'status', width: '2fr', showDivider: true},
+  {name: 'Farmer', id: 'farmer', width: '2fr'},
+  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end', minWidth: 95}
+];
+
+let mobileColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '2fr', showDivider: true},
+  {name: 'Farmer', id: 'farmer', width: '1fr'},
+  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end'}
+];
+
+interface EditableTableProps extends TableViewProps {
+  showButtons?: boolean
+}
+
+export const EditableTable: StoryObj<EditableTableProps> = {
+  args: {
+    showButtons: true
+  },
+  render: function EditableTable(args) {
+    let {showButtons, ...props} = args;
+    let isMobile = useIsMobileDevice();
+    let [editableItems, setEditableItems] = useState(defaultItems);
+    let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
+      let succeeds = Math.random() > 0.5;
+      if (succeeds) {
+        setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: false} : i));
+      } else {
+        setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: prevValue, isSaving: false} : i));
+      }
+      currentRequests.current.delete(id);
+    }, []);
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
+    let onChange = useCallback((value: any, id: Key, columnId: Key) => {
+      let alreadySaving = currentRequests.current.get(id);
+      if (alreadySaving) {
+        // remove and cancel the previous request
+        currentRequests.current.delete(id);
+        clearTimeout(alreadySaving.request);
+      }
+      setEditableItems(prev => {
+        let prevValue = prev.find(i => i.id === id)?.[columnId];
+        let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value, isSaving: true} : i);
+        // set a timeout between 0 and 10s
+        let timeout = setTimeout(() => {
+          saveItem(id, columnId, alreadySaving?.prevValue ?? prevValue);
+        }, Math.random() * 10000);
+        currentRequests.current.set(id, {request: timeout, prevValue});
+        return newItems;
+      });
+    }, []);
+    let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
+    let onSortChange = (sortDescriptor: SortDescriptor) => {
+      let {direction = 'ascending', column = 'count'} = sortDescriptor;
+
+      setEditableItems(prev => {
+        return prev.slice().sort((a, b) => {
+          let cmp = Number(a[column]) < Number(b[column]) ? -1 : 1;
+          if (direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        });
+      });
+      setSortDescriptor(sortDescriptor);
+    };
+    return (
+      <TableView aria-label="Dynamic table" {...props} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+        <TableHeader columns={isMobile ? mobileColumns : editableColumns}>
+          {(column) => (
+            <Column {...column}>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={editableItems} dependencies={[isMobile, showButtons]}>
+          {item => (
+            <Row id={item.id} columns={isMobile ? mobileColumns : editableColumns}>
+              {(column) => {
+                if (column.id === 'count' && !isMobile) {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <EditableNumberCell showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
+                    </Cell>
+                  );
+                }
+                if (column.id === 'fruits') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <EditableCell isSaving={item.isSaving} showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
+                    </Cell>
+                  );
+                }
+                if (column.id === 'farmer') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />{item[column.id]}</div>
+                    </Cell>
+                  );
+                }
+                if (column.id === 'status') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                    </Cell>
+                  );
+                }
+                return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    );
   }
 };
