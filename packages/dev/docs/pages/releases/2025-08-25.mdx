@@ -11,8 +11,7 @@ import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description:
-Summer might be winding down but we’re definitely not! Back with another release, we have added support for origin-aware overlay animations in Popover and Tooltip, which enable scale transitions to appear as if they are emerging from the trigger. We have also advanced Autocomplete to RC, and added support for filtering GridList, Table, and TagGroup (virtual focus support is still to come). Section support in GridList has also been added as an alpha, laying the groundwork for similar support in Tree and Table.
+description: Summer might be winding down but we’re definitely not! Back with another release, we have added support for origin-aware overlay animations in Popover and Tooltip, which enable scale transitions to appear as if they are emerging from the trigger. We have also advanced Autocomplete to RC, and added support for filtering GridList, Table, and TagGroup (virtual focus support is still to come). Section support in GridList has also been added as an alpha, laying the groundwork for similar support in Tree and Table.
 
 date: 2025-08-25
 ---
@@ -29,7 +28,7 @@ As always, a big thank you to everyone in the community for your feedback and co
 * Collection:
   * Add additional selection methods to `useListData` - [@rbuzatto](https://github.com/rbuzatto) - [PR](https://github.com/adobe/react-spectrum/pull/8656)
   * Add `maxHorizontalSpace` prop to `GridLayout` and `WaterfallLayout` - [@e-krebs](https://github.com/e-krebs) - [PR](https://github.com/adobe/react-spectrum/pull/8654), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8731)
-  * Implement filtering on a per CollectionNode basis  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8641)
+  * Implement filtering on a per CollectionNode basis  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8641), [PR](https://github.com/adobe/react-spectrum/pull/8762)
 * Drag and Drop:
   * Pass item objects to `useDragAndDrop` `getItems` in addition to `keys` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8711)
 * Miscellaneous:
@@ -41,7 +40,7 @@ As always, a big thank you to everyone in the community for your feedback and co
 * ComboBox:
   * Ensure that React Aria ComboBox's empty state is rendered when items aren't directly provided to the ComboBox - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8720)
 * Date and Time:
-  * Add `firstDayOfWeek` and `pageBehavior` to `calendarProps` in `useDatePicker` and `useDateRangePicker` - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8587)
+  * Add `firstDayOfWeek` and `pageBehavior` to `calendarProps` in `useDatePicker` and `useDateRangePicker` - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8587), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8649)
   * Restore date segment autoadvance when typing leading zeros - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8684)
   * Add DatePicker placeholder for Norwegian Bokmål - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8742)
   * Allow user to reset timezone - [@jasonvarga](https://github.com/jasonvarga) - [PR](https://github.com/adobe/react-spectrum/pull/8054)
@@ -77,6 +76,8 @@ As always, a big thank you to everyone in the community for your feedback and co
 * Update the React Aria Command-Palette example to fix SSR - [@souporserious](https://github.com/souporserious) - [PR](https://github.com/adobe/react-spectrum/pull/8638)
 * Update `framer-motion` version in React Aria examples - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8586)
 * Fix React Aria Tree doc examples - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8698), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8736)
+* Add a `trigger-anchor-point` example - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8764)
+* Update Drag and drop docs to include new `getItems` API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8769)
 
 ## Under Construction
 
