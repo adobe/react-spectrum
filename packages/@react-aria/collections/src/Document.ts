@@ -416,6 +416,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   nodeId = 0;
   nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
   isMounted = true;
+  isInitialRender = true;
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -521,6 +522,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         this.collection = this.nextCollection;
         this.nextCollection = null;
       }
+    }
+
+    if (this.isInitialRender) {
+      this.collection.isComplete = false;
     }
   }
 

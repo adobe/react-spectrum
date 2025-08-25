@@ -74,7 +74,7 @@ export interface PopoverAria {
   /** Placement of the popover with respect to the trigger. */
   placement: PlacementAxis | null,
   /** The origin of the target in the overlay's coordinate system. Useful for animations. */
-  triggerOrigin: {x: number, y: number} | null
+  triggerAnchorPoint: {x: number, y: number} | null
 }
 
 /**
@@ -106,7 +106,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     groupRef ?? popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps, placement, triggerOrigin: origin} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement, triggerAnchorPoint: origin} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
@@ -133,6 +133,6 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     arrowProps,
     underlayProps,
     placement,
-    triggerOrigin: origin
+    triggerAnchorPoint: origin
   };
 }
