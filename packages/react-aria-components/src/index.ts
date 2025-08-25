@@ -76,6 +76,7 @@ export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} fr
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
+export {useDrag, useDrop} from '@react-aria/dnd';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';
@@ -139,6 +140,7 @@ export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from './Toggl
 export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps, TreeLoadMoreItemProps, TreeLoadMoreItemRenderProps} from './Tree';
+export type {DragOptions, DragResult} from '@react-aria/dnd';
 export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
 export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from './utils';
