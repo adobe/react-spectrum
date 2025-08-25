@@ -10,25 +10,59 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
+import {computeAccessibleName} from 'dom-accessibility-api';
 import {FormValidationState} from '@react-stately/form';
+import {getActiveElement, getOwnerDocument, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+function isValidatableElement(element: Element): boolean {
+  return element instanceof HTMLInputElement ||
+         element instanceof HTMLTextAreaElement ||
+         element instanceof HTMLSelectElement;
+}
 
 interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
+const TIMEOUT_DURATION = 325;
+
 export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
   let {validationBehavior, focus} = props;
+
+  let justBlurredRef = useRef(false);
+  let timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function announceErrorMessage(errorMessage: string = ''): void {
+    if (timeoutIdRef.current != null) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
+    if (ref && ref.current && errorMessage !== '' && (
+        ref.current.contains(getActiveElement(getOwnerDocument(ref.current))) ||
+        justBlurredRef.current
+      )
+    ) {
+      timeoutIdRef.current = setTimeout(() => announce(errorMessage, 'polite'), TIMEOUT_DURATION);
+    }
+  }
+
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/form');
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
     if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
-      let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
+      let errorMessage =
+        state.realtimeValidation.isInvalid ?
+        (state.realtimeValidation.validationErrors?.join(' ') || stringFormatter.format('invalidValue') || '') :
+        '';
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -59,11 +93,17 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
 
     // Auto focus the first invalid input in a form, unless the error already had its default prevented.
     let form = ref?.current?.form;
-    if (!e.defaultPrevented && ref && form && getFirstInvalidInput(form) === ref.current) {
-      if (focus) {
-        focus();
-      } else {
-        ref.current?.focus();
+    if (!e.defaultPrevented && ref && form) {
+
+      // Announce the current error message
+      announceErrorMessage(ref?.current?.validationMessage || '');
+
+      if (getFirstInvalidInput(form) === ref.current) {
+        if (focus) {
+          focus();
+        } else {
+          ref.current?.focus();
+        }
       }
 
       // Always show focus ring.
@@ -78,6 +118,38 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     state.commitValidation();
   });
 
+  let onBlur = useEffectEvent((event: Event) => {
+    const input = ref?.current;
+    const relatedTarget = (event as FocusEvent).relatedTarget as Element | null;
+    if (
+      (!input || !input.validationMessage) ||
+      (relatedTarget && isValidatableElement(relatedTarget) && (relatedTarget as ValidatableElement).validationMessage)
+    ) {
+      // If the input has no validation message,
+      // or the relatedTarget has a validation message, don't announce the error message.
+      // This prevents announcing the error message when the user is navigating
+      // between inputs that may already have an error message.
+      return;
+    }
+    justBlurredRef.current = true;
+    const isRadioOrCheckbox = input.type === 'radio' || input.type === 'checkbox';
+    const groupElement = isRadioOrCheckbox ? input.closest('[role="group"][aria-labelledby], [role=\'group\'][aria-label], fieldset') : undefined;
+    // Announce the current error message
+    const accessibleName = computeAccessibleName(groupElement || input);
+    const validationMessage = input.validationMessage;
+    announceErrorMessage(
+      accessibleName && validationMessage ?
+      stringFormatter.format(
+        'reviewField',
+        {
+          accessibleName,
+          validationMessage
+        }) :
+      validationMessage
+    );
+    justBlurredRef.current = false;
+  });
+
   useEffect(() => {
     let input = ref?.current;
     if (!input) {
@@ -85,7 +157,6 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     }
 
     let form = input.form;
-
     let reset = form?.reset;
     if (form) {
       // Try to detect React's automatic form reset behavior so we don't clear
@@ -100,10 +171,17 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       };
     }
 
+    input.addEventListener('blur', onBlur);
     input.addEventListener('invalid', onInvalid);
     input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
+      if (timeoutIdRef.current != null) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
+      justBlurredRef.current = false;
+      input!.removeEventListener('blur', onBlur);
       input!.removeEventListener('invalid', onInvalid);
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
@@ -112,10 +190,10 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
         form.reset = reset;
       }
     };
-  }, [ref, onInvalid, onChange, onReset, validationBehavior]);
+  }, [onBlur, onChange, onInvalid, onReset, ref, validationBehavior]);
 }
 
-function getValidity(input: ValidatableElement) {
+function getValidity(input: ValidatableElement): ValidityState {
   // The native ValidityState object is live, meaning each property is a getter that returns the current state.
   // We need to create a snapshot of the validity state at the time this function is called to avoid unpredictable React renders.
   let validity = input.validity;
