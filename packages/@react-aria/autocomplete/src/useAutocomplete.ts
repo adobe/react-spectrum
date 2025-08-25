@@ -231,6 +231,12 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // Backspace shouldn't trigger tag deletion either
         return;
       case 'Tab':
+        // If collection doesn't have virtual focus yet, then we want tab to move into the collection but prevent default browser
+        // behavior so focus isn't lost from the input
+        if (!focusedNodeId && !disableVirtualFocus) {
+          e.preventDefault();
+        }
+
         // Propagate Tab down to the collection so that tabbing foward will hit our special logic to treat the collection
         // as a single tab stop. We want FocusScope to handle Shift Tab if one exists (aka sub dialog), so special case propogate
         // Otherwise, we don't want useSeletableCollection to handle that anyways since focus is actually on an input outside the

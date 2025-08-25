@@ -17,6 +17,7 @@ import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {useGridSelectionCheckbox} from '@react-aria/grid';
+import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableSelectionCheckboxProps {
@@ -59,6 +60,7 @@ export function useTableSelectionCheckbox<T>(props: AriaTableSelectionCheckboxPr
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  let id = useId();
 
   return {
     checkboxProps: {
@@ -66,7 +68,8 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectA
       isSelected: isSelectAll,
       isDisabled: selectionMode !== 'multiple' || (state.collection.size === 0 || (state.collection.rows.length === 1 && state.collection.rows[0].type === 'loader')),
       isIndeterminate: !isEmpty && !isSelectAll,
-      onChange: () => state.selectionManager.toggleSelectAll()
+      onChange: () => state.selectionManager.toggleSelectAll(),
+      id
     }
   };
 }

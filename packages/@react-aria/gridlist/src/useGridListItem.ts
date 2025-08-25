@@ -266,11 +266,14 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = document.activeElement;
+          walker.currentNode = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) as FocusableElement : document.activeElement;
           let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
 
           if (next) {
             e.stopPropagation();
+            // Additionally preventDefault and handle focusing the element ourselves so that we don't move from the Autocomplete input
+            e.preventDefault();
+            focusElement(next as FocusableElement);
           }
         }
       }
