@@ -32,7 +32,7 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {
-    textFieldProps,
+    inputProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
     filter: filterFn
@@ -49,7 +49,7 @@ export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX
       values={[
         [AutocompleteStateContext, state],
         [FieldInputContext, {
-          ...textFieldProps,
+          ...inputProps,
           ref: inputRef
         }],
         [SelectableCollectionContext, {

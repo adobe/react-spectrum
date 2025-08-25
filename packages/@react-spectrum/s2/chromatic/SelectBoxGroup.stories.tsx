@@ -31,17 +31,18 @@ type Story = StoryObj<typeof SelectBoxGroup>;
 export const VerticalOrientation: Story = {
   render: () => (
     <div style={{width: 600}}>
-      <SelectBoxGroup 
+      <SelectBoxGroup
+        aria-label="Vertical"
         orientation="vertical" 
         onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="text-only">
+        <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
         </SelectBox>
-        <SelectBox value="illustration-text">
+        <SelectBox id="illustration-text" textValue="V: Illustration + Text">
           <Server />
           <Text slot="label">V: Illustration + Text</Text>
         </SelectBox>
-        <SelectBox value="illustration-desc">
+        <SelectBox id="illustration-desc" textValue="Send">
           <PaperAirplane />
         </SelectBox>
       </SelectBoxGroup>
@@ -52,21 +53,22 @@ export const VerticalOrientation: Story = {
 export const HorizontalOrientation: Story = {
   render: () => (
     <div style={{width: 800}}>
-      <SelectBoxGroup 
+      <SelectBoxGroup
+        aria-label="Horizontal"
         orientation="horizontal" 
         onSelectionChange={action('onSelectionChange')}>
-        <SelectBox value="text-only">
+        <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>
         </SelectBox>
-        <SelectBox value="illustration-text">
+        <SelectBox id="illustration-text" textValue="Illustration + Title">
           <Server />
           <Text slot="label">Illustration + Title</Text>
         </SelectBox>
-        <SelectBox value="text-desc">
+        <SelectBox id="text-desc" textValue="Title + Description">
           <Text slot="label">Title + Description</Text>
           <Text slot="description">Additional description</Text>
         </SelectBox>
-        <SelectBox value="h-all">
+        <SelectBox id="h-all" textValue="Illustration + Title + Description">
           <Server />
           <Text slot="label">Illustration + Title + Description</Text>
           <Text slot="description">Full horizontal layout with all elements</Text>
