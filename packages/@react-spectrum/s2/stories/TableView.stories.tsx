@@ -14,11 +14,13 @@ import {action} from '@storybook/addon-actions';
 import {
   ActionButton,
   Avatar,
+  Button,
   Cell,
   CellProps,
   Column,
   ColumnProps,
   Content,
+  Dialog,
   Heading,
   IllustratedMessage,
   Link,
@@ -35,18 +37,20 @@ import {
   TextField
 } from '../src';
 import {categorizeArgTypes} from './utils';
+import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
+import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
 import {DialogTrigger, Popover, SortDescriptor} from 'react-aria-components';
 import {DOMRef, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
-import {forwardRef, KeyboardEvent, ReactElement, useCallback, useState} from 'react';
+import {forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useHover} from 'react-aria';
+import {useIsMobileDevice} from '../src/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 
 let onActionFunc = action('onAction');
@@ -1438,7 +1442,6 @@ let popover = style({
   },
   outlineStyle: 'none',
   minWidth: '--trigger-width',
-  width: '--trigger-width',
   padding: 8,
   display: 'flex',
   alignItems: 'center'
@@ -1452,14 +1455,37 @@ let editButton = style({
   }
 });
 
-const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void}, ref: DOMRef<HTMLDivElement>) {
-  let {value, onChange, ...otherProps} = props;
+const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: string, onChange: (value: string) => void, showButtons?: boolean}, ref: DOMRef<HTMLDivElement>) {
+  let {value, onChange, showButtons = true, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isOpen, setIsOpen] = useState(false);
   let [triggerWidth, setTriggerWidth] = useState(0);
   let [verticalOffset, setVerticalOffset] = useState(0);
   let [internalValue, setInternalValue] = useState(value);
   let [editButtonFocused, setEditButtonFocused] = useState(false);
+  let isMobile = useIsMobileDevice();
+  let [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (domRef.current) {
+      let row = domRef.current.closest('[role="row"]');
+      let onHover = () => {
+        setIsHovered(true);
+      };
+      let onLeave = () => {
+        setIsHovered(false);
+      };
+      if (row) {
+        row.addEventListener('pointerenter', onHover);
+        row.addEventListener('pointerleave', onLeave);
+      }
+      return () => {
+        row?.removeEventListener('pointerenter', onHover);
+        row?.removeEventListener('pointerleave', onLeave);
+      };
+    }
+  }, [domRef]);
+
   useLayoutEffect(() => {
     let width = domRef.current?.clientWidth || 0;
     let boundingRect = domRef.current?.getBoundingClientRect();
@@ -1468,17 +1494,31 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
     setVerticalOffset(verticalOffset - 4);
   }, [domRef]);
 
-  let {isHovered, hoverProps} = useHover({});
+  let [valid, setValid] = useState(value.length > 0);
+
+  let validateAndCommit = () => {
+    if (internalValue.length > 0) {
+      setValid(true);
+      onChange(internalValue);
+      setIsOpen(false);
+      return true;
+    }
+    setValid(false);
+    return false;
+  };
+
+  let cancel = () => {
+    setIsOpen(false);
+    setInternalValue(value);
+  };
 
   let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
       case 'Enter':
-        setIsOpen(false);
-        onChange(internalValue);
+        validateAndCommit();
         break;
       case 'Escape':
-        setIsOpen(false);
-        setInternalValue(value);
+        cancel();
         break;
     }
   };
@@ -1488,7 +1528,6 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
       ref={domRef}
       // @ts-expect-error
       className={editableCell({})}
-      {...hoverProps}
       {...otherProps}>
       <div
         className={style({
@@ -1500,36 +1539,104 @@ const EditableCell = forwardRef(function EditableCell(props: Omit<CellProps, 'ch
         {value}
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <div className={editButton({isShown: isHovered || isOpen || editButtonFocused})}>
+        <div className={editButton({isShown: isHovered || isOpen || editButtonFocused || isMobile})}>
           <ActionButton onFocusChange={setEditButtonFocused}>
             <Edit />
           </ActionButton>
         </div>
-        <Popover
-          triggerRef={domRef}
-          aria-label="Edit cell"
-          offset={verticalOffset}
-          // @ts-expect-error
-          style={{'--trigger-width': `${triggerWidth}px`}}
-          className={popover}
-          onClose={() => setEditButtonFocused(false)}>
-          <div style={{height: `${Math.abs(verticalOffset)}px`}} className={style({width: 'full', display: 'flex', alignItems: 'center'})}>
-            <TextField autoFocus value={internalValue} onChange={setInternalValue} onKeyDown={onKeyDown} styles={style({width: 'full'})} />
-          </div>
-        </Popover>
+        {!isMobile ? (
+          <Popover
+            shouldCloseOnInteractOutside={() => {
+              return validateAndCommit();
+            }}
+            triggerRef={domRef}
+            aria-label="Edit cell"
+            offset={verticalOffset}
+            style={{minWidth: `${triggerWidth}px`}}
+            className={popover}>
+            <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+              <TextField
+                autoFocus
+                isInvalid={!valid}
+                errorMessage="Please enter a valid non empty value"
+                value={internalValue}
+                onChange={setInternalValue}
+                onKeyDown={onKeyDown}
+                styles={style({width: 'full'})} />
+              {showButtons && (
+                <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                  <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                  <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+                </div>
+              )}
+            </div>
+          </Popover>
+        ) : (
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading>Edit cell</Heading>
+                <Content>
+                  <div className={style({display: 'flex', flexDirection: 'column', gap: 24, padding: 4})}>
+                    <TextField
+                      autoFocus
+                      isInvalid={!valid}
+                      errorMessage="Please enter a valid non empty value"
+                      value={internalValue}
+                      onChange={setInternalValue}
+                      onKeyDown={onKeyDown}
+                      styles={style({width: 'full'})} />
+                    <div className={style({display: 'flex', flexDirection: 'row', gap: 8, marginX: 4, alignItems: 'center', justifyContent: 'end'})}>
+                      <Button variant="secondary" onPress={() => {cancel(); close();}}>Cancel</Button>
+                      <Button
+                        variant="primary"
+                        onPress={() => {
+                          if (validateAndCommit()) {
+                            close();
+                          }
+                        }}>Confirm</Button>
+                    </div>
+                  </div>
+                </Content>
+              </>
+            )}
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
 });
 
-const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: number, onChange: (value: number) => void}, ref: DOMRef<HTMLDivElement>) {
-  let {value, onChange, ...otherProps} = props;
+const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProps, 'children'> & {value: number, onChange: (value: number) => void, showButtons?: boolean}, ref: DOMRef<HTMLDivElement>) {
+  let {value, onChange, showButtons = true, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isOpen, setIsOpen] = useState(false);
   let [triggerWidth, setTriggerWidth] = useState(0);
   let [verticalOffset, setVerticalOffset] = useState(0);
   let [internalValue, setInternalValue] = useState(value);
   let [editButtonFocused, setEditButtonFocused] = useState(false);
+  let [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (domRef.current) {
+      let row = domRef.current.closest('[role="row"]');
+      let onHover = () => {
+        setIsHovered(true);
+      };
+      let onLeave = () => {
+        setIsHovered(false);
+      };
+      if (row) {
+        row.addEventListener('pointerenter', onHover);
+        row.addEventListener('pointerleave', onLeave);
+      }
+      return () => {
+        row?.removeEventListener('pointerenter', onHover);
+        row?.removeEventListener('pointerleave', onLeave);
+      };
+    }
+  }, [domRef]);
+
   useLayoutEffect(() => {
     let width = domRef.current?.clientWidth || 0;
     let boundingRect = domRef.current?.getBoundingClientRect();
@@ -1538,7 +1645,22 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
     setVerticalOffset(verticalOffset - 4);
   }, [domRef]);
 
-  let {isHovered, hoverProps} = useHover({});
+  let [valid, setValid] = useState(internalValue > 0 && !Number.isNaN(internalValue));
+
+  let validateAndCommit = () => {
+    if (internalValue > 0 && !Number.isNaN(internalValue)) {
+      setValid(true);
+      onChange(internalValue);
+      setIsOpen(false);
+      return;
+    }
+    setValid(false);
+  };
+
+  let cancel = () => {
+    setIsOpen(false);
+    setInternalValue(value);
+  };
 
   let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
@@ -1558,7 +1680,6 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
       ref={domRef}
       // @ts-expect-error
       className={editableCell({isReversed: true})}
-      {...hoverProps}
       {...otherProps}>
       <div
         className={style({
@@ -1580,12 +1701,24 @@ const EditableNumberCell = forwardRef(function EditableCell(props: Omit<CellProp
           triggerRef={domRef}
           aria-label="Edit cell"
           offset={verticalOffset}
-          // @ts-expect-error
-          style={{'--trigger-width': `${triggerWidth}px`}}
-          className={popover}
-          onClose={() => setEditButtonFocused(false)}>
-          <div style={{height: `${Math.abs(verticalOffset)}px`}} className={style({width: 'full', display: 'flex', alignItems: 'center'})}>
-            <NumberField autoFocus hideStepper value={internalValue} onChange={setInternalValue} onKeyDown={onKeyDown} styles={style({width: 'full'})} />
+          style={{minWidth: `${triggerWidth}px`}}
+          className={popover}>
+          <div className={style({width: 'full', display: 'flex', alignItems: 'baseline'})}>
+            <NumberField
+              autoFocus
+              isInvalid={!valid}
+              errorMessage="Please enter a valid number"
+              hideStepper
+              value={internalValue}
+              onChange={setInternalValue}
+              onKeyDown={onKeyDown}
+              styles={style({width: 'full'})} />
+            {showButtons && (
+              <div className={style({display: 'flex', flexDirection: 'row', gap: 4, marginX: 4, alignItems: 'baseline'})}>
+                <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
+                <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
+              </div>
+            )}
           </div>
         </Popover>
       </DialogTrigger>
@@ -1614,70 +1747,87 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
   {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end', minWidth: 95}
 ];
 
-export const EditableTable = (args: TableViewProps): ReactElement => {
-  let [editableItems, setEditableItems] = useState(defaultItems);
-  let onChange = useCallback((value: any, id: Key, columnId: Key) => {
-    setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: value} : i));
-  }, []);
-  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
-  let onSortChange = (sortDescriptor: SortDescriptor) => {
-    let {direction = 'ascending', column = 'count'} = sortDescriptor;
+let mobileColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '2fr', showDivider: true},
+  {name: 'Farmer', id: 'farmer', width: '1fr'},
+  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end'}
+];
 
-    setEditableItems(prev => {
-      return prev.slice().sort((a, b) => {
-        let cmp = Number(a[column]) < Number(b[column]) ? -1 : 1;
-        if (direction === 'descending') {
-          cmp *= -1;
-        }
-        return cmp;
+interface EditableTableProps extends TableViewProps {
+  showButtons?: boolean
+}
+
+export const EditableTable: StoryObj<EditableTableProps> = {
+  args: {
+    showButtons: true
+  },
+  render: function EditableTable(args) {
+    let {showButtons, ...props} = args;
+    let isMobile = useIsMobileDevice();
+    let [editableItems, setEditableItems] = useState(defaultItems);
+    let onChange = useCallback((value: any, id: Key, columnId: Key) => {
+      setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: value} : i));
+    }, []);
+    let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
+    let onSortChange = (sortDescriptor: SortDescriptor) => {
+      let {direction = 'ascending', column = 'count'} = sortDescriptor;
+
+      setEditableItems(prev => {
+        return prev.slice().sort((a, b) => {
+          let cmp = Number(a[column]) < Number(b[column]) ? -1 : 1;
+          if (direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        });
       });
-    });
-    setSortDescriptor(sortDescriptor);
-  };
-  return (
-    <TableView aria-label="Dynamic table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 800, height: 208})}>
-      <TableHeader columns={editableColumns}>
-        {(column) => (
-          <Column {...column}>{column.name}</Column>
-        )}
-      </TableHeader>
-      <TableBody items={editableItems}>
-        {item => (
-          <Row id={item.id} columns={editableColumns}>
-            {(column) => {
-              if (column.id === 'count') {
-                return (
-                  <Cell align={column.align} showDivider={column.showDivider}>
-                    <EditableNumberCell value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
-                  </Cell>
-                );
-              }
-              if (column.id === 'fruits') {
-                return (
-                  <Cell align={column.align} showDivider={column.showDivider}>
-                    <EditableCell value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
-                  </Cell>
-                );
-              }
-              if (column.id === 'farmer') {
-                return (
-                  <Cell align={column.align} showDivider={column.showDivider}>
-                    <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />{item[column.id]}</div>
-                  </Cell>
-                );
-              }
-              if (column.id === 'status') {
-                return (
-                  <Cell align={column.align} showDivider={column.showDivider}>
-                    <StatusLight variant="informative">{item[column.id]}</StatusLight>
-                  </Cell>
-                );
-              }
-              return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
-            }}
-          </Row>
-        )}
-      </TableBody>
-    </TableView>
-  );
+      setSortDescriptor(sortDescriptor);
+    };
+    return (
+      <TableView aria-label="Dynamic table" {...props} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+        <TableHeader columns={isMobile ? mobileColumns : editableColumns}>
+          {(column) => (
+            <Column {...column}>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={editableItems} dependencies={[isMobile, showButtons]}>
+          {item => (
+            <Row id={item.id} columns={isMobile ? mobileColumns : editableColumns}>
+              {(column) => {
+                if (column.id === 'count' && !isMobile) {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <EditableNumberCell showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
+                    </Cell>
+                  );
+                }
+                if (column.id === 'fruits') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <EditableCell showButtons={showButtons} value={item[column.id]} onChange={value => onChange(value, item.id, column.id!)} />
+                    </Cell>
+                  );
+                }
+                if (column.id === 'farmer') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />{item[column.id]}</div>
+                    </Cell>
+                  );
+                }
+                if (column.id === 'status') {
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                    </Cell>
+                  );
+                }
+                return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    );
+  }
 };

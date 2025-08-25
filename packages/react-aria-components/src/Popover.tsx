@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
@@ -123,13 +123,18 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   }
 
   return (
-    <PopoverInner
-      {...props}
-      triggerRef={props.triggerRef!}
-      state={state}
-      popoverRef={ref}
-      isExiting={isExiting}
-      dir={direction} />
+    <Provider
+      values={[
+        [OverlayTriggerStateContext, null]
+      ]}>
+      <PopoverInner
+        {...props}
+        triggerRef={props.triggerRef!}
+        state={state}
+        popoverRef={ref}
+        isExiting={isExiting}
+        dir={direction} />
+    </Provider>
   );
 });
 
