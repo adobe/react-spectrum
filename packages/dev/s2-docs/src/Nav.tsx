@@ -104,7 +104,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
     let librarySections = getSectionsForLibrary(selectedLibrary);
     return [...librarySections.keys()];
   }, [getSectionsForLibrary, selectedLibrary]);
-  let showAllTab = searchFocused;
+  
 
   // Compute available viewport height for the vertical scrolling area below the sticky header
   useEffect(() => {
@@ -141,15 +141,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
     }
   }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
 
-  // Remove "All" section when search field is blurred and empty
-  useEffect(() => {
-    if (!searchFocused && searchValue === '' && selectedSection === 'All') {
-      // Switch to first regular section if "All" was selected
-      setSelectedSection(currentLibrarySectionArray[0]);
-      // Scroll to first regular section
-      setTimeout(() => scrollToSection(0), 100);
-    }
-  }, [searchFocused, searchValue, selectedSection, currentLibrarySectionArray]);
+  // Removed behavior that added/managed an "All" section during search focus
 
   // Create ordered libraries array with current library first
   let getOrderedLibraries = () => {
@@ -174,12 +166,6 @@ export function MobileNav({pages, currentPage}: PageProps) {
 
   let handleSearchFocus = () => {
     setSearchFocused(true);
-    // Only auto-select "All" if the first tag was already selected
-    if (selectedSection === currentLibrarySectionArray[0]) {
-      setSelectedSection('All');
-      // Scroll to "All" section (which will be at index 0)
-      setTimeout(() => scrollToSection(0), 100);
-    }
   };
 
   let handleSearchBlur = () => {
@@ -209,13 +195,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
 
   let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
-    let pages;
-    
-    if (sectionName === 'All') {
-      pages = Array.from(librarySections.values()).flat();
-    } else {
-      pages = librarySections.get(sectionName) ?? [];
-    }
+    let pages = librarySections.get(sectionName) ?? [];
     
     let filteredPages = filterPages(pages, searchValue);
     
@@ -239,7 +219,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
       return a.localeCompare(b);
     });
     
-    return showAllTab ? ['All', ...sectionArray] : sectionArray;
+    return sectionArray;
   };
 
   let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
