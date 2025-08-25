@@ -19,6 +19,7 @@ import {
   DateValue,
   Dialog,
   FormContext,
+  OverlayTriggerStateContext,
   Provider,
   TimeValue
 } from 'react-aria-components';
@@ -40,7 +41,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DatePickerProps<T extends DateValue> extends
   Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
-  Pick<CalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
+  Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'isDateUnavailable'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -49,7 +50,12 @@ export interface DatePickerProps<T extends DateValue> extends
      *
      * @default 'M'
      */
-    size?: 'S' | 'M' | 'L' | 'XL'
+    size?: 'S' | 'M' | 'L' | 'XL',
+    /**
+     * The maximum number of months to display at once in the calendar popover, if screen space permits.
+     * @default 1
+     */
+    maxVisibleMonths?: number
 }
 
 export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
@@ -132,8 +138,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     UNSAFE_className,
     styles,
     placeholderValue,
-    visibleMonths,
-    firstDayOfWeek,
+    maxVisibleMonths = 1,
     createCalendar,
     ...dateFieldProps
   } = props;
@@ -196,7 +201,9 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
             <CalendarPopover>
-              <Calendar visibleMonths={visibleMonths} createCalendar={createCalendar} firstDayOfWeek={firstDayOfWeek} />
+              <Calendar
+                visibleMonths={maxVisibleMonths}
+                createCalendar={createCalendar} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
@@ -241,7 +248,12 @@ export function CalendarPopover(props: PropsWithChildren): ReactElement {
         gap: 16
       })}>
       <Dialog>
-        {props.children}
+        <Provider
+          values={[
+            [OverlayTriggerStateContext, null]
+          ]}>
+          {props.children}
+        </Provider>
       </Dialog>
     </PopoverBase>
   );

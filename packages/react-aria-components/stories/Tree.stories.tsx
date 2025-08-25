@@ -19,10 +19,12 @@ import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Tree',
-  component: Tree
+  component: Tree,
+  excludeStories: ['TreeExampleStaticRender']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -142,52 +144,54 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-const TreeExampleStaticRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
-  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-    <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-      <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-        <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-          Projects-1A
+export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
+  return (
+    <Tree className={styles.tree} {...props} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
         </StaticTreeItem>
       </StaticTreeItem>
-      <StaticTreeItem id="projects-2" textValue="Projects-2">
-        Projects-2
-      </StaticTreeItem>
-      <StaticTreeItem id="projects-3" textValue="Projects-3">
-        Projects-3
-      </StaticTreeItem>
-    </StaticTreeItem>
-    <TreeItem
-      id="reports"
-      textValue="Reports"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        Reports
-      </TreeItemContent>
-    </TreeItem>
-    <TreeItem
-      id="Tests"
-      textValue="Tests"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isFocused}) => (
-          <Text>{`${isFocused} Tests`}</Text>
-        )}
-      </TreeItemContent>
-    </TreeItem>
-  </Tree>
-);
+      <TreeItem
+        id="reports"
+        textValue="Reports"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          Reports
+        </TreeItemContent>
+      </TreeItem>
+      <TreeItem
+        id="Tests"
+        textValue="Tests"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          {({isFocused}) => (
+            <Text>{`${isFocused} Tests`}</Text>
+          )}
+        </TreeItemContent>
+      </TreeItem>
+    </Tree>
+  );
+}
 
 const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>

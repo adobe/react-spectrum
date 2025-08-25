@@ -33,7 +33,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
-  Pick<RangeCalendarProps<T>, 'visibleMonths' | 'createCalendar'>,
+  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'isDateUnavailable'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -42,7 +42,12 @@ export interface DateRangePickerProps<T extends DateValue> extends
      *
      * @default 'M'
      */
-    size?: 'S' | 'M' | 'L' | 'XL'
+    size?: 'S' | 'M' | 'L' | 'XL',
+    /**
+     * The maximum number of months to display at once in the calendar popover, if screen space permits.
+     * @default 1
+     */
+    maxVisibleMonths?: number
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -66,8 +71,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     UNSAFE_className,
     styles,
     placeholderValue,
-    visibleMonths = 1,
-    firstDayOfWeek,
+    maxVisibleMonths = 1,
     createCalendar,
     ...dateFieldProps
   } = props;
@@ -136,9 +140,11 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               </div>
             </FieldGroup>
             <CalendarPopover>
-              <RangeCalendar visibleMonths={visibleMonths} createCalendar={createCalendar} firstDayOfWeek={firstDayOfWeek} />
+              <RangeCalendar
+                visibleMonths={maxVisibleMonths}
+                createCalendar={createCalendar} />
               {showTimeField && (
-                <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
+                <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
                   <TimeField
                     styles={timeField}
                     label={stringFormatter.format('datepicker.startTime')}

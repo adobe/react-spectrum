@@ -119,13 +119,19 @@ describe('calculatePosition', function () {
       pos.top = expected[1];
     }
 
+    let calculatedPlacement = flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis;
+    // Note that a crossAxis of 'bottom' indicates that the overlay grows towards the top since the bottom of the overlay aligns with the bottom of the trigger
+    let maxHeight = expected[4] - (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0);
     const expectedPosition = {
       position: pos,
       arrowOffsetLeft: expected[2],
       arrowOffsetTop: expected[3],
-      // Note that a crossAxis of 'bottom' indicates that the overlay grows towards the top since the bottom of the overlay aligns with the bottom of the trigger
-      maxHeight: expected[4] - (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0),
-      placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
+      maxHeight,
+      placement: calculatedPlacement,
+      triggerAnchorPoint: {
+        x: expected[2] ?? (calculatedPlacement === 'left' ? overlaySize.width : 0),
+        y: expected[3] ?? (calculatedPlacement === 'top' ? Math.min(overlaySize.height, maxHeight) : 0)
+      }
     };
 
     const container = createElementWithDimensions('div', containerDimensions);

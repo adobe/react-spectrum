@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
+import {Button, Checkbox, Group, Label, Link, ListBox, Popover, Select, SelectValue, Separator, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryObj} from '@storybook/react';
+import {MyListBoxItem} from './utils';
 import {Orientation} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Toolbar',
@@ -52,6 +54,54 @@ export const ToolbarExample: ToolbarStory = {
         <label htmlFor="after">Input After Toolbar</label>
         <input id="after" type="text" />
       </div>
+    );
+  }
+};
+
+export const SelectSupport: ToolbarStory = {
+  args: {
+    orientation: 'horizontal' as Orientation
+  },
+  render: (props: ToolbarProps) => {
+    return (
+      <Toolbar {...props} aria-label="Text formatting">
+        <Group aria-label="Style">
+          <ToggleButton aria-label="Bold">
+            <b>B</b>
+          </ToggleButton>
+          <ToggleButton aria-label="Italic">
+            <i>I</i>
+          </ToggleButton>
+          <ToggleButton aria-label="Underline">
+            <u>U</u>
+          </ToggleButton>
+        </Group>
+        <Separator orientation="vertical" />
+        <Select>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+            <span aria-hidden="true">▼</span>
+          </Button>
+          <Popover>
+            <ListBox>
+              <MyListBoxItem>Aardvark</MyListBoxItem>
+              <MyListBoxItem>Cat</MyListBoxItem>
+              <MyListBoxItem>Dog</MyListBoxItem>
+              <MyListBoxItem>Kangaroo</MyListBoxItem>
+              <MyListBoxItem>Panda</MyListBoxItem>
+              <MyListBoxItem>Snake</MyListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+        <Separator orientation="vertical" />
+
+        <Group aria-label="Clipboard">
+          <Button>Copy</Button>
+          <Button>Paste</Button>
+          <Button>Cut</Button>
+        </Group>
+      </Toolbar>
     );
   }
 };

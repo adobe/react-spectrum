@@ -261,7 +261,7 @@ function TabLine(props: TabLineProps) {
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The keys of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-export function TabList<T>(props: SpectrumTabListProps<T> & {wrap?: boolean}): ReactNode {
+export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
   const tabContext = useContext(TabContext)!;
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
   const {isQuiet, density, isEmphasized, orientation} = tabProps;
@@ -288,8 +288,6 @@ export function TabList<T>(props: SpectrumTabListProps<T> & {wrap?: boolean}): R
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
 
-  const verticalWrap = props.wrap && orientation === 'vertical';
-
   const tabContent = (
     <div
       {...stylePropsFinal}
@@ -303,8 +301,7 @@ export function TabList<T>(props: SpectrumTabListProps<T> & {wrap?: boolean}): R
         {
           'spectrum-Tabs--quiet': isQuiet,
           'spectrum-Tabs--emphasized': isEmphasized,
-          ['spectrum-Tabs--compact']: density === 'compact',
-          'spectrum-Tabs--verticalWrap': verticalWrap
+          ['spectrum-Tabs--compact']: density === 'compact'
         },
         orientation === 'vertical' && styleProps.className
       )
@@ -340,7 +337,7 @@ export function TabList<T>(props: SpectrumTabListProps<T> & {wrap?: boolean}): R
  * TabPanels is used within Tabs as a container for the content of each tab.
  * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
-export function TabPanels<T extends object>(props: SpectrumTabPanelsProps<T>): ReactNode {
+export function TabPanels<T extends object>(props: SpectrumTabPanelsProps<T>): ReactElement {
   const {tabState, tabProps} = useContext(TabContext)!;
   const {tabListState} = tabState;
 

@@ -18,6 +18,7 @@ import {ColorSliderExampleRender} from './ColorSlider.stories';
 import {ColorSwatchExampleRender} from './ColorSwatch.stories';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/ColorPicker',

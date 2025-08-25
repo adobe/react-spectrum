@@ -573,6 +573,102 @@ Items in a GridList may also be links to another page or website. This can be ac
 
 The `<GridListItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
+## Sections <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+GridList supports sections in order to group options. Sections can be used by wrapping groups of items in a `GridListSection` element. A `<GridListHeader>` element may also be included to label the section.
+
+### Static items
+
+```tsx example
+import {GridListSection, GridListHeader} from 'react-aria-components';
+
+<GridList aria-label="Sandwich contents" selectionMode="multiple">
+  <GridListSection>
+    <GridListHeader>Veggies</GridListHeader>
+    <MyItem id="lettuce">Lettuce</MyItem>
+    <MyItem id="tomato">Tomato</MyItem>
+    <MyItem id="onion">Onion</MyItem>
+  </GridListSection>
+  <GridListSection>
+    <GridListHeader>Protein</GridListHeader>
+    <MyItem id="ham">Ham</MyItem>
+    <MyItem id="tuna">Tuna</MyItem>
+    <MyItem id="tofu">Tofu</MyItem>
+  </GridListSection>
+  <GridListSection>
+    <GridListHeader>Condiments</GridListHeader>
+    <MyItem id="mayo">Mayonaise</MyItem>
+    <MyItem id="mustard">Mustard</MyItem>
+    <MyItem id="ranch">Ranch</MyItem>
+  </GridListSection>
+</GridList>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList {
+  .react-aria-GridListSection:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-GridListHeader {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
+
+### Dynamic items
+
+The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
+Similarly to the props on GridList, `<GridListSection>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
+
+```tsx example
+import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Australian', children: [
+      {id: 2, name: 'Koala'},
+      {id: 3, name: 'Kangaroo'},
+      {id: 4, name: 'Platypus'}
+    ]},
+    {name: 'American', children: [
+      {id: 6, name: 'Bald Eagle'},
+      {id: 7, name: 'Bison'},
+      {id: 8, name: 'Skunk'}
+    ]}
+  ];
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+
+  return (
+    <GridList
+      aria-label="Pick an animal"
+      items={options}
+      selectedKeys={selected}
+      selectionMode="single"
+      onSelectionChange={setSelected}>
+      {section => (
+        <GridListSection id={section.name}>
+          <GridListHeader>{section.name}</GridListHeader>
+          <Collection items={section.children}>
+            {item => <MyItem >{item.name}</MyItem>}
+          </Collection>
+        </GridListSection>
+      )}
+    </GridList>
+  );
+}
+```
+
 ## Disabled items
 
 A `GridListItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
@@ -763,6 +859,11 @@ This uses [useListData](../react-stately/useListData.html) from React Stately to
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
+interface Item {
+  id: number,
+  name: string
+}
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -775,8 +876,8 @@ function Example() {
   });
 
   ///- begin highlight -///
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+  let {dragAndDropHooks} = useDragAndDrop<Item>({
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.name})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -852,11 +953,18 @@ This example renders a custom drag preview which shows the number of items being
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
-  let {dragAndDropHooks} = useDragAndDrop({
+  let {dragAndDropHooks} = useDragAndDrop<Item>({
     // ...
     ///- begin collapse -///
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.name})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -933,16 +1041,22 @@ This can be done by returning multiple keys for an item from the `getItems` func
 This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
 
 ```tsx example export=true
-function DraggableGridList() {
-  let items = new Map([
-    ['ps', {name: 'Photoshop', style: 'strong'}],
-    ['xd', {name: 'XD', style: 'strong'}],
-    ['id', {name: 'InDesign', style: 'strong'}],
-    ['dw', {name: 'Dreamweaver', style: 'em'}],
-    ['co', {name: 'Connect', style: 'em'}]
-  ]);
+interface RichTextItem {
+  id: string,
+  name: string,
+  style: string
+}
 
-  let { dragAndDropHooks } = useDragAndDrop({
+function DraggableGridList() {
+  let items: RichTextItem[] = [
+    {id: 'ps', name: 'Photoshop', style: 'strong'},
+    {id: 'xd', name: 'XD', style: 'strong'},
+    {id: 'id', name: 'InDesign', style: 'strong'},
+    {id: 'dw', name: 'Dreamweaver', style: 'em'},
+    {id: 'co', name: 'Connect', style: 'em'}
+  ];
+
+  let { dragAndDropHooks } = useDragAndDrop<RichTextItem>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -954,13 +1068,12 @@ function DraggableGridList() {
     },
     ///- end collapse -///
     /*- begin highlight -*/
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = items.get(key as string)!;
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'text/html': `<${item.style}>${item.name}</${item.style}>`,
-          'custom-app-type': JSON.stringify({id: key, ...item})
+          'custom-app-type': JSON.stringify(item)
         };
       });
     },
@@ -969,7 +1082,7 @@ function DraggableGridList() {
 
   return (
     <MyGridList aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <MyItem id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
+      {item => <MyItem textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
     </MyGridList>
   );
 }
@@ -986,15 +1099,17 @@ function DraggableGridList() {
 Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
 ```tsx example
+///- begin collapse -///
 interface Item {
   id: number,
   name: string
 }
+///- end collapse -///
 
 function Example() {
   let [items, setItems] = React.useState<Item[]>([]);
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Item>({
     /*- begin highlight -*/
     async onRootDrop(e) {
       let items = await Promise.all(e.items.map(async (item, i) => {
@@ -1432,6 +1547,13 @@ The `onDragEnd` event allows the drag source to respond when a drag that it init
 This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
 
 ```tsx example
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1443,7 +1565,7 @@ function Example() {
     ]
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Item>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1453,9 +1575,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'custom-app-type': JSON.stringify(item)
@@ -1489,6 +1610,13 @@ function Example() {
 The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
 
 ```tsx example
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
   ///- begin collapse -///
   let list = useListData({
@@ -1503,7 +1631,7 @@ function Example() {
   ///- end collapse -///
   // ...
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Item>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1513,9 +1641,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'custom-app-type': JSON.stringify(item)
@@ -1641,7 +1768,7 @@ function DndGridList(props: DndGridListProps) {
     initialItems: props.initialItems
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<FileItem>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1653,9 +1780,8 @@ function DndGridList(props: DndGridListProps) {
     },
     ///- end collapse -///
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys) {
-      return [...keys].map((key) => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'custom-app-type': JSON.stringify(item),
           'text/plain': item.name
@@ -1756,6 +1882,21 @@ function DndGridList(props: DndGridListProps) {
 ### GridList
 
 <PropTable component={docs.exports.GridList} links={docs.links} />
+
+### GridListSection
+
+A `<GridListSection>` defines the child items for a section within a `<GridList>`. It may also contain an optional `<GridListHeader>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.GridListSection} links={docs.links} />
+
+</details>
+
+### GridListHeader
+
+A `<GridListHeader>` defines the title for a `<GridListSection>`. It accepts all DOM attributes.
 
 ### GridListItem
 
@@ -1944,7 +2085,7 @@ If you need to customize things even further, such as accessing internal state, 
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.

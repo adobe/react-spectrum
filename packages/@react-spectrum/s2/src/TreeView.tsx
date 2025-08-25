@@ -61,7 +61,7 @@ export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'class
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | 'onClick' | keyof GlobalDOMAttributes> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
 }

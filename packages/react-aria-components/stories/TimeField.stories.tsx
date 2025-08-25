@@ -15,6 +15,7 @@ import {DateInput, DateSegment, Label, TimeField} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/TimeField',

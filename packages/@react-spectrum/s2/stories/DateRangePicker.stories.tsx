@@ -14,6 +14,7 @@ import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading,
 import {CalendarSwitcher, categorizeArgTypes} from './utils';
 import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
+import {parseDate, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof DateRangePicker> = {
@@ -55,6 +56,13 @@ type Story = StoryObj<typeof DateRangePicker>;
 export const Example: Story = {
   args: {
     label: 'Reservation dates'
+  }
+};
+
+export const Zoned: Story = {
+  args: {
+    label: 'Reservation dates',
+    defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')}
   }
 };
 
