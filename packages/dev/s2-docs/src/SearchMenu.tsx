@@ -87,15 +87,15 @@ function FakeSearchFieldButton({onPress, onKeyDown, isSearchOpen, overlayId, ...
           marginStart: 'auto',
           font: 'detail',
           backgroundColor: 'layer-1',
-          paddingY: '[1px]',
-          paddingX: 2,
+          paddingY: 2,
+          paddingX: 8,
           borderRadius: 'xl',
           borderWidth: 1,
           borderColor: 'gray-300',
           borderStyle: 'solid',
           pointerEvents: 'none',
           alignSelf: 'center'
-        })}>/</kbd>
+        })}>⌘K</kbd>
     </Button>
   );
 }
@@ -237,11 +237,27 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   useEffect(() => {
     let isMac = /Mac/.test(navigator.platform);
-    const handleKeyDown = (e) => {
+    const isTextInputLike = (el: Element | null): boolean => {
+      if (!el) {
+        return false;
+      }
+      let h = el as HTMLElement;
+      return h.isContentEditable || !!el.closest('input, textarea, [contenteditable], [role="textbox"]');
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.isComposing) {
+        // avoid intercepting IME input
+        return;
+      }
+
       if (e.key === 'Escape') {
         e.preventDefault();
         closeSearchMenu();
-      } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) || e.key === '/')) {
+      } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
+        e.preventDefault();
+        toggleShowSearchMenu();
+      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(document.activeElement))) {
         e.preventDefault();
         toggleShowSearchMenu();
       }
