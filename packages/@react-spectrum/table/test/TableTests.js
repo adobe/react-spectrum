@@ -23,7 +23,6 @@ import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';

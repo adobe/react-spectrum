@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {BaseEvent, DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
-import {BaseEvent, DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {FocusEvent, KeyboardEvent, useCallback, useEffect, useRef} from 'react';
+import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getInteractionModality, useKeyboard} from '@react-aria/interactions';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
