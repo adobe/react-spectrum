@@ -60,10 +60,8 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
-  let menuContainerRef = useRef<HTMLDivElement>(null);
-  let isScrollingProgrammatically = useRef(false);
   let headerRef = useRef<HTMLDivElement>(null);
-  let sectionScrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  let scrollContainerRef = useRef<HTMLDivElement>(null);
   let [sectionViewportHeight, setSectionViewportHeight] = useState<number | null>(null);
 
   let getCurrentLibrary = (page: any) => {
@@ -147,14 +145,9 @@ export function MobileNav({pages, currentPage}: PageProps) {
   useEffect(() => {
     if (currentLibrarySectionArray.length > 0 && !searchFocused) {
       setSelectedSection(currentLibrarySectionArray[0]);
-      // Scroll to first section when library changes
-      setTimeout(() => scrollToSection(0), 100);
     }
   }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
 
-  // Removed behavior that added/managed an "All" section during search focus
-
-  // Create ordered libraries array with current library first
   let getOrderedLibraries = () => {
     let allLibraries = [
       {id: 'react-aria', label: 'React Aria'}, 
@@ -235,96 +228,18 @@ export function MobileNav({pages, currentPage}: PageProps) {
 
   let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
 
-  let scrollToSection = (sectionIndex: number) => {
-    if (menuContainerRef.current) {
-      let container = menuContainerRef.current;
-      let scrollPosition = sectionIndex * container.clientWidth;
-      
-      // Set flag to disable intersection observer updates during programmatic scroll
-      isScrollingProgrammatically.current = true;
-      
-      container.scrollTo({left: scrollPosition, behavior: 'smooth'});
-      
-      // Clear flag after scroll animation completes
-      setTimeout(() => {
-        isScrollingProgrammatically.current = false;
-      }, 600);
-    }
-  };
 
   let handleTagSelection = (keys: any) => {
     let key = [...keys][0] as string;
     setSelectedSection(key);
-    
-    // Find the index of the selected section and scroll to it
-    let sectionIndex = currentLibrarySections.indexOf(key);
-    if (sectionIndex !== -1) {
-      scrollToSection(sectionIndex);
-    }
   };
 
   useEffect(() => {
-    if (!menuContainerRef.current) {
-      return;
-    }
-
-    let container = menuContainerRef.current;
-    // Detect visible menu
-    let observer = new IntersectionObserver(
-      (entries) => {
-        // Don't update selection if we're programmatically scrolling
-        if (isScrollingProgrammatically.current) {
-          return;
-        }
-        
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            let sectionIndex = parseInt(entry.target.getAttribute('data-section-index') || '0', 10);
-            let sectionName = currentLibrarySections[sectionIndex];
-            if (sectionName && sectionName !== selectedSection) {
-              setSelectedSection(sectionName);
-            }
-          }
-        });
-      },
-      {
-        root: container,
-        threshold: 0.5,
-        rootMargin: '0px'
-      }
-    );
-
-    let menuItems = container.querySelectorAll('[data-section-index]');
-    menuItems.forEach((item) => observer.observe(item));
-
-    return () => observer.disconnect();
-  }, [currentLibrarySections, selectedSection]);
-
-  // Ensure newly selected section starts at the top of its own vertical scroll area
-  useEffect(() => {
-    if (!selectedSection) {
-      return;
-    }
-    let el = sectionScrollRefs.current[selectedSection];
-    if (el) {
-      el.scrollTo({top: 0, behavior: 'auto'});
-    } else {
-      let id = requestAnimationFrame(() => {
-        sectionScrollRefs.current[selectedSection!]?.scrollTo({top: 0, behavior: 'auto'});
-      });
-      return () => cancelAnimationFrame(id);
+    if (scrollContainerRef.current) {
+      // Ensure newly selected section starts at the top of the vertical scroll area
+      scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
     }
   }, [selectedSection, selectedLibrary]);
-
-  // Initial scroll to selected section on mount or when sections change
-  useEffect(() => {
-    if (selectedSection && currentLibrarySections.length > 0) {
-      let sectionIndex = currentLibrarySections.indexOf(selectedSection);
-      if (sectionIndex !== -1) {
-        setTimeout(() => scrollToSection(sectionIndex), 100);
-      }
-    }
-  }, [currentLibrarySections, selectedSection]);
 
   return (
     <div>
@@ -340,14 +255,6 @@ export function MobileNav({pages, currentPage}: PageProps) {
             if (nextSections.length > 0) {
               setSelectedSection(nextSections[0]);
             }
-          }
-          if (menuContainerRef.current) {
-            isScrollingProgrammatically.current = true;
-            menuContainerRef.current.scrollTo({left: 0, behavior: 'auto'});
-            // Clear the flag on the next tick to ignore initial observer updates
-            setTimeout(() => {
-              isScrollingProgrammatically.current = false;
-            }, 0);
           }
         }}
         styles={style({margin: 12})}>
@@ -380,38 +287,16 @@ export function MobileNav({pages, currentPage}: PageProps) {
               </TagGroup>
             </div>
             <div
-              ref={menuContainerRef}
+              ref={scrollContainerRef}
               style={{
-                display: 'flex',
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                scrollSnapType: 'x mandatory',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
+                height: sectionViewportHeight ?? undefined,
+                maxHeight: sectionViewportHeight ?? undefined,
+                overflowY: 'auto'
               } as React.CSSProperties}>
-              {currentLibrarySections.map((sectionName, index) => (
-                <div
-                  key={sectionName}
-                  data-section-index={index}
-                  style={{
-                    minWidth: '100%',
-                    scrollSnapAlign: 'start'
-                  } as React.CSSProperties}>
-                  <div
-                    ref={el => { sectionScrollRefs.current[sectionName] = el; }}
-                    style={{
-                      height: sectionViewportHeight ?? undefined,
-                      maxHeight: sectionViewportHeight ?? undefined,
-                      overflowY: 'auto',
-                      WebkitOverflowScrolling: 'touch'
-                    } as React.CSSProperties}>
-                    <ComponentCardView
-                      items={getSectionContent(sectionName, library.id, searchValue)}
-                      ariaLabel="Pages"
-                      size="S" />
-                  </div>
-                </div>
-              ))}
+              <ComponentCardView
+                items={selectedSection ? getSectionContent(selectedSection, library.id, searchValue) : []}
+                ariaLabel="Pages"
+                size="S" />
             </div>
           </TabPanel>
         ))}
