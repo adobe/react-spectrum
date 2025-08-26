@@ -1815,30 +1815,21 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        act(() => {walker.nextNode().focus();});
-        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        await user.tab();
+        await user.tab();
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
       });
 
-      it('should move focus after the table when tabbing from the last row', function () {
+      it('should move focus after the table when tabbing from the last row', async function () {
         let tree = renderFocusable();
 
         act(() => tree.getAllByRole('row')[2].focus());
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
 
         // Simulate tabbing within the table
-        act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-          walker.currentNode = document.activeElement;
-          walker.nextNode().focus();
-          fireEvent.keyUp(document.activeElement, {key: 'Tab'});
-        });
+        await user.tab();
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
@@ -1851,11 +1842,7 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
-        fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        act(() => {walker.previousNode().focus();});
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+        await user.tab({shift: true});
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
@@ -3919,24 +3906,21 @@ export let tableTests = () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
 
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(menuItems[1]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});

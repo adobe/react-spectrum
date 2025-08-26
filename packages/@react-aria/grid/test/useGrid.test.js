@@ -60,7 +60,7 @@ describe('useGrid', () => {
     await user.keyboard('[ArrowRight]');
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
     await user.keyboard('[ArrowRight]');
@@ -71,7 +71,7 @@ describe('useGrid', () => {
 
     act(() => tree.getAllByRole('switch')[1].focus());
 
-    await user.keyboard('[ArrowLeft]');
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
     await user.keyboard('[ArrowLeft]');

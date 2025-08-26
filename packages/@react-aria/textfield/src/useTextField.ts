@@ -131,13 +131,33 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     onKeyUp: onKeyUpProp
   } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<HTMLInputElement>>) => {
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'Home')
+      && (e.target as HTMLInputElement).selectionStart === 0
+      && (e.target as HTMLInputElement).selectionEnd === 0) {
+      e.continuePropagation();
+    }
+    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'End')
+      && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
+      && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
+      e.continuePropagation();
+    }
     if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
       e.continuePropagation();
     };
     onKeyDownProp?.(e);
   }, [onKeyDownProp]);
   let onKeyUp = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+      && (e.target as HTMLInputElement).selectionStart === 0
+      && (e.target as HTMLInputElement).selectionEnd === 0) {
+      e.continuePropagation();
+    }
+    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown')
+      && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
+      && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
+      e.continuePropagation();
+    }
     if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
       e.continuePropagation();
     };

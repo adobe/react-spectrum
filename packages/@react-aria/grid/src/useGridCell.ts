@@ -108,8 +108,28 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isDisabled: state.collection.size === 0
   });
 
-  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+  let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
+      return;
+    }
+
+    if (e.target !== ref.current && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+      if (e.key === 'Tab' && ref.current.contains(e.target as Element)) {
+        let cellWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
+        if (e.shiftKey) {
+          cellWalker.currentNode = ref.current;
+          let isFirstFocusable = cellWalker.firstChild() === e.target;
+          if (!isFirstFocusable) {
+            e.stopPropagation();
+          }
+        } else {
+          cellWalker.currentNode = ref.current;
+          let isLastFocusable = cellWalker.lastChild() === e.target;
+          if (!isLastFocusable) {
+            e.stopPropagation();
+          }
+        }
+      }
       return;
     }
 
@@ -252,7 +272,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture,
+    onKeyDown,
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     colSpan: isVirtualized ? undefined : node.colSpan,

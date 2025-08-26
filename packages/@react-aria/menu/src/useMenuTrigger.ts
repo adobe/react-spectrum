@@ -77,6 +77,9 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
           }
           // fallthrough
         case 'ArrowDown':
+          if (e.key === 'ArrowDown' && !e.altKey && e.target.closest('[role="gridcell"]')) {
+            return;
+          }
           // Stop propagation, unless it would already be handled by useKeyboard.
           if (!('continuePropagation' in e)) {
             e.stopPropagation();
@@ -85,6 +88,9 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
           state.toggle('first');
           break;
         case 'ArrowUp':
+          if (e.key === 'ArrowUp' && !e.altKey && e.target.closest('[role="gridcell"]')) {
+            return;
+          }
           if (!('continuePropagation' in e)) {
             e.stopPropagation();
           }
