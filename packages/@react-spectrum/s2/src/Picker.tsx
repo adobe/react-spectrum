@@ -33,8 +33,10 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
+  checkbox,
   checkmark,
   description,
   icon,
@@ -64,6 +66,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
@@ -578,6 +581,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
+        let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
           <DefaultProvider
             context={IconContext}
@@ -592,7 +596,12 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                   description: {styles: description({...renderProps, size})}
                 }
               }}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !isLink && (
+                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                </div>
+              )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </DefaultProvider>
           </DefaultProvider>
