@@ -363,13 +363,13 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="outside" />
-            {show && (
+            {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
                 <input data-testid="input3" />
               </FocusScope>
-            )}
+            }
           </div>
         );
       }
@@ -395,7 +395,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="outside" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" autoFocus />
@@ -417,9 +417,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
 
       rerender(<Test />);
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(outside);
     });
@@ -431,7 +429,7 @@ describe('FocusScope', function () {
             <input data-testid="before" />
             <input data-testid="outside" />
             <input data-testid="after" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
@@ -463,7 +461,7 @@ describe('FocusScope', function () {
             <input data-testid="before" />
             <input data-testid="outside" />
             <input data-testid="after" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus>
                 <input data-testid="input1" autoFocus />
                 <input data-testid="input2" />
@@ -493,7 +491,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="outside" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
                 {showChild && <input data-testid="dynamic" />}
@@ -528,13 +526,13 @@ describe('FocusScope', function () {
             <input data-testid="before" />
             <button data-testid="trigger" />
             <input data-testid="after" />
-            {show && (
+            {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
                 <input data-testid="input3" />
               </FocusScope>
-            )}
+            }
           </div>
         );
       }
@@ -563,7 +561,7 @@ describe('FocusScope', function () {
             <input data-testid="before" />
             <button data-testid="trigger" />
             <input data-testid="after" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
@@ -594,7 +592,7 @@ describe('FocusScope', function () {
           <div>
             <input data-testid="before" />
             <button data-testid="trigger" />
-            {show && 
+            {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
@@ -630,7 +628,7 @@ describe('FocusScope', function () {
             <input data-testid="before" />
             <button data-testid="trigger" />
             <input data-testid="after-trigger" />
-            {show && 
+            {show &&
               <FocusScope autoFocus>
                 <input data-testid="input1" />
                 <input data-testid="input2" />
@@ -665,60 +663,40 @@ describe('FocusScope', function () {
       ${true}  | ${false}
       ${false} | ${true}
       ${true}  | ${true}
-    `(
-      'contain=$contain, isPortaled=$isPortaled should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM',
-      async function ({contain, isPortaled}) {
-        expect(focusScopeTree.size).toBe(1);
-        let {getAllByText, getAllByRole} = render(<StorybookExample contain={contain} isPortaled={isPortaled} />);
-        expect(focusScopeTree.size).toBe(1);
+    `('contain=$contain, isPortaled=$isPortaled should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM',
+    async function ({contain, isPortaled}) {
+      expect(focusScopeTree.size).toBe(1);
+      let {getAllByText, getAllByRole} = render(<StorybookExample contain={contain} isPortaled={isPortaled} />);
+      expect(focusScopeTree.size).toBe(1);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      await user.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      await user.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      await user.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      expect(focusScopeTree.size).toBe(4);
+      if (!contain) {
         act(() => {
-          getAllByText('Open dialog')[0].focus();
+          getAllByText('close')[1].focus();
         });
         await user.click(document.activeElement);
-        act(() => {
-          jest.runAllTimers();
-        });
-        expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
-        act(() => {
-          getAllByText('Open dialog')[1].focus();
-        });
-        await user.click(document.activeElement);
-        act(() => {
-          jest.runAllTimers();
-        });
-        expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
-        act(() => {
-          getAllByText('Open dialog')[2].focus();
-        });
-        await user.click(document.activeElement);
-        act(() => {
-          jest.runAllTimers();
-        });
-        expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
-        expect(focusScopeTree.size).toBe(4);
-        if (!contain) {
-          act(() => {
-            getAllByText('close')[1].focus();
-          });
-          await user.click(document.activeElement);
-        } else {
-          fireEvent.click(getAllByText('close')[1]);
-        }
-        act(() => {
-          jest.runAllTimers();
-        });
-        expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
-        act(() => {
-          getAllByText('close')[0].focus();
-        });
-        await user.click(document.activeElement);
-        act(() => {
-          jest.runAllTimers();
-        });
-        expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
-        expect(focusScopeTree.size).toBe(1);
+      } else {
+        fireEvent.click(getAllByText('close')[1]);
       }
-    );
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      await user.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+      expect(focusScopeTree.size).toBe(1);
+    });
 
     describe('focusable first in scope', function () {
       it('should restore focus to the first focusable or tabbable element within the scope when focus is lost within the scope', async function () {
@@ -726,15 +704,9 @@ describe('FocusScope', function () {
           <div>
             <FocusScope contain>
               <div role="dialog" data-testid="focusable" tabIndex={-1}>
-                <Item data-testid="tabbable1" autoFocus tabIndex={null}>
-                  Remove me!
-                </Item>
-                <Item data-testid="item1" tabIndex={0}>
-                  Remove me, too!
-                </Item>
-                <Item data-testid="item2" tabIndex={-1}>
-                  Remove me, three!
-                </Item>
+                <Item data-testid="tabbable1" autoFocus tabIndex={null}>Remove me!</Item>
+                <Item data-testid="item1" tabIndex={0}>Remove me, too!</Item>
+                <Item data-testid="item2" tabIndex={-1}>Remove me, three!</Item>
               </div>
             </FocusScope>
           </div>
@@ -774,7 +746,7 @@ describe('FocusScope', function () {
       function Test() {
         const [display, setDisplay] = useState(false);
         useEffect(() => {
-          let handleKeyDown = e => {
+          let handleKeyDown = (e) => {
             if (e.key === 'Escape') {
               setDisplay(false);
             }
@@ -787,10 +759,16 @@ describe('FocusScope', function () {
 
         return (
           <div>
-            <button data-testid="button1" type="button" onClick={() => setDisplay(state => !state)}>
+            <button
+              data-testid="button1"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
               {display ? 'Close dialog' : 'Open dialog'}
             </button>
-            <button data-testid="button2" type="button" onClick={() => setDisplay(state => !state)}>
+            <button
+              data-testid="button2"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
               {display ? 'Close dialog' : 'Open dialog'}
             </button>{' '}
             {display && (
@@ -806,32 +784,24 @@ describe('FocusScope', function () {
       let button1 = getByTestId('button1');
       let button2 = getByTestId('button2');
       await user.click(button1);
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(button1);
       let input1 = getByTestId('input1');
       expect(input1).toBeVisible();
 
       await user.click(button2);
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(button2);
       expect(input1).not.toBeInTheDocument();
 
       await user.click(button1);
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       input1 = getByTestId('input1');
       expect(input1).toBeVisible();
       await user.tab();
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(button2);
       expect(input1).not.toBeInTheDocument();
     });
@@ -847,11 +817,9 @@ describe('FocusScope', function () {
         return (
           <div ref={ref}>
             <button onClick={() => setShow(true)}>Show</button>
-            {show && (
-              <FocusScope restoreFocus>
-                <input autoFocus onKeyDown={() => setShow(false)} />
-              </FocusScope>
-            )}
+            {show && <FocusScope restoreFocus>
+              <input autoFocus onKeyDown={() => setShow(false)} />
+            </FocusScope>}
           </div>
         );
       }
@@ -881,11 +849,9 @@ describe('FocusScope', function () {
           <div ref={ref}>
             <FocusScope>
               <button onClick={() => setShow(true)}>Show</button>
-              {show && (
-                <FocusScope restoreFocus>
-                  <input autoFocus onKeyDown={() => setShow(false)} />
-                </FocusScope>
-              )}
+              {show && <FocusScope restoreFocus>
+                <input autoFocus onKeyDown={() => setShow(false)} />
+              </FocusScope>}
             </FocusScope>
           </div>
         );
@@ -916,9 +882,7 @@ describe('FocusScope', function () {
         </FocusScope>
       );
 
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
 
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
@@ -965,9 +929,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item1.focus();
-      });
+      act(() => {item1.focus();});
 
       await user.click(item1);
       expect(document.activeElement).toBe(item2);
@@ -1004,9 +966,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item1.focus();
-      });
+      act(() => {item1.focus();});
 
       await user.click(item1);
       expect(document.activeElement).toBe(item2);
@@ -1045,9 +1005,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item1.focus();
-      });
+      act(() => {item1.focus();});
 
       await user.click(item1);
       expect(document.activeElement).toBe(item3);
@@ -1113,7 +1071,7 @@ describe('FocusScope', function () {
         let onClick = () => {
           focusManager.focusNext({
             wrap: true,
-            accept: e => !e.getAttribute('data-skip')
+            accept: (e) => !e.getAttribute('data-skip')
           });
         };
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -1124,9 +1082,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item1.focus();
-      });
+      act(() => {item1.focus();});
 
       await user.click(item1);
       expect(document.activeElement).toBe(item3);
@@ -1160,9 +1116,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item3.focus();
-      });
+      act(() => {item3.focus();});
 
       await user.click(item3);
       expect(document.activeElement).toBe(item2);
@@ -1199,9 +1153,7 @@ describe('FocusScope', function () {
       let item2 = getByTestId('item2');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item3.focus();
-      });
+      act(() => {item3.focus();});
 
       await user.click(item3);
       expect(document.activeElement).toBe(item2);
@@ -1240,9 +1192,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item3.focus();
-      });
+      act(() => {item3.focus();});
 
       await user.click(item3);
       expect(document.activeElement).toBe(item1);
@@ -1310,7 +1260,7 @@ describe('FocusScope', function () {
         let onClick = () => {
           focusManager.focusPrevious({
             wrap: true,
-            accept: e => !e.getAttribute('data-skip')
+            accept: (e) => !e.getAttribute('data-skip')
           });
         };
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -1321,9 +1271,7 @@ describe('FocusScope', function () {
       let item1 = getByTestId('item1');
       let item3 = getByTestId('item3');
 
-      act(() => {
-        item1.focus();
-      });
+      act(() => {item1.focus();});
 
       await user.click(item1);
       expect(document.activeElement).toBe(item3);
@@ -1603,13 +1551,13 @@ describe('FocusScope', function () {
             <input data-testid="outside" />
             <FocusScope restoreFocus contain>
               <input data-testid="input1" />
-              {show && (
+              {show &&
                 <ChildComponent>
                   <FocusScope restoreFocus contain>
                     <input data-testid="input3" />
                   </FocusScope>
                 </ChildComponent>
-              )}
+              }
             </FocusScope>
           </div>
         );
@@ -1618,18 +1566,14 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
       // Set a focused node and make first FocusScope the active scope
       let input1 = getByTestId('input1');
-      act(() => {
-        input1.focus();
-      });
+      act(() => {input1.focus();});
       fireEvent.focusIn(input1);
       expect(document.activeElement).toBe(input1);
 
       rerender(<Test show />);
       expect(document.activeElement).toBe(input1);
       let input3 = getByTestId('input3');
-      act(() => {
-        input3.focus();
-      });
+      act(() => {input3.focus();});
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
     });
@@ -1658,29 +1602,19 @@ describe('FocusScope', function () {
       let child2 = getByTestId('child2');
       let child3 = getByTestId('child3');
 
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
       await user.tab();
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child2);
       await user.tab();
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
       await user.tab();
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
       await user.tab({shift: true});
-      act(() => {
-        jest.runAllTimers();
-      });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
     });
 
@@ -1810,21 +1744,21 @@ describe('FocusScope', function () {
             <input data-testid="outside" />
             <FocusScope autoFocus restoreFocus contain>
               <input data-testid="parent" />
-              {show1 && (
+              {show1 &&
                 <FocusScope contain>
                   <input data-testid="child1" />
-                  {show2 && (
+                  {show2 &&
                     <FocusScope contain>
                       <input data-testid="child2" />
-                      {show3 && (
+                      {show3 &&
                         <FocusScope contain>
                           <input data-testid="child3" />
                         </FocusScope>
-                      )}
+                      }
                     </FocusScope>
-                  )}
+                  }
                 </FocusScope>
-              )}
+              }
             </FocusScope>
           </div>
         );
@@ -1960,14 +1894,10 @@ describe('FocusScope', function () {
       let inScope = getByTestId('inScope');
       let afterScope = getByTestId('afterScope');
 
-      act(() => {
-        inScope.focus();
-      });
+      act(() => {inScope.focus();});
       await user.tab();
       expect(document.activeElement).toBe(afterScope);
-      act(() => {
-        inScope.focus();
-      });
+      act(() => {inScope.focus();});
       await user.tab({shift: true});
       expect(document.activeElement).toBe(beforeScope);
     });
@@ -2062,22 +1992,19 @@ describe('FocusScope with Shadow DOM', function () {
   });
   afterEach(() => {
     // make sure to clean up any raf's that may be running to restore focus on unmount
-    act(() => {
-      jest.runAllTimers();
-    });
+    act(() => {jest.runAllTimers();});
   });
 
   it('should contain focus within the shadow DOM scope', async function () {
     const {shadowRoot} = createShadowRoot();
-    const FocusableComponent = () =>
-      ReactDOM.createPortal(
-        <FocusScope contain>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-          <input data-testid="input3" />
-        </FocusScope>,
-        shadowRoot
-      );
+    const FocusableComponent = () => ReactDOM.createPortal(
+      <FocusScope contain>
+        <input data-testid="input1" />
+        <input data-testid="input2" />
+        <input data-testid="input3" />
+      </FocusScope>,
+      shadowRoot
+    );
 
     const {unmount} = render(<FocusableComponent />);
 
@@ -2086,9 +2013,7 @@ describe('FocusScope with Shadow DOM', function () {
     const input3 = shadowRoot.querySelector('[data-testid="input3"]');
 
     // Simulate focusing the first input
-    act(() => {
-      input1.focus();
-    });
+    act(() => {input1.focus();});
     expect(document.activeElement).toBe(shadowRoot.host);
     expect(shadowRoot.activeElement).toBe(input1);
 
@@ -2114,23 +2039,17 @@ describe('FocusScope with Shadow DOM', function () {
     parentShadowRoot.appendChild(nestedDiv);
     const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
 
-    const FocusableComponent = () =>
-      ReactDOM.createPortal(
-        <FocusScope contain>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-        </FocusScope>,
-        childShadowRoot
-      );
+    const FocusableComponent = () =>  ReactDOM.createPortal(<FocusScope contain>
+      <input data-testid="input1" />
+      <input data-testid="input2" />
+    </FocusScope>, childShadowRoot);
 
     const {unmount} = render(<FocusableComponent />);
 
     const input1 = childShadowRoot.querySelector('[data-testid=input1]');
     const input2 = childShadowRoot.querySelector('[data-testid=input2]');
 
-    act(() => {
-      input1.focus();
-    });
+    act(() => {input1.focus();});
     expect(childShadowRoot.activeElement).toBe(input1);
 
     await user.tab();
@@ -2163,28 +2082,23 @@ describe('FocusScope with Shadow DOM', function () {
     const shadowHost = document.getElementById('shadow-host');
     const shadowRoot = shadowHost.attachShadow({mode: 'open'});
 
-    const FocusableComponent = () =>
-      ReactDOM.createPortal(
-        <FocusScope restoreFocus>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-          <input data-testid="input3" />
-        </FocusScope>,
-        shadowRoot
-      );
+    const FocusableComponent = () => ReactDOM.createPortal(
+      <FocusScope restoreFocus>
+        <input data-testid="input1" />
+        <input data-testid="input2" />
+        <input data-testid="input3" />
+      </FocusScope>,
+      shadowRoot
+    );
 
     const {unmount} = render(<FocusableComponent />);
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
-    act(() => {
-      input1.focus();
-    });
+    act(() => { input1.focus(); });
     expect(shadowRoot.activeElement).toBe(input1);
 
     const externalInput = getByTestId('outside');
-    act(() => {
-      externalInput.focus();
-    });
+    act(() => { externalInput.focus(); });
     expect(document.activeElement).toBe(externalInput);
 
     act(() => {
@@ -2202,15 +2116,14 @@ describe('FocusScope with Shadow DOM', function () {
   it('should autofocus and lock tab navigation inside shadow DOM', async function () {
     const {shadowRoot, shadowHost} = createShadowRoot();
 
-    const FocusableComponent = () =>
-      ReactDOM.createPortal(
-        <FocusScope contain>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-          <button data-testid="button">Button</button>
-        </FocusScope>,
-        shadowRoot
-      );
+    const FocusableComponent = () => ReactDOM.createPortal(
+      <FocusScope contain>
+        <input data-testid="input1" />
+        <input data-testid="input2" />
+        <button data-testid="button">Button</button>
+      </FocusScope>,
+      shadowRoot
+    );
 
     const {unmount} = render(<FocusableComponent />);
 
@@ -2219,9 +2132,7 @@ describe('FocusScope with Shadow DOM', function () {
     const button = shadowRoot.querySelector('[data-testid="button"]');
 
     // Simulate focusing the first input and tab through the elements
-    act(() => {
-      input1.focus();
-    });
+    act(() => {input1.focus();});
     expect(shadowRoot.activeElement).toBe(input1);
 
     // Hit TAB key
@@ -2270,8 +2181,7 @@ describe('FocusScope with Shadow DOM', function () {
                 setIsPopoverOpen(false);
                 menuClosed = true;
               }}
-              style={{position: 'absolute', top: 0, right: 0}}
-            >
+              style={{position: 'absolute', top: 0, right: 0}}>
               Close
             </button>
             {/* Portal the popover overlay to simulate real-world usage */}
@@ -2287,8 +2197,7 @@ describe('FocusScope with Shadow DOM', function () {
                         <button
                           role="menuitem"
                           data-testid="menu-item-export"
-                          onClick={() => handleMenuAction('export')}
-                        >
+                          onClick={() => handleMenuAction('export')}>
                           Export Document
                         </button>
                       </div>
@@ -2314,7 +2223,7 @@ describe('FocusScope with Shadow DOM', function () {
     const exportMenuItem = shadowRoot.querySelector('[data-testid="menu-item-export"]');
     const menuContainer = shadowRoot.querySelector('[data-testid="menu-container"]');
     const popoverOverlay = shadowRoot.querySelector('[data-testid="popover-overlay"]');
-    const closeButton = shadowRoot.querySelector('[data-testid="close-popover"]');
+    // const closeButton = shadowRoot.querySelector('[data-testid="close-popover"]');
 
     // Verify the menu is initially visible in shadow DOM
     expect(popoverOverlay).not.toBeNull();
@@ -2368,7 +2277,7 @@ describe('FocusScope with Shadow DOM', function () {
 
     function ComplexWebComponent() {
       const [showModal, setShowModal] = React.useState(true);
-      const [showTooltip, setShowTooltip] = React.useState(true);
+      const [showTooltip] = React.useState(true);
 
       return (
         <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
@@ -2455,7 +2364,7 @@ describe('Unmounting cleanup', () => {
   });
 
   // this test will fail in the 'afterAll' if there are any rafs left over
-  it('should not leak request animation frames', () => {
+  it('should not leak request animation frames',  () => {
     let tree = render(
       <FocusScope restoreFocus contain>
         <button>Focus me</button>

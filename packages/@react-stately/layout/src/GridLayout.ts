@@ -126,7 +126,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(maxHorizontalSpace, Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
+    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
     this.gap = new Size(horizontalSpacing, minSpace.height);
     this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 

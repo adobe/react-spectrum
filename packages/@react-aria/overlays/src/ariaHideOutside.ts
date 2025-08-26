@@ -56,6 +56,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       element.setAttribute('aria-hidden', 'true');
     } else {
       element.removeAttribute('aria-hidden');
+      if (element instanceof windowObj.HTMLElement) {
+        // We only ever call setHidden with hidden = false when the nodeCount is 1 aka
+        // we are trying to make the element visible to screen readers again, so remove inert as well
+        element.inert = false;
+      }
     }
   };
 
