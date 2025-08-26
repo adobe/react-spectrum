@@ -394,6 +394,10 @@ export default function SearchMenu(props: SearchMenuProps) {
                       </div>
                     )}
                     <ComponentCardView
+                      onAction={() => {
+                        setSearchValue('');
+                        closeSearchMenu();
+                      }}
                       items={selectedItems.map(item => ({
                         id: item.id,
                         name: item.name,
