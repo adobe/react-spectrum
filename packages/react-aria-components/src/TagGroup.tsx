@@ -221,8 +221,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps,
     defaultClassName: 'react-aria-Tag',
     values: {
       ...states,
-      // TODO: check if I can get rid of useFocusRing
-      isFocusVisible: isFocusVisible || states.isFocusVisible,
+      isFocusVisible: isFocusVisible,
       isHovered,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
@@ -247,7 +246,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps,
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={isFocusVisible || states.isFocusVisible || undefined}
+      data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-allows-removing={states.allowsRemoving || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>

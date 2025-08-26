@@ -12,7 +12,7 @@
 
 import {chain, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, isFocusVisible, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
+import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -78,8 +78,6 @@ export interface SelectableItemStates {
   isSelected: boolean,
   /** Whether the item is currently focused. */
   isFocused: boolean,
-  /** Whether the item is keyboard focused. */
-  isFocusVisible: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
@@ -413,7 +411,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isPressed,
     isSelected: manager.isSelected(key),
     isFocused: manager.isFocused && manager.focusedKey === key,
-    isFocusVisible: manager.isFocused && manager.focusedKey === key && isFocusVisible(),
+    // TODO; the problem with this is that this will return true if focus actually moved to a child withing the item aka grid rows
+    // In that case manager.focusedKey hasn't actually changed and we'd ideally have some other state change that could inform us of a virtual focus move in this case
+    // For the non-virtual focus case, this isn't accurate either, but we need some hook level isFocusVisible for virtual focus styling. Alternative is
+    // to have the user call useFocusRing and somehow make that hook handle virtual focus events?
+    // isFocusVisible: manager.isFocused && manager.focusedKey === key && isFocusVisible(),
     isDisabled,
     allowsSelection,
     hasAction
