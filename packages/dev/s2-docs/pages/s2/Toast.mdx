@@ -111,7 +111,7 @@ Toasts may be programmatically dismissed if they become irrelevant before the us
 
 ```tsx render expanded
 "use client";
-import {Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Button, UNSTABLE_ToastQueue as ToastQueue, Text} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
@@ -130,7 +130,7 @@ function Example() {
         }
       }}
       variant="primary">
-      {close ? 'Hide' : 'Show'} Toast
+      <Text>{close ? 'Hide' : 'Show'} Toast</Text>
     </Button>
   );
 }
