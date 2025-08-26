@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeSection, TreeHeader, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
@@ -185,6 +185,61 @@ const TreeExampleStaticRender = (args) => (
   </Tree>
 );
 
+const TreeExampleSectionRender = (args) => (
+  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeSection>
+      <TreeHeader>Photo Header</TreeHeader>
+      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+      <StaticTreeItem id="edited photos" textValue="Edited photos">Edited Photos</StaticTreeItem>
+    </TreeSection>
+    <TreeSection>
+      <TreeHeader>Project Header</TreeHeader>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
+        </StaticTreeItem>
+      </StaticTreeItem>
+      <StaticTreeItem id="projects-4" textValue="Projects-4">Project-4</StaticTreeItem>
+    </TreeSection>
+    <TreeItem
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem
+      id="Tests"
+      textValue="Tests"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isFocused}) => (
+          <Text>{`${isFocused} Tests`}</Text>
+        )}
+      </TreeItemContent>
+    </TreeItem>
+  </Tree>
+);
+
 const TreeExampleStaticNoActionsRender = (args) => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItemNoActions id="Photos" textValue="Photos">Photos</StaticTreeItemNoActions>
@@ -260,6 +315,30 @@ export const TreeExampleStatic = {
     }
   }
 };
+
+export const TreeExampleSection = {
+  render: TreeExampleSectionRender,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    disallowClearAll: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+}
 
 export const TreeExampleStaticNoActions = {
   render: TreeExampleStaticNoActionsRender,

@@ -70,6 +70,7 @@ export {SegmentedControl, SegmentedControlItem, SegmentedControlContext} from '.
 export {Slider, SliderContext} from './Slider';
 export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
+export {SideNav, SideNavItem, SideNavItemContent, SideNavCategory, SideNavSection, SideNavHeader} from './SideNav';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';
 export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from './TableView';

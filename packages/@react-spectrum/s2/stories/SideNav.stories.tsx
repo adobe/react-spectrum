@@ -22,7 +22,10 @@ import {
   Text,
   SideNav,
   SideNavItem,
-  TreeViewItemContent
+  SideNavItemContent,
+  SideNavSection,
+  SideNavHeader,
+  SideNavCategory
 } from '../src';
 import {categorizeArgTypes} from './utils';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
@@ -49,29 +52,28 @@ const meta: Meta<typeof SideNav> = {
     // @ts-ignore
     onAction: null
   },
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onSelectionChange']),
-    onAction: {
-      options: Object.keys(onActionOptions), // An array of serializable values
-      mapping: onActionOptions, // Maps serializable option values to complex arg values
-      control: {
-        type: 'select', // Type 'select' is automatically inferred when 'options' is defined
-        labels: {
-          // 'labels' maps option values to string labels
-          onActionFunc: 'onAction enabled',
-          noOnAction: 'onAction disabled'
-        }
-      },
-      table: {category: 'Events'}
-    }
-  }
+  // argTypes: {
+  //   ...categorizeArgTypes('Events', ['onAction', 'onSelectionChange']),
+  //   onAction: {
+  //     options: Object.keys(onActionOptions), // An array of serializable values
+  //     mapping: onActionOptions, // Maps serializable option values to complex arg values
+  //     control: {
+  //       type: 'select', // Type 'select' is automatically inferred when 'options' is defined
+  //       labels: {
+  //         // 'labels' maps option values to string labels
+  //         onActionFunc: 'onAction enabled',
+  //         noOnAction: 'onAction disabled'
+  //       }
+  //     },
+  //     table: {category: 'Events'}
+  //   }
+  // }
 };
 
 export default meta;
 
-
 const SideNavExampleStatic = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
     <SideNav
       {...args}
       disabledKeys={['projects-1']}
@@ -79,21 +81,34 @@ const SideNavExampleStatic = (args) => (
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
       <SideNavItem id="Photos" textValue="Photos">
-        Photos
+        <SideNavItemContent>
+          <Text>Your files</Text>
+          <Folder />
+        </SideNavItemContent>
       </SideNavItem>
-      <SideNavItem id="projects" textValue="Projects">
-        Projects
+      <SideNavItem id="projects" textValue="Projects" counter={10}>
+        <SideNavItemContent>
+          <Text>Your libraries</Text>
+        </SideNavItemContent>
         <SideNavItem id="projects-1" textValue="Projects-1">
-          Projects-1
+          <SideNavItemContent>
+            <Text>Projects-1</Text>
+          </SideNavItemContent>
           <SideNavItem id="projects-1A" textValue="Projects-1A">
-            Projects-1A
+            <SideNavItemContent>
+              <Text>Projects-1A</Text>
+            </SideNavItemContent>
           </SideNavItem>
         </SideNavItem>
         <SideNavItem id="projects-2" textValue="Projects-2">
-          Projects-2
+          <SideNavItemContent>
+            <Text>Projects-2</Text>
+          </SideNavItemContent>
         </SideNavItem>
         <SideNavItem id="projects-3" textValue="Projects-3">
-          Project-3
+          <SideNavItemContent>
+            <Text>Projects-3</Text>
+          </SideNavItemContent>
         </SideNavItem>
       </SideNavItem>
     </SideNav>
@@ -103,6 +118,109 @@ const SideNavExampleStatic = (args) => (
 export const Example = {
   render: SideNavExampleStatic,
   args: {
-    selectionMode: 'multiple'
+    selectionMode: 'single'
+  }
+};
+
+const SideNavSectionsExample = (args) => (
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
+    <SideNav
+      {...args}
+      disabledKeys={['projects-1']}
+      aria-label="test static tree"
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      <SideNavSection>
+        <SideNavHeader>Side Navigation Title</SideNavHeader>
+        <SideNavItem id="Photos" textValue="Photos">
+          <SideNavItemContent>
+            <Text>Your files</Text>
+            <Folder />
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavSection>
+      <SideNavItem id="projects" textValue="Projects" counter={10}>
+        <SideNavItemContent>
+          <Text>Your libraries</Text>
+        </SideNavItemContent>
+        <SideNavItem id="projects-1" textValue="Projects-1">
+          <SideNavItemContent>
+            <Text>Projects-1</Text>
+          </SideNavItemContent>
+          <SideNavItem id="projects-1A" textValue="Projects-1A">
+            <SideNavItemContent>
+              <Text>Projects-1A</Text>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavItem id="projects-2" textValue="Projects-2">
+          <SideNavItemContent>
+            <Text>Projects-2</Text>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem id="projects-3" textValue="Projects-3">
+          <SideNavItemContent>
+            <Text>Projects-3</Text>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+    </SideNav>
+  </div>
+)
+
+export const SideNavSections = {
+  render: SideNavSectionsExample,
+  args: {
+    selectionMode: 'single'
+  }
+};
+
+const SideNavExampleCategory= (args) => (
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
+    <SideNav
+      {...args}
+      disabledKeys={['projects-1']}
+      aria-label="test static tree"
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      <SideNavItem id="Photos" textValue="Photos">
+        <SideNavItemContent>
+          <Text>Your files</Text>
+          <Folder />
+        </SideNavItemContent>
+      </SideNavItem>
+      <SideNavCategory id="projects" textValue="Projects" counter={10}>
+        <SideNavItemContent>
+          <Text>Your libraries</Text>
+        </SideNavItemContent>
+        <SideNavItem id="projects-1" textValue="Projects-1">
+          <SideNavItemContent>
+            <Text>Projects-1</Text>
+          </SideNavItemContent>
+          <SideNavItem id="projects-1A" textValue="Projects-1A">
+            <SideNavItemContent>
+              <Text>Projects-1A</Text>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavItem id="projects-2" textValue="Projects-2">
+          <SideNavItemContent>
+            <Text>Projects-2</Text>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem id="projects-3" textValue="Projects-3">
+          <SideNavItemContent>
+            <Text>Projects-3</Text>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavCategory>
+    </SideNav>
+  </div>
+);
+
+export const Category = {
+  render: SideNavExampleCategory,
+  args: {
+    selectionMode: 'single'
   }
 };

@@ -10,20 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSection, useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionContext, SectionProps} from './Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
+import {HeaderContext} from './Header';
+import { itemStyles } from 'tailwind-starter/ListBox';
+import { GridListHeader } from './GridList';
+
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
@@ -219,9 +223,11 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     onExpandedChange
   );
 
+  // console.log(collection);
   let flattenedCollection = useMemo(() => {
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
+  // console.log(flattenedCollection);
 
   let state = useTreeState({
     ...props,
@@ -398,7 +404,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
             values={[
               [TreeStateContext, state],
               [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-              [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
+              [DropIndicatorContext, {render: TreeDropIndicatorWrapper}],
+              [SectionContext, {name: 'TreeSection', render: TreeSectionInner}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
             <CollectionRoot
@@ -772,8 +779,8 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
   let flattenedRows: Node<T>[] = [];
 
-  let visitNode = (node: Node<T>) => {
-    if (node.type === 'item' || node.type === 'loader') {
+  let visitNode = (node: Node<T>, isInSection: boolean, index: number) => {
+    if (node.type === 'item' || node.type === 'loader' || node.type === 'header') {
       let parentKey = node?.parentKey;
       let clone = {...node};
       if (parentKey != null) {
@@ -784,18 +791,32 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
           clone.index = node?.index != null ? node?.index - 1 : 0;
         }
 
-        // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
+        // Items inside a section will need their levels decremented by one in order to be indented correctly
+        if (isInSection) {
+          // console.log(node, node.index, index);
+          clone.level = node?.level != null ? node?.level - 1 : 0;
+
+          if (clone.level === 0 && index > 1) {
+            clone.index = node.index + index - 2;
+          }
+        }
+
+        // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibling rows
         // (Collection only increments the level if it is a "item" type node).
         if (node.type === 'loader') {
           clone.level = node.level + 1;
         }
+
+        // if (node.level === 0 || clone.level === 1) {
+        //   clone.index = node.index + index - 2;
+        // }
 
         keyMap.set(clone.key, clone as CollectionNode<T>);
       } else {
         keyMap.set(node.key, node as CollectionNode<T>);
       }
 
-      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
+      if (node.level === 0 || clone.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
         // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
         flattenedRows.push(keyMap.get(node.key) || node);
       }
@@ -804,13 +825,20 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
     }
 
     for (let child of collection.getChildren(node.key)) {
-      visitNode(child);
+      visitNode(child, isInSection, index + 1);
     }
   };
 
+  let length = 0;
   for (let node of collection) {
-    visitNode(node);
+    if (node.prevKey && node.hasChildNodes && node.type === 'section') {
+      length += [...collection.getChildren(node.prevKey)].length - 1;
+    }
+    console.log('length', length);
+    visitNode(node, node.type === 'section', length);
   }
+
+  // console.log(flattenedRows);
 
   return {
     flattenedRows,
@@ -911,3 +939,52 @@ function RootDropIndicator() {
     </div>
   );
 }
+
+export interface TreeSectionProps<T> extends SectionProps<T> {}
+
+function TreeSectionInner<T extends object>(props: TreeSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-TreeSection') {
+  let state = useContext(TreeStateContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let [headingRef, heading] = useSlot();
+  let {headingProps, rowProps, rowGroupProps} = useGridListSection({
+    heading,
+    'aria-label': props['aria-label'] ?? undefined
+  });
+  let renderProps = useRenderProps({
+    defaultClassName: className,
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
+
+  return (
+    <section
+      {...filterDOMProps(props as any)}
+      {...rowGroupProps}
+      {...renderProps}
+      ref={ref}>
+      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={section}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} 
+          />
+      </HeaderContext.Provider>
+    </section>
+  );
+}
+
+export const TreeHeader = (props: HTMLAttributes<HTMLElement>): ReactNode => {
+  return (
+    <GridListHeader {...props}>
+      {props.children}
+    </GridListHeader>
+  )
+}
+
+/**
+ * A TreeSection represents a section within a Tree.
+ */
+export const TreeSection = /*#__PURE__*/ createBranchComponent('section', TreeSectionInner);
+
