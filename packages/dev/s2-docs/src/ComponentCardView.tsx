@@ -21,6 +21,7 @@ import ColorSwatchPickerSvg from '@react-spectrum/docs/pages/assets/component-il
 import ColorSwatchSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorSwatch.svg';
 import ColorWheelSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorWheel.svg';
 import ComboBoxSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ComboBox.svg';
+import ComingSoonSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ComingSoon.svg';
 import ContextualHelpSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ContextualHelp.svg';
 import DateFieldSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import DatePickerSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
@@ -172,25 +173,24 @@ interface ComponentCardGridProps {
   ariaLabel?: string,
   size?: 'S' | 'M' | 'L',
   onAction?: (key: Key) => void,
-  styles?: any
+  styles?: any,
+  renderEmptyState?: () => React.ReactNode
 }
 
-export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, styles}: ComponentCardGridProps) {
+export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, styles, renderEmptyState}: ComponentCardGridProps) {
   return (
-    <CardView aria-label={ariaLabel} onAction={onAction} styles={styles}>
+    <CardView aria-label={ariaLabel} onAction={onAction} styles={styles} renderEmptyState={renderEmptyState}>
       <Collection items={items}>
         {(item) => {
-          let IllustrationComponent = componentIllustrations[item.name];
+          let IllustrationComponent = componentIllustrations[item.name] || ComingSoonSvg;
           return (
             <Card key={item.id} id={item.id} href={item.href} size={size} textValue={item.name}>
-              {IllustrationComponent && (
-                <CardPreview>
-                  <IllustrationComponent
-                    aria-hidden="true"
-                    // @ts-ignore
-                    className={illustrationStyles} />
-                </CardPreview>
-              )}
+              <CardPreview>
+                <IllustrationComponent
+                  aria-hidden="true"
+                  // @ts-ignore
+                  className={illustrationStyles} />
+              </CardPreview>
               <Content>
                 <Text slot="title">{item.name}</Text>
               </Content>
