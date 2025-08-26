@@ -374,6 +374,11 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     if (lastFocusedNode) {
       dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);
     }
+
+    // Be sure to clear the stored active descendant on input blur so that we don't attempt to return focus to the previously virtually focused
+    // child when tabbing back onto the input. This should be handled by useSelectableCollection/useSelectableItem dispatching a virtual focus event on
+    // the previously focused element (aka it will restore focus to the row, not the previously focused child of said row)
+    queuedActiveDescendant.current = null;
   };
 
   let onFocus = (e: ReactFocusEvent) => {
