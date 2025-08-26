@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
 
-```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'isDisabled']} type="s2"
+```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'size', 'density', 'staticColor', 'isQuiet', 'isJustified', 'isDisabled']} type="s2"
 "use client";
 import {ToggleButtonGroup, ToggleButton, Text} from '@react-spectrum/s2';
 import TextBold from '@react-spectrum/s2/icons/TextBold';
@@ -30,125 +30,63 @@ import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
   </ToggleButton>
 </ToggleButtonGroup>
 ```
-## Content
-
-ToggleButtonGroups contain a collection of related ToggleButtons. They follow the Collection Components API, accepting both static and dynamic collections. Each button within the group can be toggled independently when using multiple selection, or as a group when using single selection.
-
-### Icon only
-
-```tsx render expanded
-"use client";
-import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2';
-import TextBold from '@react-spectrum/s2/icons/TextBold';
-import TextItalic from '@react-spectrum/s2/icons/TextItalic';
-import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
-
-<ToggleButtonGroup selectionMode="multiple">
-  <ToggleButton id="bold" aria-label="Bold">
-    <TextBold />
-  </ToggleButton>
-  <ToggleButton id="italic" aria-label="Italic">
-    <TextItalic />
-  </ToggleButton>
-  <ToggleButton id="underline" aria-label="Underline">
-    <TextUnderline />
-  </ToggleButton>
-</ToggleButtonGroup>
-```
 
 ## Selection
 
-ToggleButtonGroups support both single and multiple selection modes.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ToggleButtonGroup) for more details.
 
-### Multiple selection
-
-Multiple toggle buttons can be selected simultaneously.
-
-```tsx render expanded
+```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import {ToggleButtonGroup, ToggleButton, Text} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [selection, setSelection] = useState(new Set(['bold']));
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      <ToggleButtonGroup 
-        selectionMode="multiple" 
-        selectedKeys={selection} 
-        onSelectionChange={setSelection}>
-        <ToggleButton id="bold">Bold</ToggleButton>
-        <ToggleButton id="italic">Italic</ToggleButton>
-        <ToggleButton id="underline">Underline</ToggleButton>
-      </ToggleButtonGroup>
-      <div>Selected: {[...selection].join(', ') || 'none'}</div>
-    </div>
-  );
-}
-
-<Example />
-```
-
-### Single selection
-
-Only one toggle button can be selected at a time.
-
-```tsx render expanded
-"use client";
+import type {Key} from 'react-aria-components';
 import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2';
 import {useState} from 'react';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+import TextStrikeThrough from '@react-spectrum/s2/icons/TextStrikeThrough';
 
-function Example() {
-  let [selection, setSelection] = useState('left');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      <ToggleButtonGroup 
-        selectionMode="single" 
-        selectedKeys={[selection]} 
-        onSelectionChange={(keys) => setSelection([...keys][0])}>
-        <ToggleButton id="left">Left</ToggleButton>
-        <ToggleButton id="center">Center</ToggleButton>
-        <ToggleButton id="right">Right</ToggleButton>
-      </ToggleButtonGroup>
-      <div>Selected: {selection}</div>
-    </div>
-  );
-}
-
-<Example />
-```
-
-## Events
-
-ToggleButtonGroups support selection events through the `onSelectionChange` prop.
-
-```tsx render expanded
-"use client";
-import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [lastAction, setLastAction] = useState('');
+function Example(props) {
+  let [selected, setSelected] = useState(new Set<Key>(['bold']));
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      <ToggleButtonGroup 
-        selectionMode="multiple"
-        onSelectionChange={(keys) => setLastAction(`Selected: ${[...keys].join(', ') || 'none'}`)}>
-        <ToggleButton id="cut">Cut</ToggleButton>
-        <ToggleButton id="copy">Copy</ToggleButton>
-        <ToggleButton id="paste">Paste</ToggleButton>
+    <>
+      <ToggleButtonGroup
+        {...props}
+        aria-label="Text style"
+        density="compact"
+        /*- begin highlight -*/
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        {/*- end highlight -*/}
+        <ToggleButton id="bold" aria-label="Bold">
+          <TextBold />
+        </ToggleButton>
+        <ToggleButton id="italic" aria-label="Italic" isDisabled>
+          <TextItalic />
+        </ToggleButton>
+        <ToggleButton id="underline" aria-label="Underline">
+          <TextUnderline />
+        </ToggleButton>
+        <ToggleButton id="strike" aria-label="Strikethrough">
+          <TextStrikeThrough />
+        </ToggleButton>
       </ToggleButtonGroup>
-      <div>{lastAction}</div>
-    </div>
+      <p>Current selection: {[...selected].join(', ')}</p>
+    </>
   );
 }
-
-<Example />
 ```
 
-## Props
+## API
+
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html'}}
+<ToggleButtonGroup>
+  <ToggleButton />
+  <ToggleButton />
+</ToggleButtonGroup>
+```
+
+### ToggleButtonGroup
 
 <PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />

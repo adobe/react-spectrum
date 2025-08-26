@@ -40,7 +40,7 @@ import Anatomy from '@react-aria/tag/docs/anatomy.svg';
 
 ## Content
 
-`TagGroup` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
+`TagGroup` follows the [Collection Components API](collections.html?component=TagGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
 
 ```tsx render
 "use client";
@@ -66,7 +66,6 @@ function Example() {
       {/*- end highlight -*/}
       {(item) => <Tag>{item.name}</Tag>}
     </TagGroup>
-    /*- end highlight -*/
   );
 }
 ```
@@ -79,19 +78,23 @@ Use the `href` prop on a `<Tag>` to create a link. See the **client side routing
 "use client";
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 
-<TagGroup/* PROPS */>
+<TagGroup label="Photo categories">
   {/*- begin highlight -*/}
-  <Tag href="https://adobe.com/" target="_blank">Adobe</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
   {/*- end highlight -*/}
-  <Tag href="https://apple.com/" target="_blank">Apple</Tag>
-  <Tag href="https://google.com/" target="_blank">Google</Tag>
-  <Tag href="https://microsoft.com/" target="_blank">Microsoft</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
 </TagGroup>
 ```
 
 ### Empty state
 
-```tsx render hideImports
+Use `renderEmptyState` to render placeholder content when the TagList is empty.
+
+```tsx render
 "use client";
 import {TagGroup} from 'vanilla-starter/TagGroup';
 
@@ -104,7 +107,7 @@ import {TagGroup} from 'vanilla-starter/TagGroup';
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=TagGroup) for more details.
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";

@@ -43,7 +43,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 ## Content
 
-`Select` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`Select` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
@@ -137,7 +137,7 @@ function Example() {
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Select#single-selection) for more details.
 
 ```tsx render
 "use client";
@@ -174,14 +174,20 @@ function Example() {
 
 Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
-  <Select name="animal" isRequired description="Please select an animal.">
+  <Select
+    label="Animal"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <SelectItem id="aardvark">Aardvark</SelectItem>
     <SelectItem id="cat">Cat</SelectItem>
     <SelectItem id="dog">Dog</SelectItem>

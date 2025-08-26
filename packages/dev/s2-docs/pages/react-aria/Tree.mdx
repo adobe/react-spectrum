@@ -19,8 +19,7 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
   <Tree
     /* PROPS */
-    aria-label="Files"
-    defaultExpandedKeys={['documents', 'photos', 'project']}>
+    aria-label="Files">
     <TreeItem title="Documents">
       <TreeItem title="Project">
         <TreeItem title="Weekly Report" />
@@ -39,8 +38,7 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
   <Tree
     /* PROPS */
-    aria-label="Files"
-    defaultExpandedKeys={['documents', 'photos', 'project']}>
+    aria-label="Files">
     <TreeItem title="Documents">
       <TreeItem title="Project">
         <TreeItem title="Weekly Report" />
@@ -57,7 +55,7 @@ import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
 ## Content
 
-`Tree` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`Tree` follows the [Collection Components API](collections.html?component=Tree), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
 ```tsx render
 "use client";
@@ -66,41 +64,37 @@ import {Collection} from 'react-aria-components';
 
 ///- begin collapse -///
 let items = [
-  {id: '1', title: 'Documents', type: 'directory', children: [
-    {id: '2', title: 'Project', type: 'directory', children: [
-      {id: '3', title: 'Weekly Report', type: 'file', children: []},
-      {id: '4', title: 'Budget', type: 'file', children: []}
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
     ]}
   ]},
-  {id: '5', title: 'Photos', type: 'directory', children: [
-    {id: '6', title: 'Image 1', type: 'file', children: []},
-    {id: '7', title: 'Image 2', type: 'file', children: []}
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
   ]}
 ];
 ///- end collapse -///
 
-function Example() {
-  return (
-   <Tree
-      aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
-      items={items}
-      selectionMode="multiple">
-      {function renderItem(item) {
-        return (
-          <TreeItem title={item.title}>
-            {/*- begin highlight -*/}
-            {/* recursively render children */}
-            <Collection items={item.children}>
-              {renderItem}
-            </Collection>
-            {/*- end highlight -*/}
-          </TreeItem>
-        );
-      }}
-    </Tree>
-  );
-}
+<Tree
+  aria-label="Files"
+  defaultExpandedKeys={[1, 4]}
+  items={items}
+  selectionMode="multiple">
+  {function renderItem(item) {
+    return (
+      <TreeItem title={item.title}>
+        {/*- begin highlight -*/}
+        {/* recursively render children */}
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+        {/*- end highlight -*/}
+      </TreeItem>
+    );
+  }}
+</Tree>
 ```
 
 ### Asynchronous loading
@@ -112,7 +106,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 import {Collection, TreeLoadMoreItem} from 'react-aria-components';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string
@@ -157,10 +151,7 @@ function AsyncLoadingExample() {
   return (
     <Tree
       aria-label="Async loading tree"
-      style={{height: 300}}
-      renderEmptyState={() => (
-        <ProgressCircle isIndeterminate aria-label="Loading..." />
-      )}>
+      style={{height: 300}}>
       <TreeItem title="Pokemon">
         <Collection items={pokemonList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
@@ -192,9 +183,9 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=Tree#selection-behavior) for more details.
 
-```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
+```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 
@@ -226,9 +217,9 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 
 ### Empty state
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Tree} from 'vanilla-starter/Tree';
 
 <Tree
   aria-label="Search results"
@@ -239,7 +230,7 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tree) for more details.
 
 ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -288,7 +279,7 @@ function Example(props) {
 
 ## Drag and drop
 
-Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Tree) to learn more.
 
 ```tsx render
 "use client";

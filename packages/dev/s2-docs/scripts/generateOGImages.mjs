@@ -117,7 +117,8 @@ async function getComponentSvg(title) {
     // Replace SVG background to match container background
     svgContent = svgContent.replace(/background:\s*var\(--anatomy-gray-100\)/g, 'background: #f8f8f8');
     svgContent = svgContent.replace(/background:\s*#f4f6fc/g, 'background: #f8f8f8');
-    
+    svgContent = svgContent.replace(/var\(--anatomy-font\)/g, 'adobe-clean');
+
     // Convert SVG to data URI for use as image source
     const svgBase64 = Buffer.from(svgContent).toString('base64');
     return `data:image/svg+xml;base64,${svgBase64}`;
@@ -141,6 +142,9 @@ for (let file of files) {
 
   // Get component SVG if available
   const componentSvg = await getComponentSvg(title);
+  if (!componentSvg) {
+    continue;
+  }
 
   let svg = await satori(
     {

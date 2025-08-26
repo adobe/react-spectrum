@@ -11,14 +11,15 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={ColorField}
   docs={docs.exports.ColorField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid']}
+  links={docs.links}
+  props={['label', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{label: 'Color', defaultValue: '#ff0000'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-A ColorField's value can be a hex color string or individual color channel values. Use the `value` or `defaultValue` prop to set the initial value, and the `onChange` event to handle changes.
+Use the `value` or `defaultValue` prop to set the color value, and `onChange` to handle user input. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function. `onChange` is always called with a `Color` object.
 
 ```tsx render
 "use client";
@@ -30,62 +31,82 @@ function Example() {
   let [value, setValue] = useState(parseColor('#e73623'));
 
   return (
-    <>
+    <div>
       <ColorField
         label="Primary color"
         value={value}
         onChange={setValue} />
-      <p>Current value: {value.toString('hsl')}</p>
-    </>
+      <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
+    </div>
   );
 }
 ```
 
-## Channel editing
+## Channel
 
-ColorField can be used to edit individual color channels by specifying the `channel` prop. This allows users to input numeric values for specific color components.
+By default, ColorField displays a hex value. Set the `colorSpace` and `channel` props to display a specific color channel.
 
-```tsx render hideImports
+```tsx render
 "use client";
-import {ColorField} from '@react-spectrum/s2';
+import {ColorField, parseColor} from '@react-spectrum/s2';
+import {useState} from 'react';
 
-<div style={{display: 'flex', gap: 20, flexDirection: 'column'}}>
-  <ColorField
-    label="Red channel"
-    channel="red"
-    colorSpace="rgb"
-    defaultValue="rgb(255, 100, 50)" />
-  <ColorField
-    label="Hue"
-    channel="hue"
-    colorSpace="hsl"
-    defaultValue="hsl(200, 100%, 50%)" />
-  <ColorField
-    label="Alpha"
-    channel="alpha"
-    defaultValue="rgba(255, 100, 50, 0.8)" />
-</div>
+function Example() {
+  let [color, setColor] = useState(parseColor('#7f007f'));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <ColorField
+        label="Hue"
+        value={color}
+        onChange={setColor}
+        /*- begin highlight -*/
+        colorSpace="hsl"
+        channel="hue" />
+        {/*- end highlight -*/}
+      <ColorField
+        label="Saturation"
+        value={color}
+        onChange={setColor}
+        colorSpace="hsl"
+        channel="saturation" />
+      <ColorField
+        label="Lightness"
+        value={color}
+        onChange={setColor}
+        colorSpace="hsl"
+        channel="lightness" />
+      <pre style={{fontSize: 12}}>Current value: {color?.toString('hex')}</pre>
+    </div>
+  );
+}
 ```
 
-## Validation
+## Forms
 
-ColorField supports validation through the `isRequired` prop and custom validation functions. It integrates with forms and displays error states appropriately.
+Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.ColorField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}}
 "use client";
 import {ColorField, Button, Form} from '@react-spectrum/s2';
 
-<Form>
-  <ColorField
-    label="Brand color"
-    name="brandColor"
-    isRequired
-    description="Enter your brand's primary color."
-    errorMessage="Please enter a valid color value." />
-  <Button type="submit">Submit</Button>
-</Form>
+function Example(props) {
+  return (
+    <Form>
+      <ColorField
+        {...props}
+        label="Brand color"
+        ///- begin highlight -///
+        name="brandColor"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
 ```
 
-## Props
+## API
 
 <PropTable component={docs.exports.ColorField} links={docs.links} />

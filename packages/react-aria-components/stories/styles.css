@@ -398,3 +398,29 @@
     align-items: center
   }
 }
+
+.popover,
+.tooltip {
+  transition: scale 300ms, opacity 300ms;
+  transform-origin: var(--trigger-anchor-point);
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+    scale: 0.85;
+  }
+
+  :global(.react-aria-OverlayArrow) {
+    &[data-placement=bottom] svg {
+      transform: rotate(180deg);
+    }
+
+    &[data-placement=left] svg {
+      transform: rotate(-90deg);
+    }
+
+    &[data-placement=right] svg {
+      transform: rotate(90deg);
+    }
+  }
+}

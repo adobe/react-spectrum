@@ -17,6 +17,10 @@ let cache = new Map();
 let nodes = {};
 
 module.exports = new Packager({
+  async loadBundleConfig() {
+    cache = new Map();
+    nodes = {};
+  },
   async package({bundle, bundleGraph, options}) {
     let promises = [];
     bundle.traverseAssets(asset => {

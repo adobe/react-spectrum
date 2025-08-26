@@ -11,7 +11,8 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={TextField}
   docs={docs.exports.TextField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isDisabled', 'isReadOnly', 'isRequired']}
+  links={docs.links}
+  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
     label: 'Name'
   }}
@@ -20,99 +21,55 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {TextField} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState('me@email.com');
-
+  let [name, setName] = useState('');
+  
   return (
-    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+    <>
       <TextField
-        label="Email (Uncontrolled)"
-        defaultValue="me@email.com" />
-      <TextField
-        label="Email (Controlled)"
-        value={value}
-        onChange={setValue} />
-    </div>
+        label="Name"
+        ///- begin highlight -///
+        value={name}
+        onChange={setName} />
+      {/*- end highlight -*/}
+      <p>Your name: {name}</p>
+    </>
   );
 }
 ```
 
-## Input types
+## Forms
 
-TextField accepts various input types through the `type` prop, enabling specialized behavior for different data types like email, password, number, URL, and more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true, type: 'email'}}
 "use client";
-import {TextField} from '@react-spectrum/s2';
+import {TextField, Button, Form} from '@react-spectrum/s2';
 
-<div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
-  <TextField label="Email" type="email" placeholder="user@example.com" />
-  <TextField label="Password" type="password" />
-  <TextField label="Phone" type="tel" placeholder="(555) 123-4567" />
-  <TextField label="Website" type="url" placeholder="https://example.com" />
-</div>
-```
-
-## Events
-
-TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
-
-```tsx render hideImports
-"use client";
-import {TextField} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [text, setText] = useState('');
-
+function Example(props) {
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+    <Form>
       <TextField
-        onChange={setText}
-        label="Your text" />
-      <div>Mirrored text: {text}</div>
-    </div>
+        {...props}
+        label="Email"
+        ///- begin highlight -///
+        name="email"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
   );
 }
 ```
 
-## Validation
-
-TextField supports HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `type="email"`, `minLength`, and `pattern`, as well as custom validation functions and server-side validation.
-
-```tsx render hideImports
-"use client";
-import {TextField, Form, Button, ButtonGroup} from '@react-spectrum/s2';
-
-<Form validationBehavior="native" style={{maxWidth: 300}}>
-  <TextField label="Email" name="email" type="email" isRequired />
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
-</Form>
-```
-
-## HTML forms
-
-TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx render hideImports
-"use client";
-import {TextField} from '@react-spectrum/s2';
-
-<form>
-  <TextField label="Email" name="email" type="email" />
-</form>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.TextField} links={docs.links} />

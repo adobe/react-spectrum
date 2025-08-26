@@ -21,13 +21,36 @@ import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 
 ## Content
 
-SegmentedControls contain a collection of related SegmentedControlItems that represent mutually exclusive options. Only one option can be selected at a time, making them ideal for view switching and mode selection.
+SegmentedControlItem supports icons and text as children. When a visible label is omitted, provide an `aria-label`.
 
-### Icon only
+<ExampleSwitcher type={null} examples={['Icon + Text', 'Icon only']}>
 
-For more compact layouts, SegmentedControls can use only icons. Ensure each item has a descriptive `aria-label`.
+```tsx render
+"use client";
+import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
+import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
+import AlignRight from '@react-spectrum/s2/icons/AlignRight';
 
-```tsx render expanded
+<SegmentedControl aria-label="Text alignment">
+  <SegmentedControlItem id="left">
+    {/*- begin highlight -*/}
+    <AlignLeft />
+    <Text>Align left</Text>
+    {/*- end highlight -*/}
+  </SegmentedControlItem>
+  <SegmentedControlItem id="center">
+    <AlignCenter />
+    <Text>Align center</Text>
+  </SegmentedControlItem>
+  <SegmentedControlItem id="right">
+    <AlignRight />
+    <Text>Align right</Text>
+  </SegmentedControlItem>
+</SegmentedControl>
+```
+
+```tsx render
 "use client";
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
@@ -36,7 +59,9 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
 
 <SegmentedControl aria-label="Text alignment">
   <SegmentedControlItem id="left" aria-label="Align left">
+    {/*- begin highlight -*/}
     <AlignLeft />
+     {/*- end highlight -*/}
   </SegmentedControlItem>
   <SegmentedControlItem id="center" aria-label="Align center">
     <AlignCenter />
@@ -47,30 +72,13 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
 </SegmentedControl>
 ```
 
+</ExampleSwitcher>
+
 ## Selection
 
-SegmentedControls support both controlled and uncontrolled selection states.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of a `<SegmentedControlItem>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
 
-### Default selection
-
-Use `defaultSelectedKey` to set an initial selection in uncontrolled mode.
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-
-<SegmentedControl defaultSelectedKey="week" aria-label="Time granularity">
-  <SegmentedControlItem id="day">Day</SegmentedControlItem>
-  <SegmentedControlItem id="week">Week</SegmentedControlItem>
-  <SegmentedControlItem id="month">Month</SegmentedControlItem>
-</SegmentedControl>
-```
-
-### Controlled selection
-
-Use `selectedKey` and `onSelectionChange` for controlled selection state.
-
-```tsx render expanded
+```tsx render
 "use client";
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {useState} from 'react';
@@ -79,86 +87,34 @@ function Example() {
   let [selected, setSelected] = useState('month');
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      <SegmentedControl 
+    <div>
+      <SegmentedControl
+        /*- begin highlight -*/
         selectedKey={selected} 
         onSelectionChange={setSelected}
+        /*- end highlight -*/
         aria-label="Time granularity">
         <SegmentedControlItem id="day">Day</SegmentedControlItem>
-        <SegmentedControlItem id="week">Week</SegmentedControlItem>
+        <SegmentedControlItem id="week" isDisabled>Week</SegmentedControlItem>
         <SegmentedControlItem id="month">Month</SegmentedControlItem>
         <SegmentedControlItem id="year">Year</SegmentedControlItem>
       </SegmentedControl>
-      <div>Selected: {selected}</div>
+      <p>Selected: {selected}</p>
     </div>
   );
 }
-
-<Example />
 ```
 
+## API
 
-## States
-
-### Disabled
-
-The entire SegmentedControl can be disabled, or individual items can be disabled.
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-  <div>
-    <div style={{marginBottom: '8px', fontSize: '14px', fontWeight: '600'}}>Disabled control</div>
-    <SegmentedControl isDisabled aria-label="Disabled example">
-      <SegmentedControlItem id="option1">Option 1</SegmentedControlItem>
-      <SegmentedControlItem id="option2">Option 2</SegmentedControlItem>
-      <SegmentedControlItem id="option3">Option 3</SegmentedControlItem>
-    </SegmentedControl>
-  </div>
-  
-  <div>
-    <div style={{marginBottom: '8px', fontSize: '14px', fontWeight: '600'}}>Individual item disabled</div>
-    <SegmentedControl aria-label="Mixed disabled example">
-      <SegmentedControlItem id="enabled1">Enabled</SegmentedControlItem>
-      <SegmentedControlItem id="disabled" isDisabled>Disabled</SegmentedControlItem>
-      <SegmentedControlItem id="enabled2">Enabled</SegmentedControlItem>
-    </SegmentedControl>
-  </div>
-</div>
+```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem'}}
+<SegmentedControl>
+  <SegmentedControlItem>
+    <Icon />
+    <Text />
+  </SegmentedControlItem>
+</SegmentedControl>
 ```
-
-## Events
-
-SegmentedControls support selection change events that provide the selected key.
-
-```tsx render expanded
-"use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [lastAction, setLastAction] = useState('');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      <SegmentedControl 
-        onSelectionChange={(key) => setLastAction(`Selected: ${key}`)}
-        aria-label="Action tracking example">
-        <SegmentedControlItem id="view">View</SegmentedControlItem>
-        <SegmentedControlItem id="edit">Edit</SegmentedControlItem>
-        <SegmentedControlItem id="preview">Preview</SegmentedControlItem>
-      </SegmentedControl>
-      <div>{lastAction}</div>
-    </div>
-  );
-}
-
-<Example />
-```
-
-## Props
 
 ### SegmentedControl
 <PropTable component={docs.exports.SegmentedControl} links={docs.links} />

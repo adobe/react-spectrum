@@ -18,7 +18,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-A ColorSwatch displays a color value passed via the `color` prop. The value can be a string or Color object.
+A ColorSwatch displays a color value passed via the `color` prop. The value can be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object. When no color is provided or the color is transparent, a red slash will be displayed.
 
 ```tsx render
 "use client";
@@ -27,63 +27,40 @@ import {ColorSwatch} from '@react-spectrum/s2';
 <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
   <ColorSwatch color="#ff6600" />
   <ColorSwatch color="rgb(255, 0, 255)" />
-  <ColorSwatch color="hsl(120, 100%, 50%)" />
+  <ColorSwatch color="hsl(120, 100%, 42%)" />
   <ColorSwatch color="rgba(0, 150, 255, 0.5)" />
-</div>
-```
-
-## No value
-
-When no color is provided or the color is transparent, ColorSwatch displays a visual indicator (red slash) to represent the absence of a color.
-
-```tsx render
-"use client";
-import {ColorSwatch} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
   <ColorSwatch />
-  <ColorSwatch color="rgba(0, 0, 0, 0)" />
 </div>
 ```
 
 ## Custom sizing
 
-ColorSwatch can be resized using style overrides with the `styles` prop.
+ColorSwatch can be resized using the `styles` prop.
 
 ```tsx render
 "use client";
 import {ColorSwatch} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
-  <ColorSwatch
-    color="#06b6d4"
-    styles={style({width: 60, height: 60})} />
-  <ColorSwatch
-    color="#10b981"
-    styles={style({width: 80, height: 40})} />
-  <ColorSwatch
-    color="#f59e0b"
-    styles={style({width: 24, height: 48})} />
-</div>
+<ColorSwatch
+  color="#10b981"
+  styles={style({width: 80, height: 40})} />
 ```
 
-## Transparent colors
+## Accessibility
 
-ColorSwatch displays transparent colors with a checkerboard pattern underneath to show the alpha channel effect.
+By default, ColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue"). Use the `colorName` prop to override this. Set an `aria-label` to provide additional context. In this example, a screen reader will announce "Fire truck red, Background color".
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {ColorSwatch} from '@react-spectrum/s2';
 
-<div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
-  <ColorSwatch color="rgba(255, 0, 0, 1)" />
-  <ColorSwatch color="rgba(255, 0, 0, 0.7)" />
-  <ColorSwatch color="rgba(255, 0, 0, 0.4)" />
-  <ColorSwatch color="rgba(255, 0, 0, 0.1)" />
-</div>
+<ColorSwatch
+  color="#f00"
+  aria-label="Background color"
+  colorName="Fire truck red" />
 ```
 
-## Props
+## API
 
 <PropTable component={docs.exports.ColorSwatch} links={docs.links} />

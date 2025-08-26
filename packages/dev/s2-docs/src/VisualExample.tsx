@@ -90,6 +90,7 @@ export interface VisualExampleProps {
   code?: ReactNode,
   wide?: boolean,
   align?: 'center' | 'start' | 'end',
+  acceptOrientation?: boolean,
   propsObject?: string
 }
 
@@ -104,7 +105,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type, propsObject}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -166,7 +167,7 @@ export function VisualExample({component, docs, links, importSource, props, init
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
-        <Output align={align} />
+        <Output align={align} acceptOrientation={acceptOrientation} />
         <div className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>

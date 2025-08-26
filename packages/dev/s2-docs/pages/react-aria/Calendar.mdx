@@ -80,8 +80,7 @@ import {Calendar} from 'vanilla-starter/Calendar';
 ```tsx render
 "use client";
 import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
-import {GregorianCalendar} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {Calendar} from 'vanilla-starter/Calendar';
 
 export default (
@@ -244,7 +243,7 @@ function Example() {
     <div>
       <Button
         style={{marginBottom: 20}}
-        onClick={() => setFocusedDate(today(getLocalTimeZone()))}>
+        onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
         Today
       </Button>
       <Calendar

@@ -22,7 +22,7 @@ const GROUPS = {
     'minValue', 'maxValue', 'step', 'minLength', 'maxLength', 'pattern', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'validationErrors', 'necessityIndicator', 'description', 'errorMessage'
   ],
   Overlay: [
-    'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'menuWidth'
+    'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'offset', 'crossOffset', 'containerPadding', 'menuWidth'
   ],
   Events: [
     /^on[A-Z]/

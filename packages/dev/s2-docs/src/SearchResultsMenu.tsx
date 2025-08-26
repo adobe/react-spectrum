@@ -48,7 +48,7 @@ function CloseButton({closeSearchMenu}: {closeSearchMenu: () => void}) {
           <Close />
         </ActionButton>
       </Provider>
-    </div> 
+    </div>
   );
 }
 

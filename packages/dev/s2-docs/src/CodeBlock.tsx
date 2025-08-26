@@ -23,11 +23,11 @@ const example = style({
 });
 
 const standaloneCode = style({
-  '--code-padding': {
+  '--code-padding-x': {
     type: 'paddingTop',
     value: 32
   },
-  padding: '--code-padding',
+  padding: '--code-padding-x',
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',

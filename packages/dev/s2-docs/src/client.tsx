@@ -7,7 +7,7 @@ import type {ReactElement} from 'react';
 let updateRoot = hydrate({
   // Intercept HMR window reloads, and do it with RSC instead.
   onHmrReload() {
-    navigate(location.pathname);
+    navigate(location.pathname + location.search + location.hash);
   }
 });
 
@@ -43,11 +43,11 @@ document.addEventListener('click', e => {
     !e.defaultPrevented
   ) {
     e.preventDefault();
-    navigate(link.pathname, true);
+    navigate(link.pathname + link.search + link.hash, true);
   }
 });
 
 // When the user clicks the back button, navigate with RSC.
 window.addEventListener('popstate', () => {
-  navigate(location.pathname);
+  navigate(location.pathname + location.search + location.hash);
 });

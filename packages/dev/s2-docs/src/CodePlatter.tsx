@@ -9,7 +9,7 @@ import Download from '@react-spectrum/s2/icons/Download';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import More from '@react-spectrum/s2/icons/More';
+import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {ReactNode, useEffect, useRef, useState} from 'react';
@@ -81,10 +81,10 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
           </TooltipTrigger>
           {(shareUrl || files || type || registryUrl) && <MenuTrigger>
             <TooltipTrigger placement="end">
-              <ActionButton aria-label="Share">
-                <More />
+              <ActionButton aria-label="Open in…">
+                <OpenIn />
               </ActionButton>
-              <Tooltip>Share</Tooltip>
+              <Tooltip>Open in…</Tooltip>
             </TooltipTrigger>
             <Menu hideLinkOutIcon>
               {shareUrl && 
@@ -106,6 +106,41 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   }}>
                   <LinkIcon />
                   <Text slot="label">Copy link</Text>
+                </MenuItem>
+              }
+              {(files || type) && 
+                <MenuItem
+                  onAction={() => {
+                    let code = codeRef.current!.querySelector('pre')!.textContent!;
+                    let filesToDownload = getCodeSandboxFiles({
+                      ...files,
+                      'Example.tsx': transformExampleCode(code)
+                    }, type);
+                    let filesToZip = {};
+                    for (let key in filesToDownload) {
+                      if (filesToDownload[key]) {
+                        filesToZip[key] = filesToDownload[key].content;
+                      }
+                    }
+                    let blob = zip(filesToZip);
+
+                    let a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'example.zip';
+                    a.hidden = true;
+                    document.body.appendChild(a);
+
+                    a.click();
+                    a.remove();
+                  }}>
+                  <Download />
+                  <Text slot="label">Download ZIP</Text>
+                </MenuItem>
+              }
+              {registryUrl && 
+                <MenuItem onAction={() => setShowShadcn(true)}>
+                  <Prompt />
+                  <Text>Install with shadcn</Text>
                 </MenuItem>
               }
               {(files || type) && 
@@ -141,41 +176,6 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   rel="noopener noreferrer">
                   <V0 />
                   <Text>Open in v0</Text>
-                </MenuItem>
-              }
-              {registryUrl && 
-                <MenuItem onAction={() => setShowShadcn(true)}>
-                  <Prompt />
-                  <Text>Install with shadcn</Text>
-                </MenuItem>
-              }
-              {(files || type) && 
-                <MenuItem
-                  onAction={() => {
-                    let code = codeRef.current!.querySelector('pre')!.textContent!;
-                    let filesToDownload = getCodeSandboxFiles({
-                      ...files,
-                      'Example.tsx': transformExampleCode(code)
-                    }, type);
-                    let filesToZip = {};
-                    for (let key in filesToDownload) {
-                      if (filesToDownload[key]) {
-                        filesToZip[key] = filesToDownload[key].content;
-                      }
-                    }
-                    let blob = zip(filesToZip);
-
-                    let a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = 'example.zip';
-                    a.hidden = true;
-                    document.body.appendChild(a);
-
-                    a.click();
-                    a.remove();
-                  }}>
-                  <Download />
-                  <Text slot="label">Download ZIP</Text>
                 </MenuItem>
               }
             </Menu>

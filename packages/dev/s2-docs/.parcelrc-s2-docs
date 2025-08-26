@@ -1,6 +1,6 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-docs", "..."],
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "parcel-resolver-docs", "..."],
   "transformers": {
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
@@ -9,6 +9,7 @@
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],
     "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-postcss", "..."],
+    "*.mdx": ["./MDXTransformer.mjs", "..."],
     // Disable PostCSS from running over style macro output
     "*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],

@@ -105,7 +105,7 @@ export function Code({children, lang, hideImports = true, links}: ICodeProps) {
       }
     }
     
-    return <code>{renderChildren(lineNodes, 0, links)}</code>;
+    return <code>{renderChildren(lineNodes, '0', links)}</code>;
   }
 
   return <code className={style({font: {default: 'code-xs', lg: 'code-sm'}, backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
@@ -192,7 +192,7 @@ function lines(node: HastNode) {
   return resultLines;
 }
 
-function renderHast(node: HastNode | HastTextNode, key: number, links?: Links, indent = ''): ReactNode {
+function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, indent = ''): ReactNode {
   if (node.type === 'element' && 'children' in node) {
     let childArray: ReactNode[] = renderChildren(node.children, key, links);
     if (node.tagName === 'div') {
@@ -243,18 +243,17 @@ function renderHast(node: HastNode | HastTextNode, key: number, links?: Links, i
   }
 }
 
-function renderChildren(children: (HastNode | HastTextNode)[], key: number, links?: Links) {
+function renderChildren(children: (HastNode | HastTextNode)[], key: string, links?: Links) {
   let childArray: ReactNode[] = [];
   for (let [i, child] of children.entries()) {
     let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
-    let childNode = renderHast(child, key, links, indent);
+    let childNode = renderHast(child, `${key}.${i}`, links, indent);
     let childNodes = Array.isArray(childNode) ? childNode : [childNode];
     for (let childNode of childNodes) {
       if (typeof childNode === 'string' && typeof childArray.at(-1) === 'string') {
         childArray[childArray.length - 1] += childNode;
       } else {
         childArray.push(childNode);
-        key++;
       }
     }
   }

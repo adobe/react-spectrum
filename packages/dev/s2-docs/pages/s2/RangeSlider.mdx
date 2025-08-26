@@ -11,7 +11,8 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={RangeSlider}
   docs={docs.exports.RangeSlider}
-  props={['size', 'isEmphasized', 'trackStyle', 'thumbStyle', 'labelPosition', 'labelAlign']}
+  links={docs.links}
+  props={['label', 'trackStyle', 'thumbStyle', 'size', 'labelPosition', 'formatOptions', 'contextualHelp', 'isEmphasized', 'isDisabled']}
   initialProps={{
     label: 'Range',
     defaultValue: {start: 30, end: 60}
@@ -21,139 +22,53 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-RangeSliders are controlled with the `value` prop and uncontrolled with the `defaultValue` prop. This value consists of two parts, `start` and `end`. Both parts must fall between the RangeSlider's minimum and maximum values, which default to 0 and 100 respectively.
+Use the `value` or `defaultValue` prop to set the RangeSlider's value. The value is an object with `start` and `end` properties. The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {RangeSlider} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState({start: 25, end: 75});
-  
+  let [currentValue, setCurrentValue] = useState({start: 25, end: 75});
+  let [finalValue, setFinalValue] = useState(currentValue);
+
   return (
-    <div style={{display: 'flex', gap: 24, flexWrap: 'wrap'}}>
+    <>
       <RangeSlider
-        label="Range (uncontrolled)"
-        defaultValue={{start: 25, end: 75}} />
-      <RangeSlider
-        label="Range (controlled)"
-        value={value}
-        onChange={setValue} />
-    </div>
+        label="Cookies to buy"
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        onChange value: {JSON.stringify(currentValue)}{'\n'}
+        onChangeEnd value: {JSON.stringify(finalValue)}
+      </pre>
+    </>
   );
 }
 ```
 
-## Value scale
+### Value scale
 
-By default, range slider values are percentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+By default, slider values are percentages between 0 and 100. Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Steps are calculated starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
 
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
+<VisualExample
+  component={RangeSlider}
+  docs={docs.exports.RangeSlider}
+  links={docs.links}
+  type="s2"
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: {start: 25, end: 125},
+    step: 5
+  }} />
 
-<RangeSlider
-  label="Price range"
-  minValue={50}
-  maxValue={150}
-  defaultValue={{start: 75, end: 100}} />
-```
-
-## Number formatting
-
-The range slider value can be formatted by using the `formatOptions` prop. `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
-  <RangeSlider
-    label="Price range"
-    formatOptions={{style: 'currency', currency: 'USD'}}
-    defaultValue={{start: 75, end: 100}} />
-  
-  <RangeSlider
-    label="Completion range"
-    maxValue={1}
-    step={0.01}
-    formatOptions={{style: 'percent'}}
-    defaultValue={{start: 0.25, end: 0.75}} />
-</div>
-```
-
-## Range selection
-
-RangeSlider allows users to select a range between two values. The filled track shows the selected range between the start and end thumbs.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [range, setRange] = useState({start: 20, end: 80});
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <RangeSlider
-        label="Temperature range"
-        value={range}
-        onChange={setRange}
-        formatOptions={{style: 'unit', unit: 'celsius'}} />
-      <div>Selected range: {range.start}°C to {range.end}°C</div>
-    </div>
-  );
-}
-```
-
-## Events
-
-RangeSlider accepts `onChange` and `onChangeEnd` props which are triggered when the user interacts with the slider. The `onChange` prop is called as the user drags, while `onChangeEnd` is called when they finish dragging.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [value, setValue] = useState({start: 25, end: 75});
-  let [lastValue, setLastValue] = useState(value);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
-      <RangeSlider
-        label="Price filter"
-        value={value}
-        onChange={setValue}
-        onChangeEnd={setLastValue}
-        formatOptions={{style: 'currency', currency: 'USD'}} />
-      <div>Current range: ${value.start} - ${value.end}</div>
-      <div>Last range: ${lastValue.start} - ${lastValue.end}</div>
-    </div>
-  );
-}
-```
-
-## HTML forms
-
-RangeSlider supports the `startName` and `endName` props for integration with HTML forms. Each thumb will submit its value with the corresponding name.
-
-```tsx render hideImports
-"use client";
-import {RangeSlider} from '@react-spectrum/s2';
-
-<form>
-  <RangeSlider
-    label="Price range"
-    defaultValue={{start: 25, end: 75}}
-    startName="minPrice"
-    endName="maxPrice"
-    formatOptions={{style: 'currency', currency: 'USD'}} />
-</form>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.RangeSlider} links={docs.links} />

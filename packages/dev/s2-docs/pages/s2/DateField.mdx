@@ -11,124 +11,94 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={DateField}
   docs={docs.exports.DateField}
-  props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isReadOnly', 'isInvalid', 'granularity']}
+  props={['label', 'granularity', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{label: 'Birth date'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-A DateField displays a placeholder by default. An initial, uncontrolled value can be provided using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
-
-Date values are provided using objects from the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
-import {DateField} from '@react-spectrum/s2';
-import {parseDate} from '@internationalized/date';
-import {useState} from 'react';
-
-function Example() {
-  let [value, setValue] = useState(parseDate('2024-03-15'));
-
-  return (
-    <>
-      <DateField
-        label="Birth date"
-        value={value}
-        onChange={setValue} />
-      <p>Selected date: {value.toString()}</p>
-    </>
-  );
-}
-```
-
-## Time zones
-
-DateField is time zone aware when a ZonedDateTime object is provided as the value. In this case, the time zone abbreviation is displayed.
-
-```tsx render hideImports
-"use client";
-import {DateField} from '@react-spectrum/s2';
-import {parseZonedDateTime} from '@internationalized/date';
-
-<DateField
-  label="Event time"
-  defaultValue={parseZonedDateTime('2024-11-07T10:45[America/Los_Angeles]')}
-  granularity="minute" />
-```
-
-## Validation
-
-DateField supports validation through the `isRequired` prop and custom validation functions. It can be integrated with forms and displays error states appropriately.
-
-```tsx render hideImports
-"use client";
-import {DateField, Button, Form} from '@react-spectrum/s2';
-import {today, getLocalTimeZone} from '@internationalized/date';
-
-<Form>
-  <DateField
-    label="Appointment date"
-    name="appointmentDate"
-    isRequired
-    minValue={today(getLocalTimeZone())}
-    description="Select a future date for your appointment." />
-  <Button type="submit">Submit</Button>
-</Form>
-```
-
-## International calendars
-
-DateField supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale.
-
-```tsx render hideImports
-"use client";
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from 'react-aria';
 import {DateField} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [date, setDate] = useState(null);
+  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let formatter = useDateFormatter({ dateStyle: 'full' });
   
   return (
-    <div style={{fontFamily: 'system-ui'}}>
-      <DateField
-        label="تاریخ تولد"
-        value={date}
-        onChange={setDate} />
-      <p>Selected date: {date?.toString()}</p>
-    </div>
-  );
-}
-```
-
-## Events
-
-DateField accepts an `onChange` prop which is triggered whenever the date is edited by the user.
-
-```tsx render hideImports
-"use client";
-import {DateField} from '@react-spectrum/s2';
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-import {useState} from 'react';
-
-function Example() {
-  let [date, setDate] = useState(parseDate('2024-07-04'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
-
-  return (
     <>
       <DateField
-        label="Event date"
+        ///- begin highlight -///
         value={date}
         onChange={setDate} />
+      {/*- end highlight -*/}
       <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
 ```
 
-## Props
+### Format options
+
+The date format is automatically determined based on the user's locale. `DateField` supports several props to control how values are displayed.
+
+```tsx render docs={docs.exports.DateField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
+"use client";
+import {parseZonedDateTime} from '@internationalized/date';
+import {DateField} from '@react-spectrum/s2';
+
+<DateField
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
+```
+
+### International calendars
+
+By default, `DateField` displays the value using the calendar system for the user's locale. Use `<Provider>` to override the calendar system by setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). The `onChange` event always receives a date in the same calendar as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
+"use client";
+import {Provider, DateField} from '@react-spectrum/s2';
+import {parseZonedDateTime} from '@internationalized/date';
+
+<Provider/* PROPS */>
+  <DateField defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
+</Provider>
+```
+
+## Forms
+
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.DateField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+"use client";
+import {today, getLocalTimeZone} from '@internationalized/date';
+import {DateField, Form, Button} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <DateField
+        {...props}
+        label="Appointment date"
+        ///- begin highlight -///
+        name="date"
+        /* PROPS */
+        minValue={today(getLocalTimeZone())}
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
 
 <PropTable component={docs.exports.DateField} links={docs.links} />

@@ -139,10 +139,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     styles,
     placeholderValue,
     maxVisibleMonths = 1,
-    firstDayOfWeek,
     createCalendar,
-    pageBehavior,
-    isDateUnavailable,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -206,10 +203,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             <CalendarPopover>
               <Calendar
                 visibleMonths={maxVisibleMonths}
-                createCalendar={createCalendar}
-                firstDayOfWeek={firstDayOfWeek}
-                isDateUnavailable={isDateUnavailable}
-                pageBehavior={pageBehavior} />
+                createCalendar={createCalendar} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField

@@ -88,7 +88,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 ## Content
 
-`Table` follows the **Collection Components API**, accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -257,7 +257,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
@@ -375,7 +375,7 @@ function Example(props) {
 
 ## Sorting
 
-Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, the table will call `onSortChange` with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
+Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, `onSortChange` is called with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
 
 ```tsx render
 "use client";
@@ -408,7 +408,7 @@ function SortableTable() {
   }
 
   return (
-    <Table 
+    <Table
       aria-label="Favorite pokemon"
       ///- begin highlight -///
       sortDescriptor={sortDescriptor}
@@ -529,14 +529,14 @@ export default function ResizableTable() {
       <Table aria-label="Table with resizable columns">
         <TableHeader columns={columns} dependencies={[columnWidths]}>
           {column => (
-            <Column 
+            <Column
               isRowHeader={column.id === 'file'}
               ///- begin highlight -///
               width={columnWidths.get(column.id)}
               ///- end highlight -///
             >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <span tabIndex={-1} className="column-name">File Name</span>
+                <span tabIndex={-1} className="column-name">{column.name}</span>
                 <ColumnResizer />
               </div>
             </Column>
@@ -592,7 +592,7 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Table) to learn more.
 
 ```tsx render
 "use client";

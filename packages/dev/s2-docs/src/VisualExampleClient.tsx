@@ -4,7 +4,6 @@ import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, Conte
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {CodePlatter, Pre} from './CodePlatter';
-import {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {flushSync} from 'react-dom';
@@ -12,6 +11,7 @@ import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
+import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {useLocale} from 'react-aria';
 
@@ -103,7 +103,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   );
 }
 
-export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'}) {
+export function Output({align = 'center', acceptOrientation}: {align?: 'center' | 'start' | 'end', acceptOrientation?: boolean}) {
   let {component, props, propsObject} = useContext(Context);
 
   if (!isValidElement(component)) {
@@ -123,6 +123,13 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
     props = {...props, children};
   }
 
+  if (props.contextualHelp) {
+    props = {
+      ...props,
+      contextualHelp: <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp>
+    };
+  }
+
   if (propsObject) {
     props = {[propsObject]: props};
   }
@@ -131,7 +138,8 @@ export function Output({align = 'center'}: {align?: 'center' | 'start' | 'end'})
     <ExampleOutput
       component={component}
       props={props}
-      align={align} />
+      align={align}
+      orientation={acceptOrientation ? props.orientation : undefined} />
   );
 }
 
@@ -152,12 +160,13 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   }
 
   for (let prop in props) {
+    let value = props[prop];
     if (
-      props[prop] != null && 
+      value != null && 
       controls[prop] != null && 
-      (controls[prop].default == null || props[prop] !== controls[prop].default)
+      (controls[prop].default == null || value !== controls[prop].default)
     ) {
-      searchParams.set(prop, JSON.stringify(props[prop]));
+      searchParams.set(prop, JSON.stringify(value));
     }
   }
 
@@ -205,45 +214,47 @@ export function CodeProps({indent = ''}) {
   return renderedProps;
 }
 
-function renderElement(name: string, props: Props, controls?: Controls) {
+function renderElement(name: string, props: Props, controls?: Controls, indent = '') {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop], '  ')).filter(Boolean);
+  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop], '  ' + indent)).filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
-  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' : ' '}{p}</Fragment>);
+  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' + indent : ' '}{p}</Fragment>);
   if (props.children) {
     let end = <>&lt;/<span className={style({color: 'red-1000'})}>{name}</span>&gt;</>;
-    let children = renderChildren(props.children);
+    let children = renderChildren(props.children, indent);
     if (typeof children !== 'string') {
       newlines = true;
     }
-    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' : null}{children}{newlines ? '\n' : null}{end}</>;
+    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' + indent : null}{children}{newlines ? '\n' + indent : null}{end}</>;
   }
 
   return <>{start}{renderedProps} /&gt;</>;
 }
 
-function renderChildren(children) {
+function renderChildren(children, indent = '') {
   if (children?.icon || children?.avatar || children?.badge) {
     let result: ReactNode = null;
     if (children.avatar) {
-      result = renderElement('Avatar', {src: 'https://i.imgur.com/xIe7Wlb.png'});
+      result = renderElement('Avatar', {src: 'https://i.imgur.com/xIe7Wlb.png'}, undefined, indent);
     } else if (children.icon) {
-      result = renderElement(children.icon.replace(/^(\d)/, '_$1'), {});
+      result = renderElement(children.icon.replace(/^(\d)/, '_$1'), {}, undefined, indent);
     }
 
     if (children.text) {
-      let text = renderElement('Text', {children: children.text});
-      result = <>{result}{result ? '\n  ' : null}{text}</>;
+      let text = renderElement('Text', {children: children.text}, undefined, indent);
+      result = <>{result}{result ? '\n  ' + indent : null}{text}</>;
     }
 
     if (children.badge) {
-      let badge = renderElement('NotificationBadge', {value: 12});
-      result = <>{result}{result ? '\n  ' : null}{badge}</>;
+      let badge = renderElement('NotificationBadge', {value: 12}, undefined, indent);
+      result = <>{result}{result ? '\n  ' + indent : null}{badge}</>;
     }
     
     return result;
   } else if (children?.text) {
     return children.text;
+  } else if (Array.isArray(children)) {
+    return children.map((c, i) => <React.Fragment key={i}>{i > 0 ? '\n  ' + indent : null}{c}</React.Fragment>);
   }
 
   return children;
@@ -275,7 +286,17 @@ function renderProp(name: string, value: any, control?: PropControl, indent = ''
     if (value === false && control?.optional) {
       return null;
     }
-    propValue = value === false ? <>{'{'}<span className={style({color: 'magenta-1000'})}>{String(value)}</span>{'}'}</> : null;
+    if (name === 'contextualHelp') {
+      let res = renderElement('ContextualHelp', {
+        children: [
+          renderElement('Heading', {children: 'Heading'}),
+          renderElement('Content', {children: 'Content'})
+        ]
+      }, undefined, indent + '    ');
+      propValue = <>{`{\n    ${indent}`}{res}{`\n  ${indent}}`}</>;
+    } else {
+      propValue = value === false ? <>{'{'}<span className={style({color: 'magenta-1000'})}>{String(value)}</span>{'}'}</> : null;
+    }
   } else if (value == null) {
     return null;
   } else if (typeof value === 'object') {
@@ -354,6 +375,10 @@ function renderImports(name: string, importSource: string, props: Props) {
   if (components.length > 1 || props.children?.icon) {
     components.push('Text');
   }
+
+  if (props.contextualHelp) {
+    components.push('ContextualHelp', 'Heading', 'Content');
+  }
   
   imports.push(renderImport(components.join(', '), importSource));
 
@@ -398,7 +423,7 @@ export function Control({name}: {name: string}) {
         return <NumberFormatControl control={control} value={value} onChange={onChange} />;
       }
       if (name === 'contextualHelp') {
-        return <ContextualHelpControl control={control} value={value} onChange={onChange} />;
+        return <BooleanControl control={control} value={value} onChange={onChange} />;
       }
       if (control.value.name === 'ReactNode') {
         return <ChildrenControl control={control} value={value} onChange={onChange} />;
@@ -546,6 +571,8 @@ function NumberControl({control, value, onChange}: ControlProps) {
       value={value}
       onChange={onChange}
       styles={style({width: 130})}
+      minValue={control.options?.minValue}
+      maxValue={control.options?.maxValue}
       formatOptions={control.name === 'delay' || control.name === 'closeDelay' ? {
         style: 'unit',
         unit: 'millisecond'
@@ -708,14 +735,6 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
   }
 
   return <StringControl control={control} value={value} onChange={onChange} />;
-}
-
-function ContextualHelpControl({control, value, onChange}: ControlProps) {
-  return (
-    <Wrapper control={control}>
-      <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
-    </Wrapper>
-  );
 }
 
 
@@ -913,6 +932,7 @@ function DurationControl({control, value, onChange}: ControlProps) {
       label={control.name}
       contextualHelp={<PropContextualHelp control={control} />}
       value={value.months}
+      minValue={1}
       onChange={months => onChange({months})}
       styles={style({width: 130})}
       formatOptions={{

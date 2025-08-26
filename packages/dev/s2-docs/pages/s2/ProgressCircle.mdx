@@ -12,31 +12,27 @@ import docs from 'docs:@react-spectrum/s2';
   component={ProgressCircle}
   docs={docs.exports.ProgressCircle}
   props={['value', 'isIndeterminate', 'size', 'staticColor']}
-  initialProps={{ariaLabel: "Loading…", value: 50}}
+  initialProps={{'aria-label': "Loading…", value: 50}}
   controlOptions={{value: {control: 'slider'}}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-ProgressCircles are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
 
-```tsx render expanded
-"use client";
-import {ProgressCircle} from '@react-spectrum/s2';
+<VisualExample
+  component={ProgressCircle}
+  docs={docs.exports.ProgressCircle}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
 
-<ProgressCircle aria-label="Loading…" value={25} />
-```
-
-Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx render hideImports
-"use client";
-import {ProgressCircle} from '@react-spectrum/s2';
-
-<ProgressCircle aria-label="Loading…" minValue={50} maxValue={150} value={100} />
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.ProgressCircle} links={docs.links} />

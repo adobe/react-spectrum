@@ -17,23 +17,9 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 </InlineAlert>
 ```
 
-## Content
-
-Inline alerts contain a title and body. They also include an icon for non-neutral variants.
-
-```tsx render
-"use client";
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
-
-<InlineAlert variant="positive">
-  <Heading>Payment Information</Heading>
-  <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
-</InlineAlert>
-```
-
 ## Auto focus
 
-InlineAlert supports an `autoFocus` prop that automatically focuses the alert when it first renders. This is useful for dynamically displayed alerts that need immediate attention.
+Use the `autoFocus` prop to focus the alert when it first renders. This is useful for displaying alerts that need immediate attention, such as form submission errors.
 
 ```tsx render hideImports
 "use client";
@@ -59,6 +45,13 @@ function Example() {
 }
 ```
 
-## Props
+## API
+
+```tsx links={{InlineAlert: '#inlinealert'}}
+<InlineAlert>
+  <Heading />
+  <Content />
+</InlineAlert>
+```
 
 <PropTable component={docs.exports.InlineAlert} links={docs.links} />

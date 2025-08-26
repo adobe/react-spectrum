@@ -8,10 +8,10 @@ import {Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagG
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = currentPage.url.slice(0, currentPage.url.indexOf('/', 1));
+  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
   let sections = new Map();
   for (let page of pages) {
-    let library = page.url.slice(0, page.url.indexOf('/', 1));
+    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
     if (library !== currentLibrary) {
       continue;
     }

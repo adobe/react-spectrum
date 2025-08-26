@@ -11,7 +11,8 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={Meter}
   docs={docs.exports.Meter}
-  props={['value', 'variant', 'size', 'staticColor', 'labelPosition', 'label']}
+  links={docs.links}
+  props={['label', 'value', 'variant', 'size', 'staticColor', 'labelPosition', 'formatOptions', 'valueLabel']}
   initialProps={{label: "Storage space", value: 35}}
   controlOptions={{value: {control: 'slider'}}}
   importSource="@react-spectrum/s2"
@@ -19,82 +20,20 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-Meters are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
 
-```tsx render expanded
-"use client";
-import {Meter} from '@react-spectrum/s2';
+<VisualExample
+  component={Meter}
+  docs={docs.exports.Meter}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
 
-<Meter label="Storage space" value={25} />
-```
-
-Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx render hideImports
-"use client";
-import {Meter} from '@react-spectrum/s2';
-
-<Meter
-  label="Widgets Used"
-  minValue={50}
-  maxValue={150}
-  value={100} />
-```
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format. `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx render hideImports
-"use client";
-import {Meter} from '@react-spectrum/s2';
-
-<Meter
-  label="Currency"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  value={60} />
-```
-
-## Labeling
-
-The value label can be updated via the `valueLabel` prop in cases where showing a different scale makes sense.
-
-```tsx render hideImports
-"use client";
-import {Meter} from '@react-spectrum/s2';
-
-<Meter 
-  label="Progress" 
-  value={25} 
-  valueLabel="1 of 4" 
-  variant="notice" />
-```
-
-You can customize the format of the value using `formatOptions` or hide the value label entirely with `showValueLabel={false}`.
-
-```tsx render hideImports
-"use client";
-import {Meter} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-  <Meter
-    label="Space used"
-    showValueLabel={false}
-    value={90}
-    variant="negative" />
-
-  <Meter
-    label="Space used"
-    valueLabel="54 of 60GB"
-    value={90} 
-    variant="negative" />
-
-  <Meter
-    label="Space used"
-    formatOptions={{style: 'percent', minimumFractionDigits: 2}}
-    value={89.123}
-    variant="negative" />
-</div>
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.Meter} links={docs.links} />

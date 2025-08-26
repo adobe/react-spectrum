@@ -8,79 +8,21 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.RadioGroup.description}</PageDescription>
 
-```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isInvalid']} initialProps={{label: 'Favorite pet'}} type="s2"
+```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite pet'}} type="s2"
 import {RadioGroup, Radio} from '@react-spectrum/s2';
 
 <RadioGroup/* PROPS */>
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
-</RadioGroup>
-```
-
-## Content
-
-RadioGroup accepts multiple Radio elements as children. Each Radio represents an option that can be selected, labeled by its children.
-
-**Note:** A Radio cannot be used outside of a RadioGroup.
-
-```tsx render expanded
-"use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
-
-<RadioGroup label="Favorite pet">
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
-  <Radio value="birds">Birds</Radio>
+  <Radio value="cats">Cat</Radio>
+  <Radio value="dogs">Dog</Radio>
+  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
 ```
 
 ## Value
 
-RadioGroup only allows single selection. An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+Use the `value` or `defaultValue` prop to set the selected item, and `onChange` to handle selection changes.
 
-```tsx render hideImports
-"use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [selected, setSelected] = useState('yes');
-
-  return (
-    <div style={{display: 'flex', gap: 40}}>
-      <RadioGroup label="Are you a wizard? (uncontrolled)" defaultValue="yes">
-        <Radio value="yes">Yes</Radio>
-        <Radio value="no">No</Radio>
-      </RadioGroup>
-
-      <RadioGroup label="Are you a wizard? (controlled)" value={selected} onChange={setSelected}>
-        <Radio value="yes">Yes</Radio>
-        <Radio value="no">No</Radio>
-      </RadioGroup>
-    </div>
-  );
-}
-```
-
-### HTML forms
-
-RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
-
-```tsx render hideImports
-"use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
-
-<RadioGroup label="Favorite pet" name="pet">
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
-</RadioGroup>
-```
-
-## Events
-
-RadioGroup accepts an `onChange` prop, which is triggered when a user changes the selected value. The example below uses `onChange` to log how the user is interacting with the component.
-
-```tsx render hideImports
+```tsx render
 "use client";
 import {RadioGroup, Radio} from '@react-spectrum/s2';
 import {useState} from 'react';
@@ -90,38 +32,58 @@ function Example() {
 
   return (
     <>
-      <RadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
-        <Radio value="wizard">Wizard</Radio>
-        <Radio value="dragon">Dragon</Radio>
+      <RadioGroup
+        label="Favorite sport"
+        /*- begin highlight -*/
+        value={selected}
+        onChange={setSelected}>
+        {/*- end highlight -*/}
+        <Radio value="soccer">Soccer</Radio>
+        <Radio value="baseball">Baseball</Radio>
+        <Radio value="basketball">Basketball</Radio>
       </RadioGroup>
-      <div>You have selected: {selected}</div>
+      <p>Current selection: {selected || 'None'}</p>
     </>
   );
 }
 ```
 
-## Validation
+## Forms
 
-RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries.
+Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide
 "use client";
-import {RadioGroup, Radio, Form, ButtonGroup, Button} from '@react-spectrum/s2';
+import {RadioGroup, Radio, Button, Form} from '@react-spectrum/s2';
 
-<Form>
-  <RadioGroup label="Favorite pet" name="pet" isRequired>
-    <Radio value="dogs">Dog</Radio>
-    <Radio value="cats">Cat</Radio>
-    <Radio value="dragon">Dragon</Radio>
-  </RadioGroup>
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
-</Form>
+function Example(props) {
+  return (
+    <Form>
+      <RadioGroup
+        {...props}
+        label="Favorite pet"
+        /*- begin highlight -*/
+        name="pet"
+        /* PROPS */
+        /*- end highlight -*/
+      >
+        <Radio value="dog">Dog</Radio>
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dragon">Dragon</Radio>
+      </RadioGroup>
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
 ```
 
-## Props
+## API
+
+```tsx links={{RadioGroup: '#radiogroup', Radio: '#radio'}}
+<RadioGroup>
+  <Radio />
+</RadioGroup>
+```
 
 ### RadioGroup
 

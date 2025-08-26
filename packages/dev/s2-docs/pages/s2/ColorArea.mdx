@@ -12,114 +12,46 @@ import racDocs from 'docs:react-aria-components';
 <VisualExample
   component={ColorArea}
   docs={docs.exports.ColorArea}
+  links={docs.links}
   props={['colorSpace', 'xChannel', 'yChannel', 'isDisabled']}
-  initialProps={{defaultValue: 'hsl(30, 100%, 50%)', xChannel: 'saturation', yChannel: 'lightness'}}
+  initialProps={{defaultValue: 'hsl(0, 100%, 50%)'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the color value, and the `xChannel` and `yChannel` props to specify which color channels to display. The value may be a string or <TypeLink type={racDocs.exports.Color} links={racDocs.links} /> object, parsed using the <TypeLink type={racDocs.exports.parseColor} links={racDocs.links} /> function.
+Use the `value` or `defaultValue` prop to set the color value, and the `xChannel` and `yChannel` props to specify which color channels to display. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
 
-The `onChange` event is called as the user drags, and `onChangeEnd` is called when dragging ends.
+The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released. These are always called with a `Color` object.
 
 ```tsx render
 "use client";
-import {ColorArea} from '@react-spectrum/s2';
+import {ColorArea, parseColor} from '@react-spectrum/s2';
 import {useState} from 'react';
-import {parseColor} from '@react-stately/color';
 
 function Example() {
-  let [currentValue, setCurrentValue] = useState(parseColor('hsl(50, 100%, 50%)'));
-  let [finalValue, setFinalValue] = useState(parseColor('hsl(50, 100%, 50%)'));
+  let [currentValue, setCurrentValue] = useState(parseColor('#9B80FF'));
+  let [finalValue, setFinalValue] = useState(currentValue);
 
   return (
     <>
       <ColorArea
-        xChannel="saturation"
-        yChannel="lightness"
+        xChannel="red"
+        yChannel="green"
+        /*- begin highlight -*/
         value={currentValue}
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue} />
-      <p>Current value: {currentValue.toString('hsl')}</p>
-      <p>Final value: {finalValue.toString('hsl')}</p>
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        onChange value: {currentValue.toString('hex')}{'\n'}
+        onChangeEnd value: {finalValue.toString('hex')}
+      </pre>
     </>
   );
 }
 ```
 
-## Color spaces
-
-ColorArea supports the RGB, HSL, and HSB color spaces via the `colorSpace` prop. You can specify which color channels to display with the `xChannel` and `yChannel` props.
-
-```tsx render hideImports
-"use client";
-import {ColorArea} from '@react-spectrum/s2';
-
-<div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-  <div>
-    <h4>HSL</h4>
-    <ColorArea
-      colorSpace="hsl"
-      xChannel="saturation"
-      yChannel="lightness"
-      defaultValue="hsl(0, 100%, 50%)" />
-  </div>
-  <div>
-    <h4>HSB</h4>
-    <ColorArea
-      colorSpace="hsb"
-      xChannel="saturation"
-      yChannel="brightness"
-      defaultValue="hsb(0, 100%, 100%)" />
-  </div>
-  <div>
-    <h4>RGB</h4>
-    <ColorArea
-      colorSpace="rgb"
-      xChannel="red"
-      yChannel="green"
-      defaultValue="rgb(255, 0, 0)" />
-  </div>
-</div>
-```
-
-## Events
-
-ColorArea supports user interactions via mouse, keyboard, and touch. You can handle color changes via the `onChange` and `onChangeEnd` props.
-
-```tsx render hideImports
-"use client";
-import {ColorArea} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [events, setEvents] = useState([]);
-
-  let addEvent = (type, value) => {
-    setEvents(prev => [...prev.slice(-2), `${type}: ${value}`]);
-  };
-
-  return (
-    <>
-      <ColorArea
-        defaultValue="hsl(200, 100%, 50%)"
-        xChannel="saturation"
-        yChannel="lightness"
-        onChange={(value) => addEvent('onChange', value.toString('hsl'))}
-        onChangeEnd={(value) => addEvent('onChangeEnd', value.toString('hsl'))} />
-      <div style={{marginTop: 10}}>
-        {events.map((event, i) => (
-          <div key={i} style={{fontSize: 12, fontFamily: 'monospace'}}>
-            {event}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-```
-
-## Props
+## API
 
 <PropTable component={docs.exports.ColorArea} links={docs.links} />
