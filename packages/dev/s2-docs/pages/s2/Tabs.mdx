@@ -97,48 +97,11 @@ function Example() {
       </div>
       {/*- begin highlight -*/}
       <Collection items={tabs}>
-        {item => <TabPanel>{item.description}</TabPanel>}
+        {item => <TabPanel>{item.content}</TabPanel>}
       </Collection>
       {/*- end highlight -*/}
     </Tabs>
   )
-}
-```
-
-### Links
-
-Use the `href` prop on a `<Tab>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
-```tsx render
-"use client";
-import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
-import {useSyncExternalStore} from 'react';
-
-export default function Example() {
-  let hash = useSyncExternalStore(subscribe, getHash, getHashServer);
-  return (
-    <Tabs aria-label="Tabs" selectedKey={hash} aria-label="Tabs">
-      <TabList>
-        {/*- begin highlight -*/}
-        <Tab id="#/" href="#/">Home</Tab>
-        {/*- end highlight -*/}
-        <Tab id="#/shared" href="#/shared">Shared</Tab>
-        <Tab id="#/deleted" href="#/deleted">Deleted</Tab>
-      </TabList>
-      <TabPanel id="#/">Home</TabPanel>
-      <TabPanel id="#/shared">Shared</TabPanel>
-      <TabPanel id="#/deleted">Deleted</TabPanel>
-    </Tabs>
-  );
-}
-function getHash() {
-  return location.hash.startsWith('#/') ? location.hash : '#/';
-}
-function getHashServer() {
-  return '#/';
-}
-function subscribe(fn) {
-  addEventListener('hashchange', fn);
-  return () => removeEventListener('hashchange', fn);
 }
 ```
 
