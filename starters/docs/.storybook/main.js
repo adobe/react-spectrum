@@ -28,8 +28,12 @@ const config = {
   addons: [
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-links"),
+<<<<<<< HEAD
+=======
+    getAbsolutePath("@storybook/addon-essentials"),
+    getAbsolutePath("@storybook/addon-onboarding"),
+>>>>>>> parent of 114f89071 (chore: Storybook 8 using parcel builder (#8272))
     getAbsolutePath("@storybook/addon-interactions"),
-    getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
   ],
   framework: {
     name: getAbsolutePath("@storybook/react-webpack5"),

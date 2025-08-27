@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Well} from '../';
 
-type WellStory = StoryObj<typeof Well>;
+type WellStory = ComponentStoryObj<typeof Well>;
 
 let meta = {
   title: 'Well',
   component: Well
-} as Meta<typeof Well>;
+} as ComponentMeta<typeof Well>;
 
 export default meta;
 

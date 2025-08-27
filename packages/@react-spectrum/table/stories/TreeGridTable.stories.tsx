@@ -14,27 +14,19 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
 import {Key} from '@react-types/shared';
-import {Meta, StoryObj} from '@storybook/react';
-import React, {JSX, useState} from 'react';
+import React, {useState} from 'react';
 
 enableTableNestedRows();
 
 export default {
   ...defaultConfig,
-  title: 'TableView/Expandable rows',
-  excludeStories: [
-    'StaticExpandableRowsRender',
-    'DynamicExpandableRowsStoryRender',
-    'UserSetRowHeaderRender',
-    'ManyExpandableRowsStoryRender',
-    'EmptyTreeGridStoryRender',
-    'LoadingTreeGridStoryRender'
-  ]
-} as Meta<typeof TableView>;
+  title: 'TableView/Expandable rows'
+} as ComponentMeta<typeof TableView>;
 
 export const StaticExpandableRowsRender = (args: Omit<SpectrumTableProps<unknown>, 'children'>): JSX.Element => (
   <TableView aria-label="TableView with static expandable rows" width={500} height={200} UNSTABLE_defaultExpandedKeys={['row 1']} UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
@@ -239,7 +231,7 @@ function ManyExpandableRows(props: ManyExpandableRowsProps): JSX.Element {
   );
 }
 
-export const ManyExpandableRowsStory: StoryObj<typeof ManyExpandableRows> = {
+export const ManyExpandableRowsStory: ComponentStoryObj<typeof ManyExpandableRows> = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
     width: 500,

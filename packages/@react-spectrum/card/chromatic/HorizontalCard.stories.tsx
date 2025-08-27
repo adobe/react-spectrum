@@ -24,7 +24,7 @@ import {
   NoDescriptionSquare,
   WithIllustration
 } from './Card.stories';
-import {Meta} from '@storybook/react';
+import {ComponentMeta} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -33,7 +33,7 @@ export default {
   args: {
     orientation: 'horizontal'
   }
-} as Meta<typeof Card>;
+} as ComponentMeta<typeof Card>;
 
 export const Horizontal: CardStory = {
   ...Default,

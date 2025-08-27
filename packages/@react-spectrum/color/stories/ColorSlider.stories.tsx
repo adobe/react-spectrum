@@ -12,16 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorSlider, ColorSwatch} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
-import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
-export type ColorSliderStory = StoryObj<typeof ColorSlider>;
+export type ColorSliderStory = ComponentStoryObj<typeof ColorSlider>;
 
 export default {
   title: 'ColorSlider',
@@ -74,7 +74,7 @@ export default {
       control: 'text'
     }
   }
-} as Meta<typeof ColorSlider>;
+} as ComponentMeta<typeof ColorSlider>;
 
 export const Default: ColorSliderStory = {
   args: {defaultValue: '#800000', channel: 'red'},

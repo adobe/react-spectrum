@@ -12,11 +12,11 @@
 
 import {Badge} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
-import {Meta, StoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 
-type BadgeStory = StoryObj<typeof Badge>;
+type BadgeStory = ComponentStoryObj<typeof Badge>;
 
 export default {
   title: 'Badge',
@@ -29,7 +29,7 @@ export default {
       }
     }
   }
-} as Meta<typeof Badge>;
+} as ComponentMeta<typeof Badge>;
 
 export const Default: BadgeStory = {
   args: {children: 'Licensed', variant: 'positive'},

@@ -11,12 +11,12 @@
  */
 
 import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Switch} from '../';
 
-type SwitchStory = StoryObj<typeof Switch>;
+type SwitchStory = ComponentStoryObj<typeof Switch>;
 
 export default {
   title: 'Switch',
@@ -35,7 +35,7 @@ export default {
       action: 'blur'
     }
   }
-} as Meta<typeof Switch>;
+} as ComponentMeta<typeof Switch>;
 
 export const Default: SwitchStory = {
   args: {children: <>Switch Label</>}

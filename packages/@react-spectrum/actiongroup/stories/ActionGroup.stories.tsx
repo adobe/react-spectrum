@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
 import Brush from '@spectrum-icons/workflow/Brush';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
@@ -23,7 +24,6 @@ import {Flex} from '@react-spectrum/layout';
 import Heal from '@spectrum-icons/workflow/Heal';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
-import {Meta, StoryObj} from '@storybook/react';
 import MoveIcon from '@spectrum-icons/workflow/MoveTo';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
@@ -126,9 +126,9 @@ export default {
       options: ['show', 'hide', 'collapse']
     }
   }
-} as Meta<typeof ActionGroup>;
+} as ComponentMeta<typeof ActionGroup>;
 
-export type ActionGroupStory = StoryObj<typeof ActionGroup>;
+export type ActionGroupStory = ComponentStoryObj<typeof ActionGroup>;
 
 export const Default: ActionGroupStory = {
   args: {items: viewItems},

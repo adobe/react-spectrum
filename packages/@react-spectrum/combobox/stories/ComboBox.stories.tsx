@@ -19,6 +19,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
@@ -28,7 +29,6 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {useRef, useState} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
@@ -62,7 +62,7 @@ for (let i = 0; i < 50; i++) {
   lotsOfSections.push({name: 'Section ' + i, children});
 }
 
-export type ComboBoxStory = StoryObj<typeof ComboBox>;
+export type ComboBoxStory = ComponentStoryObj<typeof ComboBox>;
 
 export default {
   title: 'ComboBox',
@@ -207,7 +207,7 @@ export default {
       }
     }
   }
-} as Meta<typeof ComboBox>;
+} as ComponentMeta<typeof ComboBox>;
 
 export const Default: ComboBoxStory = {
   render: (args) => render(args),

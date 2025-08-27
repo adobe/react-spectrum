@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateField} from '../';
@@ -19,13 +20,12 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
-import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 
-export type DateFieldStory = StoryObj<typeof DateField>;
+export type DateFieldStory = ComponentStoryObj<typeof DateField>;
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
 export default {
@@ -160,7 +160,7 @@ export default {
       control: 'text'
     }
   }
-} as Meta<typeof DateField>;
+} as ComponentMeta<typeof DateField>;
 
 export const Default: DateFieldStory = {
   render: (args) => render(args)

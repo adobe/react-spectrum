@@ -11,12 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ComponentMeta} from '@storybook/react';
 import defaultConfig, {TableStory} from './Table.stories';
 import {Divider} from '@react-spectrum/divider';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, items, ReorderExample} from './TableDnDExamples';
 import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
-import {Meta} from '@storybook/react';
 import React from 'react';
 import {TableView} from '../';
 import {View} from '@react-spectrum/view';
@@ -24,7 +24,7 @@ import {View} from '@react-spectrum/view';
 export default {
   ...defaultConfig,
   title: 'TableView/Drag and Drop'
-} as Meta<typeof TableView>;
+} as ComponentMeta<typeof TableView>;
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const DragOutOfTable: TableStory = {

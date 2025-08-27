@@ -14,16 +14,16 @@ import {action} from '@storybook/addon-actions';
 import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {View} from '@react-spectrum/view';
 
-export type ButtonStory = StoryObj<typeof Button>;
+export type ButtonStory = ComponentStoryObj<typeof Button>;
 
 export default {
   title: 'Button',
@@ -36,8 +36,7 @@ export default {
     onPressUp: action('pressup'),
     onFocus: action('focus'),
     onBlur: action('blur'),
-    onKeyUp: action('keyup'),
-    variant: 'accent'
+    onKeyUp: action('keyup')
   },
   argTypes: {
     onPress: {
@@ -65,7 +64,8 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground']
+      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground'],
+      defaultValue: 'accent'
     },
     style: {
       control: 'select',
@@ -80,7 +80,7 @@ export default {
       defaultValue: false
     }
   }
-} as Meta<typeof Button>;
+} as ComponentMeta<typeof Button>;
 
 export const Default: ButtonStory = {
   render: (args) => render(args)

@@ -17,7 +17,7 @@ import {DatePicker} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from '@storybook/testing-library';
 
 export default {
   title: 'DatePicker',

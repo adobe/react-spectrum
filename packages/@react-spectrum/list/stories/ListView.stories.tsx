@@ -2,7 +2,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {Badge} from '@react-spectrum/badge';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -18,7 +18,6 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import {Item, ListView, SpectrumListViewProps} from '../';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {JSX, useEffect, useState} from 'react';
 import {useAsyncList, useListData} from '@react-stately/data';
@@ -138,9 +137,9 @@ export default {
       options: ['selection', 'all']
     }
   }
-} as Meta<typeof ListView>;
+} as ComponentMeta<typeof ListView>;
 
-export type ListViewStory = StoryObj<typeof ListView>;
+export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (

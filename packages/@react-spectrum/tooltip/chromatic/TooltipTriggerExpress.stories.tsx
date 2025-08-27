@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Meta} from '@storybook/react';
+import {ComponentMeta} from '@storybook/react';
 import {TooltipTrigger} from '../';
 import {default as tooltipTriggerDefault} from './TooltipTrigger.stories';
 
@@ -27,6 +27,6 @@ export default {
       pauseAnimationAtEnd: true
     }
   }
-} as Meta<typeof TooltipTrigger>;
+} as ComponentMeta<typeof TooltipTrigger>;
 
 export * from './TooltipTrigger.stories';

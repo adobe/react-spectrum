@@ -11,18 +11,18 @@
  */
 
 import Audio from '@spectrum-icons/workflow/Audio';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, TagGroup} from '../';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 
-export type TagGroupStory = StoryObj<typeof TagGroup>;
+export type TagGroupStory = ComponentStoryObj<typeof TagGroup>;
 
 export default {
   title: 'TagGroup',
   component: TagGroup
-} as Meta<typeof TagGroup>;
+} as ComponentMeta<typeof TagGroup>;
 
 let defaultItems = [
   {id: 1, label: 'Cool Tag 1'},

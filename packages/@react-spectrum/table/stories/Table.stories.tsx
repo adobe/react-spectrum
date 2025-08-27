@@ -16,6 +16,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
@@ -29,7 +30,6 @@ import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Key, LoadingState, SortDescriptor} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -123,9 +123,9 @@ export default {
       options: ['all', 'selection']
     }
   }
-} as Meta<typeof TableView>;
+} as ComponentMeta<typeof TableView>;
 
-export type TableStory = StoryObj<Omit<typeof TableView, 'children'>>;
+export type TableStory = ComponentStoryObj<typeof TableView>;
 
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
@@ -743,7 +743,7 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
   );
 };
 
-export const ShouldFillCellWidth: StoryObj<typeof TableViewFilledCellWidths> = {
+export const ShouldFillCellWidth: ComponentStoryObj<typeof TableViewFilledCellWidths> = {
   args: {
     'aria-label': 'TableView with filled cells',
     width: 500,

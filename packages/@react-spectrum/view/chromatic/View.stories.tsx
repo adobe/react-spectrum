@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 import {Button} from '@react-spectrum/button';
-import {Meta, StoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {View} from '../';
 
-type ViewStory = StoryObj<typeof View>;
+type ViewStory = ComponentStoryObj<typeof View>;
 
 let meta = {
   title: 'View',
   component: View
-} as Meta<typeof View>;
+} as ComponentMeta<typeof View>;
 
 export default meta;
 

@@ -55,11 +55,6 @@ export default [{
         "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
         "packages/@react-spectrum/s2/spectrum-illustrations",
-        "packages/dev/parcel-config-storybook/*",
-        "packages/dev/parcel-resolver-storybook/*",
-        "packages/dev/parcel-transformer-storybook/*",
-        "packages/dev/storybook-builder-parcel/*",
-        "packages/dev/storybook-react-parcel/*",
         "packages/dev/s2-docs/pages/**"
     ],
 }, ...compat.extends("eslint:recommended"), {

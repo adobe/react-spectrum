@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import React from 'react';
 import { ColorWheel } from '../src/ColorWheel';
 

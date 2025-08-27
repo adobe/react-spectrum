@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionBar} from '../src';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {useViewportSize} from '@react-aria/utils';
 
@@ -37,9 +37,9 @@ export default {
       options: ['show', 'hide', 'collapse']
     }
   }
-} as Meta<typeof ActionBar>;
+} as ComponentMeta<typeof ActionBar>;
 
-export type ActionBarStory = StoryObj<any>;
+export type ActionBarStory = ComponentStoryObj<any>;
 
 export const Default: ActionBarStory = {
   render: (args) => <Example {...args} />,

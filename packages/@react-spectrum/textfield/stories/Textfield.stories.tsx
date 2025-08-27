@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
+import {ComponentStoryObj} from '@storybook/react';
 import Info from '@spectrum-icons/workflow/Info';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
@@ -60,7 +61,7 @@ export default {
   }
 } as Meta<typeof TextField>;
 
-export type TextFieldStory = StoryObj<typeof TextField>;
+export type TextFieldStory = ComponentStoryObj<typeof TextField>;
 
 export const Default: TextFieldStory = {
   render: (args) => render(args)

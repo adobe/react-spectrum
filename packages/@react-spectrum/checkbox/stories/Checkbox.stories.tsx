@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-export type CheckboxStory = StoryObj<typeof Checkbox>;
+export type CheckboxStory = ComponentStoryObj<typeof Checkbox>;
 
 export default {
   title: 'Checkbox',
@@ -56,7 +56,7 @@ export default {
       control: 'boolean'
     }
   }
-} as Meta<typeof Checkbox>;
+} as ComponentMeta<typeof Checkbox>;
 
 export const Default: CheckboxStory = {
   render: (args) => render(args)

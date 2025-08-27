@@ -13,12 +13,12 @@
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {Avatar} from '@react-spectrum/avatar';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import {Link} from '@react-spectrum/link';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
 let manyItems: {key: number}[] = [];
@@ -102,9 +102,9 @@ export default {
     }
   },
   render: args => render(args)
-} as Meta<typeof TagGroup>;
+} as ComponentMeta<typeof TagGroup>;
 
-export type TagGroupStory = StoryObj<any>;
+export type TagGroupStory = ComponentStoryObj<any>;
 
 export const Default: TagGroupStory = {};
 

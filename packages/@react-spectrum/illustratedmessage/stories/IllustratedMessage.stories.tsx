@@ -9,19 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
-import {Meta, StoryObj} from '@storybook/react';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React from 'react';
 
-type IllustratedMessageStory = StoryObj<typeof IllustratedMessage>;
+type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;
 
 let meta = {
   title: 'IllustratedMessage',
   component: IllustratedMessage
-} as Meta<typeof IllustratedMessage>;
+} as ComponentMeta<typeof IllustratedMessage>;
 
 export default meta;
 

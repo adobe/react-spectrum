@@ -11,11 +11,11 @@ module.exports = {
     "@storybook/addon-a11y",
     "@storybook/addon-controls",
     "storybook-dark-mode",
-    './custom-addons/provider/register.js',
-    './custom-addons/descriptions/register.js',
-    './custom-addons/theme/register.js',
-    './custom-addons/strictmode/register.js',
-    './custom-addons/scrolling/register.js'
+    './custom-addons/provider/register',
+    './custom-addons/descriptions/register',
+    './custom-addons/theme/register',
+    './custom-addons/strictmode/register',
+    './custom-addons/scrolling/register'
   ],
 
   typescript: {
@@ -26,9 +26,5 @@ module.exports = {
   framework: {
     name: "storybook-react-parcel",
     options: {},
-  },
-
-  core: {
-    disableWhatsNewNotifications: true
   }
 };

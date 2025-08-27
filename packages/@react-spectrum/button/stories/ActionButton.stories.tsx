@@ -13,13 +13,13 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
-export type ActionButtonStory = StoryObj<typeof ActionButton>;
+export type ActionButtonStory = ComponentStoryObj<typeof ActionButton>;
 
 export default {
   title: 'Button/ActionButton',
@@ -57,7 +57,7 @@ export default {
       control: 'boolean'
     }
   }
-} as Meta<typeof ActionButton>;
+} as ComponentMeta<typeof ActionButton>;
 
 
 export const Default: ActionButtonStory = {

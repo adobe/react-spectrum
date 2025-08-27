@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb, Breadcrumbs } from '../src/Breadcrumbs';
 
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,

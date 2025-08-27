@@ -13,7 +13,6 @@
 import AlignBottom from '../s2wf-icons/S2_Icon_AlignBottom_20_N.svg';
 import AlignCenter from '../s2wf-icons/S2_Icon_AlignCenter_20_N.svg';
 import AlignLeft from '../s2wf-icons/S2_Icon_AlignLeft_20_N.svg';
-import {fn} from '@storybook/test';
 import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
 import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
@@ -31,10 +30,7 @@ const meta: Meta<typeof SegmentedControl> = {
     children: {table: {disable: true}}
   },
   tags: ['autodocs'],
-  title: 'SegmentedControl',
-  args: {
-    onSelectionChange: fn()
-  }
+  title: 'SegmentedControl'
 };
 
 export default meta;

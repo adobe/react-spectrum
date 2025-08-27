@@ -13,12 +13,12 @@
 
 import {Card} from '../index';
 import {CardStory} from './Card.stories';
+import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Horizontal} from '../chromatic/HorizontalCard.stories';
 import {Image} from '@react-spectrum/image';
-import {Meta} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -39,7 +39,7 @@ export default {
       }
     }
   }
-} as Meta<typeof Card>;
+} as ComponentMeta<typeof Card>;
 
 export const CardGrid: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,

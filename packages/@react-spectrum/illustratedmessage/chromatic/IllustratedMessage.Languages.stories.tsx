@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '..';
-import {Meta, StoryObj} from '@storybook/react';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React from 'react';
 
-type IllustratedMessageStory = StoryObj<typeof IllustratedMessage>;
+type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;
 
 export default {
   title: 'Languages/IllustratedMessage',
@@ -30,7 +30,7 @@ export default {
       scales: ['large', 'medium']
     }
   }
-} as Meta<typeof IllustratedMessage>;
+} as ComponentMeta<typeof IllustratedMessage>;
 
 export const _NotFound: IllustratedMessageStory = {
   render: () => (

@@ -3,11 +3,11 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Item, ListView} from '../';
 import {items} from './ListView.stories';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Text} from '@react-spectrum/text';
 
@@ -49,9 +49,9 @@ export default {
       options: ['selection', 'all']
     }
   }
-} as Meta<typeof ListView>;
+} as ComponentMeta<typeof ListView>;
 
-export type ListViewStory = StoryObj<typeof ListView>;
+export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (

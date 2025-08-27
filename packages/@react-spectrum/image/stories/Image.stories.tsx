@@ -9,16 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Image} from '../';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
-export type ImageStory = StoryObj<typeof Image>;
+export type ImageStory = ComponentStoryObj<typeof Image>;
 
 let meta = {
   title: 'Image',
   component: Image
-} as Meta<typeof Image>;
+} as ComponentMeta<typeof Image>;
 
 export default meta;
 

@@ -21,7 +21,9 @@ const config = {
   addons: [
     "@storybook/addon-essentials",
     "@storybook/addon-links",
-    "@storybook/addon-interactions"
+    "@storybook/addon-essentials",
+    "@storybook/addon-onboarding",
+    "@storybook/addon-interactions",
   ],
   framework: {
     name: "@storybook/react-vite",

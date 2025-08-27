@@ -17,7 +17,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,

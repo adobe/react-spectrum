@@ -13,19 +13,19 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
-import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
-export type CalendarStory = StoryObj<typeof Calendar>;
+export type CalendarStory = ComponentStoryObj<typeof Calendar>;
 
 export default {
   title: 'Date and Time/Calendar',
@@ -94,7 +94,7 @@ export default {
       control: 'text'
     }
   }
-} as Meta<typeof Calendar>;
+} as ComponentMeta<typeof Calendar>;
 
 export const Default: CalendarStory = {
   render: (args) => <Example {...args} />

@@ -13,10 +13,10 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
 import {Key} from '@react-types/shared';
-import {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
 import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {SpectrumStepListProps, StepList} from '../';
@@ -74,7 +74,7 @@ export default {
       }
     }
   }
-} as Meta<typeof StepList>;
+} as ComponentMeta<typeof StepList>;
 
 function DefaultStepList(props: SpectrumStepListProps<object>): JSX.Element {
   return (
@@ -84,8 +84,8 @@ function DefaultStepList(props: SpectrumStepListProps<object>): JSX.Element {
   );
 }
 
-export type DefaultStory = StoryObj<typeof DefaultStepList>;
-export type StepListStory = StoryObj<typeof StepList>;
+export type DefaultStory = ComponentStoryObj<typeof DefaultStepList>;
+export type StepListStory = ComponentStoryObj<typeof StepList>;
 
 export const Default: DefaultStory = {
   render: (args) => <DefaultStepList {...args} />

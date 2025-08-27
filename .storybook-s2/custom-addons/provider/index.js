@@ -1,17 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import {addons} from '@storybook/preview-api';
 import {makeDecorator} from '@storybook/preview-api';
+import {getQueryParams} from '@storybook/preview-api';
 // Importing from src so that HMR works.
-// Without this, all HMR updates will bubble through the index.ts and up
+// Without this, all HMR updates will bubble through the index.ts and up 
 // to the root instead of stopping at the story files.
 import {Provider} from '../../../packages/@react-spectrum/s2/src/Provider';
 
 document.body.style.margin = '0';
 
+const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
+  if (k.includes('providerSwitcher-')) {
+    return { ...acc, [k.replace('providerSwitcher-', '')]: v };
+  }
+  return acc;
+}, {});
+
 function ProviderUpdater(props) {
-  let params = new URLSearchParams(document.location.search);
-  let localeParam = params.get('providerSwitcher-locale') || undefined;
-  let [localeValue, setLocale] = useState(localeParam);
+  let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
 
   useEffect(() => {
     let channel = addons.getChannel();

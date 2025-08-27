@@ -17,17 +17,17 @@ import {
   WithColorfulIllustration as WithColorfulIllustrationStory,
   WithIllustration as WithIllustrationStory
 } from '../chromatic/Card.stories';
+import {ComponentMeta} from '@storybook/react';
 import {
   Default as DefaultCard,
   Selected as SelectedStory
 } from '../stories/Card.stories';
-import {Meta} from '@storybook/react';
 
 export default {
   title: 'Card/default',
   component: Card,
   excludeStories: ['WithColorfulIllustratedMessage']
-} as Meta<typeof Card>;
+} as ComponentMeta<typeof Card>;
 
 export const Default: CardStory = DefaultCard;
 

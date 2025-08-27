@@ -31,9 +31,6 @@ const config: StorybookConfig = {
   framework: {
     name: "storybook-react-parcel",
     options: {},
-  },
-  core: {
-    disableWhatsNewNotifications: true
   }
   // typescript: {
   //   reactDocgen: 'react-docgen-typescript',

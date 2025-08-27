@@ -14,7 +14,7 @@ import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWid
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../src';
-import {userEvent, waitFor, within} from '@storybook/test';
+import {userEvent, waitFor, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,

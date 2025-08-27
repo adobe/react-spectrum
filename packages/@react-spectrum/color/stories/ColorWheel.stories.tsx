@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorSwatch, ColorWheel} from '../';
-import {Flex, SpectrumColorWheelProps, useLocale} from '@adobe/react-spectrum';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Flex, useLocale} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
 import React, {JSX, useState} from 'react';
 
-export type ColorWheelStory = StoryObj<typeof ColorWheel>;
+export type ColorWheelStory = ComponentStoryObj<typeof ColorWheel>;
 
 export default {
   title: 'ColorWheel',
@@ -44,7 +44,7 @@ export default {
       control: 'text'
     }
   }
-} as Meta<typeof ColorWheel>;
+} as ComponentMeta<typeof ColorWheel>;
 
 export const Default: ColorWheelStory = {
   args: {defaultValue: 'hsl(0, 100%, 50%)'},

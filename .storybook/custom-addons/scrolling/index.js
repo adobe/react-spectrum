@@ -1,12 +1,11 @@
 import {addons} from '@storybook/preview-api';
 import clsx from 'clsx';
+import {getQueryParams} from '@storybook/preview-api';
 import React, {useEffect, useState} from 'react';
 
 function ScrollingDecorator(props) {
   let {children} = props;
-  let params = new URLSearchParams(document.location.search);
-  let scrolling = params.get('scrolling') || undefined;
-  let [isScrolling, setScrolling] = useState(scrolling === 'true' || false);
+  let [isScrolling, setScrolling] = useState(getQueryParams()?.scrolling === 'true' || false);
 
   useEffect(() => {
     let channel = addons.getChannel();

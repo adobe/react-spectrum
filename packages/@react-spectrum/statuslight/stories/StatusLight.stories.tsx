@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {StatusLight} from '../';
 
-type StatusLightStory = StoryObj<typeof StatusLight>;
+type StatusLightStory = ComponentStoryObj<typeof StatusLight>;
 
 export default {
   title: 'StatusLight',
@@ -29,7 +29,7 @@ export default {
       control: 'boolean'
     }
   }
-} as Meta<typeof StatusLight>;
+} as ComponentMeta<typeof StatusLight>;
 
 export const Default: StatusLightStory = {
   args: {children: 'Status light of love', variant: 'positive'},

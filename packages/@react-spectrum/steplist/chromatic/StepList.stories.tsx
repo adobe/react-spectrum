@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, StepList} from '../';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-export type StepListStory = StoryObj<typeof StepList>;
+export type StepListStory = ComponentStoryObj<typeof StepList>;
 
 export default {
   title: 'StepList',
@@ -22,7 +22,7 @@ export default {
   parameters: {
     chromaticProvider: {disableAnimations: true}
   }
-} as Meta<typeof StepList>;
+} as ComponentMeta<typeof StepList>;
 
 export const HorizontalS: StepListStory = {
   args: {

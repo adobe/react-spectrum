@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
-import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 
-export type CheckboxGroupStory = StoryObj<typeof CheckboxGroup>;
+export type CheckboxGroupStory = ComponentStoryObj<typeof CheckboxGroup>;
 
 export default {
   title: 'CheckboxGroup',
@@ -94,7 +94,7 @@ export default {
       control: 'text'
     }
   }
-} as Meta<typeof CheckboxGroup>;
+} as ComponentMeta<typeof CheckboxGroup>;
 
 export const Default: CheckboxGroupStory = {
   render: (args) => render(args)

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { HelpCircle } from 'lucide-react';
 import React from 'react';
 import { DialogTrigger, Heading } from 'react-aria-components';

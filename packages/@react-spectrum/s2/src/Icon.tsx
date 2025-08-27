@@ -142,7 +142,7 @@ export function createIllustration(Component: ComponentType<SVGProps<SVGSVGEleme
     let ref = useRef<SVGElement>(null);
     let ctx;
     [ctx, ref] = useSpectrumContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, IllustrationContext);
-    let {styles: ctxStyles} = ctx;
+    let {render, styles: ctxStyles} = ctx;
     let {
       UNSAFE_className,
       UNSAFE_style,
@@ -151,8 +151,6 @@ export function createIllustration(Component: ComponentType<SVGProps<SVGSVGEleme
       'aria-hidden': ariaHidden,
       size = ctx.size || 'M',
       styles,
-      // @ts-ignore
-      render,
       ...otherProps
     } = props;
 

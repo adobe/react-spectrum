@@ -13,7 +13,7 @@
 import {ActionMenu} from '../src';
 import {DynamicExample, Example} from '../stories/ActionMenu.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ActionMenu<any>> = {
   component: ActionMenu,
