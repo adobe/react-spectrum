@@ -72,7 +72,7 @@ export {RangeCalendar, RangeCalendarContext} from './RangeCalendar';
 export {RangeSlider, RangeSliderContext} from './RangeSlider';
 export {SearchField, SearchFieldContext} from './SearchField';
 export {SegmentedControl, SegmentedControlItem, SegmentedControlContext} from './SegmentedControl';
-export {SelectBox, SelectBoxContext, SelectBoxGroup} from './SelectBoxGroup';
+export {SelectBox, SelectBoxGroup, SelectBoxGroupContext} from './SelectBoxGroup';
 export {Slider, SliderContext} from './Slider';
 export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
