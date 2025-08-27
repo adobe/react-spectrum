@@ -60,6 +60,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
+  let prevSearchWasEmptyRef = useRef<boolean>(true);
   let headerRef = useRef<HTMLDivElement>(null);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
   let [sectionViewportHeight, setSectionViewportHeight] = useState<number | null>(null);
@@ -208,6 +209,25 @@ export function MobileNav({pages, currentPage}: PageProps) {
       .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
   };
 
+  let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
+    let librarySections = getSectionsForLibrary(libraryId);
+    let allPages = Array.from(librarySections.values()).flat();
+    let filteredPages = filterPages(allPages, searchValue);
+    return filteredPages
+      .sort((a, b) => title(a).localeCompare(title(b)))
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
+  };
+
+  let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
+    if (!section) {
+      return [];
+    }
+    if (section === 'all') {
+      return getAllContent(libraryId, searchValue);
+    }
+    return getSectionContent(section, libraryId, searchValue);
+  };
+
   let getSectionNamesForLibrary = (libraryId: string) => {
     let librarySections = getSectionsForLibrary(libraryId);
     let sectionArray = [...librarySections.keys()];
@@ -227,6 +247,31 @@ export function MobileNav({pages, currentPage}: PageProps) {
   };
 
   let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
+
+  let tags = useMemo(() => {
+    let base = currentLibrarySections.map(name => ({id: name, name}));
+    if (searchValue.trim().length > 0) {
+      return [{id: 'all', name: 'All'}, ...base];
+    }
+    return base;
+  }, [currentLibrarySections, searchValue]);
+
+  useEffect(() => {
+    let baseIds = currentLibrarySections;
+    let ids = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
+    if (!selectedSection || !ids.includes(selectedSection)) {
+      setSelectedSection(ids[0]);
+    }
+  }, [currentLibrarySections, searchValue, selectedSection]);
+
+  // Auto-select All when search starts
+  useEffect(() => {
+    let isEmpty = searchValue.trim().length === 0;
+    if (prevSearchWasEmptyRef.current && !isEmpty) {
+      setSelectedSection('all');
+    }
+    prevSearchWasEmptyRef.current = isEmpty;
+  }, [searchValue]);
 
 
   let handleTagSelection = (keys: any) => {
@@ -280,10 +325,9 @@ export function MobileNav({pages, currentPage}: PageProps) {
                 selectionMode="single" 
                 selectedKeys={selectedSection ? [selectedSection] : []}
                 onSelectionChange={handleTagSelection}
-                styles={style({margin: 12})}>
-                {currentLibrarySections.map(sectionName => (
-                  <Tag key={sectionName} id={sectionName}>{sectionName}</Tag>
-                ))}
+                styles={style({margin: 12})}
+                items={tags}>
+                {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
               </TagGroup>
             </div>
             <div
@@ -294,7 +338,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
                 overflowY: 'auto'
               } as React.CSSProperties}>
               <ComponentCardView
-                items={selectedSection ? getSectionContent(selectedSection, library.id, searchValue) : []}
+                items={getItemsForSelection(selectedSection, library.id, searchValue)}
                 ariaLabel="Pages"
                 size="S" />
             </div>
