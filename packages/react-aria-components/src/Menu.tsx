@@ -241,7 +241,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         data-empty={state.collection.size === 0 || undefined}
-        data-react-aria-incomplete={!(state.collection as BaseCollection<T>).isComplete || undefined}
+        // data-react-aria-incomplete={!(state.collection as BaseCollection<T>).isComplete || undefined}
         onScroll={props.onScroll}>
         <Provider
           values={[

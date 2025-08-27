@@ -28,7 +28,7 @@ export type MenuStory = StoryFn<typeof Menu>;
 export const MenuExample: MenuStory = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
-    <Popover>
+    <Popover placement="bottom right">
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MenuSection className={styles.group} aria-label={'Section 1'}>
           <MyMenuItem>Foo</MyMenuItem>
