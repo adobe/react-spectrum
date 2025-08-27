@@ -125,8 +125,14 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         state.setFocusedNodeId(target.id);
       }
     } else {
-      queuedActiveDescendant.current = null;
-      state.setFocusedNodeId(null);
+      // TODO: if we recieve a focus event refocusing the collection, either we have newly refocused the input and are waiting for the
+      // wrapped collection to refocus the previously focused node if any OR
+      // we are in a state where we've filtered to such a point that there aren't any matching items in the collection to focus.
+      // In this case we want to clear tracked item if any and clear active descendant
+      if (queuedActiveDescendant.current && !document.getElementById(queuedActiveDescendant.current)) {
+        queuedActiveDescendant.current = null;
+        state.setFocusedNodeId(null);
+      }
     }
 
     delayNextActiveDescendant.current = false;
@@ -233,8 +239,16 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       case 'Tab':
         // If collection doesn't have virtual focus yet, then we want tab to move into the collection but prevent default browser
         // behavior so focus isn't lost from the input
-        if (!focusedNodeId && !disableVirtualFocus) {
+        if (!focusedNodeId && !disableVirtualFocus && !e.shiftKey) {
           e.preventDefault();
+          // Make it so input loses focus styles when tabbing forward into the collection
+          // TODO: the alternative to this if we don't want to make tabbing forward into the collection a thing is to manually move focus to the next
+          // focusable item after the collection, otherwise we run into the case where the browser will move real focus to a tabbale element in the wrapped collection
+          queueMicrotask(() => {
+            dispatchVirtualBlur(inputRef.current!, collectionRef.current);
+            dispatchVirtualFocus(collectionRef.current!, inputRef.current);
+          });
+          return;
         }
 
         // Propagate Tab down to the collection so that tabbing foward will hit our special logic to treat the collection
@@ -374,11 +388,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     if (lastFocusedNode) {
       dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);
     }
-
-    // Be sure to clear the stored active descendant on input blur so that we don't attempt to return focus to the previously virtually focused
-    // child when tabbing back onto the input. This should be handled by useSelectableCollection/useSelectableItem dispatching a virtual focus event on
-    // the previously focused element (aka it will restore focus to the row, not the previously focused child of said row)
-    queuedActiveDescendant.current = null;
   };
 
   let onFocus = (e: ReactFocusEvent) => {
@@ -390,8 +399,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     if (curFocusedNode) {
       let target = e.target;
       queueMicrotask(() => {
-        dispatchVirtualBlur(target, curFocusedNode);
-        dispatchVirtualFocus(curFocusedNode, target);
+        // instead of focusing the last focused node, just focus the collection instead and have the collection handle what item to focus via useSelectableCollection/Item
+        dispatchVirtualBlur(target, collectionRef.current);
+        dispatchVirtualFocus(collectionRef.current!, target);
       });
     }
   };

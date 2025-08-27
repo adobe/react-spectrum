@@ -128,16 +128,20 @@ function AutocompleteWrapper(props) {
 export const AutocompleteExample: AutocompleteStory = {
   render: (args) => {
     return (
-      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
-        <div>
-          <TextField autoFocus data-testid="autocomplete-example">
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </TextField>
-          <StaticMenu {...args} />
-        </div>
-      </AutocompleteWrapper>
+      <>
+        <input />
+        <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+          <div>
+            <TextField autoFocus data-testid="autocomplete-example">
+              <Label style={{display: 'block'}}>Test</Label>
+              <Input />
+              <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+            </TextField>
+            <StaticMenu {...args} />
+          </div>
+        </AutocompleteWrapper>
+        <input />
+      </>
     );
   },
   name: 'Autocomplete complex static with textfield'

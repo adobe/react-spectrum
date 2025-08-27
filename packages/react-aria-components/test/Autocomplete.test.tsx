@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -196,13 +196,13 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
-// let StaticGridList = (props) => (
-//   <GridList aria-label="test gridlist" {...props}>
-//     <GridListItem id="1">Foo</GridListItem>
-//     <GridListItem id="2">Bar</GridListItem>
-//     <GridListItem id="3">Baz</GridListItem>
-//   </GridList>
-// );
+let StaticGridList = (props) => (
+  <GridList aria-label="test gridlist" {...props}>
+    <GridListItem id="1">Foo</GridListItem>
+    <GridListItem id="2">Bar</GridListItem>
+    <GridListItem id="3">Baz</GridListItem>
+  </GridList>
+);
 
 let StaticTable = (props) => (
   <Table aria-label="test table" {...props}>
@@ -231,16 +231,16 @@ let StaticTable = (props) => (
   </Table>
 );
 
-// let StaticTagGroup = (props) => (
-//   <TagGroup {...props}>
-//     <Label>Test tag group</Label>
-//     <TagList>
-//       <Tag>Foo</Tag>
-//       <Tag>Bar</Tag>
-//       <Tag>Baz</Tag>
-//     </TagList>
-//   </TagGroup>
-// );
+let StaticTagGroup = (props) => (
+  <TagGroup {...props}>
+    <Label>Test tag group</Label>
+    <TagList>
+      <Tag>Foo</Tag>
+      <Tag>Bar</Tag>
+      <Tag>Baz</Tag>
+    </TagList>
+  </TagGroup>
+);
 
 let StaticTabs = (props) => (
   <Tabs {...props}>
@@ -465,6 +465,7 @@ describe('Autocomplete', () => {
     // from appearing on the input
     await user.tab();
     await user.tab({shift: true});
+    act(() => jest.runAllTimers());
 
     // Focus ring should be on option after typing and option is autofocused
     await user.keyboard('Bar');
@@ -509,17 +510,20 @@ describe('Autocomplete', () => {
     let input = getByRole('searchbox');
     await user.tab();
     await user.tab();
+    act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(input);
     expect(input).toHaveAttribute('data-focus-visible');
     await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
     let menu = getByRole('menu');
     let options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focused');
-
+    // console.log('tabbing away')
     await user.tab();
+    act(() => jest.runAllTimers());
     expect(document.activeElement).not.toBe(input);
     expect(options[0]).not.toHaveAttribute('data-focused');
     expect(options[0]).not.toHaveAttribute('data-focus-visible');
@@ -527,8 +531,11 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('data-focused');
 
     await user.tab({shift: true});
+
+
     act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(input);
+    // debug()
     expect(options[0]).toHaveAttribute('data-focused');
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
@@ -1094,7 +1101,7 @@ AriaAutocompleteTests({
   prefix: 'rac-static-table',
   renderers: {
     noVirtualFocus: () => render(
-      <AutocompleteWrapper>
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
         <StaticTable />
       </AutocompleteWrapper>
     )
@@ -1102,26 +1109,26 @@ AriaAutocompleteTests({
   ariaPattern: 'grid'
 });
 
-// AriaAutocompleteTests({
-//   prefix: 'rac-static-gridlist',
-//   renderers: {
-//     noVirtualFocus: () => render(
-//       <AutocompleteWrapper>
-//         <StaticGridList />
-//       </AutocompleteWrapper>
-//     )
-//   },
-//   ariaPattern: 'grid'
-// });
+AriaAutocompleteTests({
+  prefix: 'rac-static-gridlist',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticGridList />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});
 
-// AriaAutocompleteTests({
-//   prefix: 'rac-static-taggroup',
-//   renderers: {
-//     noVirtualFocus: () => render(
-//       <AutocompleteWrapper>
-//         <StaticTagGroup />
-//       </AutocompleteWrapper>
-//     )
-//   },
-//   ariaPattern: 'grid'
-// });
+AriaAutocompleteTests({
+  prefix: 'rac-static-taggroup',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticTagGroup />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});

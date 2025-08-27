@@ -76,12 +76,15 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // TODO: need to update this to handle virtual focus
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
-    // (e.g. clicking on a row button)
-    let activeElement = shouldUseVirtualFocus ? getVirtuallyFocusedElement(document) : document.activeElement;
+    // (e.g. clicking on a row button). If we are in virtualFocus, we can ignore that check since
+    // clicking will cause real focus to move inside anyways. Other interactions that happen on the input during virtual
+    // focus will be sent to the virtually focused node anyways and won't go through this flow, this only happens when navigating between
+    // rows
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current?.contains(activeElement))
+      !ref.current?.contains(document.activeElement) ||
+      shouldUseVirtualFocus)
     ) {
       focusElement(ref.current);
     }

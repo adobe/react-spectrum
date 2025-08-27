@@ -176,17 +176,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       } else if (document.activeElement !== ref.current && ref.current) {
         focusSafely(ref.current);
       }
-
-
-      // if (!shouldUseVirtualFocus) {
-      //   if (focus) {
-      //     focus();
-      //   } else if (document.activeElement !== ref.current && ref.current) {
-      //     focusSafely(ref.current);
-      //   }
-      // } else {
-      //   moveVirtualFocus(ref.current);
-      // }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);

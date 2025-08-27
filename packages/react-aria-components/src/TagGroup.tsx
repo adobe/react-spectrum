@@ -76,10 +76,12 @@ interface TagGroupInnerProps<T> {
 
 function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}: TagGroupInnerProps<T>) {
   let tagListRef = useRef<HTMLElement>(null);
-  [props, tagListRef] = useContextProps(props, tagListRef, SelectableCollectionContext);
-  let {filter, ...collectionProps} = props;
+  // Extract the user provided id so it doesn't clash with the collection id provided by Autocomplete
+  let {id, ...otherProps} = props;
+  [otherProps, tagListRef] = useContextProps(otherProps, tagListRef, SelectableCollectionContext);
+  let {filter, ...collectionProps} = otherProps;
   let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+    !otherProps['aria-label'] && !otherProps['aria-labelledby']
   );
   let tagGroupState = useListState({
     ...collectionProps,
@@ -90,15 +92,15 @@ function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}:
   let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.
-  let domProps = filterDOMProps(props, {global: true});
-  let domPropOverrides = Object.fromEntries(Object.entries(domProps).map(([k]) => [k, undefined]));
+  let domProps = filterDOMProps(otherProps, {global: true});
+  let domPropOverrides = Object.fromEntries(Object.entries(domProps).map(([k, val]) => [k, k === 'id' ? val : undefined]));
   let {
     gridProps,
     labelProps,
     descriptionProps,
     errorMessageProps
   } = useTagGroup({
-    ...props,
+    ...otherProps,
     ...domPropOverrides,
     label
   }, filteredState, tagListRef);
@@ -106,10 +108,11 @@ function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}:
   return (
     <div
       {...domProps}
+      id={id}
       ref={ref}
-      slot={props.slot || undefined}
-      className={props.className ?? 'react-aria-TagGroup'}
-      style={props.style}>
+      slot={otherProps.slot || undefined}
+      className={otherProps.className ?? 'react-aria-TagGroup'}
+      style={otherProps.style}>
       <Provider
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
@@ -122,7 +125,7 @@ function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}:
             }
           }]
         ]}>
-        {props.children}
+        {otherProps.children}
       </Provider>
     </div>
   );

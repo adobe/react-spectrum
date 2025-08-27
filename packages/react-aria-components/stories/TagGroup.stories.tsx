@@ -81,33 +81,38 @@ export function MyTag(props: TagProps) {
 
 export const TagGroupExampleWithRemove: Story = {
   render: (props: TagGroupProps) => (
-    <TagGroup {...props} onRemove={action('onRemove')}>
-      <Label>Categories</Label>
-      <TagList style={{display: 'flex', gap: 4}}>
-        <MyTag>Marsupial<Button slot="remove">X</Button></MyTag>
-        <MyTag>Animal<Button slot="remove">X</Button></MyTag>
-        <MyTag>Mammal<Button slot="remove">X</Button></MyTag>
-        <TooltipTrigger>
-          <MyTag>Chordate<Button slot="remove">X</Button></MyTag>
-          <Tooltip
-            offset={5}
-            style={{
-              background: 'Canvas',
-              color: 'CanvasText',
-              border: '1px solid gray',
-              padding: 5,
-              borderRadius: 4
-            }}>
-            <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-              <svg width="8" height="8" style={{display: 'block'}}>
-                <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-              </svg>
-            </OverlayArrow>
-            I am a tooltip
-          </Tooltip>
-        </TooltipTrigger>
-      </TagList>
-    </TagGroup>
+    <>
+      <input />
+      <TagGroup {...props} onRemove={action('onRemove')}>
+        <Label>Categories</Label>
+        <TagList style={{display: 'flex', gap: 4}}>
+          <MyTag>Marsupial<Button slot="remove">X</Button></MyTag>
+          <MyTag>Animal<Button slot="remove">X</Button></MyTag>
+          <MyTag>Mammal<Button slot="remove">X</Button></MyTag>
+          <TooltipTrigger>
+            <MyTag>Chordate<Button slot="remove">X</Button></MyTag>
+            <Tooltip
+              offset={5}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 5,
+                borderRadius: 4
+              }}>
+              <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                <svg width="8" height="8" style={{display: 'block'}}>
+                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              I am a tooltip
+            </Tooltip>
+          </TooltipTrigger>
+        </TagList>
+      </TagGroup>
+      <input />
+    </>
+
   )
 };
 
