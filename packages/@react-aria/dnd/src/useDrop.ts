@@ -188,6 +188,8 @@ export function useDrop(options: DropOptions): DropResult {
     e.stopPropagation();
     state.dragOverElements.add(e.target as Element);
     if (state.dragOverElements.size > 1) {
+      // Maintain dropEffect while moving between descendants to avoid cursor flicker.
+      e.dataTransfer.dropEffect = state.dropEffect;
       return;
     }
 
