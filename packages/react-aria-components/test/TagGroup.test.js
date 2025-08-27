@@ -306,6 +306,7 @@ describe('TagGroup', () => {
     let grid = getByTestId('list');
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
+    expect(grid).toHaveAttribute('role', 'group');
   });
 
   it('supports tooltips', async function () {
