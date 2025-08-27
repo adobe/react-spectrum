@@ -59,7 +59,7 @@ export default {
   argTypes: argTypes
 } as ComponentMeta<typeof TextField>;
 
-export type HelpTextStory = StoryObj<typeof TextField>;
+// export type HelpTextStory = StoryObj<typeof TextField>;
 
 export const Default: HelpTextStory = {};
 
