@@ -77,10 +77,11 @@ import {Edit} from 'lucide-react';
   /* fixes FF gap */
   transform: translate3d(0, 0, 0);
   transition: transform 200ms, opacity 200ms;
+  transform-origin: var(--trigger-anchor-point);
 
   &[data-entering],
   &[data-exiting] {
-    transform: var(--origin);
+    transform: scale(0.9) var(--origin);
     opacity: 0;
   }
 

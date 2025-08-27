@@ -213,7 +213,7 @@ const tablist = style({
 
 const tablistWrapper = style({
   position: 'relative',
-  minWidth: 'min',
+  minWidth: 0,
   flexShrink: 0,
   flexGrow: 0
 }, getAllowedOverrides());
