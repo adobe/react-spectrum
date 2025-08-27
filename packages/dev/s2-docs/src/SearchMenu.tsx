@@ -162,7 +162,7 @@ export default function SearchMenu(props: SearchMenuProps) {
   }, [pages, selectedLibrary]);
 
   // Build sections for the selected library
-  const componentSections = useMemo(() => {
+  const sections = useMemo(() => {
     const sectionNames = Array.from(new Set(transformedComponents.map(c => c.section || 'Components')));
     return sectionNames.map(sectionName => ({
       id: sectionName.toLowerCase(),
@@ -180,14 +180,25 @@ export default function SearchMenu(props: SearchMenuProps) {
   }, [transformedComponents]);
 
   const [selectedSectionId, setSelectedSectionId] = useState<string>('components');
+  const prevSearchWasEmptyRef = useRef<boolean>(true);
 
   // Ensure selected section is valid for the current library
   useEffect(() => {
-    const sectionIds = componentSections.map(s => s.id);
+    const baseIds = sections.map(s => s.id);
+    const sectionIds = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
     if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
       setSelectedSectionId(sectionIds[0] || 'components');
     }
-  }, [selectedLibrary, componentSections, selectedSectionId]);
+  }, [selectedLibrary, sections, selectedSectionId, searchValue]);
+
+  // When search starts, auto-select the All tag.
+  useEffect(() => {
+    const isEmpty = searchValue.trim().length === 0;
+    if (prevSearchWasEmptyRef.current && !isEmpty) {
+      setSelectedSectionId('all');
+    }
+    prevSearchWasEmptyRef.current = isEmpty;
+  }, [searchValue]);
 
   useEffect(() => {
     let isMac = /Mac/.test(navigator.platform);
@@ -256,13 +267,21 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
-      return componentSections;
+      return sections;
     }
-    return componentSections.map(section => ({
+    return sections.map(section => ({
       ...section,
       children: section.children.filter(item => contains(item.name, searchValue))
     })).filter(section => section.children.length > 0);
-  }, [componentSections, searchValue, contains]);
+  }, [sections, searchValue, contains]);
+
+  const tags = useMemo(() => {
+    if (searchValue.trim().length > 0) {
+      // When searching, prepend an All tag
+      return [{id: 'all', name: 'All'}, ...sections];
+    }
+    return sections;
+  }, [searchValue, sections]);
 
   // Type to search handler
   const handleButtonKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -313,14 +332,20 @@ export default function SearchMenu(props: SearchMenuProps) {
   }, []);
 
   const selectedItems = useMemo(() => {
+    if (searchValue.trim().length > 0 && selectedSectionId === 'all') {
+      return filteredComponents.flatMap(s => s.children) || [];
+    }
     return (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
-  }, [filteredComponents, selectedSectionId]);
+  }, [filteredComponents, selectedSectionId, searchValue]);
 
   const selectedSectionName = useMemo(() => {
+    if (searchValue.trim().length > 0 && selectedSectionId === 'all') {
+      return 'All';
+    }
     return (filteredComponents.find(s => s.id === selectedSectionId)?.name)
-      || (componentSections.find(s => s.id === selectedSectionId)?.name)
+      || (sections.find(s => s.id === selectedSectionId)?.name)
       || 'Items';
-  }, [filteredComponents, componentSections, selectedSectionId]);
+  }, [filteredComponents, sections, selectedSectionId, searchValue]);
 
   return (
     <div
@@ -374,7 +399,7 @@ export default function SearchMenu(props: SearchMenuProps) {
                   <CloseButton closeSearchMenu={closeSearchMenu} />
 
                   <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
-                    {componentSections.length > 0 && (
+                    {sections.length > 0 && (
                       <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingY: 8})}>
                         <SelectableCollectionContext.Provider value={null}>
                           <TagGroup
@@ -383,10 +408,10 @@ export default function SearchMenu(props: SearchMenuProps) {
                             selectedKeys={selectedSectionId ? [selectedSectionId] : []}
                             onSelectionChange={handleSectionSelectionChange}
                             aria-label="Select section"
-                            items={componentSections}>
-                            {(section) => (
-                              <Tag key={section.id} id={section.id}>
-                                {section.name}
+                            items={tags}>
+                            {(tag) => (
+                              <Tag key={tag.id} id={tag.id}>
+                                {tag.name}
                               </Tag>
                             )}
                           </TagGroup>
