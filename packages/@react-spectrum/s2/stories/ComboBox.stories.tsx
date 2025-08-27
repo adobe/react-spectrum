@@ -16,6 +16,7 @@ import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
@@ -26,7 +27,7 @@ const meta: Meta<typeof ComboBox<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange']),
+    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore']),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
@@ -39,7 +40,7 @@ const meta: Meta<typeof ComboBox<any>> = {
 export default meta;
 type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Example = {
+export const Example: Story = {
   render: (args: ComboBoxProps<any>) => (
     <ComboBox {...args}>
       <ComboBoxItem>Chocolate</ComboBoxItem>
@@ -146,8 +147,8 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = {
-  render: (args: any) => (
+export const Validation: Story = {
+  render: (args) => (
     <Form>
       <ComboBox {...args}>
         {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
@@ -195,7 +196,7 @@ export const ContextualHelpExample: Story = {
   }
 };
 
-export const CustomWidth = {
+export const CustomWidth: Story = {
   render: (args) => (
     <ComboBox {...args} styles={style({width: 384})}>
       <ComboBoxItem>Chocolate</ComboBoxItem>
@@ -220,7 +221,7 @@ interface Character {
   birth_year: number
 }
 
-const AsyncComboBox = (args: any) => {
+const AsyncComboBox = (args: ComboBoxProps<Character> & {delay: number, label: string}): ReactElement => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -253,7 +254,8 @@ const AsyncComboBox = (args: any) => {
   );
 };
 
-export const AsyncComboBoxStory  = {
+export type AsyncComboBoxStoryType = typeof AsyncComboBox;
+export const AsyncComboBoxStory: StoryObj<AsyncComboBoxStoryType> = {
   render: AsyncComboBox,
   args: {
     ...Example.args,
@@ -289,7 +291,7 @@ return (
   }
 };
 
-export const EmptyCombobox = {
+export const EmptyCombobox: Story = {
   render: (args) => (
     <ComboBox {...args}>
       {[]}

@@ -50,9 +50,13 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   props = useProviderProps(props);
   props = useFormProps(props);
 
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
-  }
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
+      hasWarned.current = true;
+    }
+  }, [props.placeholder]);
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {

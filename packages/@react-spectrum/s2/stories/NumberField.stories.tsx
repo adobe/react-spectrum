@@ -51,50 +51,55 @@ export const Example: Story = {
   }
 };
 
-export const Validation = (args: any) => (
-  <Form>
-    <NumberField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-Validation.args = {
-  label: 'Quantity',
-  isRequired: true
+export const Validation: Story = {
+  render: (args) => (
+    <Form>
+      <NumberField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    label: 'Quantity',
+    isRequired: true
+  }
 };
 
-export const CustomWidth = (args: any) => <NumberField {...args} styles={style({width: 384})} />;
-
-CustomWidth.args = {
-  label: 'Large quantity'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const CustomWidth: Story = {
+  render: (args) => <NumberField {...args} styles={style({width: 384})} />,
+  args: {
+    label: 'Large quantity'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
 
-export const ContextualHelpExample = (args: any) => (
-  <NumberField
-    {...args}
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>Quantity</Heading>
-        <Content>
-          <Text>
-            Pick a number between negative infinity and positive infinity.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Quantity"
-            target="_blank">Learn more about quantity</Link>
-        </Footer>
-      </ContextualHelp>
-    } />
-);
-
-ContextualHelpExample.args = {
-  label: 'Quantity'
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <NumberField
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>Quantity</Heading>
+          <Content>
+            <Text>
+              Pick a number between negative infinity and positive infinity.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Quantity"
+              target="_blank">Learn more about quantity</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
+  ),
+  args: {
+    label: 'Quantity'
+  }
 };
+

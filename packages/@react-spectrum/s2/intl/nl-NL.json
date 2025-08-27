@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "Alles geselecteerd",
   "breadcrumbs.more": "Meer items",
   "button.pending": "in behandeling",
+  "calendar.invalidSelection": "Geselecteerde {selectedCount, plural, one {datum} other {datums}} niet beschikbaar.",
   "combobox.noResults": "Geen resultaten",
   "contextualhelp.help": "Help",
   "contextualhelp.info": "Informatie",
+  "datepicker.endTime": "Eindtijd",
+  "datepicker.startTime": "Starttijd",
+  "datepicker.time": "Tijd",
   "dialog.alert": "Melding",
   "dialog.dismiss": "Negeren",
   "dropzone.replaceMessage": "Bestand neerzetten om te vervangen",
@@ -33,7 +37,7 @@
   "tag.hideButtonLabel": "Minder weergeven",
   "tag.noTags": "Geen",
   "tag.showAllButtonLabel": "Alles tonen ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Alles wissen",
+  "toast.collapse": "Samenvouwen",
+  "toast.showAll": "Alles weergeven"
 }

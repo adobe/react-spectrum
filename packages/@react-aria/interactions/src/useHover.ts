@@ -48,7 +48,7 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   }, 50);
 }
 
-function handleGlobalPointerEvent(e) {
+function handleGlobalPointerEvent(e: PointerEvent) {
   if (e.pointerType === 'touch') {
     setGlobalIgnoreEmulatedMouseEvents();
   }
@@ -59,10 +59,12 @@ function setupGlobalTouchEvents() {
     return;
   }
 
-  if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
-  } else if (process.env.NODE_ENV === 'test') {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+  if (hoverCount === 0) {
+    if (typeof PointerEvent !== 'undefined') {
+      document.addEventListener('pointerup', handleGlobalPointerEvent);
+    } else if (process.env.NODE_ENV === 'test') {
+      document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    }
   }
 
   hoverCount++;

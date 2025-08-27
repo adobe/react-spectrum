@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "تم تحديد الكل",
   "breadcrumbs.more": "المزيد من العناصر",
   "button.pending": "قيد الانتظار",
+  "calendar.invalidSelection": "{selectedCount, plural, one {التاريخ} other {التواريخ}} المحدد/المحددة غير متوفرة.",
   "combobox.noResults": "لا توجد نتائج",
   "contextualhelp.help": "مساعدة",
   "contextualhelp.info": "معلومات",
+  "datepicker.endTime": "وقت الانتهاء",
+  "datepicker.startTime": "وقت البدء",
+  "datepicker.time": "الوقت",
   "dialog.alert": "تنبيه",
   "dialog.dismiss": "تجاهل",
   "dropzone.replaceMessage": "للاستبدال، قم بإفلات الملف",
@@ -33,7 +37,7 @@
   "tag.hideButtonLabel": "إظهار أقل",
   "tag.noTags": "بدون",
   "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "مسح الكل",
+  "toast.collapse": "طي",
+  "toast.showAll": "إظهار الكل"
 }

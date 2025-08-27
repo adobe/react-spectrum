@@ -100,6 +100,7 @@ build:
 	done
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
+	node scripts/fixUseClient.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -117,7 +118,6 @@ check-examples:
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	node scripts/extractStarter.mjs
 	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter

@@ -14,56 +14,282 @@ import {
   DatePicker as AriaDatePicker,
   DatePickerProps as AriaDatePickerProps,
   Button,
-  Calendar,
-  CalendarCell,
-  CalendarGrid,
-  DateInput,
-  DateSegment,
+  ButtonRenderProps,
+  ContextValue,
   DateValue,
   Dialog,
-  FieldError,
-  Group,
-  Heading,
-  Label,
-  Popover,
-  Text
+  FormContext,
+  OverlayTriggerStateContext,
+  Provider,
+  TimeValue
 } from 'react-aria-components';
-import {HelpTextProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {Calendar, CalendarProps, IconContext, TimeField} from '../';
+import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
+import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
+import {FieldGroup, FieldLabel, HelpText} from './Field';
+import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {PopoverBase} from './Popover';
+import {pressScale} from './pressScale';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DatePickerProps<T extends DateValue>
-  extends AriaDatePickerProps<T>, HelpTextProps {
-  label?: ReactNode
+
+export interface DatePickerProps<T extends DateValue> extends
+  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'isDateUnavailable'>,
+  StyleProps,
+  SpectrumLabelableProps,
+  HelpTextProps {
+    /**
+     * The size of the DateField.
+     *
+     * @default 'M'
+     */
+    size?: 'S' | 'M' | 'L' | 'XL',
+    /**
+     * The maximum number of months to display at once in the calendar popover, if screen space permits.
+     * @default 1
+     */
+    maxVisibleMonths?: number
 }
 
-export function DatePicker<T extends DateValue>(
-  {label, description, errorMessage, ...props}: DatePickerProps<T>
-): ReactNode {
+export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
+
+const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+  ...focusRing(),
+  ...controlBorderRadius('sm'),
+  position: 'relative',
+  font: {
+    size: {
+      S: 'ui-sm',
+      M: 'ui',
+      L: 'ui-lg',
+      XL: 'ui-xl'
+    }
+  },
+  cursor: 'default',
+  display: 'flex',
+  textAlign: 'center',
+  borderStyle: 'none',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 24,
+      XL: 32
+    }
+  },
+  height: 'auto',
+  marginStart: 'text-to-control',
+  aspectRatio: 'square',
+  flexShrink: 0,
+  transition: {
+    default: 'default',
+    forcedColors: 'none'
+  },
+  backgroundColor: {
+    default: baseColor('gray-100'),
+    isOpen: 'gray-200',
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isHovered: 'Highlight',
+      isOpen: 'Highlight',
+      isDisabled: 'GrayText'
+    }
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: 'ButtonFace'
+  }
+});
+
+export const timeField = style({
+  flexShrink: 1,
+  flexGrow: 0,
+  minWidth: 0,
+  width: 'unset'
+});
+
+export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(
+  props: DatePickerProps<T>, ref: Ref<HTMLDivElement>
+): ReactElement {
+  [props, ref] = useSpectrumContextProps(props, ref, DatePickerContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let {
+    label,
+    contextualHelp,
+    description: descriptionMessage,
+    errorMessage,
+    isRequired,
+    size = 'M',
+    labelPosition = 'top',
+    necessityIndicator,
+    labelAlign = 'start',
+    UNSAFE_style,
+    UNSAFE_className,
+    styles,
+    placeholderValue,
+    maxVisibleMonths = 1,
+    createCalendar,
+    ...dateFieldProps
+  } = props;
+  let formContext = useContext(FormContext);
+  let [buttonHasFocus, setButtonHasFocus] = useState(false);
+
   return (
-    <AriaDatePicker {...props}>
-      <Label>{label}</Label>
-      <Group>
-        <DateInput>
-          {(segment) => <DateSegment segment={segment} />}
-        </DateInput>
-        <Button>▼</Button>
-      </Group>
-      {description && <Text slot="description">{description}</Text>}
-      <FieldError>{errorMessage}</FieldError>
-      <Popover>
-        <Dialog>
-          <Calendar>
-            <header>
-              <Button slot="previous">◀</Button>
-              <Heading />
-              <Button slot="next">▶</Button>
-            </header>
-            <CalendarGrid>
-              {(date) => <CalendarCell date={date} />}
-            </CalendarGrid>
-          </Calendar>
-        </Dialog>
-      </Popover>
+    <AriaDatePicker
+      ref={ref}
+      isRequired={isRequired}
+      {...dateFieldProps}
+      style={UNSAFE_style}
+      className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
+        isInForm: !!formContext,
+        labelPosition,
+        size
+      }, styles)}>
+      {({isDisabled, isInvalid, isOpen, state}) => {
+        let placeholder: DateValue | undefined = placeholderValue ?? undefined;
+        let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : undefined;
+        let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : undefined;
+        let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
+        let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : undefined;
+        let showTimeField = !!timeGranularity;
+        return (
+          <>
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={isRequired}
+              size={size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={contextualHelp}>
+              {label}
+            </FieldLabel>
+            <FieldGroup
+              role="presentation"
+              shouldTurnOffFocusRing={buttonHasFocus}
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              size={size}
+              styles={style({
+                ...fieldInput(),
+                textWrap: 'nowrap',
+                paddingStart: 'edge-to-text',
+                paddingEnd: {
+                  size: {
+                    S: 2,
+                    M: 4,
+                    L: space(6),
+                    XL: space(6)
+                  }
+                }
+              })({size})}>
+              <DateInputContainer>
+                <DateInput />
+              </DateInputContainer>
+              <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
+              <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
+            </FieldGroup>
+            <CalendarPopover>
+              <Calendar
+                visibleMonths={maxVisibleMonths}
+                createCalendar={createCalendar} />
+              {showTimeField && (
+                <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
+                  <TimeField
+                    styles={timeField}
+                    label={stringFormatter.format('datepicker.time')}
+                    value={state.timeValue}
+                    // TODO: why do i need the cast?
+                    onChange={v => state.setTimeValue(v as TimeValue)}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone} />
+                </div>
+              )}
+            </CalendarPopover>
+            <HelpText
+              size={size}
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              description={descriptionMessage}>
+              {errorMessage}
+            </HelpText>
+          </>
+        );
+      }}
     </AriaDatePicker>
+  );
+});
+
+export function CalendarPopover(props: PropsWithChildren): ReactElement {
+  return (
+    <PopoverBase
+      hideArrow
+      styles={style({
+        paddingX: 16,
+        paddingY: 32,
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16
+      })}>
+      <Dialog>
+        <Provider
+          values={[
+            [OverlayTriggerStateContext, null]
+          ]}>
+          {props.children}
+        </Provider>
+      </Dialog>
+    </PopoverBase>
+  );
+}
+
+
+export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL', setButtonHasFocus: (hasFocus: boolean) => void}): ReactElement {
+  let buttonRef = useRef<HTMLButtonElement>(null);
+  let {isOpen, size, setButtonHasFocus} = props;
+  return (
+    <Button
+      ref={buttonRef}
+      // Prevent press scale from sticking while DatePicker is open.
+      // @ts-ignore
+      isPressed={false}
+      onFocusChange={setButtonHasFocus}
+      style={pressScale(buttonRef)}
+      className={renderProps => inputButton({
+        ...renderProps,
+        size,
+        isOpen
+      })}>
+      <Provider
+        values={[
+          [IconContext, {
+            styles: style({
+              '--iconPrimary': {
+                type: 'fill',
+                value: 'currentColor'
+              },
+              size: fontRelative(14)
+            })
+          }]
+        ]}>
+        <CalendarIcon />
+      </Provider>
+    </Button>
   );
 }

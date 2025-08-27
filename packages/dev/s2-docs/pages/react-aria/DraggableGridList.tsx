@@ -1,9 +1,9 @@
 'use client';
-import {createElement} from 'react';
+import {createElement, ReactElement} from 'react';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 import {useDragAndDrop} from 'react-aria-components';
 
-export function DraggableGridList() {
+export function DraggableGridList(): ReactElement {
   let items = new Map([
     ['ps', {name: 'Photoshop', style: 'strong'}],
     ['xd', {name: 'XD', style: 'strong'}],

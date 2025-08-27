@@ -12,7 +12,7 @@
 
 import {categorizeArgTypes} from './utils';
 import {ColorArea} from '../src/ColorArea';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
@@ -28,9 +28,11 @@ const meta: Meta<typeof ColorArea> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorArea>;
 
-export const Example = (args: any) => <ColorArea {...args} onChange={undefined} />;
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
+export const Example: Story = {
+  render: (args) => <ColorArea {...args} onChange={undefined} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
 };

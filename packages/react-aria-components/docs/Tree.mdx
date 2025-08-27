@@ -58,22 +58,23 @@ import {
   Button,
   Collection
 } from 'react-aria-components';
+import {Info} from 'lucide-react';
 
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']} selectionMode="multiple" defaultSelectedKeys={['photos']}>
   <TreeItem id="documents" textValue="Documents">
     <MyTreeItemContent>
       Documents
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="project" textValue="Project">
       <MyTreeItemContent>
         Project
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
       <TreeItem id="report" textValue="Weekly Report">
         <MyTreeItemContent>
           Weekly Report
-          <Button aria-label="Info">ⓘ</Button>
+          <Button aria-label="Info"><Info size={20} /></Button>
         </MyTreeItemContent>
       </TreeItem>
     </TreeItem>
@@ -81,18 +82,18 @@ import {
   <TreeItem id="photos" textValue="Photos">
     <MyTreeItemContent>
       Photos
-      <Button aria-label="Info">ⓘ</Button>
+      <Button aria-label="Info"><Info size={20} /></Button>
     </MyTreeItemContent>
     <TreeItem id="one" textValue="Image 1">
       <MyTreeItemContent>
         Image 1
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
     <TreeItem id="two" textValue="Image 2">
       <MyTreeItemContent>
         Image 2
-        <Button aria-label="Info">ⓘ</Button>
+        <Button aria-label="Info"><Info size={20} /></Button>
       </MyTreeItemContent>
     </TreeItem>
   </TreeItem>
@@ -164,6 +165,12 @@ import {
         stroke: currentColor;
         stroke-width: 3px;
       }
+    }
+
+    .react-aria-Button[slot=drag] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     &[data-has-child-items] .react-aria-Button[slot=chevron] {
@@ -360,13 +367,14 @@ If you will use a Tree in multiple places in your app, you can wrap all of the p
 ```tsx example export=true render=false
 import type {TreeItemContentProps, TreeItemContentRenderProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
+import {GripVertical} from 'lucide-react';
 
 function MyTreeItemContent(props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <TreeItemContent>
       {({hasChildItems, selectionBehavior, selectionMode, allowsDragging}: TreeItemContentRenderProps) => (
         <>
-          {allowsDragging && <Button slot="drag">≡</Button>}
+          {allowsDragging && <Button slot="drag"><GripVertical size={18} /></Button>}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
           <Button slot="chevron">
             <svg viewBox="0 0 24 24">
@@ -406,14 +414,14 @@ Now we can render a Tree using far less code.
 
 ```tsx example
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
-  <MyTreeItem title="Documents">
-    <MyTreeItem title="Project">
-      <MyTreeItem title="Weekly Report" />
+  <MyTreeItem id="documents" title="Documents">
+    <MyTreeItem id="project" title="Project">
+      <MyTreeItem id="report" title="Weekly Report" />
     </MyTreeItem>
   </MyTreeItem>
-  <MyTreeItem title="Photos">
-    <MyTreeItem title="Image 1" />
-    <MyTreeItem title="Image 2" />
+  <MyTreeItem id="photos" title="Photos">
+    <MyTreeItem id="one" title="Image 1" />
+    <MyTreeItem id="two" title="Image 2" />
   </MyTreeItem>
 </Tree>
 ```
@@ -452,7 +460,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
+      defaultExpandedKeys={['1']}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -498,7 +506,7 @@ A user can click on a different item to change the selection or click on the sam
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} />
 ```
 
 ### Multiple selection
@@ -507,7 +515,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="multiple" defaultSelectedKeys={[2, 4]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1', '2']} />
 ```
 
 ### Disallow empty selection
@@ -517,7 +525,7 @@ In this mode, if a single item is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} disallowEmptySelection />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} disallowEmptySelection />
 ```
 
 
@@ -741,6 +749,134 @@ This accepts a list of item ids that are disabled. An item is considered disable
 <PokemonEvolutionTree selectionMode="multiple" disabledKeys={[3]} />
 ```
 
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. Use the [renderEmptyState](#empty-state) prop to display a spinner during initial load.
+To enable infinite scrolling, render a `<TreeLoadMoreItem>` element at the end of the tree or an arbitrary Tree row's last item.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface StarWarsCharacter {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+interface Pokemon {
+  name: string
+}
+
+function AsyncSortTable() {
+  let starWarsList = useAsyncList<StarWarsCharacter>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let pokemonList = useAsyncList<Pokemon>({
+    async load({signal, cursor, filterText}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Tree
+      aria-label="async loading tree"
+      style={{ height: '300px' }}>
+      <MyTreeItem id="pokemon" title="Pokemon">
+        {/*- begin highlight -*/}
+        <Collection items={pokemonList.items}>
+          {(item: Pokemon) => (
+            <MyTreeItem id={item.name} title={item.name} />
+          )}
+        </Collection>
+        <MyTreeLoader isLoading={pokemonList.isLoading} onLoadMore={pokemonList.loadMore} />
+        {/*- end highlight -*/}
+      </MyTreeItem>
+      <MyTreeItem id="starwars" title="Star Wars">
+        {/*- begin highlight -*/}
+        <Collection items={starWarsList.items}>
+          {(item: StarWarsCharacter) => (
+            <MyTreeItem id={item.name} title={item.name} />
+          )}
+        </Collection>
+        <MyTreeLoader isLoading={starWarsList.isLoading} onLoadMore={starWarsList.loadMore} />
+        {/*- end highlight -*/}
+      </MyTreeItem>
+    </Tree>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" />TreeLoader</summary>
+
+```tsx example export=true render=false
+import {TreeLoadMoreItem} from 'react-aria-components';
+
+export function MyTreeLoader(props) {
+  return (
+    <TreeLoadMoreItem
+      {...props}>
+      {({level}) => {
+        return (
+          <MyProgressCircle
+            aria-label="Loading more..."
+            isIndeterminate />
+        );
+      }}
+    </TreeLoadMoreItem>
+  );
+}
+```
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example export=true render=false
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+export function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="100%" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `Tree` will display if there are no items.
@@ -767,7 +903,7 @@ Use the `renderEmptyState` prop to customize what the `Tree` will display if the
 
 </details>
 
-## Drag and drop <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Drag and drop <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or move items within the tree hierarchy.
 
@@ -1445,8 +1581,8 @@ function Example() {
             id: Math.random().toString(36).slice(2),
             name: entry.name,
             kind: entry.kind,
-            children: entry.kind === 'directory' 
-              ? await getFiles(entry) 
+            children: entry.kind === 'directory'
+              ? await getFiles(entry)
               : []
           });
         }
@@ -1837,6 +1973,17 @@ function DndTree(props: DndTreeProps) {
 
 <PropTable component={docs.exports.TreeItemContent} links={docs.links} />
 
+### TreeLoadMoreItem
+
+A `<TreeLoadMoreItem>` defines the load more spinner within a `<Tree>`. It renders its children when `isLoading` is true, and allows you to customize the scroll distance from the bottom of the tree or tree row that should trigger another load operation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.TreeLoadMoreItem} links={docs.links} />
+
+</details>
+
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
@@ -2014,7 +2161,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.

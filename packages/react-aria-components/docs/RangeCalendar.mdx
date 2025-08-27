@@ -43,12 +43,13 @@ type: component
 
 ```tsx example
 import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <RangeCalendar aria-label="Trip dates">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}
@@ -240,9 +241,9 @@ function MyRangeCalendar<T extends DateValue>({errorMessage, ...props}: MyRangeC
   return (
     <RangeCalendar {...props}>
       <header>
-        <Button slot="previous">◀</Button>
+        <Button slot="previous"><ChevronLeft size={20} /></Button>
         <Heading />
-        <Button slot="next">▶</Button>
+        <Button slot="next"><ChevronRight size={20} /></Button>
       </header>
       <CalendarGrid>
         {date => <CalendarCell date={date} />}
@@ -415,9 +416,9 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 ```tsx example
 <RangeCalendar aria-label="Trip dates" visibleDuration={{months: 3}}>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -440,9 +441,9 @@ The `pageBehavior` prop allows you to control how the calendar navigates between
 ```tsx example
 <RangeCalendar aria-label="Trip dates" visibleDuration={{months: 3}} pageBehavior="single">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -790,9 +791,9 @@ import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-ar
 
 <RangeCalendar aria-label="Trip dates">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     <CalendarGridHeader>
@@ -976,9 +977,9 @@ function RangeCalendarValue() {
 
 <RangeCalendar>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}

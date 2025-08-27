@@ -3,7 +3,6 @@
     "@babel/preset-react": "^7.24.1",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.14",
-    "@storybook/addon-onboarding": "^1.0.8",
     "@storybook/blocks": "^8.6.14",
     "@storybook/react": "^8.6.14",
     "@storybook/react-vite": "^8.6.14",
@@ -14,6 +13,7 @@
     "autoprefixer": "^10.4.16",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
+    "react-docgen-typescript": "^2.2.2",
     "react-dom": "^18.2.0",
     "storybook": "^8.6.14",
     "tailwindcss": "^4.0.0",
@@ -34,6 +34,7 @@
   },
   "resolutions": {
     "@types/mime": "3.0.4",
-    "jackspeak": "2.1.1"
+    "jackspeak": "2.1.1",
+    "rollup": "4.43.0"
   }
 }

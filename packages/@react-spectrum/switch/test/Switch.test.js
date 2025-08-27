@@ -207,4 +207,27 @@ describe('Switch', function () {
     await user.click(button);
     expect(input).not.toBeChecked();
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultSelected when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => true, false);
+        
+        return (
+          <form action={formAction}>
+            <Switch defaultSelected={value}>Test</Switch>
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('switch');
+      expect(input).not.toBeChecked();
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toBeChecked();
+    });
+  }
 });

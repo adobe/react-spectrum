@@ -125,7 +125,7 @@ const getCurrentLibrary = (currentPage: Page) => {
 
 export default function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen} = props;
-  
+
   const currentLibrary = getCurrentLibrary(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(currentLibrary);
   let [searchValue, setSearchValue] = useState('');
@@ -140,14 +140,14 @@ export default function SearchMenu(props: SearchMenuProps) {
       },
       {
         id: 'react-aria',
-        label: 'React Aria', 
+        label: 'React Aria',
         description: 'Style-free components and hooks for building accessible UIs',
         icon: <ReactAriaLogo />
       },
       {
         id: 'internationalized',
         label: 'Internationalized',
-        description: 'Framework-agnostic internationalization utilities', 
+        description: 'Framework-agnostic internationalization utilities',
         icon: <InternationalizedLogo />
       }
     ];
@@ -158,7 +158,7 @@ export default function SearchMenu(props: SearchMenuProps) {
       const currentTab = allTabs.splice(currentTabIndex, 1)[0];
       allTabs.unshift(currentTab);
     }
-    
+
     return allTabs;
   };
 
@@ -184,13 +184,13 @@ export default function SearchMenu(props: SearchMenuProps) {
         } else if (page.url.includes('react-internationalized')) {
           library = 'internationalized';
         }
-        
+
         return library === selectedLibrary;
       })
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
-        
+
         return {
           id: name,
           name: title,
@@ -257,7 +257,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   let {contains} = useFilter({sensitivity: 'base'});
 
-  let filter: AutocompleteProps['filter'] = (textValue, inputValue) => {
+  let filter: AutocompleteProps<any>['filter'] = (textValue, inputValue) => {
     return textValue != null && contains(textValue, inputValue);
   };
 
@@ -281,6 +281,11 @@ export default function SearchMenu(props: SearchMenuProps) {
       onFocusSearch(); // Open the search overlay
       setSearchValue(e.key); // Set the initial search value
     }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      toggleShowSearchMenu();
+    }
   };
 
   let handleButtonPress = () => {
@@ -289,10 +294,9 @@ export default function SearchMenu(props: SearchMenuProps) {
 
   return (
     <div
-      className={style({ 
-        width: 'full', 
+      className={style({
         display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto',
+        gridTemplateColumns: 'auto 1fr',
         alignItems: 'center',
         gap: 16
       })}>

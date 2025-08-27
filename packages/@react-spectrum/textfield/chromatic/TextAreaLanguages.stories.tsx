@@ -11,8 +11,10 @@
  */
 
 import Info from '@spectrum-icons/workflow/Info';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {render} from './TextArea.stories';
+import {TextArea} from '../';
 
 export default {
   title: 'Languages/TextArea',
@@ -24,15 +26,17 @@ export default {
       scales: ['large', 'medium']
     }
   }
-};
+} as Meta<typeof TextArea>;
 
-export const Value測試IconInfoLabelPositionSideValidationStateValid = () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
+export type TextAreaStory = StoryFn<typeof TextArea>;
+
+export const Value測試IconInfoLabelPositionSideValidationStateValid: TextAreaStory = () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
 
 Value測試IconInfoLabelPositionSideValidationStateValid.story = {
   name: 'value: 測試, icon: Info, labelPosition: side, validationState: valid'
 };
 
-export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel = () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
+export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextAreaStory = () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
 
 ValueاختبارIsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'value: اختبار, isRequired: false, necessityIndicator: label'

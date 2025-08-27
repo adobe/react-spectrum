@@ -18,7 +18,7 @@ import {Item} from '@react-stately/collections';
 import {Key} from '@react-types/shared';
 import {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {SpectrumStepListProps, StepList} from '../';
 import {View} from '@react-spectrum/view';
 
@@ -76,7 +76,7 @@ export default {
   }
 } as Meta<typeof StepList>;
 
-function DefaultStepList(props: SpectrumStepListProps<object>) {
+function DefaultStepList(props: SpectrumStepListProps<object>): JSX.Element {
   return (
     <StepList {...props}>
       {options.map((o) => <Item key={o.key}>{o.value}</Item>)}

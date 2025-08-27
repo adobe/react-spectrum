@@ -30,7 +30,7 @@ interface SearchResultsMenuProps {
   searchRef: React.RefObject<TextFieldRef<HTMLInputElement> | null>,
   showCards: boolean,
   renderCardList: () => React.ReactNode,
-  filter?: AutocompleteProps['filter'],
+  filter?: AutocompleteProps<ComponentItem | ComponentSection>['filter'],
   noResultsText?: (value: string) => string,
   closeSearchMenu: () => void,
   isPrimary?: boolean
@@ -48,7 +48,7 @@ function CloseButton({closeSearchMenu}: {closeSearchMenu: () => void}) {
           <Close />
         </ActionButton>
       </Provider>
-    </div> 
+    </div>
   );
 }
 
@@ -78,7 +78,7 @@ export default function SearchResultsMenu({
             ref={searchRef}
             size="L"
             aria-label={`Search ${libraryName}`}
-            UNSAFE_style={{marginInlineEnd: 308, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'} as CSSProperties}
+            UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: isPrimary ? 'search-menu-search-field' : 'none'} as CSSProperties}
             styles={style({width: '[500px]'})} />
         </div>
 
@@ -88,7 +88,6 @@ export default function SearchResultsMenu({
 
         <div style={{display: showCards ? 'none' : 'block'}} className={style({height: 'full', overflow: 'auto'})}>
           {mainItems.length > 0 ? (
-             
             <div
               className={style({marginX: 'auto', marginY: 8, maxWidth: '[500px]'})}
               role="region"
