@@ -523,8 +523,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         this.nextCollection = null;
       }
     }
-
+    console.log('in update collection')
     if (this.isInitialRender) {
+      console.log('is updating to false', this.collection)
       this.collection.isComplete = false;
     }
   }
