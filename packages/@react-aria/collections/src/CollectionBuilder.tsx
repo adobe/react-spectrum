@@ -115,6 +115,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   useLayoutEffect(() => {
+    console.log('setting not initial render')
     document.isMounted = true;
     document.isInitialRender = false;
     return () => {
