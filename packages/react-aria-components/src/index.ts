@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridListLoadMoreItem, GridList, GridListItem, GridListContext} from './GridList';
+export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListSection} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
