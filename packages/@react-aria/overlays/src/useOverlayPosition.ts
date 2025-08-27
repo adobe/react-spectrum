@@ -73,7 +73,7 @@ export interface PositionAria {
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis | null,
   /** The origin of the target in the overlay's coordinate system. Useful for animations. */
-  triggerOrigin: {x: number, y: number} | null,
+  triggerAnchorPoint: {x: number, y: number} | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -146,6 +146,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
 
     if (visualViewport?.scale !== lastScale.current) {
+      return;
+    }
+
+    // Delay updating the position until children are finished rendering (e.g. collections).
+    if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
       return;
     }
 
@@ -294,14 +299,16 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   return {
     overlayProps: {
       style: {
-        position: 'absolute',
+        position: position ? 'absolute' : 'fixed',
+        top: !position ? 0 : undefined,
+        left: !position ? 0 : undefined,
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position?.position,
         maxHeight: position?.maxHeight ?? '100vh'
       }
     },
     placement: position?.placement ?? null,
-    triggerOrigin: position?.triggerOrigin ?? null,
+    triggerAnchorPoint: position?.triggerAnchorPoint ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',
