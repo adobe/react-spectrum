@@ -25,6 +25,7 @@ import {
   Breadcrumbs,
   Button,
   ButtonGroup,
+  Calendar,
   Checkbox,
   CheckboxGroup,
   CloseButton,
@@ -39,6 +40,9 @@ import {
   Content,
   ContextualHelp,
   CustomDialog,
+  DateField,
+  DatePicker,
+  DateRangePicker,
   Dialog,
   DialogContainer,
   DialogTrigger,
@@ -65,6 +69,7 @@ import {
   ProgressCircle,
   Radio,
   RadioGroup,
+  RangeCalendar,
   RangeSlider,
   SearchField,
   SegmentedControl,
@@ -81,6 +86,7 @@ import {
   Text,
   TextArea,
   TextField,
+  TimeField,
   Tooltip,
   TooltipTrigger,
 } from "@react-spectrum/s2";
@@ -108,6 +114,15 @@ export default function Lazy() {
         <ColorSlider defaultValue="#7f0000" channel="red" />
         <ColorArea defaultValue="#7f0000" />
         <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+      </Section>
+
+      <Section title="Date and time">
+        <Calendar aria-label="Calendar" />
+        <DateField label="Date Field" />
+        <DatePicker label="Date Picker" />
+        <DateRangePicker label="Date Range Picker" />
+        <RangeCalendar aria-label="Range Calendar" />
+        <TimeField label="Time Field" />
       </Section>
 
       <Section title="Drag and Drop">
