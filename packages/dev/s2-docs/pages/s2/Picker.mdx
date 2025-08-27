@@ -43,7 +43,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <Picker label="Animals" items={options} selectionMode="single">
+    <Picker label="Animals" items={options}>
       {(item) => <PickerItem>{item.name}</PickerItem>}
     </Picker>
     /*- end highlight -*/

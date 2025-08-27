@@ -42,6 +42,16 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
    * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy).
    */
   referrerPolicy?: HTMLAttributeReferrerPolicy,
+  /**
+   * The intrinsic width of the image.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#width).
+   */
+  width?: number,
+  /**
+   * The intrinsic height of the image.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#height).
+   */
+  height?: number,
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString,
   /** A function that is called to render a fallback when the image fails to load. */
@@ -152,7 +162,9 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     fetchPriority,
     loading,
     referrerPolicy,
-    slot
+    slot,
+    width,
+    height
   } = props;
   let hidden = (props as ImageContextValue).hidden;
   
@@ -234,13 +246,15 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
           decoding={decoding}
           loading={loading}
           referrerPolicy={referrerPolicy}
+          width={width}
+          height={height}
           ref={imgRef}
           onLoad={onLoad}
           onError={onError}
           className={imgStyles({isRevealed, isTransitioning})} />
         )}
     </div>
-  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
+  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, width, height, onLoad, onError, isRevealed, isTransitioning]);
 });
 
 function getFetchPriorityProp(fetchPriority?: 'high' | 'low' | 'auto'): Record<string, string | undefined> {
