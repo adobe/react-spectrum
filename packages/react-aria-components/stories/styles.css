@@ -399,14 +399,44 @@
   }
 }
 
-.popover,
-.tooltip {
-  transition: scale 300ms, opacity 300ms;
-  transform-origin: var(--trigger-anchor-point);
 
+:global(.react-aria-Popover) {
+  transition: transform 200ms, opacity 200ms;
+  --starting-scale: scale(0.9);
+  transform-origin: var(--trigger-anchor-point);
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
+    transform: scale(0.85) var(--origin);
+    scale: 0.85;
+  }
+
+  :global(.react-aria-OverlayArrow) {
+    &[data-placement=bottom] svg {
+      transform: rotate(180deg);
+    }
+
+    &[data-placement=left] svg {
+      transform: rotate(-90deg);
+    }
+
+    &[data-placement=right] svg {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.popover,
+.tooltip {
+  /* transition: scale 300ms, opacity 300ms; */
+  /* transform-origin: var(--trigger-anchor-point); */
+  transition: transform 200ms, opacity 200ms;
+  --starting-scale: scale(0.9);
+  transform-origin: var(--trigger-anchor-point);
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+    transform: scale(0.85) var(--origin);
     scale: 0.85;
   }
 

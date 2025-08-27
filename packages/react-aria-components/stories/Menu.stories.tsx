@@ -31,7 +31,7 @@ export const MenuExample: MenuStory = () => (
     <Popover placement="bottom right">
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MenuSection className={styles.group} aria-label={'Section 1'}>
-          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>F falwkenglawne glkawne glkawngl kwnae lgknawe goo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>

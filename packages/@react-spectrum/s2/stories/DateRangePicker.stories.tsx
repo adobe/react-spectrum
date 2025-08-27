@@ -12,7 +12,7 @@
 
 import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading, Link, Text} from '../src';
 import {CalendarSwitcher, categorizeArgTypes} from './utils';
-import {fn} from '@storybook/test';
+// import {fn} from '@storybook/test';
 import type {Meta, StoryObj} from '@storybook/react';
 import {parseDate, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};
@@ -37,8 +37,8 @@ const meta: Meta<typeof DateRangePicker> = {
     }
   },
   args: {
-    onOpenChange: fn(),
-    onChange: fn()
+    // onOpenChange: fn(),
+    // onChange: fn()
   },
   title: 'DateRangePicker',
   decorators: [

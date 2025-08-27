@@ -149,7 +149,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    // Delay updating the position until children are finished rendering (e.g. collections).
+    // // Delay updating the position until children are finished rendering (e.g. collections).
     if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
       return;
     }
@@ -157,6 +157,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // Don't update while the overlay is animating.
     // Things like scale animations can mess up positioning by affecting the overlay's computed size.
     if (overlayRef.current.getAnimations?.().length > 0) {
+      console.log('ANIMATING')
       return;
     }
 
@@ -225,7 +226,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;
     }
-
+    debugger
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
   // eslint-disable-next-line react-hooks/exhaustive-deps
