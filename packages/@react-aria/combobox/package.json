@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/combobox",
-  "version": "3.13.1",
+  "version": "3.13.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -30,8 +30,8 @@
     "@react-aria/i18n": "^3.12.12",
     "@react-aria/listbox": "^3.14.8",
     "@react-aria/live-announcer": "^3.4.4",
-    "@react-aria/menu": "^3.19.1",
-    "@react-aria/overlays": "^3.29.0",
+    "@react-aria/menu": "^3.19.2",
+    "@react-aria/overlays": "^3.29.1",
     "@react-aria/selection": "^3.25.1",
     "@react-aria/textfield": "^3.18.1",
     "@react-aria/utils": "^3.30.1",
