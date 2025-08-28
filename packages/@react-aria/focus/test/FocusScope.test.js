@@ -74,6 +74,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
     });
 
+    // There's a bug in user event most likely where this test passes with or without `visibilityProperty`
     it('should skip hidden elements', async function () {
       let {getByTestId} = render(
         <FocusScope contain>
