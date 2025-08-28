@@ -113,25 +113,26 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       return;
     }
 
-    if (e.target !== ref.current && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
-      if (e.key === 'Tab' && ref.current.contains(e.target as Element)) {
-        let cellWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
-        if (e.shiftKey) {
-          cellWalker.currentNode = ref.current;
-          let isFirstFocusable = cellWalker.firstChild() === e.target;
-          if (!isFirstFocusable) {
-            e.stopPropagation();
-          }
-        } else {
-          cellWalker.currentNode = ref.current;
-          let isLastFocusable = cellWalker.lastChild() === e.target;
-          if (!isLastFocusable) {
-            e.stopPropagation();
-          }
-        }
-      }
-      return;
-    }
+    // TODO: keyboard handler should only stop propagation on keys we intend to handle, not ALL keys, that way we don't have to call continue then call stop else where but only *sometimes* depending on the order
+    // if (e.target !== ref.current && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+    //   if (e.key === 'Tab' && ref.current.contains(e.target as Element)) {
+    //     let cellWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
+    //     if (e.shiftKey) {
+    //       cellWalker.currentNode = ref.current;
+    //       let isFirstFocusable = cellWalker.firstChild() === e.target;
+    //       if (!isFirstFocusable) {
+    //         e.stopPropagation();
+    //       }
+    //     } else {
+    //       cellWalker.currentNode = ref.current;
+    //       let isLastFocusable = cellWalker.lastChild() === e.target;
+    //       if (!isLastFocusable) {
+    //         e.stopPropagation();
+    //       }
+    //     }
+    //   }
+    //   return;
+    // }
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;

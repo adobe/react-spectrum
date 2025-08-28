@@ -2655,7 +2655,7 @@ describe('Table', () => {
     });
   });
 
-  describe.skip('Editable fields in cells', () => {
+  describe('Editable fields in cells', () => {
     describe.each(['none', 'single', 'multiple'])('selectionMode: %s', (selectionMode) => {
       it('should support editing a textfield in a cell in a table with keyboard interactions', async () => {
         let {getByRole, getAllByRole} = render(
@@ -2716,15 +2716,14 @@ describe('Table', () => {
         await user.keyboard('{ArrowRight}');
         await user.keyboard('{ArrowRight}');
         if (selectionMode === 'none') {
-          expect(tableTester.cells({element: tableTester.rows[0]})[2]).toHaveFocus();
+          expect(inputs[0]).toHaveFocus();
         } else {
           // in selection modes, account for extra checkbox column
           await user.keyboard('{ArrowRight}');
-          expect(tableTester.cells({element: tableTester.rows[0]})[3]).toHaveFocus();
+          expect(inputs[0]).toHaveFocus();
         }
-        expect(inputs[0]).toHaveFocus();
         await user.keyboard('{ArrowRight}');
-        expect(inputs[0]).toHaveFocus();
+        expect(inputs[1]).toHaveFocus();
         await user.keyboard('{ArrowLeft}');
         expect(inputs[0]).toHaveFocus();
         // Type a string that would trigger a typeahead or selection if we weren't in a textfield
@@ -2733,10 +2732,10 @@ describe('Table', () => {
         expect(inputs[0]).toHaveFocus();
 
         // Navigate to second textfield in first row
-        await user.tab();
-        expect(inputs[1]).toHaveFocus();
         await user.keyboard('{ArrowRight}');
         expect(inputs[1]).toHaveFocus();
+        await user.keyboard('{ArrowRight}');
+        expect(tableTester.rows[0]).toHaveFocus();
         await user.keyboard('{ArrowLeft}');
         expect(inputs[1]).toHaveFocus();
         // Type a string that would trigger a typeahead or selection if we weren't in a textfield
@@ -2750,11 +2749,7 @@ describe('Table', () => {
         // Come back to the table, we should remember roughly where we were, in this case, on the cell containing the input.
         // We may want this to focus the input itself instead of the cell.
         await user.tab({shift: true});
-        if (selectionMode === 'none') {
-          expect(tableTester.cells({element: tableTester.rows[0]})[2]).toHaveFocus();
-        } else {
-          expect(tableTester.cells({element: tableTester.rows[0]})[3]).toHaveFocus();
-        }
+        expect(inputs[0]).toHaveFocus(); // TODO: this should be the second input if we were on it previously, but it's always the first input right now
       });
 
       describe('pointer interactions', () => {
@@ -2815,7 +2810,7 @@ describe('Table', () => {
           await user.click(inputs[0]);
           expect(inputs[0]).toHaveFocus();
           await user.keyboard('{ArrowRight}');
-          expect(inputs[0]).toHaveFocus();
+          expect(inputs[1]).toHaveFocus();
           await user.keyboard('{ArrowLeft}');
           expect(inputs[0]).toHaveFocus();
           // Type a string that would trigger a typeahead or selection if we weren't in a textfield
@@ -2827,7 +2822,7 @@ describe('Table', () => {
           await user.click(inputs[1]);
           expect(inputs[1]).toHaveFocus();
           await user.keyboard('{ArrowRight}');
-          expect(inputs[1]).toHaveFocus();
+          expect(tableTester.rows[0]).toHaveFocus();
           await user.keyboard('{ArrowLeft}');
           expect(inputs[1]).toHaveFocus();
           // Type a string that would trigger a typeahead or selection if we weren't in a textfield
@@ -2888,7 +2883,7 @@ describe('Table', () => {
       await user.keyboard('{ArrowRight}');
       expect(inputs[1]).toHaveFocus();
       await user.keyboard('{ArrowRight}');
-      expect(inputs[1]).toHaveFocus();
+      expect(tableTester.rows[0]).toHaveFocus();
       await user.keyboard('{ArrowLeft}');
       expect(inputs[1]).toHaveFocus();
       // Type a string that would trigger a typeahead or selection if we weren't in a textfield
@@ -2896,8 +2891,7 @@ describe('Table', () => {
       expect(tableTester.selectedRows).toHaveLength(0);
       expect(inputs[1]).toHaveFocus();
 
-      await user.tab({shift: true});
-
+      // TODO: correct behaviour? selection cursor is where it would be if you pressed down, so it doesn't do anything, so should it be allowed to navigate cells now?
       await user.keyboard('{ArrowDown}');
       await user.tab();
       expect(button).toHaveFocus();

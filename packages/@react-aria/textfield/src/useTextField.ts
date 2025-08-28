@@ -135,31 +135,47 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'Home')
       && (e.target as HTMLInputElement).selectionStart === 0
       && (e.target as HTMLInputElement).selectionEnd === 0) {
-      e.continuePropagation();
-    }
-    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'End')
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if ((e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'End')
       && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
       && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
-      e.continuePropagation();
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else {
+      if (!e.isPropagationStopped()) {
+        e.stopPropagation();
+      }
     }
-    if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
-      e.continuePropagation();
-    };
     onKeyDownProp?.(e);
   }, [onKeyDownProp]);
   let onKeyUp = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
     if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp')
       && (e.target as HTMLInputElement).selectionStart === 0
       && (e.target as HTMLInputElement).selectionEnd === 0) {
-      e.continuePropagation();
-    }
-    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown')
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if ((e.key === 'ArrowRight' || e.key === 'ArrowDown')
       && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
       && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
-      e.continuePropagation();
-    }
-    if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
-      e.continuePropagation();
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else {
+      if (!e.isPropagationStopped()) {
+        e.stopPropagation();
+      }
     };
     onKeyUpProp?.(e);
   }, [onKeyUpProp]);
@@ -232,6 +248,24 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         autoCorrect: props.autoCorrect,
         spellCheck: props.spellCheck,
         [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: props.enterKeyHint,
+
+        // TODO: Always?? or only if we're inside a grid? in which case maybe I should do this in all of Grid hooks by checking if target instance of HTMLInputElement?
+        onPointerDown: (e) => {
+          e.stopPropagation();
+          props.onKeyDown?.(e);
+        },
+        onPointerUp: (e) => {
+          e.stopPropagation();
+          props.onKeyUp?.(e);
+        },
+        onClick: (e) => {
+          e.stopPropagation();
+          props.onClick?.(e);
+        },
+        onDoubleClick: (e) => {
+          e.stopPropagation();
+          props.onDoubleClick?.(e);
+        },
 
         // Clipboard events
         onCopy: props.onCopy,

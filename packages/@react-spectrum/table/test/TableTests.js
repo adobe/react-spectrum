@@ -1815,7 +1815,6 @@ export let tableTests = () => {
 
         // Simulate tabbing within the table
         await user.tab();
-        await user.tab();
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
@@ -4252,8 +4251,7 @@ export let tableTests = () => {
 
       expect(document.activeElement).toEqual(input);
 
-      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
+      await user.keyboard('{Escape}');
       act(() => {
         jest.runAllTimers();
       });
