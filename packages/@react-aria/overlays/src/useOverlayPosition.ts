@@ -140,6 +140,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
   }, [isOpen]);
 
+  let hasPositioned = useRef(false);
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !boundaryElement) {
       return;
@@ -154,10 +155,24 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    // Don't update while the overlay is animating.
-    // Things like scale animations can mess up positioning by affecting the overlay's computed size.
-    if (overlayRef.current.getAnimations?.().length > 0) {
-      return;
+    // Scale animations can mess up positioning by affecting the overlay's computed size.
+    let animations = overlayRef.current.getAnimations();
+    let savedAnimations: [Animation, CSSNumberish][] = [];
+    if (animations?.length > 0) {
+      if (hasPositioned.current) {
+        // If we've already positioned at least once, skip updating during animations to avoid flicker in Safari.
+        return;
+      } else {
+        // Otherwise, we need to measure the overlay's final size after the animations.
+        // Temporarily pause and skip to the end. After the positioning calculations, we'll resume.
+        for (let anim of animations) {
+          if (anim.playState === 'running') {
+            anim.pause();
+            savedAnimations.push([anim, anim.currentTime!]);
+            anim.currentTime = anim.effect?.getComputedTiming().duration as number;
+          }
+        }
+      }
     }
 
     // Determine a scroll anchor based on the focused element.
@@ -204,6 +219,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       arrowBoundaryOffset
     });
 
+    for (let [anim, time] of savedAnimations) {
+      anim.currentTime = time;
+      anim.play();
+    }
+
     if (!position.position) {
       return;
     }
@@ -228,6 +248,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
+    hasPositioned.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
