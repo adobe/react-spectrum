@@ -74,6 +74,34 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
     });
 
+    it('should skip hidden elements', async function () {
+      let {getByTestId} = render(
+        <FocusScope contain>
+          <input data-testid="input1" />
+          <input data-testid="input2" style={{visibility: 'hidden'}} />
+          <input data-testid="input3" />
+        </FocusScope>
+      );
+
+      let input1 = getByTestId('input1');
+      let input3 = getByTestId('input3');
+
+      act(() => {input1.focus();});
+      expect(document.activeElement).toBe(input1);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input3);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input1);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(input3);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(input1);
+    });
+
     it('should work with nested elements', async function () {
       let {getByTestId} = render(
         <FocusScope contain>
