@@ -160,21 +160,21 @@ export const GridListSectionExample = (args) => (
     }}>
     <GridListSection>
       <GridListHeader>Section 1</GridListHeader>
-      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="1,1" >1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="1,2" >1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="1,3" >1,3 <Button>Actions</Button></MyGridListItem>
     </GridListSection>
     <GridListSection>
       <GridListHeader>Section 2</GridListHeader>
-      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
     </GridListSection>
     <GridListSection>
       <GridListHeader>Section 3</GridListHeader>
-      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
     </GridListSection>
   </GridList>
 );
@@ -213,7 +213,7 @@ export function VirtualizedGridListSection() {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
@@ -223,11 +223,11 @@ export function VirtualizedGridListSection() {
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
+        headingHeight: 25,
         rowHeight: 25
       }}>
       <GridList
         className={styles.menu}
-        // selectionMode="multiple"
         style={{height: 400}}
         aria-label="virtualized with grid section"
         items={sections}>
@@ -236,7 +236,7 @@ export function VirtualizedGridListSection() {
             <GridListSection>
               <GridListHeader>{section.name}</GridListHeader>
               <Collection items={section.children} >
-                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+                {item => <MyGridListItem textValue={item.name}>{item.name}</MyGridListItem>}
               </Collection>
             </GridListSection>
           )}
