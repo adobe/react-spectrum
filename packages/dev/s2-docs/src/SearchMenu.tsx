@@ -44,8 +44,8 @@ let modalStyle = style({
   position: 'absolute',
   top: 8,
   width: 'full',
-  // Matches body
-  maxWidth: 1280,
+  // 1280px matches body
+  maxWidth: '[min(1280px, 95vw)]',
   backgroundColor: 'elevated',
   paddingX: 16,
   paddingY: 8,
