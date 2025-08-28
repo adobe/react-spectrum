@@ -233,7 +233,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   }
 
   let DOMProps = filterDOMProps(props, {global: true});
-  console.log('state.collection', state.collection)
   return (
     <FocusScope>
       <div

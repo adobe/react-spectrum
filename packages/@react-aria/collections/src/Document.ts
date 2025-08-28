@@ -519,8 +519,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
-        console.trace('ABOUT TO UPDATE TO NEXT COLLECTION');
-        // console.log('updating collection to next collection')
         this.nextCollection = null;
       }
     }
