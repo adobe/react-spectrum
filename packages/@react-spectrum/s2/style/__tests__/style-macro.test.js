@@ -55,7 +55,7 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs111 Jbpv111"`);
+    expect(js).toMatchInlineSnapshot('" Jbs111 Jbpv111"');
   });
 
   it('should support self references', () => {
@@ -117,7 +117,7 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js).toMatchInlineSnapshot(`" _kc111 hc111 mCPFGYc111 lc111 SMBFGYc111 Rv111 ZjUQgKd111 -m_-mc111 -S_-Sv111"`);
+    expect(js).toMatchInlineSnapshot('" _kc111 hc111 mCPFGYc111 lc111 SMBFGYc111 Rv111 ZjUQgKd111 -m_-mc111 -S_-Sv111"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +134,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw111 pg111"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb111 pHJ3AUd111"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb111 pg111"`);
+    expect(js()).toMatchInlineSnapshot('"  gw111 pg111"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb111 pHJ3AUd111"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb111 pg111"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +151,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B111 __Ya111"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D111 __Ya111"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D111 __Ya111"`);
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B111 __Ya111"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D111 __Ya111"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D111 __Ya111"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +168,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk111 Qk111 Sk111 Rk111"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm111 Qm111 Sm111 Rm111"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Tm111 Qm111 Sm111 Rm111"`);
+    expect(js()).toMatchInlineSnapshot('"  Tk111 Qk111 Sk111 Rk111"');
+    expect(overrides).toMatchInlineSnapshot('" Tm111 Qm111 Sm111 Rm111"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm111 Qm111 Sm111 Rm111"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -185,9 +185,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE111"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk111"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk111 gE111"`);
+    expect(js()).toMatchInlineSnapshot('"  gE111"');
+    expect(overrides).toMatchInlineSnapshot('" Nk111"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk111 gE111"');
   });
 
   it('should support runtime conditions', () => {
@@ -241,9 +241,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH111 pt111"`);
-    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF111 po111"`);
-    expect(js({ isPressed: true })).toMatchInlineSnapshot(`"  gE111 pm111"`);
+    expect(js({})).toMatchInlineSnapshot('"  gH111 pt111"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF111 po111"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE111 pm111"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -284,10 +284,10 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH111"`);
-    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF111"`);
-    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  g_h111"`);
-    expect(js({ isSelected: true, isHovered: true })).toMatchInlineSnapshot(`"  g3111"`);
+    expect(js({})).toMatchInlineSnapshot('"  gH111"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF111"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h111"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g3111"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -301,9 +301,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({ variant: 'accent' })).toMatchInlineSnapshot(`"  gY111"`);
-    expect(js({ variant: 'primary' })).toMatchInlineSnapshot(`"  gjQquMe111"`);
-    expect(js({ variant: 'secondary' })).toMatchInlineSnapshot(`"  gw111"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY111"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe111"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw111"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -337,8 +337,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb111"`);
-    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  ple111"`);
+    expect(js({})).toMatchInlineSnapshot('"  plb111"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple111"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -346,7 +346,7 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th111 Qh111 Sh111 Rh111"`);
+    expect(js).toMatchInlineSnapshot('" Th111 Qh111 Sh111 Rh111"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
