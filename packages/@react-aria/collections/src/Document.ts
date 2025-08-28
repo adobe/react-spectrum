@@ -417,6 +417,8 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
   isMounted = true;
   isInitialRender = true;
+  isComplete = true;
+
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -520,15 +522,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
-        console.log('updating collection to next collection')
+        console.trace('ABOUT TO UPDATE TO NEXT COLLECTION');
+        // console.log('updating collection to next collection')
         this.nextCollection = null;
       }
     }
-    console.log('in update collection, checking if isinitial render', this.isInitialRender)
-    if (this.isInitialRender) {
-      console.log('is updating to false', this.collection)
-      this.collection.isComplete = false;
-    }
+
+    this.collection.isComplete = this.isComplete;
   }
 
   queueUpdate(): void {

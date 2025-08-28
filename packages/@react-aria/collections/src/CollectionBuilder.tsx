@@ -115,9 +115,11 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   useLayoutEffect(() => {
-    console.log('setting not initial render')
+    // console.log('setting not initial render')
+    console.trace('in LAYOUTEFFECT, setting isComplete to true');
     document.isMounted = true;
     document.isInitialRender = false;
+    // document.isComplete = true;
     return () => {
       // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
@@ -145,6 +147,14 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
   if (typeof CollectionNodeClass === 'string') {
     CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
+  }
+
+
+  let document = useContext(CollectionDocumentContext);
+  console.log('calling useSSRCollectionNode', document)
+  if (document?.isInitialRender) {
+    console.log('MAKING DOCUMENT ISCOMPLETE FALSE IN USESSR')
+    document.isComplete = false;
   }
 
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.

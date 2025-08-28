@@ -288,7 +288,6 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }
-
     this.firstKey = firstKey;
     this.lastKey = lastKey;
     this.frozen = !isSSR;

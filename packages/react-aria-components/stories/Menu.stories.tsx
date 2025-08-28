@@ -16,7 +16,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
 import React, {JSX} from 'react';
 import styles from '../example/index.css';
-import './styles.css';
+import styles2 from './styles.css';
 
 export default {
   title: 'React Aria Components/Menu',
@@ -28,7 +28,7 @@ export type MenuStory = StoryFn<typeof Menu>;
 export const MenuExample: MenuStory = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
-    <Popover placement="bottom right">
+    <Popover placement="bottom right" className={styles2.popover}>
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MenuSection className={styles.group} aria-label={'Section 1'}>
           <MyMenuItem>F falwkenglawne glkawne glkawngl kwnae lgknawe goo</MyMenuItem>

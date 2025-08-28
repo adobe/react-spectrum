@@ -151,18 +151,18 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
 
     // // Delay updating the position until children are finished rendering (e.g. collections).
-    if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
-      return;
-    }
+    // if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
+    //   return;
+    // }
 
     // Scale animations can mess up positioning by affecting the overlay's computed size.
     let animations = overlayRef.current.getAnimations?.();
     let savedAnimations: [Animation, CSSNumberish][] = [];
     if (animations?.length > 0) {
-      if (hasPositioned.current) {
-        // If we've already positioned at least once, skip updating during animations to avoid flicker in Safari.
-        return;
-      } else {
+      // if (hasPositioned.current) {
+      //   // If we've already positioned at least once, skip updating during animations to avoid flicker in Safari.
+      //   // return;
+      // } else {
         // Otherwise, we need to measure the overlay's final size after the animations.
         // Temporarily pause and skip to the end. After the positioning calculations, we'll resume.
         for (let anim of animations) {
@@ -172,7 +172,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
             anim.currentTime = anim.effect?.getComputedTiming().duration as number;
           }
         }
-      }
     }
 
     // Determine a scroll anchor based on the focused element.
@@ -245,7 +244,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;
     }
-    debugger
+    // debugger
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
     hasPositioned.current = true;
