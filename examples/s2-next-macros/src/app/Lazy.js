@@ -53,6 +53,7 @@ import {
   DropZone,
   Footer,
   Form,
+  FullscreenDialog,
   Header,
   Heading,
   IllustratedMessage,
@@ -74,6 +75,8 @@ import {
   SearchField,
   SegmentedControl,
   SegmentedControlItem,
+  SelectBox,
+  SelectBoxGroup,
   Slider,
   StatusLight,
   Switch,
@@ -93,6 +96,10 @@ import {
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
 import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
+import Server from "@react-spectrum/s2/illustrations/linear/Server";
+import AlertNotice from "@react-spectrum/s2/illustrations/linear/AlertNotice";
+import PaperAirplane from "@react-spectrum/s2/illustrations/linear/PaperAirplane";
+import StarFilled1 from "@react-spectrum/s2/illustrations/linear/StarFilled1";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
@@ -156,6 +163,26 @@ export default function Lazy() {
           <TextArea label="Description" />
           <TextField label="Email" />
           <TextField label="Password" />
+          <SelectBoxGroup aria-label="Choose a cloud">
+            <SelectBox id="aws" textValue="Amazon Web Services">
+              <Server />
+              <Text slot="label">Amazon Web Services</Text>
+              <Text slot="description">Reliable cloud infrastructure</Text>
+            </SelectBox>
+            <SelectBox id="azure" textValue="Microsoft Azure">
+              <AlertNotice />
+              <Text slot="label">Microsoft Azure</Text>
+            </SelectBox>
+            <SelectBox id="gcp" textValue="Google Cloud Platform">
+              <PaperAirplane />
+              <Text slot="label">Google Cloud Platform</Text>
+            </SelectBox>
+            <SelectBox id="ibm" textValue="IBM Cloud">
+              <StarFilled1 />
+              <Text slot="label">IBM Cloud</Text>
+              <Text slot="description">Hybrid cloud solutions</Text>
+            </SelectBox>
+          </SelectBoxGroup>
         </Form>
       </Section>
 
@@ -301,6 +328,26 @@ export default function Lazy() {
               <Text>50% disk space remaining.</Text>
             </Content>
           </Popover>
+        </DialogTrigger>
+
+        <DialogTrigger>
+          <Button variant="primary">Fullscreen</Button>
+          <FullscreenDialog>
+            {({close}) => <>
+                <Heading slot="title">Dialog title</Heading>
+                <Header>Header</Header>
+                <Content>
+                  {[...Array(5)].map((_, i) => <p key={i} style={{
+                    marginTop: i === 0 ? 0 : undefined,
+                    marginBottom: i === 4 ? 0 : undefined
+                  }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>)}
+                </Content>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="accent">Save</Button>
+                </ButtonGroup>
+              </>}
+          </FullscreenDialog>
         </DialogTrigger>
 
         <TooltipTrigger>
