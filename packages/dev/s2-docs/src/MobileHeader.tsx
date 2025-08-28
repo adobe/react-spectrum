@@ -1,10 +1,12 @@
 'use client';
 
-import {ActionButton, CloseButton, CustomDialog, DialogTrigger} from '@react-spectrum/s2';
+import {ActionButton, CloseButton, DialogTrigger} from '@react-spectrum/s2';
 import {AdobeLogo} from './AdobeLogo';
+import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
-import React, {CSSProperties, useEffect, useRef} from 'react';
+import {Modal} from '../../../@react-spectrum/s2/src/Modal';
+import React, {CSSProperties, forwardRef, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let fadeOut = keyframes(`
@@ -55,6 +57,56 @@ const animation = {
 
 const animationRange = '24px 64px';
 
+interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  isDismissible?: boolean,
+  isKeyboardDismissDisabled?: boolean,
+  padding?: 'default' | 'none'
+}
+
+const dialogStyle = style({
+  padding: {
+    padding: {
+      default: {
+        default: 24,
+        sm: 32
+      },
+      none: 0
+    }
+  },
+  boxSizing: 'border-box',
+  outlineStyle: 'none',
+  borderRadius: 'inherit',
+  overflow: 'auto',
+  position: 'relative',
+  size: 'full',
+  maxSize: 'inherit'
+});
+
+const MobileCustomDialog = forwardRef<HTMLDivElement, MobileDialogProps>(function MobileCustomDialog(props, ref) {
+  let {
+    size,
+    isDismissible,
+    isKeyboardDismissDisabled,
+    padding = 'default'
+  } = props;
+
+  return (
+    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled} style={{zIndex: 100}}>
+      <RACDialog
+        {...props}
+        ref={ref}
+        className={dialogStyle({padding})}>
+        {composeRenderProps(props.children, (children) => (
+          <OverlayTriggerStateContext.Provider value={null}>
+            {children}
+          </OverlayTriggerStateContext.Provider>
+        ))}
+      </RACDialog>
+    </Modal>
+  );
+});
+
 export function MobileHeader({toc, nav}) {
   let ref = useRef<HTMLDivElement | null>(null);
 
@@ -92,7 +144,7 @@ export function MobileHeader({toc, nav}) {
         },
         alignItems: 'center',
         gap: 12,
-        // zIndex: 100, // TODO: should be behind custom dialog
+        zIndex: 1,
         overflow: 'clip',
         '--base-bg': {
           type: 'backgroundColor',
@@ -153,10 +205,10 @@ export function MobileHeader({toc, nav}) {
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        <CustomDialog size="fullscreenTakeover" padding="none">
-          <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
+        <MobileCustomDialog size="fullscreenTakeover" padding="none">
+          <CloseButton styles={style({position: 'fixed', top: 12, insetEnd: 12, zIndex: 101})} />
           {nav}
-        </CustomDialog>
+        </MobileCustomDialog>
       </DialogTrigger>
     </div>
   );

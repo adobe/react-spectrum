@@ -63,7 +63,8 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let prevSearchWasEmptyRef = useRef<boolean>(true);
   let headerRef = useRef<HTMLDivElement>(null);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
-  let [sectionViewportHeight, setSectionViewportHeight] = useState<number | null>(null);
+  let tabListRef = useRef<HTMLDivElement>(null);
+  let [tabListHeight, setTabListHeight] = useState(0);
 
   let getCurrentLibrary = (page: any) => {
     if (page.url.includes('react-aria')) {
@@ -116,25 +117,6 @@ export function MobileNav({pages, currentPage}: PageProps) {
   }, [getSectionsForLibrary, selectedLibrary]);
   
 
-  // Compute available viewport height for the vertical scrolling area below the sticky header
-  useEffect(() => {
-    let computeAvailableHeight = () => {
-      if (!headerRef.current) {
-        return;
-      }
-      let rect = headerRef.current.getBoundingClientRect();
-      let viewportHeight = window.innerHeight;
-      // Account for bottom padding used on the MobileNav container
-      let bottomPadding = 24;
-      let available = viewportHeight - rect.bottom - bottomPadding;
-      setSectionViewportHeight(Math.max(100, available));
-    };
-
-    computeAvailableHeight();
-    window.addEventListener('resize', computeAvailableHeight);
-    return () => window.removeEventListener('resize', computeAvailableHeight);
-  }, [selectedLibrary, searchFocused, searchValue, currentLibrarySectionArray.length]);
-
   useEffect(() => {
       // Auto-select first section initially or when library changes
     if (currentLibrarySectionArray.length > 0 && !selectedSection) {
@@ -148,6 +130,18 @@ export function MobileNav({pages, currentPage}: PageProps) {
       setSelectedSection(currentLibrarySectionArray[0]);
     }
   }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
+
+  useEffect(() => {
+    let measure = () => {
+      if (tabListRef.current) {
+        setTabListHeight(tabListRef.current.getBoundingClientRect().height);
+      }
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [selectedLibrary]);
 
   let getOrderedLibraries = () => {
     let allLibraries = [
@@ -287,7 +281,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
   }, [selectedSection, selectedLibrary]);
 
   return (
-    <div>
+    <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
       <Tabs 
         aria-label="Libraries"
         density="compact"
@@ -302,17 +296,20 @@ export function MobileNav({pages, currentPage}: PageProps) {
             }
           }
         }}
-        styles={style({margin: 12})}>
-        <TabList>
-          {libraries.map(library => (
-            <Tab key={library.id} id={library.id}>{library.label}</Tab>
-          ))}
-        </TabList>
+        styles={style({marginX: 12, marginTop: 12})}>
+        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white'})}>
+          <TabList>
+            {libraries.map(library => (
+              <Tab key={library.id} id={library.id}>{library.label}</Tab>
+            ))}
+          </TabList>
+        </div>
         {libraries.map(library => (
           <TabPanel key={library.id} id={library.id}>
             <div
               ref={headerRef}
-              className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white'})}>
+              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'white'})}
+              style={{top: tabListHeight}}>
               <SearchField 
                 aria-label="Search" 
                 value={searchValue}
@@ -330,13 +327,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
                 {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
               </TagGroup>
             </div>
-            <div
-              ref={scrollContainerRef}
-              style={{
-                height: sectionViewportHeight ?? undefined,
-                maxHeight: sectionViewportHeight ?? undefined,
-                overflowY: 'auto'
-              } as React.CSSProperties}>
+            <div ref={scrollContainerRef}>
               <ComponentCardView
                 items={getItemsForSelection(selectedSection, library.id, searchValue)}
                 ariaLabel="Pages"
