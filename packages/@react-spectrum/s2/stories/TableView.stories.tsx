@@ -45,18 +45,18 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
 import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
-import {DOMRef, DOMRefValue, FocusableRefValue, forwardRefType, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Pressable} from '@react-aria/interactions';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useFocusVisible} from 'react-aria';
 import {useIsMobileDevice} from '../src/utils';
 import {useLayoutEffect} from '@react-aria/utils';
-import { Pressable, PressResponder } from '@react-aria/interactions';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -1572,7 +1572,6 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   let [valid, setValid] = useState(isValid(value));
 
   let validateAndCommit = () => {
-    console.log('validateAndCommit', internalValue);
     if (isValid(internalValue)) {
       setValid(true);
       onChange(internalValue);
@@ -1679,7 +1678,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
         {!isMobile ? (
           <Popover
             ref={popoverRef}
-            shouldCloseOnInteractOutside={(e) => {
+            shouldCloseOnInteractOutside={() => {
               if (!popoverRef.current?.contains(document.activeElement)) {
                 return false;
               }
@@ -1796,7 +1795,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
   },
   render: function EditableTable(args) {
     let {showButtons, ...props} = args;
-    let isMobile = !useMediaQuery('(any-pointer: fine)');
+    let isMobile = useIsMobileDevice();
     let tableRef = useRef<DOMRefValue<HTMLDivElement>>(null);
     let [editableItems, setEditableItems] = useState(defaultItems);
     let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
