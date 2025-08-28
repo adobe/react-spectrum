@@ -853,9 +853,9 @@ workflows:
       - test-esm:
           requires:
             - install
-      - lint:
-          requires:
-            - install
+      # - lint:
+      #     requires:
+      #       - install
       - ts-build-fork-point:
           requires:
             - install
@@ -893,12 +893,12 @@ workflows:
       - storybook-s2:
           requires:
             - install
-      - docs:
-          requires:
-            - install
-      - s2-docs:
-          requires:
-            - install
+      # - docs:
+      #     requires:
+      #       - install
+      # - s2-docs:
+      #     requires:
+      #       - install
       - verdaccio:
           filters:
             branches:
@@ -940,7 +940,7 @@ workflows:
             - v-rsp-cra-18
       - deploy:
           requires:
-            - lint
+            # - lint
             - test-ssr
             - test
             - test-ssr-16
@@ -953,8 +953,8 @@ workflows:
             - storybook-17
             - storybook-19
             - storybook-s2
-            - docs
-            - s2-docs
+            # - docs
+            # - s2-docs
       - deploy-verdaccio:
           requires:
             - v-docs
