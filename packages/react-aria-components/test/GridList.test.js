@@ -494,6 +494,85 @@ describe('GridList', () => {
     expect(items).toHaveLength(2);
   });
 
+  it('should calculate the correct aria-rowindex when gridlist is made up of only sections', () => {
+    let sections = [];
+    for (let s = 0; s < 5; s++) {
+      let items = [];
+      for (let i = 0; i < 2; i++) {
+        items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+      }
+      sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+    }
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
+
+    let {getAllByRole} = render(
+      <Virtualizer layout={ListLayout} layoutOptions={{headingHeight: 25, rowHeight: 25}}>
+        <GridList aria-label="Test" items={sections}>
+          <Collection items={sections}>
+            {section => (
+              <GridListSection>
+                <GridListHeader>{section.name}</GridListHeader>
+                <Collection items={section.children} >
+                  {item => <GridListItem>{item.name}</GridListItem>}
+                </Collection>
+              </GridListSection>
+            )}
+          </Collection>
+        </GridList>
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(15);
+    expect(rows.map(r => r.textContent)).toEqual(['Section 0', 'Section 0, Item 0', 'Section 0, Item 1', 'Section 1', 'Section 1, Item 0', 'Section 1, Item 1', 'Section 2', 'Section 2, Item 0', 'Section 2, Item 1', 'Section 3', 'Section 3, Item 0', 'Section 3, Item 1', 'Section 4', 'Section 4, Item 0', 'Section 4, Item 1']);
+
+    for (let i = 0; i < 15; i++) {
+      expect(rows[i]).toHaveAttribute('aria-rowindex');
+      expect(rows[i].getAttribute('aria-rowindex')).toEqual(`${i + 1}`);
+    }
+  });
+
+  it('should calculate the correct aria-rowindex when there is a mix of sections and individual items', () => {
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
+
+    let {getAllByRole} = render(
+      <Virtualizer layout={ListLayout} layoutOptions={{headingHeight: 25, rowHeight: 25}}>
+        <GridList aria-label="Test">
+          <GridListItem>Home</GridListItem>
+          <GridListItem>School</GridListItem>
+          <GridListSection>
+            <GridListHeader>Pets</GridListHeader>
+            <GridListItem>Cat</GridListItem>
+            <GridListItem>Dog</GridListItem>
+          </GridListSection>
+          <GridListSection aria-label="Ice cream flavors">
+            <GridListItem>Vanilla</GridListItem>
+            <GridListItem>Chocolate</GridListItem>
+          </GridListSection>
+          <GridListItem>City Hall</GridListItem>
+          <GridListItem>Pharmacy</GridListItem>
+          <GridListSection>
+            <GridListHeader>Plants</GridListHeader>
+            <GridListItem>Sunflower</GridListItem>
+            <GridListItem>Daffodil</GridListItem>
+          </GridListSection>
+        </GridList>
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(12);
+    expect(rows.map(r => r.textContent)).toEqual(['Home', 'School', 'Pets', 'Cat', 'Dog', 'Vanilla', 'Chocolate', 'City Hall', 'Pharmacy', 'Plants', 'Sunflower', 'Daffodil']);
+
+    for (let i = 0; i < 12; i++) {
+      expect(rows[i]).toHaveAttribute('aria-rowindex');
+      expect(rows[i].getAttribute('aria-rowindex')).toEqual(`${i + 1}`);
+    }
+  });
+
   describe('selectionBehavior="replace"', () => {
     // Required for proper touch detection
     installPointerEvent();
