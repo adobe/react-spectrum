@@ -16,7 +16,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj, StoryFn, StoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';

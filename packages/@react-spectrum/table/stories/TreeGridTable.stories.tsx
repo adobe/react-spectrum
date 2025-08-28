@@ -19,7 +19,7 @@ import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stori
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
 import {Key} from '@react-types/shared';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 
 enableTableNestedRows();
 

@@ -13,7 +13,7 @@
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
 import {DatePicker} from '../';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent} from '@storybook/test';
+import {userEvent} from '@storybook/testing-library';
 
 const meta: Meta<typeof DatePicker> = {
   component: DatePicker,

@@ -13,7 +13,7 @@
 import {CalendarDate} from '@internationalized/date';
 import {DateField} from '../';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent} from '@storybook/test';
+import {userEvent} from '@storybook/testing-library';
 
 const meta: Meta<typeof DateField> = {
   component: DateField,

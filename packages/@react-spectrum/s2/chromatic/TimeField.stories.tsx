@@ -13,7 +13,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {Time} from '@internationalized/date';
 import {TimeField} from '../';
-import {userEvent} from '@storybook/test';
+import {userEvent} from '@storybook/testing-library';
 
 const meta: Meta<typeof TimeField> = {
   component: TimeField,

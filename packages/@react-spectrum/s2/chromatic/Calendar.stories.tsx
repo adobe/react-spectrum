@@ -15,7 +15,7 @@ import {CalendarDate} from '@internationalized/date';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
-import {screen, userEvent, within} from '@storybook/test';
+import {screen, userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Calendar> = {
   component: Calendar,

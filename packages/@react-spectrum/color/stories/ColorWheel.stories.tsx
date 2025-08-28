@@ -12,8 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorSwatch, ColorWheel} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Flex, useLocale} from '@adobe/react-spectrum';
+import {ComponentMeta, ComponentStoryObj, StoryFn} from '@storybook/react';
+import {Flex, SpectrumColorWheelProps, useLocale} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
 import React, {JSX, useState} from 'react';
 

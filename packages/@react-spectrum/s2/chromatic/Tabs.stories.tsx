@@ -17,7 +17,7 @@ import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import {userEvent} from '@storybook/test';
+import {userEvent} from '@storybook/testing-library';
 import {useState} from 'react';
 
 const meta: Meta<typeof Tabs> = {
@@ -192,7 +192,7 @@ function AddRemoveExample(props) {
   let [tabs, setTabs] = useState([
     {id: 1, title: 'Tab 1', content: 'Tab body 1'},
     {id: 2, title: 'Tab 2', content: 'Tab body 2'},
-    {id: 3, title: 'Tab 3', content: 'Tab body 3'}, 
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'},
     {id: 4, title: 'Tab 4', content: 'Tab body 4'},
     {id: 5, title: 'Tab 5', content: 'Tab body 5'},
     {id: 6, title: 'Tab 6', content: 'Tab body 6'},

@@ -14,7 +14,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
-import {ComponentStoryObj} from '@storybook/react';
+import {ComponentStoryObj, JSX} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
@@ -22,7 +22,6 @@ import {GridLayoutOptions} from '../src/GridLayout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import {JSX, Meta, StoryObj} from '@storybook/react';
 import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useMemo, useState} from 'react';

@@ -12,9 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
-import {ComponentStoryObj} from '@storybook/react';
+import {ComponentStoryObj, Meta} from '@storybook/react';
 import Info from '@spectrum-icons/workflow/Info';
-import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {TextField} from '../';
 

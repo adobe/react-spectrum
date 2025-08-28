@@ -9,14 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {ComponentMeta, StoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
-
-type HelpTextStory = ComponentStoryObj<typeof TextField>;
 
 const argTypes = {
   label: {
@@ -59,7 +57,7 @@ export default {
   argTypes: argTypes
 } as ComponentMeta<typeof TextField>;
 
-// export type HelpTextStory = StoryObj<typeof TextField>;
+export type HelpTextStory = StoryObj<typeof TextField>;
 
 export const Default: HelpTextStory = {};
 

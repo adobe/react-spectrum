@@ -12,7 +12,7 @@
 
 import {Button, Checkbox, Group, Label, Link, ListBox, Popover, Select, SelectValue, Separator, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {MyListBoxItem} from './utils';
 import {Orientation} from 'react-stately';
 import React from 'react';
@@ -61,7 +61,7 @@ ToolbarExample.argTypes = {
   }
 };
 
-export const SelectSupport: ToolbarStory = {
+export const SelectSupport = {
   args: {
     orientation: 'horizontal' as Orientation
   },

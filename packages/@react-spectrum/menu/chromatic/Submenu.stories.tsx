@@ -18,7 +18,7 @@ import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import {ComponentStoryObj, Meta} from '@storybook/react';
 import {Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
