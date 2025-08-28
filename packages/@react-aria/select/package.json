@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/select",
-  "version": "3.16.1",
+  "version": "3.16.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -31,7 +31,7 @@
     "@react-aria/interactions": "^3.25.5",
     "@react-aria/label": "^3.7.21",
     "@react-aria/listbox": "^3.14.8",
-    "@react-aria/menu": "^3.19.1",
+    "@react-aria/menu": "^3.19.2",
     "@react-aria/selection": "^3.25.1",
     "@react-aria/utils": "^3.30.1",
     "@react-aria/visually-hidden": "^3.8.27",
