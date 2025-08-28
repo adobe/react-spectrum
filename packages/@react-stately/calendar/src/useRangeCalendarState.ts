@@ -34,7 +34,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-  /** Determines how to align the initial selection relative to the visible date range. */
+  /** Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
