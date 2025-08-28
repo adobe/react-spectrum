@@ -156,7 +156,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
 
     // Scale animations can mess up positioning by affecting the overlay's computed size.
-    let animations = overlayRef.current.getAnimations();
+    let animations = overlayRef.current.getAnimations?.();
     let savedAnimations: [Animation, CSSNumberish][] = [];
     if (animations?.length > 0) {
       if (hasPositioned.current) {
