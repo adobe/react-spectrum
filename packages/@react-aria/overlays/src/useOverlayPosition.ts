@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -140,7 +140,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
   }, [isOpen]);
 
-  let hasPositioned = useRef(false);
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !boundaryElement) {
       return;
@@ -150,6 +149,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
+<<<<<<< HEAD
     // // Delay updating the position until children are finished rendering (e.g. collections).
     // if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
     //   return;
@@ -174,6 +174,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         }
     }
 
+=======
+>>>>>>> a99e47697ef287e22f6ef368094a11e4a9c1a7ff
     // Determine a scroll anchor based on the focused element.
     // This stores the offset of the anchor element from the scroll container
     // so it can be restored after repositioning. This way if the overlay height
@@ -214,14 +216,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize: arrowSize ?? arrowRef?.current?.getBoundingClientRect().width ?? 0,
+      arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset
     });
-
-    for (let [anim, time] of savedAnimations) {
-      anim.currentTime = time;
-      anim.play();
-    }
 
     if (!position.position) {
       return;
@@ -247,7 +244,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // debugger
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    hasPositioned.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 

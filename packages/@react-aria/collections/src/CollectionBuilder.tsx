@@ -118,8 +118,6 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     // console.log('setting not initial render')
     console.trace('in LAYOUTEFFECT, setting isComplete to true');
     document.isMounted = true;
-    document.isInitialRender = false;
-    // document.isComplete = true;
     return () => {
       // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
