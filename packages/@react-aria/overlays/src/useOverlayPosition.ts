@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -140,7 +140,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
   }, [isOpen]);
 
-  let hasPositioned = useRef(false);
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !boundaryElement) {
       return;
@@ -148,31 +147,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     if (visualViewport?.scale !== lastScale.current) {
       return;
-    }
-
-    // Delay updating the position until children are finished rendering (e.g. collections).
-    if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
-      return;
-    }
-
-    // Scale animations can mess up positioning by affecting the overlay's computed size.
-    let animations = overlayRef.current.getAnimations?.();
-    let savedAnimations: [Animation, CSSNumberish][] = [];
-    if (animations?.length > 0) {
-      if (hasPositioned.current) {
-        // If we've already positioned at least once, skip updating during animations to avoid flicker in Safari.
-        return;
-      } else {
-        // Otherwise, we need to measure the overlay's final size after the animations.
-        // Temporarily pause and skip to the end. After the positioning calculations, we'll resume.
-        for (let anim of animations) {
-          if (anim.playState === 'running') {
-            anim.pause();
-            savedAnimations.push([anim, anim.currentTime!]);
-            anim.currentTime = anim.effect?.getComputedTiming().duration as number;
-          }
-        }
-      }
     }
 
     // Determine a scroll anchor based on the focused element.
@@ -215,14 +189,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize: arrowSize ?? arrowRef?.current?.getBoundingClientRect().width ?? 0,
+      arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset
     });
-
-    for (let [anim, time] of savedAnimations) {
-      anim.currentTime = time;
-      anim.play();
-    }
 
     if (!position.position) {
       return;
@@ -248,7 +217,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    hasPositioned.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
