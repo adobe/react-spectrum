@@ -62,7 +62,8 @@ function Example() {
       label="Categories"
       /*- begin highlight -*/
       items={list.items}
-      onRemove={(keys) => list.remove(...keys)}>
+      onRemove={(keys) => list.remove(...keys)}
+      renderEmptyState={() => <div>No categories</div>}>
       {/*- end highlight -*/}
       {(item) => <Tag>{item.name}</Tag>}
     </TagGroup>
@@ -87,21 +88,6 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
   <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
   <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
   <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
-</TagGroup>
-```
-
-### Empty state
-
-Use `renderEmptyState` to render placeholder content when the TagList is empty.
-
-```tsx render
-"use client";
-import {TagGroup} from 'vanilla-starter/TagGroup';
-
-<TagGroup
-  label="Categories"
-  renderEmptyState={() => 'No categories.'}>
-  {[]}
 </TagGroup>
 ```
 
