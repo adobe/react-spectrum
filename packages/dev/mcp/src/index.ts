@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fg from 'fast-glob';
-import {fileURLToPath} from 'url';
+import {fileURLToPath, pathToFileURL} from 'url';
 import fs from 'fs';
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import path from 'path';
@@ -40,6 +40,8 @@ const ICONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/s2wf-icon
 let iconIdCache: string[] | null = null;
 const ILLUSTRATIONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/spectrum-illustrations/linear');
 let illustrationIdCache: string[] | null = null;
+let iconAliasesCache: Record<string, string[]> | null = null;
+let illustrationAliasesCache: Record<string, string[]> | null = null;
 
 function ensureIconsExist() {
   if (!fs.existsSync(ICONS_DIR)) {
@@ -81,6 +83,22 @@ function listIllustrationNames(): string[] {
   )).sort((a, b) => a.localeCompare(b));
   illustrationIdCache = ids;
   return ids;
+}
+
+async function loadIconAliases(): Promise<Record<string, string[]>> {
+  if (iconAliasesCache) {return iconAliasesCache;}
+  const aliasesPath = path.resolve(__dirname, '../../s2-docs/src/iconAliases.js');
+  if (!fs.existsSync(aliasesPath)) {return iconAliasesCache = {};}
+  const mod = await import(pathToFileURL(aliasesPath).href);
+  return (iconAliasesCache = (mod.iconAliases ?? {}));
+}
+
+async function loadIllustrationAliases(): Promise<Record<string, string[]>> {
+  if (illustrationAliasesCache) {return illustrationAliasesCache;}
+  const aliasesPath = path.resolve(__dirname, '../../s2-docs/src/illustrationAliases.js');
+  if (!fs.existsSync(aliasesPath)) {return illustrationAliasesCache = {};}
+  const mod = await import(pathToFileURL(aliasesPath).href);
+  return (illustrationAliasesCache = (mod.illustrationAliases ?? {}));
 }
 
 function readAllPages(): PageInfo[] {
@@ -286,16 +304,30 @@ async function main() {
     },
     async ({terms}) => {
       const allNames = listIconNames();
+      const nameSet = new Set(allNames);
+      const aliases = await loadIconAliases();
       const rawTerms = Array.isArray(terms) ? terms : [terms];
       const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
       if (normalized.length === 0) {
         throw new Error('Provide at least one non-empty search term.');
       }
-      const results = allNames.filter(name => {
+      // direct name matches
+      const results = new Set(allNames.filter(name => {
         const nameLower = name.toLowerCase();
         return normalized.some(term => nameLower.includes(term));
-      });
-      return {content: [{type: 'text', text: JSON.stringify(results, null, 2)}]};
+      }));
+      // alias matches
+      for (const [aliasKey, targets] of Object.entries(aliases)) {
+        if (!targets || targets.length === 0) {continue;}
+        const aliasLower = aliasKey.toLowerCase();
+        if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
+          for (const t of targets) {
+            const n = String(t);
+            if (nameSet.has(n)) {results.add(n);}
+          }
+        }
+      }
+      return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
     }
   );
 
@@ -309,16 +341,30 @@ async function main() {
     },
     async ({terms}) => {
       const allNames = listIllustrationNames();
+      const nameSet = new Set(allNames);
+      const aliases = await loadIllustrationAliases();
       const rawTerms = Array.isArray(terms) ? terms : [terms];
       const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
       if (normalized.length === 0) {
         throw new Error('Provide at least one non-empty search term.');
       }
-      const results = allNames.filter(name => {
+      // direct name matches
+      const results = new Set(allNames.filter(name => {
         const nameLower = name.toLowerCase();
         return normalized.some(term => nameLower.includes(term));
-      });
-      return {content: [{type: 'text', text: JSON.stringify(results, null, 2)}]};
+      }));
+      // alias matches
+      for (const [aliasKey, targets] of Object.entries(aliases)) {
+        if (!targets || targets.length === 0) {continue;}
+        const aliasLower = aliasKey.toLowerCase();
+        if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
+          for (const t of targets) {
+            const n = String(t);
+            if (nameSet.has(n)) {results.add(n);}
+          }
+        }
+      }
+      return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
     }
   );
 
