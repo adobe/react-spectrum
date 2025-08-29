@@ -70,7 +70,7 @@ export interface CalendarPropsBase {
   /** 
    * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
    * @default 'center'
-  */
+   */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
