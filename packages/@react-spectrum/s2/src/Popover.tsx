@@ -14,20 +14,23 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
+  ContextValue,
   Dialog,
   DialogProps,
   OverlayArrow,
   OverlayTriggerStateContext,
+  useContextProps,
   useLocale
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {createContext, forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | keyof GlobalDOMAttributes> {
   styles?: StyleString,
@@ -150,7 +153,11 @@ let arrow = style({
   }
 });
 
+export const PopoverContext = createContext<ContextValue<PopoverProps, DOMRefValue<HTMLDivElement>>>(null);
+export const InPopoverContext = createContext(false);
+
 export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, PopoverContext);
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -214,7 +221,9 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
               </svg>
             </OverlayArrow>
           )}
-          {children}
+          <InPopoverContext.Provider value>
+            {children}
+          </InPopoverContext.Provider>
         </>
       ))}
     </AriaPopover>
