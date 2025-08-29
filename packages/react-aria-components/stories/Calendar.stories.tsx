@@ -74,38 +74,6 @@ export const CalendarResetValue: CalendarStory = {
   )
 };
 
-// export const CalendarMultiMonth: CalendarStory = {
-//   render: (args) => (
-//     <Calendar style={{width: 500}} visibleDuration={{months: 3}} {...args}>
-//       <div style={{display: 'flex', alignItems: 'center'}}>
-//         <Button slot="previous">&lt;</Button>
-//         <Heading style={{flex: 1, textAlign: 'center'}} />
-//         <Button slot="next">&gt;</Button>
-//       </div>
-//       <div style={{display: 'flex', gap: 20}}>
-//         <CalendarGrid style={{flex: 1}}>
-//           {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-//         </CalendarGrid>
-//         <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-//           {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-//         </CalendarGrid>
-//         <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
-//           {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-//         </CalendarGrid>
-//       </div>
-//     </Calendar>
-//   ),
-//   args: {
-//     selectionAlignment: 'center'
-//   },
-//   argTypes: {
-//     selectionAlignment: {
-//       control: 'select',
-//       options: ['start', 'center', 'end']
-//     }
-//   }
-// };
-
 function CalendarMultiMonthExample(args) {
   let defaultDate = new CalendarDate(2021, 7, 1);
   let [focusedDate, setFocusedDate] = React.useState(defaultDate);
