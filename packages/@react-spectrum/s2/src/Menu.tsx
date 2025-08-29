@@ -211,7 +211,7 @@ export let checkmark = style({
   aspectRatio: 'square'
 });
 
-let checkbox = style({
+export let checkbox = style({
   gridArea: 'checkmark',
   marginEnd: 'text-to-control'
 });
