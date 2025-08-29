@@ -41,7 +41,7 @@ const meta: Meta<typeof Picker<any>> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange', 'onLoadMore']),
+    ...categorizeArgTypes('Events', ['onOpenChange', 'onChange', 'onLoadMore']),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},

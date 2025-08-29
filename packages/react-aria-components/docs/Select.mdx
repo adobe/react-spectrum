@@ -105,8 +105,11 @@ import {ChevronDown} from 'lucide-react';
   }
 
   .react-aria-SelectValue {
-    flex: 1 0 auto;
+    flex: 1;
     text-align: start;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     &[data-placeholder] {
       font-style: italic;
@@ -319,7 +322,7 @@ This example wraps `Select` and all of its children together into a single compo
 import type {SelectProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
 import {Text, FieldError} from 'react-aria-components';
 
-interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children'> {
+interface MySelectProps<T extends object, M extends 'single' | 'multiple'> extends Omit<SelectProps<T, M>, 'children'> {
   label?: string,
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
@@ -327,7 +330,9 @@ interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
-export function MySelect<T extends object>({label, description, errorMessage, children, items, ...props}: MySelectProps<T>) {
+export function MySelect<T extends object, M extends 'single' | 'multiple' = 'single'>(
+  {label, description, errorMessage, children, items, ...props}: MySelectProps<T, M>
+) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -409,7 +414,7 @@ The examples above show static collections, which can be used when the full list
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
 As seen below, an iterable list of options is passed to the Select using the `items` prop. Each item accepts an `id` prop, which
-is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+is passed to the `onChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
 as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
@@ -434,11 +439,10 @@ function Example() {
 }
 ```
 
-## Selection
+## Value
 
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
+Setting a selected option can be done by using the `defaultValue` or `value` prop. The value corresponds to the `id` prop of an item.
 When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the [Selection](selection.html) guide for more details.
 
 ```tsx example
 import type {Key} from 'react-aria-components';
@@ -458,8 +462,43 @@ function Example() {
     <MySelect
       label="Pick an animal (controlled)"
       items={options}
-      selectedKey={animal}
-      onSelectionChange={selected => setAnimal(selected)}>
+      value={animal}
+      onChange={selected => setAnimal(selected)}>
+      {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    </MySelect>
+  );
+}
+```
+
+### Multiple selection
+
+Set the `selectionMode="multiple"` prop to enable the user to select multiple items. When multiple selection is enabled, the `value` prop should be an array of item ids instead of a single item, and `onChange` will be called with an array. See [below](#customizing-selectvalue) for how to customize the `SelectValue`.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  /*- begin highlight -*/
+  let [animals, setAnimals] = React.useState<Key[]>(['Bison', 'Kangaroo']);
+  /*- end highlight -*/
+
+  return (
+    <MySelect
+      label="Pick an animal (controlled)"
+      items={options}
+      /*- begin highlight -*/
+      selectionMode="multiple"
+      /*- end highlight -*/
+      value={animals}
+      onChange={selected => setAnimals(selected)}>
       {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
     </MySelect>
   );
@@ -485,7 +524,7 @@ Select supports the `name` prop for integration with HTML forms. The `id` of the
 
 ## Links
 
-By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Link items in a `Select` are not selectable.
+By default, interacting with an item in a Select triggers `onChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Link items in a `Select` are not selectable.
 
 ```tsx example
 <MySelect label="Project">
@@ -902,14 +941,14 @@ function Example() {
 Select passes the rendered children of the selected item in the render props of the `SelectValue` as well as if the placeholder should be showing. You can use this to customize the value displayed in the Select.
 
 ```tsx example
-<Select>
+<Select selectionMode="multiple">
   <Label>Favorite Animal</Label>
   <Button>
     {/*- begin highlight -*/}
     <SelectValue>
-      {({defaultChildren, isPlaceholder}) => {
-        return isPlaceholder ? <><b>Animal</b> selection</> : defaultChildren;
-      }}
+      {({selectedItems, defaultChildren, isPlaceholder}) => (
+        isPlaceholder || selectedItems.length === 1 ? defaultChildren : `${selectedItems.length} selected items`
+      )}
     </SelectValue>
     {/*- end highlight -*/}
     <span aria-hidden="true"><ChevronDown size={16} /></span>
