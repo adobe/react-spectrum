@@ -90,6 +90,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   outline: none;
   max-width: 250px;
   transition: transform 200ms, opacity 200ms;
+  --starting-scale: scale(0.9);
   transform-origin: var(--trigger-anchor-point);
 
   .react-aria-OverlayArrow svg {
@@ -101,7 +102,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
 
   &[data-entering],
   &[data-exiting] {
-    transform: scale(0.85) var(--origin);
+    transform: var(--starting-scale) var(--origin);
     opacity: 0;
   }
 

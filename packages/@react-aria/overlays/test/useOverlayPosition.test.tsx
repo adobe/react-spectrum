@@ -51,6 +51,13 @@ describe('useOverlayPosition', function () {
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
+
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return parseInt(this.style.width, 10) || 0;
+    });
+    jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+      return parseInt(this.style.height, 10) || 0;
+    });
   });
 
   it('should position the overlay relative to the trigger', function () {

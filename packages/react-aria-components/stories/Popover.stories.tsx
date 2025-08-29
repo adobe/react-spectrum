@@ -30,6 +30,10 @@ export default {
         'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
         'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
       ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
     }
   }
 } as Meta<typeof Popover>;
@@ -41,7 +45,7 @@ export const PopoverExample: PopoverStory = (args) => (
     <Button>Open popover</Button>
     <Popover
       {...args}
-      className={styles.popover}
+      className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
       style={{
         background: 'Canvas',
         color: 'CanvasText',
