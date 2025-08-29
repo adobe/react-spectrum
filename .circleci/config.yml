@@ -678,6 +678,28 @@ jobs:
           paths:
             - '*/verdaccio/s2-webpack-5-example'
 
+  v-s2-next:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-next.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-next-macros'
+
   v-icon-builder:
     executor: rsp-xlarge
     steps:
@@ -914,6 +936,9 @@ workflows:
       - v-s2-webpack:
           requires:
             - verdaccio
+      - v-s2-next:
+          requires:
+            - verdaccio
       - v-icon-builder:
           requires:
             - verdaccio
@@ -948,6 +973,7 @@ workflows:
             - v-rac-rsp-tailwind
             - v-s2-parcel
             - v-s2-webpack
+            - v-s2-next
             - v-icon-builder
             - v-publish-stats
       - comment:

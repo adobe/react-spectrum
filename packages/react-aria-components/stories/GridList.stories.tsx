@@ -21,10 +21,12 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
   GridListItem,
   GridListItemProps,
   GridListLoadMoreItem,
   GridListProps,
+  GridListSection,
   Heading,
   ListLayout,
   Modal,
@@ -48,7 +50,8 @@ import './styles.css';
 
 export default {
   title: 'React Aria Components/GridList',
-  component: GridList
+  component: GridList,
+  excludeStories: ['MyGridListItem']
 } as Meta<typeof GridList>;
 
 export type GridListStory = StoryFn<typeof GridList>;
@@ -77,7 +80,7 @@ export const GridListExample: GridListStory = (args) => (
   </GridList>
 );
 
-const MyGridListItem = (props: GridListItemProps) => {
+export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}
@@ -145,6 +148,105 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
+
+export const GridListSectionExample = (args) => (
+  <GridList
+    {...args}
+    className={styles.menu}
+    aria-label="test gridlist"
+    style={{
+      width: 400,
+      height: 400
+    }}>
+    <GridListSection>
+      <GridListHeader>Section 1</GridListHeader>
+      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 2</GridListHeader>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 3</GridListHeader>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+  </GridList>
+);
+
+GridListSectionExample.story = {
+  args: {
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  }
+};
+
+export function VirtualizedGridListSection() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 3; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        // selectionMode="multiple"
+        style={{height: 400}}
+        aria-label="virtualized with grid section"
+        items={sections}>
+        <Collection items={sections}>
+          {section => (
+            <GridListSection>
+              <GridListHeader>{section.name}</GridListHeader>
+              <Collection items={section.children} >
+                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+              </Collection>
+            </GridListSection>
+          )}
+        </Collection>
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+
 const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
@@ -201,6 +303,7 @@ export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
 };
 
 interface VirtualizedGridListGridProps {
+  minItemSizeWidth?: number,
   maxItemSizeWidth?: number,
   maxColumns?: number,
   minHorizontalSpace?: number,
@@ -209,6 +312,7 @@ interface VirtualizedGridListGridProps {
 
 export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
   const {
+    minItemSizeWidth = 40,
     maxItemSizeWidth = 65,
     maxColumns = Infinity,
     minHorizontalSpace = 0,
@@ -223,7 +327,7 @@ export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (arg
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40),
+        minItemSize: new Size(minItemSizeWidth, 40),
         maxItemSize: new Size(maxItemSizeWidth, 40),
         minSpace: new Size(minHorizontalSpace, 18),
         maxColumns,
@@ -238,12 +342,18 @@ export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (arg
 
 VirtualizedGridListGrid.story = {
   args: {
+    minItemSizeWidth: 40,
     maxItemSizeWidth: 65,
     maxColumns: undefined,
     minHorizontalSpace: 0,
     maxHorizontalSpace: undefined
   },
   argTypes: {
+    minItemSizeWidth: {
+      control: 'number',
+      description: 'The minimum width of each item in the grid list',
+      defaultValue: 40
+    },
     maxItemSizeWidth: {
       control: 'number',
       description: 'Maximum width of each item in the grid list.',

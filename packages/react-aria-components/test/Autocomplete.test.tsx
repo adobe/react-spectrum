@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField} from '..';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -67,7 +67,6 @@ let MenuWithSections = (props) => (
   </Menu>
 );
 
-// TODO: add tests for nested submenus and subdialogs
 let SubMenus = (props) => (
   <Menu {...props}>
     <MenuItem>Foo</MenuItem>
@@ -197,6 +196,93 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
+let StaticGridList = (props) => (
+  <GridList aria-label="test gridlist" {...props}>
+    <GridListItem id="1">Foo</GridListItem>
+    <GridListItem id="2">Bar</GridListItem>
+    <GridListItem id="3">Baz</GridListItem>
+  </GridList>
+);
+
+let StaticTable = (props) => (
+  <Table aria-label="test table" {...props}>
+    <TableHeader>
+      <Column isRowHeader>Column 1</Column>
+      <Column>Column 2</Column>
+      <Column>Column 3</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Foo</Cell>
+        <Cell>Row 1 Cell 2</Cell>
+        <Cell>Row 1 Cell 3</Cell>
+      </Row>
+      <Row>
+        <Cell>Bar</Cell>
+        <Cell>Row 2 Cell 2</Cell>
+        <Cell>Row 2 Cell 3</Cell>
+      </Row>
+      <Row>
+        <Cell>Baz</Cell>
+        <Cell>Row 3 Cell 2</Cell>
+        <Cell>Row 3 Cell 3</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
+let StaticTagGroup = (props) => (
+  <TagGroup {...props}>
+    <Label>Test tag group</Label>
+    <TagList>
+      <Tag>Foo</Tag>
+      <Tag>Bar</Tag>
+      <Tag>Baz</Tag>
+    </TagList>
+  </TagGroup>
+);
+
+let StaticTabs = (props) => (
+  <Tabs {...props}>
+    <TabList aria-label="Test tabs">
+      <Tab id="1">Foo</Tab>
+      <Tab id="2">Bar</Tab>
+      <Tab id="3">Baz</Tab>
+    </TabList>
+    <TabPanel id="1">Foo content</TabPanel>
+    <TabPanel id="2">Bar content</TabPanel>
+    <TabPanel id="3">Baz content</TabPanel>
+  </Tabs>
+);
+
+let StaticTree = (props) => (
+  <Tree aria-label="test tree" {...props}>
+    <TreeItem textValue="Foo">
+      <TreeItemContent>
+        Foo
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem textValue="Bar">
+      <TreeItemContent>
+        Bar
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem textValue="Baz">
+      <TreeItemContent>
+        Baz
+      </TreeItemContent>
+    </TreeItem>
+  </Tree>
+);
+
+let StaticBreadcrumbs = (props) => (
+  <Breadcrumbs {...props}>
+    <Breadcrumb>Foo</Breadcrumb>
+    <Breadcrumb>Bar</Breadcrumb>
+    <Breadcrumb>Baz</Breadcrumb>
+  </Breadcrumbs>
+);
+
 let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
@@ -268,6 +354,28 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
         onSelectionChange={onSelectionChange}>
         {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
+    </Autocomplete>
+  );
+};
+
+let CustomFiltering = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let [inputValue, setInputValue] = React.useState('');
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue, node) => {
+    if (node.parentKey === 'sec1') {
+      return true;
+    }
+    return contains(textValue, inputValue);
+  };
+
+  return (
+    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
+      {children}
     </Autocomplete>
   );
 };
@@ -792,6 +900,63 @@ describe('Autocomplete', () => {
     dialogs = queryAllByRole('dialog');
     expect(dialogs).toHaveLength(0);
   });
+
+  it.each`
+    Name              | Component
+    ${'Tabs'}         | ${StaticTabs}
+    ${'Tree'}         | ${StaticTree}
+    ${'Breadcrumbs'}  | ${StaticBreadcrumbs}
+  `('$Name doesnt get filtered by Autocomplete', async function ({Component}) {
+    let {getByRole, getByTestId} = render(
+      <AutocompleteWrapper>
+        <Component data-testid="wrapped" />
+      </AutocompleteWrapper>
+    );
+
+    let wrappedComponent = getByTestId('wrapped');
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Foo');
+    expect(input).toHaveValue('Foo');
+    expect(input).not.toHaveAttribute('aria-controls');
+    expect(input).not.toHaveAttribute('aria-autocomplete');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
+  });
+
+  it('should allow user to filter by node information', async () => {
+    let {getByRole} = render(
+      <CustomFiltering>
+        <MenuWithSections />
+      </CustomFiltering>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    let menu = getByRole('menu');
+    let sections = within(menu).getAllByRole('group');
+    expect(sections.length).toBe(2);
+    let options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(6);
+
+    await user.keyboard('Copy');
+    sections = within(menu).getAllByRole('group');
+    options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(4);
+    expect(within(sections[0]).getByText('Foo')).toBeTruthy();
+    expect(within(sections[0]).getByText('Bar')).toBeTruthy();
+    expect(within(sections[0]).getByText('Baz')).toBeTruthy();
+    expect(within(sections[1]).getByText('Copy')).toBeTruthy();
+  });
 });
 
 AriaAutocompleteTests({
@@ -851,6 +1016,11 @@ AriaAutocompleteTests({
       <AutocompleteWrapper>
         <SubDialogAndMenu />
       </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
     )
   },
   actionListener: onAction,
@@ -908,9 +1078,50 @@ AriaAutocompleteTests({
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticListbox />
       </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticListbox />
+      </AutocompleteWrapper>
     )
   },
   ariaPattern: 'listbox',
   actionListener: onAction,
   selectionListener: onSelectionChange
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-table',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticTable />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-gridlist',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticGridList />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-taggroup',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticTagGroup />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
 });
