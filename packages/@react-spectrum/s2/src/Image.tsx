@@ -1,5 +1,5 @@
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, JSX, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
@@ -143,7 +143,10 @@ const imgStyles = style({
   transitionDuration: 500
 });
 
-export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
+/**
+ * An image with support for skeleton loading and custom error states.
+ */
+export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   [props, domRef] = useSpectrumContextProps(props, domRef, ImageContext);
 
   let {
@@ -210,10 +213,15 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     }
 
     // If the image is already loaded, update state immediately instead of waiting for onLoad.
-    if (state === 'loading' && imgRef.current?.complete) {
-      // Queue a microtask so we don't hit React's update limit.
-      // TODO: is this necessary?
-      queueMicrotask(onLoad);
+    let img = imgRef.current;
+    if (state === 'loading' && img?.complete) {
+      if (img.naturalWidth === 0 && img.naturalHeight === 0) {
+        // Queue a microtask so we don't hit React's update limit.
+        // TODO: is this necessary?
+        queueMicrotask(onError);
+      } else {
+        queueMicrotask(onLoad);
+      }
     }
 
     animation(domRef.current);

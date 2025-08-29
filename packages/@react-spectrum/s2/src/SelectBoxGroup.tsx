@@ -401,7 +401,7 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
         className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
         style={UNSAFE_style}
         {...otherProps}>
-          {children}
+        {children}
       </ListBox>
     </SelectBoxContext.Provider>
   );

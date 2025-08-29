@@ -19,7 +19,6 @@ import {
   DialogProps,
   OverlayArrow,
   OverlayTriggerStateContext,
-  useContextProps,
   useLocale
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
