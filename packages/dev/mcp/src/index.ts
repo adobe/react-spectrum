@@ -36,6 +36,53 @@ function assertDocsExist() {
 // Cache of parsed pages
 const pageCache = new Map<string, PageInfo>();
 
+const ICONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/s2wf-icons');
+let iconIdCache: string[] | null = null;
+const ILLUSTRATIONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/spectrum-illustrations/linear');
+let illustrationIdCache: string[] | null = null;
+
+function ensureIconsExist() {
+  if (!fs.existsSync(ICONS_DIR)) {
+    throw new Error(`S2 icons directory not found at ${ICONS_DIR}`);
+  }
+}
+
+function listIconNames(): string[] {
+  if (iconIdCache) {return iconIdCache;}
+  ensureIconsExist();
+  const files = fg.sync('*.svg', {cwd: ICONS_DIR, absolute: false, suppressErrors: true});
+  const ids = Array.from(new Set(
+    files.map(f => f.replace(/\.svg$/i, '')
+      // Mirror IconPicker.tsx regex to derive the id from the filename
+      .replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'))
+  )).sort((a, b) => a.localeCompare(b));
+  iconIdCache = ids;
+  return ids;
+}
+
+function ensureIllustrationsExist() {
+  if (!fs.existsSync(ILLUSTRATIONS_DIR)) {
+    throw new Error(`S2 illustrations directory not found at ${ILLUSTRATIONS_DIR}`);
+  }
+}
+
+function listIllustrationNames(): string[] {
+  if (illustrationIdCache) {return illustrationIdCache;}
+  ensureIllustrationsExist();
+  // linear directory may contain multiple sizes per illustration name
+  const files = fg.sync('**/*.svg', {cwd: ILLUSTRATIONS_DIR, absolute: false, suppressErrors: true});
+  const ids = Array.from(new Set(
+    files.map(f => {
+      const base = f.replace(/\.svg$/i, '')
+        // Pattern: S2_lin_<name>_<size>
+        .replace(/^S2_lin_(.*)_\d+$/, '$1');
+      return base ? (base.charAt(0).toUpperCase() + base.slice(1)) : base;
+    })
+  )).sort((a, b) => a.localeCompare(b));
+  illustrationIdCache = ids;
+  return ids;
+}
+
 function readAllPages(): PageInfo[] {
   assertDocsExist();
   const patterns = ['s2/**/*.md', 'react-aria/**/*.md'];
@@ -226,6 +273,52 @@ async function main() {
         text = lines.slice(section.startLine, section.endLine).join('\n');
       }
       return {content: [{type: 'text', text}]} as const;
+    }
+  );
+
+  // search_icons tool
+  server.registerTool(
+    'search_icons',
+    {
+      title: 'Search S2 icons',
+      description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
+      inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+    },
+    async ({terms}) => {
+      const allNames = listIconNames();
+      const rawTerms = Array.isArray(terms) ? terms : [terms];
+      const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
+      if (normalized.length === 0) {
+        throw new Error('Provide at least one non-empty search term.');
+      }
+      const results = allNames.filter(name => {
+        const nameLower = name.toLowerCase();
+        return normalized.some(term => nameLower.includes(term));
+      });
+      return {content: [{type: 'text', text: JSON.stringify(results, null, 2)}]};
+    }
+  );
+
+  // search_illustrations tool
+  server.registerTool(
+    'search_illustrations',
+    {
+      title: 'Search S2 illustrations',
+      description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
+      inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+    },
+    async ({terms}) => {
+      const allNames = listIllustrationNames();
+      const rawTerms = Array.isArray(terms) ? terms : [terms];
+      const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
+      if (normalized.length === 0) {
+        throw new Error('Provide at least one non-empty search term.');
+      }
+      const results = allNames.filter(name => {
+        const nameLower = name.toLowerCase();
+        return normalized.some(term => nameLower.includes(term));
+      });
+      return {content: [{type: 'text', text: JSON.stringify(results, null, 2)}]};
     }
   );
 
