@@ -30,6 +30,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
   let checkboxId = useId();
   let isDisabled = !state.selectionManager.canSelectItem(key);
   let isSelected = state.selectionManager.isSelected(key);
+  let isIndeterminate = state.selectionManager.isIndeterminate?.(key);
 
   // Checkbox should always toggle selection, regardless of selectionBehavior.
   let onChange = () => manager.toggleSelection(key);
@@ -42,6 +43,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
       'aria-label': stringFormatter.format('select'),
       isSelected,
       isDisabled,
+      isIndeterminate,
       onChange
     }
   };

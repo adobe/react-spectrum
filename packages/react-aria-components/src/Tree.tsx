@@ -34,6 +34,7 @@ import {DraggableCollectionState, DroppableCollectionState, Collection as IColle
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SelectionStrategy} from '@react-stately/selection';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
@@ -166,7 +167,11 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
+  /** Whether selection propagates between parent and child nodes. */
+  selectionPropagation?: boolean,
+  /** Specifies which keys are included in the selection. */
+  selectionStrategy?: SelectionStrategy
 }
 
 
