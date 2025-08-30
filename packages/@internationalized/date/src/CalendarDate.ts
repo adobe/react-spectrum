@@ -375,14 +375,14 @@ export class ZonedDateTime {
   /** Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
   set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime;
   set(fields: DateFields & TimeFields, constrainDay?: boolean): ZonedDateTime;
-  set(...args: any[]) { 
+  set(fields: DateFields & TimeFields, value?: Disambiguation | boolean) { 
     let disambiguation, constrainDay = false;
-    if (args[1] && typeof args[1] === 'string') {
-      disambiguation = args[1];
-    } else if (args[1] && typeof args[1] === 'boolean') {
-      constrainDay = args[1];
+    if (value && typeof value === 'string') {
+      disambiguation = value;
+    } else if (value && typeof value === 'boolean') {
+      constrainDay = value;
     }
-    return setZoned(this, args[0], disambiguation, constrainDay);
+    return setZoned(this, fields, disambiguation, constrainDay); 
   }
 
 
