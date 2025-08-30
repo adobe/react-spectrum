@@ -1,7 +1,7 @@
 import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key} from '@react-types/shared';
-import {MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionManager, MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useEffect, useMemo, useRef} from 'react';
 
 export interface GridState<T, C extends GridCollection<T>> {
@@ -9,7 +9,7 @@ export interface GridState<T, C extends GridCollection<T>> {
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
-  selectionManager: SelectionManager,
+  selectionManager: MultipleSelectionManager,
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean
 }
