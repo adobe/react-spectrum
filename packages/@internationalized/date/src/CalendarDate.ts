@@ -376,11 +376,11 @@ export class ZonedDateTime {
   set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime;
   set(fields: DateFields & TimeFields, constrainDay?: boolean): ZonedDateTime;
   set(...args: any[]) { 
-    let disambiguation , constrainDay = false;
-    if(args[1] && typeof args[1] === "string") {
-      disambiguation = args[1]
-    }else if(args[1] && typeof args[1] === "boolean"){
-      constrainDay = args[1]
+    let disambiguation, constrainDay = false;
+    if (args[1] && typeof args[1] === 'string') {
+      disambiguation = args[1];
+    } else if (args[1] && typeof args[1] === 'boolean') {
+      constrainDay = args[1];
     }
     return setZoned(this, args[0], disambiguation, constrainDay);
   }
