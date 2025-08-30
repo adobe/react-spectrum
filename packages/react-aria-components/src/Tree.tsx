@@ -166,7 +166,9 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
+  /** The currently indeterminate keys in the collection (controlled). */
+  indeterminateKeys?: Iterable<Key>
 }
 
 

@@ -952,7 +952,7 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
     <FocusScope>
       <Flex direction={'column'}>
         <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {(tree.selectedKeys.size > 0)
+          {(tree.selectedKeys === 'all' || tree.selectedKeys.size > 0)
             ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
             : null
           }
@@ -990,7 +990,7 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
               variant="destructive"
               primaryActionLabel="Delete"
               onPrimaryAction={() => tree.removeSelectedItems()}>
-              Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
+              Are you sure you want to delete {tree.selectedKeys !== 'all' && tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys === 'all' ? 'all' : tree.selectedKeys.size} items`}?
             </AlertDialog>
           }
         </DialogContainer>

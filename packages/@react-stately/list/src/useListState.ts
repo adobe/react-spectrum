@@ -12,7 +12,7 @@
 
 import {Collection, CollectionStateBase, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
-import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionManager, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useCollection} from '@react-stately/collections';
 
@@ -36,7 +36,7 @@ export interface ListState<T> {
   disabledKeys: Set<Key>,
 
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  selectionManager: MultipleSelectionManager
 }
 
 /**
@@ -84,7 +84,7 @@ export function UNSTABLE_useFilteredListState<T extends object>(state: ListState
   };
 }
 
-function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: SelectionManager) {
+function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: MultipleSelectionManager) {
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
