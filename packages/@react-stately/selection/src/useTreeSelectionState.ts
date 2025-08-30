@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MultipleSelectionStateProps, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionStateProps, useMultipleSelectionState} from './useMultipleSelectionState';
 import {SelectionStrategy, TreeSelectionState} from './types';
 import {useMemo} from 'react';
 
