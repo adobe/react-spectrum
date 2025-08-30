@@ -26,6 +26,7 @@ import {
   Menu,
   MenuItem,
   MenuTrigger,
+  NotificationBadge,
   Picker,
   PickerItem,
   Row,
@@ -94,7 +95,7 @@ function App() {
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
+            <Button variant="secondary"><Text>Secondary</Text><NotificationBadge value={2} /></Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
@@ -178,7 +179,16 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
-          <TableView aria-label="Files" styles={style({width: 320, height: 320})}>
+          <TableView
+            aria-label="Files"
+            styles={style({width: 320, height: 320})}
+            renderActionBar={selectedKeys => (
+              <ActionBar>
+                <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
+                <ActionButton onPress={() => console.log('copy', selectedKeys)}>Copy</ActionButton>
+                <ActionButton onPress={() => console.log('delete', selectedKeys)}>Delete</ActionButton>
+              </ActionBar>
+            )}>
             <TableHeader>
               <Column isRowHeader>Name</Column>
               <Column>Type</Column>
