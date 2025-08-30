@@ -455,14 +455,14 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         let isPM = displayValue.hour >= 12;
         let shouldBePM = placeholder.hour >= 12;
         if (isPM && !shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour - 12}, undefined, true);
+          value = displayValue.set({hour: displayValue.hour - 12}, false);
         } else if (!isPM && shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour + 12}, undefined, true);
+          value = displayValue.set({hour: displayValue.hour + 12}, false);
         }
       } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
-        value = displayValue.set({hour: placeholder['hour'] + 12}, undefined, true);
+        value = displayValue.set({hour: placeholder['hour'] + 12}, false);
       } else if (part in displayValue) {
-        value = displayValue.set({[part]: placeholder[part]}, undefined, true);
+        value = displayValue.set({[part]: placeholder[part]}, false);
       }
       updatePlaceholder(value);
     },
@@ -574,7 +574,7 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
       return {
         value: eras.indexOf(date.era),
         minValue: 0,
-        maxValue: eras.length - 1
+        maxValue: eras.length - 1  
       };
     }
     case 'year':
@@ -644,7 +644,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
     case 'year':
     case 'month':
     case 'day':
-      return value.cycle(part, amount, {round: part === 'year'}, true);
+      return value.cycle(part, amount, {round: part === 'year'}, false);
   }
 
   if ('hour' in value) {
@@ -652,7 +652,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
       case 'dayPeriod': {
         let hours = value.hour;
         let isPM = hours >= 12;
-        return value.set({hour: isPM ? hours - 12 : hours + 12}, undefined, true);
+        return value.set({hour: isPM ? hours - 12 : hours + 12}, false);
       }
       case 'hour':
       case 'minute':
@@ -660,7 +660,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
         return value.cycle(part, amount, {
           round: part !== 'hour',
           hourCycle: options.hour12 ? 12 : 24
-        }, true);
+        }, false);
     }
   }
 
@@ -673,19 +673,19 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
     case 'month':
     case 'year':
     case 'era':
-      return value.set({[part]: segmentValue}, undefined, true);
+      return value.set({[part]: segmentValue}, false);
   }
 
   if ('hour' in value && typeof segmentValue === 'number') {
     switch (part) {
       case 'dayPeriod': {
-        let hours = value.hour;
+        let hours = value.hour; 
         let wasPM = hours >= 12;
         let isPM = segmentValue >= 12;
         if (isPM === wasPM) {
           return value;
         }
-        return value.set({hour: wasPM ? hours - 12 : hours + 12}, undefined, true);
+        return value.set({hour: wasPM ? hours - 12 : hours + 12}, false);
       }
       case 'hour':
         // In 12 hour time, ensure that AM/PM does not change
@@ -702,7 +702,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
         // fallthrough
       case 'minute':
       case 'second':
-        return value.set({[part]: segmentValue}, undefined, true);
+        return value.set({[part]: segmentValue}, false);
     }
   }
 

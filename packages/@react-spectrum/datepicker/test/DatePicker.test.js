@@ -1191,7 +1191,7 @@ describe('DatePicker', function () {
         });
 
         it('should support using the page up and down keys to increment and decrement the day by 7', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 27), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 24), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max day', async function () {
