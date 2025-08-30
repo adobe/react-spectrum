@@ -10,9 +10,9 @@
       <g transform="translate(503 109)" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-500)" stroke-width="1.5">
         <rect width="214" height="48" rx="6" stroke="none" />
         <rect x="0.75" y="0.75" width="212.5" height="46.5" rx="5.25" fill="none" />
-      </g><text transform="translate(264 139)" fill="var(--anatomy-gray-600)" font-size="20" font-family="Adobe-Clean">
+      </g><text transform="translate(264 139)" fill="var(--anatomy-gray-600)" font-size="20" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Option 1</tspan>
-      </text><text transform="translate(521 139)" fill="var(--anatomy-gray-600)" font-size="20" font-family="Adobe-Clean">
+      </text><text transform="translate(521 139)" fill="var(--anatomy-gray-600)" font-size="20" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Option 1</tspan>
       </text>
       <g transform="translate(427 128.5)">
@@ -20,43 +20,43 @@
       </g>
       <g transform="translate(684 128.5)">
         <path d="M15,1.5A1.5,1.5,0,0,0,12.437.437L7.5,5.382,2.567.437A1.505,1.505,0,1,0,.437,2.565l6,5.993a1.5,1.5,0,0,0,2.115,0l6-5.993A1.5,1.5,0,0,0,15,1.5Z" transform="translate(0.004 0.006)" fill="var(--anatomy-gray-600)" />
-      </g><text transform="translate(246 97)" fill="var(--anatomy-gray-600)" font-size="18" font-family="Adobe-Clean">
+      </g><text transform="translate(246 97)" fill="var(--anatomy-gray-600)" font-size="18" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Label</tspan>
-      </text><text transform="translate(503 97)" fill="var(--anatomy-gray-600)" font-size="18" font-family="Adobe-Clean">
+      </text><text transform="translate(503 97)" fill="var(--anatomy-gray-600)" font-size="18" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Label</tspan>
       </text>
       <g transform="translate(503 166)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
         <rect width="214" height="156" rx="6" stroke="none" />
         <rect x="0.75" y="0.75" width="212.5" height="154.5" rx="5.25" fill="none" />
-      </g><text transform="translate(521 201)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+      </g><text transform="translate(521 201)" fill="var(--anatomy-gray-800)" font-size="20" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Option 1</tspan>
-      </text><text transform="translate(521 249)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+      </text><text transform="translate(521 249)" fill="var(--anatomy-gray-800)" font-size="20" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Option 2</tspan>
-      </text><text transform="translate(521 297)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+      </text><text transform="translate(521 297)" fill="var(--anatomy-gray-800)" font-size="20" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Option 3</tspan>
       </text>
-      <g transform="translate(-102 542)"><text transform="translate(402 -354)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <g transform="translate(-102 542)"><text transform="translate(402 -354)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
           <tspan x="-14.157" y="0">Value</tspan>
         </text>
         <path d="M0,2.5A2.5,2.5,0,0,0,2,4.95V29H3V4.95A2.5,2.5,0,1,0,0,2.5Z" transform="translate(399.5 -398)" fill="var(--anatomy-gray-500)" />
       </g>
       <g transform="translate(-49 437)">
-        <text transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <text transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
           <tspan x="-17.641" y="0">Trigger</tspan>
         </text>
         <path d="M-1270-401.5a2.5,2.5,0,0,1,2-2.45V-417h1v13.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1270-401.5Z" transform="translate(1669.5 74)" fill="var(--anatomy-gray-500)" />
       </g>
       <g transform="translate(-149 401)">
-        <text transform="translate(410 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <text transform="translate(410 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
           <tspan x="-27.651" y="0">Label</tspan>
         </text>
-        <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" /><text transform="translate(410 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" /><text transform="translate(410 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
           <tspan x="-27.651" y="0">Label</tspan>
         </text>
         <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" />
       </g>
       <g transform="translate(338 672.5)">
-        <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
           <tspan x="-14.612" y="0">Menu</tspan>
         </text>
         <path d="M-1244-611.5V-639.55a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-611.5Z" transform="translate(1607.5 282)" fill="var(--anatomy-gray-500)" />

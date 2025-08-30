@@ -15,7 +15,7 @@
         <path d="M 1604.999755859375 7526.58642578125 L 1612.586547851562 7518.99951171875 L 1753.000122070312 7518.99951171875 C 1754.654174804688 7518.99951171875 1755.999755859375 7517.65380859375 1755.999755859375 7515.99951171875 L 1755.999755859375 7420.9990234375 C 1755.999755859375 7419.34521484375 1754.654174804688 7417.99951171875 1753.000122070312 7417.99951171875 L 1521.000366210938 7417.99951171875 C 1519.346313476562 7417.99951171875 1518.000732421875 7419.34521484375 1518.000732421875 7420.9990234375 L 1518.000732421875 7515.99951171875 C 1518.000732421875 7517.65380859375 1519.346313476562 7518.99951171875 1521.000366210938 7518.99951171875 L 1597.41455078125 7518.99951171875 L 1604.999755859375 7526.58642578125 M 1604.999633789062 7528.00048828125 L 1597.000244140625 7519.99951171875 L 1521.000366210938 7519.99951171875 C 1518.791748046875 7519.99951171875 1517.000732421875 7518.20849609375 1517.000732421875 7515.99951171875 L 1517.000732421875 7420.9990234375 C 1517.000732421875 7418.79052734375 1518.791748046875 7416.99951171875 1521.000366210938 7416.99951171875 L 1753.000122070312 7416.99951171875 C 1755.208618164062 7416.99951171875 1756.999755859375 7418.79052734375 1756.999755859375 7420.9990234375 L 1756.999755859375 7515.99951171875 C 1756.999755859375 7518.20849609375 1755.208618164062 7519.99951171875 1753.000122070312 7519.99951171875 L 1613.000732421875 7519.99951171875 L 1604.999633789062 7528.00048828125 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
       </g>
     </g>
-    <text id="Header" transform="translate(1052 1253)" fill="var(--anatomy-gray-900)" font-size="15" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="16">Properties</tspan></text>
+    <text id="Header" transform="translate(1052 1253)" fill="var(--anatomy-gray-900)" font-size="15" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="16">Properties</tspan></text>
     <g id="Action_button" data-name="Action button" transform="translate(1116 1364)">
       <rect id="Placement_Area" data-name="Placement Area" width="24" height="24" fill="red" opacity="0"/>
       <g id="Background" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-500)" stroke-width="1">
@@ -33,25 +33,25 @@
       <rect id="Placement_Area-2" data-name="Placement Area" width="210" height="24" fill="red" opacity="0"/>
       <g id="Label">
         <rect id="Placement_Area-3" data-name="Placement Area" width="29" height="24" fill="red" opacity="0"/>
-        <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Width</tspan></text>
+        <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Width</tspan></text>
       </g>
       <g id="Field" transform="translate(43)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
         <rect width="173" height="24" rx="4" stroke="none"/>
         <rect x="0.5" y="0.5" width="172" height="23" rx="3.5" fill="none"/>
       </g>
-      <text id="Text-2" data-name="Text" transform="translate(50 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">250 px</tspan></text>
+      <text id="Text-2" data-name="Text" transform="translate(50 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">250 px</tspan></text>
     </g>
     <g id="Text_field-2" data-name="Text field" transform="translate(1052.199 1311)">
       <rect id="Placement_Area-4" data-name="Placement Area" width="216" height="24" transform="translate(-0.199)" fill="red" opacity="0"/>
       <g id="Label-2" data-name="Label">
         <rect id="Placement_Area-5" data-name="Placement Area" width="32" height="24" transform="translate(-0.199)" fill="red" opacity="0"/>
-        <text id="Text-3" data-name="Text" transform="translate(-0.199 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Height</tspan></text>
+        <text id="Text-3" data-name="Text" transform="translate(-0.199 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Height</tspan></text>
       </g>
       <g id="Field-2" data-name="Field" transform="translate(42.801)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
         <rect width="173" height="24" rx="4" stroke="none"/>
         <rect x="0.5" y="0.5" width="172" height="23" rx="3.5" fill="none"/>
       </g>
-      <text id="Text-4" data-name="Text" transform="translate(49.801 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">100 px</tspan></text>
+      <text id="Text-4" data-name="Text" transform="translate(49.801 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">100 px</tspan></text>
     </g>
   </g>
 </svg>

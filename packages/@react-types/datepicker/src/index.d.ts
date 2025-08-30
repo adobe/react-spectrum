@@ -109,7 +109,7 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePick
   endName?: string
 }
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate' | 'name'>, DateRangePickerProps<T> {}
 
 interface SpectrumDateFieldBase<T extends DateValue> extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation<MappedDateValue<T>>, StyleProps {
   /**

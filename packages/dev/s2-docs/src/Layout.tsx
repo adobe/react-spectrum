@@ -1,5 +1,5 @@
 import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
-import type {PageProps} from '@parcel/rsc';
+import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
 import './anatomy.css';
@@ -18,13 +18,13 @@ import {TypeLink} from './types';
 import {VisualExample} from './VisualExample';
 
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} id={anchorId(children)} className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id="top" className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
   h2: H2,
   h3: H3,
   h4: H4,
   p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
-  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginTop: 0, marginBottom: 8})}>{children}</li>,
+  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
@@ -44,15 +44,26 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
+const getTitle = (currentPage: Page): string => {
+  let library: string | undefined;
+  if (currentPage.name.startsWith('react-aria/')) {
+    library = 'React Aria';
+  } else if (currentPage.name.startsWith('s2/')) {
+    library = 'React Spectrum';
+  }
+  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  return library ? `${pageTitle} - ${library}` : pageTitle;
+};
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   return (
-    <Provider elementType="html" locale="en" background="layer-1">
+    <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
-        <title>{currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name}</title>
+        <title>{getTitle(currentPage)}</title>
       </head>
       <body
         className={style({
@@ -73,18 +84,23 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           gap: {
             default: 0,
             lg: 12
+          },
+          overscrollBehavior: {
+            default: 'auto',
+            lg: 'none'
           }
         })}>
         <Header pages={pages} currentPage={currentPage} />
         <MobileHeader
           toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
           nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
-        <div className={style({display: 'flex', gap: 32, width: 'full'})}>
+        <div className={style({display: 'flex', width: 'full'})}>
           <Nav pages={pages} currentPage={currentPage} />
           <main 
             key={currentPage.url}
             style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
             className={style({
+              isolation: 'isolate',
               backgroundColor: 'base',
               padding: {
                 default: 12,
@@ -113,7 +129,8 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             <article
               className={style({
                 maxWidth: 768,
-                width: 'full'
+                width: 'full',
+                height: 'fit'
               })}>
               {React.cloneElement(children, {components})}
             </article>
@@ -164,9 +181,9 @@ function MobileToc({toc}) {
   );
 }
 
-function renderMobileToc(toc, seen = new Map()) {
+function renderMobileToc(toc: TocNode[], seen = new Map()) {
   return toc.map((c) => {
-    let href = '#' + anchorId(c.title);
+    let href = c.level === 1 ? '#top' : '#' + anchorId(c.title);
     if (seen.has(href)) {
       seen.set(href, seen.get(href) + 1);
       href += '-' + seen.get(href);

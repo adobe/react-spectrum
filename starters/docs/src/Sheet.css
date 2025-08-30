@@ -1,0 +1,58 @@
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0 0 0 / .3);
+  backdrop-filter: blur(10px);
+
+  &[data-entering] {
+    animation: sheet-blur 300ms;
+  }
+
+  &[data-exiting] {
+    animation: sheet-blur 300ms reverse ease-in;
+  }
+}
+
+.sheet {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  background: var(--overlay-background);
+  outline: none;
+  border-left: 1px solid var(--border-color);
+  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
+  font-family: system-ui;
+  font-size: 0.875rem;
+
+  &[data-entering] {
+    animation: sheet-slide 300ms;
+  }
+
+  &[data-exiting] {
+    animation: sheet-slide 300ms reverse ease-in;
+  }
+}
+
+@keyframes sheet-blur {
+  from {
+    background: rgba(0 0 0 / 0);
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    background: rgba(0 0 0 / .3);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes sheet-slide {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

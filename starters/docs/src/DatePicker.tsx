@@ -16,15 +16,14 @@ import {ChevronDown} from 'lucide-react';
 
 import './DatePicker.css';
 
-export interface DatePickerProps<T extends DateValue>
-  extends AriaDatePickerProps<T> {
+export interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
 export function DatePicker<T extends DateValue>(
-  { label, description, errorMessage, firstDayOfWeek, ...props }:
+  { label, description, errorMessage, ...props }:
     DatePickerProps<T>
 ) {
   return (
@@ -40,7 +39,7 @@ export function DatePicker<T extends DateValue>(
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
         <Popover hideArrow>
-          <Calendar firstDayOfWeek={firstDayOfWeek} />
+          <Calendar />
         </Popover>
       </AriaDatePicker>
     )

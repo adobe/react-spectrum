@@ -9,11 +9,9 @@
   font-size: 18px;
   color: var(--text-color);
 
-  .react-aria-Breadcrumb:not(:last-child)::after {
-    content: '›';
-    content: '›' / '';
-    alt: ' ';
-    padding: 0 5px;
+  .react-aria-Breadcrumb {
+    display: flex;
+    align-items: center;
   }
 
   .react-aria-Link {

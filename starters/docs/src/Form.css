@@ -15,7 +15,7 @@
   max-width: 250px;
   outline: none;
 
-  &:focus-visible {
+  &:focus {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }

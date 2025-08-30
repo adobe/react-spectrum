@@ -12,6 +12,8 @@
   /* fixes FF gap */
   transform: translate3d(0, 0, 0);
   transition: transform 200ms, opacity 200ms;
+  font-family: system-ui;
+  font-size: 0.875rem;
 
   &[data-entering],
   &[data-exiting] {

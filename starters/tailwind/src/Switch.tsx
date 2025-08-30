@@ -13,7 +13,7 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
 
 const track = tv({
   extend: focusRing,
-  base: 'flex h-4 w-7 px-px items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent',
+  base: 'flex h-4 w-7 box-border px-px items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent',
   variants: {
     isSelected: {
       false: 'bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300',

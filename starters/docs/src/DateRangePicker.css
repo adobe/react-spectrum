@@ -47,7 +47,9 @@
     min-width: unset;
     padding: unset;
     border: unset;
-    outline: unset;
+    &[data-focus-within] {
+      outline: unset;
+    }
   }
 
   &[data-invalid] {

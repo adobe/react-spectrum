@@ -843,6 +843,13 @@ function generateFunctionOptionsTable(functionName, file) {
  */
 async function main() {
   const mdxFiles = await getMdxFiles(S2_DOCS_PAGES_ROOT);
+
+  // Collect generated markdown filenames for each library so we can build llms.txt files.
+  const docsByLibrary = {
+    's2': new Set(),
+    'react-aria': new Set()
+  };
+
   for (const filePath of mdxFiles) {
     const mdContent = fs.readFileSync(filePath, 'utf8');
     const processor = unified()
@@ -863,7 +870,53 @@ async function main() {
     fs.mkdirSync(path.dirname(outPath), {recursive: true});
     fs.writeFileSync(outPath, markdown, 'utf8');
     console.log('Generated', path.relative(REPO_ROOT, outPath));
+
+    // Track markdown files by library (first path segment e.g. "s2/Button.mdx" -> "s2").
+    const relativePathParts = relativePath.split(path.sep);
+    const libKey = relativePathParts[0];
+    if (docsByLibrary[libKey]) {
+      docsByLibrary[libKey].add(path.basename(outPath));
+    }
   }
+
+  // Generate llms.txt for each library.
+  const makeLlmsTxt = (lib, files) => {
+    if (!files.size) {return;}
+
+    const titleMap = {
+      's2': 'React Spectrum S2 Documentation',
+      'react-aria': 'React Aria Components Documentation'
+    };
+    
+    const summaryMap = {
+      's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
+      'react-aria': 'Plain-text markdown documentation for React Aria components.'
+    };
+
+    const title = titleMap[lib] || `${lib} documentation`;
+    const summary = summaryMap[lib] || '';
+
+    let txt = `# ${title}\n\n`;
+    if (summary) {
+      txt += `> ${summary}\n\n`;
+    }
+
+    txt += '## Documentation\n';
+    const sorted = Array.from(files).sort((a, b) => a.localeCompare(b));
+    for (const file of sorted) {
+      const display = file.replace(/\.md$/, '');
+      txt += `- [${display}](${lib}/${file})\n`;
+    }
+
+    const libDistDir = path.join(DIST_ROOT, lib);
+    fs.mkdirSync(libDistDir, {recursive: true});
+    const llmsPath = path.join(libDistDir, 'llms.txt');
+    fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
+    console.log('Generated', path.relative(REPO_ROOT, llmsPath));
+  };
+
+  makeLlmsTxt('s2', docsByLibrary['s2']);
+  makeLlmsTxt('react-aria', docsByLibrary['react-aria']);
 }
 
 main().catch((err) => {

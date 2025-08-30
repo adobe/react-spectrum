@@ -29,14 +29,17 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
   children: ReactNode,
   /** Whether the drop zone has been filled. */
   isFilled?: boolean,
-  /** The message to replace the default banner message that is shown when the drop zone is filled. */
+  /**
+   * The message to replace the default banner message that is shown when the drop zone is filled.
+   * @default 'Drop file to replace'
+   */
   replaceMessage?: string,
   /**
    * The size of the DropZone.
    *
    * @default 'M'
    */
-    size?: 'S' | 'M' | 'L'
+  size?: 'S' | 'M' | 'L'
 }
 
 export const DropZoneContext = createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);

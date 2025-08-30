@@ -41,7 +41,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DatePickerProps<T extends DateValue> extends
   Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
-  Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'isDateUnavailable'>,
+  Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {

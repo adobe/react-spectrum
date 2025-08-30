@@ -40,7 +40,7 @@ import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
@@ -372,7 +372,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                 [ActionButtonGroupContext, {styles: treeActions}],
                 [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
               ]}>
-              {children}
+              {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
             {isFocusVisible && isDetached && <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />}
           </div>

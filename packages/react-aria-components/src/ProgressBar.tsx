@@ -24,7 +24,7 @@ export interface ProgressBarRenderProps {
   /**
    * The value as a percentage between the minimum and maximum.
    */
-  percentage?: number,
+  percentage: number | undefined,
   /**
    * A formatted version of the value.
    * @selector [aria-valuetext]

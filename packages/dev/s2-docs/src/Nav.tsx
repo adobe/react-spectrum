@@ -7,9 +7,15 @@ import type {PageProps} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
+  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
   let sections = new Map();
   for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
+    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
+    if (library !== currentLibrary) {
+      continue;
+    }
+
+    let section = page.exports?.section ?? 'Components';
     let sectionPages = sections.get(section) ?? [];
     sectionPages.push(page);
     sections.set(section, sectionPages);
@@ -29,6 +35,8 @@ export function Nav({pages, currentPage}: PageProps) {
         height: 'fit',
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
+        paddingX: 12,
+        minWidth: 180,
         display: {
           default: 'none',
           lg: 'block'
@@ -101,9 +109,7 @@ export function SideNav({children}) {
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        minWidth: 160,
-        width: 192,
-        maxWidth: 240,
+        width: 'full',
         boxSizing: 'border-box'
       })}>
       {children}

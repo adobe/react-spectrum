@@ -43,3 +43,7 @@ const colorLink = style({
 export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | 'variable'}) {
   return <RACLink {...props} className={r => colorLink({...r, type})} />;
 }
+
+export function CodeLink(props: RACLinkProps) {
+  return <RACLink {...props} style={({isHovered}) => ({textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
+}
