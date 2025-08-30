@@ -56,6 +56,11 @@ describe('DateField', () => {
       expect(segment).toHaveAttribute('data-placeholder', 'true');
       expect(segment).toHaveAttribute('data-type');
       expect(segment).toHaveAttribute('data-test', 'test');
+      expect(segment).not.toHaveAttribute('data-readonly');
+    }
+
+    for (let literal of [...input.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
     }
   });
 
@@ -164,7 +169,7 @@ describe('DateField', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <DateField isDisabled>
         <Label>Birth date</Label>
         <DateInput className={({isDisabled}) => isDisabled ? 'disabled' : ''}>
@@ -175,6 +180,64 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled');
     expect(group).toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).not.toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly with disabled state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly isDisabled>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).toHaveAttribute('data-disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).not.toHaveAttribute('data-disabled');
+    expect(group).not.toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).not.toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).not.toHaveAttribute('data-disabled');
+    }
   });
 
   it('should support render props', () => {
