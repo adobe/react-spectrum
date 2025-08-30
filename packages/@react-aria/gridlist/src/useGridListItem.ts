@@ -277,6 +277,33 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   //   });
   // }
 
+  let sumOfNodes = (node: RSNode<unknown>): number => {
+    if (node.prevKey === null) {
+      if (node.type === 'section') {
+        return [...state.collection.getChildren!(node.key)].length;
+      } else if (node.type === 'item') {
+        return 1;
+      }
+      return 0;
+    }
+
+    let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) : null;
+    if (parentNode && parentNode.type === 'section') {
+      return sumOfNodes(parentNode);
+    }
+
+    let prevNode = state.collection.getItem(node.prevKey!);
+    if (prevNode) {
+      if (node.type === 'section') {
+        return sumOfNodes(prevNode) + [...state.collection.getChildren!(node.key)].length;
+      }
+  
+      return sumOfNodes(prevNode) + 1;
+    }
+
+    return 0;
+  };
+
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture,
@@ -294,7 +321,22 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let {collection} = state;
     let nodes = [...collection];
     // TODO: refactor ListCollection to store an absolute index of a node's position?
-    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section') ? [...collection.getKeys()].filter((key) => collection.getItem(key)?.type !== 'section').findIndex((key) => key === node.key) + 1 : node.index + 1;
+    if (nodes.find(node => node.type === 'section')) {
+      let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) : null;
+      let isInSection = parentNode && parentNode.type === 'section';
+      if (isInSection) {
+        let diff = [...state.collection.getChildren!(parentNode!.key)].length - node.index - 1;
+        if (parentNode!.prevKey) {
+          rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - diff;
+        } else {
+          rowProps['aria-rowindex'] = [...state.collection.getChildren!(parentNode!.key)].length - diff;
+        }
+      } else {
+        rowProps['aria-rowindex'] = sumOfNodes(node);
+      }
+    } else {
+      rowProps['aria-rowindex'] = node.index + 1;
+    }
   }
 
   let gridCellProps = {
