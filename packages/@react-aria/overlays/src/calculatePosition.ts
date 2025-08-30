@@ -181,7 +181,7 @@ function getDelta(
   // Note that these values are with respect to the visual viewport (aka 0,0 is the top left of the viewport)
   let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
   let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
-  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis];
   let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
   // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount to align one of the overlay's

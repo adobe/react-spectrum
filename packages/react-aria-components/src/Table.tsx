@@ -1237,7 +1237,8 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number
+  colSpan?: number,
+  focusMode?: 'cell' | 'child'
 }
 
 class TableCellNode extends CollectionNode<unknown> {
@@ -1258,7 +1259,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
   let {gridCellProps, isPressed} = useTableCell({
     node: cell,
     shouldSelectOnPressUp: !!dragState,
-    isVirtualized
+    isVirtualized,
+    focusMode: props.focusMode || 'child'
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
