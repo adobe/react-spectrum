@@ -29,7 +29,6 @@ import {
   NumberField,
   Picker,
   PickerItem,
-  ProgressCircle,
   Row,
   StatusLight,
   TableBody,

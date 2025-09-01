@@ -23,13 +23,13 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { ProgressCircle } from './ProgressCircle';
 
 export interface ActionButtonStyleProps {
   /**
@@ -339,6 +339,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [AvatarContext, {
             size: avatarSize[size],
+            // @ts-ignore
             styles: style({
               marginStart: {
                 default: '--iconMargin',
