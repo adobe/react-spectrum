@@ -7200,7 +7200,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/mcp-s2-docs@workspace:packages/dev/mcp"
   dependencies:
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
+    "@swc/helpers": "npm:^0.5.0"
     fast-glob: "npm:^3.3.3"
     typescript: "npm:^5.8.2"
     zod: "npm:^3.23.8"
