@@ -42,16 +42,16 @@ import {
 import {categorizeArgTypes} from './utils';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
+import {colorMix, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
 import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
-import {DOMRef, DOMRefValue, forwardRefType, Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, Key, SelectionMode} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Pressable, useHover} from '@react-aria/interactions';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useFocusVisible} from 'react-aria';
@@ -1424,7 +1424,13 @@ const editableCell = style({
   },
   backgroundColor: {
     default: 'transparent',
-    isHovered: '--s2-container-bg'
+    isHovered: {
+      selectionMode: {
+        none: colorMix('gray-25', 'gray-900', 7),
+        single: '--s2-container-bg',
+        multiple: '--s2-container-bg'
+      }
+    }
   }
 });
 
@@ -1496,11 +1502,12 @@ interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
   align?: 'start' | 'center' | 'end',
   density?: 'compact' | 'spacious' | 'regular',
   valueKey?: string,
-  setValueKey?: string
+  setValueKey?: string,
+  selectionMode: SelectionMode
 }
 
 const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = string>(props: EditableCellProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {value, valueKey = 'value', setValueKey = 'onChange', onChange, showButtons = true, isSaving, tableRef, isValid, displayValue, children, align = 'start', density, ...otherProps} = props;
+  let {value, valueKey = 'value', setValueKey = 'onChange', onChange, showButtons = true, isSaving, tableRef, isValid, displayValue, children, align = 'start', density, selectionMode, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [isOpen, setIsOpen] = useState(false);
@@ -1635,7 +1642,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
       ref={domRef}
       {...hoverProps}
       // @ts-expect-error
-      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered})}
+      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, selectionMode})}
       {...otherProps}>
       <div
         className={style({
@@ -1800,6 +1807,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     showButtons: true
   },
   render: function EditableTable(args) {
+    let selectionMode = args.selectionMode ?? 'none' as SelectionMode;
     let {showButtons, ...props} = args;
     let isMobile = useIsMobileDevice();
     let tableRef = useRef<DOMRefValue<HTMLDivElement>>(null);
@@ -1867,7 +1875,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems} dependencies={[isMobile, showButtons, columns, props.density]}>
+          <TableBody items={editableItems} dependencies={[isMobile, showButtons, columns, props.density, selectionMode]}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
@@ -1875,6 +1883,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                     return (
                       <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
                         <EditableCell
+                          selectionMode={selectionMode}
                           align={column.align}
                           displayValue={value => value.toString()}
                           isValid={value => value > 0 && !Number.isNaN(value)}
@@ -1899,6 +1908,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                     return (
                       <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
                         <EditableCell
+                          selectionMode={selectionMode}
                           align={column.align}
                           displayValue={value => value.toString()}
                           isValid={value => value.length > 0}
@@ -1922,6 +1932,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                     return (
                       <Cell align={column.align} showDivider={column.showDivider}>
                         <EditableCell
+                          selectionMode={selectionMode}
                           align={column.align}
                           displayValue={value => {
                             return (
