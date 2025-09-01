@@ -1430,6 +1430,13 @@ const editableCell = style({
         single: '--s2-container-bg',
         multiple: '--s2-container-bg'
       }
+    },
+    isCellFocused: {
+      selectionMode: {
+        none: '--s2-container-bg',
+        single: '--s2-container-bg',
+        multiple: '--s2-container-bg'
+      }
     }
   }
 });
@@ -1468,8 +1475,8 @@ let editButton = style({
   flexShrink: 0
 });
 
-function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>}) {
-  let {cellRef} = props;
+function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving: boolean}) {
+  let {cellRef, isSaving} = props;
   let isFocused = useRef(false);
 
   useEffect(() => {
@@ -1483,7 +1490,7 @@ function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>}) {
 
   return (
     <div className={editButton}>
-      <ActionButton onFocusChange={(e) => isFocused.current = e} isQuiet aria-label="Edit cell" styles={style({flexShrink: 0})}>
+      <ActionButton isPending={isSaving} onFocusChange={(e) => isFocused.current = e} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
         <Edit />
       </ActionButton>
     </div>
@@ -1516,6 +1523,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   let [verticalOffset, setVerticalOffset] = useState(0);
   let [internalValue, _setInternalValue] = useState(value);
   let [isRowFocused, setIsRowFocused] = useState(false);
+  let [isCellFocused, setIsCellFocused] = useState(false);
   let isMobile = !useMediaQuery('(any-pointer: fine)');
   let [isHovered, setIsHovered] = useState(false);
   let {isHovered: isCellHovered, hoverProps} = useHover({});
@@ -1534,6 +1542,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   useEffect(() => {
     if (domRef.current) {
       let row = domRef.current.closest('[role="row"]');
+      let cell = domRef.current.closest('[role="rowheader"],[role="gridcell"]');
       let onHover = () => {
         setIsHovered(true);
       };
@@ -1546,17 +1555,27 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
       let onFocusOut = () => {
         setIsRowFocused(false);
       };
-      if (row) {
+      let onCellFocus = () => {
+        setIsCellFocused(true);
+      };
+      let onCellBlur = () => {
+        setIsCellFocused(false);
+      };
+      if (row && cell) {
         row.addEventListener('pointerenter', onHover);
         row.addEventListener('pointerleave', onLeave);
         row.addEventListener('focusin', onFocusIn, {capture: true});
         row.addEventListener('focusout', onFocusOut, {capture: true});
+        cell.addEventListener('focusin', onCellFocus, {capture: true});
+        cell.addEventListener('focusout', onCellBlur, {capture: true});
       }
       return () => {
         row?.removeEventListener('pointerenter', onHover);
         row?.removeEventListener('pointerleave', onLeave);
         row?.removeEventListener('focusin', onFocusIn, {capture: true});
         row?.removeEventListener('focusout', onFocusOut, {capture: true});
+        cell?.removeEventListener('focusin', onCellFocus, {capture: true});
+        cell?.removeEventListener('focusout', onCellBlur, {capture: true});
       };
     }
   }, [domRef]);
@@ -1612,37 +1631,16 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     }
   };
 
-  let [showSpinner, setShowSpinner] = useState(false);
-  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  let wasSpinning = useRef(false);
-  useEffect(() => {
-    if (isSaving && !wasSpinning.current) {
-      wasSpinning.current = true;
-      timeout.current = setTimeout(() => {
-        setShowSpinner(true);
-      }, 5000);
-    } else if (!isSaving) {
-      wasSpinning.current = false;
-      setShowSpinner(false);
-      timeout.current && clearTimeout(timeout.current);
-    }
-  }, [isSaving]);
-  useEffect(() => {
-    return () => {
-      timeout.current && clearTimeout(timeout.current);
-    };
-  }, []);
-
   let isShown = useMemo(() => {
-    return isHovered || isOpen || (isRowFocused && isFocusVisible) || isMobile;
-  }, [isHovered, isOpen, isRowFocused, isFocusVisible, isMobile]);
+    return isHovered || isOpen || (isRowFocused && isFocusVisible) || isMobile || isSaving;
+  }, [isHovered, isOpen, isRowFocused, isFocusVisible, isMobile, isSaving]);
 
   return (
     <div
       ref={domRef}
       {...hoverProps}
       // @ts-expect-error
-      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, selectionMode})}
+      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, isCellFocused: isCellFocused && isFocusVisible, selectionMode})}
       {...otherProps}>
       <div
         className={style({
@@ -1680,14 +1678,11 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
           })({align})}>
           {displayValue(value)}
         </div>
-        {isSaving && showSpinner && (
-          <ProgressCircle isIndeterminate size="S" styles={style({marginX: 8, flexShrink: 0})} aria-label="Saving..." />
-        )}
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         {/** Ignore the extra pressable, this is not real code, just want the warnings to stop. */}
         {/* @ts-expect-error */}
-        {isShown ? <EditableTrigger cellRef={domRef} /> : <Pressable isDisabled><div role="button" tabIndex={-1} style={{display: 'none'}} /></Pressable>}
+        {isShown ? <EditableTrigger isSaving={isSaving} cellRef={domRef} /> : <Pressable isDisabled><div role="button" tabIndex={-1} style={{display: 'none'}} /></Pressable>}
         {!isMobile ? (
           <Popover
             ref={popoverRef}
