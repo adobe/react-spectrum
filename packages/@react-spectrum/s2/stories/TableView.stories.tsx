@@ -50,7 +50,7 @@ import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Pressable} from '@react-aria/interactions';
+import {Pressable, useHover} from '@react-aria/interactions';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
@@ -1421,6 +1421,10 @@ const editableCell = style({
   flexDirection: {
     default: 'row',
     isReversed: 'row-reverse'
+  },
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: '--s2-container-bg'
   }
 });
 
@@ -1507,6 +1511,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   let [isRowFocused, setIsRowFocused] = useState(false);
   let isMobile = !useMediaQuery('(any-pointer: fine)');
   let [isHovered, setIsHovered] = useState(false);
+  let {isHovered: isCellHovered, hoverProps} = useHover({});
   let {isFocusVisible} = useFocusVisible();
 
   let setInternalValue = (value: T) => {
@@ -1628,8 +1633,9 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   return (
     <div
       ref={domRef}
+      {...hoverProps}
       // @ts-expect-error
-      className={editableCell({isReversed: align === 'end'})}
+      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered})}
       {...otherProps}>
       <div
         className={style({
