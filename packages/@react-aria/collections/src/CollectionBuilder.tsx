@@ -116,7 +116,6 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   useLayoutEffect(() => {
     document.isMounted = true;
-    document.isInitialRender = false;
     return () => {
       // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.

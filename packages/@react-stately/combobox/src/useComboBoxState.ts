@@ -14,13 +14,14 @@ import {Collection, CollectionStateBase, FocusStrategy, Key, Node} from '@react-
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
-import {ListCollection, useSingleSelectListState} from '@react-stately/list';
-import {SelectState} from '@react-stately/select';
+import {ListCollection, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
+export interface ComboBoxState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
+  /** The default selected key. */
+  readonly defaultSelectedKey: Key | null,
   /** The current value of the combo box input. */
   inputValue: string,
   /** The default value of the combo box input. */
@@ -31,6 +32,10 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   commit(): void,
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy | null,
+  /** Whether the select is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the select is focused. */
+  setFocused(isFocused: boolean): void,
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
