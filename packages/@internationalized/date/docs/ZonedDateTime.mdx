@@ -76,6 +76,8 @@ let date = fromAbsolute(1688023843144, 'America/Los_Angeles');
 
 The current time can be retrieved using the <TypeLink links={docs.links} type={docs.exports.now} /> function. This requires a time zone identifier to be provided, which is used to determine the local time. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
 
+**Note:** the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
+
 ```tsx
 import {now, getLocalTimeZone} from '@internationalized/date';
 

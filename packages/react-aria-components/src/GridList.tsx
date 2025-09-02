@@ -624,7 +624,7 @@ export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, func
   let rowHeaderProps = useContext(GridListHeaderContext);
 
   return (
-    <header {...props} ref={ref}>
+    <header className="react-aria-GridListHeader" ref={ref} {...props}>
       <div {...rowHeaderProps} style={{display: 'contents'}}>
         {props.children}
       </div>
