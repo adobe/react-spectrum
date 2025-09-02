@@ -1415,8 +1415,20 @@ const editableCell = style({
   justifyContent: 'space-between',
   width: 'full',
   height: 'full',
-  paddingX: 16,
-  marginX: -16,
+  paddingTop: 4,
+  '--paddingBottomVar': {
+    type: 'paddingBottom',
+    value: 4
+  },
+  '--marginBottomVar': {
+    type: 'marginBottom',
+    value: -4
+  },
+  paddingBottom: 'calc(var(--paddingBottomVar) - 1px)',
+  paddingX: 36,
+  marginTop: -4,
+  marginBottom: 'calc(var(--marginBottomVar) - 1px)',
+  marginX: -36,
   flexDirection: {
     default: 'row',
     isReversed: 'row-reverse'
@@ -1474,8 +1486,8 @@ let editButton = style({
   flexShrink: 0
 });
 
-function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving: boolean}) {
-  let {cellRef, isSaving} = props;
+function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving: boolean, density: 'compact' | 'spacious' | 'regular'}) {
+  let {cellRef, isSaving, density} = props;
   let isFocused = useRef(false);
 
   useEffect(() => {
@@ -1487,9 +1499,16 @@ function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving:
     };
   }, []);
 
+  let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
+  if (density === 'compact') {
+    size = 'S';
+  } else if (density === 'spacious') {
+    size = 'L';
+  }
+
   return (
     <div className={editButton}>
-      <ActionButton isPending={isSaving} onFocusChange={(e) => isFocused.current = e} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
+      <ActionButton size={size} isPending={isSaving} onFocusChange={(e) => isFocused.current = e} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
         <Edit />
       </ActionButton>
     </div>
@@ -1584,13 +1603,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     let width = domRef.current?.clientWidth || 0;
     let boundingRect = domRef.current?.parentElement?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
-    if (density === 'compact') {
-      verticalOffset += 0;
-    } else if (density === 'spacious') {
-      verticalOffset += 8;
-    } else {
-      verticalOffset += 4;
-    }
+
     // @ts-expect-error
     let tableWidth = tableRef?.current?.UNSAFE_getDOMNode()?.clientWidth || 0;
     setTriggerWidth(width);
@@ -1681,7 +1694,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         {/** Ignore the extra pressable, this is not real code, just want the warnings to stop. */}
         {/* @ts-expect-error */}
-        {isShown ? <EditableTrigger isSaving={isSaving} cellRef={domRef} /> : <Pressable isDisabled><div role="button" tabIndex={-1} style={{display: 'none'}} /></Pressable>}
+        {isShown ? <EditableTrigger density={density} isSaving={isSaving} cellRef={domRef} /> : <Pressable isDisabled><div role="button" tabIndex={-1} style={{display: 'none'}} /></Pressable>}
         {!isMobile ? (
           <Popover
             ref={popoverRef}

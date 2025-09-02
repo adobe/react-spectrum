@@ -269,8 +269,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     orientation = 'horizontal',
     staticColor = props.staticColor,
     isQuiet = props.isQuiet,
-    size = props.size || 'M',
-    isDisabled = props.isDisabled
+    size = props.size || 'M'
   } = ctx || {};
 
   let [isProgressVisible, setIsProgressVisible] = useState(false);
@@ -295,7 +294,6 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
   return (
     <RACButton
       {...props}
-      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
@@ -312,85 +310,89 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
         orientation,
         isInGroup
       }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {styles:
-            style({
-              order: 1,
-              truncate: true,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible})
-          }],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({
-              size: fontRelative(20),
-              marginStart: '--iconMargin',
-              flexShrink: 0,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible})
-          }],
-          [AvatarContext, {
-            size: avatarSize[size],
-            // @ts-ignore
-            styles: style({
-              marginStart: {
-                default: '--iconMargin',
-                ':last-child': 0
-              },
-              flexShrink: 0,
-              order: 0,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible})
-          }],
-          [NotificationBadgeContext, {
-            staticColor: staticColor,
-            size: props.size === 'XS' ? undefined : props.size,
-            isDisabled: props.isDisabled,
-            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-        {isPending &&
-          <div
-            className={style({
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              opacity: {
-                default: 0,
-                isProgressVisible: 1
-              }
-            })({isProgressVisible, isPending})}>
-            <ProgressCircle
-              isIndeterminate
-              aria-label={stringFormatter.format('button.pending')}
-              size="S"
-              staticColor={staticColor}
-              styles={style({
-                size: {
-                  size: {
-                    S: 14,
-                    M: 18,
-                    L: 20,
-                    XL: 24
+      {({isDisabled}) => (
+        <>
+          <Provider
+            values={[
+              [SkeletonContext, null],
+              [TextContext, {styles:
+                style({
+                  order: 1,
+                  truncate: true,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
                   }
-                }
-              })({size})} />
-          </div>
-          }
-      </Provider>
+                })({isProgressVisible})
+              }],
+              [IconContext, {
+                render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                styles: style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin',
+                  flexShrink: 0,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }],
+              [AvatarContext, {
+                size: avatarSize[size],
+                // @ts-ignore
+                styles: style({
+                  marginStart: {
+                    default: '--iconMargin',
+                    ':last-child': 0
+                  },
+                  flexShrink: 0,
+                  order: 0,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }],
+              [NotificationBadgeContext, {
+                staticColor: staticColor,
+                size: props.size === 'XS' ? undefined : props.size,
+                isDisabled: isDisabled,
+                styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
+              }]
+            ]}>
+            {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+            {isPending &&
+              <div
+                className={style({
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  opacity: {
+                    default: 0,
+                    isProgressVisible: 1
+                  }
+                })({isProgressVisible, isPending})}>
+                <ProgressCircle
+                  isIndeterminate
+                  aria-label={stringFormatter.format('button.pending')}
+                  size="S"
+                  staticColor={staticColor}
+                  styles={style({
+                    size: {
+                      size: {
+                        S: 14,
+                        M: 18,
+                        L: 20,
+                        XL: 24
+                      }
+                    }
+                  })({size})} />
+              </div>
+              }
+          </Provider>
+        </>
+      )}
     </RACButton>
   );
 });

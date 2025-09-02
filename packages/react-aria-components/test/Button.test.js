@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, ProgressBar, Text} from '../';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -363,5 +363,29 @@ describe('Button', () => {
 
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).not.toHaveBeenCalled();
+  });
+
+  it('disables press when in pending state for context', async function () {
+    let {getByRole,queryByRole} = render(
+      <DialogTrigger>
+        <Button isPending>Delete…</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <Heading slot="title">Alert</Heading>
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = queryByRole('alertdialog');
+    expect(dialog).toBeNull();
   });
 });
