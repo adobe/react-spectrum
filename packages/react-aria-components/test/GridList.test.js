@@ -507,7 +507,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
 
-    let {getAllByRole} = render(
+    let {getAllByRole, getByRole} = render(
       <Virtualizer layout={ListLayout} layoutOptions={{headingHeight: 25, rowHeight: 25}}>
         <GridList aria-label="Test" items={sections}>
           <Collection items={sections}>
@@ -524,6 +524,10 @@ describe('GridList', () => {
       </Virtualizer>
     );
 
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('aria-rowcount');
+    expect(grid.getAttribute('aria-rowcount')).toEqual('15');
+
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(15);
     expect(rows.map(r => r.textContent)).toEqual(['Section 0', 'Section 0, Item 0', 'Section 0, Item 1', 'Section 1', 'Section 1, Item 0', 'Section 1, Item 1', 'Section 2', 'Section 2, Item 0', 'Section 2, Item 1', 'Section 3', 'Section 3, Item 0', 'Section 3, Item 1', 'Section 4', 'Section 4, Item 0', 'Section 4, Item 1']);
@@ -538,7 +542,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
 
-    let {getAllByRole} = render(
+    let {getAllByRole, getByRole} = render(
       <Virtualizer layout={ListLayout} layoutOptions={{headingHeight: 25, rowHeight: 25}}>
         <GridList aria-label="Test">
           <GridListItem>Home</GridListItem>
@@ -562,6 +566,10 @@ describe('GridList', () => {
         </GridList>
       </Virtualizer>
     );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('aria-rowcount');
+    expect(grid.getAttribute('aria-rowcount')).toEqual('12');
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(12);

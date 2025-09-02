@@ -21,7 +21,6 @@ import {DraggableCollectionState, DroppableCollectionState, Collection as IColle
 import {FieldInputContext, SelectableCollectionContext} from './context';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {HeaderContext} from './Header';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -580,11 +579,11 @@ export interface GridListSectionProps<T> extends SectionProps<T> {}
 /**
  * A GridListSection represents a section within a GridList.
  */
-export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(ListStateContext)!;
   let {CollectionBranch, isVirtualized} = useContext(CollectionRendererContext);
   let headingRef = useRef(null);
-  ref = useObjectRef<HTMLElement>(ref);
+  ref = useObjectRef<HTMLDivElement>(ref);
   let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
     'aria-label': props['aria-label'] ?? undefined,
     node: item,
@@ -601,33 +600,35 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
   delete DOMProps.id;
 
   return (
-    <section
+    <div
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
         values={[
-          [HeaderContext, {...rowProps, ref: headingRef}],
-          [GridListHeaderContext, {...rowHeaderProps}]
+          [GridListHeaderContext, {...rowProps, ref: headingRef}],
+          [GridListHeaderInnerContext, {...rowHeaderProps}]
         ]}>
         <CollectionBranch
           collection={state.collection}
           parent={item} />
       </Provider>
-    </section>
+    </div>
   );
 });
 
-const GridListHeaderContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
 
-export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, HeaderContext);
-  let rowHeaderProps = useContext(GridListHeaderContext);
+export const GridListHeaderContext = createContext<ContextValue<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>({});
+const GridListHeaderInnerContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
+
+export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, GridListHeaderContext);
+  let rowHeaderProps = useContext(GridListHeaderInnerContext);
 
   return (
-    <header className="react-aria-GridListHeader" ref={ref} {...props}>
+    <div className="react-aria-GridListHeader" ref={ref} {...props}>
       <div {...rowHeaderProps} style={{display: 'contents'}}>
         {props.children}
       </div>
-    </header>
+    </div>
   );
 });
