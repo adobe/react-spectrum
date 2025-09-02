@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionNode} from '@react-aria/collections';
 import {DOMAttributes, RefObject, Node as RSNode} from '@react-types/shared';
 import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
-import {CollectionNode} from '@react-aria/collections';
 
-export interface AriaGridListSectionProps<T> {
+export interface AriaGridListSectionProps {
   /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string,
   /** An object representing the section. */
@@ -41,7 +41,7 @@ export interface GridListSectionAria {
  * @param props - Props for the section.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useGridListSection<T>(props: AriaGridListSectionProps<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
+export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
   let {'aria-label': ariaLabel, node, isVirtualized} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({
