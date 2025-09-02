@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/mcp-s2-docs",
+  "name": "@react-spectrum/mcp",
   "version": "0.1.0",
   "description": "MCP server exposing React Spectrum S2 docs as tools",
   "type": "module",

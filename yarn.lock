@@ -7196,9 +7196,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/mcp-s2-docs@workspace:packages/dev/mcp":
+"@react-spectrum/mcp@workspace:packages/dev/mcp":
   version: 0.0.0-use.local
-  resolution: "@react-spectrum/mcp-s2-docs@workspace:packages/dev/mcp"
+  resolution: "@react-spectrum/mcp@workspace:packages/dev/mcp"
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
