@@ -13,8 +13,9 @@
 import {DOMAttributes, RefObject, Node as RSNode} from '@react-types/shared';
 import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
+import {CollectionNode} from '@react-aria/collections';
 
-export interface AriaGridListSectionProps {
+export interface AriaGridListSectionProps<T> {
   /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string,
   /** An object representing the section. */
@@ -40,7 +41,7 @@ export interface GridListSectionAria {
  * @param props - Props for the section.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
+export function useGridListSection<T>(props: AriaGridListSectionProps<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
   let {'aria-label': ariaLabel, node, isVirtualized} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({
@@ -51,8 +52,10 @@ export function useGridListSection<T>(props: AriaGridListSectionProps, state: Li
 
   let sumOfNodes = (node: RSNode<unknown>): number => {
     if (node.prevKey === null) {
-      if (node.type === 'section') {
-        return [...state.collection.getChildren!(node.key)].length;
+      let lastChildKey = (node as CollectionNode<T>).lastChildKey;
+      if (node.type === 'section' && lastChildKey) {
+        let lastChild = state.collection.getItem(lastChildKey);
+        return lastChild ? lastChild.index + 1 : 0;
       } else if (node.type === 'item') {
         return 1;
       }
@@ -64,8 +67,12 @@ export function useGridListSection<T>(props: AriaGridListSectionProps, state: Li
       if (node.type === 'item') {
         return sumOfNodes(prevNode) + 1;
       }
-      
-      return sumOfNodes(prevNode) + [...state.collection.getChildren!(node.key)].length;
+
+      let lastChildKey = (node as CollectionNode<T>).lastChildKey;
+      if (lastChildKey) {
+        let lastChild = state.collection.getItem(lastChildKey);
+        return lastChild ? sumOfNodes(prevNode) + lastChild.index + 1 : sumOfNodes(prevNode);
+      }
     }
   
     return 0;

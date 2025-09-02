@@ -20,6 +20,7 @@ import type {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import type {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
+import { CollectionNode } from '@react-aria/collections';
 
 export interface AriaGridListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
@@ -322,10 +323,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let nodes = [...collection];
     // TODO: refactor ListCollection to store an absolute index of a node's position?
     if (nodes.find(node => node.type === 'section')) {
-      let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) : null;
+      let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T>: null;
       let isInSection = parentNode && parentNode.type === 'section';
-      if (isInSection) {
-        let diff = [...state.collection.getChildren!(parentNode!.key)].length - node.index - 1;
+      let lastChildKey = parentNode?.lastChildKey;
+      if (isInSection && lastChildKey) {
+        let lastChild = state.collection.getItem(lastChildKey)
+        let diff = lastChild ? lastChild.index - node.index : 0;
         if (parentNode!.prevKey) {
           rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - diff;
         } else {
