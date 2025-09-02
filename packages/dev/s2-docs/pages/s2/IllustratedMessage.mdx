@@ -8,67 +8,33 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.IllustratedMessage.description}</PageDescription>
 
-```tsx render docs={docs.exports.IllustratedMessage} links={docs.links} props={['size', 'orientation']} initialProps={{}} type="s2"
-import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
-import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
-
-<IllustratedMessage/* PROPS */>
-  {/* TODO */}
-</IllustratedMessage>
-```
-
-## Example
-
-```tsx render expanded
-"use client";
-import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
-import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
-
-<IllustratedMessage>
-  <Image />
-  <Heading>No results</Heading>
-  <Content>Try another search</Content>
-</IllustratedMessage>
-```
-
-## Content
-
-An IllustratedMessage consists of three areas: an illustration, a title, and a body.
-Each of these sections can be populated by providing the following components to your IllustratedMessage as children:
-`svg`, Heading (title), and Content (body).
-
-```tsx render expanded
-"use client";
-import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
-import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
-
-<IllustratedMessage>
-  <Image />
-  <Heading>Drag and Drop your file</Heading>
-  <Content>Select a File from your computer<br /> or Search Adobe Stock</Content>
-</IllustratedMessage>
-```
-
-### With actions
-
-IllustratedMessages can include action buttons to help users resolve the situation.
-
-```tsx render expanded
+```tsx render docs={docs.exports.IllustratedMessage} links={docs.links} props={['size', 'orientation']} type="s2"
 "use client";
 import {IllustratedMessage, Heading, Content, Button, ButtonGroup} from '@react-spectrum/s2';
 import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 
-<IllustratedMessage>
+<IllustratedMessage/* PROPS */>
   <Image />
-  <Heading>No matching results</Heading>
-  <Content>Try another search or browse our categories.</Content>
+  <Heading>Create your first asset.</Heading>
+  <Content>Get started by uploading or importing some assets.</Content>
   <ButtonGroup>
-    <Button variant="primary">Browse categories</Button>
-    <Button variant="secondary">Clear search</Button>
+    <Button variant="secondary">Import</Button>
+    <Button variant="accent">Upload</Button>
   </ButtonGroup>
 </IllustratedMessage>
 ```
 
-## Props
+## API
+
+```tsx links={{IllustratedMessage: '#illustratedmessage', ButtonGroup: 'ButtonGroup.html'}}
+<IllustratedMessage>
+  <Illustration />
+  <Heading />
+  <Content />
+  <ButtonGroup />
+</IllustratedMessage>
+```
+
+### IllustratedMessage
 
 <PropTable component={docs.exports.IllustratedMessage} links={docs.links} />

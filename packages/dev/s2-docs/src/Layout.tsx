@@ -24,7 +24,7 @@ const components = {
   h4: H4,
   p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
-  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginTop: 0, marginBottom: 8})}>{children}</li>,
+  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,

@@ -32,7 +32,7 @@ import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
 
 ## Content
 
-`Tree` follows the [Collection Components API](collections.html?component=TreeView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`TreeView` follows the [Collection Components API](collections.html?component=TreeView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
 ```tsx render
 "use client";
@@ -302,7 +302,6 @@ function Example(props) {
         {...props}
         aria-label="Pokemon evolution"
         styles={style({height: 250, width: 300})}
-        defaultExpandedKeys={['bulbasaur', 'ivysaur']}
         ///- begin highlight -///
         /* PROPS */
         selectedKeys={selected}

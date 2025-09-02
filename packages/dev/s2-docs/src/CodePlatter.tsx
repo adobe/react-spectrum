@@ -203,6 +203,9 @@ export function Pre({children}) {
 }
 
 function transformExampleCode(code: string): string {
+  // Export the last function
+  code = code.replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport function Example$2');
+
   // Add function wrapper around raw JSX in examples.
   return code.replace(/\n<((?:.|\n)+)/, (_, code) => {
     let res = '\nexport function Example() {\n  return (\n    <';

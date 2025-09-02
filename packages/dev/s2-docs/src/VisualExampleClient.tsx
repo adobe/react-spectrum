@@ -472,7 +472,7 @@ function BooleanControl({control, value, onChange}: ControlProps) {
 
 function UnionControl({control, value, onChange, isPicker = false}) {
   let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
-  if (isPicker || length > 18) {
+  if (isPicker || control.options?.control === 'picker' || length > 18) {
     return (
       <Picker 
         label={control.name}
@@ -482,7 +482,7 @@ function UnionControl({control, value, onChange, isPicker = false}) {
         styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.filter(e => e.value).map(element => (
-          <PickerItem key={element.value} id={element.value}>{element.value}</PickerItem>
+          <PickerItem key={element.value} id={element.value}>{String(element.value)}</PickerItem>
         ))}
       </Picker>
     );
