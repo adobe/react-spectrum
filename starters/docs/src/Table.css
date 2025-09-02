@@ -118,6 +118,10 @@
       --radius-top: 0px;
     }
   }
+
+  .react-aria-ProgressBar {
+    margin: auto;
+  }
 }
 
 :where(.react-aria-Row) .react-aria-Checkbox {
