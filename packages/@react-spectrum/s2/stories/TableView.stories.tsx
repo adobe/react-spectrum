@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {
+  ActionBar,
   ActionButton,
   Avatar,
   Button,
@@ -41,7 +42,7 @@ import {
 import {categorizeArgTypes} from './utils';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
-import {colorMix, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {colorMix, lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
 import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
@@ -1414,20 +1415,14 @@ const editableCell = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   width: 'full',
-  height: 'full',
-  paddingTop: 4,
-  '--paddingBottomVar': {
-    type: 'paddingBottom',
-    value: 4
+  height: {
+    density: {
+      compact: '[30px]',
+      regular: '[38px]',
+      spacious: '[46px]'
+    }
   },
-  '--marginBottomVar': {
-    type: 'marginBottom',
-    value: -4
-  },
-  paddingBottom: 'calc(var(--paddingBottomVar) - 1px)',
   paddingX: 36,
-  marginTop: -4,
-  marginBottom: 'calc(var(--marginBottomVar) - 1px)',
   marginX: -36,
   flexDirection: {
     default: 'row',
@@ -1448,7 +1443,8 @@ const editableCell = style({
         single: '--s2-container-bg',
         multiple: '--s2-container-bg'
       }
-    }
+    },
+    isEdited: lightDark('yellow-300/15', 'yellow-300/50')
   }
 });
 
@@ -1520,6 +1516,7 @@ interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
   onChange: (value: T) => void,
   showButtons?: boolean,
   isSaving?: boolean,
+  isEdited?: boolean,
   tableRef: DOMRefValue<HTMLDivElement>,
   isValid: (value: T) => boolean,
   displayValue: (value: T) => ReactNode,
@@ -1532,7 +1529,7 @@ interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
 }
 
 const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = string>(props: EditableCellProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {value, valueKey = 'value', setValueKey = 'onChange', onChange, showButtons = true, isSaving, tableRef, isValid, displayValue, children, align = 'start', density, selectionMode, ...otherProps} = props;
+  let {value, valueKey = 'value', setValueKey = 'onChange', onChange, showButtons = true, isSaving, tableRef, isValid, displayValue, children, align = 'start', density = 'regular', selectionMode, isEdited, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [isOpen, setIsOpen] = useState(false);
@@ -1652,7 +1649,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
       ref={domRef}
       {...hoverProps}
       // @ts-expect-error
-      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, isCellFocused: isCellFocused && isFocusVisible, selectionMode})}
+      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, isCellFocused: isCellFocused && isFocusVisible, selectionMode, isEdited, density})}
       {...otherProps}>
       <div
         className={style({
@@ -1996,3 +1993,208 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     );
   }
 };
+
+
+export const EditableTableWithBulk: StoryObj<EditableTableProps> = {
+  args: {
+    showButtons: true
+  },
+  render: function EditableTableWithBulk(args) {
+    let selectionMode = args.selectionMode ?? 'none' as SelectionMode;
+    let {showButtons, ...props} = args;
+    let isMobile = useIsMobileDevice();
+    let tableRef = useRef<DOMRefValue<HTMLDivElement>>(null);
+    let [editedItems, setEditedItems] = useState<Map<Key, object>>(new Map());
+    let [editableItems, setEditableItems] = useState(defaultItems);
+    let onChange = useCallback((value: any, id: Key, columnId: Key) => {
+      setEditedItems(prev => {
+        let newItems = new Map(prev);
+        let existingEdit = newItems.get(id);
+        if (existingEdit) {
+          newItems.set(id, {
+            ...existingEdit,
+            [columnId]: value
+          });
+        } else {
+          newItems.set(id, {
+            [columnId]: value
+          });
+        }
+        return newItems;
+      });
+    }, []);
+    let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
+    let onSortChange = (sortDescriptor: SortDescriptor) => {
+      let {direction = 'ascending', column = 'count'} = sortDescriptor;
+
+      setEditableItems(prev => {
+        return prev.slice().sort((a, b) => {
+          let cmp = Number(a[column]) < Number(b[column]) ? -1 : 1;
+          if (direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        });
+      });
+      setSortDescriptor(sortDescriptor);
+    };
+
+    let [fruitWidth, setFruitWidth] = useState<number | '6fr'>('6fr');
+    let columns = useMemo(() => {
+      return isMobile ? mobileColumns : editableColumns.map(column => {
+        if (column.id === 'fruits') {
+          column.width = fruitWidth;
+        }
+        return {...column};
+      });
+    }, [isMobile, fruitWidth]);
+
+    let saveItems = useCallback(() => {
+      setEditableItems(prev => {
+        return prev.map(item => {
+          if (editedItems.has(item.id)) {
+            return {...item, ...editedItems.get(item.id)};
+          }
+          return item;
+        });
+      });
+      setEditedItems(new Map());
+    }, [editedItems]);
+
+    return (
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+        <Button onPress={() => setFruitWidth(fruitWidth === '6fr' ? 800 : '6fr')}>Toggle Fruit width</Button>
+        <TableView
+          renderActionBar={() => (
+            <ActionBar editedItemCount={editedItems.size}>
+              <ActionButton onPress={() => setEditedItems(new Map())}>Reset</ActionButton>
+              <ActionButton onPress={saveItems}>Save</ActionButton>
+            </ActionBar>
+          )}
+          key={fruitWidth}
+          ref={tableRef}
+          aria-label="Dynamic table"
+          {...props}
+          sortDescriptor={sortDescriptor}
+          onSortChange={onSortChange}
+          styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+          <TableHeader columns={columns}>
+            {(column) => (
+              <Column {...column}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={editableItems} dependencies={[isMobile, showButtons, columns, props.density, selectionMode, editedItems]}>
+            {item => (
+              <Row id={item.id} columns={columns}>
+                {(column) => {
+                  if (column.id === 'count' && !isMobile) {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => value.toString()}
+                          isValid={value => value > 0 && !Number.isNaN(value)}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isEdited={!!editedItems.get(item.id)?.[column.id]}
+                          showButtons={showButtons}
+                          value={editedItems.get(item.id)?.[column.id] ?? item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => (
+                            <NumberField
+                              hideStepper
+                              errorMessage="Please enter a valid non 0 or empty value"
+                              {...props} />
+                          )}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'fruits') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => value.toString()}
+                          isValid={value => value.length > 0}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isEdited={!!editedItems.get(item.id)?.[column.id]}
+                          showButtons={showButtons}
+                          value={editedItems.get(item.id)?.[column.id] ?? item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => (
+                            <TextField
+                              errorMessage="Please enter a valid non empty value"
+                              {...props} />
+                          )}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'farmer') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => {
+                            return (
+                              <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+                                <Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
+                                {value}
+                              </div>
+                            );
+                          }}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          valueKey="selectedKey"
+                          setValueKey="onSelectionChange"
+                          isEdited={!!editedItems.get(item.id)?.[column.id]}
+                          showButtons={showButtons}
+                          value={editedItems.get(item.id)?.[column.id] ?? item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <Picker {...props}>
+                                <PickerItem textValue="Eva" id="Eva"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Eva</Text></PickerItem>
+                                <PickerItem textValue="Steven" id="Steven"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Steven</Text></PickerItem>
+                                <PickerItem textValue="Michael" id="Michael"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Michael</Text></PickerItem>
+                                <PickerItem textValue="Sara" id="Sara"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Sara</Text></PickerItem>
+                                <PickerItem textValue="Karina" id="Karina"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Karina</Text></PickerItem>
+                                <PickerItem textValue="Otto" id="Otto"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Otto</Text></PickerItem>
+                                <PickerItem textValue="Matt" id="Matt"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Matt</Text></PickerItem>
+                                <PickerItem textValue="Emily" id="Emily"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Emily</Text></PickerItem>
+                                <PickerItem textValue="Amelia" id="Amelia"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Amelia</Text></PickerItem>
+                                <PickerItem textValue="Isla" id="Isla"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Isla</Text></PickerItem>
+                              </Picker>
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'status') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                      </Cell>
+                    );
+                  }
+                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
+  }
+};
+

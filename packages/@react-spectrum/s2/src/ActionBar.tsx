@@ -85,7 +85,8 @@ export interface ActionBarProps extends SlotProps {
   /** Handler that is called when the ActionBar clear button is pressed. */
   onClearSelection?: () => void,
   /** A ref to the scrollable element the ActionBar appears above. */
-  scrollRef?: RefObject<HTMLElement | null>
+  scrollRef?: RefObject<HTMLElement | null>,
+  editedItemCount?: number
 }
 
 export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
@@ -94,7 +95,7 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);
 
-  let isOpen = props.selectedItemCount !== 0;
+  let isOpen = props.selectedItemCount !== 0 || props.editedItemCount !== 0;
   let isExiting = useExitAnimation(domRef, isOpen && props.scrollRef != null);
   if (!isOpen && !isExiting) {
     return null;
@@ -104,7 +105,7 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
 });
 
 const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps & {isExiting: boolean}, ref: ForwardedRef<HTMLDivElement | null>) {
-  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting} = props;
+  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, editedItemCount = 0} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // Store the last count greater than zero so that we can retain it while rendering the fade-out animation.
@@ -152,6 +153,17 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   let objectRef = useObjectRef(ref);
   let isEntering = useEnterAnimation(objectRef, !!scrollRef);
 
+  let message = stringFormatter.format('actionbar.selected', {count: lastCount});
+  if (editedItemCount > 0 && lastCount !== 'all' && lastCount > 0) {
+    message = stringFormatter.format('actionbar.selectedEdited', {count: lastCount, editedCount: editedItemCount});
+  } else if (editedItemCount > 0 && lastCount !== 'all') {
+    message = stringFormatter.format('actionbar.edited', {editedCount: editedItemCount});
+  } else if (editedItemCount > 0 && lastCount === 'all') {
+    message = stringFormatter.format('actionbar.selectedAllEdited', {editedCount: editedItemCount});
+  } else if (lastCount === 'all') {
+    message = stringFormatter.format('actionbar.selectedAll');
+  }
+
   return (
     <FocusScope restoreFocus>
       <div
@@ -173,9 +185,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
             aria-label={stringFormatter.format('actionbar.clearSelection')}
             onPress={() => onClearSelection?.()} />
           <span className={style({font: 'ui', color: {default: 'neutral', isEmphasized: 'gray-25'}})({isEmphasized})}>
-            {lastCount === 'all'
-              ? stringFormatter.format('actionbar.selectedAll')
-              : stringFormatter.format('actionbar.selected', {count: lastCount})}
+            {message}
           </span>
         </div>
       </div>
