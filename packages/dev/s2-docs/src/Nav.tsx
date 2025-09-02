@@ -1,10 +1,13 @@
 'use client';
 
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
+import {Content, Heading, IllustratedMessage, Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {type Library, TAB_DEFS} from './SearchMenu';
 import {Link} from 'react-aria-components';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import type {PageProps} from '@parcel/rsc';
-import {Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
@@ -66,7 +69,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let tabListRef = useRef<HTMLDivElement>(null);
   let [tabListHeight, setTabListHeight] = useState(0);
 
-  let getCurrentLibrary = (page: any) => {
+  let getCurrentLibrary = (page: any): Library => {
     if (page.url.includes('react-aria')) {
       return 'react-aria';
     } else if (page.url.includes('react-internationalized')) {
@@ -75,7 +78,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
     return 'react-spectrum';
   };
 
-  let [selectedLibrary, setSelectedLibrary] = useState<'react-spectrum' | 'react-aria' | 'internationalized'>(getCurrentLibrary(currentPage));
+  let [selectedLibrary, setSelectedLibrary] = useState<Library>(getCurrentLibrary(currentPage));
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
     let sectionsMap = new Map();
@@ -144,20 +147,17 @@ export function MobileNav({pages, currentPage}: PageProps) {
   }, [selectedLibrary]);
 
   let getOrderedLibraries = () => {
-    let allLibraries = [
-      {id: 'react-aria', label: 'React Aria'}, 
-      {id: 'react-spectrum', label: 'React Spectrum'}
-    ];
-    
-    let currentLibrary = getCurrentLibrary(currentPage);
-    
-    // Find current library and move it to first position
-    let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibrary);
+    let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label}));
+
+    let currentLibId = getCurrentLibrary(currentPage);
+
+    // Move current library to first position
+    let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibId);
     if (currentLibraryIndex > 0) {
       let currentLib = allLibraries.splice(currentLibraryIndex, 1)[0];
       allLibraries.unshift(currentLib);
     }
-    
+
     return allLibraries;
   };
 
@@ -287,7 +287,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
         density="compact"
         selectedKey={selectedLibrary}
         onSelectionChange={(key) => {
-          let newLib = key as 'react-spectrum' | 'react-aria' | 'internationalized';
+          let newLib = key as Library;
           setSelectedLibrary(newLib);
           if (!searchFocused) {
             let nextSections = getSectionNamesForLibrary(newLib);
@@ -331,7 +331,22 @@ export function MobileNav({pages, currentPage}: PageProps) {
               <ComponentCardView
                 items={getItemsForSelection(selectedSection, library.id, searchValue)}
                 ariaLabel="Pages"
-                size="S" />
+                size="S"
+                renderEmptyState={() => (
+                  <IllustratedMessage styles={style({margin: 32})}>
+                    <NoSearchResults />
+                    <Heading>No results</Heading>
+                    {searchValue.trim().length > 0 ? (
+                      <Content>
+                        No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
+                      </Content>
+                    ) : (
+                      <Content>
+                        No results found in {selectedLibrary}.
+                      </Content>
+                    )}
+                  </IllustratedMessage>
+                )} />
             </div>
           </TabPanel>
         ))}

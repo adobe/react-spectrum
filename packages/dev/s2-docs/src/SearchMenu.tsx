@@ -1,12 +1,14 @@
 'use client';
 
-import {ActionButton, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
+import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
 import {Autocomplete, AutocompleteProps, Dialog, Key, Modal, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import FakeSearchFieldButton from './FakeSearchFieldButton';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
 // @ts-ignore
@@ -61,7 +63,7 @@ let modalStyle = style({
   height: '[90vh]'
 });
 
-type Library = 'react-spectrum' | 'react-aria' | 'internationalized';
+export type Library = 'react-spectrum' | 'react-aria' | 'internationalized';
 
 type TabDef = {
   label: string,
@@ -69,7 +71,7 @@ type TabDef = {
   icon: React.ReactNode
 };
 
-const TAB_DEFS: Record<Library, TabDef> = {
+export const TAB_DEFS: Record<Library, TabDef> = {
   'react-spectrum': {
     label: 'React Spectrum',
     description: "Components for Adobe's Spectrum design system",
@@ -430,9 +432,19 @@ export default function SearchMenu(props: SearchMenuProps) {
                       }))}
                       ariaLabel={selectedSectionName}
                       renderEmptyState={() => (
-                        <div className={style({display: 'block', textAlign: 'center', marginY: 32})}>
-                          {searchValue.trim().length > 0 ? `No results for "${searchValue}" in ${tab.label}.` : `No pages found in ${tab.label}.`}
-                        </div>
+                        <IllustratedMessage styles={style({margin: 32})}>
+                          <NoSearchResults />
+                          <Heading>No results</Heading>
+                          {searchValue.trim().length > 0 ? (
+                            <Content>
+                              No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {tab.label}.
+                            </Content>
+                          ) : (
+                            <Content>
+                              No results found in {tab.label}.
+                            </Content>
+                          )}
+                        </IllustratedMessage>
                       )} />
                   </div>
                 </Autocomplete>
