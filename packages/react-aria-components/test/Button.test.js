@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -366,7 +366,7 @@ describe('Button', () => {
   });
 
   it('disables press when in pending state for context', async function () {
-    let {getByRole,queryByRole} = render(
+    let {getByRole, queryByRole} = render(
       <DialogTrigger>
         <Button isPending>Delete…</Button>
         <Modal data-test="modal">
