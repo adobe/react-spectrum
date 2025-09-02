@@ -123,7 +123,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
 
 export function Files({children, files}: {children?: ReactNode, files: string[]}) {
   return (
-    <Tabs aria-label="Files" defaultSelectedKey="example" density="compact">
+    <Tabs key={files.join('|')} aria-label="Files" defaultSelectedKey="example" density="compact">
       <TabList styles={style({marginBottom: 20})}>
         {children && <Tab id="example">Example</Tab>}
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
