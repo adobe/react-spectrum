@@ -1,11 +1,9 @@
 {
   "name": "@react-spectrum/mcp",
   "version": "0.1.0",
-  "description": "MCP server exposing React Spectrum S2 docs as tools",
+  "description": "MCP server for React Spectrum (S2) and React Aria documentation",
   "type": "module",
-  "bin": {
-    "s2-docs-mcp": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",

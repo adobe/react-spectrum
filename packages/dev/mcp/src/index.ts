@@ -21,6 +21,22 @@ type PageInfo = {
   sections: SectionInfo[]
 };
 
+type Library = 's2' | 'react-aria';
+
+function errorToString(err: unknown): string {
+  if (err && typeof err === 'object' && 'stack' in err && typeof (err as any).stack === 'string') {
+    return (err as any).stack as string;
+  }
+  if (err && typeof err === 'object' && 'message' in err && typeof (err as any).message === 'string') {
+    return (err as any).message as string;
+  }
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
+}
+
 // Resolve docs dist root based on this file location
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,10 +117,10 @@ async function loadIllustrationAliases(): Promise<Record<string, string[]>> {
   return (illustrationAliasesCache = (mod.illustrationAliases ?? {}));
 }
 
-function readAllPages(): PageInfo[] {
+function readAllPagesFor(library: Library): PageInfo[] {
   assertDocsExist();
-  const patterns = ['s2/**/*.md', 'react-aria/**/*.md'];
-  const absFiles = fg.sync(patterns, {cwd: DOCS_DIST_ROOT, absolute: true, suppressErrors: true});
+  const pattern = `${library}/**/*.md`;
+  const absFiles = fg.sync([pattern], {cwd: DOCS_DIST_ROOT, absolute: true, suppressErrors: true});
   const pages: PageInfo[] = [];
   for (const absPath of absFiles) {
     if (path.basename(absPath).toLowerCase() === 'llms.txt') {continue;}
@@ -174,42 +190,34 @@ function parsePage(absPath: string, keyFromPath?: string): PageInfo {
   return {key, title, description, filePath: absPath, sections};
 }
 
-function resolvePagePath(pageName: string): PageInfo {
-  // Accept keys like "s2/Button" or plain "Button"
+function resolvePagePathFor(library: Library, pageName: string): PageInfo {
+  // Accept keys like "s2/Button" or plain "Button" but restrict to the selected library
   assertDocsExist();
 
   if (pageCache.has(pageName)) {
     return pageCache.get(pageName)!;
   }
 
-  // If includes slash, treat as explicit
   if (pageName.includes('/')) {
-    const abs = path.join(DOCS_DIST_ROOT, `${pageName}.md`);
+    const normalized = pageName.replace(/\\/g, '/');
+    const prefix = normalized.split('/', 1)[0];
+    if (prefix !== library) {
+      throw new Error(`Page '${pageName}' is not in the '${library}' library.`);
+    }
+    const abs = path.join(DOCS_DIST_ROOT, `${normalized}.md`);
     if (!fs.existsSync(abs)) {
       throw new Error(`Page not found: ${pageName}`);
     }
-    const info = parsePage(abs, pageName);
-    pageCache.set(pageName, info);
+    const info = parsePage(abs, normalized);
+    pageCache.set(normalized, info);
     return info;
   }
 
-  // Search both libraries by filename
-  const candidates = fg.sync([`s2/${pageName}.md`, `react-aria/${pageName}.md`], {
-    cwd: DOCS_DIST_ROOT,
-    absolute: true,
-    suppressErrors: true
-  });
-
-  if (candidates.length === 0) {
-    throw new Error(`Page not found: ${pageName}`);
+  const abs = path.join(DOCS_DIST_ROOT, library, `${pageName}.md`);
+  if (!fs.existsSync(abs)) {
+    throw new Error(`Page not found in '${library}': ${pageName}`);
   }
-  if (candidates.length > 1) {
-    const keys = candidates.map(p => path.relative(DOCS_DIST_ROOT, p).replace(/\\/g, '/').replace(/\.md$/i, ''));
-    throw new Error(`Ambiguous page name '${pageName}'. Please specify one of: ${keys.join(', ')}`);
-  }
-
-  const abs = candidates[0];
-  const key = path.relative(DOCS_DIST_ROOT, abs).replace(/\\/g, '/').replace(/\.md$/i, '');
+  const key = `${library}/${pageName}`;
   const info = parsePage(abs, key);
   pageCache.set(info.key, info);
   return info;
@@ -219,9 +227,9 @@ function readPageContent(filePath: string): string {
   return fs.readFileSync(filePath, 'utf8');
 }
 
-async function main() {
+async function startServer(library: Library) {
   const server = new McpServer({
-    name: 's2-docs-server',
+    name: library === 's2' ? 's2-docs-server' : 'react-aria-docs-server',
     version: '0.1.0'
   });
 
@@ -229,12 +237,12 @@ async function main() {
   server.registerTool(
     'list_pages',
     {
-      title: 'List S2 docs pages',
-      description: 'Returns a list of available pages in the S2 and React Aria docs.',
+      title: library === 's2' ? 'List React Spectrum (@react-spectrum/s2) docs pages' : 'List React Aria docs pages',
+      description: `Returns a list of available pages in the ${library} docs.`,
       inputSchema: {includeDescription: z.boolean().optional()}
     },
     async ({includeDescription}) => {
-      const pages = readAllPages();
+      const pages = readAllPagesFor(library);
       const items = pages
         .sort((a, b) => a.key.localeCompare(b.key))
         .map(p => includeDescription ? {key: p.key, title: p.title, description: p.description ?? ''} : {key: p.key, title: p.title});
@@ -253,7 +261,7 @@ async function main() {
       inputSchema: {page_name: z.string()}
     },
     async ({page_name}) => {
-      const info = resolvePagePath(page_name);
+      const info = resolvePagePathFor(library, page_name);
       const out = {
         key: info.key,
         title: info.title,
@@ -273,7 +281,7 @@ async function main() {
       inputSchema: {page_name: z.string(), section_name: z.string().optional()}
     },
     async ({page_name, section_name}) => {
-      const info = resolvePagePath(page_name);
+      const info = resolvePagePathFor(library, page_name);
       let text: string;
       if (!section_name) {
         text = readPageContent(info.filePath);
@@ -294,87 +302,103 @@ async function main() {
     }
   );
 
-  // search_icons tool
-  server.registerTool(
-    'search_icons',
-    {
-      title: 'Search S2 icons',
-      description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
-      inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
-    },
-    async ({terms}) => {
-      const allNames = listIconNames();
-      const nameSet = new Set(allNames);
-      const aliases = await loadIconAliases();
-      const rawTerms = Array.isArray(terms) ? terms : [terms];
-      const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
-      if (normalized.length === 0) {
-        throw new Error('Provide at least one non-empty search term.');
-      }
-      // direct name matches
-      const results = new Set(allNames.filter(name => {
-        const nameLower = name.toLowerCase();
-        return normalized.some(term => nameLower.includes(term));
-      }));
-      // alias matches
-      for (const [aliasKey, targets] of Object.entries(aliases)) {
-        if (!targets || targets.length === 0) {continue;}
-        const aliasLower = aliasKey.toLowerCase();
-        if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
-          for (const t of targets) {
-            const n = String(t);
-            if (nameSet.has(n)) {results.add(n);}
+  if (library === 's2') {
+    // search_icons tool
+    server.registerTool(
+      'search_icons',
+      {
+        title: 'Search S2 icons',
+        description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
+        inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+      },
+      async ({terms}) => {
+        const allNames = listIconNames();
+        const nameSet = new Set(allNames);
+        const aliases = await loadIconAliases();
+        const rawTerms = Array.isArray(terms) ? terms : [terms];
+        const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
+        if (normalized.length === 0) {
+          throw new Error('Provide at least one non-empty search term.');
+        }
+        // direct name matches
+        const results = new Set(allNames.filter(name => {
+          const nameLower = name.toLowerCase();
+          return normalized.some(term => nameLower.includes(term));
+        }));
+        // alias matches
+        for (const [aliasKey, targets] of Object.entries(aliases)) {
+          if (!targets || targets.length === 0) {continue;}
+          const aliasLower = aliasKey.toLowerCase();
+          if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
+            for (const t of targets) {
+              const n = String(t);
+              if (nameSet.has(n)) {results.add(n);}
+            }
           }
         }
+        return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
       }
-      return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
-    }
-  );
+    );
 
-  // search_illustrations tool
-  server.registerTool(
-    'search_illustrations',
-    {
-      title: 'Search S2 illustrations',
-      description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
-      inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
-    },
-    async ({terms}) => {
-      const allNames = listIllustrationNames();
-      const nameSet = new Set(allNames);
-      const aliases = await loadIllustrationAliases();
-      const rawTerms = Array.isArray(terms) ? terms : [terms];
-      const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
-      if (normalized.length === 0) {
-        throw new Error('Provide at least one non-empty search term.');
-      }
-      // direct name matches
-      const results = new Set(allNames.filter(name => {
-        const nameLower = name.toLowerCase();
-        return normalized.some(term => nameLower.includes(term));
-      }));
-      // alias matches
-      for (const [aliasKey, targets] of Object.entries(aliases)) {
-        if (!targets || targets.length === 0) {continue;}
-        const aliasLower = aliasKey.toLowerCase();
-        if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
-          for (const t of targets) {
-            const n = String(t);
-            if (nameSet.has(n)) {results.add(n);}
+    // search_illustrations tool
+    server.registerTool(
+      'search_illustrations',
+      {
+        title: 'Search S2 illustrations',
+        description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
+        inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+      },
+      async ({terms}) => {
+        const allNames = listIllustrationNames();
+        const nameSet = new Set(allNames);
+        const aliases = await loadIllustrationAliases();
+        const rawTerms = Array.isArray(terms) ? terms : [terms];
+        const normalized = Array.from(new Set(rawTerms.map(t => String(t ?? '').trim().toLowerCase()).filter(Boolean)));
+        if (normalized.length === 0) {
+          throw new Error('Provide at least one non-empty search term.');
+        }
+        // direct name matches
+        const results = new Set(allNames.filter(name => {
+          const nameLower = name.toLowerCase();
+          return normalized.some(term => nameLower.includes(term));
+        }));
+        // alias matches
+        for (const [aliasKey, targets] of Object.entries(aliases)) {
+          if (!targets || targets.length === 0) {continue;}
+          const aliasLower = aliasKey.toLowerCase();
+          if (normalized.some(term => aliasLower.includes(term) || term.includes(aliasLower))) {
+            for (const t of targets) {
+              const n = String(t);
+              if (nameSet.has(n)) {results.add(n);}
+            }
           }
         }
+        return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
       }
-      return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
-    }
-  );
+    );
+  }
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
 
-// Only run main if executed directly
-main().catch(err => {
-  // Print JSON-RPC compatible error to stderr for MCP host visibility
-  console.error(err?.stack || String(err));
-  process.exit(1);
-});
+function printUsage() {
+  const usage = 'Usage: mcp <subcommand>\n\nSubcommands:\n  s2           Start MCP server for React Spectrum S2 docs\n  react-aria   Start MCP server for React Aria docs\n\nExamples:\n  npx @react-spectrum/mcp s2\n  npx @react-spectrum/mcp react-aria';
+  console.log(usage);
+}
+
+// CLI entry
+(async () => {
+  try {
+    const arg = (process.argv[2] || '').trim();
+    if (arg === '--help' || arg === '-h' || arg === 'help') {
+      printUsage();
+      process.exit(0);
+    }
+    const library: Library = arg === 'react-aria' ? 'react-aria' : 's2';
+    await startServer(library);
+  } catch (err) {
+    console.error(errorToString(err));
+    process.exit(1);
+  }
+})();

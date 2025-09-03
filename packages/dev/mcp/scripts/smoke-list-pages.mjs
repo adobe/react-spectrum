@@ -3,9 +3,10 @@ import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
 async function main() {
+  const subcommand = process.argv[2] || 's2';
   const transport = new StdioClientTransport({
     command: 'node',
-    args: [new URL('../dist/index.js', import.meta.url).pathname]
+    args: [new URL('../dist/index.js', import.meta.url).pathname, subcommand]
   });
 
   const client = new Client({name: 's2-docs-smoke', version: '0.0.0'});
