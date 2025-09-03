@@ -3,6 +3,9 @@ import {H2, H3} from '../../src/Headings';
 import {Link} from '../../src/Link';
 import {Code} from '../../src/Code';
 import {CodeBlock} from '../../src/CodeBlock';
+import {IconCards} from '../../src/IconCards';
+import {IconColors} from '../../src/IconColors';
+import {IconSizes} from '../../src/IconSizes';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 export default Layout;
 
@@ -19,9 +22,31 @@ import Edit from "@react-spectrum/s2/icons/Edit";
 <Edit />
 ```
 
+## API
+
+Icons support a more limited set of the style macro through a special macro called `iconStyle`.
+
+### iconStyle
+
+```tsx render expanded
+"use client";
+import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Edit from '@react-spectrum/s2/icons/Edit';
+
+<Edit styles={iconStyle({size: 'XL', color: 'positive'})} />
+```
+
+### Icon colors
+
+<IconColors />
+
+### Icon sizes
+
+<IconSizes />
+
 ## Available icons
 
-
+<IconCards />
 
 ## Custom icons
 
