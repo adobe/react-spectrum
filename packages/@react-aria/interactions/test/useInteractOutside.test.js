@@ -679,6 +679,6 @@ describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
 
     // Cleanup
     unmount();
-    document.body.removeChild(shadowRoot.host);
+    cleanup();
   });
 });
