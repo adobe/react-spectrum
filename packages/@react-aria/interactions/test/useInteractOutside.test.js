@@ -617,7 +617,7 @@ describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
   });
 
   it('should handle interact outside events with UNSAFE_PortalProvider in shadow DOM', async () => {
-    const {shadowRoot} = createShadowRoot();
+    const {shadowRoot, cleanup} = createShadowRoot();
     let interactOutsideTriggered = false;
 
     // Create portal container within the shadow DOM for the popover
