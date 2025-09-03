@@ -123,7 +123,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
 
 export function Files({children, files}: {children?: ReactNode, files: string[]}) {
   return (
-    <Tabs aria-label="Files" defaultSelectedKey="example" density="compact">
+    <Tabs key={files.join('|')} aria-label="Files" defaultSelectedKey="example" density="compact">
       <TabList styles={style({marginBottom: 20})}>
         {children && <Tab id="example">Example</Tab>}
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
@@ -159,14 +159,15 @@ export function getFiles(files: string[]) {
 
     let name = path.basename(file);
     let contents = fs.readFileSync(file, 'utf8');
-    fileContents[name] = contents;
+    fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
 
     for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
-      if (!specifier.startsWith('.')) {
+      specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
+      if (!/^(\.|starters)/.test(specifier)) {
         continue;
       }
 
-      let resolved = path.resolve(path.dirname(file), specifier);
+      let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
       if (!fileContents[path.basename(resolved)]) {
         queue.push(resolved);
       }

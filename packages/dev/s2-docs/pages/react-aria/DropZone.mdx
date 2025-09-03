@@ -61,7 +61,7 @@ import '../../tailwind/tailwind.css';
       <DropZone
         // Determine whether dragged content should be accepted.
         getDropOperation={types => (
-          ['text/plain', 'image/jpeg', 'image/png', 'image.gif'].some(t => types.has(t)) ? 'copy' : 'cancel'
+          ['text/plain', 'image/jpeg', 'image/png', 'image/gif'].some(t => types.has(t)) ? 'copy' : 'cancel'
         )}
         onDrop={async (event) => {
           // Find the first accepted item.

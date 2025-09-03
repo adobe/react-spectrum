@@ -200,6 +200,10 @@ function groupProps(
           continue;
         }
 
+        if (propName === 'placement' && (props[propName].value.type !== 'union' || props[propName].value.elements.length !== 22)) {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }
