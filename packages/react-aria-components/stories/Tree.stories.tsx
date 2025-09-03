@@ -23,7 +23,8 @@ import './styles.css';
 
 export default {
   title: 'React Aria Components/Tree',
-  component: Tree
+  component: Tree,
+  excludeStories: ['TreeExampleStaticRender']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -143,52 +144,54 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-const TreeExampleStaticRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
-  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-    <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-      <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-        <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-          Projects-1A
+export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
+  return (
+    <Tree className={styles.tree} {...props} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
         </StaticTreeItem>
       </StaticTreeItem>
-      <StaticTreeItem id="projects-2" textValue="Projects-2">
-        Projects-2
-      </StaticTreeItem>
-      <StaticTreeItem id="projects-3" textValue="Projects-3">
-        Projects-3
-      </StaticTreeItem>
-    </StaticTreeItem>
-    <TreeItem
-      id="reports"
-      textValue="Reports"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        Reports
-      </TreeItemContent>
-    </TreeItem>
-    <TreeItem
-      id="Tests"
-      textValue="Tests"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isFocused}) => (
-          <Text>{`${isFocused} Tests`}</Text>
-        )}
-      </TreeItemContent>
-    </TreeItem>
-  </Tree>
-);
+      <TreeItem
+        id="reports"
+        textValue="Reports"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          Reports
+        </TreeItemContent>
+      </TreeItem>
+      <TreeItem
+        id="Tests"
+        textValue="Tests"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          {({isFocused}) => (
+            <Text>{`${isFocused} Tests`}</Text>
+          )}
+        </TreeItemContent>
+      </TreeItem>
+    </Tree>
+  );
+}
 
 const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
@@ -423,7 +426,7 @@ let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'report
 
 const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
-    initialItems: rows,
+    initialItems: args.items as any ?? rows,
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
@@ -1192,4 +1195,81 @@ export const TreeWithDragAndDropVirtualized = {
   ...TreeWithDragAndDrop,
   render: TreeDragAndDropVirtualizedRender,
   name: 'Tree with drag and drop (virtualized)'
+};
+
+
+interface ITreeItem {
+  id: string,
+  name: string,
+  childItems?: Iterable<ITreeItem>
+}
+
+let totalItems = 0;
+let itemKeys = new Set<any>();
+/**
+ * Generates a tree data structure with 10 items per level and 6 levels deep.
+ * @returns Array of tree items with the specified structure.
+ */
+function generateTreeData(): Array<ITreeItem> {
+  /**
+   * Recursively generates tree items for a given level.
+   * @param level - Current depth level (1-6).
+   * @param parentId - Parent item ID for generating unique child IDs.
+   * @returns Array of tree items for this level.
+   */
+  function generateLevel(level: number, parentId: string = ''): Array<ITreeItem> {
+    const items: ITreeItem[] = [];
+    const itemsPerLevel = 7;
+
+    for (let i = 1; i < itemsPerLevel; i++) {
+      const itemId = parentId ? `${parentId}-${i}` : `level-${level}-item-${i}`;
+      const itemName = `Level ${level} Item ${i}`;
+
+      const item: ITreeItem = {
+        id: itemId,
+        name: itemName
+      };
+
+      // Add child items if not at the deepest level (level 6)
+      if (level < 6) {
+        item.childItems = generateLevel(level + 1, itemId);
+      }
+
+      totalItems++;
+      items.push(item);
+      itemKeys.add(itemId);
+    }
+
+    return items;
+  }
+
+  return generateLevel(1);
+}
+
+const treeData = generateTreeData();
+console.log(`Total items: ${totalItems}`);
+
+function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());
+  let expandAll = () => {
+    setExpandedKeys(itemKeys);
+  };
+
+  return (
+    <>
+      <button onClick={expandAll}>Expand All {totalItems}</button>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <TreeExampleDynamicRender {...args} expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} />
+      </Virtualizer>
+    </>
+  );
+}
+
+export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
+  ...TreeExampleDynamic,
+  args: {
+    ...TreeExampleDynamic.args,
+    items: treeData
+  },
+  render: (args) => <HugeVirtualizedTreeRender {...args} />
 };
