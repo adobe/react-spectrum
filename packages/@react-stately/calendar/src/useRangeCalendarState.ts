@@ -33,7 +33,12 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration
+  visibleDuration?: DateDuration,
+  /** 
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
+   * @default 'center'
+   */
+  selectionAlignment?: 'start' | 'center' | 'end'
 }
 
 /**
@@ -41,7 +46,16 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendarState<T extends DateValue = DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
-  let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
+  let {
+    value: valueProp,
+    defaultValue,
+    onChange,
+    createCalendar,
+    locale,
+    visibleDuration = {months: 1},
+    minValue,
+    maxValue,
+    ...calendarProps} = props;
   let [value, setValue] = useControlledState<RangeValue<T> | null, RangeValue<MappedDateValue<T>>>(
     valueProp!,
     defaultValue || null!,
@@ -73,7 +87,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     visibleDuration,
     minValue: min,
     maxValue: max,
-    selectionAlignment: alignment
+    selectionAlignment: props.selectionAlignment || alignment
   });
 
   let updateAvailableRange = (date) => {

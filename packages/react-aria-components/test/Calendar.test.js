@@ -172,6 +172,41 @@ describe('Calendar', () => {
     expect(grids[1]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
   });
 
+
+  it.each([
+    {name: 'at the start', alignment: 'start', expected: ['February 2020', 'March 2020', 'April 2020']},
+    {name: 'in the center', alignment: 'center', expected: ['January 2020', 'February 2020', 'March 2020']},
+    {name: 'at the end', alignment: 'end', expected: ['December 2019', 'January 2020', 'February 2020']}
+  ])('should align the initial value $name', async ({alignment, expected}) => {
+    const {getAllByRole} = render(
+      <Calendar visibleDuration={{months: 3}} defaultValue={new CalendarDate(2020, 2, 3)} selectionAlignment={alignment}>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <div style={{display: 'flex', gap: 30}}>
+          <CalendarGrid>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+          <CalendarGrid offset={{months: 1}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+          <CalendarGrid offset={{months: 2}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </div>
+      </Calendar>
+    );
+
+    let grids = getAllByRole('grid');
+    expect(grids).toHaveLength(3);
+
+    expect(grids[0]).toHaveAttribute('aria-label', expected[0]);
+    expect(grids[1]).toHaveAttribute('aria-label', expected[1]);
+    expect(grids[2]).toHaveAttribute('aria-label', expected[2]);
+  });
+
   it('should support hover', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
