@@ -14,7 +14,7 @@ import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Date
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 import './styles.css';
-import { CalendarProps } from 'react-aria';
+import {CalendarProps} from 'react-aria';
 
 export default {
   title: 'React Aria Components/Calendar',
@@ -95,7 +95,7 @@ export const CalendarMultiMonth: CalendarStory = {
 };
 
 interface CalendarFirstDayOfWeekExampleProps extends CalendarProps<DateValue> {
-  locale: string;
+  locale: string
 }
 
 export const CalendarFirstDayOfWeekExample: StoryObj<CalendarFirstDayOfWeekExampleProps> = {
