@@ -165,7 +165,7 @@ function useDisableInteractions(props, isPending) {
   // Don't allow interaction while isPending is true
   if (isPending) {
     for (const key in props) {
-      if (key.startsWith('on')) {
+      if (key.startsWith('on') && !(key.includes('Focus') || key.includes('Blur'))) {
         props[key] = undefined;
       }
     }
