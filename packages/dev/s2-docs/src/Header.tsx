@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton, Badge} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
 import {flushSync} from 'react-dom';
 import GithubLogo from './icons/GithubLogo';
@@ -102,6 +102,7 @@ export default function Header(props: PageProps) {
           </div>
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
+            <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>Beta Preview</Badge>
             <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet>
               <GithubLogo />
