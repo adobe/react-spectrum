@@ -29,6 +29,7 @@ import {
   NotificationBadge,
   Picker,
   PickerItem,
+  Provider,
   Row,
   SubmenuTrigger,
   TableBody,
@@ -71,7 +72,7 @@ function App() {
     {id: 'waterfall', label: 'Waterfall'}
   ];
   return (
-    <main>
+    <Provider elementType="main">
       <Heading
         styles={style({ font: "heading-xl", textAlign: "center" })}
         level={1}
@@ -269,7 +270,7 @@ function App() {
           <Lazy />
         </React.Suspense>}
       </div>
-    </main>
+    </Provider>
   );
 }
 
