@@ -187,6 +187,7 @@ function App() {
           <TableView
             aria-label="Files"
             styles={style({width: 320, height: 320})}
+            selectionMode="multiple"
             renderActionBar={selectedKeys => (
               <ActionBar>
                 <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
