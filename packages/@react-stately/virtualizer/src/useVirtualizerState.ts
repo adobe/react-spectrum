@@ -27,10 +27,10 @@ export const useLayoutEffect: typeof React.useLayoutEffect = typeof document !==
   : () => {};
 
 interface VirtualizerProps<T extends object, V, O> {
-  renderView(type: string, content: T | null): V,
+  renderView: (type: string, content: T | null) => V,
   layout: Layout<T>,
   collection: Collection<T>,
-  onVisibleRectChange(rect: Rect): void,
+  onVisibleRectChange: (rect: Rect) => void,
   persistedKeys?: Set<Key> | null,
   layoutOptions?: O
 }
