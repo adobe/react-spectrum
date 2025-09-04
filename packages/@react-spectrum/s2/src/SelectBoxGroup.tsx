@@ -26,8 +26,8 @@ import {IllustrationContext} from '../src/Icon';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef} from 'react';
 import {TextContext} from './Content';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {useFocusVisible} from 'react-aria';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className'> {
   /**
