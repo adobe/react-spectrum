@@ -12,14 +12,28 @@ let updateRoot = hydrate({
 });
 
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
-// and in a React transition, stream in the new page. Once complete, we'll pushState to 
+// and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
   let res = fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
+  let currentPath = location.pathname;
+  let [newBasePath, newPathAnchor] = pathname.split('#');
+
   updateRoot(res, () => {
     if (push) {
       history.pushState(null, '', pathname);
       push = false;
+    }
+
+    // Reset scroll if navigating to a different page without an anchor, primarily for the mobile case.
+    // Otherwise, make sure to scroll the anchor into view if any
+    if (currentPath !== newBasePath && !newPathAnchor) {
+      window.scrollTo(0, 0);
+    } else if (newPathAnchor) {
+      let element = document.getElementById(newPathAnchor);
+      if (element) {
+        element.scrollIntoView();
+      }
     }
   });
 }
