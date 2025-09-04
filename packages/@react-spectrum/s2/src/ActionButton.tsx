@@ -16,7 +16,7 @@ import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' wi
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -30,7 +30,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { usePendingState } from './Button';
+import {usePendingState} from './Button';
 
 export interface ActionButtonStyleProps {
   /**
