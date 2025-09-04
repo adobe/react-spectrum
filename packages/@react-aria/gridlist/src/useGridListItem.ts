@@ -281,7 +281,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   let sumOfNodes = (node: CollectionNode<T>): number => {
     if (node.prevKey === null) {
       if (node.type === 'section') {
-        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null
+        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
         return lastChild ? lastChild.index + 1 : 0;
       } else if (node.type === 'item') {
         return 1;
@@ -297,7 +297,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let prevNode = state.collection.getItem(node.prevKey!) as CollectionNode<T>;
     if (prevNode) {
       if (node.type === 'section') {
-        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null
+        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
         return lastChild ? sumOfNodes(prevNode) + lastChild.index + 1 : 0;
       }
   
