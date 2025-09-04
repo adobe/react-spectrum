@@ -20,6 +20,7 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
+import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
@@ -29,9 +30,8 @@ import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {usePendingState} from './Button';
-import { ImageContext } from './Image';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonStyleProps {
   /**
