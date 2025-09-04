@@ -31,6 +31,7 @@ import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {usePendingState} from './Button';
+import { ImageContext } from './Image';
 
 export interface ActionButtonStyleProps {
   /**
@@ -323,14 +324,17 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
               }],
               [AvatarContext, {
                 size: avatarSize[size],
-                // @ts-ignore
                 styles: style({
                   marginStart: {
                     default: '--iconMargin',
                     ':last-child': 0
                   },
                   flexShrink: 0,
-                  order: 0,
+                  order: 0
+                })
+              }],
+              [ImageContext, {
+                styles: style({
                   opacity: {
                     default: 1,
                     isProgressVisible: 0
