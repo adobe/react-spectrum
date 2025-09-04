@@ -517,4 +517,4 @@ export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContai
       }
     }
   }
-}
+};
