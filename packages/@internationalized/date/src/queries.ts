@@ -223,6 +223,7 @@ export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayO
 }
 
 const cachedRegions = new Map<string, string>();
+const cachedWeekInfo = new Map<string, {firstDay: number}>();
 
 function getRegion(locale: string): string | undefined {
   // If the Intl.Locale API is available, use it to get the region for the locale.
@@ -251,8 +252,29 @@ function getRegion(locale: string): string | undefined {
 function getWeekStart(locale: string): number {
   // TODO: use Intl.Locale for this once browsers support the weekInfo property
   // https://github.com/tc39/proposal-intl-locale-info
-  let region = getRegion(locale);
-  return region ? weekStartData[region] || 0 : 0;
+  let weekInfo = cachedWeekInfo.get(locale);
+  if (!weekInfo) {
+    if (Intl.Locale) {
+      // @ts-ignore
+      let localeInst = new Intl.Locale(locale);
+      if ('getWeekInfo' in localeInst) {
+        // @ts-expect-error
+        weekInfo = localeInst.getWeekInfo();
+        if (weekInfo) {
+          cachedWeekInfo.set(locale, weekInfo);
+          return weekInfo.firstDay;
+        }
+      }
+    }
+    let region = getRegion(locale);
+    if (locale.includes('u-ca-iso8601')) {
+      weekInfo = {firstDay: 1};
+    } else {
+      weekInfo = {firstDay: region ? weekStartData[region] || 0 : 0};
+    }
+  }
+
+  return weekInfo.firstDay;
 }
 
 /** Returns the number of weeks in the given month and locale. */
