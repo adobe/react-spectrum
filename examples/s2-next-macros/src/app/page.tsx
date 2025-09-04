@@ -99,10 +99,11 @@ function App() {
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary"><Text>Secondary</Text><NotificationBadge value={2} /></Button>
+            <Button variant="secondary"><Text>Secondary</Text></Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
+              <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
             <LinkButton
