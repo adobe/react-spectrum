@@ -26,6 +26,7 @@ import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import { isReadable } from 'stream';
 
 export interface DatePickerRenderProps {
   /**
@@ -43,6 +44,11 @@ export interface DatePickerRenderProps {
    * @selector [data-disabled]
    */
   isDisabled: boolean,
+  /**
+   * Whether the date picker is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
   /**
    * Whether the date picker is invalid.
    * @selector [data-invalid]
@@ -130,7 +136,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       isFocusVisible,
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
-      isOpen: state.isOpen
+      isOpen: state.isOpen,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -172,6 +179,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-open={state.isOpen || undefined} />
       <HiddenDateInput
         autoComplete={props.autoComplete}
@@ -238,7 +246,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isFocusVisible,
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
-      isOpen: state.isOpen
+      isOpen: state.isOpen,
+      isReadOnly: props.isReadOnly || false,
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
@@ -285,6 +294,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-open={state.isOpen || undefined} />
     </Provider>
   );
