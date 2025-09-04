@@ -267,11 +267,29 @@ function getWeekStart(locale: string): number {
       }
     }
     let region = getRegion(locale);
-    if (locale.includes('u-ca-iso8601')) {
+    if (locale.includes('-fw-')) {
+      let day = locale.split('-fw-')[1];
+      if (day === 'mon') {
+        weekInfo = {firstDay: 1};
+      } else if (day === 'tue') {
+        weekInfo = {firstDay: 2};
+      } else if (day === 'wed') {
+        weekInfo = {firstDay: 3};
+      } else if (day === 'thu') {
+        weekInfo = {firstDay: 4};
+      } else if (day === 'fri') {
+        weekInfo = {firstDay: 5};
+      } else if (day === 'sat') {
+        weekInfo = {firstDay: 6};
+      } else {
+        weekInfo = {firstDay: 0};
+      }
+    } else if (locale.includes('u-ca-iso8601')) {
       weekInfo = {firstDay: 1};
     } else {
       weekInfo = {firstDay: region ? weekStartData[region] || 0 : 0};
     }
+    cachedWeekInfo.set(locale, weekInfo);
   }
 
   return weekInfo.firstDay;

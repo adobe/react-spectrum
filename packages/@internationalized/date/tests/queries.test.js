@@ -278,6 +278,9 @@ describe('queries', function () {
       // start of week is monday
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+
+      // override first day of week
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
     });
   });
 

@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, I18nProvider, RangeCalendar} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, DateValue, Heading, I18nProvider, RangeCalendar} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 import './styles.css';
+import { CalendarProps } from 'react-aria';
 
 export default {
   title: 'React Aria Components/Calendar',
@@ -43,36 +44,18 @@ function Footer() {
 }
 
 export const CalendarExample: CalendarStory = {
-  render: function Example() {
-    let locale = 'en-US-u-ca-iso8601';
-    return (
-      <>
-        <I18nProvider locale={locale}>
-          <Calendar style={{width: 220}}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <Button slot="previous">&lt;</Button>
-              <Heading style={{flex: 1, textAlign: 'center'}} />
-              <Button slot="next">&gt;</Button>
-            </div>
-            <CalendarGrid style={{width: '100%'}}>
-              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-            </CalendarGrid>
-          </Calendar>
-        </I18nProvider>
-
-        <Calendar style={{width: 220}}>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <Button slot="previous">&lt;</Button>
-            <Heading style={{flex: 1, textAlign: 'center'}} />
-            <Button slot="next">&gt;</Button>
-          </div>
-          <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-          </CalendarGrid>
-        </Calendar>
-      </>
-    );
-  }
+  render: () => (
+    <Calendar style={{width: 220}}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button slot="previous">&lt;</Button>
+        <Heading style={{flex: 1, textAlign: 'center'}} />
+        <Button slot="next">&gt;</Button>
+      </div>
+      <CalendarGrid style={{width: '100%'}}>
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+      </CalendarGrid>
+    </Calendar>
+  )
 };
 
 export const CalendarResetValue: CalendarStory = {
@@ -109,6 +92,40 @@ export const CalendarMultiMonth: CalendarStory = {
       </div>
     </Calendar>
   )
+};
+
+interface CalendarFirstDayOfWeekExampleProps extends CalendarProps<DateValue> {
+  locale: string;
+}
+
+export const CalendarFirstDayOfWeekExample: StoryObj<CalendarFirstDayOfWeekExampleProps> = {
+  render: function Example(args) {
+    return (
+      <div>
+        <I18nProvider locale={args.locale}>
+          <Calendar style={{width: 220}}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Button slot="previous">&lt;</Button>
+              <Heading style={{flex: 1, textAlign: 'center'}} />
+              <Button slot="next">&gt;</Button>
+            </div>
+            <CalendarGrid style={{width: '100%'}}>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            </CalendarGrid>
+          </Calendar>
+        </I18nProvider>
+      </div>
+    );
+  },
+  args: {
+    locale: 'en-US-u-ca-iso8601-fw-tue'
+  },
+  argTypes: {
+    locale: {
+      control: 'select',
+      options: ['en-US-u-ca-iso8601-fw-tue', 'en-US-u-ca-iso8601', 'en-US', 'fr-FR-u-ca-iso8601-fw-tue', 'fr-FR-u-ca-iso8601', 'fr-FR']
+    }
+  }
 };
 
 export const RangeCalendarExample: CalendarStory = {
