@@ -59,10 +59,10 @@ export class TreeSelectionManager extends SelectionManager {
       this.selection.forEach(key => {
         for (let parent of getAncestors(this.collection, key)) {
           if (this.isSelected(parent.key)) {
-            continue;
+            break;
           }
 
-          if (this.isPartiallyChecked(parent.key)) {
+          if (this.isPartiallySelected(parent.key)) {
             keys.add(parent.key);
           }
         }
@@ -164,7 +164,7 @@ export class TreeSelectionManager extends SelectionManager {
     return keys;
   }
 
-  private isPartiallyChecked(key: Key) {
+  private isPartiallySelected(key: Key) {
     let queue: Node<unknown>[] = [];
     queue.push(...getChildren(this.collection, key));
 

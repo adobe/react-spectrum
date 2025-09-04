@@ -170,7 +170,10 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
   /** Whether selection propagates between parent and child nodes. */
   selectionPropagation?: boolean,
-  /** Specifies which keys are included in the selection. */
+  /**
+   * Specifies which keys are included in the selection.
+   * @default 'all'
+   */
   selectionStrategy?: SelectionStrategy
 }
 
