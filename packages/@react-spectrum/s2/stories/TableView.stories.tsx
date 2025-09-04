@@ -1422,8 +1422,6 @@ const editableCell = style({
       spacious: '[46px]'
     }
   },
-  paddingX: 36,
-  marginX: -36,
   flexDirection: {
     default: 'row',
     isReversed: 'row-reverse'
@@ -1597,7 +1595,9 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   // Popover positioning
   useLayoutEffect(() => {
     let width = domRef.current?.clientWidth || 0;
-    let boundingRect = domRef.current?.parentElement?.parentElement?.getBoundingClientRect();
+    // @ts-expect-error
+    let cell = domRef.current.closest('[role="rowheader"],[role="gridcell"]');
+    let boundingRect = cell?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
     // @ts-expect-error
@@ -1910,29 +1910,31 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                   if (column.id === 'fruits') {
                     return (
                       <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => value.toString()}
-                          isValid={value => value.length > 0}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => (
-                            <TextField
-                              errorMessage="Please enter a valid non empty value"
-                              {...props} />
-                          )}
-                        </EditableCell>
-                        <ActionMenu>
-                          <MenuItem>Cut</MenuItem>
-                          <MenuItem>Copy</MenuItem>
-                          <MenuItem>Paste</MenuItem>
-                        </ActionMenu>
+                        <div className={style({display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center'})}>
+                          <EditableCell
+                            selectionMode={selectionMode}
+                            align={column.align}
+                            displayValue={value => value.toString()}
+                            isValid={value => value.length > 0}
+                            // @ts-expect-error
+                            tableRef={tableRef}
+                            isSaving={item.isSaving[column.id!]}
+                            showButtons={showButtons}
+                            value={item[column.id]}
+                            density={props.density}
+                            onChange={value => onChange(value, item.id, column.id!)}>
+                            {(props) => (
+                              <TextField
+                                errorMessage="Please enter a valid non empty value"
+                                {...props} />
+                            )}
+                          </EditableCell>
+                          <ActionMenu>
+                            <MenuItem>Cut</MenuItem>
+                            <MenuItem>Copy</MenuItem>
+                            <MenuItem>Paste</MenuItem>
+                          </ActionMenu>
+                        </div>
                       </Cell>
                     );
                   }
