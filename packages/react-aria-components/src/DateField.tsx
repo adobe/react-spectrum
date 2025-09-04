@@ -40,7 +40,7 @@ export interface DateFieldRenderProps {
    */
   isDisabled: boolean
     /**
-   * Whether the date picker is read only.
+   * Whether the date field is read only.
    * @selector [data-readonly]
    */
   isReadOnly: boolean,
