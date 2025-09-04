@@ -26,7 +26,6 @@ import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
-import { isReadable } from 'stream';
 
 export interface DatePickerRenderProps {
   /**
