@@ -182,6 +182,7 @@ function getDelta(
   let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
   let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
   let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+  // let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis];
   let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
   // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount to align one of the overlay's
@@ -536,7 +537,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 export function getRect(node: Element, ignoreScale: boolean) {
   let {top, left, width, height} = node.getBoundingClientRect();
 
-  // Use offsetWidth and offsetHeight if this is an HTML element, so that 
+  // Use offsetWidth and offsetHeight if this is an HTML element, so that
   // the size is not affected by scale transforms.
   if (ignoreScale && node instanceof node.ownerDocument.defaultView!.HTMLElement) {
     width = node.offsetWidth;
