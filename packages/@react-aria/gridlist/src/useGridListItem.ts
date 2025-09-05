@@ -331,7 +331,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       if (isInSection && lastChildKey) {
         let lastChild = state.collection.getItem(lastChildKey);
         let delta = lastChild ? lastChild.index - node.index : 0;
-        if (parentNode!.prevKey) {
+        if (parentNode && parentNode.prevKey) {
           rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - delta;
         } else {
           rowProps['aria-rowindex'] = lastChild ? lastChild.index - delta + 1 : 0;
