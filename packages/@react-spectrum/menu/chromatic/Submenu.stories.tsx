@@ -171,6 +171,7 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+  await userEvent.click(document.body);
   await userEvent.click(menuItems[0]);
   await within(body).findByText('Baseline');
 };
