@@ -80,6 +80,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
+        <link rel="icon" href="https://www.adobe.com/favicon.ico" />
         <meta name="description" content={getDescription(currentPage)} />
         <meta property="og:image" content={getOgImageUrl(currentPage)} />
         <title>{getTitle(currentPage)}</title>
