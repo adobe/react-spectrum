@@ -28,6 +28,7 @@
   "dependencies": {
     "@react-aria/i18n": "^3.12.12",
     "@react-aria/interactions": "^3.25.5",
+    "@react-aria/live-announcer": "^3.4.4",
     "@react-aria/spinbutton": "^3.6.18",
     "@react-aria/textfield": "^3.18.1",
     "@react-aria/utils": "^3.30.1",
