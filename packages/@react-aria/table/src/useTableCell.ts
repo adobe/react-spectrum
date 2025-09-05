@@ -28,7 +28,8 @@ export interface AriaTableCellProps {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void
+  onAction?: () => void,
+  focusMode?: 'cell' | 'child'
 }
 
 export interface TableCellAria {

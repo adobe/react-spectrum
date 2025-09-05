@@ -85,7 +85,6 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
  */
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
@@ -139,7 +138,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
 
   return (
     <button
-      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
+      {...mergeProps(DOMProps, renderProps, isPending ? {} : buttonProps, focusProps, hoverProps)}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
@@ -160,19 +159,3 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     </button>
   );
 });
-
-function disablePendingProps(props) {
-  // Don't allow interaction while isPending is true
-  if (props.isPending) {
-    props.onPress = undefined;
-    props.onPressStart = undefined;
-    props.onPressEnd = undefined;
-    props.onPressChange = undefined;
-    props.onPressUp = undefined;
-    props.onKeyDown = undefined;
-    props.onKeyUp = undefined;
-    props.onClick = undefined;
-    props.href = undefined;
-  }
-  return props;
-}
