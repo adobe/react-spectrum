@@ -274,24 +274,28 @@ const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolea
   });
 
   return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        rowHeight: 25
-      }}>
-      <GridList
-        className={styles.menu}
-        selectionMode="multiple"
-        dragAndDropHooks={dragAndDropHooks}
-        style={{height: 400}}
-        aria-label="virtualized gridlist"
-        items={list.items}>
-        <Collection items={list.items}>
-          {item => <MyGridListItem>{item.name}</MyGridListItem>}
-        </Collection>
-        <MyGridListLoaderIndicator isLoading={args.isLoading} />
-      </GridList>
-    </Virtualizer>
+    <>
+      <button>before</button>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25
+        }}>
+        <GridList
+          className={styles.menu}
+          selectionMode="multiple"
+          dragAndDropHooks={dragAndDropHooks}
+          style={{height: 400}}
+          aria-label="virtualized gridlist"
+          items={list.items}>
+          <Collection items={list.items}>
+            {item => <MyGridListItem>{item.name}</MyGridListItem>}
+          </Collection>
+          <MyGridListLoaderIndicator isLoading={args.isLoading} />
+        </GridList>
+      </Virtualizer>
+      <button>after</button>
+    </>
   );
 };
 
