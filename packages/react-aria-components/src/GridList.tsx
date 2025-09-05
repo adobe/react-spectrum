@@ -297,9 +297,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);
-
-  // supply isInSection info here by checking if node has parentNode which has type === 'section' ?
-
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
