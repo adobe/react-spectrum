@@ -1633,7 +1633,7 @@ describe('Table', () => {
   });
 
   describe('load more spinner', () => {
-    let offsetHeight, scrollHeight;
+    let clientHeight, scrollHeight;
     let DndTable = stories.DndTable;
     let initialItems = [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1641,7 +1641,7 @@ describe('Table', () => {
     ];
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function () {
         if (this.getAttribute('role') === 'grid') {
           return 200;
         }
@@ -1651,7 +1651,7 @@ describe('Table', () => {
     });
 
     afterAll(function () {
-      offsetHeight.mockReset();
+      clientHeight.mockReset();
       scrollHeight.mockReset();
     });
 
