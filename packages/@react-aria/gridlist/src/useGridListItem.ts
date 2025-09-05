@@ -279,29 +279,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // }
 
   let sumOfNodes = (node: CollectionNode<T>): number => {
+    // If prevKey is null, then this is the first node in the collection so get number of row(s)
     if (node.prevKey === null) {
-      if (node.type === 'section') {
-        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
-        return lastChild ? lastChild.index + 1 : 0;
-      } else if (node.type === 'item') {
-        return 1;
-      }
-      return 0;
+      return getNumberOfRows(node, state);
     }
 
+    // If the node is an item inside of a section, get number of rows in the current section
     let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T> : null;
     if (parentNode && parentNode.type === 'section') {
       return sumOfNodes(parentNode);
     }
 
+    // Otherwise, if the node is a section or item outside of a section, recursively call to get the current sum + get the number of row(s)
     let prevNode = state.collection.getItem(node.prevKey!) as CollectionNode<T>;
     if (prevNode) {
-      if (node.type === 'section') {
-        let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
-        return lastChild ? sumOfNodes(prevNode) + lastChild.index + 1 : 0;
-      }
-  
-      return sumOfNodes(prevNode) + 1;
+      return sumOfNodes(prevNode) + getNumberOfRows(node, state);
     }
 
     return 0;
@@ -334,7 +326,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         if (parentNode && parentNode.prevKey) {
           rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - delta;
         } else {
-          rowProps['aria-rowindex'] = lastChild ? lastChild.index - delta + 1 : 0;
+          // If the item is within a section but the section is the first node in the collection
+          rowProps['aria-rowindex'] = node.index + 1;
         }
       } else {
         rowProps['aria-rowindex'] = sumOfNodes(node as CollectionNode<T>);
@@ -370,4 +363,15 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+export function getNumberOfRows<T>(node: CollectionNode<T>, state: ListState<T> | TreeState<T>) {
+  if (node.type === 'section') {
+    // Use the index of the last child to determine the number of nodes in the section
+    let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
+    return lastChild ? lastChild.index + 1 : 0;
+  } else if (node.type === 'item') {
+    return 1;
+  }
+  return 0;
 }

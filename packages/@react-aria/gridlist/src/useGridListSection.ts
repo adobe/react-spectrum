@@ -12,6 +12,7 @@
 
 import {CollectionNode} from '@react-aria/collections';
 import {DOMAttributes, RefObject, Node as RSNode} from '@react-types/shared';
+import {getNumberOfRows} from './useGridListItem';
 import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
 
@@ -50,31 +51,18 @@ export function useGridListSection<T>(props: AriaGridListSectionProps, state: Li
   });
   let rowIndex;
 
-  let sumOfNodes = (node: RSNode<unknown>): number => {
+  let sumOfNodes = (node: CollectionNode<unknown>): number => {
+    // If prevKey is null, then this is the first node in the collection
     if (node.prevKey === null) {
-      let lastChildKey = (node as CollectionNode<T>).lastChildKey;
-      if (node.type === 'section' && lastChildKey) {
-        let lastChild = state.collection.getItem(lastChildKey);
-        return lastChild ? lastChild.index + 1 : 0;
-      } else if (node.type === 'item') {
-        return 1;
-      }
-      return 0;
+      return getNumberOfRows(node, state);
     }
   
-    let prevNode = state.collection.getItem(node.prevKey!);
+    // Otherwise, if the node is a section or item outside of a section, recursively call to get the current sum + get the number of row(s)
+    let prevNode = state.collection.getItem(node.prevKey!) as CollectionNode<T>;
     if (prevNode) {
-      if (node.type === 'item') {
-        return sumOfNodes(prevNode) + 1;
-      }
-
-      let lastChildKey = (node as CollectionNode<T>).lastChildKey;
-      if (lastChildKey) {
-        let lastChild = state.collection.getItem(lastChildKey);
-        return lastChild ? sumOfNodes(prevNode) + lastChild.index + 1 : sumOfNodes(prevNode);
-      }
+      return sumOfNodes(prevNode) + getNumberOfRows(node, state);
     }
-  
+
     return 0;
   };
 
@@ -82,7 +70,7 @@ export function useGridListSection<T>(props: AriaGridListSectionProps, state: Li
     if (node.prevKey) {
       let prevNode = state.collection.getItem(node.prevKey);
       if (prevNode) {
-        rowIndex = sumOfNodes(prevNode) + 1;
+        rowIndex = sumOfNodes(prevNode as CollectionNode<T>) + 1;
       }
     } else {
       rowIndex = 1;
