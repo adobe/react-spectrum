@@ -10256,10 +10256,10 @@ __metadata:
 
 "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch":
   version: 14.6.1
-  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=13cf21"
+  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=3511b9"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 10c0/ede32fec9345bb5e5c19a5abcb647d8c4704239f3f5417afe2914c1397067dae7ce547e46adfd4027c913f5735c0651ec530c73bdc5c7ea955efa860cc6a9dd9
+  checksum: 10c0/5a3e378cfdcad1ae09b73141ba9ea5adb0e7ed0d9f6bf1c4ba3631c91554414c4f2ab255c23f08425d2d398daa11d745ead8ef7ba0d1de76e19252db0b5dbba3
   languageName: node
   linkType: hard
 
