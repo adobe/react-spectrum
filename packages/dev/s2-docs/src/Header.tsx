@@ -108,7 +108,7 @@ export default function Header(props: PageProps) {
               <Text>Beta Preview</Text>
             </Badge>
             <MarkdownMenu url={currentPage.url} />
-            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet>
+            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />
             </ActionButton>
           </div>
