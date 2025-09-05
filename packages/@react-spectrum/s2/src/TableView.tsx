@@ -44,7 +44,7 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
@@ -1004,11 +1004,12 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'className' | 'style'>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
-  children: ReactNode
+  children: ReactNode,
+  styles?: StylesPropWithoutWidth
 }
 
 /**
@@ -1026,11 +1027,11 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
       // @ts-ignore
       isSticky={isSticky}
-      className={renderProps => cell({
+      className={renderProps => mergeStyles(cell({
         ...renderProps,
         ...tableVisualOptions,
         isDivider: showDivider
-      })}
+      }), props.styles)}
       textValue={textValue}
       {...otherProps}>
       {({isFocusVisible}) => (

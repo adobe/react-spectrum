@@ -129,6 +129,52 @@ export const DisabledRows: StoryObj<typeof StaticTable> = {
   }
 };
 
+export const WrappingCells: StoryObj<typeof StaticTable> = {
+  render: (args: any) => (
+    <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+        <Column>Size</Column>
+        <Column>B</Column>
+      </TableHeader>
+      <TableBody>
+        <Row id="1">
+          <Cell styles={style({alignItems: 'start'})}>Games</Cell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+          <Cell>74 GB</Cell>
+          <Cell>Long long long long long long long cell</Cell>
+        </Row>
+        <Row id="2">
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+          <Cell>1.2 GB</Cell>
+          <Cell>Long long long long long long long cell</Cell>
+        </Row>
+        <Row id="3">
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+          <Cell>0.2 GB</Cell>
+          <Cell>Long long long long long long long cell</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  args: {
+    ...Example.args,
+    overflowMode: 'wrap'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
 let columns = [
   {name: 'Foo', id: 'foo', isRowHeader: true},
   {name: 'Bar', id: 'bar'},
