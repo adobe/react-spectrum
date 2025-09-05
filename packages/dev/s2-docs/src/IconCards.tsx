@@ -1,9 +1,10 @@
+/* eslint-disable rulesdir/imports */
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {iconAliases} from './iconAliases.js';
-// eslint-disable-next-line
+// @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {pressScale, SearchField} from '@react-spectrum/s2';
 import React, {useCallback, useRef} from 'react';

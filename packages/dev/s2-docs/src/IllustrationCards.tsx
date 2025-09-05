@@ -1,12 +1,13 @@
+/* eslint-disable rulesdir/imports */
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-// eslint-disable-next-line rulesdir/imports
+// @ts-ignore
 import gradientIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
 import {illustrationAliases} from './illustrationAliases.js';
-// eslint-disable-next-line rulesdir/imports
+// @ts-ignore
 import linearIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import {pressScale, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
