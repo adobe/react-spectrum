@@ -368,7 +368,7 @@ function last(walker: TreeWalker) {
 export function getNumberOfRows<T>(node: RSNode<unknown>, state: ListState<T> | TreeState<T>) {
   if (node.type === 'section') {
     // Use the index of the last child to determine the number of nodes in the section
-    let currentNode = node as CollectionNode<T>
+    let currentNode = node as CollectionNode<T>;
     let lastChild = currentNode.lastChildKey ? state.collection.getItem(currentNode.lastChildKey) : null;
     return lastChild ? lastChild.index + 1 : 0;
   } else if (node.type === 'item') {
