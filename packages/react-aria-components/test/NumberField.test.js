@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -188,5 +188,74 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('supports pasting value in another numbering system', async () => {
+    let {getByRole, rerender} = render(<TestNumberField />);
+    let input = getByRole('textbox');
+    await user.tab();
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3.000.000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('3,000,000.25');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('3,000,000.25');
+
+    rerender(<TestNumberField formatOptions={{style: 'currency', currency: 'USD'}} />);
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,256789');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$3,000,000.26');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('1,000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1,000.00', 'Ambiguous value should be parsed using the current locale');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+
+    await user.paste('1.000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  it('should support arabic singular and dual counts', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <NumberField defaultValue={0} onChange={onChange} formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
+          <Label>Test</Label>
+          <Group style={{display: 'flex'}}>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(onChange).toHaveBeenLastCalledWith(1);
+    expect(input).toHaveValue('يوم');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveValue('يومان');
+    expect(onChange).toHaveBeenLastCalledWith(2);
   });
 });
