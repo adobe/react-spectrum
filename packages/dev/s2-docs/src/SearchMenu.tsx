@@ -410,7 +410,8 @@ export default function SearchMenu(props: SearchMenuProps) {
                             selectedKeys={selectedSectionId ? [selectedSectionId] : []}
                             onSelectionChange={handleSectionSelectionChange}
                             aria-label="Select section"
-                            items={tags}>
+                            items={tags}
+                            styles={style({marginX: 12})}>
                             {(tag) => (
                               <Tag key={tag.id} id={tag.id}>
                                 {tag.name}
