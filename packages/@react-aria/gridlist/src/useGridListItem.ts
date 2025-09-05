@@ -324,7 +324,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         let lastChild = state.collection.getItem(lastChildKey);
         let delta = lastChild ? lastChild.index - node.index : 0;
         if (parentNode && parentNode.prevKey) {
-          rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - delta;
+          rowProps['aria-rowindex'] = sumOfNodes(parentNode) - delta;
         } else {
           // If the item is within a section but the section is the first node in the collection
           rowProps['aria-rowindex'] = node.index + 1;
@@ -365,10 +365,11 @@ function last(walker: TreeWalker) {
   return next;
 }
 
-export function getNumberOfRows<T>(node: CollectionNode<T>, state: ListState<T> | TreeState<T>) {
+export function getNumberOfRows<T>(node: RSNode<unknown>, state: ListState<T> | TreeState<T>) {
   if (node.type === 'section') {
     // Use the index of the last child to determine the number of nodes in the section
-    let lastChild = node.lastChildKey ? state.collection.getItem(node.lastChildKey) : null;
+    let currentNode = node as CollectionNode<T>
+    let lastChild = currentNode.lastChildKey ? state.collection.getItem(currentNode.lastChildKey) : null;
     return lastChild ? lastChild.index + 1 : 0;
   } else if (node.type === 'item') {
     return 1;
