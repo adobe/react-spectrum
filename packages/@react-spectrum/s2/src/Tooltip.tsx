@@ -101,6 +101,9 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   opacity: {
     isEntering: 0,
     isExiting: 0
+  },
+  overflowWrap: {
+    default: 'break-word'
   }
 });
 
