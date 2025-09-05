@@ -13,20 +13,40 @@
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import './styles.css';
+import styles from './styles.css';
 
 export default {
   title: 'React Aria Components/Tooltip',
-  component: Tooltip
+  component: Tooltip,
+  args: {
+    placement: 'top',
+    hideArrow: false
+  },
+  argTypes: {
+    placement: {
+      control: 'select',
+      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
+        'top', 'top left', 'top right', 'top start', 'top end',
+        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
+        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
+    }
+  }
 } as Meta<typeof Tooltip>;
 
 export type TooltipStory = StoryFn<typeof Tooltip>;
 export type TooltipStoryObj = StoryObj<typeof Tooltip>;
 
-export const TooltipExample: TooltipStory = () => (
+export const TooltipExample: TooltipStory = (args) => (
   <TooltipTrigger>
     <Button>Tooltip trigger</Button>
     <Tooltip
+      {...args}
+      className={`${styles['tooltip-base']} ${styles[(args as any).animation]}`}
       offset={5}
       style={{
         background: 'Canvas',
@@ -35,11 +55,11 @@ export const TooltipExample: TooltipStory = () => (
         padding: 5,
         borderRadius: 4
       }}>
-      <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+      {!(args as any).hideArrow && <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
           <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
-      </OverlayArrow>
+      </OverlayArrow>}
       I am a tooltip
     </Tooltip>
   </TooltipTrigger>
@@ -332,4 +352,18 @@ export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoun
     }
   },
   render: (args) => <TooltipArrowBoundaryOffsetExampleRender {...args} />
+};
+
+export const TooltipContainerPaddingExample: StoryObj<typeof Tooltip> = {
+  render: (args) => (
+    <TooltipTrigger>
+      <Button style={{position: 'absolute', top: 0, left: 0}}>Tooltip trigger</Button>
+      <Tooltip {...args}>
+        I am a tooltip
+      </Tooltip>
+    </TooltipTrigger>
+  ),
+  args: {
+    containerPadding: 10
+  }
 };

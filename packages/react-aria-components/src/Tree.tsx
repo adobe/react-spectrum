@@ -13,7 +13,7 @@
 import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
@@ -148,7 +148,7 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>
 }
 
 
@@ -448,7 +448,11 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+class TreeContentNode extends CollectionNode<any> {
+  static readonly type = 'content';
+}
+
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode, function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -483,10 +487,14 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   onAction?: () => void
 }
 
+class TreeItemNode extends CollectionNode<any> {
+  static readonly type = 'item';
+}
+
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -719,7 +727,7 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
   isLoading?: boolean
 }
 
-export const TreeLoadMoreItem = createLeafComponent('loader', function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -810,6 +818,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   let flattenedRows: Node<T>[] = [];
   // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
   let itemCount = 0;
+  let parentLookup: Map<Key, boolean> = new Map();
 
   let visitNode = (node: Node<T>) => {
     if (node.type === 'item' || node.type === 'loader') {
@@ -836,12 +845,13 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
 
       // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
       let modifiedNode = keyMap.get(node.key) || node;
-      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && flattenedRows.find(row => row.key === modifiedNode.parentKey))) {
+      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && parentLookup.get(modifiedNode.parentKey))) {
         if (modifiedNode.type === 'item') {
           itemCount++;
         }
 
         flattenedRows.push(modifiedNode);
+        parentLookup.set(modifiedNode.key, true);
       }
     } else if (node.type !== null) {
       keyMap.set(node.key, node as CollectionNode<T>);

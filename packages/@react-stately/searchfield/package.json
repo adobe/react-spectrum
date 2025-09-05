@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/searchfield",
-  "version": "3.5.13",
+  "version": "3.5.15",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,8 +26,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/utils": "^3.10.7",
-    "@react-types/searchfield": "^3.6.3",
+    "@react-stately/utils": "^3.10.8",
+    "@react-types/searchfield": "^3.6.5",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

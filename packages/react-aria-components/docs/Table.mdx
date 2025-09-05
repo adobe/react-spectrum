@@ -1393,6 +1393,13 @@ import {useListData} from 'react-stately';
 import {useDragAndDrop, Button} from 'react-aria-components';
 import {GripVertical} from 'lucide-react';
 
+interface FileItem {
+  id: number,
+  name: string,
+  date: string,
+  type: string
+}
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1404,9 +1411,9 @@ function Example() {
   });
 
   ///- begin highlight -///
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).name
+  let {dragAndDropHooks} = useDragAndDrop<FileItem>({
+    getItems: (keys, items) => items.map(item => ({
+      'text/plain': item.name
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -1495,12 +1502,21 @@ This example renders a custom drag preview which shows the number of items being
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
+///- begin collapse -///
+interface FileItem {
+  id: number,
+  name: string,
+  date: string,
+  type: string
+}
+///- end collapse -///
+
 function Example() {
-  let {dragAndDropHooks} = useDragAndDrop({
+  let {dragAndDropHooks} = useDragAndDrop<FileItem>({
     // ...
     ///- begin collapse -///
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).name
+    getItems: (keys, items) => items.map(item => ({
+      'text/plain': item.name
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -1605,7 +1621,7 @@ function DraggableTable() {
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Pokemon>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1617,9 +1633,8 @@ function DraggableTable() {
     },
     ///- end collapse -///
     /*- begin highlight -*/
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = items.find(item => item.id === key)!;
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': `${item.name} – ${item.type}`,
           'text/html': `<strong>${item.name}</strong> – <em>${item.type}</em>`,
@@ -2078,7 +2093,7 @@ function Example() {
     ]
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Pokemon>({
     // ...
     ///- begin collapse -///
     renderDragPreview(items) {
@@ -2089,9 +2104,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'pokemon': JSON.stringify(item)
@@ -2137,7 +2151,7 @@ function Example() {
     ]
   });
   ///- end collapse -///
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Pokemon>({
     // ...
     ///- begin collapse -///
     renderDragPreview(items) {
@@ -2148,9 +2162,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'pokemon': JSON.stringify(item)
@@ -2293,7 +2306,7 @@ function DndTable(props: DndTableProps) {
     initialItems: props.initialItems
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<FileItem>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -2305,9 +2318,8 @@ function DndTable(props: DndTableProps) {
     },
     ///- end collapse -///
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys) {
-      return [...keys].map((key) => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'custom-app-type': JSON.stringify(item),
           'text/plain': item.name
@@ -2660,7 +2672,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.

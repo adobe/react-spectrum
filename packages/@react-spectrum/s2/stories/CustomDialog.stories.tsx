@@ -120,3 +120,20 @@ export const SideImage: Story = {
     </DialogTrigger>
   )
 };
+
+export const CustomWidth: Story = {
+  render: (args) => (
+    <DialogTrigger>
+      <ActionButton>Open dialog</ActionButton>
+      <CustomDialog {...args} styles={style({width: 900})}>
+        <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center'})}>
+          <Checkmark />
+          <Heading slot="title" styles={style({font: 'heading-lg', textAlign: 'center', marginY: 0})}>Thank you!</Heading>
+          <p className={style({font: 'body', textAlign: 'center', marginY: 0})}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
+        </div>
+      </CustomDialog>
+    </DialogTrigger>
+  ),
+  tags: ['!autodocs']
+};
