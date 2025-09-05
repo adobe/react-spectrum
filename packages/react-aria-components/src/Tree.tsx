@@ -818,6 +818,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   let flattenedRows: Node<T>[] = [];
   // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
   let itemCount = 0;
+  let parentLookup: Map<Key, boolean> = new Map();
 
   let visitNode = (node: Node<T>) => {
     if (node.type === 'item' || node.type === 'loader') {
@@ -844,12 +845,13 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
 
       // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
       let modifiedNode = keyMap.get(node.key) || node;
-      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && flattenedRows.find(row => row.key === modifiedNode.parentKey))) {
+      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && parentLookup.get(modifiedNode.parentKey))) {
         if (modifiedNode.type === 'item') {
           itemCount++;
         }
 
         flattenedRows.push(modifiedNode);
+        parentLookup.set(modifiedNode.key, true);
       }
     } else if (node.type !== null) {
       keyMap.set(node.key, node as CollectionNode<T>);
