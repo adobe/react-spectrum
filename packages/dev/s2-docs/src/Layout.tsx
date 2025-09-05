@@ -44,13 +44,15 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
-const getTitle = (currentPage: Page): string => {
-  let library: string | undefined;
+const getLibraryName = (currentPage: Page): string => {
   if (currentPage.name.startsWith('react-aria/')) {
-    library = 'React Aria';
-  } else if (currentPage.name.startsWith('s2/')) {
-    library = 'React Spectrum';
+    return 'React Aria';
   }
+  return 'React Spectrum';
+};
+
+const getTitle = (currentPage: Page): string => {
+  let library = getLibraryName(currentPage);
   const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
   return library ? `${pageTitle} - ${library}` : pageTitle;
 };
@@ -58,6 +60,16 @@ const getTitle = (currentPage: Page): string => {
 const getOgImageUrl = (currentPage: Page): string => {
   const slug = currentPage.url.replace(/^\//, '').replace(/\.html$/, '');
   return `/og/${slug}.png`;
+};
+
+const getDescription = (currentPage: Page): string => {
+  let library = getLibraryName(currentPage);
+  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  const explicitDescription = (currentPage as any).description || currentPage.exports?.description;
+  if (explicitDescription) {
+    return explicitDescription as string;
+  }
+  return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
@@ -68,6 +80,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
+        <meta name="description" content={getDescription(currentPage)} />
         <meta property="og:image" content={getOgImageUrl(currentPage)} />
         <title>{getTitle(currentPage)}</title>
       </head>
