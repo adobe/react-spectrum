@@ -324,17 +324,17 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let {collection} = state;
     let nodes = [...collection];
     // TODO: refactor BaseCollection to store an absolute index of a node's position?
-    if (nodes.find(node => node.type === 'section')) {
+    if (nodes.some(node => node.type === 'section')) {
       let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T> : null;
       let isInSection = parentNode && parentNode.type === 'section';
       let lastChildKey = parentNode?.lastChildKey;
       if (isInSection && lastChildKey) {
         let lastChild = state.collection.getItem(lastChildKey);
-        let diff = lastChild ? lastChild.index - node.index : 0;
+        let delta = lastChild ? lastChild.index - node.index : 0;
         if (parentNode!.prevKey) {
-          rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - diff;
+          rowProps['aria-rowindex'] = sumOfNodes(parentNode!) - delta;
         } else {
-          rowProps['aria-rowindex'] = lastChild ? lastChild.index - diff + 1 : 0;
+          rowProps['aria-rowindex'] = lastChild ? lastChild.index - delta + 1 : 0;
         }
       } else {
         rowProps['aria-rowindex'] = sumOfNodes(node as CollectionNode<T>);

@@ -254,7 +254,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       throw new Error('Cannot add a node to a frozen collection');
     }
 
-    if (node.type === 'item' && this.keyMap.get(node.key) == null || node.type === 'header' && this.keyMap.get(node.key) == null) {
+    if ((node.type === 'item' || node.type === 'header') && this.keyMap.get(node.key) == null) {
       this.itemCount++;
     }
 
