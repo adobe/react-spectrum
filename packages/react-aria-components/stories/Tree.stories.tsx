@@ -1247,7 +1247,6 @@ function generateTreeData(): Array<ITreeItem> {
 }
 
 const treeData = generateTreeData();
-console.log(`Total items: ${totalItems}`);
 
 function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
   let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());

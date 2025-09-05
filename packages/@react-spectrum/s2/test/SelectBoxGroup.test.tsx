@@ -153,11 +153,7 @@ describe('SelectBoxGroup', () => {
 
     it('handles uncontrolled keyboard selection', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
-      const listbox = screen.getByRole('listbox');
-
-      await act(async () => {
-        listbox.focus();
-      });
+      await user.tab();
 
       await act(async () => {
         await user.keyboard(' ');
@@ -703,13 +699,10 @@ describe('SelectBoxGroup', () => {
 
     it('supports space key selection in uncontrolled mode', async () => {
       render(<UncontrolledSelectBox selectionMode="single" />);
-      const listbox = screen.getByRole('listbox');
       const option1 = screen.getByRole('option', {name: 'Option 1'});
 
-      await act(async () => {
-        listbox.focus();
-        await user.keyboard(' ');
-      });
+      await user.tab();
+      await user.keyboard(' ');
 
       expect(option1).toHaveAttribute('aria-selected', 'true');
     });
@@ -730,10 +723,7 @@ describe('SelectBoxGroup', () => {
         </SelectBoxGroup>
       );
 
-      const listbox = screen.getByRole('listbox');
-      await act(async () => {
-        listbox.focus();
-      });
+      await user.tab();
 
       await user.keyboard('{ArrowDown}');
 
