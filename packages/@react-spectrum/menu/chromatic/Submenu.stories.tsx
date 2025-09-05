@@ -143,11 +143,14 @@ Default.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  await userEvent.click(document.body);
+  await new Promise(resolve => setTimeout(resolve, 250));
   await userEvent.hover(menuItems[0]);
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 250));
   let submenuTrigger = await within(body).findByText('Baseline');
   await userEvent.hover(submenuTrigger);
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 250));
 };
 
 export const Mobile: DefaultStory = {
