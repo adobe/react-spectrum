@@ -6,7 +6,7 @@ import {iconAliases} from './iconAliases.js';
 // eslint-disable-next-line
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {pressScale, SearchField} from '@react-spectrum/s2';
-import {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 
 const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
 
@@ -51,9 +51,9 @@ export function IconCards() {
   return (
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <SearchField />
+        <SearchField size="L" />
         <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(8, 8), preserveAspectRatio: true}}>
-          <ListBox items={iconList} layout="grid" className={style({height: 300, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
+          <ListBox items={iconList} layout="grid" className={style({height: 360, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
             {item => <IconItem item={item} />}
           </ListBox>
         </Virtualizer>
