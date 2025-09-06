@@ -1,5 +1,5 @@
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, JSX, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
@@ -42,6 +42,16 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
    * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy).
    */
   referrerPolicy?: HTMLAttributeReferrerPolicy,
+  /**
+   * The intrinsic width of the image.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#width).
+   */
+  width?: number,
+  /**
+   * The intrinsic height of the image.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#height).
+   */
+  height?: number,
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString,
   /** A function that is called to render a fallback when the image fails to load. */
@@ -133,7 +143,10 @@ const imgStyles = style({
   transitionDuration: 500
 });
 
-export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
+/**
+ * An image with support for skeleton loading and custom error states.
+ */
+export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   [props, domRef] = useSpectrumContextProps(props, domRef, ImageContext);
 
   let {
@@ -152,7 +165,9 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     fetchPriority,
     loading,
     referrerPolicy,
-    slot
+    slot,
+    width,
+    height
   } = props;
   let hidden = (props as ImageContextValue).hidden;
   
@@ -198,10 +213,15 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     }
 
     // If the image is already loaded, update state immediately instead of waiting for onLoad.
-    if (state === 'loading' && imgRef.current?.complete) {
-      // Queue a microtask so we don't hit React's update limit.
-      // TODO: is this necessary?
-      queueMicrotask(onLoad);
+    let img = imgRef.current;
+    if (state === 'loading' && img?.complete) {
+      if (img.naturalWidth === 0 && img.naturalHeight === 0) {
+        // Queue a microtask so we don't hit React's update limit.
+        // TODO: is this necessary?
+        queueMicrotask(onError);
+      } else {
+        queueMicrotask(onLoad);
+      }
     }
 
     animation(domRef.current);
@@ -234,13 +254,15 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
           decoding={decoding}
           loading={loading}
           referrerPolicy={referrerPolicy}
+          width={width}
+          height={height}
           ref={imgRef}
           onLoad={onLoad}
           onError={onError}
           className={imgStyles({isRevealed, isTransitioning})} />
         )}
     </div>
-  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
+  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, width, height, onLoad, onError, isRevealed, isTransitioning]);
 });
 
 function getFetchPriorityProp(fetchPriority?: 'high' | 'low' | 'auto'): Record<string, string | undefined> {

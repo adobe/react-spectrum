@@ -12,6 +12,9 @@
   outline: none;
   max-width: 250px;
   transition: transform 200ms, opacity 200ms;
+  font-family: system-ui;
+  font-size: 0.875rem;
+  padding: 8px;
 
   .react-aria-OverlayArrow svg {
     display: block;
@@ -69,4 +72,9 @@
       transform: rotate(-90deg);
     }
   }
+}
+
+/* Extra padding for custom trigger example content */
+.react-aria-Popover :where(p, div) {
+  margin: 0;
 }

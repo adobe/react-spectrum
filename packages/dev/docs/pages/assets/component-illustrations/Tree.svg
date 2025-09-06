@@ -13,7 +13,7 @@
       </g>
       <rect id="Rectangle_1793" data-name="Rectangle 1793" width="298" height="46" transform="translate(343 206)" fill="var(--anatomy-gray-900)" opacity="0.1"/>
       <rect id="rectangle-34" width="298" height="1" transform="translate(343 158)" fill="var(--anatomy-gray-300)"/>
-      <text id="Documents" transform="translate(452 133)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Documents</tspan></text>
+      <text id="Documents" transform="translate(452 133)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Documents</tspan></text>
       <g id="Checkbox" transform="translate(386 119)">
         <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="14" height="32" stroke="none"/>
@@ -55,25 +55,25 @@
         <path id="Path_35615" data-name="Path 35615" d="M3,29.461a2.472,2.472,0,0,1-2.5-2.5V5A2.472,2.472,0,0,1,3,2.5H13.084a1.972,1.972,0,0,1,1.4.6l3.1,3.1a.907.907,0,0,0,.7.3H28.964a2.472,2.472,0,0,1,2.5,2.5V26.965a2.472,2.472,0,0,1-2.5,2.5Z" transform="translate(177.52 261.02)" fill="var(--anatomy-gray-200)"/>
         <path id="Path_35616" data-name="Path 35616" d="M29,6H18.3c-.1,0-.2,0-.4-.2L14.8,2.7A2.413,2.413,0,0,0,13.1,2H3A2.946,2.946,0,0,0,0,5V27a3.009,3.009,0,0,0,3,3H29a3.009,3.009,0,0,0,3-3V9A2.946,2.946,0,0,0,29,6Zm2,21a2.006,2.006,0,0,1-2,2H3a2.006,2.006,0,0,1-2-2V7H29a2.006,2.006,0,0,1,2,2Z" transform="translate(177.5 261)" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="_12_items" data-name="12 items" transform="translate(452 148)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">12 items</tspan></text>
+      <text id="_12_items" data-name="12 items" transform="translate(452 148)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">12 items</tspan></text>
       <g id="filetype_generic_lightUI_32" transform="translate(433.625 168)">
         <path id="White_Bg" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Onboarding" transform="translate(472 180)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Onboarding</tspan></text>
-      <text id="PDF" transform="translate(472 195)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">PDF</tspan></text>
+      <text id="Onboarding" transform="translate(472 180)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Onboarding</tspan></text>
+      <text id="PDF" transform="translate(472 195)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">PDF</tspan></text>
       <g id="filetype_generic_lightUI_32-2" data-name="filetype_generic_lightUI_32" transform="translate(433.625 215)">
         <path id="White_Bg-2" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline-2" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Budget" transform="translate(472 227)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Budget</tspan></text>
-      <text id="XLS" transform="translate(472 242)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">XLS</tspan></text>
+      <text id="Budget" transform="translate(472 227)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Budget</tspan></text>
+      <text id="XLS" transform="translate(472 242)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">XLS</tspan></text>
       <g id="filetype_generic_lightUI_32-3" data-name="filetype_generic_lightUI_32" transform="translate(435.313 262)">
         <path id="White_Bg-3" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline-3" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Sales_Pitch" data-name="Sales Pitch" transform="translate(473.688 274)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Sales Pitch</tspan></text>
-      <text id="PPT" transform="translate(473.688 289)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">PPT</tspan></text>
+      <text id="Sales_Pitch" data-name="Sales Pitch" transform="translate(473.688 274)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Sales Pitch</tspan></text>
+      <text id="PPT" transform="translate(473.688 289)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">PPT</tspan></text>
       <g id="Action_button" data-name="Action button" transform="translate(607 123)">
         <rect id="Placement_Area-5" data-name="Placement Area" width="24" height="24" fill="red" opacity="0"/>
         <g id="Background" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
@@ -99,7 +99,7 @@
       </g>
       <rect id="Rectangle_1793-2" data-name="Rectangle 1793" width="298" height="46" transform="translate(343 206)" fill="var(--anatomy-gray-900)" opacity="0.1"/>
       <rect id="rectangle-34-4" data-name="rectangle-34" width="298" height="1" transform="translate(343 158)" fill="var(--anatomy-gray-300)"/>
-      <text id="Documents-2" data-name="Documents" transform="translate(452 133)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Documents</tspan></text>
+      <text id="Documents-2" data-name="Documents" transform="translate(452 133)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Documents</tspan></text>
       <g id="Checkbox-5" data-name="Checkbox" transform="translate(386 119)">
         <g id="Placement_Area-6" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="14" height="32" stroke="none"/>
@@ -141,25 +141,25 @@
         <path id="Path_35615-2" data-name="Path 35615" d="M3,29.461a2.472,2.472,0,0,1-2.5-2.5V5A2.472,2.472,0,0,1,3,2.5H13.084a1.972,1.972,0,0,1,1.4.6l3.1,3.1a.907.907,0,0,0,.7.3H28.964a2.472,2.472,0,0,1,2.5,2.5V26.965a2.472,2.472,0,0,1-2.5,2.5Z" transform="translate(177.52 261.02)" fill="var(--anatomy-gray-200)"/>
         <path id="Path_35616-2" data-name="Path 35616" d="M29,6H18.3c-.1,0-.2,0-.4-.2L14.8,2.7A2.413,2.413,0,0,0,13.1,2H3A2.946,2.946,0,0,0,0,5V27a3.009,3.009,0,0,0,3,3H29a3.009,3.009,0,0,0,3-3V9A2.946,2.946,0,0,0,29,6Zm2,21a2.006,2.006,0,0,1-2,2H3a2.006,2.006,0,0,1-2-2V7H29a2.006,2.006,0,0,1,2,2Z" transform="translate(177.5 261)" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="_12_items-2" data-name="12 items" transform="translate(452 148)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">12 items</tspan></text>
+      <text id="_12_items-2" data-name="12 items" transform="translate(452 148)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">12 items</tspan></text>
       <g id="filetype_generic_lightUI_32-4" data-name="filetype_generic_lightUI_32" transform="translate(433.625 168)">
         <path id="White_Bg-4" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline-4" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Onboarding-2" data-name="Onboarding" transform="translate(472 180)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Onboarding</tspan></text>
-      <text id="PDF-2" data-name="PDF" transform="translate(472 195)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">PDF</tspan></text>
+      <text id="Onboarding-2" data-name="Onboarding" transform="translate(472 180)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Onboarding</tspan></text>
+      <text id="PDF-2" data-name="PDF" transform="translate(472 195)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">PDF</tspan></text>
       <g id="filetype_generic_lightUI_32-5" data-name="filetype_generic_lightUI_32" transform="translate(433.625 215)">
         <path id="White_Bg-5" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline-5" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Budget-2" data-name="Budget" transform="translate(472 227)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Budget</tspan></text>
-      <text id="XLS-2" data-name="XLS" transform="translate(472 242)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">XLS</tspan></text>
+      <text id="Budget-2" data-name="Budget" transform="translate(472 227)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Budget</tspan></text>
+      <text id="XLS-2" data-name="XLS" transform="translate(472 242)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">XLS</tspan></text>
       <g id="filetype_generic_lightUI_32-6" data-name="filetype_generic_lightUI_32" transform="translate(435.313 262)">
         <path id="White_Bg-6" data-name="White Bg" d="M5.645,27.2A2.151,2.151,0,0,1,3.5,25.047V2.655A2.151,2.151,0,0,1,5.645.5H18.839A1.7,1.7,0,0,1,20.05,1L24.442,5.4a1.739,1.739,0,0,1,.505,1.22V25.047A2.151,2.151,0,0,1,22.8,27.2Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
         <path id="Gray_Outline-6" data-name="Gray Outline" d="M25.1,5.1,20.622.639A2.157,2.157,0,0,0,19.082,0H5.625A2.633,2.633,0,0,0,3,2.625v22.75A2.627,2.627,0,0,0,5.625,28h17.5a2.627,2.627,0,0,0,2.625-2.625V6.65A2.2,2.2,0,0,0,25.1,5.1Zm-5.04-3.789,4.392,4.375H20.5a.439.439,0,0,1-.437-.437Zm4.812,24.062a1.75,1.75,0,0,1-1.75,1.75H5.625a1.75,1.75,0,0,1-1.75-1.75V2.625A1.755,1.755,0,0,1,5.625.875H19.082a.426.426,0,0,1,.1.009V5.25A1.316,1.316,0,0,0,20.5,6.562h4.366a.3.3,0,0,1,.009.088Z" fill="var(--anatomy-gray-500)"/>
       </g>
-      <text id="Sales_Pitch-2" data-name="Sales Pitch" transform="translate(473.688 274)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Sales Pitch</tspan></text>
-      <text id="PPT-2" data-name="PPT" transform="translate(473.688 289)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">PPT</tspan></text>
+      <text id="Sales_Pitch-2" data-name="Sales Pitch" transform="translate(473.688 274)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Sales Pitch</tspan></text>
+      <text id="PPT-2" data-name="PPT" transform="translate(473.688 289)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">PPT</tspan></text>
       <g id="Action_button-2" data-name="Action button" transform="translate(607 123)">
         <rect id="Placement_Area-10" data-name="Placement Area" width="24" height="24" fill="red" opacity="0"/>
         <g id="Background-2" data-name="Background" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">

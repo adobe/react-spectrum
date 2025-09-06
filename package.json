@@ -27,6 +27,9 @@
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
+    "build:mcp": "yarn workspace @react-spectrum/mcp build",
+    "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn workspace @react-spectrum/mcp build && node packages/dev/mcp/dist/index.js",
+    "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",
     "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
@@ -64,7 +67,8 @@
     "packages/react-aria",
     "packages/react-aria-components",
     "packages/tailwindcss-react-aria-components",
-    "packages/*/*"
+    "packages/*/*",
+    "packages/dev/mcp"
   ],
   "devDependencies": {
     "@actions/core": "^1.1.0",
@@ -245,7 +249,8 @@
     "micromark-extension-mdxjs": "patch:micromark-extension-mdxjs@npm%3A1.0.0#~/.yarn/patches/micromark-extension-mdxjs-npm-1.0.0-d2b6b69e4a.patch",
     "remark-mdx": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
     "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch",
-    "lightningcss": "1.30.1"
+    "lightningcss": "1.30.1",
+    "react-server-dom-parcel": "canary"
   },
   "@parcel/transformer-css": {
     "cssModules": {
@@ -280,7 +285,8 @@
       {
         "name": "s2-styles",
         "assets": [
-          "packages/@react-spectrum/s2/**"
+          "packages/@react-spectrum/s2/**",
+          "packages/dev/s2-docs/src/**"
         ],
         "types": [
           "css"

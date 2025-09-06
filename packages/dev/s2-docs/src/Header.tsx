@@ -1,13 +1,14 @@
 'use client';
 
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton, Badge, Text} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
+import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {flushSync} from 'react-dom';
 import GithubLogo from './icons/GithubLogo';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {MarkdownMenu} from './MarkdownMenu';
 import {PageProps} from '@parcel/rsc';
-import React, {CSSProperties, useState} from 'react';
+import React, {CSSProperties, useId, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import SearchMenu from './SearchMenu';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
@@ -33,6 +34,7 @@ function getButtonIcon(currentPage) {
 export default function Header(props: PageProps) {
   const {pages, currentPage} = props;
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchMenuId = useId();
 
   let toggleShowSearchMenu = () => {
     if (!document.startViewTransition) {
@@ -82,26 +84,31 @@ export default function Header(props: PageProps) {
           className={style({
             width: 'full', 
             display: 'grid',
+            // @eslint-disable-next-line
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center'
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu} onKeyDown={handleActionButtonKeyDown} UNSAFE_style={{paddingInlineStart: 10}}>
+            <ActionButton aria-label="Open menu and search" aria-expanded={searchOpen} aria-controls={searchOpen ? searchMenuId : undefined} size="XL" isQuiet onPress={toggleShowSearchMenu} onKeyDown={handleActionButtonKeyDown} UNSAFE_style={{paddingInlineStart: 10}}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
                   {getButtonIcon(currentPage)}
                 </div>
-                <span className={style({fontSize: 'heading-xs', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
+                <span className={style({font: 'ui-2xl', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
                   {getButtonText(currentPage)}
                 </span>
               </div>
               <ChevronDownIcon className={style({width: 18})} />
             </ActionButton>
           </div>
-          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
+          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
+            <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>
+              <AlertTriangle />
+              <Text>Beta Preview</Text>
+            </Badge>
             <MarkdownMenu url={currentPage.url} />
-            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet>
+            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />
             </ActionButton>
           </div>

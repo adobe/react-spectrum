@@ -27,7 +27,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function Table(props: TableProps) {
   return (
-    <ResizableTableContainer className="max-h-[280px] w-[550px] overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-600 rounded-lg">
+    <ResizableTableContainer className="max-h-[320px] max-w-[480px] overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-600 rounded-lg">
       <AriaTable {...props} className="border-separate border-spacing-0" />
     </ResizableTableContainer>
   );
@@ -79,7 +79,7 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && (
-        <AriaColumn width={36} minWidth={36} className="text-start text-sm font-semibold cursor-default p-2">
+        <AriaColumn width={36} minWidth={36} className="p-2 text-sm font-semibold cursor-default text-start">
           {selectionMode === 'multiple' && <Checkbox slot="selection" />}
         </AriaColumn>
       )}

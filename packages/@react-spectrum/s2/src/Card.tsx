@@ -253,7 +253,11 @@ let preview = style({
 
 const image = style({
   width: 'full',
-  aspectRatio: '3/2',
+  aspectRatio: {
+    layout: {
+      grid: '3/2'
+    }
+  },
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
@@ -346,7 +350,10 @@ let footer = style({
   paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
-export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
+export const InternalCardViewContext = createContext({
+  ElementType: 'div' as 'div' | typeof GridListItem,
+  layout: 'grid' as 'grid' | 'waterfall'
+});
 export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
@@ -377,8 +384,12 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
+/**
+ * A Card summarizes an object that a user can select or navigate to.
+ */
 export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
+  let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
   let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
   let isQuiet = variant === 'quiet';
@@ -386,7 +397,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   let children = (
     <Provider
       values={[
-        [ImageContext, {alt: '', styles: image}],
+        [ImageContext, {alt: '', styles: image({layout})}],
         [TextContext, {
           slots: {
             [DEFAULT_SLOT]: {},
@@ -413,7 +424,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
-  let ElementType = useContext(InternalCardViewContext);
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
@@ -560,6 +570,7 @@ export const CollectionCardPreview = forwardRef(function CollectionCardPreview(p
 export interface AssetCardProps extends Omit<CardProps, 'density'> {}
 
 export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
+  let {layout} = useContext(InternalCardViewContext);
   return (
     <Card {...props} ref={ref} density="regular">
       {composeRenderProps(props.children, children => (
@@ -569,11 +580,15 @@ export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, re
               alt: '',
               styles: style({
                 width: 'full',
-                aspectRatio: 'square',
+                aspectRatio: {
+                  layout: {
+                    grid: 'square'
+                  }
+                },
                 objectFit: 'contain',
                 pointerEvents: 'none',
                 userSelect: 'none'
-              })
+              })({layout})
             }],
             [IllustrationContext, {
               render(icon) {

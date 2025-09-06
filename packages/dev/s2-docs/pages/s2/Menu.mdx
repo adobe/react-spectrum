@@ -1,0 +1,520 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import docs from 'docs:@react-spectrum/s2';
+
+# Menu
+
+<PageDescription>{docs.exports.Menu.description}</PageDescription>
+
+```tsx render docs={docs.exports.Menu} links={docs.links} props={['size']} type="s2" wide
+"use client";
+import {Menu, MenuTrigger, MenuItem, MenuSection, SubmenuTrigger, Header, Heading, Text, ActionButton} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/icons/Image';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import DeviceTablet from '@react-spectrum/s2/icons/DeviceTablet';
+import DeviceDesktop from '@react-spectrum/s2/icons/DeviceDesktop';
+
+function Example(props) {
+  return (
+    <MenuTrigger>
+      <ActionButton>Publish</ActionButton>
+      <Menu {...props}/* PROPS */>
+        <MenuSection>
+          <Header>
+            <Heading>Publish and export</Heading>
+            <Text slot="description">
+              Social media, other formats
+            </Text>
+          </Header>
+          <MenuItem
+            textValue="quick export"
+            onAction={() => alert('Quick export')}>
+            <Image />
+            <Text slot="label">Quick Export</Text>
+            <Text slot="description">
+              Share a low-res snapshot.
+            </Text>
+          </MenuItem>
+          <SubmenuTrigger>
+            <MenuItem textValue="open a copy">
+              <Copy />
+              <Text slot="label">Open a copy</Text>
+              <Text slot="description">
+                Illustrator for iPad or desktop
+              </Text>
+            </MenuItem>
+            <Menu>
+              <MenuSection>
+                <Header>
+                  <Heading>Open a copy in</Heading>
+                </Header>
+                <MenuItem
+                  textValue="ipad"
+                  onAction={() => alert('Open on iPad')}>
+                  <DeviceTablet />
+                  <Text slot="label">Illustrator for iPad</Text>
+                </MenuItem>
+                <MenuItem
+                  textValue="desktop"
+                  onAction={() => alert('Open on desktop')}>
+                  <DeviceDesktop />
+                  <Text slot="label">Illustrator for desktop</Text>
+                </MenuItem>
+              </MenuSection>
+            </Menu>
+          </SubmenuTrigger>
+        </MenuSection>
+        <MenuSection selectionMode="multiple" defaultSelectedKeys={['files']}>
+          <MenuItem id="files">Show files</MenuItem>
+          <MenuItem id="folders">Show folders</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+## Content
+
+`Menu` follows the [Collection Components API](collections.html?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+let items = [
+  {id: 'cut', name: 'Cut'},
+  {id: 'copy', name: 'Copy'},
+  {id: 'paste', name: 'Paste'},
+  {id: 'select-all', name: 'Select All'}
+];
+
+<MenuTrigger>
+  <ActionButton>Edit</ActionButton>
+  {/*- begin highlight -*/}
+  <Menu items={items}>
+    {item => <MenuItem>{item.name}</MenuItem>}
+  </Menu>
+  {/*- end highlight -*/}
+</MenuTrigger>
+```
+
+### Slots
+
+`MenuItem` supports icons or images, `label` and `description` text slots, and keyboard shortcuts.
+
+<ExampleSwitcher type={null} examples={['Icon', 'Image']}>
+
+```tsx render
+"use client";
+import {MenuTrigger, ActionButton, Menu, MenuItem, Text, Keyboard} from '@react-spectrum/s2';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<MenuTrigger>
+  <ActionButton>Edit</ActionButton>
+  <Menu>
+    <MenuItem textValue="Copy">
+      {/*- begin highlight -*/}
+      <Copy />
+      <Text slot="label">Copy</Text>
+      <Text slot="description">Copy the selected text</Text>
+      <Keyboard>⌘C</Keyboard>
+      {/*- end highlight -*/}
+    </MenuItem>
+    <MenuItem textValue="Cut">
+      <Cut />
+      <Text slot="label">Cut</Text>
+      <Text slot="description">Cut the selected text</Text>
+      <Keyboard>⌘X</Keyboard>
+    </MenuItem>
+    <MenuItem textValue="Paste">
+      <Paste />
+      <Text slot="label">Paste</Text>
+      <Text slot="description">Paste the copied text</Text>
+      <Keyboard>⌘V</Keyboard>
+    </MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+```tsx render
+"use client";
+import {MenuTrigger, ActionButton, Menu, MenuItem, Text, Image} from '@react-spectrum/s2';
+import normal from 'url:./assets/normal.png';
+import multiply from 'url:./assets/multiply.png';
+import screen from 'url:./assets/screen.png';
+
+<MenuTrigger>
+  <ActionButton>Blend mode</ActionButton>
+  <Menu>
+    <MenuItem textValue="normal">
+      {/*- begin highlight -*/}
+      <Image src={normal} />
+      <Text slot="label">Normal</Text>
+      <Text slot="description">No effect applied.</Text>
+      {/*- end highlight -*/}
+    </MenuItem>
+    <MenuItem textValue="multiply">
+      <Image src={multiply} />
+      <Text slot="label">Multiply</Text>
+      <Text slot="description">Add contrast, detail, and darken shadows.</Text>
+    </MenuItem>
+    <MenuItem textValue="screen">
+      <Image src={screen} />
+      <Text slot="label">Screen</Text>
+      <Text slot="description">Reduce contrast and brighten details.</Text>
+    </MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+</ExampleSwitcher>
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Interactive elements (e.g. buttons) within menu items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<MenuSection>` component to group options. A `<Header>` element, with a `<Heading>` and optional `description` slot can be included to label a section. Sections without a header must have an `aria-label`.
+
+```tsx render
+"use client";
+import {MenuTrigger, ActionButton, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <ActionButton>Publish</ActionButton>
+  <Menu>
+    {/*- begin highlight -*/}
+    <MenuSection>
+      <Header>
+        <Heading>Export</Heading>
+        <Text slot="description">Save to your device</Text>
+      </Header>
+      {/*- end highlight -*/}
+      <MenuItem>Image…</MenuItem>
+      <MenuItem>Video…</MenuItem>
+      <MenuItem>Text…</MenuItem>
+    </MenuSection>
+    <MenuSection>
+      <Header>
+        <Heading>Share</Heading>
+        <Text slot="description">Share to social media</Text>
+      </Header>
+      <MenuItem>YouTube…</MenuItem>
+      <MenuItem>Instagram…</MenuItem>
+      <MenuItem>Email…</MenuItem>
+    </MenuSection>
+  </Menu>
+</MenuTrigger>
+```
+
+### Submenus
+
+Wrap a `<MenuItem>` and a `<Menu>` with a `<SubmenuTrigger>` to create a submenu.
+
+```tsx render
+"use client";
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Paste</MenuItem>
+    {/*- begin highlight -*/}
+    <SubmenuTrigger>
+      <MenuItem id="share">Share</MenuItem>
+      <Popover>
+      <Menu>
+      {/*- end highlight -*/}
+        <MenuItem>Email</MenuItem>
+        <MenuItem>SMS</MenuItem>
+        <MenuItem>Copy Link</MenuItem>
+      </Menu>
+      </Popover>
+    </SubmenuTrigger>
+  </Menu>
+</MenuTrigger>
+```
+
+### Links
+
+Use the `href` prop on a `<MenuItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+```tsx render docs={docs.exports.Menu} links={docs.links} props={['hideLinkOutIcon']} type="s2" wide
+"use client";
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <MenuTrigger>
+      <ActionButton>Links</ActionButton>
+      <Menu {...props}/* PROPS */>
+        {/*- begin highlight -*/}
+        <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
+        {/*- end highlight -*/}
+        <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
+        <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
+        <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+### Popover content
+
+Wrap the Menu in a [Popover](Popover.html) to add additional sibling elements. This example includes a header with interactive content.
+
+```tsx render
+"use client";
+import {Popover, MenuTrigger, ActionButton, SearchField, Menu, MenuItem, MenuSection, SubmenuTrigger, Avatar, Switch, Divider, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Buildings from '@react-spectrum/s2/icons/Buildings';
+import Settings from '@react-spectrum/s2/icons/Settings';
+
+<MenuTrigger>
+  <ActionButton aria-label="Account">
+    <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
+  </ActionButton>
+  {/*- begin highlight -*/}
+  <Popover>
+  {/*- end highlight -*/}
+    <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
+      <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
+        <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
+        <div>
+          <div className={style({font: 'title'})}>Devon Govett</div>
+          <div className={style({font: 'ui'})}>user@example.com</div>
+          <Switch styles={style({marginTop: 4})}>Dark theme</Switch>
+        </div>
+      </div>
+      <Divider styles={style({marginX: 12})} />
+      <Menu aria-label="Account">
+        <MenuSection>
+          <SubmenuTrigger>
+            <MenuItem>
+              <Buildings />
+              <Text slot="label">Organization</Text>
+              <Text slot="value">Nike</Text>
+            </MenuItem>
+            <Menu selectionMode="single" selectedKeys={['nike']}>
+              <MenuItem id="adobe">Adobe</MenuItem>
+              <MenuItem id="nike">Nike</MenuItem>
+              <MenuItem id="apple">Apple</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+          <MenuItem>
+            <Settings />
+            <Text slot="label">Settings</Text>
+          </MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <MenuItem>Legal notices</MenuItem>
+          <MenuItem>Sign out</MenuItem>
+        </MenuSection>
+      </Menu>
+    </div>
+  </Popover>
+</MenuTrigger>
+```
+
+### Autocomplete
+
+Use [Autocomplete](Autocomplete.html) from React Aria Components with a [SearchField](SearchField.html) to make a menu searchable.
+
+```tsx render
+"use client";
+import {MenuTrigger, ActionButton, Menu, MenuItem, Popover, SearchField} from '@react-spectrum/s2';
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <MenuTrigger>
+      <ActionButton>Add tag...</ActionButton>
+      <Popover>
+        {/*- begin highlight -*/}
+        <Autocomplete filter={contains}>
+          <SearchField aria-label="Search tags" autoFocus />
+          <Menu styles={style({marginTop: 8})}>
+            {/*- end highlight -*/}
+            <MenuItem>News</MenuItem>
+            <MenuItem>Travel</MenuItem>
+            <MenuItem>Shopping</MenuItem>
+            <MenuItem>Business</MenuItem>
+            <MenuItem>Entertainment</MenuItem>
+            <MenuItem>Food</MenuItem>
+            <MenuItem>Technology</MenuItem>
+            <MenuItem>Health</MenuItem>
+            <MenuItem>Science</MenuItem>
+          </Menu>
+        </Autocomplete>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Menu) for more details.
+
+```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start" type="s2"
+"use client";
+import type {Selection} from 'react-aria-components';
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set(['rulers']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>View</ActionButton>
+        <Menu
+          {...props}
+          /*- begin highlight -*/
+          /* PROPS */
+          selectedKeys={selected}
+          onSelectionChange={setSelected}>
+          {/*- end highlight */}
+          <MenuItem id="grid">Pixel grid</MenuItem>
+          <MenuItem id="rulers">Rulers</MenuItem>
+          <MenuItem id="comments" isDisabled>Comments</MenuItem>
+          <MenuItem id="layout">Layout guides</MenuItem>
+          <MenuItem id="toolbar">Toolbar</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Section-level selection
+
+Each section in a menu may have independent selection states by passing `selectionMode` and `selectedKeys` to the `MenuSection`.
+
+```tsx render hideImports
+"use client";
+import type {Selection} from 'react-aria-components';
+import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading, ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [style, setStyle] = useState<Selection>(new Set(['bold']));
+  let [align, setAlign] = useState<Selection>(new Set(['left']));
+  return (
+    <MenuTrigger>
+      <ActionButton>Edit</ActionButton>
+      <Menu>
+        <MenuSection>
+          <Header>
+            <Heading>Clipboard</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </MenuSection>
+        {/*- begin highlight -*/}
+        <MenuSection
+          selectionMode="multiple"
+          selectedKeys={style}
+          onSelectionChange={setStyle}>
+          {/*- end highlight -*/}
+          <Header>
+            <Heading>Text style</Heading>
+          </Header>
+          <MenuItem id="bold">Bold</MenuItem>
+          <MenuItem id="italic">Italic</MenuItem>
+          <MenuItem id="underline">Underline</MenuItem>
+        </MenuSection>
+        <MenuSection selectionMode="single" selectedKeys={align} onSelectionChange={setAlign}>
+          <Header>
+            <Heading>Text alignment</Heading>
+          </Header>
+          <MenuItem id="left">Left</MenuItem>
+          <MenuItem id="center">Center</MenuItem>
+          <MenuItem id="right">Right</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+## Menu trigger
+
+MenuTrigger accepts props to control trigger interactions and Menu positioning.
+
+```tsx render docs={docs.exports.MenuTrigger} links={docs.links} props={['trigger', 'align', 'direction', 'shouldFlip']} type="s2"
+"use client";
+import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+<MenuTrigger/* PROPS */>
+  <ActionButton>Copy</ActionButton>
+  <Menu>
+    <MenuItem>Copy as plain text</MenuItem>
+    <MenuItem>Copy as rich text</MenuItem>
+    <MenuItem>Copy URL</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+## API
+
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger'}}
+<MenuTrigger>
+  <Button />
+  <Menu>
+    <MenuItem>
+      <Icon /> or <Image />
+      <Text slot="label" />
+      <Text slot="description" />
+      <Keyboard />
+    </MenuItem>
+    <MenuSection>
+      <Header>
+        <Heading />
+        <Text slot="description" />
+      </Header>
+      <MenuItem />
+    </MenuSection>
+    <SubmenuTrigger>
+      <MenuItem />
+      <Menu />
+    </SubmenuTrigger>
+  </Menu>
+</MenuTrigger>
+```
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} showDescription />
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} showDescription />
+
+### MenuItem
+
+<PropTable component={docs.exports.MenuItem} links={docs.links} showDescription />
+
+### MenuSection
+
+<PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
+
+### SubmenuTrigger
+
+<PropTable component={docs.exports.SubmenuTrigger} links={docs.links} showDescription />

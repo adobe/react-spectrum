@@ -1,11 +1,11 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, Content, Image, Text, InlineAlert, Heading} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
 import {Button as VanillaButton} from 'vanilla-starter/Button';
 import {Button as TailwindButton} from 'tailwind-starter/Button';
-import {Button as MacroButton} from './ButtonExample';
+/* import {Button as MacroButton} from './ButtonExample'; */
 import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
@@ -14,76 +14,41 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 
 <PageDescription>{docs.exports.Button.description}</PageDescription>
 
-<ExampleSwitcher examples={['Vanilla CSS', 'Tailwind', 'Style Macro']}>
+<ExampleSwitcher examples={['Vanilla CSS', 'Tailwind'/*, 'Style Macro'*/]}>
   <VisualExample
     component={VanillaButton}
     docs={docs.exports.Button}
     links={docs.links}
-    props={['isDisabled']}
+    props={['isPending', 'isDisabled']}
     initialProps={{children: 'Vanilla'}}
     type="vanilla"
-    files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]} />
   <VisualExample
     component={TailwindButton}
     docs={tailwindDocs.exports.Button}
     links={tailwindDocs.links}
-    props={['variant', 'isDisabled']}
+    props={['variant', 'isPending', 'isDisabled']}
     initialProps={{children: 'Tailwind'}}
     type="tailwind"
     files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]} />
-  <VisualExample
+  {/* <VisualExample
     component={MacroButton}
     docs={docs.exports.Button}
     links={docs.links}
     props={['isDisabled']}
     initialProps={{children: 'Style Macro'}}
-    files={["packages/dev/s2-docs/pages/ButtonExample.tsx"]} />
+    files={["packages/dev/s2-docs/pages/ButtonExample.tsx"]} /> */}
 </ExampleSwitcher>
-
-## Features
-
-On the surface, building a custom styled button seems simple. However, there are many
-cross browser inconsistencies in interactions and accessibility features to consider.
-`Button` handles all of these interactions for you, so you can focus on the styling.
-
-* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
-* **Accessible** – Uses a native `<button>` element under the hood, with support for the <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys.
-* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
-
-{/* Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods to learn more. */}
-
-## Anatomy
-
-Buttons consist of a clickable area usually containing a textual label or an icon
-that users can click to perform an action. In addition, keyboard users may activate
-buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
-
-If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
-`aria-labelledby` prop must be passed to identify the button to assistive technology.
-
-## Examples
-
-<div>
-<Card>
-  <CardPreview>
-    <Image src="https://react-spectrum.adobe.com/ripple-button.74b256b2.png" />
-  </CardPreview>
-  <Content>
-    <Text slot="title">Ripple Button</Text>
-    <Text slot="description">A button with an animated ripple effect styled with Tailwind CSS.</Text>
-  </Content>
-</Card>
-</div>
 
 ## Events
 
-`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](/blog/building-a-button-part-1.html) to learn more.
 
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction.  See [usePress](usePress.html) for more details.
+The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See [usePress](usePress.html) for more details.
 
 ```tsx render
 "use client";
-import {Button} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 function Example() {
@@ -104,7 +69,55 @@ function Example() {
 }
 ```
 
-## Props
+## Pending
+
+Use the `isPending` prop to display a pending state. Pending buttons remain focusable, but are otherwise disabled. Pending state changes are announced to assistive technologies.
+
+```tsx render
+"use client";
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+function PendingButton() {
+  let [isPending, setPending] = useState(false);
+
+  return (
+    <Button
+      ///- begin highlight -///
+      isPending={isPending}
+      ///- end highlight -///
+      onPress={() => {
+        setPending(true);
+        setTimeout(() => {
+          setPending(false);
+        }, 5000);
+      }}>
+      Save
+    </Button>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content><p style={{marginTop: 0}}>The `ProgressBar` must be in the accessibility tree as soon as the button becomes pending, even if it is not visible. To delay showing a spinner until a minimum amount of time passes, use `opacity: 0`. Do not use `visibility: hidden` or `display: none` as these remove the element from the accessibility tree.</p>
+  <p style={{marginBottom: 0}}>To reserve space for the button's label while pending, either set it to `visibility: hidden` with a descriptive ProgressBar `aria-label` (e.g. "Saving"), or set it to `opacity: 0` to combine the button's label with the `aria-label` of the ProgressBar (e.g. "Save, pending").</p></Content>
+</InlineAlert>
+
+## Link buttons
+
+The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link.html) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
+
+```tsx render
+"use client";
+import {Link} from 'react-aria-components';
+
+<Link className="react-aria-Button" href="https://adobe.com/" target="_blank">
+  Adobe
+</Link>
+```
+
+## API
 
 <PropTable component={docs.exports.Button} links={docs.links} />
 

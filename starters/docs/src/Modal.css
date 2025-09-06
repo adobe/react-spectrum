@@ -11,6 +11,8 @@
   align-items: center;
   justify-content: center;
   z-index: 100;
+  font-family: system-ui;
+  font-size: 0.875rem;
 
   &[data-entering] {
     animation: modal-fade 200ms;

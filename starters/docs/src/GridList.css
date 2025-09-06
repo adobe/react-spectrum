@@ -185,3 +185,11 @@
     margin-bottom: -2px;
   }
 }
+
+.react-aria-GridListLoadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+}

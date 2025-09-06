@@ -30,7 +30,9 @@ export function RadioGroup(
     (
       <AriaRadioGroup {...props}>
         <Label>{label}</Label>
-        {children}
+        <div className="radio-items">
+          {children}
+        </div>
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
       </AriaRadioGroup>

@@ -173,6 +173,7 @@ export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOM
 
   /**
    * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * @default 'text'
    */
   type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {}),
 

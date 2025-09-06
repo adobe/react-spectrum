@@ -12,7 +12,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <PageDescription>{docs.exports.Table.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
   "use client";
   import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
   import {TableBody, Cell} from 'react-aria-components';
@@ -86,42 +86,9 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
-
-A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
-
-If the table supports row selection, each row can optionally include a selection checkbox. Additionally, a "select all" checkbox may be displayed in a column header if the table supports multiple row selection. A drag button may also be included within a cell if the row is draggable.
-
-If a table supports column resizing, then it should also be wrapped in a `<ResizableTableContainer>`, and a `<ColumnResizer>` should be included in each resizable column.
-
-```tsx
-import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, ResizableTableContainer, ColumnResizer} from 'react-aria-components';
-
-<ResizableTableContainer>
-  <Table>
-    <TableHeader>
-      <Column />
-      <Column><Checkbox slot="selection" /></Column>
-      <Column><ColumnResizer /></Column>
-      <Column />
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell><Button slot="drag" /></Cell>
-        <Cell><Checkbox slot="selection" /></Cell>
-        <Cell />
-        <Cell />
-      </Row>
-    </TableBody>
-  </Table>
-</ResizableTableContainer>
-```
-
 ## Content
 
-`Table` follows the **Collection Components API**, accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -201,12 +168,13 @@ on external state (e.g. `columns` in this example).</Content>
 
 ### Asynchronous loading
 
-This example uses the `useAsyncList` hook to handle asynchronous loading of data from a server.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TableLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Collection, TableLoadMoreItem} from 'react-aria-components';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from 'react-stately';
 
 interface Character {
@@ -217,46 +185,79 @@ interface Character {
 }
 
 function AsyncSortTable() {
-  ///- begin highlight -///
   let list = useAsyncList<Character>({
-    async load({ signal }) {
-      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {
-        signal
-      });
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        { signal }
+      );
       let json = await res.json();
+
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
-  ///- end highlight -///
 
   return (
-    <Table aria-label="Star Wars characters">
-      <TableHeader>
-        <Column id="name" isRowHeader allowsSorting>Name</Column>
-        <Column id="height" allowsSorting>Height</Column>
-        <Column id="mass" allowsSorting>Mass</Column>
-        <Column id="birth_year" allowsSorting>Birth Year</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {(item) => (
-          <Row id={item.name}>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.height}</Cell>
-            <Cell>{item.mass}</Cell>
-            <Cell>{item.birth_year}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+    <div
+      style={{
+        height: 150,
+        overflow: 'auto',
+        border: '1px solid var(--border-color)',
+        borderRadius: 6
+      }}>
+      <Table
+        aria-label="Star Wars characters"
+        style={{tableLayout: 'fixed', width: '100%', border: 0}}>
+        <TableHeader
+          style={{
+            position: 'sticky',
+            top: 0,
+            background: 'var(--overlay-background)',
+            zIndex: 1
+          }}>
+          <Column id="name" isRowHeader allowsSorting>Name</Column>
+          <Column id="height" allowsSorting>Height</Column>
+          <Column id="mass" allowsSorting>Mass</Column>
+          <Column id="birth_year" allowsSorting>Birth Year</Column>
+        </TableHeader>
+        <TableBody
+          renderEmptyState={() => (
+            <ProgressCircle isIndeterminate aria-label="Loading..." />
+          )}>
+          <Collection items={list.items}>
+            {(item) => (
+              <Row id={item.name}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </Collection>
+          {/*- begin highlight -*/}
+          <TableLoadMoreItem
+            onLoadMore={list.loadMore}
+            isLoading={list.loadingState === 'loadingMore'}>
+            <ProgressCircle isIndeterminate aria-label="Loading more..." />
+          </TableLoadMoreItem>
+          {/*- end highlight -*/}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 ```
 
 ### Links
 
-Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
@@ -374,7 +375,7 @@ function Example(props) {
 
 ## Sorting
 
-Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, the table will call `onSortChange` with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
+Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, `onSortChange` is called with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
 
 ```tsx render
 "use client";
@@ -407,7 +408,7 @@ function SortableTable() {
   }
 
   return (
-    <Table 
+    <Table
       aria-label="Favorite pokemon"
       ///- begin highlight -///
       sortDescriptor={sortDescriptor}
@@ -528,14 +529,14 @@ export default function ResizableTable() {
       <Table aria-label="Table with resizable columns">
         <TableHeader columns={columns} dependencies={[columnWidths]}>
           {column => (
-            <Column 
+            <Column
               isRowHeader={column.id === 'file'}
               ///- begin highlight -///
               width={columnWidths.get(column.id)}
               ///- end highlight -///
             >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <span tabIndex={-1} className="column-name">File Name</span>
+                <span tabIndex={-1} className="column-name">{column.name}</span>
                 <ColumnResizer />
               </div>
             </Column>
@@ -591,7 +592,7 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Table) to learn more.
 
 ```tsx render
 "use client";
@@ -654,6 +655,30 @@ function ReorderableTable() {
 
 ## API
 
+<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
+
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem'}}
+<ResizableTableContainer>
+  <Table>
+    <TableHeader>
+      <Column />
+      <Column><Checkbox slot="selection" /></Column>
+      <Column><ColumnResizer /></Column>
+      <Column />
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><Button slot="drag" /></Cell>
+        <Cell><Checkbox slot="selection" /></Cell>
+        <Cell />
+        <Cell />
+      </Row>
+      <TableLoadMoreItem />
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
 ### Table
 
 <PropTable component={docs.exports.Table} links={docs.links} showDescription />
@@ -694,9 +719,14 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.ResizableTableContainer} links={docs.links} showDescription />
 
-
 ### ColumnResizer
 
 <PropTable component={docs.exports.ColumnResizer} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-ColumnResizer" properties={docs.exports.ColumnResizerRenderProps.properties} />
+
+### TableLoadMoreItem
+
+<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-TableLoadMoreItem" properties={docs.exports.TableLoadMoreItemRenderProps.properties} /> */}

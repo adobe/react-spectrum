@@ -9,11 +9,6 @@
   [slot=description] {
     font-size: 12px;
   }
-
-  &[data-orientation=horizontal] {
-    flex-direction: row;
-    align-items: center;
-  }
 }
 
 .react-aria-Radio {
@@ -75,4 +70,17 @@
       border-color: var(--border-color-disabled);
     }
   }
+}
+
+.react-aria-RadioGroup .radio-items {
+  display: flex;
+  gap: 8px;
+}
+
+.react-aria-RadioGroup[data-orientation=vertical] .radio-items {
+  flex-direction: column;
+}
+
+.react-aria-RadioGroup[data-orientation=horizontal] .radio-items {
+  flex-direction: row;
 }

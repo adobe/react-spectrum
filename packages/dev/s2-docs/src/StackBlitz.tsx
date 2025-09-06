@@ -53,8 +53,8 @@ function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' 
         'react-aria-components': '^1.10.0',
         react: '^19',
         'react-dom': '^19',
+        'lucide-react': '^0.514.0',
         ...(type === 'tailwind' ? {
-          'lucide-react': '^0.514.0',
           'tailwind-variants': '^0.3.1'
         } : {})
       },

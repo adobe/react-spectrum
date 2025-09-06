@@ -23,11 +23,11 @@ const example = style({
 });
 
 const standaloneCode = style({
-  '--code-padding': {
+  '--code-padding-x': {
     type: 'paddingTop',
     value: 32
   },
-  padding: '--code-padding',
+  padding: '--code-padding-x',
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
@@ -78,7 +78,9 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
   }
 
   let content = (
-    <CodePlatter>
+    <CodePlatter
+      files={files ? getFiles(files) : undefined}
+      type={props.type}>
       {code}
     </CodePlatter>
   );
@@ -106,7 +108,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   let lines = children.split('\n');
   return lines.length > maxLines
   ? (
-    <ExpandableCode hasHighlightedLine={children.includes('- begin highlight')}>
+    <ExpandableCode hasHighlightedLine={/- begin (highlight|focus)/.test(children)}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>
@@ -121,7 +123,7 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
 
 export function Files({children, files}: {children?: ReactNode, files: string[]}) {
   return (
-    <Tabs aria-label="Files" defaultSelectedKey="example" density="compact">
+    <Tabs key={files.join('|')} aria-label="Files" defaultSelectedKey="example" density="compact">
       <TabList styles={style({marginBottom: 20})}>
         {children && <Tab id="example">Example</Tab>}
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
@@ -157,14 +159,15 @@ export function getFiles(files: string[]) {
 
     let name = path.basename(file);
     let contents = fs.readFileSync(file, 'utf8');
-    fileContents[name] = contents;
+    fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
 
     for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
-      if (!specifier.startsWith('.')) {
+      specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
+      if (!/^(\.|starters)/.test(specifier)) {
         continue;
       }
 
-      let resolved = path.resolve(path.dirname(file), specifier);
+      let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
       if (!fileContents[path.basename(resolved)]) {
         queue.push(resolved);
       }
