@@ -5520,6 +5520,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/collections@npm:3.0.0-rc.4":
+  version: 3.0.0-rc.4
+  resolution: "@react-aria/collections@npm:3.0.0-rc.4"
+  dependencies:
+    "@react-aria/interactions": "npm:^3.25.4"
+    "@react-aria/ssr": "npm:^3.9.10"
+    "@react-aria/utils": "npm:^3.30.0"
+    "@react-types/shared": "npm:^3.31.0"
+    "@swc/helpers": "npm:^0.5.0"
+    use-sync-external-store: "npm:^1.4.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  checksum: 10c0/712c574704bc735b525a8c184780373e1854be515cabf83b22ee59ea9c52befd02495445b5546db44d913bb37273e16a59672298a180b57f72930e697d81c9ad
+  languageName: node
+  linkType: hard
+
 "@react-aria/collections@npm:3.0.0-rc.6, @react-aria/collections@workspace:packages/@react-aria/collections":
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
@@ -5728,6 +5745,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/gridlist@workspace:packages/@react-aria/gridlist"
   dependencies:
+    "@react-aria/collections": "npm:3.0.0-rc.4"
     "@react-aria/focus": "npm:^3.21.1"
     "@react-aria/grid": "npm:^3.14.4"
     "@react-aria/i18n": "npm:^3.12.12"
@@ -5762,7 +5780,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.5, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.4, @react-aria/interactions@npm:^3.25.5, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
@@ -6303,7 +6321,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.30.1, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.30.0, @react-aria/utils@npm:^3.30.1, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
@@ -8766,7 +8784,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.30.0, @react-types/shared@npm:^3.32.0, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.30.0, @react-types/shared@npm:^3.31.0, @react-types/shared@npm:^3.32.0, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
