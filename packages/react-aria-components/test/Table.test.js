@@ -1310,6 +1310,56 @@ describe('Table', () => {
         expect(checkbox).toBeChecked();
       }
     });
+
+    it('support drop target keyboard navigation', async () => {
+      const DndTableExample = stories.DndTableExample;
+      render(<DndTableExample />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+    
+      const labels = ['Pictures', 'Adobe Fresco', 'Apps', 'Adobe Illustrator', 'Adobe Lightroom', 'Adobe Dreamweaver'];
+    
+      for (let i = 0; i <= labels.length; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+    
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+    
+      await user.keyboard('{Home}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+    
+      for (let i = labels.length; i >= 0; i--) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+    
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+    
+      await user.keyboard('{End}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Dreamweaver');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+    });
   });
 
   describe('column resizing', () => {
