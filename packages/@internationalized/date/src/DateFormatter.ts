@@ -34,7 +34,18 @@ export class DateFormatter implements Intl.DateTimeFormat {
 
   /** Formats a date to an array of parts such as separators, numbers, punctuation, and more. */
   formatToParts(value: Date): Intl.DateTimeFormatPart[] {
-    return this.formatter.formatToParts(value);
+    const parts = this.formatter.formatToParts(value);
+
+    const literalBeforeDayPeriodIndex =
+      parts.findIndex((p) => p.type === 'dayPeriod') - 1;
+    if (literalBeforeDayPeriodIndex >= 0) {
+      const normalizedParts = parts.map((p, i) =>
+        i === literalBeforeDayPeriodIndex ? {...p, value: ' '} : p
+      );
+      return normalizedParts;
+    }
+
+    return parts;
   }
 
   /** Formats a date range as a string. */
