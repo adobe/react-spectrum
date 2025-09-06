@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, RangeCalendar} from 'react-aria-components';
-import {CalendarDate, parseDate} from '@internationalized/date';
+import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, DateValue, Heading, I18nProvider, RangeCalendar} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 import './styles.css';
+import {CalendarProps} from 'react-aria';
 
 export default {
   title: 'React Aria Components/Calendar',
@@ -22,7 +22,7 @@ export default {
 } as Meta<typeof Calendar>;
 
 export type CalendarStory = StoryObj<typeof Calendar>;
-export type RangeCalendarStory = StoryObj<typeof RangeCalendar>;
+
 
 function Footer() {
   const state = useContext(CalendarStateContext);
@@ -74,53 +74,61 @@ export const CalendarResetValue: CalendarStory = {
   )
 };
 
-function CalendarMultiMonthExample(args) {
-  let defaultDate = new CalendarDate(2021, 7, 1);
-  let [focusedDate, setFocusedDate] = React.useState(defaultDate);
-
-  return (
-    <>
-      <button
-        style={{marginBottom: 20}}
-        onClick={() => setFocusedDate(defaultDate)}>
-        Reset focused date
-      </button>
-      <Calendar style={{width: 500}} visibleDuration={{months: 3}} focusedValue={focusedDate} onFocusChange={setFocusedDate} defaultValue={defaultDate} {...args}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button slot="previous">&lt;</Button>
-          <Heading style={{flex: 1, textAlign: 'center'}} />
-          <Button slot="next">&gt;</Button>
-        </div>
-        <div style={{display: 'flex', gap: 20}}>
-          <CalendarGrid style={{flex: 1}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
-          <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
-          <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
-        </div>
-      </Calendar>
-    </>
-  );
+export const CalendarMultiMonth: CalendarStory = {
+  render: () => (
+    <Calendar style={{width: 500}} visibleDuration={{months: 2}}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button slot="previous">&lt;</Button>
+        <Heading style={{flex: 1, textAlign: 'center'}} />
+        <Button slot="next">&gt;</Button>
+      </div>
+      <div style={{display: 'flex', gap: 20}}>
+        <CalendarGrid style={{flex: 1}}>
+          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+        </CalendarGrid>
+        <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
+          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+        </CalendarGrid>
+      </div>
+    </Calendar>
+  )
 };
 
-export const CalendarMultiMonth: CalendarStory = {
-  render: (args) => <CalendarMultiMonthExample {...args} />,
+interface CalendarFirstDayOfWeekExampleProps extends CalendarProps<DateValue> {
+  locale: string
+}
+
+export const CalendarFirstDayOfWeekExample: StoryObj<CalendarFirstDayOfWeekExampleProps> = {
+  render: function Example(args) {
+    return (
+      <div>
+        <I18nProvider locale={args.locale}>
+          <Calendar style={{width: 220}}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Button slot="previous">&lt;</Button>
+              <Heading style={{flex: 1, textAlign: 'center'}} />
+              <Button slot="next">&gt;</Button>
+            </div>
+            <CalendarGrid style={{width: '100%'}}>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            </CalendarGrid>
+          </Calendar>
+        </I18nProvider>
+      </div>
+    );
+  },
   args: {
-    selectionAlignment: 'center'
+    locale: 'en-US-u-ca-iso8601-fw-tue'
   },
   argTypes: {
-    selectionAlignment: {
+    locale: {
       control: 'select',
-      options: ['start', 'center', 'end']
+      options: ['en-US-u-ca-iso8601-fw-tue', 'en-US-u-ca-iso8601', 'en-US', 'fr-FR-u-ca-iso8601-fw-tue', 'fr-FR-u-ca-iso8601', 'fr-FR']
     }
   }
 };
 
-export const RangeCalendarExample: RangeCalendarStory = {
+export const RangeCalendarExample: CalendarStory = {
   render: () => (
     <RangeCalendar style={{width: 220}}>
       <div style={{display: 'flex', alignItems: 'center'}}>
@@ -133,37 +141,4 @@ export const RangeCalendarExample: RangeCalendarStory = {
       </CalendarGrid>
     </RangeCalendar>
   )
-};
-
-
-export const RangeCalendarMultiMonthExample: RangeCalendarStory = {
-  render: (args) => (
-    <RangeCalendar style={{width: 500}} visibleDuration={{months: 3}} defaultValue={{start: parseDate('2025-08-04'), end: parseDate('2025-08-10')}} {...args} >
-      <div style={{display: 'flex', alignItems: 'center'}}>
-        <Button slot="previous">&lt;</Button>
-        <Heading style={{flex: 1, textAlign: 'center'}} />
-        <Button slot="next">&gt;</Button>
-      </div>
-      <div style={{display: 'flex', gap: 20}}>
-        <CalendarGrid style={{flex: 1}}>
-          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-        </CalendarGrid>
-        <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-        </CalendarGrid>
-        <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
-          {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-        </CalendarGrid>
-      </div>
-    </RangeCalendar>
-  ),
-  args: {
-    selectionAlignment: 'center'
-  },
-  argTypes: {
-    selectionAlignment: {
-      control: 'select',
-      options: ['start', 'center', 'end']
-    }
-  }
 };
