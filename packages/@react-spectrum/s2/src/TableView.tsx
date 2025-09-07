@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
+import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style, StyleString} from '../style' with {type: 'macro'};
 import {
   Button,
   CellRenderProps,
@@ -44,7 +44,7 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
@@ -1004,12 +1004,12 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends Omit<RACCellProps, 'className' | 'style'>, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
   children: ReactNode,
-  styles?: StylesPropWithoutWidth
+  styles?: StyleString
 }
 
 /**
