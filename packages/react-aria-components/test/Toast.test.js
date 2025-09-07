@@ -250,6 +250,54 @@ describe('Toast', () => {
     expect(document.activeElement).toBe(button);
   });
 
+  it('should provide toast index', async () => {
+    const queue = new ToastQueue();
+    function ToastToggle() {
+      return (
+        <>
+          <ToastRegion queue={queue}>
+            {({toast, index}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{`${toast.content}: ${index}`}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion>
+          <Button
+            onPress={() => {
+              if (queue.visibleToasts.length === 0){
+                queue.add('First toast');
+                queue.add('Second toast');
+                queue.add('Third toast');
+              } else {
+                queue.clear();
+              }
+            }}>
+            {close ? 'Hide' : 'Show'} Toasts
+          </Button>
+        </>
+      );
+    }
+
+    let {getByText, getAllByRole, queryByRole} = render(<ToastToggle />);
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    act(() => jest.advanceTimersByTime(100));
+    let toasts = getAllByRole('alertdialog');
+    expect(toasts).toHaveLength(3);
+
+    expect(getByText('First toast: 0')).toBeVisible();
+    expect(getByText('Second toast: 1')).toBeVisible();
+    expect(getByText('Third toast: 2')).toBeVisible();
+
+    await user.click(button);
+    expect(queryByRole('alertdialog')).toBeNull();
+  });
+
   it('should support programmatically closing toasts', async () => {
     const queue = new ToastQueue();
     function ToastToggle() {
