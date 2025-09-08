@@ -68,7 +68,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp, hasSection} = listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -313,10 +313,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
-    let {collection} = state;
-    let nodes = [...collection];
     // TODO: refactor BaseCollection to store an absolute index of a node's position?
-    if (nodes.some(node => node.type === 'section')) {
+    if (hasSection) {
       let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T> : null;
       let isInSection = parentNode && parentNode.type === 'section';
       let lastChildKey = parentNode?.lastChildKey;

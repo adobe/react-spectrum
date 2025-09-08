@@ -145,7 +145,9 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
+  let {collection} = state;
+  let nodes = [...collection];
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp, hasSection: nodes.some(node => node.type === 'section')});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
