@@ -4,8 +4,6 @@ export default Layout;
 import {ActionButton} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
-export const section = 'S2';
-
 # ActionButton
 
 <PageDescription>{docs.exports.ActionButton.description}</PageDescription>
@@ -19,44 +17,9 @@ export const section = 'S2';
   importSource="@react-spectrum/s2"
   type="s2" />
 
-## Content
-
-ActionButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ActionButton.
-A visible label can be provided by passing a string or a Text component as a child, depending on whether the ActionButton has an accompanying icon.
-
-```tsx render
-"use client";
-import {ActionButton, Text} from '@react-spectrum/s2';
-import Edit from '@react-spectrum/s2/icons/Edit';
-
-<ActionButton>
-  <Edit />
-  <Text>Icon + Label</Text>
-</ActionButton>
-```
-
-### Accessibility
-
-If no visible label is provided (e.g. an icon only button),
-an alternative text label must be provided to identify the control for accessibility. This should be added using
-the `aria-label` prop.
-
-```tsx
-<ActionButton aria-label="Icon only">
-  <Edit />
-</ActionButton>
-```
-
-### Internationalization
-
-In order to internationalize an ActionButton, a localized string should be passed to the `children` or `aria-label` prop.
-
 ## Events
 
-ActionButtons support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress`
-prop.
-
-The following example uses an `onPress` handler to update a counter stored in React state.
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button.
 
 ```tsx render hideImports
 "use client";
@@ -67,11 +30,25 @@ function Example() {
   let [count, setCount] = useState(0);
 
   return (
-   <ActionButton onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
+    /*- begin highlight -*/
+    <ActionButton onPress={() => setCount(c => c + 1)}>
+    {/*- end highlight -*/}
+      {count} Edits
+    </ActionButton>
   );
 }
 ```
 
-## Props
+## API
+
+```tsx links={{ActionButton: '#actionbutton', Avatar: 'Avatar.html'}}
+<ActionButton>
+  <Icon /> or <Avatar />
+  <Text />
+  <NotificationBadge />
+</ActionButton>
+```
+
+### ActionButton
 
 <PropTable component={docs.exports.ActionButton} links={docs.links} />

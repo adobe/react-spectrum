@@ -29,6 +29,7 @@
   .react-aria-Header {
     font-size: 1.000125rem;
     font-weight: bold;
+    font-variation-settings: initial;
     padding: 0 0.6247499999999999rem;
   }
 
@@ -205,4 +206,12 @@
 
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+}
+
+.react-aria-ListBoxLoadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
 }

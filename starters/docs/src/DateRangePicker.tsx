@@ -23,7 +23,7 @@ export interface DateRangePickerProps<T extends DateValue>
 }
 
 export function DateRangePicker<T extends DateValue>(
-  { label, description, errorMessage, firstDayOfWeek, ...props }:
+  { label, description, errorMessage, ...props }:
     DateRangePickerProps<T>
 ) {
   return (
@@ -43,7 +43,7 @@ export function DateRangePicker<T extends DateValue>(
         {description && <Text slot="description">{description}</Text>}
         <FieldError>{errorMessage}</FieldError>
         <Popover hideArrow>
-          <RangeCalendar firstDayOfWeek={firstDayOfWeek} />
+          <RangeCalendar />
         </Popover>
       </AriaDateRangePicker>
     )

@@ -353,6 +353,7 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
+  textDecoration: 'none',
   flexShrink: 0,
   transition: 'default',
   paddingX: {
