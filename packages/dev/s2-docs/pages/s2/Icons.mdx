@@ -1,4 +1,5 @@
 import {Layout} from '../../src/Layout';
+import {InstallCommand} from '../../src/InstallCommand';
 import {IconCards} from '../../src/IconCards';
 import {IconColors} from '../../src/IconColors';
 import {IconSizes} from '../../src/IconSizes';
@@ -59,7 +60,7 @@ To use custom icons, you first need to convert your SVGs into compatible icon co
 
 If you are using Parcel, the `@react-spectrum/parcel-transformer-s2-icon` plugin can be used to convert SVGs to icon components. First install it into your project as a dev dependency:
 
-`yarn add @react-spectrum/parcel-transformer-s2-icon --dev`
+<InstallCommand pkg="@react-spectrum/parcel-transformer-s2-icon" flags="--dev" />
 
 Then, add it to your `.parcelrc`:
 
