@@ -41,6 +41,18 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
+function mouseEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true, composed: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
+
 describe('usePress', function () {
   beforeAll(() => {
     jest.useFakeTimers();
@@ -1049,7 +1061,7 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
+    it('should not fire press/click events for disabled elements', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
@@ -1065,6 +1077,7 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, mouseEvent('click', {}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([]);
@@ -4553,11 +4566,12 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
-      const shadowRoot = setupShadowDOMTest({isDisabled: true});
+    it('should not fire press/click events for disabled elements', function () {
+      const shadowRoot = setupShadowDOMTest({isDisabled: true, onClick: e => addEvent({type: e.type, target: e.target})});
 
       const el = shadowRoot.getElementById('testElement');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, mouseEvent('click', {}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([]);
