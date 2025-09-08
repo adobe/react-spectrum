@@ -14,9 +14,9 @@ export function InputGroup(props: InputGroupProps) {
       {props.label && <span id={id}>{props.label}</span>}
       <Group {...props} aria-labelledby={id}>
         {composeRenderProps(props.children, (children, renderProps) => (
-          <InputContext value={{disabled: renderProps.isDisabled}}>
+          <InputContext.Provider value={{disabled: renderProps.isDisabled}}>
             {children}
-          </InputContext>
+          </InputContext.Provider>
         ))}
       </Group>
     </div>
