@@ -30,6 +30,7 @@ import {
   NotificationBadge,
   Picker,
   PickerItem,
+  Provider,
   Row,
   SubmenuTrigger,
   TableBody,
@@ -70,7 +71,7 @@ function App() {
     {id: 'waterfall', label: 'Waterfall'}
   ];
   return (
-    <main>
+    <Provider elementType="main">
       <Heading
         styles={style({ font: "heading-xl", textAlign: "center" })}
         level={1}
@@ -96,10 +97,11 @@ function App() {
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary"><Text>Secondary</Text><NotificationBadge value={2} /></Button>
+            <Button variant="secondary"><Text>Secondary</Text></Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
+              <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
             <LinkButton
@@ -183,6 +185,7 @@ function App() {
           <TableView
             aria-label="Files"
             styles={style({width: 320, height: 320})}
+            selectionMode="multiple"
             renderActionBar={selectedKeys => (
               <ActionBar>
                 <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
@@ -266,7 +269,7 @@ function App() {
           <Lazy />
         </React.Suspense>}
       </div>
-    </main>
+    </Provider>
   );
 }
 
