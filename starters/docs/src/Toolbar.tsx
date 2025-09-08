@@ -4,8 +4,8 @@ import './Toolbar.css';
 
 export function Toolbar(props: ToolbarProps) {
   return (
-    <ToggleButtonGroupContext value={{orientation: props.orientation}}>
+    <ToggleButtonGroupContext.Provider value={{orientation: props.orientation}}>
       <RACToolbar {...props} />
-    </ToggleButtonGroupContext>
+    </ToggleButtonGroupContext.Provider>
   );
 }
