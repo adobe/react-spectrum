@@ -246,7 +246,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
       isOpen: state.isOpen,
-      isReadOnly: props.isReadOnly || false,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });

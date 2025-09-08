@@ -38,12 +38,12 @@ export interface DateFieldRenderProps {
    * Whether the date field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
-    /**
+  isDisabled: boolean,
+  /**
    * Whether the date field is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean,
+  isReadOnly: boolean
 }
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -87,7 +87,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly:state.isReadOnly
+      isReadOnly: state.isReadOnly
     },
     defaultClassName: 'react-aria-DateField'
   });
@@ -160,7 +160,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly:state.isReadOnly
+      isReadOnly: state.isReadOnly
     },
     defaultClassName: 'react-aria-TimeField'
   });
@@ -190,7 +190,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined} 
-        data-readonly={state.isReadOnly || undefined}/>
+        data-readonly={state.isReadOnly || undefined} />
     </Provider>
   );
 });
