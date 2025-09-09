@@ -470,7 +470,7 @@ function ScrollingBoundaryContainerExample(args) {
   let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
   return (
     <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto'}}>
-      <div style={{width: 1000, height: 1000}}>
+      <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <DialogTrigger>
           <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
           <Popover
