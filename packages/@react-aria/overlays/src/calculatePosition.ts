@@ -179,10 +179,13 @@ function getDelta(
   let boundarySize = boundaryDimensions[AXIS_SIZE[axis]];
   // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
   // Note that these values are with respect to the visual viewport (aka 0,0 is the top left of the viewport)
-  let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
-  let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
-  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis];
-  let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+
+  let boundaryStartEdge =  containerOffsetWithBoundary[axis] + boundaryDimensions.scroll[AXIS[axis]] +  padding;
+  let boundaryEndEdge =  containerOffsetWithBoundary[axis] + boundaryDimensions.scroll[AXIS[axis]] + boundarySize - padding;
+  // transformed value of the left edge of the overlay
+  let startEdgeOffset = offset - containerScroll + boundaryDimensions.scroll[AXIS[axis]] + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+  // transformed value of the right edge of the overlay
+  let endEdgeOffset = offset - containerScroll + size + boundaryDimensions.scroll[AXIS[axis]]  + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
   // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount to align one of the overlay's
   // edges with the closest boundary edge.
@@ -288,6 +291,8 @@ function getMaxHeight(
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
+  // TODO: this calculation is also incorrect? Might need to do the same logic as in getDelta to properly calculate where overlay top is with respect to the boundary, right now
+  // it is erroneously adding containerOffsetWithBoundary
   let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - (position.bottom ?? 0) - overlayHeight);
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
@@ -302,6 +307,7 @@ function getMaxHeight(
       - (boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the top of the boundary
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     );
+    console.log('maxheih', containerOffsetWithBoundary, position)
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
 }
 
@@ -315,10 +321,10 @@ function getAvailableSpace(
 ) {
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
-    return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - (boundaryDimensions.scroll[axis] ?? 0) + containerOffsetWithBoundary[axis] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
+    return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - (boundaryDimensions.scroll[axis] ?? 0) - containerOffsetWithBoundary[axis] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
   }
 
-  return Math.max(0, boundaryDimensions[size] + boundaryDimensions[axis] + boundaryDimensions.scroll[axis] - containerOffsetWithBoundary[axis] - childOffset[axis] - childOffset[size] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
+  return Math.max(0, boundaryDimensions[size] + boundaryDimensions[axis] + boundaryDimensions.scroll[axis] + containerOffsetWithBoundary[axis] - childOffset[axis] - childOffset[size] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
 }
 
 export function calculatePositionInternal(
@@ -507,7 +513,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
   // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(container, boundaryElement, false);
+  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(boundaryElement, container,  false);
+  console.log('is tag body',  boundaryElement.tagName === 'BODY')
   if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
     containerDimensions.scroll.top = 0;
     containerDimensions.scroll.left = 0;
