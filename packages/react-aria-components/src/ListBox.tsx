@@ -21,7 +21,7 @@ import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, 
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
-import {SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
