@@ -287,14 +287,15 @@ function getMaxHeight(
   margins: Position,
   padding: number,
   overlayHeight: number,
-  heightGrowthDirection: HeightGrowthDirection
+  heightGrowthDirection: HeightGrowthDirection,
+  containerDimensions: Dimensions
 ) {
-  const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
+  const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : containerDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
   // TODO: this calculation is also incorrect? Might need to do the same logic as in getDelta to properly calculate where overlay top is with respect to the boundary, right now
   // it is erroneously adding containerOffsetWithBoundary
-  let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : (containerHeight - (position.bottom ?? 0) - overlayHeight);
+  let overlayTop = position.top != null ? position.top : (containerHeight - (position.bottom ?? 0) - overlayHeight);
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
@@ -420,7 +421,8 @@ export function calculatePositionInternal(
     margins,
     padding,
     overlaySize.height,
-    heightGrowthDirection
+    heightGrowthDirection,
+    containerDimensions
   );
 
   if (userSetMaxHeight && userSetMaxHeight < maxHeight) {

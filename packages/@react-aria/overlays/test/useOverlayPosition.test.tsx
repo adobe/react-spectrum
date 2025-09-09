@@ -80,7 +80,7 @@ describe('useOverlayPosition', function () {
     `);
   });
 
-  it.only('should position the overlay relative to the trigger at top', function () {
+  it('should position the overlay relative to the trigger at top', function () {
     let res = render(<Example placement="top" />);
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');
@@ -89,7 +89,7 @@ describe('useOverlayPosition', function () {
       position: absolute;
       z-index: 100000;
       left: 12px;
-      bottom: 518px;
+      bottom: 350px;
       max-height: 238px;
     `);
 
@@ -281,7 +281,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       top: 200px;
-      max-height: 406px;
+      max-height: 556px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -303,7 +303,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       bottom: 300px;
-      max-height: 238px;
+      max-height: 88px;
     `);
 
     expect(overlay).toHaveTextContent('placement: top');
