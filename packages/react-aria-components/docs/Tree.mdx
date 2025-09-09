@@ -668,7 +668,7 @@ Items may also have an action specified by directly applying `onAction` on the `
 Tree items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<TreeItem>` component. Links behave the same way as described above for item actions depending on the `selectionMode` and `selectionBehavior`.
 
 ```tsx example
-<Tree aria-label="Tree with onAction applied on the items directly" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
+<Tree aria-label="Tree with href" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
   <MyTreeItem
     /*- begin highlight -*/
     href="https://pokemondb.net/pokedex/bulbasaur"
@@ -769,7 +769,7 @@ interface Pokemon {
   name: string
 }
 
-function AsyncSortTable() {
+function AsyncTree() {
   let starWarsList = useAsyncList<StarWarsCharacter>({
     async load({signal, cursor}) {
       if (cursor) {
