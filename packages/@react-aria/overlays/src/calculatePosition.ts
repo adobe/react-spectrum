@@ -12,7 +12,6 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
 import {clamp, isWebKit} from '@react-aria/utils';
-import ConversionFunnel from '@spectrum-icons/workflow/ConversionFunnel';
 
 interface Position {
   top?: number,
@@ -272,7 +271,6 @@ function computePosition(
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
     // container.
-    console.log('isContainerPositioned', containerDimensions, boundaryDimensions);
     const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : containerDimensions[TOTAL_SIZE[size]]);
     position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
