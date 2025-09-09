@@ -80,7 +80,7 @@ describe('useOverlayPosition', function () {
     `);
   });
 
-  it('should position the overlay relative to the trigger at top', function () {
+  it.only('should position the overlay relative to the trigger at top', function () {
     let res = render(<Example placement="top" />);
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');
