@@ -257,14 +257,14 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
-  private _node: CollectionNode<T> | null;
+  node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this._node = null;
+    this.node = null;
   }
 
   get index(): number {
@@ -284,23 +284,15 @@ export class ElementNode<T> extends BaseNode<T> {
     return 0;
   }
 
-  get node(): CollectionNode<T> {
-    if (this._node == null) {
-      throw Error('Attempted to access node before it was defined. Check if setProps wasn\'t called before attempting to access the node.');
-    }
-
-    return this._node;
-  }
-
-  set node(node: CollectionNode<T>) {
-    this._node = node;
-  }
-
   /**
    * Lazily gets a mutable instance of a Node. If the node has already
    * been cloned during this update cycle, it just returns the existing one.
    */
-  private getMutableNode(): Mutable<CollectionNode<T>> {
+  private getMutableNode(): Mutable<CollectionNode<T>> | null {
+    if (this.node == null) {
+      return null;
+    }
+
     if (!this.isMutated) {
       this.node = this.node.clone();
       this.isMutated = true;
@@ -313,22 +305,26 @@ export class ElementNode<T> extends BaseNode<T> {
   updateNode(): void {
     let nextSibling = this.nextVisibleSibling;
     let node = this.getMutableNode();
+    if (node == null) {
+      return;
+    }
+
     node.index = this.index;
     node.level = this.level;
-    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
-    node.prevKey = this.previousVisibleSibling?.node.key ?? null;
-    node.nextKey = nextSibling?.node.key ?? null;
+    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node?.key ?? null : null;
+    node.prevKey = this.previousVisibleSibling?.node?.key ?? null;
+    node.nextKey = nextSibling?.node?.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstVisibleChild?.node.key ?? null;
-    node.lastChildKey = this.lastVisibleChild?.node.key ?? null;
+    node.firstChildKey = this.firstVisibleChild?.node?.key ?? null;
+    node.lastChildKey = this.lastVisibleChild?.node?.key ?? null;
 
     // Update the colIndex of sibling nodes if this node has a colSpan.
     if ((node.colSpan != null || node.colIndex != null) && nextSibling) {
       // This queues the next sibling for update, which means this happens recursively.
       let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
-      if (nextColIndex !== nextSibling.node.colIndex) {
+      if (nextSibling.node != null && nextColIndex !== nextSibling.node.colIndex) {
         let siblingNode = nextSibling.getMutableNode();
-        siblingNode.colIndex = nextColIndex;
+        siblingNode!.colIndex = nextColIndex;
       }
     }
   }
@@ -336,7 +332,7 @@ export class ElementNode<T> extends BaseNode<T> {
   setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, CollectionNodeClass: CollectionNodeClass<any>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
     let node;
     let {value, textValue, id, ...props} = obj;
-    if (this._node == null) {
+    if (this.node == null) {
       node = new CollectionNodeClass(id ?? `react-aria-${++this.ownerDocument.nodeId}`);
       this.node = node;
     } else {
@@ -450,7 +446,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private addNode(element: ElementNode<T>): void {
-    if (element.isHidden) {
+    if (element.isHidden || element.node == null) {
       return;
     }
 
@@ -461,10 +457,14 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       }
     }
 
-    collection.addNode(element.node!);
+    collection.addNode(element.node);
   }
 
   private removeNode(node: ElementNode<T>): void {
+    if (node.node == null) {
+      return;
+    }
+
     for (let child of node) {
       this.removeNode(child);
     }
@@ -516,7 +516,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     // Finally, update the collection.
     if (this.nextCollection) {
-      this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
+      this.nextCollection.commit(this.firstVisibleChild?.node?.key ?? null, this.lastVisibleChild?.node?.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
         this.nextCollection = null;
