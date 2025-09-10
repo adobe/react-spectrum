@@ -149,4 +149,20 @@ describe('Link', () => {
     await user.click(link);
     expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
   });
+
+  it('should not navigate if disabled', async () => {
+    let navigate = jest.fn();
+    let useHref = href => '/base' + href;
+    let onClick = jest.fn();
+    let {getByRole} = render(
+      <RouterProvider navigate={navigate} useHref={useHref}>
+        <Link isDisabled href="/foo" routerOptions={{foo: 'bar'}} onClick={onClick}>Test</Link>
+      </RouterProvider>
+    );
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('href', '/base/foo');
+    await user.click(link);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });

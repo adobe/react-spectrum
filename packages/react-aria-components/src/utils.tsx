@@ -73,7 +73,7 @@ export interface StyleRenderProps<T> {
   style?: StyleOrFunction<T>
 }
 
-type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
+export type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */

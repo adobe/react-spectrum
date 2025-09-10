@@ -426,7 +426,7 @@ let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'report
 
 const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
-    initialItems: rows,
+    initialItems: args.items as any ?? rows,
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
@@ -1195,4 +1195,81 @@ export const TreeWithDragAndDropVirtualized = {
   ...TreeWithDragAndDrop,
   render: TreeDragAndDropVirtualizedRender,
   name: 'Tree with drag and drop (virtualized)'
+};
+
+
+interface ITreeItem {
+  id: string,
+  name: string,
+  childItems?: Iterable<ITreeItem>
+}
+
+let totalItems = 0;
+let itemKeys = new Set<any>();
+/**
+ * Generates a tree data structure with 10 items per level and 6 levels deep.
+ * @returns Array of tree items with the specified structure.
+ */
+function generateTreeData(): Array<ITreeItem> {
+  /**
+   * Recursively generates tree items for a given level.
+   * @param level - Current depth level (1-6).
+   * @param parentId - Parent item ID for generating unique child IDs.
+   * @returns Array of tree items for this level.
+   */
+  function generateLevel(level: number, parentId: string = ''): Array<ITreeItem> {
+    const items: ITreeItem[] = [];
+    const itemsPerLevel = 7;
+
+    for (let i = 1; i < itemsPerLevel; i++) {
+      const itemId = parentId ? `${parentId}-${i}` : `level-${level}-item-${i}`;
+      const itemName = `Level ${level} Item ${i}`;
+
+      const item: ITreeItem = {
+        id: itemId,
+        name: itemName
+      };
+
+      // Add child items if not at the deepest level (level 6)
+      if (level < 6) {
+        item.childItems = generateLevel(level + 1, itemId);
+      }
+
+      totalItems++;
+      items.push(item);
+      itemKeys.add(itemId);
+    }
+
+    return items;
+  }
+
+  return generateLevel(1);
+}
+
+const treeData = generateTreeData();
+console.log(`Total items: ${totalItems}`);
+
+function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());
+  let expandAll = () => {
+    setExpandedKeys(itemKeys);
+  };
+
+  return (
+    <>
+      <button onClick={expandAll}>Expand All {totalItems}</button>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <TreeExampleDynamicRender {...args} expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} />
+      </Virtualizer>
+    </>
+  );
+}
+
+export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
+  ...TreeExampleDynamic,
+  args: {
+    ...TreeExampleDynamic.args,
+    items: treeData
+  },
+  render: (args) => <HugeVirtualizedTreeRender {...args} />
 };

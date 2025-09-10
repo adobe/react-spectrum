@@ -394,15 +394,15 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
   );
 
   return (
-    <ListBox
-      selectionMode={selectionMode}
-      layout="grid"
-      className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
-      style={UNSAFE_style}
-      {...otherProps}>
-      <SelectBoxContext.Provider value={selectBoxContextValue}>
+    <SelectBoxContext.Provider value={selectBoxContextValue}>
+      <ListBox
+        selectionMode={selectionMode}
+        layout="grid"
+        className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
+        style={UNSAFE_style}
+        {...otherProps}>
         {children}
-      </SelectBoxContext.Provider>
-    </ListBox>
+      </ListBox>
+    </SelectBoxContext.Provider>
   );
 });
