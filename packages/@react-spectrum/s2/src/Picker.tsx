@@ -33,8 +33,10 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
+  checkbox,
   checkmark,
   description,
   icon,
@@ -64,6 +66,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
@@ -91,8 +94,9 @@ export interface PickerStyleProps {
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
+type SelectionMode = 'single' | 'multiple';
+export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -262,7 +266,7 @@ let InsideSelectValueContext = createContext(false);
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object, M extends SelectionMode = 'single'>(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -507,7 +511,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         {(renderProps) => (
           <>
             <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-              {({defaultChildren}) => {
+              {({selectedItems, defaultChildren, selectedText}) => {
                 return (
                   <Provider
                     values={[
@@ -531,7 +535,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {defaultChildren}
+                    {selectedItems.length <= 1 ? defaultChildren : <Text slot="label">{selectedText}</Text>}
                   </Provider>
                 );
               }}
@@ -577,6 +581,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
+        let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
           <DefaultProvider
             context={IconContext}
@@ -591,7 +596,12 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                   description: {styles: description({...renderProps, size})}
                 }
               }}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !isLink && (
+                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                </div>
+              )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </DefaultProvider>
           </DefaultProvider>
