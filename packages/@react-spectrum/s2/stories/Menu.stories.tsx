@@ -15,7 +15,7 @@ import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
@@ -35,6 +35,8 @@ import {Selection} from 'react-aria-components';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 
+const events = ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'];
+
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
@@ -42,9 +44,10 @@ const meta: Meta<typeof CombinedMenu> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Menu'
 };
 
