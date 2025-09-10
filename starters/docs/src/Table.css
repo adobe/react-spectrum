@@ -13,6 +13,10 @@
   word-break: break-word;
   forced-color-adjust: none;
 
+  &div {
+    padding: 0;
+  }
+
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
@@ -76,6 +80,13 @@
     padding: 4px 8px;
     text-align: left;
     outline: none;
+    box-sizing: border-box;
+
+    &div {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
 
     &[data-focus-visible] {
       outline: 2px solid var(--focus-ring-color);
@@ -107,6 +118,10 @@
       --radius-top: 0px;
     }
   }
+
+  .react-aria-ProgressBar {
+    margin: auto;
+  }
 }
 
 :where(.react-aria-Row) .react-aria-Checkbox {
@@ -124,6 +139,7 @@
   .column-header {
     display: flex;
     align-items: center;
+    font-weight: bold;
   }
 
   .sort-indicator {
@@ -268,4 +284,9 @@
   width: 30px;
   object-fit: cover;
   display: block;
+}
+
+.react-aria-TableLoadingIndicator {
+  height: 24px;
+  position: relative;
 }

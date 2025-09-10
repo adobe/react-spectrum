@@ -66,6 +66,9 @@ function createElementWithDimensions(elemName, dimensions, margins = {}) {
     bottom: dimensions.bottom || 0
   });
 
+  jest.spyOn(elem, 'offsetWidth', 'get').mockImplementation(() => dimensions.width || 0);
+  jest.spyOn(elem, 'offsetHeight', 'get').mockImplementation(() => dimensions.height || 0);
+
   jest.spyOn(elem, 'scrollWidth', 'get').mockImplementation(() => dimensions.width || 0);
   jest.spyOn(elem, 'scrollHeight', 'get').mockImplementation(() => dimensions.height || 0);
 

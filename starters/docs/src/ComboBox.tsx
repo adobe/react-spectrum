@@ -28,18 +28,20 @@ export function ComboBox<T extends object>(
   return (
     (
       <AriaComboBox {...props}>
-        <Label>{label}</Label>
-        <div className="my-combobox-container">
-          <Input />
-          <FieldButton><ChevronDown size={16} /></FieldButton>
-        </div>
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-        <Popover hideArrow>
-          <ListBox>
-            {children}
-          </ListBox>
-        </Popover>
+        {({isInvalid}) => (<>
+          <Label>{label}</Label>
+          <div className="my-combobox-container">
+            <Input />
+            <FieldButton><ChevronDown size={16} /></FieldButton>
+          </div>
+          {description && !isInvalid && <Text slot="description">{description}</Text>}
+          <FieldError>{errorMessage}</FieldError>
+          <Popover hideArrow>
+            <ListBox>
+              {children}
+            </ListBox>
+          </Popover>
+        </>)}
       </AriaComboBox>
     )
   );

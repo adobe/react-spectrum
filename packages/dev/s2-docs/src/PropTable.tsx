@@ -19,10 +19,10 @@ const GROUPS = {
     'label', 'labelPosition', 'labelAlign', 'contextualHelp'
   ],
   Validation: [
-    'minValue', 'maxValue', 'step', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'necessityIndicator', 'description', 'errorMessage'
+    'minValue', 'maxValue', 'step', 'minLength', 'maxLength', 'pattern', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'validationErrors', 'necessityIndicator', 'description', 'errorMessage'
   ],
   Overlay: [
-    'isOpen', 'defaultOpen', 'onOpenChange', 'placement', 'direction', 'align', 'shouldFlip', 'menuWidth'
+    'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'offset', 'crossOffset', 'containerPadding', 'menuWidth'
   ],
   Events: [
     /^on[A-Z]/
@@ -34,7 +34,7 @@ const GROUPS = {
     'style', 'className'
   ],
   Forms: [
-    'name', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
+    'name', 'startName', 'endName', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
   ],
   Accessibility: [
     'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
@@ -79,11 +79,11 @@ export function PropTable({component, links, showDescription}: PropTableProps) {
 interface GroupedPropTableProps {
   properties: TInterface['properties'],
   links: any,
-  propGroups: {[name: string]: (string | RegExp)[]},
+  propGroups?: {[name: string]: (string | RegExp)[]},
   defaultExpanded?: Set<string>
 }
 
-export function GroupedPropTable({properties, links, propGroups, defaultExpanded}: GroupedPropTableProps) {
+export function GroupedPropTable({properties, links, propGroups = GROUPS, defaultExpanded = DEFAULT_EXPANDED}: GroupedPropTableProps) {
   setLinks(links);
 
   let [props, groups] = groupProps(properties, propGroups);
@@ -197,6 +197,10 @@ function groupProps(
         }
 
         if (propName === 'target' && props[propName].value.type !== 'identifier') {
+          continue;
+        }
+
+        if (propName === 'placement' && (props[propName].value.type !== 'union' || props[propName].value.elements.length !== 22)) {
           continue;
         }
 
