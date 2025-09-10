@@ -19,7 +19,7 @@ export interface ColorChannelFieldState extends NumberFieldState {
   /** The default value of the field. */
   defaultColorValue: Color | null,
   /** Sets the color value of the field. */
-  setColorValue(value: Color | null): void
+  setColorValue: (value: Color | null) => void
 }
 
 /**
