@@ -1,4 +1,5 @@
 import {CodeFold} from './CodeFold';
+import {CodeLink} from './Link';
 import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
 import React, {ReactNode} from 'react';
@@ -38,16 +39,19 @@ function Highlight({children}) {
 
 const groupings = {
   highlight: Highlight,
-  collapse: CodeFold
+  collapse: CodeFold,
+  focus: 'span'
 };
 
+type Links = {[name: string]: string};
 export interface ICodeProps {
   children: string,
   lang?: string,
-  hideImports?: boolean
+  hideImports?: boolean,
+  links?: Links
 }
  
-export function Code({children, lang, hideImports = true}: ICodeProps) {
+export function Code({children, lang, hideImports = true, links}: ICodeProps) {
   if (lang) {
     // @ts-ignore
     let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
@@ -73,7 +77,7 @@ export function Code({children, lang, hideImports = true}: ICodeProps) {
           visible.push(line);
         }
 
-        if (line.tagName === 'highlight' && !hasHighlight) {
+        if ((line.tagName === 'highlight' || line.tagName === 'focus') && !hasHighlight) {
           hasHighlight = true;
           // Center highlighted lines within collapsed window (~8 lines).
           let highlightedLines = line.children.length;
@@ -101,7 +105,7 @@ export function Code({children, lang, hideImports = true}: ICodeProps) {
       }
     }
     
-    return <code>{renderChildren(lineNodes, 0)}</code>;
+    return <code>{renderChildren(lineNodes, '0', links)}</code>;
   }
 
   return <code className={style({font: {default: 'code-xs', lg: 'code-sm'}, backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
@@ -188,9 +192,9 @@ function lines(node: HastNode) {
   return resultLines;
 }
 
-function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): ReactNode {
+function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, indent = ''): ReactNode {
   if (node.type === 'element' && 'children' in node) {
-    let childArray: ReactNode[] = renderChildren(node.children, key);
+    let childArray: ReactNode[] = renderChildren(node.children, key, links);
     if (node.tagName === 'div') {
       if (typeof childArray.at(-1) === 'string') {
         childArray[childArray.length - 1] += '\n';
@@ -210,39 +214,46 @@ function renderHast(node: HastNode | HastTextNode, key: number, indent = ''): Re
       children = childArray[1];
     }
 
-    if (node.tagName === 'span' && !className) {
+    let tagName: any = node.tagName;
+    let properties: any = node.properties;
+    if (links && typeof children === 'string' && links[children]) {
+      let link = links[children];
+      tagName = CodeLink;
+      properties = {...properties, href: link};
+    }
+
+    if (tagName === 'span' && !className) {
       return children;
     }
 
-    if (node.tagName === 'div' && !className) {
+    if (tagName === 'div' && !className) {
       return children;
     }
 
-    let type = groupings[node.tagName] || node.tagName;
+    let type = groupings[tagName] || tagName;
     if (type === 'div') {
       // we inserted a newline, so treat this as inline.
       type = 'span';
     }
 
-    return React.createElement(type, {...node.properties, className, key}, children);
+    return React.createElement(type, {...properties, className, key}, children);
   } else {
     // @ts-ignore
     return node.value;
   }
 }
 
-function renderChildren(children: (HastNode | HastTextNode)[], key: number) {
+function renderChildren(children: (HastNode | HastTextNode)[], key: string, links?: Links) {
   let childArray: ReactNode[] = [];
   for (let [i, child] of children.entries()) {
     let indent = i === 1 && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) ? childArray[0] : '';
-    let childNode = renderHast(child, key, indent);
+    let childNode = renderHast(child, `${key}.${i}`, links, indent);
     let childNodes = Array.isArray(childNode) ? childNode : [childNode];
     for (let childNode of childNodes) {
       if (typeof childNode === 'string' && typeof childArray.at(-1) === 'string') {
         childArray[childArray.length - 1] += childNode;
       } else {
         childArray.push(childNode);
-        key++;
       }
     }
   }
