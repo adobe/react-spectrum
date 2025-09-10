@@ -18,10 +18,6 @@
     display: contents;
   }
 
-  .react-aria-ToggleButton {
-    width: 32px;
-  }
-
   .react-aria-Separator {
     align-self: stretch;
     background-color: var(--border-color);

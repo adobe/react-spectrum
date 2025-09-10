@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, DropZone, FileTrigger, Link, Text} from 'react-aria-components';
+import {Button, DropZone, FileTrigger, Link, Text, useDrag} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {FocusRing, mergeProps, useButton, useClipboard} from 'react-aria';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';

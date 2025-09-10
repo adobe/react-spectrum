@@ -12,7 +12,7 @@ import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 <PageDescription>{docs.exports.GridList.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Favorite pokemon', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Favorite pokemon', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css"]}
   "use client";
   import {GridList, GridListItem} from 'vanilla-starter/GridList';
   import {Button} from 'vanilla-starter/Button';
@@ -53,27 +53,9 @@ import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
-
-A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
-If the list supports row selection, each row can optionally include a selection checkbox.
-
-```tsx
-import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
-
-<GridList>
-  <GridListItem>
-    <Button slot="drag" />
-    <Checkbox slot="selection" />
-  </GridListItem>
-</GridList>
-```
-
 ## Content
 
-`GridList` follows the **Collection Components API**, accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`GridList` follows the [Collection Components API](collections.html?component=GridList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -104,11 +86,13 @@ function Example() {
 
 ### Asynchronous loading
 
-This example uses the useAsyncList hook to handle asynchronous loading of data from a server.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<GridListLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
 
 ```tsx render
 "use client";
+import {Collection, GridListLoadMoreItem} from 'react-aria-components';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from '@react-stately/data';
 
 interface Character {
@@ -116,25 +100,42 @@ interface Character {
 }
 
 function AsyncLoadingExample() {
-  /*- begin highlight -*/
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
-        {signal}
+        cursor || `https://swapi.py4e.com/api/people/?search=`,
+        { signal }
       );
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
+        cursor: json.next
       };
     }
   });
-  /*- end highlight -*/
 
   return (
-    <GridList aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <GridListItem id={item.name}>{item.name}</GridListItem>}
+    <GridList
+      aria-label="Star Wars Characters"
+      selectionMode="multiple"
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <Collection items={list.items}>
+        {(item) => <GridListItem id={item.name}>{item.name}</GridListItem>}
+      </Collection>
+      {/*- begin highlight -*/}
+      <GridListLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'}>
+        <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      </GridListLoadMoreItem>
+      {/*- end highlight -*/}
     </GridList>
   );
 }
@@ -142,9 +143,9 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=GridList#selection-behavior) for more details.
 
-```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
+```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
@@ -162,7 +163,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 ```tsx render hideImports
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {GridList} from 'vanilla-starter/GridList';
 
 <GridList
   aria-label="Search results"
@@ -173,7 +174,7 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=GridList) for more details.
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -211,7 +212,7 @@ function Example(props) {
 
 ## Drag and drop
 
-GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html) to learn more.
+GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=GridList) to learn more.
 
 ```tsx render
 "use client";
@@ -260,6 +261,18 @@ function Example() {
 
 ## API
 
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
+
+```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html'}}
+<GridList>
+  <GridListItem>
+    <Button slot="drag" />
+    <Checkbox slot="selection" />
+  </GridListItem>
+  <GridListLoadMoreItem />
+</GridList>
+```
+
 ### GridList
 
 <PropTable component={docs.exports.GridList} links={docs.links} showDescription />
@@ -271,3 +284,9 @@ function Example() {
 <PropTable component={docs.exports.GridListItem} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-GridListItem" properties={docs.exports.GridListItemRenderProps.properties} />
+
+### GridListLoadMoreItem
+
+<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} showDescription />
+
+{/* <StateTable defaultClassName="react-aria-GridListLoadMoreItem" properties={docs.exports.GridListLoadMoreItemRenderProps.properties} /> */}
