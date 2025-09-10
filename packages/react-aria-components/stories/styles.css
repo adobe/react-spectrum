@@ -399,16 +399,9 @@
   }
 }
 
-.popover,
-.tooltip {
-  transition: scale 300ms, opacity 300ms;
+.popover-base,
+.tooltip-base {
   transform-origin: var(--trigger-anchor-point);
-
-  &[data-entering],
-  &[data-exiting] {
-    opacity: 0;
-    scale: 0.85;
-  }
 
   :global(.react-aria-OverlayArrow) {
     &[data-placement=bottom] svg {
@@ -422,5 +415,52 @@
     &[data-placement=right] svg {
       transform: rotate(90deg);
     }
+  }
+}
+
+.popover,
+.tooltip {
+  composes: popover-base transition;
+}
+
+.transition {
+  transition: scale 300ms, opacity 300ms;
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+.animation {
+  animation: enter 300ms;
+  &[data-exiting] {
+    animation: exit 300ms;
+  }
+}
+
+.animation-delayed {
+  &[data-entering] {
+    animation: enter 300ms;
+  }
+
+  &[data-exiting] {
+    animation: exit 300ms;
+  }
+}
+
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: 0;
+    scale: 0.85;
   }
 }

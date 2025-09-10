@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height:300px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:4px" viewBox="0 0 627 300">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height:300px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:var(--anatomy-radius);" viewBox="0 0 627 300">
   <title>List anatomy diagram</title>
   <desc>Shows a list and list item component with labels pointing to its parts.</desc>
   <defs>
@@ -9,7 +9,7 @@
   <g id="listview_anatomy" clip-path="url(#clip-listview_anatomy)">
     <rect width="627" height="300" fill="var(--anatomy-gray-100)"/>
     <g id="Group_156661" data-name="Group 156661" transform="translate(0 -186)">
-      <text id="List_container" data-name="List container" transform="translate(75.999 366)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-67.847" y="0">List container</tspan></text>
+      <text id="List_container" data-name="List container" transform="translate(75.999 366)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-67.847" y="0">List container</tspan></text>
       <g id="Group_152111" data-name="Group 152111" transform="translate(195 847.715) rotate(180)">
         <rect id="Rectangle_138454" data-name="Rectangle 138454" width="8" height="1" transform="translate(101 484.715)" fill="var(--anatomy-gray-700)"/>
         <g id="Group_72702" data-name="Group 72702" transform="translate(92 372)">
@@ -28,10 +28,10 @@
       <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-800)" opacity="0"/>
       <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--spectrum-alias-highlight-selected)"/>
       <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-800)" opacity="0"/>
-      <text id="List_item" data-name="List item" transform="translate(174 293)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
-      <text id="List_item-2" data-name="List item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
-      <text id="List_item-3" data-name="List item" transform="translate(174 409)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
-      <text id="List_item-4" data-name="List item" transform="translate(174 467)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item" data-name="List item" transform="translate(174 293)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-2" data-name="List item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-3" data-name="List item" transform="translate(174 409)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-4" data-name="List item" transform="translate(174 467)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
       <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
@@ -84,14 +84,14 @@
       </g>
     </g>
     <g id="Group_152101" data-name="Group 152101" transform="translate(200.005 422)">
-      <text id="List_item_row" data-name="List item row" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item row</tspan></text>
+      <text id="List_item_row" data-name="List item row" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item row</tspan></text>
       <g id="Group_152108" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
         <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
     <g id="Group_156663" data-name="Group 156663" transform="translate(200.005 447)">
-      <text id="List_item_grid_cell" data-name="List item grid cell" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item grid cell</tspan></text>
+      <text id="List_item_grid_cell" data-name="List item grid cell" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item grid cell</tspan></text>
       <g id="Group_152108-2" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
         <path id="Union_56-2" data-name="Union 56" d="M-9134-304.5a2.5,2.5,0,0,1,2-2.451V-370h1v63.05a2.5,2.5,0,0,1,2,2.451,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-304.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
@@ -99,7 +99,7 @@
     </g>
     <text id="Selection_checkbox_optional_" data-name="Selection
 checkbox
-(optional)" transform="translate(175 14)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-41.82" y="0">Selection</tspan><tspan x="-43.26" y="15">checkbox</tspan><tspan x="-46.5" y="30">(optional)</tspan></text>
+(optional)" transform="translate(175 14)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-41.82" y="0">Selection</tspan><tspan x="-43.26" y="15">checkbox</tspan><tspan x="-46.5" y="30">(optional)</tspan></text>
     <line id="Line_9" data-name="Line 9" y2="24" transform="translate(152.5 50.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
   </g>
 </svg>

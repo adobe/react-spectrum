@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -149,17 +149,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    // Delay updating the position until children are finished rendering (e.g. collections).
-    if (overlayRef.current.querySelector('[data-react-aria-incomplete]')) {
-      return;
-    }
-
-    // Don't update while the overlay is animating.
-    // Things like scale animations can mess up positioning by affecting the overlay's computed size.
-    if (overlayRef.current.getAnimations?.().length > 0) {
-      return;
-    }
-
     // Determine a scroll anchor based on the focused element.
     // This stores the offset of the anchor element from the scroll container
     // so it can be restored after repositioning. This way if the overlay height
@@ -200,7 +189,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize: arrowSize ?? arrowRef?.current?.getBoundingClientRect().width ?? 0,
+      arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset
     });
 

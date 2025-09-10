@@ -192,6 +192,9 @@ const wrapperStyles = style({
 
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * A CardView displays a group of related objects, with support for selection and bulk actions.
+ */
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
@@ -282,9 +285,14 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     }
   } : undefined;
 
+  let cardViewCtx = useMemo(() => ({
+    layout: layoutName,
+    ElementType: GridListItem
+  }), [layoutName]);
+
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
-      <InternalCardViewContext.Provider value={GridListItem}>
+      <InternalCardViewContext.Provider value={cardViewCtx}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
