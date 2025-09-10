@@ -1077,8 +1077,8 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, mouseEvent('click', {}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });
@@ -4571,8 +4571,8 @@ describe('usePress', function () {
 
       const el = shadowRoot.getElementById('testElement');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, mouseEvent('click', {}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });
