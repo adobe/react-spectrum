@@ -19,7 +19,7 @@ const tabsStyles = tv({
   variants: {
     orientation: {
       horizontal: 'flex-col',
-      vertical: 'flex-row w-[800px]'
+      vertical: 'flex-row'
     }
   }
 });
