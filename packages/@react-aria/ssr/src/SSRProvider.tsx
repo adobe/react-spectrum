@@ -168,11 +168,7 @@ function useModernSSRSafeId(defaultId?: string): string {
 export const useSSRSafeId: typeof useModernSSRSafeId | typeof useLegacySSRSafeId = typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
 
 function getSnapshot() {
-  return false;
-}
-
-function getServerSnapshot() {
-  return true;
+  return null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -181,17 +177,41 @@ function subscribe(onStoreChange: () => void): () => void {
   return () => {};
 }
 
+function useModernIsSSR(): boolean {
+  let initialState = false;
+  // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
+  React.useSyncExternalStore(subscribe, getSnapshot, () => {
+    initialState = true;
+
+    // Important! We must return the same value for both server and client to avoid unnecessary render
+    return getSnapshot();
+  });
+  let [isSSR, setIsSSR] = useState(initialState);
+
+  if (typeof document !== 'undefined') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useLayoutEffect(() => {
+      if (!isSSR) {
+        return;
+      }
+
+      React.startTransition(() => {
+        setIsSSR(false);
+      });
+    }, [isSSR]);
+  }
+
+  return isSSR;
+}
+
+function useLegacyIsSSR(): boolean {
+  return useContext(IsSSRContext);
+}
+
+// Use React.useSyncExternalStore and React.startTransition in React >=18 if available, otherwise fall back to our old implementation.
 /**
  * Returns whether the component is currently being server side rendered or
  * hydrated on the client. Can be used to delay browser-specific rendering
  * until after hydration.
  */
-export function useIsSSR(): boolean {
-  // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
-  if (typeof React['useSyncExternalStore'] === 'function') {
-    return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot);
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useContext(IsSSRContext);
-}
+export const useIsSSR: () => boolean = typeof React['startTransition'] === 'function' ? useModernIsSSR : useLegacyIsSSR;
