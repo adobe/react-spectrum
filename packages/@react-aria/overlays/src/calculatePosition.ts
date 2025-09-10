@@ -301,14 +301,14 @@ function getMaxHeight(
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
-      (boundaryDimensions.height + boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the bottom of the boundary
+      (boundaryDimensions.height + boundaryDimensions.top) // this is the bottom of the boundary
       - overlayTop // this is the top of the overlay
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     )
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
       (overlayTop + overlayHeight) // this is the bottom of the overlay
-      - (boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the top of the boundary
+      - boundaryDimensions.top // this is the top of the boundary
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     );
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
