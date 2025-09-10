@@ -110,7 +110,11 @@ function getContainerDimensions(containerNode: Element): Dimensions {
   let scroll: Position = {};
   let isPinchZoomedIn = (visualViewport?.scale ?? 1) > 1;
 
-  if (containerNode.tagName === 'BODY') {
+  // In the case where the container is `html` or `body` and the container doesn't have something like `position: relative`,
+  // then position absolute will be positioned relative to the viewport, also known as the `initial containing block`.
+  // That's why we use the visual viewport instead.
+
+  if (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') {
     let documentElement = document.documentElement;
     totalWidth = documentElement.clientWidth;
     totalHeight = documentElement.clientHeight;
@@ -291,10 +295,8 @@ function getMaxHeight(
   containerDimensions: Dimensions
 ) {
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : containerDimensions[TOTAL_SIZE.height]);
-  // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
-  // used in computePosition.
-  // TODO: this calculation is also incorrect? Might need to do the same logic as in getDelta to properly calculate where overlay top is with respect to the boundary, right now
-  // it is erroneously adding containerOffsetWithBoundary
+  // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top
+  // with respect to the container.
   let overlayTop = position.top != null ? position.top : (containerHeight - (position.bottom ?? 0) - overlayHeight);
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
@@ -309,7 +311,6 @@ function getMaxHeight(
       - (boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the top of the boundary
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     );
-  // console.log('maxheih', containerOffsetWithBoundary, position);
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
 }
 
@@ -324,8 +325,8 @@ function getAvailableSpace(
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
     return Math.max(0,
-      childOffset[axis] // trigger top
-      - boundaryDimensions[axis] // boundary top
+      childOffset[axis] // trigger start
+      - boundaryDimensions[axis] // boundary start
       - (margins[axis] ?? 0) // margins usually for arrows or other decorations
       - margins[FLIPPED_DIRECTION[axis]]
       - padding); // padding between overlay and boundary
