@@ -50,7 +50,7 @@ function ColorThumb(props: ColorThumbProps): JSX.Element {
 }
 
 // ColorLoupe is rendered in a portal so that it breaks out of clipped/scrolling containers (e.g. popovers).
-function ColorLoupe({isOpen, valueCSS, containerRef, loupeRef, style, getPosition}: any) {
+function ColorLoupe({isOpen, valueCSS, containerRef, loupeRef, style}: any) {
   let patternId = useId();
 
   // Get the bounding rectangle of the container (e.g. ColorArea/ColorSlider).
@@ -76,7 +76,7 @@ function ColorLoupe({isOpen, valueCSS, containerRef, loupeRef, style, getPositio
   let thumbLeft = style.left || '50%';
   if (typeof thumbLeft === 'string' && thumbLeft.endsWith('%')) {
     thumbLeft = parseFloat(thumbLeft || '50%') / 100 * containerRect.width;
-  } else if (typeof thumbLeft=== 'string' && thumbLeft.endsWith('px')) {
+  } else if (typeof thumbLeft === 'string' && thumbLeft.endsWith('px')) {
     thumbLeft = parseFloat(thumbLeft);
   }
 
