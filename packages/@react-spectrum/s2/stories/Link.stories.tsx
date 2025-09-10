@@ -28,7 +28,7 @@ const meta: Meta<typeof Link> = {
     ...categorizeArgTypes('Events', events)
   },
   args: {
-    ...getActionArgs([...events]),
+    ...getActionArgs(events),
     href: 'https://www.imdb.com/title/tt6348138/',
     target: '_blank'
   },
