@@ -41,18 +41,6 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
-function mouseEvent(type, opts) {
-  let evt = new Event(type, {bubbles: true, cancelable: true, composed: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    altKey: false,
-    button: opts.button || 0
-  }, opts);
-  return evt;
-}
-
 describe('usePress', function () {
   beforeAll(() => {
     jest.useFakeTimers();
