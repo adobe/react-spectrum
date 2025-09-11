@@ -301,14 +301,14 @@ function getMaxHeight(
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
-      (boundaryDimensions.height + boundaryDimensions.top) // this is the bottom of the boundary
+      (boundaryDimensions.height + boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the bottom of the boundary
       - overlayTop // this is the top of the overlay
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     )
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
       (overlayTop + overlayHeight) // this is the bottom of the overlay
-      - boundaryDimensions.top // this is the top of the boundary
+      - boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)// this is the top of the boundary
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     );
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
@@ -320,13 +320,15 @@ function getAvailableSpace(
   childOffset: Offset, // trigger
   margins: Position, // overlay
   padding: number, // overlay <-> boundary
-  placementInfo: ParsedPlacement
+  placementInfo: ParsedPlacement,
+  shouldAccountForScroll: boolean
 ) {
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
     return Math.max(0,
       childOffset[axis] // trigger start
       - boundaryDimensions[axis] // boundary start
+      - (shouldAccountForScroll ? (boundaryDimensions.scroll[axis]) ?? 0 + containerOffsetWithBoundary[axis] : 0)
       - (margins[axis] ?? 0) // margins usually for arrows or other decorations
       - margins[FLIPPED_DIRECTION[axis]]
       - padding); // padding between overlay and boundary
@@ -335,11 +337,12 @@ function getAvailableSpace(
   return Math.max(0,
     boundaryDimensions[size]
     + boundaryDimensions[axis]
-     - childOffset[axis]
-     - childOffset[size]
-     - (margins[axis] ?? 0)
-     - margins[FLIPPED_DIRECTION[axis]]
-     - padding);
+      + (shouldAccountForScroll ? (boundaryDimensions.scroll[axis] ?? 0 + containerOffsetWithBoundary[axis]) : 0)
+      - childOffset[axis]
+      - childOffset[size]
+      - (margins[axis] ?? 0)
+      - margins[FLIPPED_DIRECTION[axis]]
+      - padding);
 }
 
 export function calculatePositionInternal(
@@ -358,7 +361,8 @@ export function calculatePositionInternal(
   isContainerPositioned: boolean,
   userSetMaxHeight: number | undefined,
   arrowSize: number,
-  arrowBoundaryOffset: number
+  arrowBoundaryOffset: number,
+  shouldAccountForScroll: boolean
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
@@ -370,7 +374,8 @@ export function calculatePositionInternal(
     childOffset,
     margins,
     padding + offset,
-    placementInfo
+    placementInfo,
+    shouldAccountForScroll
   );
 
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
@@ -384,7 +389,8 @@ export function calculatePositionInternal(
       childOffset,
       margins,
       padding + offset,
-      flippedPlacementInfo
+      flippedPlacementInfo,
+      shouldAccountForScroll
     );
 
     // If the available space for the flipped position is greater than the original available space, flip.
@@ -530,12 +536,9 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
   // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(boundaryElement, container,  false);
-  if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
-    containerDimensions.scroll.top = 0;
-    containerDimensions.scroll.left = 0;
-  }
+  let containerOffsetWithBoundary: Offset = getPosition(boundaryElement, container,  false);
 
+  let shouldAccountForScroll = !isViewportContainer || boundaryElement === document.body;
   return calculatePositionInternal(
     placement,
     childOffset,
@@ -552,7 +555,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     isContainerPositioned,
     maxHeight,
     arrowSize,
-    arrowBoundaryOffset
+    arrowBoundaryOffset,
+    shouldAccountForScroll
   );
 }
 
