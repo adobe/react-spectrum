@@ -86,7 +86,7 @@ export function InstallCommand({pkg, flags, label}: InstallCommandProps) {
       </SegmentedControl>
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
-        <div className={style({display: 'flex', alignItems: 'center', gap: 12})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
           <Pre>{command}</Pre>
           <CopyButton ariaLabel="Copy command" tooltip="Copy command" text={command} />
         </div>
