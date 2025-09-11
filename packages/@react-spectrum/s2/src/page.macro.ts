@@ -25,7 +25,7 @@ export function generatePageStyles(this: MacroContext | void): void {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
-      content: `html {
+      content: `:root, :host {
         color-scheme: light dark;
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
