@@ -38,18 +38,23 @@ export interface InstallCommandProps {
   /** Optional flags appended after the package name(s), e.g. "--dev". */
   flags?: string,
   /** Optional label preceding the code block. */
-  label?: string
+  label?: string,
+  /** If true, renders an npx command instead of install (hides manager switcher). */
+  isCommand?: boolean
 }
 
-export function InstallCommand({pkg, flags, label}: InstallCommandProps) {
+export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandProps) {
   let [manager, setManager] = useState<PkgManager>('yarn');
 
   useEffect(() => {
+    if (isCommand) {
+      return;
+    }
     let stored = localStorage.getItem('packageManager');
     if (stored === 'npm' || stored === 'pnpm' || stored === 'yarn') {
       setManager(stored);
     }
-  }, []);
+  }, [isCommand]);
 
   let onSelectionChange = (key: Key) => {
     let value = String(key) as PkgManager;
@@ -59,31 +64,37 @@ export function InstallCommand({pkg, flags, label}: InstallCommandProps) {
 
   let command = useMemo(() => {
     let parts: string[] = [];
-    switch (manager) {
-      case 'yarn':
-        parts = ['yarn', 'add'];
-        break;
-      case 'npm':
-        parts = ['npm', 'install'];
-        break;
-      case 'pnpm':
-        parts = ['pnpm', 'add'];
-        break;
+    if (isCommand) {
+      parts = ['npx', pkg];
+    } else {
+      switch (manager) {
+        case 'yarn':
+          parts = ['yarn', 'add'];
+          break;
+        case 'npm':
+          parts = ['npm', 'install'];
+          break;
+        case 'pnpm':
+          parts = ['pnpm', 'add'];
+          break;
+      }
+      parts.push(pkg);
     }
-    parts.push(pkg);
     if (flags) {
       parts.push(flags);
     }
     return parts.join(' ');
-  }, [manager, pkg, flags]);
+  }, [isCommand, manager, pkg, flags]);
 
   return (
     <div className={container} data-example-switcher>
-      <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
-        <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
-        <SegmentedControlItem id="npm">npm</SegmentedControlItem>
-        <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
-      </SegmentedControl>
+      {!isCommand && (
+        <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
+          <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
+          <SegmentedControlItem id="npm">npm</SegmentedControlItem>
+          <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
+        </SegmentedControl>
+      )}
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
         <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
