@@ -16,7 +16,7 @@ import reactAriaDocs from 'docs:react-aria-components';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 // @ts-ignore
 import reactSpectrumDocs from 'docs:@react-spectrum/s2';
-import {SelectableCollectionContext} from '../../../react-aria-components/src/context';
+import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';

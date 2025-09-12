@@ -41,7 +41,7 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
 import {ImageContext} from './Image';
-import {InPopoverContext, PopoverBase, PopoverContext} from './Popover';
+import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
@@ -366,14 +366,19 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
   if (isPopover) {
     return (
-      <PopoverBase
+      <Popover
         ref={ref}
         hideArrow
-        UNSAFE_style={UNSAFE_style}
+        UNSAFE_style={{
+          ...UNSAFE_style,
+          // TODO: similar to Combobox, can't override via styles props
+          padding: 0,
+          overflow: 'unset'
+        }}
         UNSAFE_className={UNSAFE_className}
         styles={styles}>
         {content}
-      </PopoverBase>
+      </Popover>
     );
   }
 

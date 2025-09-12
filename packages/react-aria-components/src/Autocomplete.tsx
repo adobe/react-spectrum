@@ -12,7 +12,7 @@
 
 import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {FieldInputContext, SelectableCollectionContext} from './context';
+import {FieldInputContext, SelectableCollectionContext} from './RSPContexts';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, useRef} from 'react';
