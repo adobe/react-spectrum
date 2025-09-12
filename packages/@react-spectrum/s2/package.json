@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -153,7 +153,7 @@
     "@internationalized/date": "^3.9.0",
     "@internationalized/number": "^3.6.5",
     "@react-aria/calendar": "^3.9.1",
-    "@react-aria/collections": "3.0.0-rc.6",
+    "@react-aria/collections": "3.0.0-rc.7",
     "@react-aria/focus": "^3.21.1",
     "@react-aria/i18n": "^3.12.12",
     "@react-aria/interactions": "^3.25.5",
@@ -169,8 +169,8 @@
     "@react-types/table": "^3.13.3",
     "@react-types/textfield": "^3.12.5",
     "csstype": "^3.0.2",
-    "react-aria": "^3.43.1",
-    "react-aria-components": "^1.12.1",
+    "react-aria": "^3.43.2",
+    "react-aria-components": "^1.12.2",
     "react-stately": "^3.41.0"
   },
   "peerDependencies": {
