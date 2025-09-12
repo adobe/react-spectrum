@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, DISALLOW_VIRTUAL_FOCUS, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -395,6 +395,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       manager.setFocused(false);
     }
   };
+
+  useEffect(() => {
+    if (!shouldUseVirtualFocus) {
+      let disableVirtualFocus = new CustomEvent(DISALLOW_VIRTUAL_FOCUS, {
+        cancelable: true,
+        bubbles: true
+      });
+
+      ref.current?.dispatchEvent(disableVirtualFocus);
+    }
+  }, [shouldUseVirtualFocus, ref]);
 
   // Ref to track whether the first item in the collection should be automatically focused. Specifically used for autocomplete when user types
   // to focus the first key AFTER the collection updates.

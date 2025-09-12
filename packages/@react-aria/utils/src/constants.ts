@@ -13,3 +13,5 @@
 // Custom event names for updating the autocomplete's aria-activedecendant.
 export const CLEAR_FOCUS_EVENT = 'react-aria-clear-focus';
 export const FOCUS_EVENT = 'react-aria-focus';
+// Custom event to tell autocomplete that virtual focus isn't supported for this component (e.g. Table)
+export const DISALLOW_VIRTUAL_FOCUS = 'react-aria-disallow-virtual-focus';

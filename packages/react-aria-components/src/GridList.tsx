@@ -11,7 +11,7 @@
  */
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext} from './RSPContexts';
+import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, HeaderNode, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
@@ -98,29 +98,25 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
 });
 
 interface GridListInnerProps<T extends object> {
-  props: GridListProps<T>,
+  props: GridListProps<T> & SelectableCollectionContextValue<T>,
   collection: ICollection<Node<object>>,
-  gridListRef: RefObject<HTMLDivElement | null>
+  gridListRef: RefObject<HTMLElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  // TODO: for now, don't grab collection ref and collectionProps from the autocomplete, rely on the user tabbing to the gridlist
-  // figure out if we want to support virtual focus for grids when wrapped in an autocomplete
-  let contextProps;
-  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
-  let {filter, ...collectionProps} = contextProps;
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
+  let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
-    ...props,
+    ...DOMCollectionProps,
     collection,
     children: undefined,
     layoutDelegate
   });
 
-  let filteredState = UNSTABLE_useFilteredListState(gridlistState, filter);
+  let filteredState = UNSTABLE_useFilteredListState(gridlistState as ListState<T>, filter);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {disabledBehavior, disabledKeys} = filteredState.selectionManager;
   let {direction} = useLocale();
@@ -138,7 +134,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   ), [filteredState.collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
-    ...props,
     ...DOMCollectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
@@ -243,7 +238,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
