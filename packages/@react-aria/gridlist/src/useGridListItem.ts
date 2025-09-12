@@ -11,6 +11,7 @@
  */
 
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {CollectionNode} from '@react-aria/collections';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -67,7 +68,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp, hasSection} = listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -277,6 +278,27 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   //   });
   // }
 
+  let sumOfNodes = (node: CollectionNode<T>): number => {
+    // If prevKey is null, then this is the first node in the collection so get number of row(s)
+    if (node.prevKey === null) {
+      return getNumberOfRows(node, state);
+    }
+
+    // If the node is an item inside of a section, get number of rows in the current section
+    let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T> : null;
+    if (parentNode && parentNode.type === 'section') {
+      return sumOfNodes(parentNode);
+    }
+
+    // Otherwise, if the node is a section or item outside of a section, recursively call to get the current sum + get the number of row(s)
+    let prevNode = state.collection.getItem(node.prevKey!) as CollectionNode<T>;
+    if (prevNode) {
+      return sumOfNodes(prevNode) + getNumberOfRows(node, state);
+    }
+
+    return 0;
+  };
+
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture,
@@ -291,10 +313,26 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
-    let {collection} = state;
-    let nodes = [...collection];
-    // TODO: refactor ListCollection to store an absolute index of a node's position?
-    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section') ? [...collection.getKeys()].filter((key) => collection.getItem(key)?.type !== 'section').findIndex((key) => key === node.key) + 1 : node.index + 1;
+    // TODO: refactor BaseCollection to store an absolute index of a node's position?
+    if (hasSection) {
+      let parentNode = node.parentKey ? state.collection.getItem(node.parentKey) as CollectionNode<T> : null;
+      let isInSection = parentNode && parentNode.type === 'section';
+      let lastChildKey = parentNode?.lastChildKey;
+      if (isInSection && lastChildKey) {
+        let lastChild = state.collection.getItem(lastChildKey);
+        let delta = lastChild ? lastChild.index - node.index : 0;
+        if (parentNode && parentNode.prevKey) {
+          rowProps['aria-rowindex'] = sumOfNodes(parentNode) - delta;
+        } else {
+          // If the item is within a section but the section is the first node in the collection
+          rowProps['aria-rowindex'] = node.index + 1;
+        }
+      } else {
+        rowProps['aria-rowindex'] = sumOfNodes(node as CollectionNode<T>);
+      }
+    } else {
+      rowProps['aria-rowindex'] = node.index + 1;
+    }
   }
 
   let gridCellProps = {
@@ -323,4 +361,16 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+export function getNumberOfRows<T>(node: RSNode<unknown>, state: ListState<T> | TreeState<T>) {
+  if (node.type === 'section') {
+    // Use the index of the last child to determine the number of nodes in the section
+    let currentNode = node as CollectionNode<T>;
+    let lastChild = currentNode.lastChildKey ? state.collection.getItem(currentNode.lastChildKey) : null;
+    return lastChild ? lastChild.index + 1 : 0;
+  } else if (node.type === 'item') {
+    return 1;
+  }
+  return 0;
 }

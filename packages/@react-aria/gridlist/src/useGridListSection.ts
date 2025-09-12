@@ -10,13 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {CollectionNode} from '@react-aria/collections';
+import {DOMAttributes, RefObject, Node as RSNode} from '@react-types/shared';
+import {getNumberOfRows} from './useGridListItem';
 import type {ListState} from '@react-stately/list';
 import {useLabels, useSlotId} from '@react-aria/utils';
 
 export interface AriaGridListSectionProps {
   /** An accessibility label for the section. Required if `heading` is not present. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** An object representing the section. */
+  node: RSNode<unknown>,
+  /** Whether the list row is contained in a virtual scroller. */
+  isVirtualized?: boolean
 }
 
 export interface GridListSectionAria {
@@ -37,20 +43,49 @@ export interface GridListSectionAria {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
-  let {'aria-label': ariaLabel} = props;
+  let {'aria-label': ariaLabel, node, isVirtualized} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({
     'aria-label': ariaLabel,
     'aria-labelledby': headingId
   });
+  let rowIndex;
+
+  let sumOfNodes = (node: CollectionNode<unknown>): number => {
+    // If prevKey is null, then this is the first node in the collection
+    if (node.prevKey === null) {
+      return getNumberOfRows(node, state);
+    }
+  
+    // Otherwise, if the node is a section or item outside of a section, recursively call to get the current sum + get the number of row(s)
+    let prevNode = state.collection.getItem(node.prevKey!) as CollectionNode<T>;
+    if (prevNode) {
+      return sumOfNodes(prevNode) + getNumberOfRows(node, state);
+    }
+
+    return 0;
+  };
+
+  if (isVirtualized) {
+    if (node.prevKey) {
+      let prevNode = state.collection.getItem(node.prevKey);
+      if (prevNode) {
+        rowIndex = sumOfNodes(prevNode as CollectionNode<T>) + 1;
+      }
+    } else {
+      rowIndex = 1;
+    }
+  }
 
   return {
     rowProps: {
-      role: 'row'
+      role: 'row',
+      'aria-rowindex': rowIndex
     },
     rowHeaderProps: {
       id: headingId,
-      role: 'rowheader'
+      role: 'rowheader',
+      'aria-colindex': 1
     },
     rowGroupProps: {
       role: 'rowgroup',
