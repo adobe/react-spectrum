@@ -68,7 +68,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
@@ -393,13 +393,16 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 estimatedHeadingHeight: 50,
                 padding: 8,
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
-              <PopoverBase
+              <Popover
                 hideArrow
                 offset={menuOffset}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined,
+                  // TODO: similar to Combobox, can't override via styles props
+                  padding: 0,
+                  overflow: 'unset'
                 }}
                 styles={style({
                   marginStart: {
@@ -435,7 +438,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     {renderer}
                   </ListBox>
                 </Provider>
-              </PopoverBase>
+              </Popover>
             </Virtualizer>
           </InternalPickerContext.Provider>
         </>

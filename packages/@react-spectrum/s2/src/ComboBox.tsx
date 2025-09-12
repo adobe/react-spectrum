@@ -59,7 +59,7 @@ import intlMessages from '../intl/*.json';
 import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {Node} from 'react-stately';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
@@ -643,7 +643,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           description={descriptionMessage}>
           {errorMessage}
         </HelpText>
-        <PopoverBase
+        <Popover
           hideArrow
           triggerRef={triggerRef}
           offset={menuOffset}
@@ -652,7 +652,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           UNSAFE_style={{
             width: menuWidth ? `${menuWidth}px` : undefined,
             // manually subtract border as we can't set Popover to border-box, it causes the contents to spill out
-            '--trigger-width': `calc(${triggerWidth} - 2px)`
+            '--trigger-width': `calc(${triggerWidth} - 2px)`,
+            // TODO: Unfortunately can't override via styles prop
+            // need to unset the overflow otherwise we get two scroll bars
+            padding: 0,
+            overflow: 'unset'
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',
@@ -693,7 +697,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               </ListBox>
             </Virtualizer>
           </Provider>
-        </PopoverBase>
+        </Popover>
       </InternalComboboxContext.Provider>
     </>
   );
