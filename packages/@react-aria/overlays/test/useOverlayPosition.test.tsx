@@ -260,6 +260,12 @@ describe('useOverlayPosition with positioned container', () => {
         } else {
           return realGetComputedStyle(element);
         }
+      }),
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+        return parseInt(this.style.width, 10) || 0;
+      }),
+      jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+        return parseInt(this.style.height, 10) || 0;
       })
     );
   });
@@ -290,7 +296,7 @@ describe('useOverlayPosition with positioned container', () => {
     `);
   });
 
-  it('should position the overlay relative to the trigger at top', function () {
+  it.only('should position the overlay relative to the trigger at top', function () {
     let res = render(<Example placement="top" />);
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');

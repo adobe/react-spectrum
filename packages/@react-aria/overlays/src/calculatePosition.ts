@@ -294,38 +294,53 @@ function getMaxHeight(
   heightGrowthDirection: HeightGrowthDirection,
   containerDimensions: Dimensions
 ) {
-  const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : containerDimensions[TOTAL_SIZE.height]);
+  let viewportHeight = visualViewport?.height ?? document.documentElement.clientHeight;
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top
   // with respect to the container.
-  let overlayTop = position.top != null ? position.top : (containerHeight - (position.bottom ?? 0) - overlayHeight);
+  let overlayTop = (position.top != null ? position.top  : (containerDimensions[TOTAL_SIZE.height] - (position.bottom ?? 0) - overlayHeight)) - (containerDimensions.scroll.top ?? 0);
+  console.log('overlaytop vals', containerDimensions[TOTAL_SIZE.height], (position.bottom ?? 0), overlayHeight);
+  // TODO: calculate the dimentions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
+  let boundingRect = {
+    // TODO: This should be boundary top in container coord system vs viewport top in container coord system
+    top: Math.max(boundaryDimensions.top + containerOffsetWithBoundary.top, containerOffsetWithBoundary.top), // these are followed by 0 because we are in the coordinate system of the viewport
+    // TODO: This should be boundary bottom in container coord system vs viewport bottom in container coord system
+    bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height) + containerOffsetWithBoundary.top, viewportHeight + containerOffsetWithBoundary.top) // TODO: not sure if containerHeight is appropriate here
+  };
+
+
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
-      (boundaryDimensions.height + boundaryDimensions.top) // this is the bottom of the boundary
+      boundingRect.bottom // this is the bottom of the boundary
       - overlayTop // this is the top of the overlay
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     )
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
       (overlayTop + overlayHeight) // this is the bottom of the overlay
-      - boundaryDimensions.top // this is the top of the boundary
+      - boundingRect.top // this is the top of the boundary
       - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
     );
-  return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
+    // console.log('stuff', overlayTop, overlayHeight, boundingRect, viewportHeight, boundaryDimensions);
+  // console.log('max height', overlayTop, maxHeight, containerHeight, overlayHeight, boundaryDimensions, containerOffsetWithBoundary)
+  // console.log('final max', maxHeight, boundaryDimensions.height - (padding * 2))
+  return maxHeight;
 }
 
 function getAvailableSpace(
   boundaryDimensions: Dimensions, // boundary
   containerOffsetWithBoundary: Offset,
-  childOffset: Offset, // trigger
+  childOffset: Offset, // trigger, position based of container's non-viewport 0,0
   margins: Position, // overlay
   padding: number, // overlay <-> boundary
-  placementInfo: ParsedPlacement
+  placementInfo: ParsedPlacement,
+  containerDimensions: Dimensions //
 ) {
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
-    return Math.max(0,
+    return  Math.max(0,
       childOffset[axis] // trigger start
+      - (containerDimensions.scroll[axis] ?? 0) // transform trigger position to be with respect to viewport 0,0
       - boundaryDimensions[axis] // boundary start
       - (margins[axis] ?? 0) // margins usually for arrows or other decorations
       - margins[FLIPPED_DIRECTION[axis]]
@@ -337,6 +352,7 @@ function getAvailableSpace(
     + boundaryDimensions[axis]
      - childOffset[axis]
      - childOffset[size]
+     + (containerDimensions.scroll[axis] ?? 0)
      - (margins[axis] ?? 0)
      - margins[FLIPPED_DIRECTION[axis]]
      - padding);
@@ -370,7 +386,8 @@ export function calculatePositionInternal(
     childOffset,
     margins,
     padding + offset,
-    placementInfo
+    placementInfo,
+    containerDimensions
   );
 
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
@@ -384,7 +401,8 @@ export function calculatePositionInternal(
       childOffset,
       margins,
       padding + offset,
-      flippedPlacementInfo
+      flippedPlacementInfo,
+      containerDimensions
     );
 
     // If the available space for the flipped position is greater than the original available space, flip.
@@ -525,6 +543,11 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   overlaySize.height += (margins.top ?? 0) + (margins.bottom ?? 0);
 
   let scrollSize = getScroll(scrollNode);
+
+  // TODO: note that due to logic inside getContainerDimensions, for cases where the boundary element is the body, we will return
+  // a height/width that matches the visual viewport size rather than the body's height/width (aka for zoom it will be zoom adjusted size)
+  // and a top/left that is adjusted as well (will return the top/left of the zoomed in viewport, or 0,0 for a non-zoomed body)
+  // Otherwise this returns the height/width of a arbitrary boundary element, and its top/left with respect to the viewport (NOTE THIS MEANS IT DOESNT INCLUDE SCROLL)
   let boundaryDimensions = getContainerDimensions(boundaryElement);
   let containerDimensions = getContainerDimensions(container);
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
@@ -532,10 +555,10 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
   let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(boundaryElement, container,  false);
   if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
-    containerDimensions.scroll.top = 0;
-    containerDimensions.scroll.left = 0;
+    // containerDimensions.scroll.top = 0;
+    // containerDimensions.scroll.left = 0;
   }
-
+  // console.log('container', container, boundaryElement, containerDimensions, boundaryDimensions, containerOffsetWithBoundary)
   return calculatePositionInternal(
     placement,
     childOffset,
