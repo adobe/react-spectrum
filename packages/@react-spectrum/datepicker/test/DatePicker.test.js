@@ -437,7 +437,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      expect(getTextValue(combobox)).toBe('2/3/2019, 8:45 AM');
+      expect(getTextValue(combobox)).toBe('2/3/2019, 8:45 AM');
 
       let button = getByRole('button');
       await user.click(button);
@@ -450,7 +450,7 @@ describe('DatePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(getTextValue(timeField)).toBe('8:45 AM');
+      expect(getTextValue(timeField)).toBe('8:45 AM');
 
       // selecting a date should not close the popover
       await user.click(selected.nextSibling.children[0]);
@@ -458,7 +458,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 8, 45));
-      expect(getTextValue(combobox)).toBe('2/4/2019, 8:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 8:45 AM');
 
       let hour = within(timeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -472,7 +472,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 9, 45));
-      expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
     it('should not throw error when deleting values from time field when CalendarDateTime value is used', async function () {
@@ -484,7 +484,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      expect(getTextValue(combobox)).toBe('2/3/2019, 10:45 AM');
+      expect(getTextValue(combobox)).toBe('2/3/2019, 10:45 AM');
 
       let button = getByRole('button');
       await user.click(button);
@@ -497,7 +497,7 @@ describe('DatePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(getTextValue(timeField)).toBe('10:45 AM');
+      expect(getTextValue(timeField)).toBe('10:45 AM');
 
       // selecting a date should not close the popover
       await user.click(selected.nextSibling.children[0]);
@@ -505,7 +505,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 10, 45));
-      expect(getTextValue(combobox)).toBe('2/4/2019, 10:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 10:45 AM');
 
       let hour = within(timeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -521,7 +521,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 1, 45));
-      expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
     });
 
     it('should fire onChange until both date and time are selected', async function () {

@@ -42,6 +42,17 @@ describe('DateFormatter', function () {
     ]);
   });
 
+  it('should format to parts with space as literal before am/pm', function () {
+    let formatter = new DateFormatter('en-US', {timeStyle: 'short'});
+    expect(formatter.formatToParts(new Date(2020, 1, 3, 13, 0))).toEqual([
+      {type: 'hour', value: '1'},
+      {type: 'literal', value: ':'},
+      {type: 'minute', value: '00'},
+      {type: 'literal', value: ' '},
+      {type: 'dayPeriod', value: 'PM'}
+    ]);
+  });
+
   it('should format a range', function () {
     let formatter = new DateFormatter('en-US');
     // Test fallback

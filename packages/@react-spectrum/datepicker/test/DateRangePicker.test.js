@@ -492,8 +492,8 @@ describe('DateRangePicker', function () {
 
       let startDate = getByTestId('start-date');
       let endDate = getByTestId('end-date');
-      expect(getTextValue(startDate)).toBe('2/3/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/3/2019, 8:45 AM');
+      expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
 
       let button = getByRole('button');
       await user.click(button);
@@ -506,10 +506,10 @@ describe('DateRangePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
       let startTimeField = getAllByLabelText('Start time')[0];
-      expect(getTextValue(startTimeField)).toBe('8:45 AM');
+      expect(getTextValue(startTimeField)).toBe('8:45 AM');
 
       let endTimeField = getAllByLabelText('End time')[0];
-      expect(getTextValue(endTimeField)).toBe('10:45 AM');
+      expect(getTextValue(endTimeField)).toBe('10:45 AM');
 
       // selecting a date should not close the popover
       await user.click(getByLabelText('Sunday, February 10, 2019 selected'));
@@ -518,8 +518,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 8, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 8:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
 
       let hour = within(startTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -534,8 +534,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
 
       hour = within(endTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -550,8 +550,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(3);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 11, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
     });
 
     it('should not fire onChange until both date range and time range are selected', async function () {
