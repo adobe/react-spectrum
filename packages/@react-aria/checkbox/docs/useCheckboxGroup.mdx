@@ -127,13 +127,14 @@ function Checkbox(props) {
   let {children} = props;
   let state = React.useContext(CheckboxGroupContext);
   let ref = React.useRef(null);
-  let {inputProps} = useCheckboxGroupItem(props, state, ref);
+  let {inputProps, labelProps} = useCheckboxGroupItem(props, state, ref);
 
   let isDisabled = state.isDisabled || props.isDisabled;
   let isSelected = state.isSelected(props.value);
 
   return (
     <label
+      {...labelProps}
       style={{
         display: 'block',
         color: (isDisabled && 'var(--gray)') || (isSelected && 'var(--blue)'),
