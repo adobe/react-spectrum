@@ -1432,7 +1432,7 @@ describe('ComboBox', function () {
   });
 
   describe('blur', function () {
-    it('closes and commits selection on tab', async function () {
+    it('closes without selecting on tab', async function () {
       let {queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
           <ComboBox label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
@@ -1470,9 +1470,8 @@ describe('ComboBox', function () {
 
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-      expect(onSelectionChange).toHaveBeenCalledWith('1');
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenCalledWith('Bulbasaur');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onInputChange).not.toHaveBeenCalled();
       expect(queryByRole('listbox')).toBeFalsy();
     });
 
@@ -1736,7 +1735,7 @@ describe('ComboBox', function () {
       expect(onBlur).not.toBeCalled();
     });
 
-    it('tab and shift tab move focus away from the combobox and select the focused item', async function () {
+    it('tab and shift tab move focus away from the combobox without selecting the focused item', async function () {
       let {getByRole, queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
           <Button variant="secondary">Shift tab move</Button>
@@ -1795,9 +1794,9 @@ describe('ComboBox', function () {
       });
 
       expect(queryByRole('listbox')).toBeNull();
-      expect(onInputChange).toHaveBeenLastCalledWith('Bulbasaur');
-      expect(onSelectionChange).toHaveBeenLastCalledWith('1');
-      expect(combobox.value).toBe('Bulbasaur');
+      expect(onInputChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(combobox.value).toBe('');
       expect(document.activeElement).toBe(tabButton);
 
       act(() => {
@@ -1828,9 +1827,9 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(onInputChange).toHaveBeenLastCalledWith('Bulbasaur');
-      expect(onSelectionChange).toHaveBeenLastCalledWith('1');
-      expect(combobox.value).toBe('Bulbasaur');
+      expect(onInputChange).toHaveBeenCalledWith('');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(combobox.value).toBe('');
       expect(queryByRole('listbox')).toBeNull();
       expect(document.activeElement).toBe(shiftTabButton);
     });
@@ -5268,9 +5267,9 @@ describe('ComboBox', function () {
 
       if (parseInt(React.version, 10) >= 19) {
         it('resets to defaultSelectedKey when submitting form action', async () => {
-          function Test() {        
+          function Test() {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5280,11 +5279,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId, getByRole} = render(<Test />);
           let input = getByRole('combobox');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');
@@ -5599,7 +5598,7 @@ describe('ComboBox', function () {
         it('resets to defaultSelectedKey when submitting form action', async () => {
           function Test() {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5609,11 +5608,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId} = render(<Test />);
           let input = document.querySelector('input[name=combobox]');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');
