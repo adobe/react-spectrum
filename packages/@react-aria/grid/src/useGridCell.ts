@@ -11,13 +11,13 @@
  */
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely, isFocusVisible} from '@react-aria/interactions';
+import {focusSafely, isFocusVisible, useLongPress} from '@react-aria/interactions';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent, useEffect, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -44,7 +44,9 @@ export interface GridCellAria {
   /** Props for the grid cell element. */
   gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean,
+  /** Whether the cell is currently in edit mode. */
+  isEditing: boolean
 }
 
 /**
@@ -280,9 +282,116 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     };
   }
 
+
+  // Edit mode.
+  let isEditing = state.editingKey === node.key;
+  let modality = useRef('');
+  let isDoubleClickAllowed = /* state.selectionManager.isEmpty || */ !state.selectionManager.canSelectItem(node.parentKey!) || state.selectionManager.isSelected(node.parentKey!);
+  let editModeProps = {
+    onDoubleClick(e) {
+      // TODO: this conflicts with double click to perform an action with selectionBehavior="replace".
+      // With selectionBehavior="toggle", the action will also fire for each click. Probably should delay to ensure it wasn't a double click?
+      // If there is no action, then the selection will also toggle twice. Maybe you have to select via checkbox if there is editing?
+
+      if (modality.current === 'touch') {
+        return;
+      }
+
+      // With selectionBehavior="toggle", only support double click to edit when nothing is selected. See below.
+      // if (state.selectionManager.selectionBehavior !== 'toggle' || isDoubleClickAllowed) {
+      if (isDoubleClickAllowed) {
+        e.stopPropagation();
+        state.startEditing(node.key);
+      }
+    },
+    onPointerDown(e) {
+      // If selectionBehavior="toggle", we need to prevent row selection from toggling when trying to double click to edit.
+      // When no rows are selected, users can double click a cell to edit, or click the checkbox to start selecting.
+      // Once at least one row is selected, clicking other rows will select them, and double clicking does nothing.
+      modality.current = e.pointerType;
+      if (
+        state.selectionManager.selectionBehavior === 'toggle' &&
+        e.pointerType !== 'touch' &&
+        isDoubleClickAllowed
+      ) {
+        // TODO: this doesn't work on touch because touch with selectionBehavior="replace" works like toggle.
+        // But if we prevent this, there is no other way to initiate a selection (e.g. checkbox).
+        // We could add long press, but seems like
+        e.stopPropagation();
+        // focus();
+        // state.selectionManager.setFocused(true);
+        // state.selectionManager.setFocusedKey(node.parentKey);
+      }
+
+      if (isEditing) {
+        e.stopPropagation();
+      }
+    },
+    onMouseDown(e) {
+      if (isEditing) {
+        e.stopPropagation();
+      }
+    },
+    onKeyDown(e) {
+      if (e.key === 'Escape' && isEditing) {
+        e.stopPropagation();
+        state.endEditing();
+      } else if (e.key === 'Enter') {
+        e.stopPropagation();
+        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+          return;
+        }
+        if (!isEditing) {
+          state.startEditing(node.key);
+        } else {
+          // Maybe not by default. User will want to save the value first.
+          // state.endEditing();
+        }
+      } else if (!isEditing && (e.key.length === 1 || !/^[A-Z]/i.test(e.key))) {
+        // TODO: somehow only if the edit mode is a text input?
+        e.stopPropagation();
+        state.startEditing(node.key);
+      } else if (isEditing) {
+        e.stopPropagation();
+      }
+    },
+    onBlur(e) {
+      if (isEditing && !e.currentTarget.contains(e.relatedTarget)) {
+        state.endEditing();
+      }
+    }
+  };
+
+  let {longPressProps} = useLongPress({
+    isDisabled: isEditing,
+    onLongPress(e) {
+      if (e.pointerType === 'touch') {
+        state.startEditing(node.key);
+      }
+    }
+  });
+
+  if (node.props?.allowsEditing) {
+    gridCellProps = isEditing ? {...gridCellProps, ...editModeProps} : mergeProps(gridCellProps, longPressProps, editModeProps);
+  }
+
+  let wasEditing = useRef(false);
+  useEffect(() => {
+    if (ref.current && isEditing !== wasEditing.current && (isEditing || (state.selectionManager.isFocused && state.selectionManager.focusedKey === node.key))) {
+      focus();
+      let input = document.activeElement;
+      if ((input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) && ref.current.contains(input)) {
+        input.select();
+      }
+    }
+
+    wasEditing.current = isEditing;
+  }, [isEditing, state.selectionManager.isFocused, state.selectionManager.focusedKey, focus, node.key, ref]);
+
   return {
     gridCellProps,
-    isPressed
+    isPressed,
+    isEditing
   };
 }
 
