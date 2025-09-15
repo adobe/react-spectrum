@@ -50,7 +50,7 @@ import {ChevronRight} from 'lucide-react';
     </Button>
   </Heading>
   <DisclosurePanel>
-    <p>Details about system requirements here.</p>
+    Details about system requirements here.
   </DisclosurePanel>
 </Disclosure>
 ```
@@ -74,6 +74,7 @@ import {ChevronRight} from 'lucide-react';
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 8px 0;
 
     svg {
       rotate: 0deg;
@@ -84,13 +85,20 @@ import {ChevronRight} from 'lucide-react';
     }
   }
 
+  .react-aria-Heading {
+    margin-bottom: 0;
+  }
+
   &[data-expanded] .react-aria-Button[slot=trigger] svg {
     rotate: 90deg;
   }
 }
 
 .react-aria-DisclosurePanel {
-  margin-left: 32px;
+  margin-left: 26px;
+  height: var(--disclosure-panel-height);
+  transition: height 250ms;
+  overflow: clip;
 }
 ```
 
@@ -149,7 +157,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
         </Button>
       </Heading>
       <DisclosurePanel>
-        <p>{children}</p>
+        {children}
       </DisclosurePanel>
     </Disclosure>
   )
@@ -213,7 +221,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
     <Button>Click me</Button>
   </div>
   <DisclosurePanel>
-    <p>Details about system requirements here.</p>
+    Details about system requirements here.
   </DisclosurePanel>
 </Disclosure>
 ```
@@ -281,6 +289,8 @@ The states, selectors, and render props for each component used in a `Disclosure
 A `Disclosure` can be targeted with the `.react-aria-Disclosure` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.DisclosureRenderProps.properties} />
+
+Use the `--disclosure-panel-width` and `--disclosure-panel-height` CSS variables to implement animations.
 
 ### Button
 
