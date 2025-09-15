@@ -90,6 +90,9 @@ export interface ActionBarProps extends SlotProps {
 
 export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ */
 export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);

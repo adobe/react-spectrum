@@ -119,6 +119,9 @@ export const timeField = style({
   width: 'unset'
 });
 
+/**
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(
   props: DatePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
