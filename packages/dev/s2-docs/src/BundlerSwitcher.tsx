@@ -36,6 +36,7 @@ export interface BundlerSwitcherItemProps {
   children: ReactNode
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function BundlerSwitcherItem(_props: BundlerSwitcherItemProps) {
   return null;
 }
