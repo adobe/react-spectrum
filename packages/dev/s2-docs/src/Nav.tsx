@@ -297,7 +297,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
           }
         }}
         styles={style({marginX: 12, marginTop: 12})}>
-        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white'})}>
+        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'layer-2'})}>
           <TabList>
             {libraries.map(library => (
               <Tab key={library.id} id={library.id}>{library.label}</Tab>
@@ -308,7 +308,7 @@ export function MobileNav({pages, currentPage}: PageProps) {
           <TabPanel key={library.id} id={library.id}>
             <div
               ref={headerRef}
-              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'white'})}
+              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'layer-2'})}
               style={{top: tabListHeight}}>
               <SearchField 
                 aria-label="Search" 
