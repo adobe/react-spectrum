@@ -235,7 +235,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
             }
           )}} />
       </head>
-      <body>
+      <body style={{position: 'relative'}}>
         {children}
         <script
           dangerouslySetInnerHTML={{__html: `

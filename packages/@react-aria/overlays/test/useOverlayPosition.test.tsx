@@ -14,7 +14,7 @@ import {fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
-function Example({triggerTop = 250, ...props}) {
+function Example({triggerTop = 250, containerStyle = {width: 600, height: 600} as React.CSSProperties, ...props}) {
   let targetRef = useRef(null);
   let containerRef = useRef(null);
   let overlayRef = useRef(null);
@@ -23,7 +23,7 @@ function Example({triggerTop = 250, ...props}) {
   return (
     <React.Fragment>
       <div ref={targetRef} data-testid="trigger" style={{left: 10, top: triggerTop, width: 100, height: 100}}>Trigger</div>
-      <div ref={containerRef} data-testid="container" style={{width: 600, height: 600}}>
+      <div ref={containerRef} data-testid="container" style={containerStyle}>
         <div ref={overlayRef} data-testid="overlay" style={style}>
           <div data-testid="arrow" {...arrowProps} />
           placement: {placement}
@@ -36,6 +36,13 @@ function Example({triggerTop = 250, ...props}) {
 let original = window.HTMLElement.prototype.getBoundingClientRect;
 HTMLElement.prototype.getBoundingClientRect = function () {
   let rect = original.apply(this);
+  if (this.tagName === 'BODY') {
+    return {
+      ...rect,
+      height: this.clientHeight,
+      width: this.clientWidth
+    };
+  }
   return {
     ...rect,
     left: parseInt(this.style.left, 10) || 0,
@@ -49,6 +56,7 @@ HTMLElement.prototype.getBoundingClientRect = function () {
 
 describe('useOverlayPosition', function () {
   beforeEach(() => {
+    document.body.style.margin = '0'; // jsdom defaults to having a margin of 8px, we should fix this down the line
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
 
@@ -226,6 +234,7 @@ describe('useOverlayPosition with positioned container', () => {
   let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
   let realGetComputedStyle = window.getComputedStyle;
   beforeEach(() => {
+    document.body.style.margin = '0';
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
     stubs.push(
@@ -238,19 +247,7 @@ describe('useOverlayPosition with positioned container', () => {
         }
       }),
       jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        if (this.attributes.getNamedItem('data-testid')?.value === 'container') {
-          // Say, overlay is positioned somewhere
-          let real = realGetBoundingClientRect.apply(this);
-          return {
-            ...real,
-            top: 150,
-            left: 0,
-            width: 400,
-            height: 400
-          };
-        } else {
-          return realGetBoundingClientRect.apply(this);
-        }
+        return realGetBoundingClientRect.apply(this);
       }),
       jest.spyOn(window, 'getComputedStyle').mockImplementation(element => {
         if (element.attributes.getNamedItem('data-testid')?.value === 'container') {
@@ -276,7 +273,7 @@ describe('useOverlayPosition with positioned container', () => {
   });
 
   it('should position the overlay relative to the trigger', function () {
-    let res = render(<Example />);
+    let res = render(<Example containerStyle={{top: 150, left: 0, width: 400, height: 400}} />);
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');
 
@@ -287,7 +284,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       top: 200px;
-      max-height: 556px;
+      max-height: 406px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -296,8 +293,9 @@ describe('useOverlayPosition with positioned container', () => {
     `);
   });
 
-  it.only('should position the overlay relative to the trigger at top', function () {
-    let res = render(<Example placement="top" />);
+  it('should position the overlay relative to the trigger at top', function () {
+    // body default has a margin of 8px, no idea where from
+    let res = render(<Example placement="top" containerStyle={{top: 150, left: 0, width: 400, height: 400}} />);
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');
 
@@ -309,7 +307,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       bottom: 300px;
-      max-height: 88px;
+      max-height: 238px;
     `);
 
     expect(overlay).toHaveTextContent('placement: top');
