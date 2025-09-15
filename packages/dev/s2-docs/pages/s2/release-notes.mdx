@@ -21,7 +21,7 @@ export const section = 'Releases';
 
 This release introduces a new font for Spectrum 2: Adobe Clean Spectrum VF. This is an evolution of the previous Adobe Clean, with slightly updated metrics allowing for better vertical centering. Along with this update, the S2 Provider component now automatically handles loading the fonts needed for the user's language. The new font does not affect previous versions of React Spectrum.
 
-If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [updated docs](GettingStarted.html#setting-up-your-app) for details.
+If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [updated docs](getting-started.html#setting-up-your-app) for details.
 
 ### New Components
 
@@ -64,7 +64,7 @@ If you previously used `page.css` without a `Provider`, you'll need to add a `Pr
 
 Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component’s own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
 
-We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html) with the [S2 style macro](Styling.html#style-macro) to create custom components. [Safe style properties](Styling.html#supported-css-properties) can be passed to the `styles` prop of an S2 component.
+We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html) with the [S2 style macro](styling.html#style-macro) to create custom components. [Safe style properties](styling.html#supported-css-properties) can be passed to the `styles` prop of an S2 component.
 
 
 ### Style macro updates
@@ -127,7 +127,7 @@ Spectrum has updated the S disclosure design. As a result, all other sizes (M, L
 
 In this release, we have made significant changes to the way our Style Macro generates CSS in order to fix issues with Safari. The Style Macro uses [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers) to avoid CSS specificity and ordering issues. However, this means global CSS declared outside a `@layer`, such as CSS resets, will take precedence over S2's CSS. To avoid this, we previously used [all: revert-layer](https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer). Unfortunately, due to numerous bugs in Safari 18, this caused rendering issues in our components.
 
-To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See [the docs](Styling.html#css-resets) for more information.
+To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See [the docs](styling.html#css-resets) for more information.
 
 **If you are using a version older than React Spectrum v3 on the same page, you must update to the latest version.** See the Adobe internal documentation for more details.
 
@@ -167,9 +167,9 @@ In addition, several DialogTrigger props have moved to the above children:
 * `hideArrow`, `offset`, `crossOffset`, `containerPadding`, `placement`, and `shouldFlip` moved to Popover
 
 We've also continued to iterate on developer experience based on your feedback. Documentation on style macro usage with regards to
-[colors](Styling.html#colors) and [typography](Styling.html#typography) have been added to help clarify
-these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](Styling.html#sizing)
-for more information. Finally, documentation on [optimizing CSS bundling](Styling.html#css-optimization) have also been
+[colors](styling.html#colors) and [typography](styling.html#typography) have been added to help clarify
+these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](styling.html#sizing)
+for more information. Finally, documentation on [optimizing CSS bundling](styling.html#css-optimization) have also been
 added to help you generate a properly optimized output when using the bundler of your choice.
 
 ### New components
@@ -294,7 +294,7 @@ See the updated [API changelog](https://github.com/adobe/react-spectrum/blob/mai
 
 * [TagGroup](TagGroup.html) now supports avatars, images, error message and description help text, and improved hover/focus styling
 * Updated React Aria Components to v1.2.0
-* Fixed global styles such as CSS resets from applying to Spectrum 2 elements. Note that any CSS rule referenced from an `UNSAFE_className` prop must now be wrapped in `@layer UNSAFE_overrides`. See [the docs](Styling.html#unsafe-style-overrides) for more details.
+* Fixed global styles such as CSS resets from applying to Spectrum 2 elements. Note that any CSS rule referenced from an `UNSAFE_className` prop must now be wrapped in `@layer UNSAFE_overrides`. See [the docs](styling.html#unsafe-style-overrides) for more details.
 * The `style` macro will now error if it is called without importing `with {type: 'macro'}`. Previously it would fail to apply styles silently. This should help with debugging.
 
 See the updated [API changelog](https://github.com/adobe/react-spectrum/blob/main/packages/@react-spectrum/s2/api-diff.md) for a full list of changes since RSP v3.
