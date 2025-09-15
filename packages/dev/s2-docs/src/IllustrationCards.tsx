@@ -2,15 +2,18 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {Content, Heading, IllustratedMessage, pressScale, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
 // @ts-ignore
 import gradientIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
 import {illustrationAliases} from './illustrationAliases.js';
 // @ts-ignore
 import linearIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
-import {pressScale, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 
 type IllustrationItemType = {
@@ -107,7 +110,18 @@ export function IllustrationCards() {
           <ListBox
             items={items}
             layout="grid"
-            className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
+            className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+            renderEmptyState={() => (
+              <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+                <NoSearchResults />
+                <Heading>
+                  No results
+                </Heading>
+                <Content>
+                  Try a different search term.
+                </Content>
+              </IllustratedMessage>
+              )}>
             {(item: IllustrationItemType) => <IllustrationItem item={item} />}
           </ListBox>
         </Virtualizer>
