@@ -292,22 +292,32 @@ function getMaxHeight(
   padding: number,
   overlayHeight: number,
   heightGrowthDirection: HeightGrowthDirection,
-  containerDimensions: Dimensions
+  containerDimensions: Dimensions,
+  isContainerDescendentOfBoundary: boolean
 ) {
-  let viewportHeight = visualViewport?.height ?? document.documentElement.clientHeight;
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top
   // with respect to the container.
   let overlayTop = (position.top != null ? position.top  : (containerDimensions[TOTAL_SIZE.height] - (position.bottom ?? 0) - overlayHeight)) - (containerDimensions.scroll.top ?? 0);
-  console.log('overlaytop vals', containerDimensions[TOTAL_SIZE.height], (position.bottom ?? 0), overlayHeight);
-  // TODO: calculate the dimentions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
+
+  // calculate the dimentions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
+  let boundaryToContainerTransformOffset = isContainerDescendentOfBoundary ? containerOffsetWithBoundary.top : 0;
+  // TODO: calculate the below, will need to add to visualViewport
+  // let viewportToContainerTransformOffset = container is body or html ? 0 : containerDimensions.top
   let boundingRect = {
     // TODO: This should be boundary top in container coord system vs viewport top in container coord system
-    top: Math.max(boundaryDimensions.top + containerOffsetWithBoundary.top, containerOffsetWithBoundary.top), // these are followed by 0 because we are in the coordinate system of the viewport
+    // For the viewport top, there are several cases
+    // 1. pinchzoom case where we want the viewports offset top as top here
+    // 2. case where container is offset from the boundary and is contained by the boundary. In this case the top we want here is NOT 0, we want to take boundary's top even though is is a negative number OR the visual viewport, whichever is more restrictive
+    // is there ever a case where we'd use the container over the visualview port?
+    // TODO: another issue is getting the proper top of the visual viewport with respect to the container if the container is not the layout viewport
+    // will need viewportToContainerTransformOffset. Also need to mock visualViewport in the tests?
+    // top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, visualViewport?.offsetTop ),
+    top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, visualViewport?.offsetTop ?? boundaryDimensions.top + boundaryToContainerTransformOffset),
     // TODO: This should be boundary bottom in container coord system vs viewport bottom in container coord system
-    bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height) + containerOffsetWithBoundary.top, viewportHeight + containerOffsetWithBoundary.top) // TODO: not sure if containerHeight is appropriate here
+    // bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), visualViewport?.offsetTop + visualViewport?.height)
+    bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset ) // TODO: not sure if containerHeight is appropriate here
   };
-
-
+  // console.log('bounding rect calcs top', boundaryDimensions.top , boundaryToContainerTransformOffset, visualViewport)
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
@@ -324,6 +334,7 @@ function getMaxHeight(
     // console.log('stuff', overlayTop, overlayHeight, boundingRect, viewportHeight, boundaryDimensions);
   // console.log('max height', overlayTop, maxHeight, containerHeight, overlayHeight, boundaryDimensions, containerOffsetWithBoundary)
   // console.log('final max', maxHeight, boundaryDimensions.height - (padding * 2))
+  console.log('maxHeight, boundingRec, overlayTop', maxHeight, boundingRect, overlayTop, heightGrowthDirection);
   return maxHeight;
 }
 
@@ -374,7 +385,8 @@ export function calculatePositionInternal(
   isContainerPositioned: boolean,
   userSetMaxHeight: number | undefined,
   arrowSize: number,
-  arrowBoundaryOffset: number
+  arrowBoundaryOffset: number,
+  isContainerDescendentOfBoundary: boolean
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
@@ -441,7 +453,8 @@ export function calculatePositionInternal(
     padding,
     overlaySize.height,
     heightGrowthDirection,
-    containerDimensions
+    containerDimensions,
+    isContainerDescendentOfBoundary
   );
 
   if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
@@ -553,12 +566,18 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
   // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(boundaryElement, container,  false);
+  // TODO: we want these offset values to be positive if boundary is contained within the container, but negative if the container is contained with the boundary
+  // Ideally we'd just use getPosition(boundaryElement, container, false) here but this returns a 0 height, just need to apply Rob's fixes to the test suite
+  // let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(boundaryElement, container,  false);
   if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
     // containerDimensions.scroll.top = 0;
     // containerDimensions.scroll.left = 0;
   }
+  // console.log('gawegaweg', getPosition(boundaryElement, container,  false))
+  let containerOffsetWithBoundary: Offset = getPosition(boundaryElement, container,  false);
   // console.log('container', container, boundaryElement, containerDimensions, boundaryDimensions, containerOffsetWithBoundary)
+
+  let isContainerDescendentOfBoundary = boundaryElement.contains(container);
   return calculatePositionInternal(
     placement,
     childOffset,
@@ -575,7 +594,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     isContainerPositioned,
     maxHeight,
     arrowSize,
-    arrowBoundaryOffset
+    arrowBoundaryOffset,
+    isContainerDescendentOfBoundary
   );
 }
 
