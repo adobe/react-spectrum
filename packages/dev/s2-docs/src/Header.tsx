@@ -2,7 +2,7 @@
 
 import {ActionButton, Badge, Text} from '@react-spectrum/s2';
 // @ts-ignore
-import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
+import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
@@ -94,7 +94,7 @@ export default function Header(props: PageProps) {
           <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>
-              <AlertTriangle />
+              <BetaApp />
               <Text>Beta Preview</Text>
             </Badge>
             <MarkdownMenu url={currentPage.url} />
