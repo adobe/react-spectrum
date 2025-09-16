@@ -112,68 +112,70 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             lg: 'none'
           }
         })}>
-        <Header pages={pages} currentPage={currentPage} />
-        <MobileHeader
-          toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
-          nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
-        <div className={style({display: 'flex', width: 'full'})}>
-          <Nav pages={pages} currentPage={currentPage} />
-          <main 
-            key={currentPage.url}
-            style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
-            className={style({
-              isolation: 'isolate',
-              backgroundColor: 'base',
-              padding: {
-                default: 12,
-                lg: 40
-              },
-              borderRadius: {
-                default: 'none',
-                lg: 'xl'
-              },
-              boxShadow: {
-                lg: 'emphasized'
-              },
-              width: 'full',
-              boxSizing: 'border-box',
-              flexGrow: 1,
-              display: 'flex',
-              justifyContent: 'space-between',
-              position: 'relative',
-              height: {
-                lg: '[calc(100vh - 72px)]'
-              },
-              overflow: {
-                lg: 'auto'
-              }
-            })}>
-            <article
+        <div className={style({isolation: 'isolate', width: 'full'})}>
+          <Header pages={pages} currentPage={currentPage} />
+          <MobileHeader
+            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
+          <div className={style({display: 'flex', width: 'full', marginTop: 12})}>
+            <Nav pages={pages} currentPage={currentPage} />
+            <main
+              key={currentPage.url}
+              style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
               className={style({
-                maxWidth: 768,
-                width: 'full',
-                height: 'fit'
-              })}>
-              {React.cloneElement(children, {components})}
-            </article>
-            <aside
-              className={style({
-                position: 'sticky',
-                top: 0,
-                height: 'fit',
-                maxHeight: 'screen',
-                overflow: 'auto',
-                paddingY: 32,
-                boxSizing: 'border-box',
-                display: {
+                isolation: 'isolate',
+                backgroundColor: 'base',
+                padding: {
+                  default: 12,
+                  lg: 40
+                },
+                borderRadius: {
                   default: 'none',
-                  lg: 'block'
+                  lg: 'xl'
+                },
+                boxShadow: {
+                  lg: 'emphasized'
+                },
+                width: 'full',
+                boxSizing: 'border-box',
+                flexGrow: 1,
+                display: 'flex',
+                justifyContent: 'space-between',
+                position: 'relative',
+                height: {
+                  lg: '[calc(100vh - 72px)]'
+                },
+                overflow: {
+                  lg: 'auto'
                 }
               })}>
-              <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-              <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-            </aside>
-          </main>
+              <article
+                className={style({
+                  maxWidth: 768,
+                  width: 'full',
+                  height: 'fit'
+                })}>
+                {React.cloneElement(children, {components})}
+              </article>
+              <aside
+                className={style({
+                  position: 'sticky',
+                  top: 0,
+                  height: 'fit',
+                  maxHeight: 'screen',
+                  overflow: 'auto',
+                  paddingY: 32,
+                  boxSizing: 'border-box',
+                  display: {
+                    default: 'none',
+                    lg: 'block'
+                  }
+                })}>
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+              </aside>
+            </main>
+          </div>
         </div>
       </body>
     </Provider>
