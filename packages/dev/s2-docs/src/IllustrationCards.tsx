@@ -74,6 +74,17 @@ export function IllustrationCards() {
     }, []);
   }, [variant, gradientStyle]);
 
+  let handleCopyImport = (id: string) => {
+    let importText = variant === 'gradient' ? 
+      `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+      `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+    navigator.clipboard.writeText(importText).then(() => {
+      // noop
+    }).catch(() => {
+      // noop
+    });
+  };
+
   return (
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
@@ -108,6 +119,7 @@ export function IllustrationCards() {
             preserveAspectRatio: true
           }}>
           <ListBox
+            onAction={(item) => handleCopyImport(item.toString())}
             items={items}
             layout="grid"
             className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
@@ -135,27 +147,15 @@ function IllustrationItem({item}: {item: IllustrationItemType}) {
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      {({isFocused}) => (
-        <>
-          <Illustration />
-          {isFocused && (
-            <div
-              className={style({
-                position: 'absolute',
-                bottom: 0,
-                left: '50%',
-                translateX: '-50%',
-                translateY: '20%',
-                padding: 4,
-                backgroundColor: 'elevated',
-                borderRadius: 'default',
-                boxShadow: 'elevated'
-              })}>
-              {item.id}
-            </div>
-          )}
-        </>
-      )}
+      <Illustration />
+      <div
+        className={style({
+          display: 'flex',
+          alignItems: 'center',
+          padding: 4
+        })}>
+        {item.id}
+      </div>
     </ListBoxItem>
   );
 }

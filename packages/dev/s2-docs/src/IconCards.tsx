@@ -36,8 +36,17 @@ const itemStyle = style({
   flexDirection: 'column',
   gap: 4,
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  paddingX: 4
 });
+
+let handleCopyImport = (id: string) => {
+  navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
+    // noop
+  }).catch(() => {
+    // noop
+  });
+};
 
 export function IconCards() {
   let {contains} = useFilter({sensitivity: 'base'});
@@ -57,9 +66,10 @@ export function IconCards() {
         <SearchField size="L" />
         <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(8, 8), preserveAspectRatio: true}}>
           <ListBox
+            onAction={(item) => handleCopyImport(item.toString())}
             items={iconList}
             layout="grid"
-            className={style({height: 360, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+            className={style({height: 440, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
             renderEmptyState={() => (
               <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
                 <NoSearchResults />
@@ -80,29 +90,16 @@ function IconItem({item}) {
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      {({isFocused}) => {
-        return (
-          <>
-            <Icon styles={iconStyle({size: 'XL'})} />
-            {isFocused && (
-              <div
-                className={style({
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '50%',
-                  translateX: '-50%',
-                  translateY: '20%',
-                  padding: 4,
-                  backgroundColor: 'elevated',
-                  borderRadius: 'default',
-                  boxShadow: 'elevated'
-                })}>
-                {item.id}
-              </div>
-            )}
-          </>
-        );
-      }}
+      <Icon styles={iconStyle({size: 'XL'})} />
+      <div
+        className={style({
+          maxWidth: '100%',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap'
+        })}>
+        {item.id}
+      </div>
     </ListBoxItem>
   );
 }
