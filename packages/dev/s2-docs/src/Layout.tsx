@@ -15,6 +15,7 @@ import {PickerItem, Provider} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TitleResizer} from './TitleResizer';
 import {TypeLink} from './types';
 import {VisualExample} from './VisualExample';
 
@@ -113,6 +114,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           }
         })}>
         <div className={style({isolation: 'isolate', width: 'full'})}>
+          <TitleResizer />
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
             toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
