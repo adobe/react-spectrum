@@ -1,8 +1,8 @@
 'use client';
 
 import {ActionButton, CloseButton, DialogTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
 import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {getCurrentLibrary, TAB_DEFS} from './SearchMenu';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
@@ -107,7 +107,7 @@ const MobileCustomDialog = forwardRef<HTMLDivElement, MobileDialogProps>(functio
   );
 });
 
-export function MobileHeader({toc, nav}) {
+export function MobileHeader({toc, nav, currentPage}) {
   let ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -128,6 +128,9 @@ export function MobileHeader({toc, nav}) {
       return () => window.removeEventListener('scroll', onScroll);
     }
   }, []);
+
+  let currentLibrary = getCurrentLibrary(currentPage);
+  let icon = TAB_DEFS[currentLibrary].icon;
 
   return (
     <div
@@ -172,7 +175,7 @@ export function MobileHeader({toc, nav}) {
           alignItems: 'center',
           flexGrow: 1
         })}>
-        <AdobeLogo />
+        {icon}
         <h2
           className={style({
             font: 'heading-sm',
@@ -184,7 +187,7 @@ export function MobileHeader({toc, nav}) {
             animationTimeline: 'scroll()',
             animationRange
           } as CSSProperties}>
-          React Aria
+          {TAB_DEFS[currentLibrary].label}
         </h2>
       </div>
       <div

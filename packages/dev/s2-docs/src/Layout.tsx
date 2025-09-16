@@ -117,6 +117,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           <TitleResizer />
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
+            currentPage={currentPage}
             toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
             nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
           <div className={style({display: 'flex', width: 'full', marginTop: 12})}>

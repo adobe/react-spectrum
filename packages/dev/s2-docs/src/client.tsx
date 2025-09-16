@@ -12,7 +12,7 @@ let updateRoot = hydrate({
 });
 
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
-// and in a React transition, stream in the new page. Once complete, we'll pushState to 
+// and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
   let res = fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
