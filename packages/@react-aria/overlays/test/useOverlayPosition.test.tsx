@@ -89,7 +89,7 @@ describe('useOverlayPosition', function () {
       position: absolute;
       z-index: 100000;
       left: 12px;
-      bottom: 350px;
+      bottom: 518px;
       max-height: 238px;
     `);
 
@@ -281,7 +281,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       top: 200px;
-      max-height: 556px;
+      max-height: 406px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -303,7 +303,7 @@ describe('useOverlayPosition with positioned container', () => {
       z-index: 100000;
       left: 12px;
       bottom: 300px;
-      max-height: 88px;
+      max-height: 238px;
     `);
 
     expect(overlay).toHaveTextContent('placement: top');
