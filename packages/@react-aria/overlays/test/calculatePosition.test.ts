@@ -109,14 +109,14 @@ describe('calculatePosition', function () {
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
     let pos: {right?: number, top?: number, left?: number, bottom?: number} = {};
     if ((placementAxis === 'left' && !flip) || (placementAxis === 'right' && flip)) {
-      pos.right = boundaryDimensions.width - (expected[0] + overlaySize.width);
+      pos.right = containerDimensions.width - (expected[0] + overlaySize.width);
       pos.top = expected[1];
     } else if ((placementAxis === 'right' && !flip) || (placementAxis === 'left' && flip)) {
       pos.left = expected[0];
       pos.top = expected[1];
     } else if (placementAxis === 'top') {
       pos.left = expected[0];
-      pos.bottom = boundaryDimensions.height - providerOffset - (expected[1] + overlaySize.height);
+      pos.bottom = containerDimensions.height - (expected[1] + overlaySize.height);
     } else if (placementAxis === 'bottom') {
       pos.left = expected[0];
       pos.top = expected[1];

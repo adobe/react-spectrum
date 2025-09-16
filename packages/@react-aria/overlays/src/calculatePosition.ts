@@ -275,7 +275,9 @@ function computePosition(
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
     // container.
-    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : containerDimensions[TOTAL_SIZE[size]]);
+    let containerHeight = (isContainerPositioned ? containerDimensions[size] : containerDimensions[TOTAL_SIZE[size]]);
+    // containerHeight = 400;
+    // console.log('container height', containerHeight, isContainerPositioned, containerOffsetWithBoundary)
     position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
@@ -298,7 +300,7 @@ function getMaxHeight(
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top
   // with respect to the container.
   let overlayTop = (position.top != null ? position.top  : (containerDimensions[TOTAL_SIZE.height] - (position.bottom ?? 0) - overlayHeight)) - (containerDimensions.scroll.top ?? 0);
-
+  // console
   // calculate the dimentions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
   let boundaryToContainerTransformOffset = isContainerDescendentOfBoundary ? containerOffsetWithBoundary.top : 0;
   // TODO: calculate the below, will need to add to visualViewport
@@ -314,8 +316,8 @@ function getMaxHeight(
     // top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, visualViewport?.offsetTop ),
     top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, visualViewport?.offsetTop ?? boundaryDimensions.top + boundaryToContainerTransformOffset),
     // TODO: This should be boundary bottom in container coord system vs viewport bottom in container coord system
-    // bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), visualViewport?.offsetTop + visualViewport?.height)
-    bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset ) // TODO: not sure if containerHeight is appropriate here
+    bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), visualViewport?.offsetTop + visualViewport?.height)
+    // bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset ) // TODO: not sure if containerHeight is appropriate here
   };
   // console.log('bounding rect calcs top', boundaryDimensions.top , boundaryToContainerTransformOffset, visualViewport)
   let maxHeight = heightGrowthDirection !== 'top' ?
@@ -334,7 +336,7 @@ function getMaxHeight(
     // console.log('stuff', overlayTop, overlayHeight, boundingRect, viewportHeight, boundaryDimensions);
   // console.log('max height', overlayTop, maxHeight, containerHeight, overlayHeight, boundaryDimensions, containerOffsetWithBoundary)
   // console.log('final max', maxHeight, boundaryDimensions.height - (padding * 2))
-  console.log('maxHeight, boundingRec, overlayTop', maxHeight, boundingRect, overlayTop, heightGrowthDirection);
+  // console.log('maxHeight, boundingRec, overlayTop', maxHeight, boundingRect, overlayTop, heightGrowthDirection);
   return maxHeight;
 }
 
@@ -345,22 +347,36 @@ function getAvailableSpace(
   margins: Position, // overlay
   padding: number, // overlay <-> boundary
   placementInfo: ParsedPlacement,
-  containerDimensions: Dimensions //
+  containerDimensions: Dimensions, //,
+  isContainerDescendentOfBoundary: boolean
 ) {
+  console.log('iscontainer', isContainerDescendentOfBoundary)
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
     return  Math.max(0,
       childOffset[axis] // trigger start
       - (containerDimensions.scroll[axis] ?? 0) // transform trigger position to be with respect to viewport 0,0
-      - boundaryDimensions[axis] // boundary start
+      - (boundaryDimensions[axis] + (isContainerDescendentOfBoundary ? containerOffsetWithBoundary[axis] : 0)) // boundary start
       - (margins[axis] ?? 0) // margins usually for arrows or other decorations
       - margins[FLIPPED_DIRECTION[axis]]
       - padding); // padding between overlay and boundary
   }
-
+  console.log('available',
+    Math.max(0,
+      (boundaryDimensions[size]
+      + boundaryDimensions[axis]
+      + (isContainerDescendentOfBoundary ? containerOffsetWithBoundary[axis] : 0))
+       - childOffset[axis]
+       - childOffset[size]
+       + (containerDimensions.scroll[axis] ?? 0)
+       - (margins[axis] ?? 0)
+       - margins[FLIPPED_DIRECTION[axis]]
+       - padding)
+  )
   return Math.max(0,
-    boundaryDimensions[size]
+    (boundaryDimensions[size]
     + boundaryDimensions[axis]
+    + (isContainerDescendentOfBoundary ? containerOffsetWithBoundary[axis] : 0))
      - childOffset[axis]
      - childOffset[size]
      + (containerDimensions.scroll[axis] ?? 0)
@@ -399,7 +415,8 @@ export function calculatePositionInternal(
     margins,
     padding + offset,
     placementInfo,
-    containerDimensions
+    containerDimensions,
+    isContainerDescendentOfBoundary
   );
 
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
@@ -414,7 +431,8 @@ export function calculatePositionInternal(
       margins,
       padding + offset,
       flippedPlacementInfo,
-      containerDimensions
+      containerDimensions,
+      isContainerDescendentOfBoundary
     );
 
     // If the available space for the flipped position is greater than the original available space, flip.
@@ -575,6 +593,9 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   }
   // console.log('gawegaweg', getPosition(boundaryElement, container,  false))
   let containerOffsetWithBoundary: Offset = getPosition(boundaryElement, container,  false);
+  console.log('contianer offset with boundary', containerDimensions, boundaryDimensions, targetNode.outerHTML, overlayNode.outerHTML)
+  console.log('container outer', container.outerHTML)
+  console.log('boundary outer', boundaryElement.outerHTML)
   // console.log('container', container, boundaryElement, containerDimensions, boundaryDimensions, containerOffsetWithBoundary)
 
   let isContainerDescendentOfBoundary = boundaryElement.contains(container);
