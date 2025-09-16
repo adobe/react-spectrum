@@ -4,7 +4,18 @@ const Code = ({children}) => <code className={style({font: 'code'})}>{children}<
 
 export function S2StyleProperties() {
   return (
-    <ul className={style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', padding: 0, listStyleType: 'none'})} style={{columns: 3}}>
+    <ul className={style({
+      fontSize: 'body-lg',
+      lineHeight: 'body',
+      color: 'body',
+      padding: 0,
+      listStyleType: 'none',
+      display: 'grid',
+      gridTemplateColumns: {
+        default: 'repeat(2, minmax(0, 1fr))',
+        sm: 'repeat(3, minmax(0, 1fr))'
+      }
+    })}>
       <li><Code>margin</Code></li>
       <li><Code>marginStart</Code></li>
       <li><Code>marginEnd</Code></li>
