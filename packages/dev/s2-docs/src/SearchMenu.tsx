@@ -206,7 +206,7 @@ export default function SearchMenu(props: SearchMenuProps) {
         return;
       }
 
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && isSearchOpen) {
         e.preventDefault();
         closeSearchMenu();
       } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
@@ -220,7 +220,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [closeSearchMenu, toggleShowSearchMenu]);
+  }, [closeSearchMenu, isSearchOpen, toggleShowSearchMenu]);
 
   let onFocusSearch = React.useCallback(() => {
     toggleShowSearchMenu();
