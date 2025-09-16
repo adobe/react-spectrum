@@ -3,12 +3,15 @@
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
 import {AdobeLogo} from './icons/AdobeLogo';
 import {Autocomplete, AutocompleteProps, Dialog, Key, Modal, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
+// @ts-ignore
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import FakeSearchFieldButton from './FakeSearchFieldButton';
+import {getLibraryFromPage, getLibraryFromUrl, Library} from './library';
 import {InternationalizedLogo} from './icons/InternationalizedLogo';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+// @ts-ignore
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
 // @ts-ignore
@@ -63,7 +66,7 @@ let modalStyle = style({
   height: '[90vh]'
 });
 
-export type Library = 'react-spectrum' | 'react-aria' | 'internationalized';
+// Library type now exported from library.ts
 
 type TabDef = {
   label: string,
@@ -89,24 +92,9 @@ export const TAB_DEFS: Record<Library, TabDef> = {
   }
 };
 
-const getCurrentLibrary = (currentPage: Page): Library => {
-  if (currentPage.url.includes('react-aria')) {
-    return 'react-aria';
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return 'internationalized';
-  }
-  return 'react-spectrum';
-};
+const getCurrentLibrary = (currentPage: Page): Library => getLibraryFromPage(currentPage);
 
-const getLibraryFromUrl = (url: string): Library => {
-  if (url.includes('react-aria')) {
-    return 'react-aria';
-  }
-  if (url.includes('react-internationalized')) {
-    return 'internationalized';
-  }
-  return 'react-spectrum';
-};
+// getLibraryFromUrl now imported from library.ts
 
 export default function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, toggleShowSearchMenu, closeSearchMenu, isSearchOpen, overlayId} = props;

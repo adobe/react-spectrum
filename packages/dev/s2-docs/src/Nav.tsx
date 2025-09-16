@@ -3,18 +3,20 @@
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import {Content, Heading, IllustratedMessage, Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {type Library, TAB_DEFS} from './SearchMenu';
+import {getLibraryFromPage, type Library} from './library';
 import {Link} from 'react-aria-components';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+// @ts-ignore
 import type {PageProps} from '@parcel/rsc';
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {TAB_DEFS} from './SearchMenu';
 
 export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
+  let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
-    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
+    let library = getLibraryFromPage(page);
     if (library !== currentLibrary) {
       continue;
     }
@@ -49,8 +51,20 @@ export function Nav({pages, currentPage}: PageProps) {
       {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>
-            {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+            {pages
+              .sort((a, b) => {
+                let aIntro = isIntroduction(a);
+                let bIntro = isIntroduction(b);
+                if (aIntro && !bIntro) {
+                  return -1;
+                }
+                if (!aIntro && bIntro) {
+                  return 1;
+                }
+                return title(a).localeCompare(title(b));
+              })
+              .map(page => (
+                <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
             ))}
           </SideNav>
         </SideNavSection>
@@ -69,30 +83,14 @@ export function MobileNav({pages, currentPage}: PageProps) {
   let tabListRef = useRef<HTMLDivElement>(null);
   let [tabListHeight, setTabListHeight] = useState(0);
 
-  let getCurrentLibrary = (page: any): Library => {
-    if (page.url.includes('react-aria')) {
-      return 'react-aria';
-    } else if (page.url.includes('react-internationalized')) {
-      return 'internationalized';
-    }
-    return 'react-spectrum';
-  };
+  let getCurrentLibrary = (page: any): Library => getLibraryFromPage(page);
 
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(getCurrentLibrary(currentPage));
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
     let sectionsMap = new Map();
     
-    let filteredPages = pages.filter(page => {
-      let pageLibrary: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
-      if (page.url.includes('react-aria')) {
-        pageLibrary = 'react-aria';
-      } else if (page.url.includes('react-internationalized')) {
-        pageLibrary = 'internationalized';
-      }
-      
-      return pageLibrary === libraryId;
-    });
+    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId);
 
     for (let page of filteredPages) {
       let section = page.exports?.section ?? 'Components';
@@ -357,6 +355,15 @@ export function MobileNav({pages, currentPage}: PageProps) {
 
 function title(page) {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
+}
+
+function isIntroduction(page) {
+  let navTitle = page.exports?.navigationTitle;
+  if (typeof navTitle === 'string' && navTitle.trim().toLowerCase() === 'introduction') {
+    return true;
+  }
+  let t = title(page);
+  return typeof t === 'string' && t.trim().toLowerCase() === 'introduction';
 }
 
 function SideNavSection({title, children}) {
