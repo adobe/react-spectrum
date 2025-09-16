@@ -86,11 +86,13 @@ export function BundlerSwitcher({children}: BundlerSwitcherProps) {
 
   return (
     <div className={container}>
-      <SegmentedControl selectedKey={active?.id} onSelectionChange={onSelectionChange} styles={switcher}>
-        {items.map(it => (
-          <SegmentedControlItem key={it.id} id={it.id}>{it.label}</SegmentedControlItem>
-        ))}
-      </SegmentedControl>
+      <div className={style({overflowX: 'auto', width: 'auto', flexGrow: 1})}>
+        <SegmentedControl selectedKey={active?.id} onSelectionChange={onSelectionChange} styles={switcher}>
+          {items.map(it => (
+            <SegmentedControlItem key={it.id} id={it.id}>{it.label}</SegmentedControlItem>
+          ))}
+        </SegmentedControl>
+      </div>
       {active?.content}
     </div>
   );
