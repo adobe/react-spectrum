@@ -1,12 +1,12 @@
 'use client';
 
 import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
 import React, {CSSProperties, lazy, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TAB_DEFS} from './constants';
 
 const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
@@ -80,6 +80,9 @@ export function MobileHeader({toc, pages, currentPage}) {
     }
   }, []);
 
+  let currentLibrary = getCurrentLibrary(currentPage);
+  let icon = TAB_DEFS[currentLibrary].icon;
+
   return (
     <div
       ref={ref}
@@ -123,7 +126,7 @@ export function MobileHeader({toc, pages, currentPage}) {
           alignItems: 'center',
           flexGrow: 1
         })}>
-        <AdobeLogo />
+        {icon}
         <h2
           className={style({
             font: 'heading-sm',
@@ -135,7 +138,7 @@ export function MobileHeader({toc, pages, currentPage}) {
             animationTimeline: 'scroll()',
             animationRange
           } as CSSProperties}>
-          React Aria
+          {TAB_DEFS[currentLibrary].label}
         </h2>
       </div>
       <div

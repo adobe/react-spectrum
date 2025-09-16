@@ -101,9 +101,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           <TitleResizer />
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
+            currentPage={currentPage}
             toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
-            pages={pages}
-            currentPage={currentPage} />
+            pages={pages} />
           <div className={style({display: 'flex', width: 'full'})}>
             <Nav pages={pages} currentPage={currentPage} />
             <main
