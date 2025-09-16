@@ -239,6 +239,8 @@ export function CalendarPopover(props: PropsWithChildren): ReactElement {
   return (
     <PopoverBase
       hideArrow
+      // TODO: another case where the below styles aren't allowed as overrides via styles
+      // and thus we can't get away with replacing it with Popover...
       styles={style({
         paddingX: 16,
         paddingY: 32,

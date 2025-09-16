@@ -15,7 +15,6 @@ import {
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
   ContextValue,
-  Dialog,
   DialogProps,
   OverlayArrow,
   OverlayTriggerStateContext,
@@ -23,8 +22,9 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
@@ -155,8 +155,7 @@ let arrow = style({
 export const PopoverContext = createContext<ContextValue<PopoverProps, DOMRefValue<HTMLDivElement>>>(null);
 export const InPopoverContext = createContext(false);
 
-export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, PopoverContext);
+export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -164,18 +163,18 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
     styles,
     size
   } = props;
-  let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
 
   // TODO: should we pass through lang and dir props in RAC?
   let popoverRef = useCallback((el: HTMLDivElement) => {
-    (domRef as MutableRefObject<HTMLDivElement>).current = el;
     if (el) {
       el.lang = locale;
       el.dir = direction;
     }
-  }, [locale, direction, domRef]);
+  }, [locale, direction]);
+  // Memoed so it doesn't break ComboBox/Picker scrolling
+  let mergedRef = useMemo(() => mergeRefs(popoverRef, ref), [ref, popoverRef]);
 
   // On small devices, show a modal (or eventually a tray) instead of a popover.
   // TODO: reverted this until we have trays.
@@ -204,7 +203,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
     <AriaPopover
       {...props}
       offset={(props.offset ?? 8) + (hideArrow ? 0 : 8)}
-      ref={popoverRef}
+      ref={mergedRef}
       style={{
         ...UNSAFE_style,
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
@@ -229,43 +228,33 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
+export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
 }
 
-
+// TODO this now goes on the Popover itself, do we want to allow users to override the height?
+// That made sense for the inner dialog when that existed, but probably is undesirable for the popover itself
+// Will move padding into the popover styles instead when this is decided
 const dialogStyle = style({
   padding: 8,
-  boxSizing: 'border-box',
-  outlineStyle: 'none',
-  borderRadius: 'inherit',
-  overflow: 'auto',
-  position: 'relative',
-  width: 'full',
-  maxSize: 'inherit'
+  display: 'block',
+  overflow: 'auto'
 }, getAllowedOverrides({height: true}));
 
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
+export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, PopoverContext);
   let domRef = useDOMRef(ref);
-  const {triggerRef, isOpen, onOpenChange, ...otherProps} = props;
-
 
   return (
-    <PopoverBase  isOpen={isOpen} onOpenChange={onOpenChange} triggerRef={triggerRef} size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
-      <Dialog
-        {...otherProps}
-        ref={domRef}
-        style={props.UNSAFE_style}
-        className={(props.UNSAFE_className || '') + dialogStyle(null, props.styles)}>
-        {composeRenderProps(props.children, (children) => (
-          // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          <OverlayTriggerStateContext.Provider value={null}>
-            {children}
-          </OverlayTriggerStateContext.Provider>
-        ))}
-      </Dialog>
+    <PopoverBase {...props} ref={domRef} styles={dialogStyle(null, props.styles)}>
+      {composeRenderProps(props.children, (children) => (
+        // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
+        <OverlayTriggerStateContext.Provider value={null}>
+          {children}
+        </OverlayTriggerStateContext.Provider>
+      ))}
     </PopoverBase>
   );
 });

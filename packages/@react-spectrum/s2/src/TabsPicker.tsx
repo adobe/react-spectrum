@@ -45,7 +45,7 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -241,11 +241,13 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 size={size}
                 className={iconStyles} />
             </Button>
-            <PopoverBase
+            <Popover
               hideArrow
               offset={menuOffset}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
+              // TODO: similar to Combobox, can't override via styles props
+              UNSAFE_style={{padding: 0, overflow: 'unset'}}
               styles={style({
                 marginStart: -12,
                 minWidth: 192,
@@ -271,7 +273,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   {children}
                 </ListBox>
               </Provider>
-            </PopoverBase>
+            </Popover>
           </>
         )}
       </AriaSelect>

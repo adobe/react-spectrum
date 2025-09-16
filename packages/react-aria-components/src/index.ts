@@ -14,7 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
+export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext, SelectableCollectionContext, FieldInputContext} from './RSPContexts';
 
 export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
@@ -152,3 +152,4 @@ export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFiel
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {SelectableCollectionContextValue} from './RSPContexts';
