@@ -13,6 +13,7 @@
 import {Button, Content, Heading, InlineAlert, InlineAlertProps} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
@@ -62,7 +63,7 @@ export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
   render: (args) => <DynamicExampleRender {...args} />
 };
 
-let NoHeadingExample = (args) => {
+let NoHeadingExample = (args: InlineAlertProps & {showHeading: boolean, content: string}): ReactElement => {
   let {showHeading = false, content} = args;
   return (
     <InlineAlert {...args}>
@@ -74,9 +75,9 @@ let NoHeadingExample = (args) => {
   );
 };
 
-export const NoHeading = {
+export const NoHeading: StoryObj<typeof NoHeadingExample> = {
   render: (args) => (
-    <NoHeadingExample {...args} />
+    <NoHeadingExample {...args} styles={style({width: 400})} />
   ),
   args: {
     showHeading: false,
