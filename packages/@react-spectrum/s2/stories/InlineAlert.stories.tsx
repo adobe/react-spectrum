@@ -61,3 +61,30 @@ const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
 export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
   render: (args) => <DynamicExampleRender {...args} />
 };
+
+let NoHeadingExample = (args) => {
+  let {showHeading = false, content} = args;
+  return (
+    <InlineAlert {...args}>
+      {showHeading && <Heading>Payment Information</Heading>}
+      <Content>
+        {content}
+      </Content>
+    </InlineAlert>
+  );
+};
+
+export const NoHeading = {
+  render: (args) => (
+    <NoHeadingExample {...args} />
+  ),
+  args: {
+    showHeading: false,
+    content: 'There was an error processing your payment. Please check that your card information is correct, then try again.'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
