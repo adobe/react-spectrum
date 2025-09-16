@@ -61,6 +61,7 @@ export {RadioGroup, Radio, RadioGroupContext, RadioContext, RadioGroupStateConte
 export {SearchField, SearchFieldContext} from './SearchField';
 export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
+export {SharedElementTransition, SharedElement, SelectionIndicator, SelectionIndicatorContext} from './SharedElementTransition';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
 export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
@@ -125,6 +126,7 @@ export type {ProgressBarProps, ProgressBarRenderProps} from './ProgressBar';
 export type {RadioGroupProps, RadioGroupRenderProps, RadioProps, RadioRenderProps} from './RadioGroup';
 export type {SearchFieldProps, SearchFieldRenderProps} from './SearchField';
 export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRenderProps} from './Select';
+export type {SharedElementTransitionProps, SharedElementProps, SharedElementRenderProps, SelectionIndicatorProps} from './SharedElementTransition';
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
