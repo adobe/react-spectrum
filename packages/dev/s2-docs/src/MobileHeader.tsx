@@ -124,7 +124,7 @@ export function MobileHeader({toc, pages, currentPage}) {
           flexGrow: 1
         })}>
         <AdobeLogo />
-        <h2 
+        <h2
           className={style({
             font: 'heading-sm',
             marginY: 0,

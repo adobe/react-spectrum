@@ -125,7 +125,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
             <Nav pages={pages} currentPage={currentPage} />
-            <main 
+            <main
               key={currentPage.url}
               style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
               className={style({
