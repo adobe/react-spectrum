@@ -25,13 +25,15 @@ import {
   PickerSection,
   Text
 } from '../src';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
+
+const events = ['onOpenChange', 'onChange', 'onLoadMore'];
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -41,13 +43,14 @@ const meta: Meta<typeof Picker<any>> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onOpenChange', 'onChange', 'onLoadMore']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
     contextualHelp: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Picker'
 };
 

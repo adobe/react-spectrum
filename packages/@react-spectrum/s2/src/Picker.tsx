@@ -20,6 +20,7 @@ import {
   ButtonRenderProps,
   Collection,
   ContextValue,
+  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
@@ -529,6 +530,11 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       [TextContext, {
                         slots: {
                           description: {},
+                          [DEFAULT_SLOT]: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })},
                           label: {styles: style({
                             display: 'block',
                             flexGrow: 1,
@@ -595,6 +601,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               context={TextContext}
               value={{
                 slots: {
+                  [DEFAULT_SLOT]: {styles: label({size})},
                   label: {styles: label({size})},
                   description: {styles: description({...renderProps, size})}
                 }

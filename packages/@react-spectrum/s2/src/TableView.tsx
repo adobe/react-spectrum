@@ -458,7 +458,8 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: '[6px]'
+  borderRadius: '[6px]',
+  pointerEvents: 'none'
 } as const;
 
 function CellFocusRing() {
@@ -1036,8 +1037,8 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {isFocusVisible && <CellFocusRing />}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+          {isFocusVisible && <CellFocusRing />}
         </>
       )}
     </RACCell>

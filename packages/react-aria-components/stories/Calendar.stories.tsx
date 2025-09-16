@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, RangeCalendar} from 'react-aria-components';
+import {
+  Button,
+  Calendar,
+  CalendarCell,
+  CalendarGrid,
+  CalendarProps,
+  CalendarStateContext,
+  DateValue,
+  Heading,
+  I18nProvider,
+  RangeCalendar
+} from 'react-aria-components';
 import {CalendarDate, parseDate} from '@internationalized/date';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
@@ -116,6 +127,41 @@ export const CalendarMultiMonth: CalendarStory = {
     selectionAlignment: {
       control: 'select',
       options: ['start', 'center', 'end']
+    }
+  }
+};
+
+
+interface CalendarFirstDayOfWeekExampleProps extends CalendarProps<DateValue> {
+  locale: string
+}
+
+export const CalendarFirstDayOfWeekExample: StoryObj<CalendarFirstDayOfWeekExampleProps> = {
+  render: function Example(args) {
+    return (
+      <div>
+        <I18nProvider locale={args.locale}>
+          <Calendar style={{width: 220}}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Button slot="previous">&lt;</Button>
+              <Heading style={{flex: 1, textAlign: 'center'}} />
+              <Button slot="next">&gt;</Button>
+            </div>
+            <CalendarGrid style={{width: '100%'}}>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            </CalendarGrid>
+          </Calendar>
+        </I18nProvider>
+      </div>
+    );
+  },
+  args: {
+    locale: 'en-US-u-ca-iso8601-fw-tue'
+  },
+  argTypes: {
+    locale: {
+      control: 'select',
+      options: ['en-US-u-ca-iso8601-fw-tue', 'en-US-u-ca-iso8601', 'en-US', 'fr-FR-u-ca-iso8601-fw-tue', 'fr-FR-u-ca-iso8601', 'fr-FR']
     }
   }
 };
