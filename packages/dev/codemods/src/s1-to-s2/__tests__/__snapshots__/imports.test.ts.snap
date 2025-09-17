@@ -40,8 +40,8 @@ import * as RSP1 from "@react-spectrum/s2";
 `;
 
 exports[`should not import Item from S2 1`] = `
-"import { MenuItem, Menu } from "@react-spectrum/s2";
-import { ListView, Item } from '@adobe/react-spectrum';
+"import { MenuItem, Menu, ListView } from "@react-spectrum/s2";
+import { Item } from '@adobe/react-spectrum';
 
 <div>
   <Menu aria-label="Alignment">

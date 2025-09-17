@@ -615,7 +615,8 @@ export const style = createTheme({
     borderColor: new SpectrumColorProperty('borderColor', {
       ...baseColors,
       negative: colorToken('negative-border-color-default'),
-      disabled: colorToken('disabled-border-color')
+      disabled: colorToken('disabled-border-color'),
+      'neutral-subdued': colorToken('neutral-subdued-content-color-default')
     }),
     outlineColor: new SpectrumColorProperty('outlineColor', {
       ...baseColors,

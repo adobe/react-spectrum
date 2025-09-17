@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton, ActionButtonGroup, Image, ListView, ListViewItem, Text} from '../';
 import {categorizeArgTypes} from './utils';
-import {ListView, ListViewItem, Text, Image, ActionButton, ActionButtonGroup} from '../';
-import type {Meta, StoryObj} from '@storybook/react';
-import { Key } from 'react-aria';
-import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
-import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-import { ReactNode } from 'react';
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
+import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {Key} from 'react-aria';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactNode} from 'react';
 
 const meta: Meta<typeof ListView> = {
   component: ListView,
@@ -98,7 +98,7 @@ const items: Item[] = [
 export const Dynamic: Story = {
   render: (args) => (
     <ListView {...args} items={items}>
-      {item => (
+      {(item) => (
         <ListViewItem>{item.name}</ListViewItem>
       )}
     </ListView>
@@ -155,7 +155,7 @@ const itemsWithIcons: Array<{id: string, title: string, icons: ReactNode}> = [
   {id: '13', title: 'belly rubs', icons: <File />},
   {id: '14', title: 'long boi', icons: <File />},
   {id: '15', title: 'floof', icons: <File />},
-  {id: '16', title: 'german sheparpadom', icons: <File />},
+  {id: '16', title: 'german sheparpadom', icons: <File />}
 ];
 
 export const DynamicWithIcon: Story = {

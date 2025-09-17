@@ -10,7 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {baseColor, edgeToText, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
 import {
+  ContextValue,
   DEFAULT_SLOT,
   GridList,
   GridListItem,
@@ -19,32 +23,27 @@ import {
   GridListProps,
   GridListRenderProps,
   ListLayout,
-  ListStateContext,
   Provider,
-  useContextProps,
-  useLocale,
+  SlotProps,
   Virtualizer
 } from 'react-aria-components';
-import {JSXElementConstructor, ReactElement, ReactNode, createContext, forwardRef, useContext, useRef} from 'react';
-import {ContextValue, SlotProps} from 'react-aria-components';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {IconContext} from './Icon';
+import {ImageContext} from './Image';
+import {pressScale} from './pressScale';
+import {Text, TextContext} from './Content';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {baseColor, edgeToText, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
-import { useScale } from './utils';
-import { useDOMRef } from '@react-spectrum/utils';
-import { pressScale } from './pressScale';
-import { IconContext } from './Icon';
-import { centerBaseline } from './CenterBaseline';
-import { Text, TextContext } from './Content';
-import { ImageContext } from './Image';
-import { ActionButtonGroupContext } from './ActionButtonGroup';
 
-export interface ListViewProps<T> extends GridListProps<T>, DOMProps, StyleProps, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, DOMProps, StyleProps, ListViewStylesProps, SlotProps {
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  children: ReactNode | ((item: T) => ReactNode)
 }
 
 interface ListViewStylesProps {
@@ -84,10 +83,10 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   borderStyle: 'solid'
 }, getAllowedOverrides());
 
-export const ListView = /*#__PURE__*/ forwardRef(function ListView<T extends object>(
+export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T extends object>(
   props: ListViewProps<T>,
   ref: DOMRef<HTMLDivElement>
-): ReactNode {
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
   let {children, isQuiet} = props;
   let scale = useScale();
@@ -242,10 +241,10 @@ let actionButtonGroup = style({
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
-  let isLinkOut = isLink && props.target === '_blank';
+  // let isLinkOut = isLink && props.target === '_blank';
   let {isQuiet} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
-  let {direction} = useLocale();
+  // let {direction} = useLocale();
   return (
     <GridListItem
       {...props}
