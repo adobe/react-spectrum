@@ -83,10 +83,10 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let defaultValue = useMemo(() => {
-    return props.defaultValue ?? (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+    return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
   }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
   let value = useMemo(() => {
-    return props.value ?? (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+    return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
   }, [props.value, props.selectedKey, selectionMode]);
   let [controlledValue, setControlledValue] = useControlledState<ValueType<M>>(value as any, defaultValue as any, props.onChange);
   let setValue = (value: Key | Key[] | null) => {
