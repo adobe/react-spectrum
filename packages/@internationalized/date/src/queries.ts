@@ -286,7 +286,7 @@ function getWeekStart(locale: string): number {
       } else {
         weekInfo = {firstDay: 0};
       }
-    } else if (locale.includes('u-ca-iso8601')) {
+    } else if (locale.includes('-ca-iso8601')) {
       weekInfo = {firstDay: 1};
     } else {
       weekInfo = {firstDay: region ? weekStartData[region] || 0 : 0};
