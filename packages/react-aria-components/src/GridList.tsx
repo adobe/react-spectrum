@@ -272,7 +272,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   );
 }
 
-export interface GridListItemRenderProps extends ItemRenderProps {}
+export interface GridListItemRenderProps extends ItemRenderProps {
+  isFirstItem: boolean,
+  isLastItem: boolean
+}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
