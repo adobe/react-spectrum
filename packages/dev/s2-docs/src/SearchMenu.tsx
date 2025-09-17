@@ -390,7 +390,7 @@ export default function SearchMenu(props: SearchMenuProps) {
 
                   <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                     {sections.length > 0 && (
-                      <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingY: 8})}>
+                      <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
                         <SelectableCollectionContext.Provider value={null}>
                           <TagGroup
                             selectionMode="single"
