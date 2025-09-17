@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button,
   Dialog,
@@ -26,8 +27,7 @@ import {
   Popover,
   TextField
 } from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import React, {act, useRef} from 'react';
+import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
