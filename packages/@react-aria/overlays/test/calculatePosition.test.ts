@@ -138,16 +138,13 @@ describe('calculatePosition', function () {
     };
 
     const container = createElementWithDimensions('div', containerDimensions);
-    Object.assign(container.style, {
-      position: 'relative'
-    });
     const target = createElementWithDimensions('div', targetDimension);
     const overlay = createElementWithDimensions('div', overlaySize, margins);
 
     const parentElement = document.createElement('div');
     parentElement.appendChild(container);
     parentElement.appendChild(target);
-    container.appendChild(overlay);
+    parentElement.appendChild(overlay);
 
     document.documentElement.appendChild(parentElement);
 

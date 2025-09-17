@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/toast",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -45,7 +45,7 @@
     "@react-aria/overlays": "^3.29.1",
     "@react-aria/toast": "^3.0.7",
     "@react-aria/utils": "^3.30.1",
-    "@react-spectrum/button": "^3.17.2",
+    "@react-spectrum/button": "^3.17.3",
     "@react-spectrum/utils": "^3.12.8",
     "@react-stately/toast": "^3.1.2",
     "@react-types/shared": "^3.32.0",
