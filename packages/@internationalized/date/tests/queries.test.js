@@ -281,6 +281,9 @@ describe('queries', function () {
 
       // override first day of week
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
+
+      // override applied if extension appears in the middle of other extensions
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue-nu-thai')).toEqual(new CalendarDate(2021, 8, 3));
     });
   });
 

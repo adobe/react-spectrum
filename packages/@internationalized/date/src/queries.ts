@@ -268,7 +268,9 @@ function getWeekStart(locale: string): number {
     }
     let region = getRegion(locale);
     if (locale.includes('-fw-')) {
-      let day = locale.split('-fw-')[1];
+      // pull the value for the attribute fw from strings such as en-US-u-ca-iso8601-fw-tue or en-US-u-ca-iso8601-fw-mon-nu-thai
+      // where the fw attribute could be followed by another unicode locale extension or not
+      let day = locale.split('-fw-')[1].split('-')[0];
       if (day === 'mon') {
         weekInfo = {firstDay: 1};
       } else if (day === 'tue') {
