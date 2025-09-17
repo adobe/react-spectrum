@@ -28,7 +28,7 @@ export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> 
   scrollOffset?: number
 }
 
-export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
+export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
   let {collection, onLoadMore, scrollOffset = 1} = props;
 
   let sentinelObserver = useRef<IntersectionObserver>(null);

@@ -1,0 +1,38 @@
+@import "./theme.css";
+
+.react-aria-Disclosure {
+  width: 100%;
+
+  .react-aria-Heading {
+    margin: 0;
+    padding: 0.5em 0;
+  }
+
+  .react-aria-Button[slot=trigger] {
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+      rotate: 0deg;
+      transition: rotate 200ms;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3px;
+    }
+  }
+
+  &[data-expanded] .react-aria-Button[slot=trigger] svg {
+    rotate: 90deg;
+  }
+}
+
+.react-aria-DisclosurePanel {
+  margin-left: 32px;
+  color: var(--text-color);
+}

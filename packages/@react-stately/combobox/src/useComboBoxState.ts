@@ -10,25 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, FocusStrategy, Key, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
-import {ListCollection, useSingleSelectListState} from '@react-stately/list';
-import {SelectState} from '@react-stately/select';
+import {ListCollection, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
+export interface ComboBoxState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
+  /** The default selected key. */
+  readonly defaultSelectedKey: Key | null,
   /** The current value of the combo box input. */
   inputValue: string,
+  /** The default value of the combo box input. */
+  defaultInputValue: string,
   /** Sets the value of the combo box input. */
   setInputValue(value: string): void,
   /** Selects the currently focused item and updates the input value. */
   commit(): void,
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy | null,
+  /** Whether the select is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the select is focused. */
+  setFocused(isFocused: boolean): void,
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
@@ -90,20 +97,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     onSelectionChange,
     items: props.items ?? props.defaultItems
   });
-  let defaultInputValue: string | null | undefined = props.defaultInputValue;
-  if (defaultInputValue == null) {
-    if (selectedKey == null) {
-      defaultInputValue = '';
-    } else {
-      defaultInputValue = collection.getItem(selectedKey)?.textValue ?? '';
-    }
-  }
 
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
-    defaultInputValue!,
+    getDefaultInputValue(props.defaultInputValue, selectedKey, collection) || '',
     props.onInputChange
   );
+  let [initialSelectedKey] = useState(selectedKey);
+  let [initialValue] = useState(inputValue);
 
   // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
@@ -365,6 +366,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
+  let defaultSelectedKey = props.defaultSelectedKey ?? initialSelectedKey;
+
   return {
     ...validation,
     ...triggerState,
@@ -374,6 +377,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     close: commitValue,
     selectionManager,
     selectedKey,
+    defaultSelectedKey,
     setSelectedKey,
     disabledKeys,
     isFocused,
@@ -381,6 +385,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     selectedItem,
     collection: displayedCollection,
     inputValue,
+    defaultInputValue: getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ?? initialValue,
     setInputValue,
     commit,
     revert
@@ -406,4 +411,15 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
     }
   }
   return filteredNode;
+}
+
+
+function getDefaultInputValue(defaultInputValue: string | null | undefined, selectedKey: Key | null, collection: Collection<Node<unknown>>) {
+  if (defaultInputValue == null) {
+    if (selectedKey != null) {
+      return collection.getItem(selectedKey)?.textValue ?? '';
+    }
+  }
+
+  return defaultInputValue;
 }

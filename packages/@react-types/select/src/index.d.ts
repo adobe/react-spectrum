@@ -27,10 +27,35 @@ import {
   SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, Validation<Key>, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
+export type SelectionMode = 'single' | 'multiple';
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
+
+export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
+  /**
+   * Whether single or multiple selection is enabled.
+   * @default 'single'
+   */
+  selectionMode?: M,
+  /**
+   * The currently selected key in the collection (controlled).
+   * @deprecated
+   */
+  selectedKey?: Key | null,
+  /**
+   * The initial selected key in the collection (uncontrolled).
+   * @deprecated
+   */
+  defaultSelectedKey?: Key,
+  /**
+   * Handler that is called when the selection changes.
+   * @deprecated
+   */
+  onSelectionChange?: (key: Key | null) => void,
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
@@ -39,7 +64,7 @@ export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isRe
   onOpenChange?: (isOpen: boolean) => void
 }
 
-export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {
+export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -47,10 +72,16 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
   /**
    * The name of the input, used when submitting an HTML form.
    */
-  name?: string
+  name?: string,
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }
 
-export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.

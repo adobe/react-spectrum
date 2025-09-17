@@ -15,8 +15,10 @@ import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FieldInputContext} from './context';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -46,7 +48,7 @@ export interface SearchFieldRenderProps {
   state: SearchFieldState
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps {}
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -58,7 +60,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -71,7 +73,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
     ...removeDataAttributes(props),
     label,
     validationBehavior
-  }, state, mergedInputRef);
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -84,7 +86,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
     defaultClassName: 'react-aria-SearchField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -99,7 +101,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {

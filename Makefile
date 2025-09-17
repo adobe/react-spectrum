@@ -100,6 +100,7 @@ build:
 	done
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
+	node scripts/fixUseClient.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -117,7 +118,6 @@ check-examples:
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	node scripts/extractStarter.mjs
 	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
@@ -143,7 +143,8 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	node scripts/extractStarter.mjs
+	yarn workspace @react-spectrum/s2-docs generate:md
+	yarn workspace @react-spectrum/s2-docs generate:og
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
 	mkdir -p dist/$$(git rev-parse HEAD)

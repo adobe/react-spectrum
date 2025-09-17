@@ -1,0 +1,37 @@
+@import "./theme.css";
+
+.react-aria-Toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: fit-content;
+
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+  }
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .react-aria-Group {
+    display: contents;
+  }
+
+  .react-aria-Separator {
+    align-self: stretch;
+    background-color: var(--border-color);
+
+    &:not([aria-orientation=vertical]) {
+      border: none;
+      height: 1px;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    &[aria-orientation=vertical] {
+      width: 1px;
+      margin: 0px 10px;
+    }
+  }
+}

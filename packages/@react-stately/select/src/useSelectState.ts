@@ -10,16 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, FocusStrategy} from '@react-types/shared';
+import {CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
+import {ListState, useListState} from '@react-stately/list';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
-import {SelectProps} from '@react-types/select';
-import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {SelectionMode, SelectProps, ValueType} from '@react-types/select';
+import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 
-export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
+export interface SelectStateOptions<T, M extends SelectionMode = 'single'> extends Omit<SelectProps<T, M>, 'children'>, CollectionStateBase<T> {}
 
-export interface SelectState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
+export interface SelectState<T, M extends SelectionMode = 'single'> extends ListState<T>, OverlayTriggerState, FormValidationState {
+  /**
+   * The key for the first selected item.
+   * @deprecated
+   */
+  readonly selectedKey: Key | null,
+
+  /**
+   * The default selected key.
+   * @deprecated
+   */
+  readonly defaultSelectedKey: Key | null,
+
+  /**
+   * Sets the selected key.
+   * @deprecated
+   */
+  setSelectedKey(key: Key | null): void,
+
+  /** The current select value. */
+  readonly value: ValueType<M>,
+
+  /** The default select value. */
+  readonly defaultValue: ValueType<M>,
+
+  /** Sets the select value. */
+  setValue(value: Key | Key[] | null): void,
+
+  /**
+   * The value of the first selected item.
+   * @deprecated
+   */
+  readonly selectedItem: Node<T> | null,
+
+  /** The value of the selected items. */
+  readonly selectedItems: Node<T>[],
+
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -41,43 +78,95 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
+export function useSelectState<T extends object, M extends SelectionMode = 'single'>(props: SelectStateOptions<T, M>): SelectState<T, M>  {
+  let {selectionMode = 'single' as M} = props;
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
-  let listState = useSingleSelectListState({
-    ...props,
-    onSelectionChange: (key) => {
-      if (props.onSelectionChange != null) {
-        props.onSelectionChange(key);
+  let defaultValue = useMemo(() => {
+    return props.defaultValue ?? (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+  }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
+  let value = useMemo(() => {
+    return props.value ?? (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+  }, [props.value, props.selectedKey, selectionMode]);
+  let [controlledValue, setControlledValue] = useControlledState<ValueType<M>>(value as any, defaultValue as any, props.onChange);
+  let setValue = (value: Key | Key[] | null) => {
+    if (selectionMode === 'single') {
+      let key = Array.isArray(value) ? value[0] ?? null : value;
+      setControlledValue(key as ValueType<M>);
+      if (key !== controlledValue) {
+        props.onSelectionChange?.(key);
+      }
+    } else {
+      let keys: Key[] = [];
+      if (Array.isArray(value)) {
+        keys = value;
+      } else if (value != null) {
+        keys = [value];
       }
 
-      triggerState.close();
+      setControlledValue(keys as ValueType<M>);
+    }
+  };
+
+  let listState = useListState({
+    ...props,
+    selectionMode,
+    disallowEmptySelection: selectionMode === 'single',
+    allowDuplicateSelectionEvents: true,
+    selectedKeys: useMemo(() => convertValue(controlledValue), [controlledValue]),
+    onSelectionChange: (keys: Selection) => {
+      // impossible, but TS doesn't know that
+      if (keys === 'all') {
+        return;
+      }
+
+      if (selectionMode === 'single') {
+        let key = keys.values().next().value ?? null;
+        setValue(key);
+        triggerState.close();
+      } else {
+        setValue([...keys]);
+      }
+
       validationState.commitValidation();
     }
   });
 
+  let selectedKey = listState.selectionManager.firstSelectedKey;
+  let selectedItems = useMemo(() => {
+    return [...listState.selectionManager.selectedKeys].map(key => listState.collection.getItem(key)).filter(item => item != null);
+  }, [listState.selectionManager.selectedKeys, listState.collection]);
+
   let validationState = useFormValidationState({
     ...props,
-    value: listState.selectedKey
+    value: Array.isArray(controlledValue) && controlledValue.length === 0 ? null : controlledValue as any
   });
 
   let [isFocused, setFocused] = useState(false);
-  let isEmpty = useMemo(() => listState.collection.size === 0 || (listState.collection.size === 1 && listState.collection.getItem(listState.collection.getFirstKey()!)?.type === 'loader'), [listState.collection]);
+  let [initialValue] = useState(controlledValue);
 
   return {
     ...validationState,
     ...listState,
     ...triggerState,
+    value: controlledValue,
+    defaultValue: defaultValue ?? initialValue,
+    setValue,
+    selectedKey,
+    setSelectedKey: setValue,
+    selectedItem: selectedItems[0] ?? null,
+    selectedItems,
+    defaultSelectedKey: props.defaultSelectedKey ?? (props.selectionMode === 'single' ? initialValue as Key : null),
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (!isEmpty) {
+      if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
     toggle(focusStrategy: FocusStrategy | null = null) {
-      if (!isEmpty) {
+      if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
       }
@@ -85,4 +174,14 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     isFocused,
     setFocused
   };
+}
+
+function convertValue(value: Key | Key[] | null | undefined) {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
 }

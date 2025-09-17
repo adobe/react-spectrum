@@ -2,5 +2,6 @@
   "clear": "Puhasta",
   "invalid": "(kehtetu)",
   "loading": "Laadimine...",
-  "noResults": "Tulemusi pole"
+  "noResults": "Tulemusi pole",
+  "valid": "(kehtiv)"
 }

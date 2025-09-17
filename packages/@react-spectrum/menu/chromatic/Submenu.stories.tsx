@@ -18,7 +18,7 @@ import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import {Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
+import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
@@ -143,6 +143,9 @@ Default.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.hover(menuItems[0]);
   let submenuTrigger = await within(body).findByText('Baseline');
   await userEvent.hover(submenuTrigger);
@@ -166,11 +169,14 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.click(menuItems[0]);
   await within(body).findByText('Baseline');
 };
 
-function DefaultSubmenu(props) {
+function DefaultSubmenu(props: Omit<SpectrumMenuTriggerProps, 'children'>): JSX.Element {
   return (
     <MenuTrigger {...props} isOpen>
       <ActionButton>

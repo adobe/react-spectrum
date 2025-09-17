@@ -13,6 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat, View} from '@adobe/react-spectrum';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {ToggleButton} from '../';
@@ -38,9 +39,11 @@ export default {
     providerSwitcher: {status: 'positive'},
     chromatic: {delay: 300}
   }
-};
+} as Meta<typeof ToggleButton>;
 
-export const AllPossibleStates = () => (
+export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
+
+export const AllPossibleStates: ToggleButtonStory = () => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map((c) => (
       <ToggleButton {...c}>Button</ToggleButton>
@@ -52,7 +55,7 @@ AllPossibleStates.story = {
   name: 'all possible states'
 };
 
-export const StaticColorWhite = () => (
+export const StaticColorWhite: ToggleButtonStory = () => (
   <View backgroundColor="static-blue-700" padding="size-1000">
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
       {combinations.map((c) => (
@@ -68,7 +71,7 @@ StaticColorWhite.story = {
   name: 'staticColor = white'
 };
 
-export const StaticColorBlack = () => (
+export const StaticColorBlack: ToggleButtonStory = () => (
   <View backgroundColor="static-yellow-400" padding="size-1000">
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
       {combinations.map((c) => (
@@ -84,7 +87,7 @@ StaticColorBlack.story = {
   name: 'staticColor = black'
 };
 
-export const Arabic = () => (
+export const Arabic: ToggleButtonStory = () => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map((c) => (
       <ToggleButton {...c}>زر</ToggleButton>

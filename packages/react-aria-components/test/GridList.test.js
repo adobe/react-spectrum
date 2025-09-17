@@ -20,7 +20,9 @@ import {
   DropIndicator,
   GridList,
   GridListContext,
+  GridListHeader,
   GridListItem,
+  GridListSection,
   Label,
   ListLayout,
   Modal,
@@ -32,9 +34,9 @@ import {
   Virtualizer
 } from '../';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -44,6 +46,23 @@ let TestGridList = ({listBoxProps, itemProps}) => (
     <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
   </GridList>
 );
+
+let TestGridListSections = ({listBoxProps, itemProps}) => (
+  <GridList aria-label="Test" {...listBoxProps}>
+    <GridListSection>
+      <GridListHeader>Favorite Animal</GridListHeader>
+      <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
+    </GridListSection>
+    <GridListSection aria-label="Favorite Ice Cream">
+      <GridListItem {...itemProps} id="cat" textValue="Vanilla"><Checkbox slot="selection" />Vanilla</GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Chocolate"><Checkbox slot="selection" />Chocolate</GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry"><Checkbox slot="selection" />Strawberry</GridListItem>
+    </GridListSection>
+  </GridList>
+);
+
 
 let DraggableGridList = (props) => {
   let {dragAndDropHooks} = useDragAndDrop({
@@ -413,6 +432,68 @@ describe('GridList', () => {
     expect(items[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('should support sections', () => {
+    let {getAllByRole} = render(<TestGridListSections />);
+
+    let groups = getAllByRole('rowgroup');
+    expect(groups).toHaveLength(2);
+
+    expect(groups[0]).toHaveClass('react-aria-GridListSection');
+    expect(groups[1]).toHaveClass('react-aria-GridListSection');
+
+    expect(groups[0]).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Favorite Animal');
+    expect(groups[1].getAttribute('aria-label')).toEqual('Favorite Ice Cream');
+  });
+
+  it('should update collection when moving item to a different section', () => {
+    let {getAllByRole, rerender} = render(
+      <GridList aria-label="Test">
+        <GridListSection id="veggies">
+          <GridListHeader>Veggies</GridListHeader>
+          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
+          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
+          <GridListItem key="onion" id="onion">Onion</GridListItem>
+        </GridListSection>
+        <GridListSection id="meats">
+          <GridListHeader>Meats</GridListHeader>
+          <GridListItem key="ham" id="ham">Ham</GridListItem>
+          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
+          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+        </GridListSection>
+      </GridList>
+    );
+
+    let sections = getAllByRole('rowgroup');
+    let items = within(sections[0]).getAllByRole('gridcell');
+    expect(items).toHaveLength(3);
+    items = within(sections[1]).getAllByRole('gridcell');
+    expect(items).toHaveLength(3);
+
+    rerender(
+      <GridList aria-label="Test">
+        <GridListSection id="veggies">
+          <GridListHeader>Veggies</GridListHeader>
+          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
+          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
+          <GridListItem key="onion" id="onion">Onion</GridListItem>
+          <GridListItem key="ham" id="ham">Ham</GridListItem>
+        </GridListSection>
+        <GridListSection id="meats">
+          <GridListHeader>Meats</GridListHeader>
+          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
+          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+        </GridListSection>
+      </GridList>
+    );
+
+    sections = getAllByRole('rowgroup');
+    items = within(sections[0]).getAllByRole('gridcell');
+    expect(items).toHaveLength(4);
+    items = within(sections[1]).getAllByRole('gridcell');
+    expect(items).toHaveLength(2);
+  });
+
   describe('selectionBehavior="replace"', () => {
     // Required for proper touch detection
     installPointerEvent();
@@ -701,10 +782,7 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[1]);
 
     await user.tab();
-    expect(document.activeElement).toBe(buttonRef.current);
-
-    await user.tab();
-    expect(document.activeElement).toBe(document.body);
+    expect(document.body).toHaveFocus();
   });
 
   it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {
@@ -1099,9 +1177,9 @@ describe('GridList', () => {
               <GridListItem id={item.name}>{item.name}</GridListItem>
             )}
           </Collection>
-          <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+          <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
-          </UNSTABLE_GridListLoadingSentinel>
+          </GridListLoadMoreItem>
         </GridList>
       );
     };
@@ -1211,9 +1289,9 @@ describe('GridList', () => {
                   <GridListItem id={item.name}>{item.name}</GridListItem>
                 )}
               </Collection>
-              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+              <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                 Loading...
-              </UNSTABLE_GridListLoadingSentinel>
+              </GridListLoadMoreItem>
             </GridList>
           </Virtualizer>
         );
@@ -1227,7 +1305,7 @@ describe('GridList', () => {
         expect(rows).toHaveLength(8);
         let loaderRow = rows[7];
         expect(loaderRow).toHaveTextContent('Loading...');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -1302,7 +1380,7 @@ describe('GridList', () => {
         rows = gridListTester.rows;
         expect(rows).toHaveLength(8);
         loaderRow = rows[7];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 7) {
             continue;
@@ -1311,6 +1389,29 @@ describe('GridList', () => {
           }
         }
       });
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderGridList({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
+      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+      await gridListTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

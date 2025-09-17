@@ -48,6 +48,8 @@ export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLE
   isDisabled?: boolean,
   /** Whether the group is invalid. */
   isInvalid?: boolean,
+  /** Whether the group is read only. */
+  isReadOnly?: boolean,
   /**
    * An accessibility role for the group. By default, this is set to `'group'`.
    * Use `'region'` when the contents of the group is important enough to be
@@ -65,7 +67,7 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
  */
 export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
-  let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 
   let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
@@ -92,7 +94,8 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
-      data-invalid={isInvalid || undefined}>
+      data-invalid={isInvalid || undefined}
+      data-readonly={isReadOnly || undefined}>
       {renderProps.children}
     </div>
   );

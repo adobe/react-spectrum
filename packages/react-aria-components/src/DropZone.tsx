@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
+import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
 import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
@@ -47,7 +47,7 @@ export interface DropZoneRenderProps {
   isDisabled: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -88,7 +88,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
     values: {isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled},
     defaultClassName: 'react-aria-DropZone'
   });
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -98,8 +98,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
       ]}>
       {/* eslint-disable-next-line */}
       <div
-        {...mergeProps(dropProps, hoverProps, DOMProps)}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
         slot={props.slot || undefined}
         ref={dropzoneRef}
         onClick={(e) => {

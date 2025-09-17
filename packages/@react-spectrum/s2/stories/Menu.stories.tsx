@@ -14,8 +14,8 @@ import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
@@ -30,10 +30,12 @@ import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import {ReactElement, useState} from 'react';
 import {Selection} from 'react-aria-components';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
-import {useState} from 'react';
+
+const events = ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'];
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
@@ -42,9 +44,10 @@ const meta: Meta<typeof CombinedMenu> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Menu'
 };
 
@@ -243,7 +246,7 @@ export const DynamicExample: Story = {
   }
 };
 
-export const SelectionGroups = (args) => {
+const SelectionGroupsRender = (args: MenuProps<IExampleItem>): ReactElement => {
   let [group1, setGroup1] = useState<Selection>(new Set([1]));
   let [group2, setGroup2] = useState<Selection>(new Set());
   return (
@@ -306,6 +309,9 @@ export const SelectionGroups = (args) => {
   );
 };
 
-SelectionGroups.parameters = {
-  layout: 'padded'
+export const SelectionGroups: StoryObj<typeof SelectionGroupsRender> = {
+  render: (args) => <SelectionGroupsRender {...args} />,
+  parameters: {
+    layout: 'padded'
+  }
 };

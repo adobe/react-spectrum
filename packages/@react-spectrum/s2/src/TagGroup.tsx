@@ -34,7 +34,7 @@ import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
@@ -51,12 +51,12 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes> {
   /** The children of the tag. */
   children: ReactNode
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
   /** A description for the tag group. */
   description?: ReactNode,
   /**
@@ -323,7 +323,15 @@ function TagGroupInner<T>({
                       style={item.props.UNSAFE_style}
                       key={item.key}
                       className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
-                      {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
+                      <TagWrapper
+                        key={item.key}
+                        id={item.key}
+                        textValue={item.textValue}
+                        isInRealDOM
+                        size={size}
+                        allowsRemoving={!!onRemove}
+                        {...item.props}
+                        children={item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})} />
                     </div>
                   );
                 })}
@@ -516,41 +524,41 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
   return (
     <>
       {isInRealDOM && (
-      <div
-        className={style({
-          display: 'flex',
-          minWidth: 0,
-          alignItems: 'center',
-          gap: 'text-to-visual',
-          forcedColorAdjust: 'none',
-          backgroundColor: 'transparent'
-        })}>
-        <Provider
-          values={[
-            [TextContext, {styles: style({order: 1, truncate: true})}],
-            [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-            }],
-            [AvatarContext, {
-              size: avatarSize[size],
-              styles: style({order: 0})
-            }],
-            [ImageContext, {
-              styles: style({
-                size: fontRelative(20),
-                flexShrink: 0,
-                order: 0,
-                aspectRatio: 'square',
-                objectFit: 'contain',
-                borderRadius: 'sm'
-              })
-            }]
-          ]}>
-          {children}
-        </Provider>
-      </div>
-        )}
+        <div
+          className={style({
+            display: 'flex',
+            minWidth: 0,
+            alignItems: 'center',
+            gap: 'text-to-visual',
+            forcedColorAdjust: 'none',
+            backgroundColor: 'transparent'
+          })}>
+          <Provider
+            values={[
+              [TextContext, {styles: style({order: 1, truncate: true})}],
+              [IconContext, {
+                render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+              }],
+              [AvatarContext, {
+                size: avatarSize[size],
+                styles: style({order: 0})
+              }],
+              [ImageContext, {
+                styles: style({
+                  size: fontRelative(20),
+                  flexShrink: 0,
+                  order: 0,
+                  aspectRatio: 'square',
+                  objectFit: 'contain',
+                  borderRadius: 'sm'
+                })
+              }]
+            ]}>
+            {children}
+          </Provider>
+        </div>
+      )}
       {!isInRealDOM && children}
       {allowsRemoving && isInRealDOM && (
         <ClearButton

@@ -22,6 +22,7 @@ import {
   InputDOMProps,
   LabelableProps,
   Orientation,
+  PressEvents,
   SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
@@ -56,14 +57,14 @@ export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, Fo
   value?: string
 }
 
-export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps {
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps, PressEvents {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, InputDOMProps, LabelableProps, HelpTextProps, Validation<string[]> {}
+export interface CheckboxGroupProps extends ValueBase<string[]>, Pick<InputDOMProps, 'name'>, InputBase, LabelableProps, HelpTextProps, Validation<string[]> {}
 
 export interface CheckboxProps extends ToggleProps {
   /**
@@ -73,15 +74,15 @@ export interface CheckboxProps extends ToggleProps {
   isIndeterminate?: boolean
 }
 
-export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
+export interface AriaCheckboxProps extends CheckboxProps, InputDOMProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusEvents {}
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusEvents {}
 
 export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
   value: string
 }
 
-export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
+export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'>, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */

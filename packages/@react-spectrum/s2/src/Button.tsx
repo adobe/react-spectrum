@@ -15,7 +15,7 @@ import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateCon
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -51,12 +51,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
@@ -292,6 +292,24 @@ const gradient = style({
   }
 });
 
+export function usePendingState(isPending: boolean) {
+  let [isProgressVisible, setIsProgressVisible] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if (isPending) {
+      timeout = setTimeout(() => {
+        setIsProgressVisible(true);
+      }, 1000);
+    } else {
+      setIsProgressVisible(false);
+    }
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [isPending]);
+  return {isProgressVisible};
+}
+
 /**
  * Buttons allow users to perform an action.
  * They have multiple styles for various needs, and are ideal for calling attention to
@@ -302,7 +320,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
-    isPending,
+    isPending = false,
     variant = 'primary',
     fillStyle = 'fill',
     size = 'M',
@@ -311,24 +329,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
-  let [isProgressVisible, setIsProgressVisible] = useState(false);
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isPending) {
-      // Start timer when isPending is set to true.
-      timeout = setTimeout(() => {
-        setIsProgressVisible(true);
-      }, 1000);
-    } else {
-      // Exit loading state when isPending is set to false. */
-      setIsProgressVisible(false);
-    }
-    return () => {
-      // Clean up on unmount or when user removes isPending prop before entering loading state.
-      clearTimeout(timeout);
-    };
-  }, [isPending]);
+  let {isProgressVisible} = usePendingState(isPending);
 
   return (
     <RACButton

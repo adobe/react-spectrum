@@ -20,21 +20,24 @@ import {
   ButtonRenderProps,
   Collection,
   ContextValue,
+  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   Provider,
   SectionProps,
   SelectValue,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
+  checkbox,
   checkmark,
   description,
   icon,
@@ -64,6 +67,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
@@ -86,12 +90,14 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
+   * @private
    */
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
+type SelectionMode = 'single' | 'multiple';
+export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -240,7 +246,7 @@ let InsideSelectValueContext = createContext(false);
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object, M extends SelectionMode = 'single'>(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -286,12 +292,12 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   let spinnerId = useSlotId([showButtonSpinner]);
 
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       className={loadingWrapperStyles}
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}>
       <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function' && items) {
@@ -319,7 +325,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({...field(), position: 'relative'}, getAllowedOverrides())({
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
         labelPosition,
         size
@@ -485,7 +491,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         {(renderProps) => (
           <>
             <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-              {({defaultChildren}) => {
+              {({selectedItems, defaultChildren, selectedText}) => {
                 return (
                   <Provider
                     values={[
@@ -500,6 +506,11 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       [TextContext, {
                         slots: {
                           description: {},
+                          [DEFAULT_SLOT]: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })},
                           label: {styles: style({
                             display: 'block',
                             flexGrow: 1,
@@ -509,7 +520,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {defaultChildren}
+                    {selectedItems.length <= 1 ? defaultChildren : <Text slot="label">{selectedText}</Text>}
                   </Provider>
                 );
               }}
@@ -531,7 +542,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   );
 });
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -555,6 +566,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
+        let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
           <DefaultProvider
             context={IconContext}
@@ -565,11 +577,17 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               context={TextContext}
               value={{
                 slots: {
+                  [DEFAULT_SLOT]: {styles: label({size})},
                   label: {styles: label({size})},
                   description: {styles: description({...renderProps, size})}
                 }
               }}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !isLink && (
+                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                </div>
+              )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </DefaultProvider>
           </DefaultProvider>
@@ -589,7 +607,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
+export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

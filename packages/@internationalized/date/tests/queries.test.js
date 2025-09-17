@@ -17,6 +17,7 @@ import {
   endOfYear,
   EthiopicCalendar,
   getDayOfWeek,
+  getLocalTimeZone,
   getMinimumDayInMonth,
   getMinimumMonthInYear,
   getWeeksInMonth,
@@ -31,6 +32,8 @@ import {
   maxDate,
   minDate,
   PersianCalendar,
+  resetLocalTimeZone,
+  setLocalTimeZone,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -270,6 +273,15 @@ describe('queries', function () {
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 1));
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'thu')).toEqual(new CalendarDate(2021, 7, 29));
     });
+
+    it('should return the start of the week in en-US-u-ca-iso8601', function () {
+      // start of week is monday
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+
+      // override first day of week
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
+    });
   });
 
   describe('endOfWeek', function () {
@@ -341,6 +353,17 @@ describe('queries', function () {
       let b = new CalendarDate('AD', 1, 1, 1);
       expect(a.compare(b)).toBeLessThan(0);
       expect(b.compare(a)).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getLocalTimeZone', function () {
+    it('gets local time zone', function () {
+      const systemTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
+      setLocalTimeZone('America/Denver');
+      expect(getLocalTimeZone()).toBe('America/Denver');
+      resetLocalTimeZone();
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
     });
   });
 });

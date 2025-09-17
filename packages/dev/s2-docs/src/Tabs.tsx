@@ -47,7 +47,8 @@ const tabs = style({
   display: 'flex',
   flexShrink: 0,
   font: 'ui',
-  height: 'full'
+  height: 'full',
+  paddingTop: 8
 });
 
 /**

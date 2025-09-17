@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, UNSTABLE_TableLoadingSentinel, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -1633,7 +1633,7 @@ describe('Table', () => {
   });
 
   describe('load more spinner', () => {
-    let offsetHeight, scrollHeight;
+    let clientHeight, scrollHeight;
     let DndTable = stories.DndTable;
     let initialItems = [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1641,7 +1641,7 @@ describe('Table', () => {
     ];
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function () {
         if (this.getAttribute('role') === 'grid') {
           return 200;
         }
@@ -1651,7 +1651,7 @@ describe('Table', () => {
     });
 
     afterAll(function () {
-      offsetHeight.mockReset();
+      clientHeight.mockReset();
       scrollHeight.mockReset();
     });
 
@@ -1873,9 +1873,9 @@ describe('Table', () => {
                   </MyRow>
                 )}
               </Collection>
-              <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <TableLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 <div>spinner</div>
-              </UNSTABLE_TableLoadingSentinel>
+              </TableLoadMoreItem>
             </TableBody>
           </Table>
         </ResizableTableContainer>
@@ -2074,9 +2074,9 @@ describe('Table', () => {
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                   <div>spinner</div>
-                </UNSTABLE_TableLoadingSentinel>
+                </TableLoadMoreItem>
               </TableBody>
             </Table>
           </Virtualizer>
@@ -2090,7 +2090,7 @@ describe('Table', () => {
         expect(rows).toHaveLength(7);
         let loaderRow = rows[6];
         expect(loaderRow).toHaveTextContent('spinner');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -2144,12 +2144,9 @@ describe('Table', () => {
         expect(rows).toHaveLength(1);
 
         let loaderRow = rows[0];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '2');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         expect(loaderRow).toHaveTextContent('loading');
-        for (let [index, row] of rows.entries()) {
-          // the header row is the first row but isn't included in "rows" so add +2
-          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
-        }
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
 
         tree.rerender(<VirtualizedTableLoad items={items} />);
         rows = tableTester.rows;
@@ -2163,7 +2160,7 @@ describe('Table', () => {
         rows = tableTester.rows;
         expect(rows).toHaveLength(7);
         loaderRow = rows[6];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 6) {
             continue;
@@ -2633,6 +2630,29 @@ describe('Table', () => {
 
     await user.click(button);
     expect(button).toHaveTextContent('Hide Columns');
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await tableTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

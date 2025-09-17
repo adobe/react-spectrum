@@ -1,7 +1,7 @@
 import type {CalendarDate} from '@internationalized/date';
-import {CalendarStateContext} from 'react-aria-components';
+import {CalendarStateContext, RangeCalendarStateContext} from 'react-aria-components';
+import {ReactElement, useContext} from 'react';
 import {Select, SelectItem} from 'vanilla-starter/Select';
-import {useContext} from 'react';
 import {useDateFormatter} from 'react-aria';
 
 interface MonthItem {
@@ -10,13 +10,15 @@ interface MonthItem {
   formatted: string
 }
 
-export function MonthDropdown() {
-  let state = useContext(CalendarStateContext)!;
+export function MonthDropdown(): ReactElement {
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState || rangeCalendarState!;
   let formatter = useDateFormatter({
     month: 'short',
     timeZone: state.timeZone
   });
-  
+
   // Format the name of each month in the year according to the
   // current locale and calendar system. Note that in some calendar
   // systems, such as the Hebrew, the number of months may differ

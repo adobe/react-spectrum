@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -63,11 +63,6 @@ export interface DOMProps extends StyleProps, SharedDOMProps {
   children?: ReactNode
 }
 
-export interface ScrollableProps<T extends Element> {
-  /** Handler that is called when a user scrolls. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event). */
-  onScroll?: (e: UIEvent<T>) => void
-}
-
 type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
 type StyleOrFunction<T> = CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined);
 
@@ -78,7 +73,7 @@ export interface StyleRenderProps<T> {
   style?: StyleOrFunction<T>
 }
 
-type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
+export type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */

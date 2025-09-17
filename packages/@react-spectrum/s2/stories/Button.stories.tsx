@@ -12,11 +12,13 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, Text} from '../src';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useEffect, useRef, useState} from 'react';
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -26,9 +28,10 @@ const meta: Meta<typeof Button> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Button'
 };
 
@@ -54,7 +57,7 @@ export const Example: Story = {
 };
 
 
-export const PendingButton = {
+export const PendingButton: Story = {
   render: (args) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>

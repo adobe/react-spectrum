@@ -13,7 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -21,35 +21,37 @@ import {SpectrumSliderProps} from '@react-types/slider';
 const meta: Meta<SpectrumSliderProps> = {
   title: 'Slider',
   component: Slider
-};
+} as Meta<SpectrumSliderProps>;
 
 export default meta;
 
-export const Default = {
+export type SliderStory = StoryObj<typeof Slider>;
+
+export const Default: SliderStory = {
   args: {label: 'Slider label'}
 };
 
-export const Disabled = {
+export const Disabled: SliderStory = {
   args: {...Default.args, isDisabled: true}
 };
 
-export const LabelPositionSide = {
+export const LabelPositionSide: SliderStory = {
   args: {...Default.args, labelPosition: 'side'}
 };
 
-export const Value50 = {
+export const Value50: SliderStory = {
   args: {...Default.args, defaultValue: 50}
 };
 
-export const Filled = {
+export const Filled: SliderStory = {
   args: {...Value50.args, isFilled: true}
 };
 
-export const FillOffset = {
+export const FillOffset: SliderStory = {
   args: {...Filled.args, defaultValue: 80, fillOffset: 50}
 };
 
-export const TrackGradient = {
+export const TrackGradient: SliderStory = {
   args: {
     ...Default.args,
     isFilled: true,
@@ -65,10 +67,10 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = {
+export const _ContextualHelp: SliderStory = {
   args: {label: 'Slider label', contextualHelp}
 };
 
-export const ContextualHelpSideLabel = {
+export const ContextualHelpSideLabel: SliderStory = {
   args: {label: 'Slider label', contextualHelp, labelPosition: 'side'}
 };

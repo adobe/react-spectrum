@@ -56,6 +56,11 @@ describe('DateField', () => {
       expect(segment).toHaveAttribute('data-placeholder', 'true');
       expect(segment).toHaveAttribute('data-type');
       expect(segment).toHaveAttribute('data-test', 'test');
+      expect(segment).not.toHaveAttribute('data-readonly');
+    }
+
+    for (let literal of [...input.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
     }
   });
 
@@ -164,7 +169,7 @@ describe('DateField', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <DateField isDisabled>
         <Label>Birth date</Label>
         <DateInput className={({isDisabled}) => isDisabled ? 'disabled' : ''}>
@@ -175,6 +180,64 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled');
     expect(group).toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).not.toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly with disabled state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly isDisabled>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).toHaveAttribute('data-disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).not.toHaveAttribute('data-disabled');
+    expect(group).not.toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).not.toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).not.toHaveAttribute('data-disabled');
+    }
   });
 
   it('should support render props', () => {
@@ -218,7 +281,7 @@ describe('DateField', () => {
 
   it('should support form value', () => {
     render(
-      <DateField name="birthday" value={new CalendarDate(2020, 2, 3)}>
+      <DateField name="birthday" form="test" value={new CalendarDate(2020, 2, 3)}>
         <Label>Birth date</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -227,6 +290,7 @@ describe('DateField', () => {
     );
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -373,7 +437,23 @@ describe('DateField', () => {
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 
-  it('should not store leading zeros when typing into the segments', async () => {
+  it('should support autofill', async() => {
+    let {getByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let hiddenDateInput = document.querySelector('input[type=date]');
+    await user.type(hiddenDateInput, '2000-05-30');
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('5/30/2000');
+  });
+
+  it('should reset to placeholders when deleting a partially filled DateField', async () => {
     let {getAllByRole} = render(
       <DateField>
         <Label>Date</Label>
@@ -385,29 +465,17 @@ describe('DateField', () => {
 
     let segements = getAllByRole('spinbutton');
     let monthSegment = segements[0];
+    expect(monthSegment).toHaveTextContent('mm');
     await user.click(monthSegment);
     expect(monthSegment).toHaveFocus();
     await user.keyboard('11');
     expect(monthSegment).toHaveTextContent('11');
+
     await user.click(monthSegment);
-    await user.keyboard('012');
-    expect(monthSegment).toHaveTextContent('12');
-
-    let daysSegment = segements[1];
-    await user.click(daysSegment);
-    expect(daysSegment).toHaveFocus();
-    await user.keyboard('11');
-    expect(daysSegment).toHaveTextContent('11');
-    await user.click(daysSegment);
-    await user.keyboard('012');
-    expect(daysSegment).toHaveTextContent('12');
-
-    let yearsSegment = segements[2];
-    await user.click(yearsSegment);
-    expect(yearsSegment).toHaveFocus();
-    await user.keyboard('1111');
-    expect(yearsSegment).toHaveTextContent('1111');
-    await user.keyboard('002222');
-    expect(yearsSegment).toHaveTextContent('2222');
+    await user.keyboard('{backspace}');
+    await user.keyboard('{backspace}');
+    expect(monthSegment).toHaveTextContent('mm');
+    expect(segements[1]).toHaveTextContent('dd');
+    expect(segements[2]).toHaveTextContent('yyyy');
   });
 });

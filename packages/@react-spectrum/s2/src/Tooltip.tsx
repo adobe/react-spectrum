@@ -23,11 +23,11 @@ import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {typ
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
+export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
   children: ReactNode,
   /**
@@ -38,7 +38,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode
 }
@@ -101,6 +101,9 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   opacity: {
     isEntering: 0,
     isExiting: 0
+  },
+  overflowWrap: {
+    default: 'break-word'
   }
 });
 
