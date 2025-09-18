@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/searchfield",
-  "version": "3.8.20",
+  "version": "3.8.22",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@react-aria/searchfield": "^3.8.8",
-    "@react-spectrum/button": "^3.17.1",
+    "@react-spectrum/button": "^3.17.3",
     "@react-spectrum/form": "^3.7.18",
     "@react-spectrum/textfield": "^3.14.1",
     "@react-spectrum/utils": "^3.12.8",

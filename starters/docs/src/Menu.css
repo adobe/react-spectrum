@@ -77,6 +77,12 @@
   }
 }
 
+.react-aria-Separator {
+  margin: 6px 8px;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+}
+
 .react-aria-MenuItem {
   [slot=label] {
     font-weight: bold;

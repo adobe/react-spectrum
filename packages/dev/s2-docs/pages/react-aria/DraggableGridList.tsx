@@ -1,18 +1,9 @@
 'use client';
-import {createElement, ReactElement} from 'react';
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
 import {useDragAndDrop} from 'react-aria-components';
+import {PokemonGridList, Pokemon} from './PokemonGridList';
 
-export function DraggableGridList(): ReactElement {
-  let items = new Map([
-    ['ps', {name: 'Photoshop', style: 'strong'}],
-    ['xd', {name: 'XD', style: 'strong'}],
-    ['id', {name: 'InDesign', style: 'strong'}],
-    ['dw', {name: 'Dreamweaver', style: 'em'}],
-    ['co', {name: 'Connect', style: 'em'}]
-  ]);
-
-  let {dragAndDropHooks} = useDragAndDrop({
+export function DraggableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
     renderDragPreview(items) {
       return (
         <div className="drag-preview">
@@ -21,31 +12,16 @@ export function DraggableGridList(): ReactElement {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = items.get(key as string)!;
+    getItems(keys, items) {
+      return items.map(item => {
         return {
-          'text/plain': item.name,
-          'text/html': `<${item.style}>${item.name}</${item.style}>`,
-          'custom-app-type': JSON.stringify({id: key, ...item})
+          'text/plain': `${item.name} – ${item.type}`,
+          'text/html': `<strong>${item.name}</strong> – <em>${item.type}</em>`,
+          'pokemon': JSON.stringify(item)
         };
       });
     }
   });
 
-  return (
-    <GridList
-      aria-label="Draggable list"
-      selectionMode="multiple"
-      items={items}
-      dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => (
-        <GridListItem
-          id={id}
-          textValue={item.name}>
-          {createElement(item.style || 'span', null, item.name)}
-        </GridListItem>
-      )}
-    </GridList>
-  );
+  return <PokemonGridList dragAndDropHooks={dragAndDropHooks} />;
 }

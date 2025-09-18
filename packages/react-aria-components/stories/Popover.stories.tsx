@@ -30,6 +30,10 @@ export default {
         'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
         'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
       ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
     }
   }
 } as Meta<typeof Popover>;
@@ -41,7 +45,7 @@ export const PopoverExample: PopoverStory = (args) => (
     <Button>Open popover</Button>
     <Popover
       {...args}
-      className={styles.popover}
+      className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
       style={{
         background: 'Canvas',
         color: 'CanvasText',
@@ -461,3 +465,56 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
     </Popover>
   </DialogTrigger>
 );
+
+function ScrollingBoundaryContainerExample(args) {
+  let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
+  return (
+    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto'}}>
+      <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <DialogTrigger>
+          <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
+          <Popover
+            {...args}
+            boundaryElement={boundaryElem ?? undefined}
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              zIndex: 5
+            }}>
+            <Dialog>
+              Should match the width of the trigger button
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      </div>
+    </div>
+  );
+}
+
+export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContainerExample> = {
+  render: (args) => <ScrollingBoundaryContainerExample {...args} />,
+  args: {
+    containerPadding: 0,
+    placement: 'bottom'
+  },
+  argTypes: {
+    containerPadding: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
+      }
+    },
+    hideArrow: {
+      table: {
+        disable: true
+      }
+    },
+    animation: {
+      table: {
+        disable: true
+      }
+    }
+  }
+};

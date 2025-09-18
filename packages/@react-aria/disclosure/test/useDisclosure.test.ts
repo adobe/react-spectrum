@@ -31,7 +31,6 @@ describe('useDisclosure', () => {
     let {buttonProps, panelProps} = result.current;
 
     expect(buttonProps['aria-expanded']).toBe(false);
-    expect(panelProps.hidden).toBe(true);
     expect(panelProps['aria-hidden']).toBe(true);
   });
 
@@ -44,7 +43,7 @@ describe('useDisclosure', () => {
     let {buttonProps, panelProps} = result.current;
 
     expect(buttonProps['aria-expanded']).toBe(true);
-    expect(panelProps.hidden).toBe(false);
+    expect(panelProps['aria-hidden']).toBe(false);
   });
 
   it('should handle expanding on press event (with mouse)', () => {
