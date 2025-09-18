@@ -12,6 +12,7 @@
 
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
+import {willOpenKeyboard} from './keyboard';
 
 interface ViewportSize {
   width: number,
@@ -36,6 +37,25 @@ export function useViewportSize(): ViewportSize {
       });
     };
 
+    // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
+    // We can anticipate this and resize early by handling the blur event and using the layout size.
+    let onBlur = (e: FocusEvent) => {
+      if (
+        willOpenKeyboard(e.target as Element) && 
+        (!e.relatedTarget || !willOpenKeyboard(e.relatedTarget as Element))
+      ) {
+        setSize(size => {
+          let newSize = {width: window.innerWidth, height: window.innerHeight};
+          if (newSize.width === size.width && newSize.height === size.height) {
+            return size;
+          }
+          return newSize;
+        });
+      }
+    };
+
+    window.addEventListener('blur', onBlur, true);
+
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
     } else {
@@ -43,6 +63,7 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
+      window.removeEventListener('blur', onBlur);
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
