@@ -39,17 +39,20 @@ export function useViewportSize(): ViewportSize {
 
     // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
     // We can anticipate this and resize early by handling the blur event and using the layout size.
+    let frame: number;
     let onBlur = (e: FocusEvent) => {
-      if (
-        willOpenKeyboard(e.target as Element) && 
-        (!e.relatedTarget || !willOpenKeyboard(e.relatedTarget as Element))
-      ) {
-        setSize(size => {
-          let newSize = {width: window.innerWidth, height: window.innerHeight};
-          if (newSize.width === size.width && newSize.height === size.height) {
-            return size;
+      if (willOpenKeyboard(e.target as Element)) {
+        // Wait one frame to see if a new element gets focused.
+        frame = requestAnimationFrame(() => {
+          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
+            setSize(size => {
+              let newSize = {width: window.innerWidth, height: window.innerHeight};
+              if (newSize.width === size.width && newSize.height === size.height) {
+                return size;
+              }
+              return newSize;
+            });
           }
-          return newSize;
         });
       }
     };
@@ -63,6 +66,7 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener('blur', onBlur, true);
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
