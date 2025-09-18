@@ -151,16 +151,7 @@ function preventScrollMobileSafari() {
       setTimeout(() => {
         if (document.activeElement === scrollStopper && relatedTarget.isConnected) {
           relatedTarget.focus({preventScroll: true});
-          if (visualViewport) {
-            if (visualViewport.height < window.innerHeight) {
-              // If the keyboard is already visible, scroll the target into view.
-              scrollIntoView(relatedTarget);
-            } else {
-              // Otherwise, wait for the visual viewport to resize before scrolling so we can
-              // measure the correct position to scroll to.
-              visualViewport.addEventListener('resize', () => scrollIntoView(relatedTarget), {once: true});
-            }
-          }
+          scrollIntoViewWhenReady(relatedTarget);
         }
         scrollStopper.remove();
       }, 32);
@@ -175,6 +166,15 @@ function preventScrollMobileSafari() {
     }
   };
 
+  // Override programmatic focus to scroll into view without scrolling the whole page.
+  let focus = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function (opts) {
+    focus.call(this, {...opts, preventScroll: true});
+    if (!opts || !opts.preventScroll) {
+      scrollIntoViewWhenReady(this);
+    }
+  };
+
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
     addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
@@ -184,6 +184,7 @@ function preventScrollMobileSafari() {
   return () => {
     removeEvents();
     style.remove();
+    HTMLElement.prototype.focus = focus;
   };
 }
 
@@ -211,6 +212,17 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
     // @ts-ignore
     target.removeEventListener(event, handler, options);
   };
+}
+
+function scrollIntoViewWhenReady(target: Element) {
+  if (!visualViewport || visualViewport.height < window.innerHeight) {
+    // If the keyboard is already visible, scroll the target into view.
+    scrollIntoView(target);
+  } else {
+    // Otherwise, wait for the visual viewport to resize before scrolling so we can
+    // measure the correct position to scroll to.
+    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
+  }
 }
 
 function scrollIntoView(target: Element) {
