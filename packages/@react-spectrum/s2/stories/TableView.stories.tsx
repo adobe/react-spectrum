@@ -18,9 +18,13 @@ import {
   Button,
   Cell,
   CellProps,
+  ColorSwatch,
+  ColorWheel,
   Column,
   ColumnProps,
   Content,
+  DatePicker,
+  DateRangePicker,
   Dialog,
   Heading,
   IllustratedMessage,
@@ -30,6 +34,9 @@ import {
   NumberField,
   Picker,
   PickerItem,
+  Radio,
+  RadioGroup,
+  RangeSlider,
   Row,
   StatusLight,
   TableBody,
@@ -37,8 +44,10 @@ import {
   TableView,
   TableViewProps,
   Text,
+  TextArea,
   TextField
 } from '../src';
+import {CalendarDate, getLocalTimeZone} from '@internationalized/date';
 import {categorizeArgTypes} from './utils';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
@@ -53,8 +62,8 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Pressable, useHover} from '@react-aria/interactions';
 import {useAsyncList} from '@react-stately/data';
+import {useDateFormatter, useFocusVisible, useNumberFormatter} from 'react-aria';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useFocusVisible} from 'react-aria';
 import {useIsMobileDevice} from '../src/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 
@@ -1416,10 +1425,15 @@ const editableCell = style({
   justifyContent: 'space-between',
   width: 'full',
   height: {
-    density: {
-      compact: '[30px]',
-      regular: '[38px]',
-      spacious: '[46px]'
+    overflowMode: {
+      wrap: 'auto',
+      truncate: {
+        density: {
+          compact: '[30px]',
+          regular: '[38px]',
+          spacious: '[46px]'
+        }
+      }
     }
   },
   flexDirection: {
@@ -1722,7 +1736,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
                   [valueKey]: internalValue,
                   [setValueKey]: setInternalValue,
                   onKeyDown: onKeyDown,
-                  styles: style({flexGrow: 1, flexShrink: 1, minWidth: 0, width: '--input-width'})
+                  styles: style({flexGrow: 1, flexShrink: 1, minWidth: '--input-width'})
                 })}
                 {showButtons && (
                   <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline'})}>
@@ -1775,24 +1789,90 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
 });
 
 let defaultItems = [
-  {id: 1, fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2, isSaving: {}},
-  {id: 2, fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5, isSaving: {}},
-  {id: 3, fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10, isSaving: {}},
-  {id: 4, fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12, isSaving: {}},
-  {id: 5, fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25, isSaving: {}},
-  {id: 6, fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33, isSaving: {}},
-  {id: 7, fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42, isSaving: {}},
-  {id: 8, fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53, isSaving: {}},
-  {id: 9, fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64, isSaving: {}},
-  {id: 10, fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78, isSaving: {}}
+  {id: 1,
+    fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Apples are a type of fruit that are sweet and crunchy.',
+    isSaving: {}
+  },
+  {id: 2,
+    fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Oranges are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 3,
+    fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Pears are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 4,
+    fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Cherries are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 5,
+    fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Dates are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 6,
+    fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Bananas are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 7,
+    fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Melons are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 8,
+    fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Figs are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 9,
+    fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Blueberries are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  },
+  {id: 10,
+    fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78,
+    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
+    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
+    description: 'Blackberries are a type of fruit that are sweet and juicy.',
+    isSaving: {}
+  }
 ];
 
 let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
-  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr'},
-  {name: 'Task', id: 'task', width: '2fr'},
-  {name: 'Status', id: 'status', width: '2fr', showDivider: true},
-  {name: 'Farmer', id: 'farmer', width: '2fr'},
-  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end', minWidth: 95}
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr', minWidth: 300},
+  {name: 'Task', id: 'task', width: '2fr', minWidth: 100},
+  {name: 'Status', id: 'status', width: '2fr', showDivider: true, minWidth: 100},
+  {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150},
+  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end', minWidth: 95},
+  {name: 'Deadline', id: 'deadline', width: '2fr', minWidth: 250},
+  {name: 'Picking Season', id: 'pickingSeason', width: '2fr', minWidth: 400},
+  {name: 'Color', id: 'color', width: '2fr', minWidth: 100},
+  {name: 'Temperature Range', id: 'temperatureRange', width: '2fr', minWidth: 200},
+  {name: 'Growing Season', id: 'growingSeason', width: '2fr', minWidth: 150},
+  {name: 'Description', id: 'description', width: '2fr', minWidth: 150}
 ];
 
 let mobileColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
@@ -1807,7 +1887,7 @@ interface EditableTableProps extends TableViewProps {
 
 export const EditableTable: StoryObj<EditableTableProps> = {
   args: {
-    showButtons: true
+    showButtons: false
   },
   render: function EditableTable(args) {
     let selectionMode = args.selectionMode ?? 'none' as SelectionMode;
@@ -1826,6 +1906,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     }, []);
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
     let onChange = useCallback((value: any, id: Key, columnId: Key) => {
+      console.log('onChange', value, id, columnId);
       let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
         // remove and cancel the previous request
@@ -1868,6 +1949,8 @@ export const EditableTable: StoryObj<EditableTableProps> = {
         return {...column};
       });
     }, [isMobile, fruitWidth]);
+    let dateFormatter = useDateFormatter({dateStyle: 'full'});
+    let numberFormatter = useNumberFormatter({unit: 'celsius', style: 'unit'});
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
@@ -1976,6 +2059,155 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                                 <PickerItem textValue="Amelia" id="Amelia"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Amelia</Text></PickerItem>
                                 <PickerItem textValue="Isla" id="Isla"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Isla</Text></PickerItem>
                               </Picker>
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'deadline') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => dateFormatter.format(value.toDate(getLocalTimeZone()))}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <DatePicker aria-label="Deadline" {...props} />
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'pickingSeason') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => dateFormatter.formatRange(value.start.toDate(getLocalTimeZone()), value.end.toDate(getLocalTimeZone()))}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <DateRangePicker aria-label="Picking Season" {...props} />
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'color') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => <ColorSwatch color={value} />}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <ColorWheel aria-label="Color" {...props} />
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'temperatureRange') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => numberFormatter.formatRange(value.start, value.end)}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <RangeSlider minValue={0} maxValue={40} aria-label="Temperature Range" {...props} />
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'growingSeason') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => value}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <RadioGroup aria-label="Growing Season" {...props}>
+                                <Radio value="Spring">Spring</Radio>
+                                <Radio value="Summer">Summer</Radio>
+                                <Radio value="Fall">Fall</Radio>
+                                <Radio value="Winter">Winter</Radio>
+                              </RadioGroup>
+                            );
+                          }}
+                        </EditableCell>
+                      </Cell>
+                    );
+                  }
+                  if (column.id === 'description') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <EditableCell
+                          selectionMode={selectionMode}
+                          align={column.align}
+                          displayValue={value => <div style={{whiteSpace: 'pre-wrap'}}>{value}</div>}
+                          isValid={() => true}
+                          // @ts-expect-error
+                          tableRef={tableRef}
+                          isSaving={item.isSaving[column.id!]}
+                          showButtons={showButtons}
+                          value={item[column.id]}
+                          density={props.density}
+                          onChange={value => onChange(value, item.id, column.id!)}>
+                          {(props) => {
+                            return (
+                              <TextArea aria-label="Description" {...props} />
                             );
                           }}
                         </EditableCell>
