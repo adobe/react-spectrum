@@ -131,10 +131,15 @@ function preventScrollMobileSafari() {
     }
   };
 
+  let activeElement: HTMLElement | null = null;
   let onBlur = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
     if (!(target as any).reactAriaScrollStopper && relatedTarget && willOpenKeyboard(relatedTarget)) {
+      // Store temporary active element override so we know
+      // what was previously focused before the temporary input.
+      activeElement = target;
+
       // Create an off screen input element at the top of the page and temporarily focus 
       // that to avoid scrolling to the tapped input.
       let scrollStopper = document.createElement('input');
@@ -153,13 +158,13 @@ function preventScrollMobileSafari() {
       document.body.appendChild(scrollStopper);
       scrollStopper.focus({preventScroll: true});
 
-      // After a delay, move focus to the tapped input without scrolling, and remove the temporary input.
+      // After a delay, move focus to the tapped input, and remove the temporary input.
       setTimeout(() => {
         if (document.activeElement === scrollStopper && relatedTarget.isConnected) {
-          relatedTarget.focus({preventScroll: true});
-          scrollIntoViewWhenReady(relatedTarget);
+          relatedTarget.focus();
         }
         scrollStopper.remove();
+        activeElement = null;
       }, 32);
     } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
@@ -175,9 +180,22 @@ function preventScrollMobileSafari() {
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function (opts) {
+    // Track whether the keyboard was already visible before.
+    let target = activeElement ?? document.activeElement;
+    let wasKeyboardVisible = target != null && willOpenKeyboard(target);
+
+    // Focus the element without scrolling the page.
     focus.call(this, {...opts, preventScroll: true});
+
     if (!opts || !opts.preventScroll) {
-      scrollIntoViewWhenReady(this);
+      if (wasKeyboardVisible || !visualViewport) {
+        // If the keyboard was already visible, scroll the target into view immediately.
+        scrollIntoView(this);
+      } else {
+        // Otherwise, wait for the visual viewport to resize before scrolling so we can
+        // measure the correct position to scroll to.
+        visualViewport.addEventListener('resize', () => scrollIntoView(this), {once: true});
+      }
     }
   };
 
@@ -218,17 +236,6 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
     // @ts-ignore
     target.removeEventListener(event, handler, options);
   };
-}
-
-function scrollIntoViewWhenReady(target: Element) {
-  if (!visualViewport || visualViewport.height < window.innerHeight) {
-    // If the keyboard is already visible, scroll the target into view.
-    scrollIntoView(target);
-  } else {
-    // Otherwise, wait for the visual viewport to resize before scrolling so we can
-    // measure the correct position to scroll to.
-    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
-  }
 }
 
 function scrollIntoView(target: Element) {
