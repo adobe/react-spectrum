@@ -505,7 +505,7 @@ function PlantModal(props: ModalOverlayProps) {
       // Use position: absolute instead of fixed to avoid
       // being clipped to the "inner" viewport in iOS 26
       className={({isEntering, isExiting}) => `
-      absolute inset-0 h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
+      absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
