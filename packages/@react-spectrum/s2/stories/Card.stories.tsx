@@ -52,6 +52,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
 
 export default meta;
 type Story = StoryObj<typeof Card>;
+type UserCardStory = StoryObj<typeof UserCard>;
 
 export const Example: Story = {
   render: (args) => (
@@ -124,7 +125,7 @@ export const Asset: Story = {
   argTypes: specificArgTypes
 };
 
-export const User: Story = {
+export const User: UserCardStory = {
   render: (args) => (
     <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center'}}>
       <UserCard {...args}>

@@ -41,6 +41,10 @@ export interface TimeFieldProps<T extends TimeValue> extends
 
 export const TimeFieldContext = createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
 
+/**
+ * TimeFields allow users to enter and edit time values using a keyboard.
+ * Each part of the time is displayed in an individually editable segment.
+ */
 export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(
   props: TimeFieldProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {

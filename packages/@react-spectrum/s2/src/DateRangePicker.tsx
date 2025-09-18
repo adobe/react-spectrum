@@ -52,6 +52,10 @@ export interface DateRangePickerProps<T extends DateValue> extends
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
+/**
+ * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
+ * to enter or select a date and time range.
+ */
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
   props: DateRangePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
