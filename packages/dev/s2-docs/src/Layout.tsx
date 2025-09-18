@@ -184,9 +184,9 @@ function Toc({toc}) {
   );
 }
 
-function MobileToc({toc}) {
+function MobileToc({toc, currentPage}) {
   return (
-    <MobileOnPageNav>
+    <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(toc)}
     </MobileOnPageNav>
   );
