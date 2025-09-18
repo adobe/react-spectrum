@@ -1,6 +1,7 @@
 'use client';
 
 import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
+import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
@@ -80,7 +81,7 @@ export function MobileHeader({toc, pages, currentPage}) {
     }
   }, []);
 
-  let currentLibrary = getCurrentLibrary(currentPage);
+  let currentLibrary = getLibraryFromPage(currentPage);
   let icon = TAB_DEFS[currentLibrary].icon;
 
   return (

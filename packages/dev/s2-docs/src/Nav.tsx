@@ -225,7 +225,7 @@ export function MobileOnPageNav({children}) {
           visible.delete(entry.target);
         }
       }
-      
+
       let lastVisible = elements.find(e => visible.has(e));
       if (lastVisible) {
         setSelected('#' + lastVisible.id!);
