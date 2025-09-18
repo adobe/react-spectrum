@@ -144,6 +144,12 @@ function preventScrollMobileSafari() {
       scrollStopper.style.left = '0px';
       scrollStopper.style.top = '0px';
       scrollStopper.style.transform = 'translateY(-3000px) scale(0)';
+      // Copy keyboard-related attributes for we get the correct size.
+      for (let attr of ['autocorrect', 'autocomplete', 'autocapitalize', 'inputmode', 'spellcheck', 'type', 'pattern', 'enterkeyhint']) {
+        if (relatedTarget.hasAttribute(attr)) {
+          scrollStopper.setAttribute(attr, relatedTarget.getAttribute(attr)!);
+        }
+      }
       document.body.appendChild(scrollStopper);
       scrollStopper.focus({preventScroll: true});
 
