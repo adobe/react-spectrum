@@ -27,7 +27,7 @@ import {
   SlotProps,
   Virtualizer
 } from 'react-aria-components';
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -38,7 +38,8 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, DOMProps, StyleProps, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+  styles?: StylesPropWithHeight,
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
@@ -47,7 +48,9 @@ export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | '
 }
 
 interface ListViewStylesProps {
-  isQuiet?: boolean
+  isQuiet?: boolean,
+  isEmphasized?: boolean,
+  selectionStyle?: 'highlight' | 'checkbox'
 }
 
 export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -64,7 +67,7 @@ const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean}>({});
 
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
@@ -81,14 +84,14 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   borderColor: 'gray-300',
   borderWidth: 1,
   borderStyle: 'solid'
-}, getAllowedOverrides());
+}, getAllowedOverrides({height: true}));
 
 export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T extends object>(
   props: ListViewProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet} = props;
+  let {children, isQuiet, isEmphasized} = props;
   let scale = useScale();
 
   let renderer;
@@ -105,7 +108,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         rowHeight: scale === 'large' ? 50 : 40
       }}>
       <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet}}>
+        <InternalListViewContext.Provider value={{isQuiet, isEmphasized}}>
           <GridList
             ref={domRef}
             {...props}
@@ -122,7 +125,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   );
 });
 
-const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean}>({
+const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean, isEmphasized?: boolean}>({
   ...focusRing(),
   outlineOffset: 0,
   columnGap: 0,
@@ -130,10 +133,16 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
   paddingBottom: '--labelPadding',
   backgroundColor: {
     default: 'transparent',
-    isFocused: baseColor('gray-100').isFocusVisible
+    isHovered: 'gray-100',
+    isSelected: 'gray-100',
+    isEmphasized: {
+      isSelected: 'blue-200'
+    }
   },
   color: {
-    default: baseColor('neutral'),
+    default: baseColor('neutral-subdued'),
+    isHovered: 'gray-800',
+    isSelected: 'gray-900',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -147,7 +156,7 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
     '. checkmark icon label       actions chevron .',
     '. .         .    description actions chevron .'
   ],
-  gridTemplateColumns: [edgeToText(12), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', edgeToText(12)],
+  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', edgeToText(40)],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
@@ -167,15 +176,7 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
   borderBottomWidth: 1,
   borderTopWidth: 0,
   borderXWidth: 0,
-  borderStyle: 'solid',
-  borderTopRadius: {
-    default: 'none',
-    isFirstItem: 'default'
-  },
-  borderBottomRadius: {
-    default: 'none',
-    isLastItem: 'default'
-  }
+  borderStyle: 'solid'
 }, getAllowedOverrides());
 
 export let label = style({
@@ -183,9 +184,13 @@ export let label = style({
   alignSelf: 'center',
   font: controlFont(),
   color: 'inherit',
-  fontWeight: 'medium',
+  fontWeight: {
+    default: 'normal',
+    isSelected: 'medium'
+  },
   // TODO: token values for padding not defined yet, revisit
-  marginTop: '--labelPadding'
+  marginTop: '--labelPadding',
+  truncate: true
 });
 
 export let description = style({
@@ -235,14 +240,15 @@ let actionButtonGroup = style({
   gridArea: 'actions',
   gridRowEnd: 'span 2',
   alignSelf: 'center',
-  justifySelf: 'end'
+  justifySelf: 'end',
+  marginStart: 'text-to-visual'
 });
 
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   // let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet} = useContext(InternalListViewContext);
+  let {isQuiet, isEmphasized} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   // let {direction} = useLocale();
   return (
@@ -254,7 +260,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       className={renderProps => (props.UNSAFE_className || '') + listitem({
         ...renderProps,
         isLink,
-        isQuiet
+        isQuiet,
+        isEmphasized
       }, props.styles)}>
       {(renderProps) => {
         let {children} = props;
@@ -274,7 +281,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               }],
               [ImageContext, {styles: image}],
-              [ActionButtonGroupContext, {styles: actionButtonGroup}]
+              [ActionButtonGroupContext, {styles: actionButtonGroup, size: 'S', isQuiet: true}]
             ]}>
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
           </Provider>

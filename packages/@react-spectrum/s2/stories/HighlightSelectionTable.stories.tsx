@@ -19,8 +19,7 @@ import {
   TableBody,
   TableHeader,
   TableView,
-  TableViewProps,
-  TreeView
+  TableViewProps
 } from '../src';
 import type {Meta} from '@storybook/react';
 import React, {ReactElement} from 'react';
@@ -29,7 +28,7 @@ import UserGroup from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
 const events = ['onSelectionChange'];
 
-const meta: Meta<typeof TreeView> = {
+const meta: Meta<typeof TableView> = {
   title: 'Highlight Selection/TableView',
   component: TableView,
   parameters: {
