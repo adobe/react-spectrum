@@ -35,12 +35,12 @@ import LockOpen from '../s2wf-icons/S2_Icon_LockOpen_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useState} from 'react';
 import Visibility from '../s2wf-icons/S2_Icon_Visibility_20_N.svg';
-
 import VisibilityOff from '../s2wf-icons/S2_Icon_VisibilityOff_20_N.svg';
 
 const events = ['onSelectionChange'];
 
 const meta: Meta<typeof TreeView> = {
+  title: 'Highlight Selection/TreeView',
   component: TreeView,
   parameters: {
     layout: 'centered'
@@ -147,7 +147,8 @@ export const LayersTree: StoryObj<typeof TreeExampleLayers> = {
   args: {
     defaultExpandedKeys: ['layer-group-2'],
     selectionMode: 'multiple',
-    selectionStyle: 'highlight'
+    selectionStyle: 'highlight',
+    selectionCornerStyle: 'round'
   }
 };
 

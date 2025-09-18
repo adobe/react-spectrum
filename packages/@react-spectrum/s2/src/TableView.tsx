@@ -14,6 +14,7 @@ import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} f
 import {
   Button,
   CellRenderProps,
+  CheckboxContext,
   Collection,
   ColumnRenderProps,
   ColumnResizer,
@@ -104,7 +105,9 @@ interface S2TableProps {
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => any,
   /** Provides the ActionBar to display when rows are selected in the TableView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  selectionStyle?: 'highlight' | 'checkbox',
+  isEmphasized?: boolean
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -282,6 +285,8 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionStyle = 'checkbox',
+    isEmphasized = false,
     ...otherProps
   } = props;
 
@@ -306,11 +311,13 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionStyle,
+    isEmphasized
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionStyle, isEmphasized]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = (props.selectionMode === 'multiple' || props.selectionMode === 'single') && selectionStyle === 'checkbox';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -872,7 +879,7 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
 export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
 
   return (
@@ -881,7 +888,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       ref={domRef}
       className={tableHeader}>
       {/* Add extra columns for selection. */}
-      {selectionBehavior === 'toggle' && (
+      {selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
         // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
         // @ts-ignore
         <RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn({isQuiet})}>
@@ -1003,6 +1010,16 @@ const cellContent = style({
   backgroundColor: {
     default: 'transparent',
     isSticky: '--rowBackgroundColor'
+  },
+  fontWeight: {
+    selectionStyle: {
+      highlight: {
+        default: 'normal',
+        isRowHeader: {
+          isSelected: 'medium'
+        }
+      }
+    }
   }
 });
 
@@ -1036,14 +1053,32 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       textValue={textValue}
       {...otherProps}>
       {({isFocusVisible}) => (
-        <>
-          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
-          {isFocusVisible && <CellFocusRing />}
-        </>
+        // @ts-ignore
+        <InnerCell isFocusVisible={isFocusVisible} children={children} isSticky={isSticky} align={align} isRowHeader={props.value?.isRowHeader ?? false} />
       )}
     </RACCell>
   );
 });
+
+let InnerCell = function InnerCell(props: {isFocusVisible: boolean, children: ReactNode, isSticky?: boolean, align?: 'start' | 'center' | 'end', isRowHeader?: boolean}) {
+  let {isFocusVisible, children, isSticky, align, isRowHeader} = props;
+  let tableVisualOptions = useContext(InternalTableContext);
+  let {isSelected} = useSlottedContext(CheckboxContext, 'selection') ?? {isSelected: false};
+
+  return (
+    <>
+      <span
+        className={cellContent({
+          ...tableVisualOptions,
+          isRowHeader,
+          isSticky,
+          align: align || 'start',
+          isSelected
+        })}>{children}</span>
+      {isFocusVisible && <CellFocusRing />}
+    </>
+  );
+};
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
@@ -1053,17 +1088,33 @@ const rowBackgroundColor = {
     default: 'gray-25',
     isQuiet: '--s2-container-bg'
   },
-  isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
-  isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
-  isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
-  isSelected: {
-    default: selectedBackground, // table-selected-row-background-color, opacity /10
-    isFocusVisibleWithin: selectedActiveBackground, // table-selected-row-background-color, opacity /15
-    isHovered: selectedActiveBackground, // table-selected-row-background-color, opacity /15
-    isPressed: selectedActiveBackground // table-selected-row-background-color, opacity /15
-  },
-  forcedColors: {
-    default: 'Background'
+  selectionStyle: {
+    checkbox: {
+      isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+      isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+      isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
+      isSelected: {
+        default: selectedBackground, // table-selected-row-background-color, opacity /10
+        isFocusVisibleWithin: selectedActiveBackground, // table-selected-row-background-color, opacity /15
+        isHovered: selectedActiveBackground, // table-selected-row-background-color, opacity /15
+        isPressed: selectedActiveBackground // table-selected-row-background-color, opacity /15
+      },
+      forcedColors: {
+        default: 'Background'
+      }
+    },
+    highlight: {
+      isFocusVisibleWithin: 'gray-100',
+      isHovered: 'gray-100',
+      isPressed: 'gray-100',
+      isSelected: {
+        default: 'gray-100',
+        isEmphasized: 'blue-200'
+      },
+      forcedColors: {
+        default: 'Background'
+      }
+    }
   }
 } as const;
 
@@ -1117,7 +1168,16 @@ const row = style<RowRenderProps & S2TableProps>({
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
   },
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  color: {
+    selectionStyle: {
+      highlight: {
+        default: 'gray-700',
+        isHovered: 'gray-800',
+        isPressed: 'gray-900'
+      }
+    }
+  }
 });
 
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
@@ -1141,7 +1201,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...tableVisualOptions
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
-      {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+      {selectionMode !== 'none' && selectionBehavior === 'toggle' && tableVisualOptions.selectionStyle === 'checkbox' && (
         <Cell isSticky className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
