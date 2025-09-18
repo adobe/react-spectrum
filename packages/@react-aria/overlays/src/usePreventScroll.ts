@@ -227,9 +227,12 @@ function scrollIntoView(target: Element) {
         if (visualViewport) {
           bottom = Math.min(bottom, visualViewport.offsetTop + visualViewport.height);
         }
-        scrollable.scrollBy({
-          // Center within the viewport.
-          top: (targetRect.top - scrollableRect.top) - ((bottom - scrollableRect.top) / 2 - targetRect.height / 2),
+
+        // Center within the viewport.
+        let adjustment = (targetRect.top - scrollableRect.top) - ((bottom - scrollableRect.top) / 2 - targetRect.height / 2);
+        scrollable.scrollTo({
+          // Clamp to the valid range to prevent over-scrolling.
+          top: Math.max(0, Math.min(scrollable.scrollHeight - scrollable.clientHeight, scrollable.scrollTop + adjustment)),
           behavior: 'smooth'
         });
       }
