@@ -1,11 +1,11 @@
 'use client';
 
 import {ActionButton, CloseButton, DialogTrigger} from '@react-spectrum/s2';
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {getCurrentLibrary, TAB_DEFS} from './SearchMenu';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
+import {Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import React, {CSSProperties, forwardRef, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -96,13 +96,7 @@ const MobileCustomDialog = forwardRef<HTMLDivElement, MobileDialogProps>(functio
       <RACDialog
         {...props}
         ref={ref}
-        className={dialogStyle({padding})}>
-        {composeRenderProps(props.children, (children) => (
-          <OverlayTriggerStateContext.Provider value={null}>
-            {children}
-          </OverlayTriggerStateContext.Provider>
-        ))}
-      </RACDialog>
+        className={dialogStyle({padding})} />
     </Modal>
   );
 });
