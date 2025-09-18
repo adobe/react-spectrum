@@ -118,7 +118,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
             currentPage={currentPage}
-            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} />}
             nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
           <div className={style({display: 'flex', width: 'full', marginTop: 12})}>
             <Nav pages={pages} currentPage={currentPage} />
@@ -200,9 +200,9 @@ function Toc({toc}) {
   );
 }
 
-function MobileToc({toc}) {
+function MobileToc({toc, currentPage}) {
   return (
-    <MobileOnPageNav>
+    <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(toc)}
     </MobileOnPageNav>
   );
