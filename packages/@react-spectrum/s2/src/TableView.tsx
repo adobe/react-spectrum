@@ -359,9 +359,9 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isCheckboxSelection,
               isQuiet
             })}
-            selectionBehavior="toggle"
             onRowAction={onAction}
             {...otherProps}
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
             onSelectionChange={onSelectionChange} />
