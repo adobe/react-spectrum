@@ -131,41 +131,13 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let activeElement: HTMLElement | null = null;
   let onBlur = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (!(target as any).reactAriaScrollStopper && relatedTarget && willOpenKeyboard(relatedTarget)) {
-      // Store temporary active element override so we know
-      // what was previously focused before the temporary input.
-      activeElement = target;
-
-      // Create an off screen input element at the top of the page and temporarily focus 
-      // that to avoid scrolling to the tapped input.
-      let scrollStopper = document.createElement('input');
-      (scrollStopper as any).reactAriaScrollStopper = true; // Mark so we don't handle blur on temp input.
-      scrollStopper.dataset.reactAriaTopLayer = 'true'; // Prevent FocusScope from handling when focused.
-      scrollStopper.style.position = 'fixed';
-      scrollStopper.style.left = '0px';
-      scrollStopper.style.top = '0px';
-      scrollStopper.style.transform = 'translateY(-3000px) scale(0)';
-      // Copy keyboard-related attributes so we get the correct size.
-      for (let attr of ['autocorrect', 'autocomplete', 'autocapitalize', 'inputmode', 'spellcheck', 'type', 'pattern', 'enterkeyhint']) {
-        if (relatedTarget.hasAttribute(attr)) {
-          scrollStopper.setAttribute(attr, relatedTarget.getAttribute(attr)!);
-        }
-      }
-      document.body.appendChild(scrollStopper);
-      scrollStopper.focus({preventScroll: true});
-
-      // After a delay, move focus to the tapped input, and remove the temporary input.
-      setTimeout(() => {
-        if (document.activeElement === scrollStopper && relatedTarget.isConnected) {
-          relatedTarget.focus();
-        }
-        scrollStopper.remove();
-        activeElement = null;
-      }, 32);
+    if (relatedTarget && willOpenKeyboard(relatedTarget)) {
+      // Focus without scrolling the whole page, and then scroll into view manually.
+      relatedTarget.focus({preventScroll: true});
+      scrollIntoViewWhenReady(relatedTarget, willOpenKeyboard(target));
     } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
@@ -181,21 +153,13 @@ function preventScrollMobileSafari() {
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function (opts) {
     // Track whether the keyboard was already visible before.
-    let target = activeElement ?? document.activeElement;
-    let wasKeyboardVisible = target != null && willOpenKeyboard(target);
+    let wasKeyboardVisible = document.activeElement != null && willOpenKeyboard(document.activeElement);
 
     // Focus the element without scrolling the page.
     focus.call(this, {...opts, preventScroll: true});
 
     if (!opts || !opts.preventScroll) {
-      if (wasKeyboardVisible || !visualViewport) {
-        // If the keyboard was already visible, scroll the target into view immediately.
-        scrollIntoView(this);
-      } else {
-        // Otherwise, wait for the visual viewport to resize before scrolling so we can
-        // measure the correct position to scroll to.
-        visualViewport.addEventListener('resize', () => scrollIntoView(this), {once: true});
-      }
+      scrollIntoViewWhenReady(this, wasKeyboardVisible);
     }
   };
 
@@ -236,6 +200,17 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
     // @ts-ignore
     target.removeEventListener(event, handler, options);
   };
+}
+
+function scrollIntoViewWhenReady(target: Element, wasKeyboardVisible: boolean) {
+  if (wasKeyboardVisible || !visualViewport) {
+    // If the keyboard was already visible, scroll the target into view immediately.
+    scrollIntoView(target);
+  } else {
+    // Otherwise, wait for the visual viewport to resize before scrolling so we can
+    // measure the correct position to scroll to.
+    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
+  }
 }
 
 function scrollIntoView(target: Element) {
