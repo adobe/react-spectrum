@@ -48,7 +48,7 @@ export {useLoadMore} from './useLoadMore';
 export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel} from './useLoadMoreSentinel';
 export {inertValue} from './inertValue';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
-export {isCtrlKeyPressed} from './keyboard';
+export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
 

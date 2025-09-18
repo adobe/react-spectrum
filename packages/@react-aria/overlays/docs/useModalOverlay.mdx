@@ -75,6 +75,7 @@ The `Modal` component uses an &lt;<TypeLink links={docs.links} type={docs.export
 
 ```tsx example export=true render=false
 import {Overlay, useModalOverlay} from '@react-aria/overlays';
+import {useViewportSize} from '@react-aria/utils';
 
 function Modal({state, children, ...props}) {
   let ref = React.useRef(null);
@@ -84,18 +85,27 @@ function Modal({state, children, ...props}) {
     <Overlay>
       <div
         style={{
-          position: 'fixed',
+          position: 'absolute',
           zIndex: 100,
           top: 0,
           left: 0,
-          bottom: 0,
-          right: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          width: '100%',
+          height: document.body.clientHeight,
+          background: 'rgba(0, 0, 0, 0.5)'
+        }}
+        {...underlayProps} />
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: useViewportSize().height + 'px',
+          zIndex: 101,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
-        }}
-        {...underlayProps}>
+        }}>
         <div
           {...modalProps}
           ref={ref}

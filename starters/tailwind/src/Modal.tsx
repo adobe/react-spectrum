@@ -4,7 +4,7 @@ import { ModalOverlay, ModalOverlayProps, Modal as RACModal } from 'react-aria-c
 import { tv } from 'tailwind-variants';
 
 const overlayStyles = tv({
-  base: 'fixed top-0 left-0 w-full h-(--visual-viewport-height) isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg',
+  base: 'absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[50%] text-center backdrop-blur-lg',
   variants: {
     isEntering: {
       true: 'animate-in fade-in duration-200 ease-out'
@@ -30,7 +30,9 @@ const modalStyles = tv({
 export function Modal(props: ModalOverlayProps) {
   return (
     <ModalOverlay {...props} className={overlayStyles}>
-      <RACModal {...props} className={modalStyles} />
+      <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center p-4 box-border">
+        <RACModal {...props} className={modalStyles} />
+      </div>
     </ModalOverlay>
   );
 }

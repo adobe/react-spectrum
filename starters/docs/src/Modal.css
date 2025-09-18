@@ -1,15 +1,12 @@
 @import "./theme.css";
 
 .react-aria-ModalOverlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
-  height: var(--visual-viewport-height);
+  height: var(--page-height);
   background: rgba(0 0 0 / .5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 100;
   font-family: system-ui;
   font-size: 0.875rem;
@@ -24,12 +21,18 @@
 }
 
 .react-aria-Modal {
+  position: sticky;
+  max-height: var(--visual-viewport-height);
+  top: calc(var(--visual-viewport-height) / 2);
+  margin-left: 50vw;
+  translate: -50% -50%;
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
   background: var(--overlay-background);
   color: var(--text-color);
   border: 1px solid var(--gray-400);
   outline: none;
+  width: max-content;
   max-width: 300px;
 
   &[data-entering] {
