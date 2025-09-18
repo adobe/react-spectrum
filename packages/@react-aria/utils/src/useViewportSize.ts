@@ -63,7 +63,7 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
-      window.removeEventListener('blur', onBlur);
+      window.removeEventListener('blur', onBlur, true);
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
