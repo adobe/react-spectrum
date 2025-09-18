@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
+import {chain, getScrollParent, isIOS, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -18,19 +18,6 @@ interface PreventScrollOptions {
 }
 
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
-
-// HTML input types that do not cause the software keyboard to appear.
-const nonTextInputTypes = new Set([
-  'checkbox',
-  'radio',
-  'range',
-  'color',
-  'file',
-  'image',
-  'button',
-  'submit',
-  'reset'
-]);
 
 // The number of active usePreventScroll calls. Used to determine whether to revert back to the original page style/scroll position
 let preventScrollCount = 0;
@@ -100,31 +87,31 @@ function preventScrollStandard() {
 //    the top or bottom. Work around a bug where this does not work when the element does not actually overflow
 //    by preventing default in a `touchmove` event.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
-// 4. When focusing an input, apply a transform to trick Safari into thinking the input is at the top
-//    of the page, which prevents it from scrolling the page. After the input is focused, scroll the element
-//    into view ourselves, without scrolling the whole page.
-// 5. Offset the body by the scroll position using a negative margin and scroll to the top. This should appear the
-//    same visually, but makes the actual scroll position always zero. This is required to make all of the
-//    above work or Safari will still try to scroll the page when focusing an input.
-// 6. As a last resort, handle window scroll events, and scroll back to the top. This can happen when attempting
-//    to navigate to an input with the next/previous buttons that's outside a modal.
+// 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents 
+//    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
+//    ourselves, without scrolling the whole page.
 function preventScrollMobileSafari() {
   let scrollable: Element;
-  let restoreScrollableStyles;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     scrollable = getScrollParent(e.target as Element, true);
     if (scrollable === document.documentElement && scrollable === document.body) {
       return;
     }
-
-    // Prevent scrolling up when at the top and scrolling down when at the bottom
-    // of a nested scrollable area, otherwise mobile Safari will start scrolling
-    // the window instead.
-    if (scrollable instanceof HTMLElement && window.getComputedStyle(scrollable).overscrollBehavior === 'auto') {
-      restoreScrollableStyles = setStyle(scrollable, 'overscrollBehavior', 'contain');
-    }
   };
+
+  // Prevent scrolling up when at the top and scrolling down when at the bottom
+  // of a nested scrollable area, otherwise mobile Safari will start scrolling
+  // the window instead.
+  // This must be applied before the touchstart event as of iOS 26, so inject it as a <style> element.
+  let style = document.createElement('style');
+  style.textContent = `
+@layer {
+  * {
+    overscroll-behavior: contain;
+  }
+}`.trim();
+  document.head.prepend(style);
 
   let onTouchMove = (e: TouchEvent) => {
     // Prevent scrolling the window.
@@ -144,86 +131,59 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let onTouchEnd = () => {
-    if (restoreScrollableStyles) {
-      restoreScrollableStyles();
-    }
-  };
-
-  let onFocus = (e: FocusEvent) => {
+  let onBlur = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
-    if (willOpenKeyboard(target)) {
-      setupStyles();
+    let relatedTarget = e.relatedTarget as HTMLElement | null;
+    if (!(target as any).reactAriaScrollStopper && relatedTarget && willOpenKeyboard(relatedTarget)) {
+      // Create an off screen input element at the top of the page and temporarily focus 
+      // that to avoid scrolling to the tapped input.
+      let scrollStopper = document.createElement('input');
+      (scrollStopper as any).reactAriaScrollStopper = true; // Mark so we don't handle blur on temp input.
+      scrollStopper.dataset.reactAriaTopLayer = 'true'; // Prevent FocusScope from handling when focused.
+      scrollStopper.style.position = 'fixed';
+      scrollStopper.style.left = '0px';
+      scrollStopper.style.top = '0px';
+      scrollStopper.style.transform = 'translateY(-3000px) scale(0)';
+      document.body.appendChild(scrollStopper);
+      scrollStopper.focus({preventScroll: true});
 
-      // Apply a transform to trick Safari into thinking the input is at the top of the page
-      // so it doesn't try to scroll it into view.
-      target.style.transform = 'translateY(-2000px)';
-      requestAnimationFrame(() => {
-        target.style.transform = '';
-
-        // This will have prevented the browser from scrolling the focused element into view,
-        // so we need to do this ourselves in a way that doesn't cause the whole page to scroll.
-        if (visualViewport) {
-          if (visualViewport.height < window.innerHeight) {
-            // If the keyboard is already visible, do this after one additional frame
-            // to wait for the transform to be removed.
-            requestAnimationFrame(() => {
-              scrollIntoView(target);
-            });
-          } else {
-            // Otherwise, wait for the visual viewport to resize before scrolling so we can
-            // measure the correct position to scroll to.
-            visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
+      // After a delay, move focus to the tapped input without scrolling, and remove the temporary input.
+      setTimeout(() => {
+        if (document.activeElement === scrollStopper && relatedTarget.isConnected) {
+          relatedTarget.focus({preventScroll: true});
+          if (visualViewport) {
+            if (visualViewport.height < window.innerHeight) {
+              // If the keyboard is already visible, scroll the target into view.
+              scrollIntoView(relatedTarget);
+            } else {
+              // Otherwise, wait for the visual viewport to resize before scrolling so we can
+              // measure the correct position to scroll to.
+              visualViewport.addEventListener('resize', () => scrollIntoView(relatedTarget), {once: true});
+            }
           }
         }
-      });
+        scrollStopper.remove();
+      }, 32);
+    } else if (!relatedTarget) {
+      // When tapping the Done button on the keyboard, focus moves to the body.
+      // FocusScope will then restore focus back to the input. Later when tapping
+      // the same input again, it is already focused, so no blur event will fire,
+      // resulting in the flow above never running and Safari's native scrolling occurring.
+      // Instead, move focus to the parent focusable element (e.g. the dialog).
+      let focusable = target.parentElement?.closest('[tabindex]') as HTMLElement | null;
+      focusable?.focus({preventScroll: true});
     }
-  };
-
-  let restoreStyles: null | (() => void) = null;
-  let setupStyles = () => {
-    if (restoreStyles) {
-      return;
-    }
-
-    let onWindowScroll = () => {
-      // Last resort. If the window scrolled, scroll it back to the top.
-      // It should always be at the top because the body will have a negative margin (see below).
-      window.scrollTo(0, 0);
-    };
-
-    // Record the original scroll position so we can restore it.
-    // Then apply a negative margin to the body to offset it by the scroll position. This will
-    // enable us to scroll the window to the top, which is required for the rest of this to work.
-    let scrollX = window.pageXOffset;
-    let scrollY = window.pageYOffset;
-
-    restoreStyles = chain(
-      addEvent(window, 'scroll', onWindowScroll),
-      setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-      setStyle(document.documentElement, 'overflow', 'hidden'),
-      setStyle(document.body, 'marginTop', `-${scrollY}px`),
-      () => {
-        window.scrollTo(scrollX, scrollY);
-      }
-    );
-
-    // Scroll to the top. The negative margin on the body will make this appear the same.
-    window.scrollTo(0, 0);
   };
 
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
     addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
-    addEvent(document, 'touchend', onTouchEnd, {passive: false, capture: true}),
-    addEvent(document, 'focus', onFocus, true)
+    addEvent(document, 'blur', onBlur, true)
   );
 
   return () => {
-    // Restore styles and scroll the page back to where it was.
-    restoreScrollableStyles?.();
-    restoreStyles?.();
     removeEvents();
+    style.remove();
   };
 }
 
@@ -260,21 +220,21 @@ function scrollIntoView(target: Element) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
     if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== nextTarget) {
-      let scrollableTop = scrollable.getBoundingClientRect().top;
-      let targetTop = nextTarget.getBoundingClientRect().top;
-      if (targetTop > scrollableTop + nextTarget.clientHeight) {
-        scrollable.scrollTop += targetTop - scrollableTop;
+      let scrollableRect = scrollable.getBoundingClientRect();
+      let targetRect = nextTarget.getBoundingClientRect();
+      if (targetRect.top < scrollableRect.top || targetRect.bottom > scrollableRect.top + nextTarget.clientHeight) {
+        let bottom = scrollableRect.bottom;
+        if (visualViewport) {
+          bottom = Math.min(bottom, visualViewport.offsetTop + visualViewport.height);
+        }
+        scrollable.scrollBy({
+          // Center within the viewport.
+          top: (targetRect.top - scrollableRect.top) - ((bottom - scrollableRect.top) / 2 - targetRect.height / 2),
+          behavior: 'smooth'
+        });
       }
     }
 
     nextTarget = scrollable.parentElement;
   }
-}
-
-function willOpenKeyboard(target: Element) {
-  return (
-    (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) ||
-    target instanceof HTMLTextAreaElement ||
-    (target instanceof HTMLElement && target.isContentEditable)
-  );
 }
