@@ -10,7 +10,7 @@ import {InternationalizedLogo} from './icons/InternationalizedLogo';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/context';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
