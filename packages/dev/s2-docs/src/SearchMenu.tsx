@@ -10,12 +10,8 @@ import {InternationalizedLogo} from './icons/InternationalizedLogo';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
-// @ts-ignore
-import reactAriaDocs from 'docs:react-aria-components';
+import React, {CSSProperties, lazy, useEffect, useMemo, useRef, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
-// @ts-ignore
-import reactSpectrumDocs from 'docs:@react-spectrum/s2';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/context';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
@@ -138,24 +134,12 @@ export default function SearchMenu(props: SearchMenuProps) {
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
-        const lib = getLibraryFromUrl(page.url);
-
-        // get description from docs metadata
-        const componentKey = title.replace(/\s+/g, '');
-        let description: string | undefined = undefined;
-        if (lib === 'react-aria') {
-          description = (reactAriaDocs as any)?.exports?.[componentKey]?.description;
-        } else if (lib === 'react-spectrum') {
-          description = (reactSpectrumDocs as any)?.exports?.[componentKey]?.description;
-        }
-
         const section: string = (page.exports?.section as string) || 'Components';
 
         return {
           id: name,
           name: title,
           href: page.url,
-          description,
           section
         };
       });
