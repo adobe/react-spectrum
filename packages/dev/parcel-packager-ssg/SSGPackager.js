@@ -83,7 +83,29 @@ module.exports = new Packager({
           if (resolved.type !== 'js') {
             deps.set(getSpecifier(dep), {skipped: true});
           } else {
-            deps.set(getSpecifier(dep), {id: resolved.id});
+            // deps.set(getSpecifier(dep), {id: resolved.id});
+            let resolution = {id: resolved.id};
+
+            // Dependencies may be re-targeted to follow re-exports.
+            for (let [name, sym] of dep.symbols) {
+              let rewritten = sym.meta?.rewritten;
+              /* eslint-disable max-depth */
+              if (typeof rewritten === 'string') {
+                if (Array.isArray(resolution)) {
+                  resolution.push([rewritten, resolved.id, name]);
+                } else {
+                  resolution = [[rewritten, resolved.id, name]];
+                }
+              }
+            }
+
+            let specifier = getSpecifier(dep);
+            let cur = deps.get(specifier);
+            if (Array.isArray(cur) && Array.isArray(resolution)) {
+              cur.push(...resolution);
+            } else {
+              deps.set(specifier, resolution);
+            }
           }
         } else {
           deps.set(getSpecifier(dep), {specifier: dep.specifier});
@@ -95,6 +117,52 @@ module.exports = new Packager({
         let resolution = deps.get(id);
         if (resolution?.skipped) {
           return {};
+        }
+
+        // Synthesize a module to follow re-exports.
+        if (Array.isArray(resolution)) {
+          var m = {__esModule: true};
+          resolution.forEach(function (v) {
+            var key = v[0];
+            var id = v[1];
+            var exp = v[2];
+            var x = load(id);
+            if (key === '*') {
+              Object.keys(x).forEach(function (key) {
+                if (
+                  key === 'default' ||
+                  key === '__esModule' ||
+                  // $FlowFixMe
+                  Object.prototype.hasOwnProperty.call(m, key)
+                ) {
+                  return;
+                }
+
+                Object.defineProperty(m, key, {
+                  enumerable: true,
+                  get: function () {
+                    return x[key];
+                  }
+                });
+              });
+            } else if (exp === '*') {
+              Object.defineProperty(m, key, {
+                enumerable: true,
+                value: x
+              });
+            } else {
+              Object.defineProperty(m, key, {
+                enumerable: true,
+                get: function () {
+                  if (exp === 'default') {
+                    return x.__esModule ? x.default : x;
+                  }
+                  return x[exp];
+                }
+              });
+            }
+          });
+          return m;
         }
 
         if (resolution?.id) {
