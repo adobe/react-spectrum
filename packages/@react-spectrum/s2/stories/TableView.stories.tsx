@@ -41,9 +41,9 @@ import {
 import {Button as AriaButton, DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import {colorMix, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
+import {colorScheme, getAllowedOverrides, StylesProp} from '../src/style-utils' with {type: 'macro'};
 import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, Key, SelectionMode} from '@react-types/shared';
+import {DOMRef, forwardRefType, Key, SelectionMode} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
@@ -1496,23 +1496,42 @@ function EditableTrigger(props: {isSaving: boolean, density: 'compact' | 'spacio
 }
 
 interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
+  /** The current value that the data set is aware of. */
   value: T,
+  /** How to know when the value was successfully edited in the overlay. */
   onSubmit: (value: T) => void,
+  /** Whether the value is currently being saved. Track in your data set. */
   isSaving?: boolean,
-  isEdited?: boolean,
-  tableRef: DOMRefValue<HTMLDivElement>,
+  /** How to know if the newly selected value is valid, this determines if we should close the overlay. */
   isValid: (value: T) => boolean,
+  /** How does the current value display in the actual cell. */
   displayValue: (value: T) => ReactNode,
-  children: (props: any) => ReactElement,
-  align?: 'start' | 'center' | 'end',
+  /**
+   * A renderProps pattern, it should return the component that will be used when editing the cell.
+   * The value and onChange keys in the props will be replaced by whatever is passed in to valueKey and setValueKey.
+   */
+  children: (props: {
+    'aria-label': string,
+    autoFocus: boolean,
+    isInvalid: boolean,
+    // value: T,
+    // onChange: (value: T) => void,
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void,
+    styles?: StylesProp,
+    [key:string]: any
+  }) => ReactElement,
+  /** The density of the table. */
   density?: 'compact' | 'spacious' | 'regular',
+  /** The key to use for the value in the props. */
   valueKey?: string,
+  /** The key to use for the onChange in the props. */
   setValueKey?: string,
+  /** The selection mode of the table. */
   selectionMode: SelectionMode
 }
 
 const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = string>(props: EditableCellProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {value, valueKey = 'value', setValueKey = 'onChange', onSubmit, isSaving, tableRef, isValid, displayValue, children, density = 'regular', selectionMode, ...otherProps} = props;
+  let {value, valueKey = 'value', setValueKey = 'onChange', onSubmit, isSaving, isValid, displayValue, children, density = 'regular', selectionMode, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [isOpen, setIsOpen] = useState(false);
@@ -1542,9 +1561,9 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     setTriggerWidth(width);
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
-  }, [domRef, tableRef, density]);
+  }, [domRef, density]);
 
-  // Validation, save if valid, otherwise error message is shown and popover remains open
+  // Validation, save if valid and emit onSubmit, otherwise error message is shown and popover remains open
   let [valid, setValid] = useState(isValid(value));
 
   let validateAndCommit = () => {
@@ -1564,7 +1583,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     setInternalValue(value);
   };
 
-  // Special keyboard shortcut handling
+  // Special keyboard shortcut handling, maybe move to attach to attach to div here and use capturing instead?
   let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
       case 'Enter':
@@ -1668,8 +1687,8 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
                       'aria-label': 'Edit cell',
                       autoFocus: true,
                       isInvalid: !valid,
-                      value: internalValue,
-                      onChange: setInternalValue,
+                      [valueKey]: internalValue,
+                      [setValueKey]: setInternalValue,
                       onKeyDown: onKeyDown,
                       isMobile: true
                     })}
@@ -1755,7 +1774,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
   render: function EditableTable(props) {
     let selectionMode = props.selectionMode ?? 'none' as SelectionMode;
     let isMobile = useIsMobileDevice(); // edit mode may be same experience on mobile eventually
-    let tableRef = useRef<DOMRefValue<HTMLDivElement>>(null);
     let [editableItems, setEditableItems] = useState(defaultItems);
 
     // Replace all of this with real API calls, this is purely demonstrative.
@@ -1795,7 +1813,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-        <TableView ref={tableRef} aria-label="Dynamic table" {...props} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+        <TableView aria-label="Dynamic table" {...props} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
           <TableHeader columns={columns}>
             {(column) => (
               <Column {...column}>{column.name}</Column>
@@ -1814,8 +1832,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             align={column.align}
                             displayValue={value => value.toString()}
                             isValid={value => value.length > 0}
-                            // @ts-expect-error
-                            tableRef={tableRef}
                             isSaving={item.isSaving[column.id!]}
                             value={item[column.id]}
                             density={props.density}
@@ -1850,8 +1866,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             );
                           }}
                           isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
                           valueKey="selectedKey"
                           setValueKey="onSelectionChange"
                           isSaving={item.isSaving[column.id!]}
