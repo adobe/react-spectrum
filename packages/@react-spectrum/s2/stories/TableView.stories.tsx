@@ -52,6 +52,7 @@ import {useAsyncList} from '@react-stately/data';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useIsMobileDevice} from '../src/utils';
 import {useLayoutEffect} from '@react-aria/utils';
+import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import {VisuallyHidden} from 'react-aria';
 
 let onActionFunc = action('onAction');
@@ -92,7 +93,7 @@ export default meta;
 const StaticTable = (args: any) => (
   <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
     <TableHeader>
-      <Column minWidth={250} isRowHeader>Name</Column>
+      <Column isRowHeader>Name</Column>
       <Column>Type</Column>
       <Column>Date Modified</Column>
       <Column>Size</Column>
@@ -1507,7 +1508,7 @@ interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
   /** How does the current value display in the actual cell. */
   displayValue: (value: T) => ReactNode,
   /**
-   * A renderProps pattern, it should return the component that will be used when editing the cell.
+   * A renderProps pattern, it should return the component that will be used when editing the cell. Note: the component can contain and combine any other components you want.
    * The value and onChange keys in the props will be replaced by whatever is passed in to valueKey and setValueKey.
    */
   children: (props: {
@@ -1598,7 +1599,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   return (
     <div
       ref={domRef}
-      // @ts-expect-error
+      // @ts-ignore not sure why this is complaining
       className={editableCell({selectionMode, density})}
       {...otherProps}>
       <div
@@ -1647,9 +1648,14 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
             triggerRef={domRef}
             aria-label="Edit cell"
             offset={verticalOffset}
-            style={{minWidth: `calc(${Math.min(triggerWidth - 32 + 16, tableWidth - 32 + 16)}px)`, maxWidth: `calc(${tableWidth - 32 + 16}px)`}}
             containerPadding={0}
             placement="bottom left"
+            style={{
+              minWidth: `calc(${Math.min(triggerWidth - 32 + 16, tableWidth - 32 + 16)}px)`,
+              maxWidth: `calc(${tableWidth - 32 + 16}px)`,
+              // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+              zIndex: undefined
+            }}
             className={popover}>
             <Provider
               values={[
@@ -1860,7 +1866,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                           displayValue={value => {
                             return (
                               <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-                                <Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
+                                <User />
                                 {value}
                               </div>
                             );
@@ -1875,16 +1881,16 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                           {(props) => {
                             return (
                               <Picker {...props}>
-                                <PickerItem textValue="Eva" id="Eva"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Eva</Text></PickerItem>
-                                <PickerItem textValue="Steven" id="Steven"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Steven</Text></PickerItem>
-                                <PickerItem textValue="Michael" id="Michael"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Michael</Text></PickerItem>
-                                <PickerItem textValue="Sara" id="Sara"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Sara</Text></PickerItem>
-                                <PickerItem textValue="Karina" id="Karina"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Karina</Text></PickerItem>
-                                <PickerItem textValue="Otto" id="Otto"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Otto</Text></PickerItem>
-                                <PickerItem textValue="Matt" id="Matt"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Matt</Text></PickerItem>
-                                <PickerItem textValue="Emily" id="Emily"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Emily</Text></PickerItem>
-                                <PickerItem textValue="Amelia" id="Amelia"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Amelia</Text></PickerItem>
-                                <PickerItem textValue="Isla" id="Isla"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Isla</Text></PickerItem>
+                                <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
+                                <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
+                                <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
+                                <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
+                                <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
+                                <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
+                                <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
+                                <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
+                                <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
+                                <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
                               </Picker>
                             );
                           }}
