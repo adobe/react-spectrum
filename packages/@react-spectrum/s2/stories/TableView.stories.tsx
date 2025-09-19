@@ -14,7 +14,6 @@ import {action} from '@storybook/addon-actions';
 import {
   ActionButton,
   ActionMenu,
-  Avatar,
   Button,
   Cell,
   CellProps,
