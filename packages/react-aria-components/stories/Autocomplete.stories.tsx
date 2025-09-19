@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Group, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
@@ -19,7 +19,7 @@ import {MyGridListItem} from './GridList.stories';
 import {MyListBoxLoaderIndicator} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
 import {Node} from '@react-types/shared';
-import React, {useState} from 'react';
+import React, {Suspense, useState} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
@@ -1208,3 +1208,85 @@ export const AutocompleteUserCustomFiltering: AutocompleteStory = {
     }
   }
 };
+
+import {
+  QueryClient,
+  QueryClientProvider,
+  useSuspenseQuery
+} from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+export function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* <MenuTrigger>
+        <Button aria-label="Project actions">
+          <span>Search projects</span>
+        </Button>
+        <Popover placement="bottom start"> */}
+      <Suspense fallback={'Loading...'}>
+        <ProjectSwitcherDialog />
+      </Suspense>
+        {/* </Popover>
+      </MenuTrigger> */}
+    </QueryClientProvider>
+  );
+}
+
+function ProjectSwitcherDialog() {
+  useSuspenseQuery({
+    queryKey: ['aaaaaaaaaaa'],
+    queryFn: async () => {
+      await new Promise((res) =>
+        setTimeout(() => {
+          console.log('gawegawegaw')
+          res();
+        }, 2000)
+      );
+      return 'Hello World';
+    }
+  });
+
+  return (
+    // <Autocomplete>
+    //   <SearchField aria-label="Search projects…" autoFocus>
+    //     <Group>
+    //       <Input placeholder="Search projects…" />
+    //     </Group>
+    //   </SearchField>
+    <Menu
+      aria-label="See project settings or switch to another project"
+      items={
+        [
+          {
+            id: 'settingsGroup',
+            name: 'settingsGroup',
+            children: [
+              {
+                type: 'setting',
+                id: 'settings',
+                name: 'Project settings',
+                icon: 'gear'
+              }
+            ]
+          }
+        ] as const
+      }>
+      {(section) => (
+        <MenuSection id={section.id}>
+          <Header>My Header</Header>
+          <Collection items={section.children}>
+            {(item) => {
+              return (
+                <MenuItem id={item.id} key={item.id} textValue={item.name}>
+                  <Text slot="label">{item.name}</Text>
+                </MenuItem>
+              );
+            }}
+          </Collection>
+        </MenuSection>
+      )}
+    </Menu>
+    // </Autocomplete>
+  );
+}

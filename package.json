@@ -129,6 +129,7 @@
     "@swc/core": "^1.3.36",
     "@swc/jest": "^0.2.36",
     "@tailwindcss/postcss": "^4.0.17",
+    "@tanstack/react-query": "^5.89.0",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^16.0.0",
