@@ -98,6 +98,23 @@ describe('Disclosure', () => {
     expect(panel).not.toBeVisible();
   });
 
+  it('should not expand a disabled disclosure via isExpanded', () => {
+    const {getByTestId,  queryByText} = render(
+      <Disclosure data-testid="disclosure" isDisabled isExpanded>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const disclosure = getByTestId('disclosure');
+    expect(disclosure).toHaveAttribute('data-disabled', 'true');
+    const panel = queryByText('Content');
+    expect(panel).not.toBeVisible();
+  });
+
   it('should support controlled isExpanded prop', async () => {
     const onExpandedChange = jest.fn();
     const {getByTestId, getByRole, queryByText} = render(
