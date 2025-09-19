@@ -58,7 +58,8 @@ interface S2TreeProps {
   /** Whether the tree should be displayed with a [emphasized style](https://spectrum.adobe.com/page/tree-view/#Emphasis). */
   isEmphasized?: boolean,
   selectionStyle?: 'highlight' | 'checkbox',
-  selectionCornerStyle?: 'square' | 'round'
+  selectionCornerStyle?: 'square' | 'round',
+  highlightMode?: 'normal' | 'inverse'
 }
 
 export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
@@ -84,7 +85,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 export const TreeViewContext = createContext<ContextValue<Partial<TreeViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 
-let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean, selectionStyle: 'highlight' | 'checkbox', selectionCornerStyle: 'square' | 'round'}>({selectionStyle: 'checkbox', selectionCornerStyle: 'round'});
+let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean, selectionStyle: 'highlight' | 'checkbox', selectionCornerStyle: 'square' | 'round', highlightMode?: 'normal' | 'inverse'}>({selectionStyle: 'checkbox', selectionCornerStyle: 'round'});
 
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
@@ -116,7 +117,7 @@ const tree = style({
  */
 export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TreeViewContext);
-  let {children, isDetached, isEmphasized, selectionStyle = 'checkbox', selectionCornerStyle = 'round', UNSAFE_className, UNSAFE_style} = props;
+  let {children, isDetached, isEmphasized, selectionStyle = 'checkbox', selectionCornerStyle = 'round', UNSAFE_className, UNSAFE_style, highlightMode = 'normal'} = props;
   let scale = useScale();
 
   let renderer;
@@ -134,7 +135,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
         gap: isDetached ? 2 : 0
       }}>
       <TreeRendererContext.Provider value={{renderer}}>
-        <InternalTreeContext.Provider value={{isDetached, isEmphasized, selectionStyle, selectionCornerStyle}}>
+        <InternalTreeContext.Provider value={{isDetached, isEmphasized, selectionStyle, selectionCornerStyle, highlightMode}}>
           <Tree
             {...props}
             style={UNSAFE_style}
@@ -186,7 +187,12 @@ const rowBackgroundColor = {
       isPressed: 'gray-100',
       isSelected: {
         default: 'gray-100',
-        isEmphasized: 'blue-200'
+        isEmphasized: {
+          highlightMode: {
+            normal: 'blue-200',
+            inverse: 'blue-800/85'
+          }
+        }
       },
       forcedColors: {
         default: 'Background'
@@ -237,7 +243,12 @@ const treeCellGrid = style({
   color: {
     default: 'gray-700',
     isHovered: 'gray-800',
-    isSelected: 'gray-900',
+    isSelected: {
+      highlightMode: {
+        normal: 'gray-900',
+        inverse: 'gray-25'
+      }
+    },
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
@@ -394,15 +405,17 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
-  let {isDetached, isEmphasized, selectionStyle} = useContext(InternalTreeContext);
+  let {isDetached, isEmphasized, selectionStyle, highlightMode} = useContext(InternalTreeContext);
 
   return (
     <TreeItem
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
-        isLink: !!href, isEmphasized,
-        selectionStyle
+        isLink: !!href,
+        isEmphasized,
+        selectionStyle,
+        highlightMode
       }) + (renderProps.isFocusVisible && !isDetached && selectionStyle !== 'highlight' ? ' ' + treeRowFocusIndicator : '')} />
   );
 };
@@ -416,7 +429,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let {
     children
   } = props;
-  let {isDetached, isEmphasized, selectionStyle, selectionCornerStyle} = useContext(InternalTreeContext);
+  let {isDetached, isEmphasized, selectionStyle, selectionCornerStyle, highlightMode} = useContext(InternalTreeContext);
   let scale = useScale();
 
   return (
@@ -442,7 +455,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         }
 
         return (
-          <div className={treeCellGrid({isDisabled, isPreviousSelected, isNextSelected, isSelected, isFirst, isNextFocused, isHovered, isDetached, isEmphasized})}>
+          <div className={treeCellGrid({isDisabled, isPreviousSelected, isNextSelected, isSelected, isFirst, isNextFocused, isHovered, isDetached, isEmphasized, highlightMode})}>
             <div className={treeRowBackground({isPreviousSelected, isNextSelected, isSelected, selectionStyle, isEmphasized, isHovered, selectionCornerStyle, isRoundTop, isRoundBottom})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
@@ -466,7 +479,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                   render: centerBaseline({slot: 'icon', styles: treeIcon}),
                   styles: style({size: fontRelative(20), flexShrink: 0})
                 }],
-                [ActionButtonGroupContext, {styles: treeActions, size: 'S'}],
+                [ActionButtonGroupContext, {styles: treeActions, size: 'S', staticColor: highlightMode === 'inverse' && isSelected ? 'white' : undefined}],
                 [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, size: 'S'}]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}

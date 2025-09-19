@@ -45,7 +45,6 @@ const meta: Meta<typeof TreeView> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
     ...categorizeArgTypes('Events', events),
@@ -148,7 +147,9 @@ export const LayersTree: StoryObj<typeof TreeExampleLayers> = {
     defaultExpandedKeys: ['layer-group-2'],
     selectionMode: 'multiple',
     selectionStyle: 'highlight',
-    selectionCornerStyle: 'round'
+    selectionCornerStyle: 'round',
+    highlightMode: 'inverse',
+    isEmphasized: true
   }
 };
 
@@ -265,6 +266,8 @@ export const FileTree: StoryObj<typeof TreeExampleFiles> = {
   render: TreeExampleFiles,
   args: {
     selectionMode: 'multiple',
-    selectionStyle: 'highlight'
+    selectionStyle: 'highlight',
+    highlightMode: 'inverse',
+    isEmphasized: true
   }
 };

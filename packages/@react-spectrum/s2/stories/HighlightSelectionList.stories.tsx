@@ -34,7 +34,6 @@ const meta: Meta<typeof ListView> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
     ...categorizeArgTypes('Events', events),
@@ -63,7 +62,7 @@ let items: Item[] = [
   {id: 10, name: 'Numbers', type: 'number'}
 ];
 
-export const DocumentsTable: StoryObj<typeof ListView> = {
+export const AttributesList: StoryObj<typeof ListView> = {
   render: (args) => (
     <ListView aria-label="Dynamic list" {...args} items={items} styles={style({width: 220, height: 350})}>
       {item => (
@@ -84,6 +83,8 @@ export const DocumentsTable: StoryObj<typeof ListView> = {
   ),
   args: {
     selectionStyle: 'highlight',
-    selectionMode: 'multiple'
+    selectionMode: 'multiple',
+    highlightMode: 'inverse',
+    isEmphasized: true
   }
 };

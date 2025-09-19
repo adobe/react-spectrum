@@ -50,7 +50,8 @@ export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | '
 interface ListViewStylesProps {
   isQuiet?: boolean,
   isEmphasized?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox'
+  selectionStyle?: 'highlight' | 'checkbox',
+  highlightMode?: 'normal' | 'inverse'
 }
 
 export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -67,7 +68,7 @@ const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean, highlightMode?: 'normal' | 'inverse'}>({});
 
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
@@ -91,7 +92,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, isEmphasized} = props;
+  let {children, isQuiet, isEmphasized, highlightMode} = props;
   let scale = useScale();
 
   let renderer;
@@ -108,7 +109,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         rowHeight: scale === 'large' ? 50 : 40
       }}>
       <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet, isEmphasized}}>
+        <InternalListViewContext.Provider value={{isQuiet, isEmphasized, highlightMode}}>
           <GridList
             ref={domRef}
             {...props}
@@ -125,7 +126,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   );
 });
 
-const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean, isEmphasized?: boolean}>({
+const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean, isEmphasized?: boolean, highlightMode?: 'normal' | 'inverse'}>({
   ...focusRing(),
   outlineOffset: 0,
   columnGap: 0,
@@ -135,14 +136,28 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
     default: 'transparent',
     isHovered: 'gray-100',
     isSelected: 'gray-100',
-    isEmphasized: {
-      isSelected: 'blue-200'
+    highlightMode: {
+      normal: {
+        isEmphasized: {
+          isSelected: 'blue-200'
+        }
+      },
+      inverse: {
+        isEmphasized: {
+          isSelected: 'blue-800'
+        }
+      }
     }
   },
   color: {
     default: baseColor('neutral-subdued'),
     isHovered: 'gray-800',
-    isSelected: 'gray-900',
+    isSelected: {
+      highlightMode: {
+        normal: 'gray-900',
+        inverse: 'gray-25'
+      }
+    },
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -248,7 +263,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   // let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet, isEmphasized} = useContext(InternalListViewContext);
+  let {isQuiet, isEmphasized, highlightMode} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   // let {direction} = useLocale();
   return (
@@ -261,7 +276,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         ...renderProps,
         isLink,
         isQuiet,
-        isEmphasized
+        isEmphasized,
+        highlightMode
       }, props.styles)}>
       {(renderProps) => {
         let {children} = props;
@@ -281,7 +297,12 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               }],
               [ImageContext, {styles: image}],
-              [ActionButtonGroupContext, {styles: actionButtonGroup, size: 'S', isQuiet: true}]
+              [ActionButtonGroupContext, {
+                styles: actionButtonGroup,
+                size: 'S',
+                isQuiet: true,
+                staticColor: highlightMode === 'inverse' && renderProps.isSelected ? 'white' : undefined // how to invert this and react to color scheme? also, too bright/bold in dark mode unselected
+              }]
             ]}>
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
           </Provider>

@@ -34,7 +34,6 @@ const meta: Meta<typeof TableView> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
     ...categorizeArgTypes('Events', events),
@@ -99,10 +98,6 @@ export const DocumentsTable = {
                   <Cell>
                     <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
                       <div>{item[column.id].name}</div>
-                      <div className={style({display: 'flex', gap: 4, font: 'detail-sm'})}>
-                        <div>{item[column.id].meta}</div>
-                        {item[column.id].description && <><div>&middot;</div><div>{item[column.id].description}</div></>}
-                      </div>
                     </div>
                   </Cell>
                 );
@@ -120,6 +115,8 @@ export const DocumentsTable = {
   args: {
     overflowMode: 'wrap',
     selectionStyle: 'highlight',
-    selectionMode: 'multiple'
+    selectionMode: 'multiple',
+    highlightMode: 'inverse',
+    isEmphasized: true
   }
 };

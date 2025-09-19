@@ -107,7 +107,8 @@ interface S2TableProps {
   /** Provides the ActionBar to display when rows are selected in the TableView. */
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
   selectionStyle?: 'highlight' | 'checkbox',
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  highlightMode?: 'normal' | 'inverse'
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -287,6 +288,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     selectionStyle = 'checkbox',
     isEmphasized = false,
+    highlightMode = 'normal',
     ...otherProps
   } = props;
 
@@ -313,8 +315,9 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     isInResizeMode,
     setIsInResizeMode,
     selectionStyle,
-    isEmphasized
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionStyle, isEmphasized]);
+    isEmphasized,
+    highlightMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionStyle, isEmphasized, highlightMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = (props.selectionMode === 'multiple' || props.selectionMode === 'single') && selectionStyle === 'checkbox';
@@ -984,6 +987,10 @@ const checkboxCellStyle = style({
 
 const cellContent = style({
   truncate: true,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
   whiteSpace: {
     default: 'nowrap',
     overflowMode: {
@@ -1006,6 +1013,13 @@ const cellContent = style({
   margin: {
     default: -4,
     isSticky: 0
+  },
+  color: {
+    highlightMode: {
+      inverse: {
+        isSelected: 'gray-25'
+      }
+    }
   },
   backgroundColor: {
     default: 'transparent',
@@ -1109,7 +1123,14 @@ const rowBackgroundColor = {
       isPressed: 'gray-100',
       isSelected: {
         default: 'gray-100',
-        isEmphasized: 'blue-200'
+        highlightMode: {
+          normal: {
+            isEmphasized: 'blue-200'
+          },
+          inverse: {
+            isEmphasized: 'blue-800'
+          }
+        }
       },
       forcedColors: {
         default: 'Background'
