@@ -21,6 +21,17 @@
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
   }
+
+  &[data-disabled] {
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-DateField[data-disabled] {
+  .react-aria-DateSegment {
+    color: var(--text-color-disabled);
+  }
 }
 
 .react-aria-DateSegment {

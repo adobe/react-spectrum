@@ -366,9 +366,11 @@ describe('Button', () => {
   });
 
   it('disables press when in pending state for context', async function () {
+    let onFocusSpy = jest.fn();
+    let onBlurSpy = jest.fn();
     let {getByRole, queryByRole} = render(
       <DialogTrigger>
-        <Button isPending>Delete…</Button>
+        <Button isPending onFocus={onFocusSpy} onBlur={onBlurSpy}>Delete…</Button>
         <Modal data-test="modal">
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
@@ -384,8 +386,13 @@ describe('Button', () => {
 
     let button = getByRole('button');
     await user.click(button);
+    expect(onFocusSpy).toHaveBeenCalled();
+    expect(onBlurSpy).not.toHaveBeenCalled();
 
     let dialog = queryByRole('alertdialog');
     expect(dialog).toBeNull();
+
+    await user.click(document.body);
+    expect(onBlurSpy).toHaveBeenCalled();
   });
 });

@@ -53,7 +53,7 @@ const dialogStyle = style({
   position: 'relative',
   size: 'full',
   maxSize: 'inherit'
-}, getAllowedOverrides({height: true}));
+}, getAllowedOverrides({height: true, width: true}));
 
 /**
  * A CustomDialog is a floating window with a custom layout.

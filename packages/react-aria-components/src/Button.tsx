@@ -88,6 +88,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
+  buttonProps = useDisableInteractions(buttonProps, isPending);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -138,7 +139,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
 
   return (
     <button
-      {...mergeProps(DOMProps, renderProps, isPending ? {} : buttonProps, focusProps, hoverProps)}
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
@@ -159,3 +160,17 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     </button>
   );
 });
+
+function useDisableInteractions(props, isPending) {
+  // Don't allow interaction while isPending is true
+  if (isPending) {
+    for (const key in props) {
+      if (key.startsWith('on') && !(key.includes('Focus') || key.includes('Blur'))) {
+        props[key] = undefined;
+      }
+    }
+    props.href = undefined;
+    props.target = undefined;
+  }
+  return props;
+}

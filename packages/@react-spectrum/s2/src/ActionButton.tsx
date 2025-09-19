@@ -16,9 +16,10 @@ import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' wi
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NotificationBadgeContext} from './NotificationBadge';
@@ -29,6 +30,7 @@ import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {usePendingState} from './Button';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonStyleProps {
@@ -258,7 +260,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let {isPending} = props;
+  let {isPending = false} = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
@@ -272,24 +274,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     size = props.size || 'M'
   } = ctx || {};
 
-  let [isProgressVisible, setIsProgressVisible] = useState(false);
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isPending) {
-      // Start timer when isPending is set to true.
-      timeout = setTimeout(() => {
-        setIsProgressVisible(true);
-      }, 1000);
-    } else {
-      // Exit loading state when isPending is set to false. */
-      setIsProgressVisible(false);
-    }
-    return () => {
-      // Clean up on unmount or when user removes isPending prop before entering loading state.
-      clearTimeout(timeout);
-    };
-  }, [isPending]);
+  let {isProgressVisible} = usePendingState(isPending);
 
   return (
     <RACButton
@@ -339,14 +324,17 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
               }],
               [AvatarContext, {
                 size: avatarSize[size],
-                // @ts-ignore
                 styles: style({
                   marginStart: {
                     default: '--iconMargin',
                     ':last-child': 0
                   },
                   flexShrink: 0,
-                  order: 0,
+                  order: 0
+                })
+              }],
+              [ImageContext, {
+                styles: style({
                   opacity: {
                     default: 1,
                     isProgressVisible: 0
