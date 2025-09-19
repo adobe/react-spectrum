@@ -18,25 +18,17 @@ import {
   Button,
   Cell,
   CellProps,
-  ColorSwatch,
-  ColorWheel,
   Column,
   ColumnProps,
   Content,
-  DatePicker,
-  DateRangePicker,
   Dialog,
   Heading,
   IllustratedMessage,
   Link,
   MenuItem,
   MenuSection,
-  NumberField,
   Picker,
   PickerItem,
-  Radio,
-  RadioGroup,
-  RangeSlider,
   Row,
   StatusLight,
   TableBody,
@@ -44,28 +36,23 @@ import {
   TableView,
   TableViewProps,
   Text,
-  TextArea,
   TextField
 } from '../src';
-import {CalendarDate, getLocalTimeZone} from '@internationalized/date';
+import {Button as AriaButton, DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
 import {categorizeArgTypes} from './utils';
-import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
-import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {colorMix, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {colorScheme, getAllowedOverrides} from '../src/style-utils' with {type: 'macro'};
 import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
 import {DOMRef, DOMRefValue, forwardRefType, Key, SelectionMode} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Pressable, useHover} from '@react-aria/interactions';
 import {useAsyncList} from '@react-stately/data';
-import {useDateFormatter, useFocusVisible, useNumberFormatter} from 'react-aria';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useIsMobileDevice} from '../src/utils';
 import {useLayoutEffect} from '@react-aria/utils';
+import {VisuallyHidden} from 'react-aria';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -1419,37 +1406,29 @@ const ResizableTable = () => {
   }
 };
 
-const editableCell = style({
+const editableCell = style<{density: 'compact' | 'spacious' | 'regular', selectionMode: 'none' | 'single' | 'multiple'}>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   width: 'full',
   height: {
-    overflowMode: {
-      wrap: 'auto',
-      truncate: {
-        density: {
-          compact: '[30px]',
-          regular: '[38px]',
-          spacious: '[46px]'
-        }
-      }
+    density: {
+      compact: '[30px]',
+      regular: '[38px]',
+      spacious: '[46px]'
     }
   },
-  flexDirection: {
-    default: 'row',
-    isReversed: 'row-reverse'
-  },
+  flexDirection: 'row',
   backgroundColor: {
     default: 'transparent',
-    isHovered: {
+    ':hover': {
       selectionMode: {
         none: colorMix('gray-25', 'gray-900', 7),
         single: '--s2-container-bg',
         multiple: '--s2-container-bg'
       }
     },
-    isCellFocused: {
+    ':focus:focus-visible': {
       selectionMode: {
         none: '--s2-container-bg',
         single: '--s2-container-bg',
@@ -1489,22 +1468,19 @@ let popover = style({
   alignItems: 'center'
 }, getAllowedOverrides());
 
-let editButton = style({
+let editButton = style<{isForcedVisible: boolean}>({
+  display: {
+    default: 'none',
+    isForcedVisible: 'flex',
+    ':is([role="row"]:hover *)': 'flex',
+    ':is([role="row"][data-focus-visible-within] *)': 'flex',
+    '@media not (any-pointer: fine)': 'flex'
+  },
   flexShrink: 0
 });
 
-function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving: boolean, density: 'compact' | 'spacious' | 'regular'}) {
-  let {cellRef, isSaving, density} = props;
-  let isFocused = useRef(false);
-
-  useEffect(() => {
-    return () => {
-      if (isFocused.current) {
-        // @ts-expect-error
-        cellRef?.current?.parentElement?.parentElement?.focus();
-      }
-    };
-  }, []);
+function EditableTrigger(props: {isSaving: boolean, density: 'compact' | 'spacious' | 'regular', isForcedVisible: boolean}) {
+  let {isSaving, density, isForcedVisible} = props;
 
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
@@ -1514,8 +1490,8 @@ function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving:
   }
 
   return (
-    <div className={editButton}>
-      <ActionButton size={size} isPending={isSaving} onFocusChange={(e) => isFocused.current = e} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
+    <div className={editButton({isForcedVisible})}>
+      <ActionButton size={size} isPending={isSaving} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
         <Edit />
       </ActionButton>
     </div>
@@ -1524,8 +1500,7 @@ function EditableTrigger(props: {cellRef: DOMRefValue<HTMLDivElement>, isSaving:
 
 interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
   value: T,
-  onChange: (value: T) => void,
-  showButtons?: boolean,
+  onSubmit: (value: T) => void,
   isSaving?: boolean,
   isEdited?: boolean,
   tableRef: DOMRefValue<HTMLDivElement>,
@@ -1540,7 +1515,7 @@ interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
 }
 
 const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = string>(props: EditableCellProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {value, valueKey = 'value', setValueKey = 'onChange', onChange, showButtons = true, isSaving, tableRef, isValid, displayValue, children, align = 'start', density = 'regular', selectionMode, ...otherProps} = props;
+  let {value, valueKey = 'value', setValueKey = 'onChange', onSubmit, isSaving, tableRef, isValid, displayValue, children, density = 'regular', selectionMode, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [isOpen, setIsOpen] = useState(false);
@@ -1548,13 +1523,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   let [tableWidth, setTableWidth] = useState(0);
   let [verticalOffset, setVerticalOffset] = useState(0);
   let [internalValue, _setInternalValue] = useState(value);
-  let [isRowFocused, setIsRowFocused] = useState(false);
-  let [isCellFocused, setIsCellFocused] = useState(false);
   let isMobile = !useMediaQuery('(any-pointer: fine)');
-  let [isHovered, setIsHovered] = useState(false);
-  let {isHovered: isCellHovered, hoverProps} = useHover({});
-  let {isFocusVisible} = useFocusVisible();
-
   let setInternalValue = (value: T) => {
     _setInternalValue(value);
   };
@@ -1564,58 +1533,15 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     setInternalValue(value);
   }, [value]);
 
-  // Full row hover state
-  useEffect(() => {
-    if (domRef.current) {
-      let row = domRef.current.closest('[role="row"]');
-      let cell = domRef.current.closest('[role="rowheader"],[role="gridcell"]');
-      let onHover = () => {
-        setIsHovered(true);
-      };
-      let onLeave = () => {
-        setIsHovered(false);
-      };
-      let onFocusIn = () => {
-        setIsRowFocused(true);
-      };
-      let onFocusOut = () => {
-        setIsRowFocused(false);
-      };
-      let onCellFocus = () => {
-        setIsCellFocused(true);
-      };
-      let onCellBlur = () => {
-        setIsCellFocused(false);
-      };
-      if (row && cell) {
-        row.addEventListener('pointerenter', onHover);
-        row.addEventListener('pointerleave', onLeave);
-        row.addEventListener('focusin', onFocusIn, {capture: true});
-        row.addEventListener('focusout', onFocusOut, {capture: true});
-        cell.addEventListener('focusin', onCellFocus, {capture: true});
-        cell.addEventListener('focusout', onCellBlur, {capture: true});
-      }
-      return () => {
-        row?.removeEventListener('pointerenter', onHover);
-        row?.removeEventListener('pointerleave', onLeave);
-        row?.removeEventListener('focusin', onFocusIn, {capture: true});
-        row?.removeEventListener('focusout', onFocusOut, {capture: true});
-        cell?.removeEventListener('focusin', onCellFocus, {capture: true});
-        cell?.removeEventListener('focusout', onCellBlur, {capture: true});
-      };
-    }
-  }, [domRef]);
 
   // Popover positioning
   useLayoutEffect(() => {
     let width = domRef.current?.clientWidth || 0;
-    // @ts-expect-error
-    let cell = domRef.current.closest('[role="rowheader"],[role="gridcell"]');
+    let cell = domRef.current?.closest('[role="rowheader"],[role="gridcell"]');
     let boundingRect = cell?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
-    // @ts-expect-error
-    let tableWidth = tableRef?.current?.UNSAFE_getDOMNode()?.clientWidth || 0;
+    let tableWidth = domRef.current?.closest('[role="grid"]')?.clientWidth || 0;
     setTriggerWidth(width);
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
@@ -1627,7 +1553,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
   let validateAndCommit = () => {
     if (isValid(internalValue)) {
       setValid(true);
-      onChange(internalValue);
+      onSubmit(internalValue);
       setIsOpen(false);
       return true;
     }
@@ -1653,16 +1579,11 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
     }
   };
 
-  let isShown = useMemo(() => {
-    return isHovered || isOpen || (isRowFocused && isFocusVisible) || isMobile || isSaving;
-  }, [isHovered, isOpen, isRowFocused, isFocusVisible, isMobile, isSaving]);
-
   return (
     <div
       ref={domRef}
-      {...hoverProps}
       // @ts-expect-error
-      className={editableCell({isReversed: align === 'end', isHovered: isCellHovered, isCellFocused: isCellFocused && isFocusVisible, selectionMode, density})}
+      className={editableCell({selectionMode, density})}
       {...otherProps}>
       <div
         className={style({
@@ -1682,7 +1603,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
           color: {
             isSaving: 'neutral-subdued'
           }
-        })({isSaving, align})}>
+        })({isSaving})}>
         <div
           className={style({
             flexGrow: 1,
@@ -1691,20 +1612,13 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
             display: 'flex',
             alignItems: 'center',
             truncate: true,
-            justifyContent: {
-              default: 'start',
-              align: {
-                end: 'end'
-              }
-            }
-          })({align})}>
+            justifyContent: 'start'
+          })}>
           {displayValue(value)}
         </div>
       </div>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        {/** Ignore the extra pressable, this is not real code, just want the warnings to stop. */}
-        {/* @ts-expect-error */}
-        {isShown ? <EditableTrigger density={density} isSaving={isSaving} cellRef={domRef} /> : <Pressable isDisabled><div role="button" tabIndex={-1} style={{display: 'none'}} /></Pressable>}
+        <EditableTrigger density={density} isSaving={isSaving ?? false} isForcedVisible={isOpen || !!isSaving} />
         {!isMobile ? (
           <Popover
             ref={popoverRef}
@@ -1719,9 +1633,7 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
             offset={verticalOffset}
             style={{minWidth: `calc(${Math.min(triggerWidth - 32 + 16, tableWidth - 32 + 16)}px)`, maxWidth: `calc(${tableWidth - 32 + 16}px)`}}
             containerPadding={0}
-            // @ts-expect-error
-            boundaryElement={tableRef?.current?.UNSAFE_getDOMNode() ?? document.body}
-            placement={align === 'end' ? 'bottom right' : 'bottom left'}
+            placement="bottom left"
             className={popover}>
             <Provider
               values={[
@@ -1732,18 +1644,16 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
                   'aria-label': 'Edit cell',
                   autoFocus: true,
                   isInvalid: !valid,
-                  errorMessage: 'Please enter a valid non empty value',
                   [valueKey]: internalValue,
                   [setValueKey]: setInternalValue,
                   onKeyDown: onKeyDown,
                   styles: style({flexGrow: 1, flexShrink: 1, minWidth: '--input-width'})
                 })}
-                {showButtons && (
-                  <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline'})}>
-                    <ActionButton isQuiet onPress={cancel}><Close aria-label="Cancel" /></ActionButton>
-                    <ActionButton isQuiet onPress={validateAndCommit}><Checkmark aria-label="Save" /></ActionButton>
-                  </div>
-                )}
+                {/** Screen reader only buttons. */}
+                <VisuallyHidden>
+                  <AriaButton excludeFromTabOrder onPress={cancel} aria-label="Cancel" />
+                  <AriaButton excludeFromTabOrder onPress={validateAndCommit} aria-label="Save" />
+                </VisuallyHidden>
               </div>
             </Provider>
           </Popover>
@@ -1761,7 +1671,6 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
                       'aria-label': 'Edit cell',
                       autoFocus: true,
                       isInvalid: !valid,
-                      errorMessage: 'Please enter a valid non empty value',
                       value: internalValue,
                       onChange: setInternalValue,
                       onKeyDown: onKeyDown,
@@ -1790,73 +1699,43 @@ const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = st
 
 let defaultItems = [
   {id: 1,
-    fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva', count: 2,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Apples are a type of fruit that are sweet and crunchy.',
+    fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva',
     isSaving: {}
   },
   {id: 2,
-    fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven', count: 5,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Oranges are a type of fruit that are sweet and juicy.',
+    fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven',
     isSaving: {}
   },
   {id: 3,
-    fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael', count: 10,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Pears are a type of fruit that are sweet and juicy.',
+    fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael',
     isSaving: {}
   },
   {id: 4,
-    fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara', count: 12,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Cherries are a type of fruit that are sweet and juicy.',
+    fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara',
     isSaving: {}
   },
   {id: 5,
-    fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina', count: 25,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Dates are a type of fruit that are sweet and juicy.',
+    fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina',
     isSaving: {}
   },
   {id: 6,
-    fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto', count: 33,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Bananas are a type of fruit that are sweet and juicy.',
+    fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto',
     isSaving: {}
   },
   {id: 7,
-    fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt', count: 42,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Melons are a type of fruit that are sweet and juicy.',
+    fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt',
     isSaving: {}
   },
   {id: 8,
-    fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily', count: 53,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Figs are a type of fruit that are sweet and juicy.',
+    fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily',
     isSaving: {}
   },
   {id: 9,
-    fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia', count: 64,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Blueberries are a type of fruit that are sweet and juicy.',
+    fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia',
     isSaving: {}
   },
   {id: 10,
-    fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla', count: 78,
-    deadline: new CalendarDate(2022, 2, 3), pickingSeason: {start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 10)}, color: '#ff0000',
-    temperatureRange: {start: 18, end: 30}, growingSeason: 'Spring',
-    description: 'Blackberries are a type of fruit that are sweet and juicy.',
+    fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla',
     isSaving: {}
   }
 ];
@@ -1865,36 +1744,24 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
   {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr', minWidth: 300},
   {name: 'Task', id: 'task', width: '2fr', minWidth: 100},
   {name: 'Status', id: 'status', width: '2fr', showDivider: true, minWidth: 100},
-  {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150},
-  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end', minWidth: 95},
-  {name: 'Deadline', id: 'deadline', width: '2fr', minWidth: 250},
-  {name: 'Picking Season', id: 'pickingSeason', width: '2fr', minWidth: 400},
-  {name: 'Color', id: 'color', width: '2fr', minWidth: 100},
-  {name: 'Temperature Range', id: 'temperatureRange', width: '2fr', minWidth: 200},
-  {name: 'Growing Season', id: 'growingSeason', width: '2fr', minWidth: 150},
-  {name: 'Description', id: 'description', width: '2fr', minWidth: 150}
+  {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150}
 ];
 
 let mobileColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
   {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '2fr', showDivider: true},
-  {name: 'Farmer', id: 'farmer', width: '1fr'},
-  {name: 'Count', id: 'count', allowsSorting: true, width: '1fr', align: 'end'}
+  {name: 'Farmer', id: 'farmer', width: '1fr'}
 ];
 
-interface EditableTableProps extends TableViewProps {
-  showButtons?: boolean
-}
+interface EditableTableProps extends TableViewProps {}
 
 export const EditableTable: StoryObj<EditableTableProps> = {
-  args: {
-    showButtons: false
-  },
-  render: function EditableTable(args) {
-    let selectionMode = args.selectionMode ?? 'none' as SelectionMode;
-    let {showButtons, ...props} = args;
-    let isMobile = useIsMobileDevice();
+  render: function EditableTable(props) {
+    let selectionMode = props.selectionMode ?? 'none' as SelectionMode;
+    let isMobile = useIsMobileDevice(); // edit mode may be same experience on mobile eventually
     let tableRef = useRef<DOMRefValue<HTMLDivElement>>(null);
     let [editableItems, setEditableItems] = useState(defaultItems);
+
+    // Replace all of this with real API calls, this is purely demonstrative.
     let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
       let succeeds = Math.random() > 0.5;
       if (succeeds) {
@@ -1906,7 +1773,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     }, []);
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
     let onChange = useCallback((value: any, id: Key, columnId: Key) => {
-      console.log('onChange', value, id, columnId);
       let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
         // remove and cancel the previous request
@@ -1924,75 +1790,27 @@ export const EditableTable: StoryObj<EditableTableProps> = {
         return newItems;
       });
     }, [saveItem]);
-    let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'count', direction: 'ascending'});
-    let onSortChange = (sortDescriptor: SortDescriptor) => {
-      let {direction = 'ascending', column = 'count'} = sortDescriptor;
 
-      setEditableItems(prev => {
-        return prev.slice().sort((a, b) => {
-          let cmp = Number(a[column]) < Number(b[column]) ? -1 : 1;
-          if (direction === 'descending') {
-            cmp *= -1;
-          }
-          return cmp;
-        });
-      });
-      setSortDescriptor(sortDescriptor);
-    };
-
-    let [fruitWidth, setFruitWidth] = useState<number | '6fr'>('6fr');
+    // Demo only.
     let columns = useMemo(() => {
-      return isMobile ? mobileColumns : editableColumns.map(column => {
-        if (column.id === 'fruits') {
-          column.width = fruitWidth;
-        }
-        return {...column};
-      });
-    }, [isMobile, fruitWidth]);
-    let dateFormatter = useDateFormatter({dateStyle: 'full'});
-    let numberFormatter = useNumberFormatter({unit: 'celsius', style: 'unit'});
+      return isMobile ? mobileColumns : editableColumns;
+    }, [isMobile]);
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-        <Button onPress={() => setFruitWidth(fruitWidth === '6fr' ? 800 : '6fr')}>Toggle Fruit width</Button>
-        <TableView key={fruitWidth} ref={tableRef} aria-label="Dynamic table" {...props} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+        <TableView ref={tableRef} aria-label="Dynamic table" {...props} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
           <TableHeader columns={columns}>
             {(column) => (
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems} dependencies={[isMobile, showButtons, columns, props.density, selectionMode]}>
+          <TableBody items={editableItems} dependencies={[isMobile, columns, props.density, selectionMode]}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
-                  if (column.id === 'count' && !isMobile) {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => value.toString()}
-                          isValid={value => value > 0 && !Number.isNaN(value)}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => (
-                            <NumberField
-                              hideStepper
-                              errorMessage="Please enter a valid non 0 or empty value"
-                              {...props} />
-                          )}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
                   if (column.id === 'fruits') {
                     return (
-                      <Cell align={column.align} showDivider={column.showDivider} focusMode="cell">
+                      <Cell align={column.align} showDivider={column.showDivider}>
                         <div className={style({display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center'})}>
                           <EditableCell
                             selectionMode={selectionMode}
@@ -2002,10 +1820,9 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             // @ts-expect-error
                             tableRef={tableRef}
                             isSaving={item.isSaving[column.id!]}
-                            showButtons={showButtons}
                             value={item[column.id]}
                             density={props.density}
-                            onChange={value => onChange(value, item.id, column.id!)}>
+                            onSubmit={value => onChange(value, item.id, column.id!)}>
                             {(props) => (
                               <TextField
                                 errorMessage="Please enter a valid non empty value"
@@ -2041,10 +1858,9 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                           valueKey="selectedKey"
                           setValueKey="onSelectionChange"
                           isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
                           value={item[column.id]}
                           density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
+                          onSubmit={value => onChange(value, item.id, column.id!)}>
                           {(props) => {
                             return (
                               <Picker {...props}>
@@ -2059,155 +1875,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                                 <PickerItem textValue="Amelia" id="Amelia"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Amelia</Text></PickerItem>
                                 <PickerItem textValue="Isla" id="Isla"><Avatar size={16} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" /><Text>Isla</Text></PickerItem>
                               </Picker>
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'deadline') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => dateFormatter.format(value.toDate(getLocalTimeZone()))}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <DatePicker aria-label="Deadline" {...props} />
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'pickingSeason') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => dateFormatter.formatRange(value.start.toDate(getLocalTimeZone()), value.end.toDate(getLocalTimeZone()))}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <DateRangePicker aria-label="Picking Season" {...props} />
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'color') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => <ColorSwatch color={value} />}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <ColorWheel aria-label="Color" {...props} />
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'temperatureRange') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => numberFormatter.formatRange(value.start, value.end)}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <RangeSlider minValue={0} maxValue={40} aria-label="Temperature Range" {...props} />
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'growingSeason') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => value}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <RadioGroup aria-label="Growing Season" {...props}>
-                                <Radio value="Spring">Spring</Radio>
-                                <Radio value="Summer">Summer</Radio>
-                                <Radio value="Fall">Fall</Radio>
-                                <Radio value="Winter">Winter</Radio>
-                              </RadioGroup>
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
-                    );
-                  }
-                  if (column.id === 'description') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => <div style={{whiteSpace: 'pre-wrap'}}>{value}</div>}
-                          isValid={() => true}
-                          // @ts-expect-error
-                          tableRef={tableRef}
-                          isSaving={item.isSaving[column.id!]}
-                          showButtons={showButtons}
-                          value={item[column.id]}
-                          density={props.density}
-                          onChange={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <TextArea aria-label="Description" {...props} />
                             );
                           }}
                         </EditableCell>
