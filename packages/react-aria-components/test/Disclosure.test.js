@@ -78,7 +78,7 @@ describe('Disclosure', () => {
   });
 
   it('should support disabled state', () => {
-    const {getByTestId, getByRole} = render(
+    const {getByTestId, getByRole, queryByText} = render(
       <Disclosure data-testid="disclosure" isDisabled>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
@@ -94,6 +94,8 @@ describe('Disclosure', () => {
     const button = getByRole('button');
     expect(button).toHaveAttribute('disabled');
     expect(button).toHaveAttribute('data-disabled', 'true');
+    const panel = queryByText('Content');
+    expect(panel).not.toBeVisible();
   });
 
   it('should support controlled isExpanded prop', async () => {
@@ -239,7 +241,7 @@ describe('Disclosure', () => {
     const menuTrigger = getByTestId('menu-trigger');
     expect(disclosure).not.toHaveAttribute('data-expanded');
     expect(panel).not.toBeVisible();
-    
+
     await user.click(menuTrigger);
     const menu = getByTestId('menu');
     expect(menu).toBeVisible();

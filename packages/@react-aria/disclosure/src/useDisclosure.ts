@@ -155,7 +155,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       role: 'group',
       'aria-labelledby': triggerId,
       'aria-hidden': !state.isExpanded,
-      hidden: isSSR ? !state.isExpanded : undefined
+      hidden: (isSSR || isDisabled) ? !state.isExpanded : undefined
     }
   };
 }
