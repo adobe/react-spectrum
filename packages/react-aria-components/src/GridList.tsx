@@ -272,7 +272,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   );
 }
 
-export interface GridListItemRenderProps extends ItemRenderProps {}
+export interface GridListItemRenderProps extends ItemRenderProps {
+  isFirstItem: boolean,
+  isLastItem: boolean
+}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /** The unique id of the item. */
@@ -345,6 +348,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     defaultClassName: 'react-aria-GridListItem',
     values: {
       ...states,
+      isFirstItem: item.key === state.collection.getFirstKey(),
+      isLastItem: item.key === state.collection.getLastKey(),
       isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
