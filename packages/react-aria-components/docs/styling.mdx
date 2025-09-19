@@ -164,10 +164,10 @@ Alternatively, you can use [render props](#render-props) to control which Tailwi
 </Radio>
 ```
 
-To access [CSS variables](#css-variables), use Tailwind's [arbitrary value](https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values) syntax.
+To access [CSS variables](#css-variables), use Tailwind's [arbitrary value](https://tailwindcss.com/docs/adding-custom-styles#resolving-ambiguities) syntax.
 
 ```jsx
-<Popover className="w-[--trigger-width]">
+<Popover className="w-(--trigger-width)">
   {/* ... */}
 </Popover>
 ```
