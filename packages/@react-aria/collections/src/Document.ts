@@ -461,16 +461,14 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private removeNode(node: ElementNode<T>): void {
-    if (node.node == null) {
-      return;
-    }
-
     for (let child of node) {
       this.removeNode(child);
     }
 
-    let collection = this.getMutableCollection();
-    collection.removeNode(node.node.key);
+    if (node.node) {
+      let collection = this.getMutableCollection();
+      collection.removeNode(node.node.key);
+    }
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -508,11 +506,15 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
           this.addNode(element);
         }
 
+        if (element.node) {
+          this.dirtyNodes.delete(element);
+        }
+
         element.isMutated = false;
+      } else {
+        this.dirtyNodes.delete(element);
       }
     }
-
-    this.dirtyNodes.clear();
 
     // Finally, update the collection.
     if (this.nextCollection) {
