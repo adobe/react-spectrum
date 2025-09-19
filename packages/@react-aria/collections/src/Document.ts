@@ -179,7 +179,7 @@ export class BaseNode<T> {
   }
 
   removeChild(child: ElementNode<T>): void {
-    if (child.parentNode !== this || !this.ownerDocument.isMounted) {
+    if (child.parentNode !== this) {
       return;
     }
 
@@ -411,7 +411,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   isSSR = false;
   nodeId = 0;
   nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
-  isMounted = true;
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -426,7 +425,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   get isConnected(): boolean {
-    return this.isMounted;
+    return true;
   }
 
   createElement(type: string): ElementNode<T> {
