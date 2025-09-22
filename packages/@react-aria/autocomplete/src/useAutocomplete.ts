@@ -140,7 +140,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     delayNextActiveDescendant.current = false;
   });
 
-  let turnOffVirtualFocus = useCallback(() => {
+  let turnOffVirtualFocus = useCallback((e) => {
+    e.stopPropagation();
     setShouldUseVirtualFocus(false);
   }, []);
 

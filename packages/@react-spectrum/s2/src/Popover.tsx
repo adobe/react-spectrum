@@ -231,14 +231,16 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
 export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
 }
 
-// TODO this now goes on the Popover itself, do we want to allow users to override the height?
-// That made sense for the inner dialog when that existed, but probably is undesirable for the popover itself
-// Will move padding into the popover styles instead when this is decided
-const dialogStyle = style({
+const innerDivStyle = style({
   padding: 8,
-  display: 'block',
-  overflow: 'auto'
-}, getAllowedOverrides({height: true}));
+  boxSizing: 'border-box',
+  outlineStyle: 'none',
+  borderRadius: 'inherit',
+  overflow: 'auto',
+  position: 'relative',
+  width: 'full',
+  maxSize: 'inherit'
+});
 
 /**
  * A popover is an overlay element positioned relative to a trigger.
@@ -246,14 +248,27 @@ const dialogStyle = style({
 export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, PopoverContext);
   let domRef = useDOMRef(ref);
+  let {
+    UNSAFE_className,
+    UNSAFE_style,
+    styles,
+    ...otherProps
+  } = props;
 
   return (
-    <PopoverBase {...props} ref={domRef} styles={dialogStyle(null, props.styles)}>
+    // TODO: this moves the ref to the dialog, but the styles all go on the inner div since that is what needs overflow: auto to avoid hiding the popover arrow
+    // Kinda weird since we usually put everything on the top level element
+    // TODO: the combobox many items story is odd, it doesn't shift itself over to be properly aligned with the trigger like it does on main
+    <PopoverBase {...otherProps} ref={domRef}>
       {composeRenderProps(props.children, (children) => (
-        // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-        <OverlayTriggerStateContext.Provider value={null}>
-          {children}
-        </OverlayTriggerStateContext.Provider>
+        <div
+          style={UNSAFE_style}
+          className={(UNSAFE_className || '') + mergeStyles(innerDivStyle, styles)}>
+          {/* Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
+          <OverlayTriggerStateContext.Provider value={null}>
+            {children}
+          </OverlayTriggerStateContext.Provider>
+        </div>
       ))}
     </PopoverBase>
   );
