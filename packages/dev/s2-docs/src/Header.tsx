@@ -10,7 +10,7 @@ import {MarkdownMenu} from './MarkdownMenu';
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useState} from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
-import SearchMenu from './SearchMenu';
+import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 function getButtonText(currentPage) {
@@ -36,12 +36,14 @@ export default function Header(props: PageProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
 
-  let toggleShowSearchMenu = () => {
+  let openSearchMenu = async () => {
     if (!document.startViewTransition) {
       setSearchOpen((prev) => !prev);
       return;
     }
 
+    // Preload SearchMenu so it is ready to render immediately.
+    await preloadSearchMenu();
     document.startViewTransition(() => {
       flushSync(() => {
         setSearchOpen((prev) => !prev);
@@ -65,7 +67,7 @@ export default function Header(props: PageProps) {
   let handleActionButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'ArrowDown' && !searchOpen) {
       e.preventDefault();
-      toggleShowSearchMenu();
+      openSearchMenu();
     }
   };
 
@@ -89,7 +91,17 @@ export default function Header(props: PageProps) {
             alignItems: 'center'
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton aria-label="Open menu and search" aria-expanded={searchOpen} aria-controls={searchOpen ? searchMenuId : undefined} size="XL" isQuiet onPress={toggleShowSearchMenu} onKeyDown={handleActionButtonKeyDown} UNSAFE_style={{paddingInlineStart: 10}}>
+            <ActionButton
+              aria-label="Open menu and search"
+              aria-expanded={searchOpen}
+              aria-controls={searchOpen ? searchMenuId : undefined}
+              size="XL"
+              isQuiet
+              onPress={openSearchMenu}
+              onKeyDown={handleActionButtonKeyDown}
+              // @ts-ignore
+              onHoverStart={() => preloadSearchMenu()}
+              UNSAFE_style={{paddingInlineStart: 10}}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
                   {getButtonIcon(currentPage)}
@@ -101,7 +113,13 @@ export default function Header(props: PageProps) {
               <ChevronDownIcon className={style({width: 18})} />
             </ActionButton>
           </div>
-          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} overlayId={searchMenuId} />
+          <SearchMenuTrigger
+            pages={pages}
+            currentPage={currentPage}
+            onOpen={openSearchMenu}
+            onClose={closeSearchMenu}
+            isSearchOpen={searchOpen}
+            overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>
               <AlertTriangle />

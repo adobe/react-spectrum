@@ -1,4 +1,4 @@
-import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
+import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
@@ -119,7 +119,8 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
             toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
-            nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
+            pages={pages}
+            currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
             <Nav pages={pages} currentPage={currentPage} />
             <main 
