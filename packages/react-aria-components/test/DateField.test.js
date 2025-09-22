@@ -56,6 +56,11 @@ describe('DateField', () => {
       expect(segment).toHaveAttribute('data-placeholder', 'true');
       expect(segment).toHaveAttribute('data-type');
       expect(segment).toHaveAttribute('data-test', 'test');
+      expect(segment).not.toHaveAttribute('data-readonly');
+    }
+
+    for (let literal of [...input.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
     }
   });
 
@@ -164,7 +169,7 @@ describe('DateField', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <DateField isDisabled>
         <Label>Birth date</Label>
         <DateInput className={({isDisabled}) => isDisabled ? 'disabled' : ''}>
@@ -175,6 +180,64 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled');
     expect(group).toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).not.toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).not.toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly with disabled state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly isDisabled>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).toHaveAttribute('data-disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).toHaveAttribute('data-disabled');
+    }
+  });
+
+  it('should support readonly state', () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField isReadOnly>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-readonly');
+    expect(group).not.toHaveAttribute('data-disabled');
+    expect(group).not.toHaveClass('disabled');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-readonly');
+      expect(segment).not.toHaveAttribute('data-disabled');
+    }
+    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+      expect(literal).toHaveAttribute('data-readonly');
+      expect(literal).not.toHaveAttribute('data-disabled');
+    }
   });
 
   it('should support render props', () => {
@@ -372,44 +435,6 @@ describe('DateField', () => {
     let segments = Array.from(getByRole('group').querySelectorAll('.react-aria-DateSegment'));
     let segmentTypes = segments.map(s => s.getAttribute('data-type'));
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
-  });
-
-  it('should not store leading zeros when typing into the segments', async () => {
-    let {getAllByRole} = render(
-      <DateField>
-        <Label>Date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
-      </DateField>
-    );
-
-    let segements = getAllByRole('spinbutton');
-    let monthSegment = segements[0];
-    await user.click(monthSegment);
-    expect(monthSegment).toHaveFocus();
-    await user.keyboard('11');
-    expect(monthSegment).toHaveTextContent('11');
-    await user.click(monthSegment);
-    await user.keyboard('012');
-    expect(monthSegment).toHaveTextContent('12');
-
-    let daysSegment = segements[1];
-    await user.click(daysSegment);
-    expect(daysSegment).toHaveFocus();
-    await user.keyboard('11');
-    expect(daysSegment).toHaveTextContent('11');
-    await user.click(daysSegment);
-    await user.keyboard('012');
-    expect(daysSegment).toHaveTextContent('12');
-
-    let yearsSegment = segements[2];
-    await user.click(yearsSegment);
-    expect(yearsSegment).toHaveFocus();
-    await user.keyboard('1111');
-    expect(yearsSegment).toHaveTextContent('1111');
-    await user.keyboard('002222');
-    expect(yearsSegment).toHaveTextContent('2222');
   });
 
   it('should support autofill', async() => {

@@ -315,7 +315,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = node.index + 1;
+    let {collection} = state;
+    let nodes = [...collection];
+    // TODO: refactor ListCollection to store an absolute index of a node's position?
+    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section') ? [...collection.getKeys()].filter((key) => collection.getItem(key)?.type !== 'section').findIndex((key) => key === node.key) + 1 : node.index + 1;
   }
 
   let gridCellProps = {

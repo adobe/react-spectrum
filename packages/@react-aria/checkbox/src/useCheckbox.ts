@@ -11,7 +11,7 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, useEffect, useMemo} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
@@ -69,17 +69,24 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     onPress() {
       // @ts-expect-error
       let {[privateValidationStateProp]: groupValidationState} = props;
-  
+
       let {commitValidation} = groupValidationState
       ? groupValidationState
       : validationState;
-      
+
       commitValidation();
     }
   });
 
   return {
-    labelProps: mergeProps(labelProps, pressProps),
+    labelProps: mergeProps(
+      labelProps,
+      pressProps,
+      useMemo(() => ({
+        // Prevent label from being focused when mouse down on it.
+        // Note, this does not prevent the input from being focused in the `click` event.
+        onMouseDown: e => e.preventDefault()
+      }), [])),
     inputProps: {
       ...inputProps,
       checked: isSelected,

@@ -1,18 +1,17 @@
 'use client';
 
 import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, SegmentedControl, SegmentedControlItem, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
-import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import Copy from '@react-spectrum/s2/icons/Copy';
+import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import More from '@react-spectrum/s2/icons/More';
+import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import {ReactNode, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {zip} from './zip';
 
 const platterStyle = style({
@@ -42,28 +41,7 @@ interface CodePlatterProps {
 export function CodePlatter({children, shareUrl, files, type, registryUrl}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
-  let [isCopied, setIsCopied] = useState(false);
-  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-    };
-  }, []);
-
-  let handleCopy = () => {
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-    navigator.clipboard.writeText(codeRef.current!.querySelector('pre')!.textContent!).then(() => {
-      setIsCopied(true);
-      timeout.current = setTimeout(() => setIsCopied(false), 2000);
-    }).catch(() => {
-      // TODO: trigger a toast if copy failed
-    });
-  };
+  let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
 
   return (
     <div className={platterStyle}>
@@ -73,18 +51,13 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
           isQuiet
           density="regular"
           size="S">
-          <TooltipTrigger placement="end">
-            <ActionButton aria-label="Copy code" onPress={handleCopy}>
-              {isCopied ? <CheckmarkCircle /> : <Copy />}
-            </ActionButton>
-            <Tooltip>Copy code</Tooltip>
-          </TooltipTrigger>
+          <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
           {(shareUrl || files || type || registryUrl) && <MenuTrigger>
             <TooltipTrigger placement="end">
-              <ActionButton aria-label="Share">
-                <More />
+              <ActionButton aria-label="Open in…">
+                <OpenIn />
               </ActionButton>
-              <Tooltip>Share</Tooltip>
+              <Tooltip>Open in…</Tooltip>
             </TooltipTrigger>
             <Menu hideLinkOutIcon>
               {shareUrl && 
@@ -106,6 +79,41 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   }}>
                   <LinkIcon />
                   <Text slot="label">Copy link</Text>
+                </MenuItem>
+              }
+              {(files || type) && 
+                <MenuItem
+                  onAction={() => {
+                    let code = codeRef.current!.querySelector('pre')!.textContent!;
+                    let filesToDownload = getCodeSandboxFiles({
+                      ...files,
+                      'Example.tsx': transformExampleCode(code)
+                    }, type);
+                    let filesToZip = {};
+                    for (let key in filesToDownload) {
+                      if (filesToDownload[key]) {
+                        filesToZip[key] = filesToDownload[key].content;
+                      }
+                    }
+                    let blob = zip(filesToZip);
+
+                    let a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'example.zip';
+                    a.hidden = true;
+                    document.body.appendChild(a);
+
+                    a.click();
+                    a.remove();
+                  }}>
+                  <Download />
+                  <Text slot="label">Download ZIP</Text>
+                </MenuItem>
+              }
+              {registryUrl && 
+                <MenuItem onAction={() => setShowShadcn(true)}>
+                  <Prompt />
+                  <Text>Install with shadcn</Text>
                 </MenuItem>
               }
               {(files || type) && 
@@ -143,41 +151,6 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
                   <Text>Open in v0</Text>
                 </MenuItem>
               }
-              {registryUrl && 
-                <MenuItem onAction={() => setShowShadcn(true)}>
-                  <Prompt />
-                  <Text>Install with shadcn</Text>
-                </MenuItem>
-              }
-              {(files || type) && 
-                <MenuItem
-                  onAction={() => {
-                    let code = codeRef.current!.querySelector('pre')!.textContent!;
-                    let filesToDownload = getCodeSandboxFiles({
-                      ...files,
-                      'Example.tsx': transformExampleCode(code)
-                    }, type);
-                    let filesToZip = {};
-                    for (let key in filesToDownload) {
-                      if (filesToDownload[key]) {
-                        filesToZip[key] = filesToDownload[key].content;
-                      }
-                    }
-                    let blob = zip(filesToZip);
-
-                    let a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = 'example.zip';
-                    a.hidden = true;
-                    document.body.appendChild(a);
-
-                    a.click();
-                    a.remove();
-                  }}>
-                  <Download />
-                  <Text slot="label">Download ZIP</Text>
-                </MenuItem>
-              }
             </Menu>
           </MenuTrigger>}
         </ActionButtonGroup>
@@ -203,6 +176,9 @@ export function Pre({children}) {
 }
 
 function transformExampleCode(code: string): string {
+  // Export the last function
+  code = code.replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport function Example$2');
+
   // Add function wrapper around raw JSX in examples.
   return code.replace(/\n<((?:.|\n)+)/, (_, code) => {
     let res = '\nexport function Example() {\n  return (\n    <';

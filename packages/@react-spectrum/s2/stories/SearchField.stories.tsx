@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import {
   Content,
   ContextualHelp,
@@ -23,6 +23,8 @@ import {
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
+const events = ['onChange', 'onClear', 'onSubmit'];
+
 const meta: Meta<typeof SearchField> = {
   component: SearchField,
   parameters: {
@@ -30,12 +32,13 @@ const meta: Meta<typeof SearchField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'SearchField'
 };
 

@@ -12,12 +12,14 @@
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -230,15 +232,21 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
       data-orientation={orientation || undefined}>
-      <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
+      <SharedElementTransition>
+        <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
+      </SharedElementTransition>
     </div>
   );
+}
+
+class TabItemNode extends CollectionNode<unknown> {
+  static readonly type = 'item';
 }
 
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
@@ -280,7 +288,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}>
-      {renderProps.children}
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
     </ElementType>
   );
 });

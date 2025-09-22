@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "新活動",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "選取…",
+  "picker.selectedCount": "{count, plural, =0 {未選取任何項目} one {已選取 # 個項目} other {已選取 # 個項目}}",
   "slider.maximum": "最大值",
   "slider.minimum": "最小值",
   "table.loading": "載入中…",
