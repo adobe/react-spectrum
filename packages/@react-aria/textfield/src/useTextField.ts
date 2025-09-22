@@ -260,10 +260,12 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         },
         onClick: (e) => {
           e.stopPropagation();
+          // @ts-expect-error
           props.onClick?.(e);
         },
         onDoubleClick: (e) => {
           e.stopPropagation();
+          // @ts-expect-error
           props.onDoubleClick?.(e);
         },
 

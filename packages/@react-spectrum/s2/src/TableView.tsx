@@ -55,7 +55,6 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
-import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
@@ -125,10 +124,12 @@ const tableWrapper = style({
   position: 'relative',
   // Clip ActionBar animation.
   overflow: 'clip'
-});
+}, getAllowedOverrides({height: true}));
 
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
   width: 'full',
+  height: 'full',
+  boxSizing: 'border-box',
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
@@ -163,7 +164,7 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   scrollPaddingStart: {
     isCheckboxSelection: 40
   }
-}, getAllowedOverrides({height: true}));
+});
 
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
@@ -320,7 +321,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
-      className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
+      className={(UNSAFE_className || '') + tableWrapper(null, styles)}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2TableLayout}
@@ -457,7 +458,8 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: '[6px]'
+  borderRadius: '[6px]',
+  pointerEvents: 'none'
 } as const;
 
 function CellFocusRing() {
@@ -1035,8 +1037,8 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {isFocusVisible && <CellFocusRing />}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+          {isFocusVisible && <CellFocusRing />}
         </>
       )}
     </RACCell>

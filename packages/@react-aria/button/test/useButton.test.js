@@ -61,4 +61,11 @@ describe('useButton tests', function () {
     expect(typeof result.current.buttonProps.onKeyDown).toBe('function');
     expect(result.current.buttonProps.rel).toBeUndefined();
   });
+
+  it('handles aria-disabled passthrough for button elements', function () {
+    let props = {'aria-disabled': 'true'};
+    let {result} = renderHook(() => useButton(props));
+    expect(result.current.buttonProps['aria-disabled']).toBeTruthy();
+    expect(result.current.buttonProps['disabled']).toBeUndefined();
+  });
 });

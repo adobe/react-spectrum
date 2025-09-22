@@ -298,10 +298,18 @@ export function usePress(props: PressHookProps): PressResult {
   });
 
   let triggerClick = useEffectEvent((e: RMouseEvent<FocusableElement>) => {
+    if (isDisabled) {
+      return;
+    }
+
     onClick?.(e);
   });
 
   let triggerSyntheticClick = useEffectEvent((e: KeyboardEvent | TouchEvent, target: FocusableElement) => {
+    if (isDisabled) {
+      return;
+    }
+
     // Some third-party libraries pass in onClick instead of onPress.
     // Create a fake mouse event and trigger onClick as well.
     // This matches the browser's native activation behavior for certain elements (e.g. button).
@@ -374,7 +382,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (isDisabled) {
             e.preventDefault();
           }
-          
+
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreEmulatedMouseEvents && !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {

@@ -2300,8 +2300,6 @@ describe('TableView', function () {
           await user.keyboard('{Escape}');
 
           tree.rerender(<DragBetweenTablesComplex secondTableDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          await user.keyboard('{ArrowLeft}');
-          await user.keyboard('{ArrowRight}');
 
           let grids = tree.getAllByRole('grid');
           let rowgroup = within(grids[0]).getAllByRole('rowgroup')[1];

@@ -1,11 +1,14 @@
 'use client';
 
-import {ActionButton, MenuTrigger} from '@react-spectrum/s2';
+import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
 import {AdobeLogo} from './AdobeLogo';
-import {CSSProperties, useEffect, useRef} from 'react';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
+import {Modal} from '../../../@react-spectrum/s2/src/Modal';
+import React, {CSSProperties, lazy, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
 let fadeOut = keyframes(`
   0% {
@@ -55,7 +58,7 @@ const animation = {
 
 const animationRange = '24px 64px';
 
-export function MobileHeader({toc, nav}) {
+export function MobileHeader({toc, pages, currentPage}) {
   let ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -92,7 +95,7 @@ export function MobileHeader({toc, nav}) {
         },
         alignItems: 'center',
         gap: 12,
-        zIndex: 100,
+        zIndex: 1,
         overflow: 'clip',
         '--base-bg': {
           type: 'backgroundColor',
@@ -149,12 +152,14 @@ export function MobileHeader({toc, nav}) {
         } as CSSProperties}>
         {toc}
       </div>
-      <MenuTrigger align="end">
+      <DialogTrigger>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        {nav}
-      </MenuTrigger>
+        <Modal size="fullscreenTakeover" style={{zIndex: 100}}>
+          <MobileSearchMenu pages={pages} currentPage={currentPage} />
+        </Modal>
+      </DialogTrigger>
     </div>
   );
 }

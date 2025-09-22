@@ -282,13 +282,13 @@ A Tree consists of a container element, with items containing data inside. The i
 If the tree supports item selection, each item can optionally include a selection checkbox.
 
 ```tsx render=false
-import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-components';
+import {Tree, TreeItem, TreeItemContent, Button, Checkbox, SelectionIndicator} from 'react-aria-components';
 
 <Tree>
   <TreeItem>
     <TreeItemContent>
       <Button slot="chevron" />
-      <Checkbox slot="selection" />
+      <Checkbox slot="selection" /> or <SelectionIndicator />
       <Button slot="drag" />
     </TreeItemContent>
     <TreeItem>
@@ -414,14 +414,14 @@ Now we can render a Tree using far less code.
 
 ```tsx example
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
-  <MyTreeItem title="Documents">
-    <MyTreeItem title="Project">
-      <MyTreeItem title="Weekly Report" />
+  <MyTreeItem id="documents" title="Documents">
+    <MyTreeItem id="project" title="Project">
+      <MyTreeItem id="report" title="Weekly Report" />
     </MyTreeItem>
   </MyTreeItem>
-  <MyTreeItem title="Photos">
-    <MyTreeItem title="Image 1" />
-    <MyTreeItem title="Image 2" />
+  <MyTreeItem id="photos" title="Photos">
+    <MyTreeItem id="one" title="Image 1" />
+    <MyTreeItem id="two" title="Image 2" />
   </MyTreeItem>
 </Tree>
 ```
@@ -460,7 +460,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
-      defaultExpandedKeys={[1, 4]}
+      defaultExpandedKeys={['1']}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -506,7 +506,7 @@ A user can click on a different item to change the selection or click on the sam
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} />
 ```
 
 ### Multiple selection
@@ -515,7 +515,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="multiple" defaultSelectedKeys={[2, 4]} defaultExpandedKeys={[1]} />
+<FileTree selectionMode="multiple" defaultSelectedKeys={['2', '4']} defaultExpandedKeys={['1', '2']} />
 ```
 
 ### Disallow empty selection
@@ -525,7 +525,7 @@ In this mode, if a single item is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the example above
-<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} disallowEmptySelection />
+<FileTree selectionMode="single" defaultSelectedKeys={['2']} defaultExpandedKeys={['1']} disallowEmptySelection />
 ```
 
 
@@ -668,7 +668,7 @@ Items may also have an action specified by directly applying `onAction` on the `
 Tree items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<TreeItem>` component. Links behave the same way as described above for item actions depending on the `selectionMode` and `selectionBehavior`.
 
 ```tsx example
-<Tree aria-label="Tree with onAction applied on the items directly" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
+<Tree aria-label="Tree with href" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
   <MyTreeItem
     /*- begin highlight -*/
     href="https://pokemondb.net/pokedex/bulbasaur"
@@ -769,7 +769,7 @@ interface Pokemon {
   name: string
 }
 
-function AsyncSortTable() {
+function AsyncTree() {
   let starWarsList = useAsyncList<StarWarsCharacter>({
     async load({signal, cursor}) {
       if (cursor) {

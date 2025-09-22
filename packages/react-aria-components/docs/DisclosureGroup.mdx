@@ -53,7 +53,7 @@ import {ChevronRight} from 'lucide-react';
       </Button>
     </Heading>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
@@ -64,7 +64,7 @@ import {ChevronRight} from 'lucide-react';
       </Button>
     </Heading>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </DisclosureGroup>
@@ -139,7 +139,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
         </Button>
       </Heading>
       <DisclosurePanel>
-        <p>{children}</p>
+        {children}
       </DisclosurePanel>
     </Disclosure>
   )
@@ -228,7 +228,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
       <Button>Click me</Button>
     </div>
     <DisclosurePanel>
-      <p>Details about system requirements here.</p>
+      Details about system requirements here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="personal">
@@ -242,7 +242,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
       <Button>Click me</Button>
     </div>
     <DisclosurePanel>
-      <p>Details about personal information here.</p>
+      Details about personal information here.
     </DisclosurePanel>
   </Disclosure>
 </DisclosureGroup>
@@ -328,6 +328,8 @@ A `DisclosureGroup` can be targeted with the `.react-aria-DisclosureGroup` CSS s
 A `Disclosure` can be targeted with the `.react-aria-Disclosure` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.DisclosureRenderProps.properties} />
+
+Use the `--disclosure-panel-width` and `--disclosure-panel-height` CSS variables to implement animations.
 
 ### Button
 

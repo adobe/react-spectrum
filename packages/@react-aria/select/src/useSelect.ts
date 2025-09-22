@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
-import {AriaSelectProps} from '@react-types/select';
+import {AriaSelectProps, SelectionMode} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {DOMAttributes, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {FocusEvent, useMemo} from 'react';
@@ -24,7 +24,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children'> {
+export interface AriaSelectOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -32,7 +32,7 @@ export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children
   keyboardDelegate?: KeyboardDelegate
 }
 
-export interface SelectAria<T> extends ValidationResult {
+export interface SelectAria<T, M extends SelectionMode = 'single'> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
 
@@ -52,7 +52,7 @@ export interface SelectAria<T> extends ValidationResult {
   errorMessageProps: DOMAttributes,
 
   /** Props for the hidden select element. */
-  hiddenSelectProps: HiddenSelectProps<T>
+  hiddenSelectProps: HiddenSelectProps<T, M>
 }
 
 interface SelectData {
@@ -63,7 +63,7 @@ interface SelectData {
   validationBehavior?: 'aria' | 'native'
 }
 
-export const selectData: WeakMap<SelectState<any>, SelectData> = new WeakMap<SelectState<any>, SelectData>();
+export const selectData: WeakMap<SelectState<any, any>, SelectData> = new WeakMap<SelectState<any>, SelectData>();
 
 /**
  * Provides the behavior and accessibility implementation for a select component.
@@ -71,7 +71,7 @@ export const selectData: WeakMap<SelectState<any>, SelectData> = new WeakMap<Sel
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement | null>): SelectAria<T> {
+export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSelectOptions<T, M>, state: SelectState<T, M>, ref: RefObject<HTMLElement | null>): SelectAria<T, M> {
   let {
     keyboardDelegate,
     isDisabled,
@@ -96,6 +96,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   );
 
   let onKeyDown = (e: KeyboardEvent) => {
+    if (state.selectionManager.selectionMode === 'multiple') {
+      return;
+    }
+    
     switch (e.key) {
       case 'ArrowLeft': {
         // prevent scrolling containers
@@ -135,6 +139,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     isInvalid,
     errorMessage: props.errorMessage || validationErrors
   });
+
+  if (state.selectionManager.selectionMode === 'multiple') {
+    typeSelectProps = {};
+  }
 
   let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);

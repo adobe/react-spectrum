@@ -11,11 +11,12 @@
  */
 
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -37,9 +38,10 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -107,12 +109,27 @@ export interface SubmenuTriggerProps {
 
 const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
+class SubmenuTriggerNode<T> extends CollectionNode<T> {
+  static readonly type = 'submenutrigger';
+
+  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): CollectionNode<T> | null {
+    let triggerNode = collection.getItem(this.firstChildKey!);
+    if (triggerNode && filterFn(triggerNode.textValue, this)) {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
+}
+
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
  *
  * @version alpha
  */
-export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigger', (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubmenuTriggerNode, (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -178,16 +195,17 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 });
 
 interface MenuInnerProps<T> {
-  props: MenuProps<T>,
+  // For now we append filter and other autocomplete context props here for typescript, but eventually we can consider exposing these
+  // as top level props for users to use with standalone Menus
+  props: MenuProps<T> & {filter?: SelectableCollectionContextValue<object>['filter'], shouldUseVirtualFocus?: boolean},
   collection: BaseCollection<object>,
-  menuRef: RefObject<HTMLDivElement | null>
+  menuRef: RefObject<HTMLElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
-  let filteredCollection = useMemo(() => filter ? collection.UNSTABLE_filter(filter) : collection, [collection, filter]);
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
+  let {filter, ...autocompleteMenuProps} = props;
+  let filteredCollection = useMemo(() => filter ? collection.filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
     collection: filteredCollection as ICollection<Node<object>>,
@@ -195,7 +213,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -222,7 +240,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     <FocusScope>
       <div
         {...mergeProps(DOMProps, renderProps, menuProps)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         data-empty={state.collection.size === 0 || undefined}
         onScroll={props.onScroll}>
@@ -233,17 +251,20 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [UNSTABLE_InternalAutocompleteContext, null],
+            [SelectableCollectionContext, null],
+            [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
             /* eslint-disable-next-line react-hooks/rules-of-hooks */
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
-          <CollectionRoot
-            collection={state.collection}
-            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
-            scrollRef={ref} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={state.collection}
+              persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+              scrollRef={ref} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
       </div>
@@ -324,7 +345,7 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
 /**
  * A MenuSection represents a section within a Menu.
  */
-export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
+export const MenuSection = /*#__PURE__*/ createBranchComponent(SectionNode, MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -361,7 +382,7 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
@@ -421,7 +442,8 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
               description: descriptionProps
             }
           }],
-          [KeyboardContext, keyboardShortcutProps]
+          [KeyboardContext, keyboardShortcutProps],
+          [SelectionIndicatorContext, {isSelected: states.isSelected}]
         ]}>
         {renderProps.children}
       </Provider>

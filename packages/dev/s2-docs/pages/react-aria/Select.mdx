@@ -11,7 +11,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 <PageDescription>{docs.exports.Select.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css"]}
   "use client";
   import {Select, SelectItem} from 'vanilla-starter/Select';
 
@@ -25,7 +25,7 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
   </Select>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/Select.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/Select.tsx"]}
   "use client";
   import {Select, SelectItem} from 'tailwind-starter/Select';
 
@@ -41,43 +41,9 @@ import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A select consists of a label, a [Button](Button.html) which displays a selected value, and a [ListBox](ListBox.html) displayed in a [Popover](Popover.html). Users can press the button to open the popover and select a value.
-
-`Select` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-
-```tsx
-import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
-
-<Select>
-  <Label />
-  <Button>
-    <SelectValue />
-  </Button>
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <ListBox>
-      <ListBoxItem>
-        <Text slot="label" />
-        <Text slot="description" />
-      </ListBoxItem>
-      <ListBoxSection>
-        <Header />
-        <ListBoxItem />
-      </ListBoxSection>
-    </ListBox>
-  </Popover>
-</Select>
-```
-
 ## Content
 
-`Select` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`Select` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
@@ -169,26 +135,27 @@ function Example() {
 }
 ```
 
-## Selection
+## Value
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. When `selectionMode="multiple"`, `value` and `onChange` accept an array. Items can be disabled with the `isDisabled` prop.
 
-```tsx render
+```tsx render docs={docs.exports.Select} links={docs.links} props={['selectionMode']} wide
 "use client";
-import type {Key} from 'react-aria-components';
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {useState} from 'react';
 
-function Example() {
-  let [animal, setAnimal] = useState<Key>("bison");
+function Example(props) {
+  let [animal, setAnimal] = useState("bison");
 
   return (
     <div>
       <Select
+        {...props}
         label="Pick an animal"
         ///- begin highlight -///
-        selectedKey={animal}
-        onSelectionChange={setAnimal}
+        /* PROPS */
+        value={animal}
+        onChange={setAnimal}
         ///- end highlight -///
       >
         <SelectItem id="koala">Koala</SelectItem>
@@ -198,7 +165,7 @@ function Example() {
         <SelectItem id="bison">Bison</SelectItem>
         <SelectItem id="skunk">Skunk</SelectItem>
       </Select>
-      <p>Current selection: {animal}</p>
+      <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
     </div>
   );
 }
@@ -208,14 +175,20 @@ function Example() {
 
 Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'react-aria-components';
 
 <Form>
-  <Select name="animal" isRequired description="Please select an animal.">
+  <Select
+    label="Animal"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <SelectItem id="aardvark">Aardvark</SelectItem>
     <SelectItem id="cat">Cat</SelectItem>
     <SelectItem id="dog">Dog</SelectItem>
@@ -229,6 +202,22 @@ import {Form} from 'react-aria-components';
 
 ## API
 
+<Anatomy />
+
+```tsx links={{Select: '#select', Button: 'Button.html', SelectValue: '#selectvalue', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+<Select>
+  <Label />
+  <Button>
+    <SelectValue />
+  </Button>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</Select>
+```
+
 ### Select
 
 <PropTable component={docs.exports.Select} links={docs.links} />
@@ -237,8 +226,6 @@ import {Form} from 'react-aria-components';
 
 ### SelectValue
 
-<PropTable component={docs.exports.SelectValue} links={docs.links} />
+<PropTable component={docs.exports.SelectValue} links={docs.links} showDescription />
 
 <StateTable defaultClassName="react-aria-SelectValue" properties={docs.exports.SelectValueRenderProps.properties} />
-
-
