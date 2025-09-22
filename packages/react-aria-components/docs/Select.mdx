@@ -1221,12 +1221,12 @@ function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
 }
 
 <FieldGroup title="Filters" isDisabled>
-  <MySelect label="Status" defaultSelectedKey="published">
+  <MySelect label="Status" defaultValue="published">
     <ListBoxItem id="draft">Draft</ListBoxItem>
     <ListBoxItem id="published">Published</ListBoxItem>
     <ListBoxItem id="deleted">Deleted</ListBoxItem>
   </MySelect>
-  <MySelect label="Author" defaultSelectedKey="emma">
+  <MySelect label="Author" defaultValue="emma">
     <ListBoxItem id="john">John</ListBoxItem>
     <ListBoxItem id="emma">Emma</ListBoxItem>
     <ListBoxItem id="tim">Tim</ListBoxItem>
@@ -1298,7 +1298,7 @@ function SelectClearButton() {
       // Don't inherit behavior from Select.
       slot={null}
       style={{fontSize: 'small', marginTop: 6, padding: 4}}
-      onPress={() => state?.setSelectedKey(null)}>
+      onPress={() => state?.setValue(null)}>
       Clear
     </Button>
   );
