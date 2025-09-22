@@ -327,6 +327,13 @@ describe('string conversion', function () {
       expect(() => parseZonedDateTime('2020-02-03T23:99[America/Los_Angeles]')).toThrow();
       expect(() => parseZonedDateTime('2020-02-03T12:22:99[America/Los_Angeles]')).toThrow();
     });
+
+    it('should parse dates with seconds in offset', function () {
+      let date = parseZonedDateTime('1883-11-07T00:45[America/Los_Angeles]');
+      let string = date.toString(); // => "1883-11-07T00:45:00-07:52:58[America/Los_Angeles]"
+      let parseBack = parseZonedDateTime(string);
+      expect(parseBack).toEqual(date);
+    });
   });
 
   describe('ZonedDateTime#toString', function () {
