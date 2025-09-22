@@ -385,6 +385,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                   styles={style({
                     size: {
                       size: {
+                        XS: 12,
                         S: 14,
                         M: 18,
                         L: 20,
