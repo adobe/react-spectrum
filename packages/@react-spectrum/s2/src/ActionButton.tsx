@@ -345,7 +345,17 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 staticColor: staticColor,
                 size: props.size === 'XS' ? undefined : props.size,
                 isDisabled: isDisabled,
-                styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
+                styles: style({
+                  position: 'absolute',
+                  top: '--badgeTop',
+                  insetStart: '--badgePosition',
+                  marginTop: 'calc((self(height) * -1)/2)',
+                  marginStart: 'calc((self(height) * -1)/2)',
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
               }]
             ]}>
             {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
