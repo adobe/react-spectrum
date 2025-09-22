@@ -52,7 +52,7 @@ const content =  style({
   overflowY: {
     default: 'auto',
     // Make the whole dialog scroll rather than only the content when the height it small.
-    [`@media (height < ${400 / 16}rem)`]: 'visible'
+    [`@container (height < ${400 / 16}rem)`]: 'visible'
   },
   font: 'body'
 });
