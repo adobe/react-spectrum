@@ -37,8 +37,11 @@
   }
 
   .react-aria-SelectValue {
-    flex: 1 0 auto;
+    flex: 1;
     text-align: start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &[data-placeholder] {
       font-style: italic;

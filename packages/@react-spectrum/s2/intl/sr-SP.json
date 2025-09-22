@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Nova aktivnost",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Izaberite...",
+  "picker.selectedCount": "{count, plural, =0 {Nije izabrana nijedna stavka} one {Izabrana je # stavka} other {Izabrano je # stavki}}",
   "slider.maximum": "Najviše",
   "slider.minimum": "Najmanje",
   "table.loading": "Učitavam...",
