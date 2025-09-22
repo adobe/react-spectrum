@@ -83,7 +83,6 @@ module.exports = new Packager({
           if (resolved.type !== 'js') {
             deps.set(getSpecifier(dep), {skipped: true});
           } else {
-            // deps.set(getSpecifier(dep), {id: resolved.id});
             let resolution = {id: resolved.id};
 
             // Dependencies may be re-targeted to follow re-exports.
