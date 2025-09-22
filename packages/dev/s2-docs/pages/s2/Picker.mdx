@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.Picker.description}</PageDescription>
 
-```tsx render docs={docs.exports.Picker} links={docs.links} props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isQuiet', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'description', 'contextualHelp', 'isQuiet', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
 import {Picker, PickerItem} from '@react-spectrum/s2';
 
 <Picker/* PROPS */>
@@ -62,7 +62,7 @@ import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
-<Picker label="Permissions" defaultSelectedKey="read">
+<Picker label="Permissions" defaultValue="read">
   <PickerItem id="read" textValue="Read">
     {/*- begin highlight -*/}
     <Comment />
@@ -179,25 +179,27 @@ import {Picker, PickerItem} from '@react-spectrum/s2';
 </Picker>
 ```
 
-## Selection
+## Value
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Picker#single-selection) for more details.
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. When `selectionMode="multiple"`, `value` and `onChange` accept an array. Items can be disabled with the `isDisabled` prop.
 
-```tsx render
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['selectionMode']} wide
 "use client";
-import {Picker, PickerItem, type Key} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2';
 import {useState} from 'react';
 
-function Example() {
-  let [animal, setAnimal] = useState<Key>("bison");
+function Example(props) {
+  let [animal, setAnimal] = useState("bison");
 
   return (
     <div>
       <Picker
+        {...props}
         label="Pick an animal"
         ///- begin highlight -///
-        selectedKey={animal}
-        onSelectionChange={setAnimal}
+        /* PROPS */
+        value={animal}
+        onChange={setAnimal}
         ///- end highlight -///
       >
         <PickerItem id="koala">Koala</PickerItem>
@@ -207,7 +209,7 @@ function Example() {
         <PickerItem id="bison">Bison</PickerItem>
         <PickerItem id="skunk">Skunk</PickerItem>
       </Picker>
-      <p>Current selection: {animal}</p>
+      <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
     </div>
   );
 }
