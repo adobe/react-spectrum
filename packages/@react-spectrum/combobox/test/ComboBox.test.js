@@ -4398,7 +4398,7 @@ describe('ComboBox', function () {
       if (Method === 'escape key') {
         expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Two').id}`);
       } else {
-        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('r').id}`);
+        expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
       }
       tree.unmount();
 
@@ -4412,7 +4412,7 @@ describe('ComboBox', function () {
 
       await performInteractions(tree);
       expect(() => tree.getByTestId('tray')).toThrow();
-      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('r').id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${tree.getByText('Test').id} ${tree.getByText('Twor').id}`);
     });
 
     it('menutrigger=focus doesn\'t reopen the tray on close', async function () {

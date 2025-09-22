@@ -41,7 +41,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
   let trackRef = useRef(null);
-  let {locale} = useLocale();
+  let {direction, locale} = useLocale();
 
   return (
     <AriaColorSlider
@@ -133,7 +133,8 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
           <ColorHandle
             containerRef={trackRef}
             getPosition={() => {
-              let x = state.orientation === 'horizontal' ? state.getThumbPercent(0) : 0.5;
+              let thumbLeft = direction === 'ltr' ? state.getThumbPercent(0) : 1 - state.getThumbPercent(0);
+              let x = state.orientation === 'horizontal' ? thumbLeft : 0.5;
               let y = state.orientation === 'horizontal' ? 0.5 : 1 - state.getThumbPercent(0);
               return {x, y};
             }} />

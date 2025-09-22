@@ -502,8 +502,10 @@ function PlantModal(props: ModalOverlayProps) {
   return (
     <ModalOverlay
       {...props}
+      // Use position: absolute instead of fixed to avoid
+      // being clipped to the "inner" viewport in iOS 26
       className={({isEntering, isExiting}) => `
-      fixed top-0 left-0 w-full h-(--visual-viewport-height) isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
+      absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
@@ -526,14 +528,21 @@ function PlantModal(props: ModalOverlayProps) {
             </svg>
           </div>
         }
-        <RACModal
-          {...props}
-          ref={ref}
-          className={({isEntering, isExiting}) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
-          ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-          ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-        `} />
+        {/* Inner position: sticky div sized to the visual viewport
+            height so the modal appears in view.
+            Note that position: fixed will not work here because this
+            is positioned relative to the containing block, which is
+            the ModalOverlay in this case due to backdrop-blur. */}
+        <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center p-4 text-center">
+          <RACModal
+            {...props}
+            ref={ref}
+            className={({isEntering, isExiting}) => `
+            w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
+            ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `} />
+        </div>
       </>)}
     </ModalOverlay>
   );
