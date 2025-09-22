@@ -92,7 +92,7 @@ export const TAB_DEFS: Record<Library, TabDef> = {
   }
 };
 
-const getCurrentLibrary = (currentPage: Page): Library => getLibraryFromPage(currentPage);
+export const getCurrentLibrary = (currentPage: Page): Library => getLibraryFromPage(currentPage);
 
 // getLibraryFromUrl now imported from library.ts
 
