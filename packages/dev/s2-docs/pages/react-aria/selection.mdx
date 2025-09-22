@@ -499,6 +499,37 @@ In components which support multiple selection, you can limit the selection to a
 `selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
 only contain a single id at a time.
 
+### Animated SelectionIndicator
+
+Render a `<SelectionIndicator />` within each collection item to animate selection changes. All CSS properties listed by `transition-property` are animated. Include the `translate` property to smoothly animate the position. Use the entering and exiting states to add a transition when no items are selected.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/SelectionIndicator.css']}
+"use client";
+import {GridList, GridListItem, SelectionIndicator} from 'react-aria-components';
+import './SelectionIndicator.css';
+
+function SelectableItem({id, children}) {
+  return (
+    <GridListItem id={id} className="animated-GridListItem">
+      {/*- begin highlight -*/}
+      <SelectionIndicator />
+      {/*- end highlight -*/}
+      {children}
+    </GridListItem>
+  );
+}
+
+<GridList
+  aria-label="Animated GridList"
+  selectionMode="single">
+  <SelectableItem>Home</SelectableItem>
+  <SelectableItem>Getting Started</SelectableItem>
+  <SelectableItem>Components</SelectableItem>
+</GridList>
+```
+
+<StateTable defaultClassName="react-aria-SelectionIndicator" properties={docs.exports.SharedElementRenderProps.properties} links={docs.links} />
+
 ## Item actions
 
 In addition to selection, some collection components support item actions via the `onAction` prop. In the default `"toggle"` selection behavior, when nothing is selected, clicking, tapping, or pressing the <Keyboard>Enter</Keyboard> key triggers the item action. Items may be selected using the checkbox, or by pressing the <Keyboard>Space</Keyboard> key. When at least one item is selected, clicking or tapping a row toggles the selection.

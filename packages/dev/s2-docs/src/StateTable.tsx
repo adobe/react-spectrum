@@ -1,6 +1,6 @@
 import {Code, styles as codeStyles} from './Code';
 import {Fragment} from 'react';
-import {renderHTMLfromMarkdown, TInterface} from './types';
+import {renderHTMLfromMarkdown, setLinks, TInterface} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
@@ -8,12 +8,17 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface StateTableProps {
   properties: TInterface['properties'],
+  links?: any,
   showOptional?: boolean,
   hideSelector?: boolean,
   defaultClassName?: string
 }
 
-export function StateTable({properties, showOptional, hideSelector, defaultClassName}: StateTableProps) {
+export function StateTable({properties, links, showOptional, hideSelector, defaultClassName}: StateTableProps) {
+  if (links) {
+    setLinks(links);
+  }
+
   let props = Object.values(properties);
   if (!showOptional) {
     props = props.filter(prop => !prop.optional);
