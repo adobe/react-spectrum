@@ -238,6 +238,15 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   paddingX: {
     default: controlStyle.paddingX,
     [avatarOnly]: 0
+  },
+  // `control` sets this, but we need to override it for avatar only buttons.
+  '--iconMargin': {
+    type: 'marginStart',
+    value: {
+      default: fontRelative(-2),
+      [iconOnly]: 0,
+      [avatarOnly]: 0
+    }
   }
 }, getAllowedOverrides());
 
@@ -325,10 +334,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
               [AvatarContext, {
                 size: avatarSize[size],
                 styles: style({
-                  marginStart: {
-                    default: '--iconMargin',
-                    ':last-child': 0
-                  },
+                  marginStart: '--iconMargin',
                   flexShrink: 0,
                   order: 0
                 })
