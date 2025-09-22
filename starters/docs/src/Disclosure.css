@@ -33,6 +33,9 @@
 }
 
 .react-aria-DisclosurePanel {
-  margin-left: 32px;
+  margin-left: 26px;
   color: var(--text-color);
+  height: var(--disclosure-panel-height);
+  transition: height 250ms;
+  overflow: clip;
 }
