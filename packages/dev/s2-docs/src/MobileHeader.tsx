@@ -1,11 +1,11 @@
 'use client';
 
 import {ActionButton, CloseButton, DialogTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {getCurrentLibrary, TAB_DEFS} from './SearchMenu';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
+import {Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import React, {CSSProperties, forwardRef, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -96,18 +96,12 @@ const MobileCustomDialog = forwardRef<HTMLDivElement, MobileDialogProps>(functio
       <RACDialog
         {...props}
         ref={ref}
-        className={dialogStyle({padding})}>
-        {composeRenderProps(props.children, (children) => (
-          <OverlayTriggerStateContext.Provider value={null}>
-            {children}
-          </OverlayTriggerStateContext.Provider>
-        ))}
-      </RACDialog>
+        className={dialogStyle({padding})} />
     </Modal>
   );
 });
 
-export function MobileHeader({toc, nav}) {
+export function MobileHeader({toc, nav, currentPage}) {
   let ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -128,6 +122,9 @@ export function MobileHeader({toc, nav}) {
       return () => window.removeEventListener('scroll', onScroll);
     }
   }, []);
+
+  let currentLibrary = getCurrentLibrary(currentPage);
+  let icon = TAB_DEFS[currentLibrary].icon;
 
   return (
     <div
@@ -172,8 +169,8 @@ export function MobileHeader({toc, nav}) {
           alignItems: 'center',
           flexGrow: 1
         })}>
-        <AdobeLogo />
-        <h2 
+        {icon}
+        <h2
           className={style({
             font: 'heading-sm',
             marginY: 0,
@@ -184,7 +181,7 @@ export function MobileHeader({toc, nav}) {
             animationTimeline: 'scroll()',
             animationRange
           } as CSSProperties}>
-          React Aria
+          {TAB_DEFS[currentLibrary].label}
         </h2>
       </div>
       <div

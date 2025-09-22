@@ -19,13 +19,13 @@ function Example(props) {
   return (
     <DropZone
       {...props}
-      styles={style({width: 320})}
+      styles={style({width: 320, maxWidth: '90%'})}
       /* PROPS */
       isFilled={!!content}
       // Determine whether dragged content should be accepted.
       getDropOperation={types => (
         ['text/plain', 'image/jpeg', 'image/png', 'image/gif'].some(t => types.has(t))
-          ? 'copy' 
+          ? 'copy'
           : 'cancel'
       )}
       onDrop={async (event) => {
