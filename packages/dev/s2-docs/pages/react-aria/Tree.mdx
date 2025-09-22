@@ -355,12 +355,12 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
-```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem'}}
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <Tree>
   <TreeItem>
     <TreeItemContent>
       <Button slot="chevron" />
-      <Checkbox slot="selection" />
+      <Checkbox slot="selection" /> or <SelectionIndicator />
       <Button slot="drag" />
     </TreeItemContent>
     <TreeItem>

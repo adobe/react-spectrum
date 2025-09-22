@@ -40,11 +40,19 @@ export function SharedElementTransition(props: SharedElementTransitionProps) {
 }
 
 export interface SharedElementRenderProps {
-  isEntering?: boolean,
-  isExiting?: boolean
+  /**
+   * Whether the element is currently entering.
+   * @selector [data-entering]
+   */
+  isEntering: boolean,
+  /**
+   * Whether the element is currently exiting.
+   * @selector [data-exiting]
+   */
+  isExiting: boolean
 }
 
-interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps> {}
+export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps> {}
 
 export interface SharedElementProps extends SharedElementPropsBase {
   name: string,
@@ -173,24 +181,5 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
       ref={ref}
       data-entering={state === 'entering' || undefined}
       data-exiting={state === 'exiting' || undefined} />
-  );
-});
-
-export const SelectionIndicatorContext = createContext({isSelected: false});
-
-export interface SelectionIndicatorProps extends SharedElementPropsBase {}
-
-/**
- * An animated indicator of selection state within a group of items.
- */
-export const SelectionIndicator = forwardRef(function SelectionIndicator(props: SelectionIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {isSelected} = useContext(SelectionIndicatorContext);
-  return (
-    <SharedElement
-      {...props}
-      ref={ref}
-      className={props.className || 'react-aria-SelectionIndicator'}
-      name="SelectionIndicator"
-      isVisible={isSelected} />
   );
 });

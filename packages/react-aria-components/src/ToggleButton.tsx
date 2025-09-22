@@ -16,7 +16,7 @@ import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} f
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {SelectionIndicatorContext} from './SharedElementTransition';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
