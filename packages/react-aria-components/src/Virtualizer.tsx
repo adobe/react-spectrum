@@ -73,6 +73,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicator}: CollectionRootProps) {
   let {layout, layoutOptions} = useContext(LayoutContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
+  console.log('cow', collection);
   let state = useVirtualizerState({
     layout,
     collection,
@@ -95,6 +96,8 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     }, [layoutOptions, layoutOptions2])
   });
 
+  console.log('meow', state.visibleViews);
+
   let {contentProps} = useScrollView({
     onVisibleRectChange: state.setVisibleRect,
     contentSize: state.contentSize,
@@ -114,10 +117,12 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
 function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) {
   let virtualizer = useContext(VirtualizerContext);
   let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
+  console.log('bark', parentView.children);
   return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
 }
 
 function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
+  console.log('moo', children)
   return children.map(view => renderWrapper(parent, view, renderDropIndicator));
 }
 

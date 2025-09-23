@@ -39,17 +39,19 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
+      // console.log('blah', [...items])
       for (let item of items) {
+        // console.log(item);
         let rendered = cache.get(item);
         if (!rendered) {
           rendered = children(item);
           // @ts-ignore
           let key = rendered.props.id ?? item.key ?? item.id;
-           
+
           if (key == null) {
             throw new Error('Could not determine key for item');
           }
-           
+
           if (idScope) {
             key = idScope + ':' + key;
           }

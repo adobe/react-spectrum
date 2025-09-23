@@ -615,7 +615,7 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
   );
 });
 
-const GridListHeaderContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
+export const GridListHeaderContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
 
 export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);

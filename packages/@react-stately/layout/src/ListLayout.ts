@@ -140,7 +140,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         if (this.isVisible(node, rect)) {
           res.push(node.layoutInfo);
 
+          console.log('dog', node);
           if (node.children) {
+            console.log('puppy', node.children)
             addNodes(node.children);
           }
         }
@@ -252,8 +254,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildCollection(y: number = this.padding): LayoutNode[] {
+    console.log('buildCollection');
     let collection = this.virtualizer!.collection;
     let collectionNodes = [...collection];
+    console.log('bull', collectionNodes);
     let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
     let isEmptyOrLoading = collection?.size === 0;
@@ -301,11 +305,16 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     y -= this.gap;
     y += isEmptyOrLoading ? 0 : this.padding;
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
+    console.log('cat', nodes);
     return nodes;
   }
 
   protected isValid(node: Node<T>, y: number): boolean {
     let cached = this.layoutNodes.get(node.key);
+
+    
+    // console.log('haha', [...this.virtualizer?.collection.getChildren(node.key)]);
+    // console.log('hehe', [...this.lastCollection?.getChildren(node.key)])
     return (
       !this.invalidateEverything &&
       !!cached &&
@@ -318,6 +327,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildChild(node: Node<T>, x: number, y: number, parentKey: Key | null): LayoutNode {
     if (this.isValid(node, y)) {
+      console.log('isValid');
       return this.layoutNodes.get(node.key)!;
     }
 
@@ -361,6 +371,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+    console.log('buildSection');
     let collection = this.virtualizer!.collection;
     let width = this.virtualizer!.visibleRect.width - this.padding;
     let rect = new Rect(x, y, width - x, 0);
@@ -392,6 +403,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
     y -= this.gap;
     rect.height = y - startY;
+
+    console.log('crow', children);
 
     return {
       layoutInfo,
@@ -440,9 +453,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
+    console.log('buildItem');
+    // let collection = this.virtualizer!.collection;
     let width = this.virtualizer!.visibleRect.width - this.padding - x;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
+    // let skipped = 0;
 
     // If no explicit height is available, use an estimated height.
     if (rectHeight == null) {
@@ -466,6 +482,38 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, width, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.estimatedSize = isEstimated;
+
+
+    // let children: LayoutNode[] = [];
+    // for (let child of getChildNodes(node, collection)) {
+    //   console.log('frog', child);
+    //   if (child.type === 'content') {
+    //     continue;
+    //   }
+
+    //   let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
+
+    //   // Skip rows before the valid rectangle unless they are already cached.
+    //   if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
+    //     y += rowHeight;
+    //     skipped++;
+    //     continue;
+    //   }
+
+    //   let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
+    //   y = layoutNode.layoutInfo.rect.maxY + this.gap;
+    //   console.log('tadpole', layoutNode);
+    //   children.push(layoutNode);
+
+    //   // if (y > this.requestedRect.maxY) {
+    //   //   // Estimate the remaining height for rows that we don't need to layout right now.
+    //   //   y += ([...getChildNodes(node, collection)].length - (children.length + skipped)) * rowHeight;
+    //   //   break;
+    //   // }
+    // }
+
+    // console.log('chicken', children);
+
     return {
       layoutInfo,
       children: [],

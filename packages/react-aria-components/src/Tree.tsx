@@ -10,25 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSection, useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
+import {HeaderContext} from './Header';
+import {GridListHeader, GridListHeaderContext} from './GridList'
+import NoImage from '../../@react-spectrum/s2/spectrum-illustrations/linear/NoImage';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
+  private firstKey;
+  private lastKey;
+  private expandedKeys;
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
@@ -37,13 +43,52 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     this.keyMap = keyMap;
     this.itemCount = itemCount;
+    this.firstKey = [...this.keyMap.keys()][0];
+    this.lastKey = [...this.keyMap.keys()][-1];
+    this.expandedKeys = expandedKeys;
   }
 
   // TODO: should this collection's getters reflect the flattened structure or the original structure
   // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find all the nodes
+  // *[Symbol.iterator](): IterableIterator<Node<T>> {
+  //   let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+  //   while (node) {
+  //     // console.log('grr', node);
+  //     yield node;
+  //     node = node.nextKey != null ? this.keyMap.get(node.nextKey) : undefined;
+  //   }
+  // }
+
   *[Symbol.iterator]() {
-    yield* this.flattenedRows;
+    function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
+      if (!node) return;
+
+      // Always yield the current node first
+      yield node.clone();
+  
+      // If node is expanded, traverse its children
+      if (expandedKeys.has(node.key) && node.firstChildKey) {
+        let firstChild = keyMap.get(node.firstChildKey);
+        yield* traverseDepthFirst(keyMap.get(firstChild.nextKey), expandedKeys);
+        // yield* traverseDepthFirst(keyMap.get(node.firstChildKey), expandedKeys);
+      }
+  
+      // Then traverse to next sibling
+      if (node.nextKey) {
+        yield* traverseDepthFirst(keyMap.get(node.nextKey), expandedKeys);
+      }
+    }
+
+    let keyMap = this.keyMap;
+    let expandedKeys = this.expandedKeys;
+    console.log('keys', expandedKeys);
+    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+    yield* traverseDepthFirst(node, expandedKeys);
   }
+
+  // *[Symbol.iterator]() {
+  //   yield* this.flattenedRows;
+  // }
 
   get size() {
     return this.itemCount;
@@ -70,28 +115,82 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getKeyAfter(key: Key) {
+    // i wonder if i can keep using flattened rows here because for the keyboard nav bc nothing should really change since header + sections are not keyboard navigable?
     let index = this.flattenedRows.findIndex(row => row.key === key);
     return this.flattenedRows[index + 1]?.key;
+    // let node = this.keyMap.get(key);
+    // return node && node.nextKey != null ? this.keyMap.get(node.nextKey) : undefined;
   }
 
   getKeyBefore(key: Key) {
     let index = this.flattenedRows.findIndex(row => row.key === key);
     return this.flattenedRows[index - 1]?.key;
+    // let node = this.keyMap.get(key);
+    // return node && node.nextKey != null ? this.keyMap.get(node.prevKey) : undefined;
   }
 
   // Note that this will return Content nodes in addition to nested TreeItems
   getChildren(key: Key): Iterable<Node<T>> {
+    let keyMap = this.keyMap;
+    let expandedKeys = this.expandedKeys;
+    return {
+      // *[Symbol.iterator]() {
+      //   let parent = keyMap.get(key);
+      //   let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
+      //   while (node) {
+      //     // console.log('keys', node.key);
+      //     yield node as Node<T>;
+      //     node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+      //   }
+      // }
+      *[Symbol.iterator]() {
+        function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
+          if (!node) return;
+
+          // Always yield the current node first
+          yield node;
+      
+          // If node is expanded, traverse its children
+          if (expandedKeys.has(node.key) && node.firstChildKey) {
+            let firstChild = keyMap.get(node.firstChildKey);
+            yield* traverseDepthFirst(keyMap.get(firstChild.nextKey), expandedKeys);
+            // yield* traverseDepthFirst(keyMap.get(node.firstChildKey), expandedKeys);
+          }
+      
+          // Then traverse to next sibling
+          if (node.nextKey) {
+            yield* traverseDepthFirst(keyMap.get(node.nextKey), expandedKeys);
+          }
+        }
+
+        let parent = keyMap.get(key);
+        let node = parent?.firstChildKey ? keyMap.get(parent.firstChildKey) : null;
+        if (parent.type === 'section') {
+          yield* traverseDepthFirst(node, expandedKeys);
+        } else {
+          while (node) {
+          // console.log('keys', node.key);
+          yield node as Node<T>;
+          node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+        }
+        }
+      }
+    };
+  }
+
+  getSiblings(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
     return {
       *[Symbol.iterator]() {
         let parent = keyMap.get(key);
         let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
         while (node) {
+          // console.log('keys', node.key);
           yield node as Node<T>;
           node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
         }
       }
-    };
+    }
   }
 
   getTextValue(key: Key): string {
@@ -188,6 +287,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
+  console.log('TreeInner', collection);
   const {dragAndDropHooks} = props;
   let {direction} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -224,6 +324,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let flattenedCollection = useMemo(() => {
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
+
+  console.log('flattenedCollection', flattenedCollection);
 
   let state = useTreeState({
     ...props,
@@ -598,6 +700,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   // eslint-disable-next-line
   }, []);
 
+  console.log('hey', [...state.collection.getChildren!(item.key)], item);
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
@@ -819,7 +922,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
   let itemCount = 0;
 
-  let visitNode = (node: Node<T>) => {
+  let visitNode = (node: Node<T>, isInSection: boolean) => {
     if (node.type === 'item' || node.type === 'loader') {
       let parentKey = node?.parentKey;
       let clone = {...node};
@@ -829,6 +932,12 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
         if (hasContentNode) {
           clone.index = node?.index != null ? node?.index - 1 : 0;
+        }
+
+        if (isInSection) {
+          if (node.type === 'item') {
+            clone.level = node?.level != null ? node?.level - 1 : 0;
+          }
         }
 
         // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
@@ -856,13 +965,15 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
     }
 
     for (let child of collection.getChildren(node.key)) {
-      visitNode(child);
+      visitNode(child, isInSection);
     }
   };
 
   for (let node of collection) {
-    visitNode(node);
+    visitNode(node, node.type === 'section');
   }
+
+  // console.log('flattenedRows', flattenedRows);
 
   return {
     flattenedRows,
@@ -963,4 +1074,52 @@ function RootDropIndicator() {
       </div>
     </div>
   );
+}
+
+export interface GridListSectionProps<T> extends SectionProps<T> {}
+
+/**
+ * A TreeSection represents a section within a Tree.
+ */
+export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+  let state = useContext(TreeStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let headingRef = useRef(null);
+  ref = useObjectRef<HTMLElement>(ref);
+  let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
+    'aria-label': props['aria-label'] ?? undefined
+  }, state, ref);
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-TreeSection',
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
+
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <section
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref}>
+      <Provider
+        values={[
+          [HeaderContext, {...rowProps, ref: headingRef}],
+          [GridListHeaderContext, {...rowHeaderProps}]
+        ]}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={item} />
+      </Provider>
+    </section>
+  );
+});
+
+export const TreeHeader = (props: HTMLAttributes<HTMLElement>): ReactNode => {
+  return (
+    <GridListHeader className="react-aria-TreeHeader" {...props}>
+      {props.children}
+    </GridListHeader>
+  )
 }
