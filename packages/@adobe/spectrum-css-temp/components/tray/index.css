@@ -20,14 +20,13 @@
 
 .spectrum-Tray-wrapper {
   inset-inline-start: 0;
-  /* Positioned at the top of the window */
-  position: fixed;
+  position: absolute;
   top: 0;
 
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 
   /* Don't catch clicks */
   pointer-events: none;
@@ -55,10 +54,12 @@
   max-height: calc(var(--spectrum-visual-viewport-height) - var(--spectrum-tray-margin-top));
   /* Add padding at the bottom to account for the rest of the viewport height behind the keyboard.
    * This is necessary so that there isn't a visible gap that appears while the keyboard is animating
-   * in and out. Fall back to the safe area inset to account for things like iOS home indicator. */
-  padding-bottom: max(calc(100vh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom));
+   * in and out. Fall back to the safe area inset to account for things like iOS home indicator.
+     We also add an additional 100vh of padding (offset by the bottom position below) so the tray 
+     extends behind Safari's address bar and keyboard in iOS 26. */
+  padding-bottom: calc(max(calc(100dvh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom)) + 100vh);
   position: absolute;
-  bottom: 0;
+  bottom: -100vh;
   outline: none;
   display: flex;
   flex-direction: column;

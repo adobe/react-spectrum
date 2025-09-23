@@ -15,7 +15,6 @@ import {
   focusWithoutScrolling,
   getActiveElement,
   getOwnerDocument,
-  getOwnerWindow,
   runAfterTransition
 } from '@react-aria/utils';
 import {getInteractionModality} from './useFocusVisible';
@@ -38,15 +37,9 @@ export function focusSafely(element: FocusableElement): void {
       // If focus did not move and the element is still in the document, focus it.
       if (getActiveElement(ownerDocument) === lastFocusedElement && element.isConnected) {
         focusWithoutScrolling(element);
-        if (element instanceof getOwnerWindow(element).HTMLInputElement) {
-          element.select();
-        }
       }
     });
   } else {
     focusWithoutScrolling(element);
-    if (element instanceof getOwnerWindow(element).HTMLInputElement) {
-      element.select();
-    }
   }
 }

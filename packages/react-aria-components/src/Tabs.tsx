@@ -18,6 +18,8 @@ import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useCon
 import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
@@ -230,7 +232,9 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
       data-orientation={orientation || undefined}>
-      <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
+      <SharedElementTransition>
+        <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
+      </SharedElementTransition>
     </div>
   );
 }
@@ -284,7 +288,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabPro
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}>
-      {renderProps.children}
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
     </ElementType>
   );
 });

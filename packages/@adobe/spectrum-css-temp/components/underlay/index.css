@@ -23,7 +23,8 @@ governing permissions and limitations under the License.
 .spectrum-Underlay {
   composes: spectrum-overlay;
 
-  position: fixed;
+  /* Use position: absolute instead of fixed to avoid being clipped to the "inner" viewport in iOS 26 */
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;

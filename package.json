@@ -91,21 +91,22 @@
     "@faker-js/faker": "^8.4.1",
     "@jdb8/eslint-plugin-monorepo": "^1.0.1",
     "@octokit/rest": "*",
-    "@parcel/bundler-library": "^2.15.4",
-    "@parcel/config-default": "^2.15.4",
+    "@parcel/bundler-library": "^2.16.0",
+    "@parcel/config-default": "^2.16.0",
     "@parcel/config-storybook": ">=0.0.2",
-    "@parcel/core": "^2.15.4",
-    "@parcel/optimizer-data-url": "^2.15.4",
-    "@parcel/optimizer-terser": "^2.15.4",
-    "@parcel/packager-react-static": "^2.15.4",
-    "@parcel/packager-ts": "^2.15.4",
-    "@parcel/reporter-cli": "^2.15.4",
-    "@parcel/resolver-glob": "^2.15.4",
-    "@parcel/transformer-inline": "^2.15.4",
-    "@parcel/transformer-inline-string": "^2.15.4",
-    "@parcel/transformer-react-static": "^2.15.4",
-    "@parcel/transformer-svg-react": "^2.15.4",
-    "@parcel/transformer-typescript-types": "^2.15.4",
+    "@parcel/core": "^2.16.0",
+    "@parcel/optimizer-data-url": "^2.16.0",
+    "@parcel/optimizer-terser": "^2.16.0",
+    "@parcel/packager-react-static": "^2.16.0",
+    "@parcel/packager-ts": "^2.16.0",
+    "@parcel/reporter-bundle-analyzer": "^2.16.0",
+    "@parcel/reporter-cli": "^2.16.0",
+    "@parcel/resolver-glob": "^2.16.0",
+    "@parcel/transformer-inline": "^2.16.0",
+    "@parcel/transformer-inline-string": "^2.16.0",
+    "@parcel/transformer-react-static": "^2.16.0",
+    "@parcel/transformer-svg-react": "^2.16.0",
+    "@parcel/transformer-typescript-types": "^2.16.0",
     "@react-spectrum/parcel-namer-s2": "^0.3.0",
     "@react-spectrum/s2-icon-builder": "^0.3.0",
     "@spectrum-css/component-builder": "workspace:^",
@@ -183,7 +184,7 @@
     "npm-cli-login": "^1.0.0",
     "nyc": "^10.2.0",
     "p-queue": "^6.2.1",
-    "parcel": "^2.15.4",
+    "parcel": "^2.16.0",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
     "playwright": "^1.45.3",
@@ -293,5 +294,8 @@
         ]
       }
     ]
-  }
+  },
+  "locales": [
+    "en-US"
+  ]
 }

@@ -14,6 +14,7 @@ import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} f
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {SharedElementTransition} from './SharedElementTransition';
 import {ToggleGroupState, useToggleGroupState} from 'react-stately';
 
 export interface ToggleButtonGroupRenderProps {
@@ -60,7 +61,9 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
       data-orientation={props.orientation || 'horizontal'}
       data-disabled={props.isDisabled || undefined}>
       <ToggleGroupStateContext.Provider value={state}>
-        {renderProps.children}
+        <SharedElementTransition>
+          {renderProps.children}
+        </SharedElementTransition>
       </ToggleGroupStateContext.Provider>
     </div>
   );
