@@ -247,8 +247,10 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               // TODO: similar to Combobox, can't override via styles props
-              UNSAFE_style={{padding: 0, overflow: 'unset'}}
+              UNSAFE_style={{padding: 0, overflow: 'unset', display: 'flex'}}
               styles={style({
+                // TODO: this margin needs to be set at the dialog level but right now we are passing
+                // this to the inner div...
                 marginStart: -12,
                 minWidth: 192,
                 width: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'

@@ -373,7 +373,8 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
           ...UNSAFE_style,
           // TODO: similar to Combobox, can't override via styles props
           padding: 0,
-          overflow: 'unset'
+          overflow: 'unset',
+          display: 'flex'
         }}
         UNSAFE_className={UNSAFE_className}
         styles={styles}>

@@ -656,7 +656,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // TODO: Unfortunately can't override via styles prop
             // need to unset the overflow otherwise we get two scroll bars
             padding: 0,
-            overflow: 'unset'
+            overflow: 'unset',
+            display: 'flex'
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',

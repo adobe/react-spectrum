@@ -403,7 +403,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined,
                   // TODO: similar to Combobox, can't override via styles props
                   padding: 0,
-                  overflow: 'unset'
+                  overflow: 'unset',
+                  display: 'flex'
                 }}
                 styles={style({
                   marginStart: {
