@@ -306,7 +306,7 @@ function MobileNav({pages, currentPage}: PageProps) {
                 selectionMode="single" 
                 selectedKeys={selectedSection ? [selectedSection] : []}
                 onSelectionChange={handleTagSelection}
-                styles={style({margin: 12})}
+                UNSAFE_style={{overflow: 'auto', whiteSpace: 'nowrap', paddingBlock: 8}}
                 items={tags}>
                 {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
               </TagGroup>
