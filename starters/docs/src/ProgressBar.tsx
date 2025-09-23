@@ -14,12 +14,12 @@ export function ProgressBar({ label, ...props }: ProgressBarProps) {
   return (
     (
       <AriaProgressBar {...props}>
-        {({ percentage, valueText }) => (
+        {({ percentage, valueText, isIndeterminate }) => (
           <>
             <Label>{label}</Label>
             <span className="value">{valueText}</span>
             <div className="bar">
-              <div className="fill" style={{ width: percentage + '%' }} />
+              <div className="fill" style={{ width: (isIndeterminate ? 40 : percentage) + '%' }} />
             </div>
           </>
         )}

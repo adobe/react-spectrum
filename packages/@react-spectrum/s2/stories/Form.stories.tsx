@@ -42,12 +42,14 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
+
+const events = ['onInvalid', 'onReset', 'onSubmit'];
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -56,8 +58,9 @@ const meta: Meta<typeof Form> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'Form'
 };
 

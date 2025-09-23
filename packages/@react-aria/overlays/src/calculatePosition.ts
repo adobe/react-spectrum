@@ -67,6 +67,7 @@ export interface PositionResult {
   position: Position,
   arrowOffsetLeft?: number,
   arrowOffsetTop?: number,
+  triggerAnchorPoint: {x: number, y: number},
   maxHeight: number,
   placement: PlacementAxis
 }
@@ -126,7 +127,7 @@ function getContainerDimensions(containerNode: Element): Dimensions {
       left = visualViewport.offsetLeft;
     }
   } else {
-    ({width, height, top, left} = getOffset(containerNode));
+    ({width, height, top, left} = getOffset(containerNode, false));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
     totalWidth = width;
@@ -419,7 +420,8 @@ export function calculatePositionInternal(
   // childOffset[crossAxis] + .5 * childOffset[crossSize] = absolute position with respect to the trigger's coordinate system that would place the arrow in the center of the trigger
   // position[crossAxis] - margins[AXIS[crossAxis]] = value use to transform the position to a value with respect to the overlay's coordinate system. A child element's (aka arrow) position absolute's "0"
   // is positioned after the margin of its parent (aka overlay) so we need to subtract it to get the proper coordinate transform
-  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - position[crossAxis]! - margins[AXIS[crossAxis]];
+  let origin = childOffset[crossAxis] - position[crossAxis]! - margins[AXIS[crossAxis]];
+  let preferredArrowPosition = origin + .5 * childOffset[crossSize];
 
   // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
@@ -436,12 +438,30 @@ export function calculatePositionInternal(
   const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
   arrowPosition[crossAxis] = clamp(arrowPositionOverlappingChild, arrowMinPosition, arrowMaxPosition);
 
+  // If there is an arrow, use that as the origin so that animations are smooth.
+  // Otherwise use the target edge.
+  ({placement, crossPlacement} = placementInfo);
+  if (arrowSize) {
+    origin = arrowPosition[crossAxis];
+  } else if (crossPlacement === 'right') {
+    origin += childOffset[crossSize];
+  } else if (crossPlacement === 'center') {
+    origin += childOffset[crossSize] / 2;
+  }
+
+  let crossOrigin = placement === 'left' || placement === 'top' ? overlaySize[size] : 0;
+  let triggerAnchorPoint = {
+    x: placement === 'top' || placement === 'bottom' ? origin : crossOrigin,
+    y: placement === 'left' || placement === 'right' ? origin : crossOrigin
+  };
+
   return {
     position,
     maxHeight: maxHeight,
     arrowOffsetLeft: arrowPosition.left,
     arrowOffsetTop: arrowPosition.top,
-    placement: placementInfo.placement
+    placement,
+    triggerAnchorPoint
   };
 }
 
@@ -468,7 +488,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   let isViewportContainer = container === document.documentElement;
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
-  let childOffset: Offset = isViewportContainer ? getOffset(targetNode) : getPosition(targetNode, container);
+  let childOffset: Offset = isViewportContainer ? getOffset(targetNode, false) : getPosition(targetNode, container, false);
 
   if (!isViewportContainer) {
     let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
@@ -476,7 +496,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     childOffset.left += parseInt(marginLeft, 10) || 0;
   }
 
-  let overlaySize: Offset = getOffset(overlayNode);
+  let overlaySize: Offset = getOffset(overlayNode, true);
   let margins = getMargins(overlayNode);
   overlaySize.width += (margins.left ?? 0) + (margins.right ?? 0);
   overlaySize.height += (margins.top ?? 0) + (margins.bottom ?? 0);
@@ -487,7 +507,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
   // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container) : getPosition(container, boundaryElement);
+  let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container, false) : getPosition(container, boundaryElement, false);
   if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
     containerDimensions.scroll.top = 0;
     containerDimensions.scroll.left = 0;
@@ -513,8 +533,21 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   );
 }
 
-function getOffset(node: Element): Offset {
+export function getRect(node: Element, ignoreScale: boolean) {
   let {top, left, width, height} = node.getBoundingClientRect();
+
+  // Use offsetWidth and offsetHeight if this is an HTML element, so that 
+  // the size is not affected by scale transforms.
+  if (ignoreScale && node instanceof node.ownerDocument.defaultView!.HTMLElement) {
+    width = node.offsetWidth;
+    height = node.offsetHeight;
+  }
+
+  return {top, left, width, height};
+}
+
+function getOffset(node: Element, ignoreScale: boolean): Offset {
+  let {top, left, width, height} = getRect(node, ignoreScale);
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
   return {
     top: top + scrollTop - clientTop,
@@ -524,15 +557,14 @@ function getOffset(node: Element): Offset {
   };
 }
 
-function getPosition(node: Element, parent: Element): Offset {
+function getPosition(node: Element, parent: Element, ignoreScale: boolean): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    let {top, left, width, height} = node.getBoundingClientRect();
-    offset = {top, left, width, height};
+    offset = getRect(node, ignoreScale);
   } else {
-    offset = getOffset(node);
-    let parentOffset = getOffset(parent);
+    offset = getOffset(node, ignoreScale);
+    let parentOffset = getOffset(parent, ignoreScale);
     let parentStyle = window.getComputedStyle(parent);
     parentOffset.top += (parseInt(parentStyle.borderTopWidth, 10) || 0) - parent.scrollTop;
     parentOffset.left += (parseInt(parentStyle.borderLeftWidth, 10) || 0) - parent.scrollLeft;

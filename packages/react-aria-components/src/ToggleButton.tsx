@@ -16,6 +16,7 @@ import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} f
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
@@ -80,6 +81,10 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       data-pressed={isPressed || undefined}
       data-selected={isSelected || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}>
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
+    </button>
   );
 });

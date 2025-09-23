@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/checkbox",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,10 +26,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/form": "^3.2.0",
+    "@react-stately/form": "^3.2.1",
     "@react-stately/utils": "^3.10.8",
-    "@react-types/checkbox": "^3.10.0",
-    "@react-types/shared": "^3.31.0",
+    "@react-types/checkbox": "^3.10.1",
+    "@react-types/shared": "^3.32.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

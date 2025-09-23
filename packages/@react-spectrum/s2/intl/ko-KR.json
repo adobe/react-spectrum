@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "새로운 활동",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "선택…",
+  "picker.selectedCount": "{count, plural, =0 {선택된 항목이 없습니다} one {#개 항목이 선택되었습니다} other {#개 항목이 선택되었습니다}}",
   "slider.maximum": "최대",
   "slider.minimum": "최소",
   "table.loading": "로드 중…",

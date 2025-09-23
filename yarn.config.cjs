@@ -189,6 +189,7 @@ function enforceCSS({Yarn}) {
       && !name.startsWith('@react-spectrum/s2-docs')
       && !name.startsWith('@react-spectrum/test-utils')
       && name.startsWith('@react-spectrum')
+      && !name.startsWith('@react-spectrum/mcp')
       && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
 
       workspace.set('targets', {

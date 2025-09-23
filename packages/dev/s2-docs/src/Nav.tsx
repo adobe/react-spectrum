@@ -1,15 +1,21 @@
 'use client';
 
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
 import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
+import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
+  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
   let sections = new Map();
   for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
+    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
+    if (library !== currentLibrary) {
+      continue;
+    }
+
+    let section = page.exports?.section ?? 'Components';
     let sectionPages = sections.get(section) ?? [];
     sectionPages.push(page);
     sections.set(section, sectionPages);
@@ -29,6 +35,8 @@ export function Nav({pages, currentPage}: PageProps) {
         height: 'fit',
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
+        paddingX: 12,
+        minWidth: 180,
         display: {
           default: 'none',
           lg: 'block'
@@ -44,31 +52,6 @@ export function Nav({pages, currentPage}: PageProps) {
         </SideNavSection>
       ))}
     </nav>
-  );
-}
-
-export function MobileNav({pages, currentPage}: PageProps) {
-  let sections = new Map();
-  for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
-    let sectionPages = sections.get(section) ?? [];
-    sectionPages.push(page);
-    sections.set(section, sectionPages);
-  }
-
-  return (
-    <Menu size="L" selectionMode="single" selectedKeys={[currentPage.url]}>
-      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
-        <MenuSection key={name}>
-          <Header>
-            <Heading>{name}</Heading>
-          </Header>
-          {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-            <MenuItem key={page.url} id={page.url} href={page.url}>{title(page)}</MenuItem>
-          ))}
-        </MenuSection>
-      ))}
-    </Menu>
   );
 }
 
@@ -101,9 +84,7 @@ export function SideNav({children}) {
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        minWidth: 160,
-        width: 192,
-        maxWidth: 240,
+        width: 'full',
         boxSizing: 'border-box'
       })}>
       {children}

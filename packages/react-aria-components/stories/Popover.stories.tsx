@@ -13,20 +13,39 @@
 import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useEffect, useRef, useState} from 'react';
-import './styles.css';
+import styles from './styles.css';
 
 export default {
   title: 'React Aria Components/Popover',
-  component: Popover
+  component: Popover,
+  args: {
+    placement: 'bottom start',
+    hideArrow: false
+  },
+  argTypes: {
+    placement: {
+      control: 'select',
+      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
+        'top', 'top left', 'top right', 'top start', 'top end',
+        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
+        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
+    }
+  }
 } as Meta<typeof Popover>;
 
 export type PopoverStory = StoryFn<typeof Popover>;
 
-export const PopoverExample: PopoverStory = () => (
+export const PopoverExample: PopoverStory = (args) => (
   <DialogTrigger>
     <Button>Open popover</Button>
     <Popover
-      placement="bottom start"
+      {...args}
+      className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
       style={{
         background: 'Canvas',
         color: 'CanvasText',
@@ -34,6 +53,11 @@ export const PopoverExample: PopoverStory = () => (
         padding: 30,
         zIndex: 5
       }}>
+      {!(args as any).hideArrow && <OverlayArrow style={{display: 'flex'}}>
+        <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+          <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+        </svg>
+      </OverlayArrow>}
       <Dialog>
         {({close}) => (
           <form style={{display: 'flex', flexDirection: 'column'}}>
@@ -441,3 +465,56 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
     </Popover>
   </DialogTrigger>
 );
+
+function ScrollingBoundaryContainerExample(args) {
+  let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
+  return (
+    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto'}}>
+      <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <DialogTrigger>
+          <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
+          <Popover
+            {...args}
+            boundaryElement={boundaryElem ?? undefined}
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              zIndex: 5
+            }}>
+            <Dialog>
+              Should match the width of the trigger button
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      </div>
+    </div>
+  );
+}
+
+export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContainerExample> = {
+  render: (args) => <ScrollingBoundaryContainerExample {...args} />,
+  args: {
+    containerPadding: 0,
+    placement: 'bottom'
+  },
+  argTypes: {
+    containerPadding: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
+      }
+    },
+    hideArrow: {
+      table: {
+        disable: true
+      }
+    },
+    animation: {
+      table: {
+        disable: true
+      }
+    }
+  }
+};
