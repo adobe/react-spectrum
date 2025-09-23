@@ -18,7 +18,8 @@
     }
   }
 
-  .react-aria-Button {
+  .react-aria-Button[slot=previous],
+  .react-aria-Button[slot=next] {
     width: 1.75rem;
     height: 1.75rem;
     padding: 0;

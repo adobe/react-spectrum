@@ -12,8 +12,8 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
-import React, {ReactNode} from 'react';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
@@ -956,6 +956,73 @@ describe('Autocomplete', () => {
     expect(within(sections[0]).getByText('Bar')).toBeTruthy();
     expect(within(sections[0]).getByText('Baz')).toBeTruthy();
     expect(within(sections[1]).getByText('Copy')).toBeTruthy();
+  });
+
+
+  it('shouldnt prevent default on keyboard interactions if somehow the active descendant doesnt exist in the DOM', async () => {
+    let defaultOptions = [
+      {value: 'one'},
+      {value: 'two'},
+      {value: 'three'},
+      {value: 'four'},
+      {value: 'five'}
+    ];
+    function ControlledItemsFilter() {
+      const [options, setOptions] = useState(defaultOptions);
+      const [inputValue, onInputChange] = useState('');
+
+      useEffect(() => {
+        setOptions(
+          defaultOptions.filter(({value}) => value.includes(inputValue))
+        );
+      }, [inputValue]);
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox selectionMode="multiple">
+            <Collection items={options} dependencies={[inputValue]}>
+              {(option) => (
+                <ListBoxItem id={option.value}>{option.value}</ListBoxItem>
+              )}
+            </Collection>
+            <ListBoxLoadMoreItem onLoadMore={() => {}} isLoading={false}>
+              <div>Loading...</div>
+            </ListBoxLoadMoreItem>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+    let {getByRole} = render(
+      <ControlledItemsFilter />
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    options = within(listbox).queryAllByRole('option');
+    expect(options).toHaveLength(0);
+    // TODO: this is strange, still need to investigate. Ideally this would be removed
+    // but the collection in this configuration doesn't seem to update in time, so
+    // useSelectableCollection doesn't properly resend virtual focus to the input
+    expect(input).toHaveAttribute('aria-activedescendant');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
   });
 });
 

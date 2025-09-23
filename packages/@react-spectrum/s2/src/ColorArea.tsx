@@ -13,7 +13,8 @@
 import {
   ColorArea as AriaColorArea,
   ColorAreaProps as AriaColorAreaProps,
-  ContextValue
+  ContextValue,
+  useLocale
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
 import {createContext, forwardRef} from 'react';
@@ -34,6 +35,7 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
   [props, ref] = useSpectrumContextProps(props, ref, ColorAreaContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
+  let {direction} = useLocale();
   return (
     <AriaColorArea
       {...props}
@@ -67,7 +69,13 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
       {({state}) =>
         (<ColorHandle
           containerRef={containerRef}
-          getPosition={() => state.getThumbPosition()} />)
+          getPosition={() => {
+            let {x, y} = state.getThumbPosition();
+            return {
+              x: direction === 'ltr' ? x : 1 - x,
+              y
+            };
+          }} />)
       }
     </AriaColorArea>
   );

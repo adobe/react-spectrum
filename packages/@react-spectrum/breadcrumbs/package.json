@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/breadcrumbs",
-  "version": "3.9.22",
+  "version": "3.9.23",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -45,8 +45,8 @@
     "@react-aria/i18n": "^3.12.12",
     "@react-aria/interactions": "^3.25.5",
     "@react-aria/utils": "^3.30.1",
-    "@react-spectrum/button": "^3.17.2",
-    "@react-spectrum/menu": "^3.22.6",
+    "@react-spectrum/button": "^3.17.3",
+    "@react-spectrum/menu": "^3.22.7",
     "@react-spectrum/utils": "^3.12.8",
     "@react-stately/collections": "^3.12.7",
     "@react-types/breadcrumbs": "^3.7.16",

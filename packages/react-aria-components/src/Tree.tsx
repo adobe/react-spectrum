@@ -13,15 +13,17 @@
 import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
+import {ChildrenOrFunction, ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
@@ -400,11 +402,13 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
-            <CollectionRoot
-              collection={state.collection}
-              persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
-              scrollRef={ref}
-              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            <SharedElementTransition>
+              <CollectionRoot
+                collection={state.collection}
+                persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
+                scrollRef={ref}
+                renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            </SharedElementTransition>
           </Provider>
           {emptyState}
         </div>
@@ -698,7 +702,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
               }],
               [TreeItemContentContext, {
                 ...renderPropValues
-              }]
+              }],
+              [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             {children}
           </Provider>
@@ -720,7 +725,7 @@ export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'coll
   /**
    * The load more spinner to render when loading additional items.
    */
-  children?: ReactNode | ((values: TreeLoadMoreItemRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode),
+  children?: ChildrenOrFunction<TreeLoadMoreItemRenderProps>,
   /**
    * Whether or not the loading spinner should be rendered or not.
    */

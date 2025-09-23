@@ -20,6 +20,7 @@ import {
   ButtonRenderProps,
   Collection,
   ContextValue,
+  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
@@ -478,6 +479,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     loadingCircle,
     buttonRef
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
@@ -511,7 +513,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         {(renderProps) => (
           <>
             <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-              {({selectedItems, defaultChildren, selectedText}) => {
+              {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
                     values={[
@@ -526,6 +528,11 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       [TextContext, {
                         slots: {
                           description: {},
+                          [DEFAULT_SLOT]: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })},
                           label: {styles: style({
                             display: 'block',
                             flexGrow: 1,
@@ -535,7 +542,10 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1 ? defaultChildren : <Text slot="label">{selectedText}</Text>}
+                    {selectedItems.length <= 1 
+                      ? defaultChildren
+                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
+                    }
                   </Provider>
                 );
               }}
@@ -592,6 +602,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               context={TextContext}
               value={{
                 slots: {
+                  [DEFAULT_SLOT]: {styles: label({size})},
                   label: {styles: label({size})},
                   description: {styles: description({...renderProps, size})}
                 }

@@ -124,7 +124,11 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         queuedActiveDescendant.current = target.id;
         state.setFocusedNodeId(target.id);
       }
-    } else {
+    } else if (queuedActiveDescendant.current && !document.getElementById(queuedActiveDescendant.current)) {
+      // If we recieve a focus event refocusing the collection, either we have newly refocused the input and are waiting for the
+      // wrapped collection to refocus the previously focused node if any OR
+      // we are in a state where we've filtered to such a point that there aren't any matching items in the collection to focus.
+      // In this case we want to clear tracked item if any and clear active descendant
       queuedActiveDescendant.current = null;
       state.setFocusedNodeId(null);
     }
@@ -189,7 +193,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     // copy paste/backspacing/undo/redo for screen reader announcements
     if (lastInputType.current === 'insertText' && !disableAutoFocusFirst) {
       focusFirstItem();
-    } else if (lastInputType.current.includes('insert') || lastInputType.current.includes('delete') || lastInputType.current.includes('history')) {
+    } else if (lastInputType.current && (lastInputType.current.includes('insert') || lastInputType.current.includes('delete') || lastInputType.current.includes('history'))) {
       clearVirtualFocus(true);
 
       // If onChange was triggered before the timeout actually updated the activedescendant, we need to fire
@@ -274,9 +278,11 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         ) || false;
       } else {
         let item = document.getElementById(focusedNodeId);
-        shouldPerformDefaultAction = item?.dispatchEvent(
-          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-        ) || false;
+        if (item) {
+          shouldPerformDefaultAction = item?.dispatchEvent(
+            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+          ) || false;
+        }
       }
     }
 
@@ -366,8 +372,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     if (curFocusedNode) {
       let target = e.target;
       queueMicrotask(() => {
-        dispatchVirtualBlur(target, curFocusedNode);
-        dispatchVirtualFocus(curFocusedNode, target);
+        // instead of focusing the last focused node, just focus the collection instead and have the collection handle what item to focus via useSelectableCollection/Item
+        dispatchVirtualBlur(target, collectionRef.current);
+        dispatchVirtualFocus(collectionRef.current!, target);
       });
     }
   };

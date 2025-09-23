@@ -302,7 +302,9 @@ const allowedOverrides = [
   'insetX',
   'insetY',
   'insetStart',
-  'insetEnd'
+  'insetEnd',
+  'opacity',
+  'visibility'
 ] as const;
 
 const widthProperties = [

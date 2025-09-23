@@ -1,15 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
-
-export const section = 'S2';
 
 # Picker
 
 <PageDescription>{docs.exports.Picker.description}</PageDescription>
 
-```tsx render docs={docs.exports.Picker} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isQuiet', 'isDisabled', 'isInvalid']} initialProps={{label: 'Ice cream flavor'}} expanded type="s2"
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'description', 'contextualHelp', 'isQuiet', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
 import {Picker, PickerItem} from '@react-spectrum/s2';
 
 <Picker/* PROPS */>
@@ -23,59 +22,38 @@ import {Picker, PickerItem} from '@react-spectrum/s2';
 
 ## Content
 
-`Picker` follows the Collection Components API. It supports features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the Collections docs for more details.
+`Picker` follows the [Collection Components API](collections.html?component=Picker), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
-The following example shows a dynamic collection of items, grouped into sections.
-
-```tsx render hideImports
+```tsx render
 "use client";
-import {Picker, PickerItem, PickerSection, Header, Heading, Text, Collection} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2';
 
 function Example() {
   let options = [
-    {name: 'Fruit', children: [
-      {name: 'Apple'},
-      {name: 'Banana'},
-      {name: 'Orange'},
-      {name: 'Honeydew'},
-      {name: 'Grapes'},
-      {name: 'Watermelon'},
-      {name: 'Cantaloupe'},
-      {name: 'Pear'}
-    ]},
-    {name: 'Vegetable', children: [
-      {name: 'Cabbage'},
-      {name: 'Broccoli'},
-      {name: 'Carrots'},
-      {name: 'Lettuce'},
-      {name: 'Spinach'},
-      {name: 'Bok Choy'},
-      {name: 'Cauliflower'},
-      {name: 'Potatoes'}
-    ]}
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
   ];
 
   return (
-    <Picker label="Preferred fruit or vegetable" items={options}>
-      {section => (
-        <PickerSection id={section.name}>
-          <Header>
-            <Heading>{section.name}</Heading>
-            <Text slot="description">These flavors are common</Text>
-          </Header>
-          <Collection items={section.children}>
-            {item => <PickerItem id={item.name}>{item.name}</PickerItem>}
-          </Collection>
-        </PickerSection>
-      )}
+    /*- begin highlight -*/
+    <Picker label="Animals" items={options}>
+      {(item) => <PickerItem>{item.name}</PickerItem>}
     </Picker>
+    /*- end highlight -*/
   );
 }
 ```
 
 ### Slots
 
-Use the `"label"` and `"description"` slots to separate primary and secondary content. Items can also include an icon.
+`PickerItem` supports icons, and `label` and `description` text slots.
 
 ```tsx render
 "use client";
@@ -84,11 +62,13 @@ import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
-<Picker label="Permissions" defaultSelectedKey="read">
+<Picker label="Permissions" defaultValue="read">
   <PickerItem id="read" textValue="Read">
+    {/*- begin highlight -*/}
     <Comment />
     <Text slot="label">Read</Text>
     <Text slot="description">Comment only</Text>
+    {/*- end highlight -*/}
   </PickerItem>
   <PickerItem id="write" textValue="Write">
     <Edit />
@@ -103,11 +83,91 @@ import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 </Picker>
 ```
 
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Interactive elements (e.g. buttons) within picker items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons) as children.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<PickerSection>` component to group options. A `<Header>` element, with a `<Heading>` and optional `description` slot can be included to label a section. Sections without a header must have an `aria-label`.
+
+```tsx render
+"use client";
+import {Picker, PickerSection, PickerItem, Header, Heading, Text} from '@react-spectrum/s2';
+
+<Picker label="Ice cream flavor">
+  {/*- begin highlight -*/}
+  <PickerSection>
+    <Header>
+      <Heading>Neopolitan flavors</Heading>
+      <Text slot="description">These flavors are common</Text>
+    </Header>
+    {/*- end highlight -*/}
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Strawberry</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </PickerSection>
+  <PickerSection>
+    <Header>
+      <Heading>Others</Heading>
+      <Text slot="description">These flavors are uncommon</Text>
+    </Header>
+    <PickerItem>Matcha</PickerItem>
+    <PickerItem>Ube</PickerItem>
+    <PickerItem>Prickly pear</PickerItem>
+  </PickerSection>
+</Picker>
+```
+
+### Asynchronous loading
+
+Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling.
+
+```tsx render
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        { signal }
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker
+      aria-label="Pokemon"
+      items={list.items}
+      /*- begin highlight -*/
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {/*- end highlight -*/}
+      {(item) => <PickerItem id={item.name}>{item.name}</PickerItem>}
+    </Picker>
+  );
+}
+```
+
 ### Links
 
-Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
+Use the `href` prop on a `<PickerItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
 
-```tsx render hideImports
+```tsx render
 "use client";
 import {Picker, PickerItem} from '@react-spectrum/s2';
 
@@ -119,64 +179,72 @@ import {Picker, PickerItem} from '@react-spectrum/s2';
 </Picker>
 ```
 
-## Selection
+## Value
 
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
-When `Picker` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the Selection guide for more details.
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. When `selectionMode="multiple"`, `value` and `onChange` accept an array. Items can be disabled with the `isDisabled` prop.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['selectionMode']} wide
 "use client";
 import {Picker, PickerItem} from '@react-spectrum/s2';
 import {useState} from 'react';
 
-function Example() {
-  let [animal, setAnimal] = useState<Key>("Bison");
+function Example(props) {
+  let [animal, setAnimal] = useState("bison");
 
   return (
-    <>
+    <div>
       <Picker
+        {...props}
         label="Pick an animal"
-        selectedKey={animal}
-        onSelectionChange={selected => setAnimal(selected)}>
-        <PickerItem id="Koala">Koala</PickerItem>
-        <PickerItem id="Kangaroo">Kangaroo</PickerItem>
-        <PickerItem id="Platypus">Platypus</PickerItem>
-        <PickerItem id="Bald Eagle">Bald Eagle</PickerItem>
-        <PickerItem id="Bison">Bison</PickerItem>
+        ///- begin highlight -///
+        /* PROPS */
+        value={animal}
+        onChange={setAnimal}
+        ///- end highlight -///
+      >
+        <PickerItem id="koala">Koala</PickerItem>
+        <PickerItem id="kangaroo">Kangaroo</PickerItem>
+        <PickerItem id="platypus" isDisabled>Platypus</PickerItem>
+        <PickerItem id="eagle">Bald Eagle</PickerItem>
+        <PickerItem id="bison">Bison</PickerItem>
+        <PickerItem id="skunk">Skunk</PickerItem>
       </Picker>
-      <p>You selected {animal}</p>
-    </>
+      <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
+    </div>
   );
 }
 ```
 
-## Validation
+## Forms
 
-Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render hideImports
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
 "use client";
-import {Picker, PickerItem, ButtonGroup, Button, Form} from '@react-spectrum/s2';
+import {Picker, PickerItem, Form, Button} from '@react-spectrum/s2';
 
-<Form>
-  <Picker
-    label="Select an animal"
-    name="animal"
-    isRequired
-    description="Please select an animal.">
-    <PickerItem>Aardvark</PickerItem>
-    <PickerItem>Cat</PickerItem>
-    <PickerItem>Dog</PickerItem>
-    <PickerItem>Kangaroo</PickerItem>
-    <PickerItem>Panda</PickerItem>
-    <PickerItem>Snake</PickerItem>
-  </Picker>
-  <ButtonGroup>
-    <Button type="submit">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
-</Form>
+function Example(props) {
+  return (
+    <Form>
+      <Picker
+        {...props}
+        label="Animal"
+        /*- begin highlight -*/
+        name="animal"
+        /* PROPS */
+        /*- end highlight -*/
+        description="Please select an animal.">
+        <PickerItem id="aardvark">Aardvark</PickerItem>
+        <PickerItem id="cat">Cat</PickerItem>
+        <PickerItem id="dog">Dog</PickerItem>
+        <PickerItem id="kangaroo">Kangaroo</PickerItem>
+        <PickerItem id="panda">Panda</PickerItem>
+        <PickerItem id="snake">Snake</PickerItem>
+      </Picker>
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
 ```
 
 ## Popover options
@@ -195,10 +263,13 @@ function Example(props) {
     <div>
       <p>Select is {open ? 'open' : 'closed'}</p>
       <Picker
-        {...props}/* PROPS */
+        {...props}
         label="Choose frequency"
+        /*- begin highlight -*/
+        /* PROPS */
         isOpen={open}
         onOpenChange={setOpen}>
+        {/*- end highlight -*/}
         <PickerItem id="rarely">Rarely</PickerItem>
         <PickerItem id="sometimes">Sometimes</PickerItem>
         <PickerItem id="always">Always</PickerItem>
@@ -208,7 +279,24 @@ function Example(props) {
 }
 ```
 
-## Props
+## API
+
+```tsx links={{Picker: '#picker', PickerItem: '#pickeritem', PickerSection: '#pickersection'}}
+<Picker>
+  <PickerItem>
+    <Icon />
+    <Text slot="label" />
+    <Text slot="description" />
+  </PickerItem>
+  <PickerSection>
+    <Header>
+      <Heading />
+      <Text slot="description" />
+    </Header>
+    <PickerItem />
+  </PickerSection>
+</Picker>
+```
 
 ### Picker
 
@@ -221,4 +309,3 @@ function Example(props) {
 ### PickerSection
 
 <PropTable component={docs.exports.PickerSection} links={docs.links} />
-

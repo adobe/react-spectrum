@@ -11,7 +11,7 @@
  */
 
 import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
@@ -20,6 +20,8 @@ import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
+const events = ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore'];
+
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
@@ -27,13 +29,14 @@ const meta: Meta<typeof ComboBox<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
     contextualHelp: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'ComboBox'
 };
 
