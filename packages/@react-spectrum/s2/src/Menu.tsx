@@ -41,10 +41,10 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
 import {ImageContext} from './Image';
+import {InPopoverContext, PopoverBase, PopoverContext} from './Popover';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
-import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useGlobalListeners} from '@react-aria/utils';
@@ -211,7 +211,7 @@ export let checkmark = style({
   aspectRatio: 'square'
 });
 
-let checkbox = style({
+export let checkbox = style({
   gridArea: 'checkmark',
   marginEnd: 'text-to-control'
 });
@@ -335,27 +335,9 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     hideLinkOutIcon = false
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
-  let {align = 'start', direction = 'bottom', shouldFlip} = ctx ?? {};
+  let inPopover = useContext(InPopoverContext);
 
-  // TODO: change offset/crossoffset based on size? scale?
-  // actual values?
-  let initialPlacement: Placement;
-  switch (direction) {
-    case 'left':
-    case 'right':
-    case 'start':
-    case 'end':
-      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
-      break;
-    case 'bottom':
-    case 'top':
-    default:
-      initialPlacement = `${direction} ${align}` as Placement;
-  }
-  if (isSubmenu) {
-    initialPlacement = 'end top' as Placement;
-  }
-
+  let isPopover = (ctx || isSubmenu) && !inPopover;
   let content = (
     <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
       <Provider
@@ -370,29 +352,23 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
             slots: {
               'description': {styles: description({size})}
             }
-          }]
+          }],
+          [InPopoverContext, false]
         ]}>
         <AriaMenu
           {...props}
-          className={menu({size, isPopover: !!ctx || isSubmenu}, ctx ? null : styles)}>
+          className={menu({size, isPopover}, isPopover ? null : styles)}>
           {children}
         </AriaMenu>
       </Provider>
     </InternalMenuContext.Provider>
   );
 
-  if (ctx || isSubmenu) {
+  if (isPopover) {
     return (
       <PopoverBase
         ref={ref}
         hideArrow
-        placement={initialPlacement}
-        shouldFlip={shouldFlip}
-        // For submenus, the offset from the edge of the popover should be 10px.
-        // Subtract 8px for the padding around the parent menu.
-        offset={isSubmenu ? -2 : 8}
-        // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
-        crossOffset={isSubmenu ? -9 : 0}
         UNSAFE_style={UNSAFE_style}
         UNSAFE_className={UNSAFE_className}
         styles={styles}>
@@ -564,6 +540,21 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     }, {once: true, capture: true});
   };
 
+  let {align = 'start', direction = 'bottom', shouldFlip} = props;
+  let placement: Placement;
+  switch (direction) {
+    case 'left':
+    case 'right':
+    case 'start':
+    case 'end':
+      placement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      placement = `${direction} ${align}` as Placement;
+  }
+
   return (
     <InternalMenuTriggerContext.Provider
       value={{
@@ -571,18 +562,32 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
         direction: props.direction,
         shouldFlip: props.shouldFlip
       }}>
-      <AriaMenuTrigger {...props}>
-        <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-          {props.children}
-        </PressResponder>
-      </AriaMenuTrigger>
+      <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+        <AriaMenuTrigger {...props}>
+          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+            {props.children}
+          </PressResponder>
+        </AriaMenuTrigger>
+      </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );
 }
 
 export interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
 
-const SubmenuTrigger = AriaSubmenuTrigger as (props: SubmenuTriggerProps) => JSX.Element | null;
+function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
+  // For submenus, the offset from the edge of the popover should be 10px.
+  // Subtract 8px for the padding around the parent menu.
+  // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
+  return (
+    <AriaSubmenuTrigger {...props}>
+      {props.children[0]}
+      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -9, placement: 'end top'}}>
+        {props.children[1]}
+      </PopoverContext.Provider>
+    </AriaSubmenuTrigger>
+  );
+}
 
 export {MenuTrigger, SubmenuTrigger};
 

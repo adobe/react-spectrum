@@ -678,6 +678,28 @@ jobs:
           paths:
             - '*/verdaccio/s2-webpack-5-example'
 
+  v-s2-next:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-next.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-next-macros'
+
   v-icon-builder:
     executor: rsp-xlarge
     steps:
@@ -735,7 +757,9 @@ jobs:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
             fi
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
@@ -756,7 +780,9 @@ jobs:
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
               for dir in /tmp/verdaccio_dist/*/verdaccio; do
-                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
               done
             fi
 
@@ -774,7 +800,10 @@ jobs:
             mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
-          command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
+          command: |
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
 
   comment:
     executor: rsp
@@ -914,6 +943,9 @@ workflows:
       - v-s2-webpack:
           requires:
             - verdaccio
+      - v-s2-next:
+          requires:
+            - verdaccio
       - v-icon-builder:
           requires:
             - verdaccio
@@ -948,6 +980,7 @@ workflows:
             - v-rac-rsp-tailwind
             - v-s2-parcel
             - v-s2-webpack
+            - v-s2-next
             - v-icon-builder
             - v-publish-stats
       - comment:
