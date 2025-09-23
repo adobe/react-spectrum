@@ -351,7 +351,7 @@ export function WithCreateOption() {
         <ListBox
           data-testid="combo-box-list-box"
           className={styles.menu}>
-          {inputValue && (
+          {inputValue.length > 0 && (
             <MyListBoxItem onAction={() => alert('hi')}>
               {`Create "${inputValue}"`}
             </MyListBoxItem>

@@ -428,7 +428,7 @@ describe('ComboBox', () => {
           </div>
           <Popover placement="bottom end">
             <ListBox>
-              {inputValue && (
+              {inputValue.length > 0 && (
                 <ListBoxItem onAction={onAction}>
                   {`Create "${inputValue}"`}
                 </ListBoxItem>

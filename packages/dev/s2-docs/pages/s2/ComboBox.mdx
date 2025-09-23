@@ -182,7 +182,7 @@ function Example() {
       inputValue={inputValue}
       onInputChange={setInputValue}>
       {/*- begin highlight -*/}
-      {inputValue && (
+      {inputValue.length > 0 && (
         <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
           {`Create "${inputValue}"`}
         </ComboBoxItem>

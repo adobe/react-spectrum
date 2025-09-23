@@ -316,7 +316,7 @@ export function WithCreateOption() {
       label="Favorite Animal"
       inputValue={inputValue}
       onInputChange={setInputValue}>
-      {inputValue && (
+      {inputValue.length > 0 && (
         <ComboBoxItem onAction={() => alert('hi')}>
           {`Create "${inputValue}"`}
         </ComboBoxItem>
