@@ -104,25 +104,25 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
                 M: 480,
                 L: 640,
                 XL: 960,
-              fullscreen: 'calc(100% - 40px)',
-              fullscreenTakeover: 'full'
-            }
-          },
-          height: {
-            size: {
-              fullscreen: 'calc(100% - 40px)',
-              fullscreenTakeover: 'full'
-            }
-          },
-          maxWidth: {
-            default: '90vw',
-            size: {
-              fullscreen: 'none',
-              fullscreenTakeover: 'none'
-            }
-          },
-          maxHeight: {
-            default: '90%',
+                fullscreen: 'calc(100% - 40px)',
+                fullscreenTakeover: 'full'
+              }
+            },
+            height: {
+              size: {
+                fullscreen: 'calc(100% - 40px)',
+                fullscreenTakeover: 'full'
+              }
+            },
+            maxWidth: {
+              default: '90vw',
+              size: {
+                fullscreen: 'none',
+                fullscreenTakeover: 'none'
+              }
+            },
+            maxHeight: {
+              default: '90%',
               size: {
                 fullscreen: 'none',
                 fullscreenTakeover: 'none'
@@ -159,7 +159,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
             outlineStyle: 'solid',
             outlineWidth: 1,
             outlineColor: 'transparent'
-          })({...renderProps, size: props.size})} />
+          })({...renderProps, size: props.size})}/>
       </div>
     </ModalOverlay>
   );
