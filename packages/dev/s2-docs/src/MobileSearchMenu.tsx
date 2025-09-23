@@ -4,8 +4,8 @@ import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tab, Tab
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {getLibraryFromPage} from './library';
- 
 import {type Library, TAB_DEFS} from './constants';
+// eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import type {PageProps} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
