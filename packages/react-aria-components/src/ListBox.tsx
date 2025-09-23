@@ -22,7 +22,9 @@ import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Pre
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export interface ListBoxRenderProps {
@@ -254,11 +256,13 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
           ]}>
-          <CollectionRoot
-            collection={collection}
-            scrollRef={listBoxRef}
-            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={collection}
+              scrollRef={listBoxRef}
+              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
         {dragPreview}
@@ -410,7 +414,8 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
               label: labelProps,
               description: descriptionProps
             }
-          }]
+          }],
+          [SelectionIndicatorContext, {isSelected: states.isSelected}]
         ]}>
         {renderProps.children}
       </Provider>

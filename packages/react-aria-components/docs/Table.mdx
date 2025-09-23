@@ -251,7 +251,7 @@ If the table supports row selection, each row can optionally include a selection
 If a table supports column resizing, then it should also be wrapped in a `<ResizableTableContainer>`, and a `<ColumnResizer>` should be included in each resizable column.
 
 ```tsx
-import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, ResizableTableContainer, ColumnResizer} from 'react-aria-components';
+import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, ResizableTableContainer, ColumnResizer, SelectionIndicator} from 'react-aria-components';
 
 <ResizableTableContainer>
   <Table>
@@ -267,7 +267,9 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
     <TableBody>
       <Row>
         <Cell><Button slot="drag" /></Cell>
-        <Cell><Checkbox slot="selection" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
         <Cell />
         <Cell />
         <Cell />

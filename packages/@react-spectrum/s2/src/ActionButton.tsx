@@ -238,6 +238,15 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   paddingX: {
     default: controlStyle.paddingX,
     [avatarOnly]: 0
+  },
+  // `control` sets this, but we need to override it for avatar only buttons.
+  '--iconMargin': {
+    type: 'marginStart',
+    value: {
+      default: fontRelative(-2),
+      [iconOnly]: 0,
+      [avatarOnly]: 0
+    }
   }
 }, getAllowedOverrides());
 
@@ -325,10 +334,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
               [AvatarContext, {
                 size: avatarSize[size],
                 styles: style({
-                  marginStart: {
-                    default: '--iconMargin',
-                    ':last-child': 0
-                  },
+                  marginStart: '--iconMargin',
                   flexShrink: 0,
                   order: 0
                 })
@@ -345,7 +351,17 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 staticColor: staticColor,
                 size: props.size === 'XS' ? undefined : props.size,
                 isDisabled: isDisabled,
-                styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
+                styles: style({
+                  position: 'absolute',
+                  top: '--badgeTop',
+                  insetStart: '--badgePosition',
+                  marginTop: 'calc((self(height) * -1)/2)',
+                  marginStart: 'calc((self(height) * -1)/2)',
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
               }]
             ]}>
             {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
@@ -369,6 +385,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                   styles={style({
                     size: {
                       size: {
+                        XS: 12,
                         S: 14,
                         M: 18,
                         L: 20,
