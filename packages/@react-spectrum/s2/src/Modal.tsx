@@ -159,7 +159,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
             outlineStyle: 'solid',
             outlineWidth: 1,
             outlineColor: 'transparent'
-          })({...renderProps, size: props.size})}/>
+          })({...renderProps, size: props.size})} />
       </div>
     </ModalOverlay>
   );
