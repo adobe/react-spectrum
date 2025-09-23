@@ -20,7 +20,7 @@ import {Mutable} from './utils';
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const DATE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})$/;
 const DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?\[(.*?)\]$/;
+const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?\[(.*?)\]$/;
 const ABSOLUTE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
     /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
@@ -104,7 +104,7 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
     year < 1 ? -year + 1 : year,
     parseNumber(m[2], 1, 12),
     1,
-    m[10],
+    m[11],
     0,
     m[4] ? parseNumber(m[4], 0, 23) : 0,
     m[5] ? parseNumber(m[5], 0, 59) : 0,
@@ -118,7 +118,8 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
 
   let ms: number;
   if (m[8]) {
-    date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
+    let hourOffset = parseNumber(m[8], -23, 23);
+    date.offset = Math.sign(hourOffset) * (Math.abs(hourOffset) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000 + parseNumber(m[10] ?? '0', 0, 59) * 1000);
     ms = epochFromDate(date as ZonedDateTime) - date.offset;
 
     // Validate offset against parsed date.
@@ -212,8 +213,14 @@ function offsetToString(offset: number) {
   let sign = Math.sign(offset) < 0 ? '-' : '+';
   offset = Math.abs(offset);
   let offsetHours = Math.floor(offset / (60 * 60 * 1000));
-  let offsetMinutes = (offset % (60 * 60 * 1000)) / (60 * 1000);
-  return `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+  let offsetMinutes = Math.floor((offset % (60 * 60 * 1000)) / (60 * 1000));
+  let offsetSeconds = Math.floor((offset % (60 * 60 * 1000)) % (60 * 1000) / 1000);
+  let stringOffset = `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+  if (offsetSeconds !== 0) {
+    stringOffset += `:${String(offsetSeconds).padStart(2, '0')}`;
+  }
+
+  return stringOffset;
 }
 
 export function zonedDateTimeToString(date: ZonedDateTime): string {
