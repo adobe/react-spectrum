@@ -102,8 +102,6 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         offset={offset}
         crossOffset={crossOffset}
         hideArrow
-        // TODO: Unfortunately, we can't pass these styles via the styles prop
-        // since we don't want to actually allow modifying width and padding for the popover...
         styles={popover}>
         <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
           <Provider
