@@ -40,8 +40,8 @@ export interface ContextualHelpProps extends
 }
 
 const popover = style({
-  minWidth: 268,
-  width: 268,
+  minWidth: 'calc(268px - 2 * var(--s2-container-border-width))',
+  width: 'calc(268px - 2 * var(--s2-container-border-width))',
   padding: 24
 });
 

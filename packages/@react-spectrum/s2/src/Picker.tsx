@@ -397,22 +397,28 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               <Popover
                 hideArrow
                 offset={menuOffset}
+                crossOffset={isQuiet ? -12 : undefined}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                  width: menuWidth && !isQuiet ? `calc(${menuWidth}px - 2 * var(--s2-container-border-width))` : undefined
                 }}
+                // TODO: not sure how best to type styles so it also can accept arbitrary css vars
+                // @ts-ignore
                 styles={style({
-                  marginStart: {
-                    isQuiet: -12
+                  '--cross-offset': {
+                    type: 'width',
+                    value: -12
                   },
+                  // Subtract by 2 since these widths are set on the inner div rather than on the outermost div element that has
+                  // a border
                   minWidth: {
-                    default: '[var(--trigger-width)]',
-                    isQuiet: 192
+                    default: '[calc(var(--trigger-width) - 2 * var(--s2-container-border-width))]',
+                    isQuiet: 'calc(192px - 2 * var(--s2-container-border-width))'
                   },
                   width: {
-                    default: '[var(--trigger-width)]',
-                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                    default: '[calc(var(--trigger-width) - 2 * var(--s2-container-border-width))]',
+                    isQuiet: '[calc(var(--trigger-width) - 2 * var(--cross-offset) - 2 * var(--s2-container-border-width))]'
                   },
                   padding: 0,
                   overflow: 'unset',

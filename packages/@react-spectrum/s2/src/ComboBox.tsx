@@ -650,9 +650,10 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
           UNSAFE_style={{
-            width: menuWidth ? `${menuWidth}px` : undefined,
-            // manually subtract border as we can't set Popover to border-box, it causes the contents to spill out
-            '--trigger-width': `calc(${triggerWidth} - 2px)`
+            // Subtract by 2 since these widths are set on the inner div rather than on the outermost div element that has
+            // a border
+            width: menuWidth ? `calc(${menuWidth}px - 2 * var(--s2-container-border-width))` : undefined,
+            '--trigger-width': `calc(${triggerWidth} - 2 * var(--s2-container-border-width))`
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',
