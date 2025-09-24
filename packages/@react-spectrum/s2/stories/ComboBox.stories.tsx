@@ -50,7 +50,7 @@ type Story = StoryObj<typeof ComboBox<any>>;
 export const Example: Story = {
   render: (args: ComboBoxProps<any>) => (
     <ComboBox {...args}>
-      <ComboBoxItem id="1">Chocolate</ComboBoxItem>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
       <ComboBoxItem>Strawberry</ComboBoxItem>
       <ComboBoxItem>Vanilla</ComboBoxItem>

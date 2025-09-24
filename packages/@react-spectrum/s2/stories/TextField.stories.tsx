@@ -28,8 +28,7 @@ const meta: Meta<typeof TextField> = {
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}},
-    placeholder: {control: {type: 'text'}}
+    contextualHelp: {table: {disable: true}}
   },
   args: {
     placeholder: 'Enter your name'
