@@ -617,6 +617,46 @@ describe('MenuTrigger', function () {
         expect(tree.queryByRole('dialog')).toBeNull();
       });
 
+      it('shows selection state for available ContextualHelpTrigger items', async function () {
+        render(
+          <Provider theme={theme}>
+            <MenuTrigger defaultOpen>
+              <ActionButton>Menu</ActionButton>
+              <Menu selectionMode="single">
+                <Item key="1">One</Item>
+                <ContextualHelpTrigger>
+                  <Item key="foo" textValue="Hello">
+                    <Text>Hello</Text>
+                    <Text slot="description">Is it me you're looking for?</Text>
+                  </Item>
+                  <Dialog>
+                    <Heading>Lionel Richie says:</Heading>
+                    <Content>I can see it in your eyes</Content>
+                  </Dialog>
+                </ContextualHelpTrigger>
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        );
+
+        act(() => {jest.runAllTimers();});
+
+        let menu = screen.getByRole('menu');
+        let availableItem = within(menu).getByRole('menuitemradio', {name: 'Hello'});
+
+        expect(availableItem).toBeVisible();
+        expect(availableItem).toHaveAttribute('aria-checked', 'false');
+        expect(availableItem).not.toHaveClass('is-selected');
+        fireEvent.click(availableItem);
+        act(() => {jest.runAllTimers();});
+
+        expect(availableItem).toHaveAttribute('aria-checked', 'true');
+        expect(availableItem).toHaveClass('is-selected');
+        expect(within(availableItem).getByRole('img', {hidden: true})).toHaveClass('spectrum-Menu-checkmark');
+        expect(within(availableItem).queryByLabelText('Unavailable')).toBeNull();
+        expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
+      });
+
       it('can open a sub dialog with keyboard', async function () {
         renderTree();
         let menu = await openMenu();
