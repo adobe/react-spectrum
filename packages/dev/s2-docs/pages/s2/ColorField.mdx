@@ -12,8 +12,8 @@ import docs from 'docs:@react-spectrum/s2';
   component={ColorField}
   docs={docs.exports.ColorField}
   links={docs.links}
-  props={['label', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
-  initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+  props={['label', 'placeholder', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Select a color'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
@@ -34,6 +34,7 @@ function Example() {
     <div>
       <ColorField
         label="Primary color"
+        placeholder="Select a color"
         value={value}
         onChange={setValue} />
       <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
@@ -58,6 +59,7 @@ function Example() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <ColorField
         label="Hue"
+        placeholder="Select a hue"
         value={color}
         onChange={setColor}
         /*- begin highlight -*/
@@ -66,12 +68,14 @@ function Example() {
         {/*- end highlight -*/}
       <ColorField
         label="Saturation"
+        placeholder="Select a saturation"
         value={color}
         onChange={setColor}
         colorSpace="hsl"
         channel="saturation" />
       <ColorField
         label="Lightness"
+        placeholder="Select a lightness"
         value={color}
         onChange={setColor}
         colorSpace="hsl"
@@ -96,6 +100,7 @@ function Example(props) {
       <ColorField
         {...props}
         label="Brand color"
+        placeholder="Select a color"
         ///- begin highlight -///
         name="brandColor"
         /* PROPS */

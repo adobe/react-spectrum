@@ -12,9 +12,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={TextField}
   docs={docs.exports.TextField}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'e.g. John Doe'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -30,11 +31,12 @@ import {useState} from 'react';
 
 function Example() {
   let [name, setName] = useState('');
-  
+
   return (
     <>
       <TextField
         label="Name"
+        placeholder="e.g. John Doe"
         ///- begin highlight -///
         value={name}
         onChange={setName} />
@@ -59,6 +61,7 @@ function Example(props) {
       <TextField
         {...props}
         label="Email"
+        placeholder="abc@123.com"
         ///- begin highlight -///
         name="email"
         /* PROPS */

@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor', placeholder: 'Select a ice cream flavor'}} type="s2"
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 <ComboBox/* PROPS */>
@@ -43,7 +43,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" items={options} selectionMode="single">
+    <ComboBox label="Animals" items={options} selectionMode="single" placeholder="Select a animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -62,7 +62,7 @@ import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
-<ComboBox label="Permissions" defaultSelectedKey="read">
+<ComboBox label="Permissions" defaultSelectedKey="read" placeholder="Select a permission level">
   <ComboBoxItem id="read" textValue="Read">
     {/*- begin highlight -*/}
     <Comment />
@@ -96,7 +96,7 @@ Use the `<ComboBoxSection>` component to group options. A `<Header>` element, wi
 "use client";
 import {ComboBox, ComboBoxItem, ComboBoxSection, Header, Heading, Text} from '@react-spectrum/s2';
 
-<ComboBox label="Preferred fruit or vegetable">
+<ComboBox label="Preferred fruit or vegetable" placeholder="Select a preferred fruit or vegetable">
   {/*- begin highlight -*/}
   <ComboBoxSection>
     <Header>
@@ -151,6 +151,7 @@ function Example() {
   return (
     <ComboBox
       label="Star Wars Character Lookup"
+      placeholder="Select a Star Wars character"
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
@@ -172,7 +173,7 @@ Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client sid
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
-<ComboBox label="Bookmarks">
+<ComboBox label="Bookmarks" placeholder="Select a bookmark">
   <ComboBoxItem href="https://adobe.com/" target="_blank">Adobe</ComboBoxItem>
   <ComboBoxItem href="https://apple.com/" target="_blank">Apple</ComboBoxItem>
   <ComboBoxItem href="https://google.com/" target="_blank">Google</ComboBoxItem>
@@ -196,6 +197,7 @@ function Example() {
     <div>
       <ComboBox
         label="Pick an animal"
+        placeholder="Select a animal"
         /*- begin highlight -*/
         selectedKey={animal}
         onSelectionChange={setAnimal}>
@@ -230,6 +232,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select a favorite animal"
         /*- begin highlight -*/
         /* PROPS */
         inputValue={value}
@@ -297,6 +300,7 @@ function ControlledComboBox() {
     <div>
        <ComboBox
         label="Pick a engineering major"
+        placeholder="Select a engineering major"
         /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey}
@@ -329,6 +333,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Animal"
+        placeholder="e.g. Cat"
         /*- begin highlight -*/
         name="animal"
         /* PROPS */
@@ -357,7 +362,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavior of the popover.
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal'}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a favorite animal'}} type="s2"
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
