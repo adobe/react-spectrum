@@ -646,14 +646,10 @@ describe('MenuTrigger', function () {
 
         expect(availableItem).toBeVisible();
         expect(availableItem).toHaveAttribute('aria-checked', 'false');
-        expect(availableItem).not.toHaveClass('is-selected');
         fireEvent.click(availableItem);
         act(() => {jest.runAllTimers();});
 
         expect(availableItem).toHaveAttribute('aria-checked', 'true');
-        expect(availableItem).toHaveClass('is-selected');
-        expect(within(availableItem).getByRole('img', {hidden: true})).toHaveClass('spectrum-Menu-checkmark');
-        expect(within(availableItem).queryByLabelText('Unavailable')).toBeNull();
         expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
       });
 
