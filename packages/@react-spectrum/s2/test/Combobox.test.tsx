@@ -21,7 +21,7 @@ import userEvent from '@testing-library/user-event';
 describe('Combobox', () => {
   let user;
   let testUtilUser = new User();
-  let warnSpy;
+
   function DynamicCombobox(props) {
     let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
