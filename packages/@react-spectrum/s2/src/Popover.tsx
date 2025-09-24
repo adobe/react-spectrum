@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {allowedOverrides, colorScheme, getAllowedOverrides, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
@@ -20,7 +21,6 @@ import {
   OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
-import {allowedOverrides, colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
@@ -245,7 +245,8 @@ type popoverOverrides = [
 type PopoverStylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (popoverOverrides)[number]>;
 
 export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
-  styles: PopoverStylesProp
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: PopoverStylesProp
 }
 
 const innerDivStyle = style({
