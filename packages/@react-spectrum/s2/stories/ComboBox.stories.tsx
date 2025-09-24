@@ -38,9 +38,9 @@ const meta: Meta<typeof ComboBox<any>> = {
     placeholder: {control: {type: 'text'}}
   },
   args: {
+    ...getActionArgs(events),
     placeholder: 'Select a value'
   },
-  args: {...getActionArgs(events)},
   title: 'ComboBox'
 };
 

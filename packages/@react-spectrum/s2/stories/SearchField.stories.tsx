@@ -40,9 +40,9 @@ const meta: Meta<typeof SearchField> = {
     placeholder: {control: {type: 'text'}}
   },
   args: {
+    ...getActionArgs(events),
     placeholder: 'Enter your search here'
   },
-  args: {...getActionArgs(events)},
   title: 'SearchField'
 };
 
