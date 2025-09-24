@@ -16,7 +16,7 @@ import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement} from 'react';
+import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
@@ -307,3 +307,26 @@ export const EmptyCombobox: Story = {
     }
   }
 };
+
+export function WithCreateOption() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('hi')}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}
