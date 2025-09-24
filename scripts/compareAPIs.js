@@ -26,10 +26,10 @@ const args = parseArgs({
     isCI: {
       type: 'boolean'
     },
-    baseApiDir: {
+    'branch-api-dir': {
       type: 'string'
     },
-    branchApiDir: {
+    'base-api-dir': {
       type: 'string'
     }
   }
