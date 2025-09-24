@@ -1,0 +1,13 @@
+:root {
+  --spectrum-panel-border-color: var(--spectrum-alias-appframe-border-color);
+  --spectrum-panel-background-color: var(--spectrum-global-color-gray-100);
+  --spectrum-panel-header-text-color: var(--spectrum-global-color-gray-800);
+  --spectrum-panel-border-size: var(--spectrum-global-dimension-static-size-10);
+  --spectrum-panel-padding-x: var(--spectrum-global-dimension-size-300);
+  --spectrum-panel-padding-y: 0;
+  --spectrum-panel-header-gap-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-panel-header-height: var(--spectrum-global-dimension-size-600);
+  --spectrum-panel-header-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-panel-header-text-font-weight: var(--spectrum-global-font-weight-bold);
+  --spectrum-panel-content-padding-bottom: var(--spectrum-global-dimension-size-300);
+}
