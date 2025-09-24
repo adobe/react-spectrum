@@ -16,13 +16,21 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
-let yargs = require('yargs');
+const {parseArgs} = require('util');
 
 
-let argv = yargs
-  .option('verbose', {alias: 'v', type: 'boolean'})
-  .option('output', {alias: 'o', type: 'string'})
-  .argv;
+const args = parseArgs({
+  options: {
+    verbose: {
+      short: 'v',
+      type: 'boolean'
+    },
+    output: {
+      short: 'o',
+      type: 'string'
+    }
+  }
+});
 
 build().catch(err => {
   console.error(err.stack);
@@ -35,7 +43,7 @@ build().catch(err => {
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
 async function build() {
-  let distDir = argv.output ?? path.join(__dirname, '..', 'dist', argv.output ?? 'base-api');
+  let distDir = args.values.output ?? path.join(__dirname, '..', 'dist', args.values.output ?? 'base-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
   fs.removeSync(distDir);
   // Create a temp directory to build the site in
@@ -230,7 +238,7 @@ function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {
     let child = spawn(cmd, args, opts);
     let result = '';
-    child.stdout?.on('data', function(data) {
+    child.stdout?.on('data', function (data) {
       result += data.toString();
     });
     child.on('error', reject);

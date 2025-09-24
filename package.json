@@ -178,7 +178,6 @@
     "md5": "^2.2.1",
     "motion": "^12.23.6",
     "npm-cli-login": "^1.0.0",
-    "p-queue": "^6.2.1",
     "parcel": "^2.16.0",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
@@ -210,8 +209,7 @@
     "verdaccio": "^6.0.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
-    "xml": "^1.0.1",
-    "yargs": "^17.2.1"
+    "xml": "^1.0.1"
   },
   "resolutions": {
     "@babel/cli": "7.24.1",

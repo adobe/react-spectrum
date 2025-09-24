@@ -24209,29 +24209,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "p-queue@npm:6.2.1"
-  dependencies:
-    eventemitter3: "npm:^4.0.0"
-    p-timeout: "npm:^3.1.0"
-  checksum: 10c0/39c34c1a921c1c213654730a40867d6184857531dae39ff61af47d40cac0b4c39ded22381401d3f98ab793ed3f06fc42af7e254c521c2e6b8442e86c2a300c10
-  languageName: node
-  linkType: hard
-
 "p-reduce@npm:^1.0.0":
   version: 1.0.0
   resolution: "p-reduce@npm:1.0.0"
   checksum: 10c0/dc0bd6fdcca7c317ea84a91f06bd2da2a809a7a48ed35a5d642731f3b3b1d37338b3ab31fd40d34932cb19a6479a4a2585f4ffb5aee4fdf7fe1bc663af5a1061
-  languageName: node
-  linkType: hard
-
-"p-timeout@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "p-timeout@npm:3.2.0"
-  dependencies:
-    p-finally: "npm:^1.0.0"
-  checksum: 10c0/524b393711a6ba8e1d48137c5924749f29c93d70b671e6db761afa784726572ca06149c715632da8f70c090073afb2af1c05730303f915604fd38ee207b70a61
   languageName: node
   linkType: hard
 
@@ -25832,7 +25813,6 @@ __metadata:
     md5: "npm:^2.2.1"
     motion: "npm:^12.23.6"
     npm-cli-login: "npm:^1.0.0"
-    p-queue: "npm:^6.2.1"
     parcel: "npm:^2.16.0"
     parcel-optimizer-strict-mode: "workspace:^"
     patch-package: "npm:^6.2.0"
@@ -25865,7 +25845,6 @@ __metadata:
     walk-object: "npm:^4.0.0"
     wsrun: "npm:^5.0.0"
     xml: "npm:^1.0.1"
-    yargs: "npm:^17.2.1"
   languageName: unknown
   linkType: soft
 
@@ -31181,7 +31160,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.2.1, yargs@npm:^17.3.1":
+"yargs@npm:^17.3.1":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:

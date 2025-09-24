@@ -4,19 +4,40 @@ let fg = require('fast-glob');
 let path = require('path');
 let util = require('util');
 let chalk = require('chalk');
-let yargs = require('yargs');
 let Diff = require('diff');
+const {parseArgs} = require('util');
 
-let argv = yargs
-  .option('verbose', {alias: 'v', type: 'boolean'})
-  .option('organizedBy', {choices: ['type', 'change']})
-  .option('rawNames', {type: 'boolean'})
-  .option('package', {type: 'string'})
-  .option('interface', {type: 'string'})
-  .option('isCI', {type: 'boolean'})
-  .option('base-api-dir', {type: 'string'})
-  .option('branch-api-dir', {type: 'string'})
-  .argv;
+
+const args = parseArgs({
+  options: {
+    verbose: {
+      short: 'v',
+      type: 'boolean'
+    },
+    organizedBy: {
+      type: 'enum',
+      choices: ['type', 'change']
+    },
+    rawNames: {
+      type: 'boolean'
+    },
+    package: {
+      type: 'string'
+    },
+    interface: {
+      type: 'string'
+    },
+    isCI: {
+      type: 'boolean'
+    },
+    baseApiDir: {
+      type: 'string'
+    },
+    branchApiDir: {
+      type: 'string'
+    }
+  }
+});
 
 let allChanged = new Set();
 
@@ -41,8 +62,8 @@ compare().catch(err => {
  * as well as the local console.
  */
 async function compare() {
-  let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
-  let publishedDir = argv['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
+  let branchDir = args.values['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
+  let publishedDir = args.values['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
     console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
     return;
@@ -125,7 +146,7 @@ ${changedByDeps.length > 0 ? `changed by:
  - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${
 // eslint-disable-next-line no-nested-ternary
 affected.length > 0 ?
-argv.isCI ? `
+args.values.isCI ? `
 <details>
   <summary>it changed</summary>
    <ul>
@@ -235,14 +256,14 @@ function getDiff(pair) {
     name = pair.pubApi.replace(/.*published-api/, '');
   }
 
-  if (argv.package && !argv.package.includes(name)) {
+  if (args.values.package && !args.values.package.includes(name)) {
     return {diff: {}, name};
   }
-  if (argv.verbose) {
+  if (args.values.verbose) {
     console.log(`diffing ${name}`);
   }
-  let publishedApi = pair.pubApi === null ? {exports:{}} : getAPI(pair.pubApi);
-  let branchApi = pair.branchApi === null ? {exports:{}} : getAPI(pair.branchApi);
+  let publishedApi = pair.pubApi === null ? {exports: {}} : getAPI(pair.pubApi);
+  let branchApi = pair.branchApi === null ? {exports: {}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
   let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
@@ -254,12 +275,12 @@ function getDiff(pair) {
 
   let diffs = [];
   allInterfaces.forEach((iname, index) => {
-    if (argv.interface && argv.interface !== iname) {
+    if (args.values.interface && args.values.interface !== iname) {
       return;
     }
     let simplifiedName = allExportNames[index];
     let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
-    if (argv.verbose) {
+    if (args.values.verbose) {
       console.log(util.inspect(codeDiff, {depth: null}));
     }
     let result = [];
@@ -269,7 +290,7 @@ function getDiff(pair) {
       if (hunk.oldStart > prevEnd) {
         result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
       }
-      if (argv.isCI) {
+      if (args.values.isCI) {
         result = [...result, ...hunk.lines];
       } else {
         result = [...result, ...hunk.lines.map(line => {
@@ -287,7 +308,7 @@ function getDiff(pair) {
     if (codeDiff.hunks.length > 0) {
       joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
     }
-    if (argv.isCI && result.length > 0) {
+    if (args.values.isCI && result.length > 0) {
       joinedResult = `\`\`\`diff
 ${joinedResult}
 \`\`\``;
