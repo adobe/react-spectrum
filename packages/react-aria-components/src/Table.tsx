@@ -16,6 +16,8 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -496,10 +498,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
-          <CollectionRoot
-            collection={filteredState.collection}
-            scrollRef={tableContainerContext?.scrollRef ?? ref}
-            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={filteredState.collection}
+              scrollRef={tableContainerContext?.scrollRef ?? ref}
+              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
+          </SharedElementTransition>
         </ElementType>
       </FocusScope>
       {dragPreview}
@@ -1178,7 +1182,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                     }
                   }
                 }
-              }]
+              }],
+              [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>

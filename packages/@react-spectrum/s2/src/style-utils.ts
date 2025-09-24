@@ -302,7 +302,9 @@ export const allowedOverrides = [
   'insetX',
   'insetY',
   'insetStart',
-  'insetEnd'
+  'insetEnd',
+  'opacity',
+  'visibility'
 ] as const;
 
 export const widthProperties = [

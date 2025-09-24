@@ -22,6 +22,8 @@ import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'reac
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
@@ -178,9 +180,11 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState
-        ? props.renderEmptyState(renderValues)
-        : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
+      <SharedElementTransition>
+        {state.collection.size === 0 && props.renderEmptyState
+          ? props.renderEmptyState(renderValues)
+          : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
+      </SharedElementTransition>
     </div>
   );
 }
@@ -265,7 +269,8 @@ export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps,
                 remove: removeButtonProps
               }
             }],
-            [CollectionRendererContext, DefaultCollectionRenderer]
+            [CollectionRendererContext, DefaultCollectionRenderer],
+            [SelectionIndicatorContext, {isSelected: states.isSelected}]
           ]}>
           {renderProps.children}
         </Provider>

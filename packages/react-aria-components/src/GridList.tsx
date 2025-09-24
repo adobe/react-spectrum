@@ -23,6 +23,8 @@ import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Pre
 import {HeaderContext} from './Header';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -253,11 +255,13 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          <CollectionRoot
-            collection={filteredState.collection}
-            scrollRef={ref}
-            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={filteredState.collection}
+              scrollRef={ref}
+              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
         {dragPreview}
@@ -419,7 +423,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
               [CollectionRendererContext, DefaultCollectionRenderer],
               [ListStateContext, null],
               [SelectableCollectionContext, null],
-              [FieldInputContext, null]
+              [FieldInputContext, null],
+              [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             {renderProps.children}
           </Provider>

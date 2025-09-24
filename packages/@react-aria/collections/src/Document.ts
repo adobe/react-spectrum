@@ -179,7 +179,7 @@ export class BaseNode<T> {
   }
 
   removeChild(child: ElementNode<T>): void {
-    if (child.parentNode !== this || !this.ownerDocument.isMounted) {
+    if (child.parentNode !== this) {
       return;
     }
 
@@ -411,7 +411,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   isSSR = false;
   nodeId = 0;
   nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
-  isMounted = true;
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -426,7 +425,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   get isConnected(): boolean {
-    return this.isMounted;
+    return true;
   }
 
   createElement(type: string): ElementNode<T> {
@@ -461,16 +460,14 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private removeNode(node: ElementNode<T>): void {
-    if (node.node == null) {
-      return;
-    }
-
     for (let child of node) {
       this.removeNode(child);
     }
 
-    let collection = this.getMutableCollection();
-    collection.removeNode(node.node.key);
+    if (node.node) {
+      let collection = this.getMutableCollection();
+      collection.removeNode(node.node.key);
+    }
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -508,11 +505,15 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
           this.addNode(element);
         }
 
+        if (element.node) {
+          this.dirtyNodes.delete(element);
+        }
+
         element.isMutated = false;
+      } else {
+        this.dirtyNodes.delete(element);
       }
     }
-
-    this.dirtyNodes.clear();
 
     // Finally, update the collection.
     if (this.nextCollection) {

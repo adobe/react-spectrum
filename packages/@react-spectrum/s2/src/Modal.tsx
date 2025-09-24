@@ -24,18 +24,18 @@ interface ModalProps extends ModalOverlayProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  size?: 'S' | 'M' | 'L' | 'XL' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 const modalOverlayStyles = style({
   ...colorScheme(),
-  position: 'fixed',
-  inset: 0,
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: 'full',
+  height: '--page-height',
   isolation: 'isolate',
   backgroundColor: 'transparent-black-500',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   opacity: {
     isEntering: 0,
     isExiting: 0
@@ -45,6 +45,22 @@ const modalOverlayStyles = style({
     default: 250,
     isExiting: 130
   }
+});
+
+const modalWrapper = style({
+  position: 'sticky',
+  top: 0,
+  left: 0,
+  width: 'full',
+  height: '--visual-viewport-height',
+  display: 'flex',
+  alignItems: {
+    default: 'center',
+    size: {
+      fullscreenTakeover: 'start'
+    }
+  },
+  justifyContent: 'center'
 });
 
 /**
@@ -68,74 +84,83 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
     <ModalOverlay
       {...props}
       className={renderProps => modalOverlayStyles({...renderProps, colorScheme})}>
-      <RACModal
-        {...props}
-        ref={modalRef}
-        className={renderProps => style({
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: {
-            default: 'xl',
-            size: {
-              fullscreenTakeover: 'none'
-            }
-          },
-          width: {
-            size: {
-              // Copied from designs, not sure if correct.
-              S: 400,
-              M: 480,
-              L: 640,
-              fullscreen: 'calc(100% - 40px)',
-              fullscreenTakeover: 'full'
-            }
-          },
-          height: {
-            size: {
-              fullscreen: 'calc(100% - 40px)',
-              fullscreenTakeover: 'full'
-            }
-          },
-          maxWidth: {
-            default: '90vw',
-            size: {
-              fullscreen: 'none',
-              fullscreenTakeover: 'none'
-            }
-          },
-          maxHeight: {
-            default: '90vh',
-            size: {
-              fullscreen: 'none',
-              fullscreenTakeover: 'none'
-            }
-          },
-          '--s2-container-bg': {
-            type: 'backgroundColor',
-            value: 'layer-2'
-          },
-          backgroundColor: '--s2-container-bg',
-          opacity: {
-            isEntering: 0,
-            isExiting: 0
-          },
-          translateY: {
-            isEntering: 20
-          },
-          transition: '[opacity, translate]',
-          transitionDuration: {
-            default: 250,
-            isExiting: 130
-          },
-          transitionDelay: {
-            default: 160,
-            isExiting: 0
-          },
-          // Transparent outline for WHCM.
-          outlineStyle: 'solid',
-          outlineWidth: 1,
-          outlineColor: 'transparent'
-        })({...renderProps, size: props.size})} />
+      <div className={modalWrapper({size: props.size})} style={{containerType: 'size'} as any}>
+        <RACModal
+          {...props}
+          ref={modalRef}
+          className={renderProps => style({
+            display: 'flex',
+            flexDirection: 'column',
+            borderRadius: {
+              default: 'xl',
+              size: {
+                fullscreenTakeover: 'none'
+              }
+            },
+            width: {
+              size: {
+                // Copied from designs, not sure if correct.
+                S: 400,
+                M: 480,
+                L: 640,
+                XL: 960,
+                fullscreen: 'calc(100% - 40px)',
+                fullscreenTakeover: 'full'
+              }
+            },
+            height: {
+              size: {
+                fullscreen: 'calc(100% - 40px)',
+                fullscreenTakeover: 'full'
+              }
+            },
+            maxWidth: {
+              default: '90vw',
+              size: {
+                fullscreen: 'none',
+                fullscreenTakeover: 'none'
+              }
+            },
+            maxHeight: {
+              default: '90%',
+              size: {
+                fullscreen: 'none',
+                fullscreenTakeover: 'none'
+              }
+            },
+            paddingBottom: {
+              size: {
+                // Extend background behind the iOS Safari toolbar and keyboard.
+                fullscreenTakeover: '[100vh]'
+              }
+            },
+            '--s2-container-bg': {
+              type: 'backgroundColor',
+              value: 'layer-2'
+            },
+            backgroundColor: '--s2-container-bg',
+            opacity: {
+              isEntering: 0,
+              isExiting: 0
+            },
+            translateY: {
+              isEntering: 20
+            },
+            transition: '[opacity, translate]',
+            transitionDuration: {
+              default: 250,
+              isExiting: 130
+            },
+            transitionDelay: {
+              default: 160,
+              isExiting: 0
+            },
+            // Transparent outline for WHCM.
+            outlineStyle: 'solid',
+            outlineWidth: 1,
+            outlineColor: 'transparent'
+          })({...renderProps, size: props.size})} />
+      </div>
     </ModalOverlay>
   );
 });

@@ -21,6 +21,14 @@ interface UnderlayProps {
 
 export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps): JSX.Element {
   return (
-    <div data-testid="underlay" {...otherProps} className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
+    <div
+      data-testid="underlay"
+      {...otherProps}
+      // Cover the entire document so iOS 26 Safari doesn't clip the underlay to the inner viewport.
+      style={{height: typeof document !== 'undefined' ? document.body.getBoundingClientRect().height : undefined}}
+      className={classNames(underlayStyles, 'spectrum-Underlay', {
+        'is-open': isOpen,
+        'spectrum-Underlay--transparent': isTransparent
+      })} />
   );
 }
