@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
+import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
@@ -147,6 +147,33 @@ export const WithIcons: Story = {
   ),
   args: {
     label: 'Where to share'
+  }
+};
+
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem textValue="User One">
+        <Avatar src={SRC_URL_1} slot="avatar" />
+        <Text slot="label">User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Two">
+        <Avatar src={SRC_URL_2} slot="avatar" />
+        <Text slot="label">User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Three">
+        <Avatar src={SRC_URL_2} slot="avatar" />
+        <Text slot="label">User Three</Text>
+      </ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Share'
   }
 };
 

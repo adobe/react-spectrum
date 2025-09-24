@@ -33,11 +33,8 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
-import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
-import {centerBaseline} from './CenterBaseline';
-import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
+  avatar,
   checkmark,
   description,
   icon,
@@ -45,6 +42,11 @@ import {
   label,
   sectionHeading
 } from './Menu';
+import {AvatarContext} from './Avatar';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
+import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
@@ -363,6 +365,13 @@ export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | '
   children: ReactNode
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -390,6 +399,11 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                 [IconContext, {
                   slots: {
                     icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+                  }
+                }],
+                [AvatarContext, {
+                  slots: {
+                    avatar: {size: avatarSize[size], styles: avatar}
                   }
                 }],
                 [TextContext, {
