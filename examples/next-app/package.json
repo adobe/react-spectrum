@@ -19,7 +19,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "glob": "^10.3.12"
+    "glob": "^11.0.3"
   },
   "workspaces": [
     "../../packages/react-aria-components",

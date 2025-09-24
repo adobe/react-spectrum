@@ -19,7 +19,7 @@
     "@react-spectrum/toast": "^3.0.0-beta.16",
     "@spectrum-icons/illustrations": "^3.6.12",
     "@spectrum-icons/workflow": "^4.2.12",
-    "glob": "^10.3.12",
+    "glob": "^11.0.3",
     "next": "^13.4.1",
     "react": "^18.2.0",
     "react-aria-components": "latest",
