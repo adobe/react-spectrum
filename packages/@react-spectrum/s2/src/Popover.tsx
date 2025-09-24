@@ -20,7 +20,7 @@ import {
   OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
-import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {allowedOverrides, colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
@@ -228,7 +228,24 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
+type popoverOverrides = [
+  'overflow',
+  'padding',
+  'paddingStart',
+  'paddingEnd',
+  'paddingTop',
+  'paddingBottom',
+  'paddingX',
+  'paddingY',
+  'display',
+  'flexDirection',
+  'gap'
+];
+
+type PopoverStylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (popoverOverrides)[number]>;
+
+export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+  styles: PopoverStylesProp
 }
 
 const innerDivStyle = style({
@@ -256,9 +273,6 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
   } = props;
 
   return (
-    // TODO: this moves the ref to the dialog, but the styles all go on the inner div since that is what needs overflow: auto to avoid hiding the popover arrow
-    // Kinda weird since we usually put everything on the top level element
-    // TODO: the combobox many items story is odd, it doesn't shift itself over to be properly aligned with the trigger like it does on main
     <PopoverBase {...otherProps} ref={domRef}>
       {composeRenderProps(props.children, (children) => (
         <div

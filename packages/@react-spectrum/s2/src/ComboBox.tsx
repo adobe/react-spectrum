@@ -652,16 +652,14 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           UNSAFE_style={{
             width: menuWidth ? `${menuWidth}px` : undefined,
             // manually subtract border as we can't set Popover to border-box, it causes the contents to spill out
-            '--trigger-width': `calc(${triggerWidth} - 2px)`,
-            // TODO: Unfortunately can't override via styles prop
-            // need to unset the overflow otherwise we get two scroll bars
-            padding: 0,
-            overflow: 'unset',
-            display: 'flex'
+            '--trigger-width': `calc(${triggerWidth} - 2px)`
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',
-            width: '--trigger-width'
+            width: '--trigger-width',
+            display: 'flex',
+            overflow: 'unset',
+            padding: 0
           })}>
           <Provider
             values={[

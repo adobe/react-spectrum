@@ -275,7 +275,7 @@ export function control(options: ControlOptions): ControlResult {
   return result;
 }
 
-const allowedOverrides = [
+export const allowedOverrides = [
   'margin',
   'marginStart',
   'marginEnd',
@@ -305,13 +305,13 @@ const allowedOverrides = [
   'insetEnd'
 ] as const;
 
-const widthProperties = [
+export const widthProperties = [
   'width',
   'minWidth',
   'maxWidth'
 ] as const;
 
-const heightProperties = [
+export const heightProperties = [
   'size',
   'height',
   'minHeight',

@@ -11,7 +11,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
-import {PopoverBase, PopoverDialogProps} from './Popover';
+import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -40,7 +40,6 @@ export interface ContextualHelpProps extends
 }
 
 const popover = style({
-  fontFamily: 'sans',
   minWidth: 268,
   width: 268,
   padding: 24
@@ -96,7 +95,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <PopoverBase
+      <Popover
         placement={placement}
         shouldFlip={shouldFlip}
         // not working => containerPadding={containerPadding}
@@ -130,7 +129,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
             {children}
           </Provider>
         </RACDialog>
-      </PopoverBase>
+      </Popover>
     </DialogTrigger>
   );
 });

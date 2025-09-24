@@ -400,11 +400,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined,
-                  // TODO: similar to Combobox, can't override via styles props
-                  padding: 0,
-                  overflow: 'unset',
-                  display: 'flex'
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
                 }}
                 styles={style({
                   marginStart: {
@@ -417,7 +413,10 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   width: {
                     default: '[var(--trigger-width)]',
                     isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
-                  }
+                  },
+                  padding: 0,
+                  overflow: 'unset',
+                  display: 'flex'
                 })(props)}>
                 <Provider
                   values={[

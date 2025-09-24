@@ -244,16 +244,21 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Popover
               hideArrow
               offset={menuOffset}
+              crossOffset={-12}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
-              // TODO: similar to Combobox, can't override via styles props
-              UNSAFE_style={{padding: 0, overflow: 'unset', display: 'flex'}}
+              // TODO: not sure how best to type styles so it also can accept arbitrary css vars
+              // @ts-ignore
               styles={style({
-                // TODO: this margin needs to be set at the dialog level but right now we are passing
-                // this to the inner div...
-                marginStart: -12,
                 minWidth: 192,
-                width: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
+                '--cross-offset': {
+                  type: 'width',
+                  value: -12
+                },
+                width: 'calc(var(--trigger-width) + (-2 * var(--cross-offset)))',
+                padding: 0,
+                overflow: 'unset',
+                display: 'flex'
               })}>
               <Provider
                 values={[

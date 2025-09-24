@@ -320,6 +320,12 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
+let popoverStyles = style({
+  padding: 0,
+  overflow: 'unset',
+  display: 'flex'
+}, getAllowedOverrides());
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -369,15 +375,9 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <Popover
         ref={ref}
         hideArrow
-        UNSAFE_style={{
-          ...UNSAFE_style,
-          // TODO: similar to Combobox, can't override via styles props
-          padding: 0,
-          overflow: 'unset',
-          display: 'flex'
-        }}
+        UNSAFE_style={UNSAFE_style}
         UNSAFE_className={UNSAFE_className}
-        styles={styles}>
+        styles={popoverStyles(null, styles)}>
         {content}
       </Popover>
     );
