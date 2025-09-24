@@ -9,8 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/spectrum-css.git",
-    "directory": "components/vars"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "bugs": {
     "url": "https://github.com/adobe/spectrum-css/issues"

@@ -154,6 +154,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
+  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
 
   // Install dependencies from npm
   console.log('install our latest packages from npm');

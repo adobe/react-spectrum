@@ -114,6 +114,11 @@ async function build() {
   } catch (e) {
     fs.copySync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   }
+  try {
+    fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
+  } catch (e) {
+    fs.copySync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
+  }
   fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
