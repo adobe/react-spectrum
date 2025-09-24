@@ -3,13 +3,14 @@
   "version": "2.3.0",
   "description": "The Spectrum CSS vars package",
   "license": "Apache-2.0",
-  "main": "dist/spectrum-metadata.json",
+  "main": "protected_dist/spectrum-metadata.json",
   "scripts": {
     "update": "gulp update"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe/spectrum-css.git",
+    "directory": "components/vars"
   },
   "bugs": {
     "url": "https://github.com/adobe/spectrum-css/issues"

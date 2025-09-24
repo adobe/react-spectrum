@@ -1,0 +1,8 @@
+.spectrum {
+  --spectrum-actionbuttongroup-button-gap-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-actionbuttongroup-button-gap-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-actionbuttongroup-icon-button-gap-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-actionbuttongroup-icon-button-gap-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-actionbuttongroup-text-button-gap-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-actionbuttongroup-text-button-gap-x: var(--spectrum-global-dimension-size-100);
+}
