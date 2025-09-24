@@ -14,7 +14,7 @@
 import {unified} from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
-import glob from 'glob';
+import {globSync} from 'glob';
 import fs from 'fs';
 import {basename, resolve, dirname} from 'path';
 import {visit} from 'unist-util-visit';
@@ -28,7 +28,7 @@ import dprint from 'dprint-node';
 fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
-for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
+for (let file of globSync('packages/react-aria-components/docs/*.mdx')) {
   if (!/^[A-Z]/.test(basename(file)) || /^Virtualizer|^Toast/.test(basename(file))) {
     continue;
   }
@@ -112,7 +112,7 @@ function MyTreeItemContent`);
 let theme = fs.readFileSync('packages/@react-aria/example-theme/src/index.css', 'utf8');
 fs.writeFileSync('starters/docs/src/theme.css', theme);
 
-for (let file of glob.sync('starters/docs/src/*.css')) {
+for (let file of globSync('starters/docs/src/*.css')) {
   removeCircularDeps(file);
 }
 
