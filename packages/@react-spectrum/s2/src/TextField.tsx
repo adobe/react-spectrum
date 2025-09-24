@@ -31,7 +31,6 @@ import {mergeRefs} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';
-import {usePlaceholderWarning} from './placeholder-utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
@@ -102,8 +101,6 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
     UNSAFE_className = '',
     ...textFieldProps
   } = props;
-
-  usePlaceholderWarning(props.placeholder, 'TextField/Area', inputRef);
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
