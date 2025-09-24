@@ -14,10 +14,6 @@ const args = parseArgs({
       short: 'v',
       type: 'boolean'
     },
-    organizedBy: {
-      type: 'enum',
-      choices: ['type', 'change']
-    },
     rawNames: {
       type: 'boolean'
     },
