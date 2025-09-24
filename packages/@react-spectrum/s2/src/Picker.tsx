@@ -74,7 +74,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -401,8 +401,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  width: menuWidth && !isQuiet ? `calc(${menuWidth}px - 2 * var(--s2-container-border-width))` : undefined
-                }}
+                  '--adjusted-trigger-width': `calc(${menuWidth && !isQuiet ? `${menuWidth}px` : 'var(--trigger-width)'} - 2 * var(--s2-container-border-width))`
+                } as CSSProperties}
                 // TODO: not sure how best to type styles so it also can accept arbitrary css vars
                 // @ts-ignore
                 styles={style({
@@ -410,15 +410,13 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     type: 'width',
                     value: -12
                   },
-                  // Subtract by 2 since these widths are set on the inner div rather than on the outermost div element that has
-                  // a border
                   minWidth: {
-                    default: '[calc(var(--trigger-width) - 2 * var(--s2-container-border-width))]',
+                    default: '--adjusted-trigger-width',
                     isQuiet: 'calc(192px - 2 * var(--s2-container-border-width))'
                   },
                   width: {
-                    default: '[calc(var(--trigger-width) - 2 * var(--s2-container-border-width))]',
-                    isQuiet: '[calc(var(--trigger-width) - 2 * var(--cross-offset) - 2 * var(--s2-container-border-width))]'
+                    default: '--adjusted-trigger-width',
+                    isQuiet: '[calc(var(--adjusted-trigger-width) - 2 * var(--cross-offset))]'
                   },
                   padding: 0,
                   overflow: 'unset',
@@ -551,7 +549,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1 
+                    {selectedItems.length <= 1
                       ? defaultChildren
                       : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
                     }

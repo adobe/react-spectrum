@@ -243,7 +243,20 @@ type popoverOverrides = [
   'paddingY',
   'display',
   'flexDirection',
-  'gap'
+  'gap',
+  'flexWrap',
+  'columnGap',
+  'rowGap',
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridAutoFlow',
+  'gridAutoRows',
+  'gridAutoColumns'
 ];
 
 type PopoverStylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (popoverOverrides)[number]>;

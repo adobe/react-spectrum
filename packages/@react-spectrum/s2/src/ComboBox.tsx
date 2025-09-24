@@ -652,8 +652,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           UNSAFE_style={{
             // Subtract by 2 since these widths are set on the inner div rather than on the outermost div element that has
             // a border
-            width: menuWidth ? `calc(${menuWidth}px - 2 * var(--s2-container-border-width))` : undefined,
-            '--trigger-width': `calc(${triggerWidth} - 2 * var(--s2-container-border-width))`
+            '--trigger-width': `calc(${menuWidth ?  `${menuWidth}px` : triggerWidth} - 2 * var(--s2-container-border-width))`
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',
