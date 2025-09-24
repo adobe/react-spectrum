@@ -65,7 +65,7 @@ export {Picker, PickerItem, PickerSection, PickerContext} from './Picker';
 export {Popover} from './Popover';
 export {ProgressBar, ProgressBarContext} from './ProgressBar';
 export {ProgressCircle, ProgressCircleContext} from './ProgressCircle';
-export {Provider} from './Provider';
+export {Provider, ColorSchemeContext} from './Provider';
 export {Radio} from './Radio';
 export {RadioGroup, RadioGroupContext} from './RadioGroup';
 export {RangeCalendar, RangeCalendarContext} from './RangeCalendar';
