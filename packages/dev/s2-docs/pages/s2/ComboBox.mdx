@@ -53,7 +53,7 @@ function Example() {
 
 ### Slots
 
-`ComboBoxItem` supports icons, and `label` and `description` text slots.
+`ComboBoxItem` supports icons, avatars, and `label` and `description` text slots.
 
 ```tsx render
 "use client";
@@ -80,6 +80,30 @@ import UserSettings from '@react-spectrum/s2/icons/UserSettings';
     <Text slot="label">Admin</Text>
     <Text slot="description">Full access</Text>
   </ComboBoxItem>
+</ComboBox>
+```
+
+```tsx render
+"use client";
+import {Avatar, ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
+
+const users = Array.from({length: 10}, (_, i) => ({
+  id: `user${i + 1}`,
+  name: `User ${i + 1}`,
+  email: `user${i + 1}@example.com`,
+  avatar: 'https://i.imgur.com/kJOwAdv.png'
+}));
+
+<ComboBox label="Share" items={users}>
+  {(item) => (
+    <ComboBoxItem id={item.id} textValue={item.name}>
+      {/*- begin highlight -*/}
+      <Avatar slot="avatar" src={item.avatar} />
+      {/*- end highlight -*/}
+      <Text slot="label">{item.name}</Text>
+      <Text slot="description">{item.email}</Text>
+    </ComboBoxItem>
+  )}
 </ComboBox>
 ```
 

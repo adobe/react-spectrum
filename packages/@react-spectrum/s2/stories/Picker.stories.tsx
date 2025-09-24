@@ -11,6 +11,7 @@
  */
 
 import {
+  Avatar,
   Button,
   Content,
   ContextualHelp,
@@ -139,6 +140,33 @@ export const WithIcons: Story = {
   ),
   args: {
     label: 'Where to share'
+  }
+};
+
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <Picker {...args}>
+      <PickerItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text slot="label">User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </PickerItem>
+      <PickerItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </PickerItem>
+      <PickerItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Three</Text>
+      </PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Share'
   }
 };
 
