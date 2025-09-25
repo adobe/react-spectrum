@@ -161,6 +161,7 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
   fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
 
