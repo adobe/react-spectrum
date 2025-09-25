@@ -264,6 +264,7 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
   let {
     UNSAFE_className,
     UNSAFE_style,
+    styles,
     padding = 'default',
     ...otherProps
   } = props;
@@ -273,7 +274,7 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
       {composeRenderProps(props.children, (children) => (
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + innerDivStyle({padding})}>
+          className={(UNSAFE_className || '') + innerDivStyle({padding}, styles)}>
           {/* Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
           <OverlayTriggerStateContext.Provider value={null}>
             {children}
