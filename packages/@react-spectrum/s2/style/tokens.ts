@@ -170,17 +170,11 @@ export function fontSizeToken(name: keyof typeof tokens): number {
   return index;
 }
 
-export function shadowLayer(name: keyof typeof tokens): string {
-  let token = tokens[name] as typeof tokens['drop-shadow-emphasized-default-ambient'];
-  
-  // Currently we depend on x/y/blur being the same between light and dark theme.
-  // Spread must also be zero, since filter: drop-shadow() does not support it.
-  // Assertions so we know if these assumptions change in the future.
-  assert.equal(token.sets.light.value.x, token.sets.dark.value.x);
-  assert.equal(token.sets.light.value.y, token.sets.dark.value.y);
-  assert.equal(token.sets.light.value.blur, token.sets.dark.value.blur);
-  assert.equal(token.sets.light.value.spread, token.sets.dark.value.spread);
-  assert.equal(token.sets.light.value.spread, '0px');
-
-  return `${token.sets.light.value.x} ${token.sets.light.value.y} ${token.sets.light.value.blur} light-dark(${token.sets.light.value.color}, ${token.sets.dark.value.color})`;
+export function shadowToken(name: 'drop-shadow-emphasized' | 'drop-shadow-elevated' | 'drop-shadow-dragged'): string[] {
+  let token = tokens[name];
+  return token.value.map(layer => {
+    // Spread must also be zero, since filter: drop-shadow() does not support it.
+    assert.equal(layer.spread, '0px');
+    return `${layer.x} ${layer.y} ${layer.blur} light-dark(${layer.color.sets.light.value}, ${layer.color.sets.dark.value})`;
+  });
 }

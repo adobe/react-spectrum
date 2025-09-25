@@ -766,13 +766,13 @@ export const style = createTheme({
       };
     }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
-        return {
-          // Set font-variation-settings in addition to font-weight to work around typekit issue.
+      return {
+        // Set font-variation-settings in addition to font-weight to work around typekit issue.
         // (This was fixed, but leaving for backward compatibility for now.)
-          fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
-          fontWeight: value as any,
-          fontSynthesisWeight: 'none'
-        };
+        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
+        fontWeight: value as any,
+        fontSynthesisWeight: 'none'
+      };
     }, fontWeight),
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
@@ -834,17 +834,16 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      // top-most layer is first in the box-shadow property.
-      emphasized: `${shadowLayer('drop-shadow-emphasized-default-ambient')}, ${shadowLayer('drop-shadow-emphasized-default-transition')}, ${shadowLayer('drop-shadow-emphasized-default-transition-key')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: shadowToken('drop-shadow-emphasized').join(', '),
+      elevated: shadowToken('drop-shadow-elevated').join(', '),
+      dragged: shadowToken('drop-shadow-dragged').join(', '),
       none: 'none'
     },
     filter: {
       // layer order is reversed for filter property. filters are applied in the order they are specified.
-      emphasized: `drop-shadow(${shadowLayer('drop-shadow-emphasized-default-transition-key')}) drop-shadow(${shadowLayer('drop-shadow-emphasized-default-transition')}) drop-shadow(${shadowLayer('drop-shadow-emphasized-default-ambient')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: shadowToken('drop-shadow-emphasized').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      elevated: shadowToken('drop-shadow-elevated').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      dragged: shadowToken('drop-shadow-dragged').reverse().map(s => `drop-shadow(${s})`).join(' '),
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
