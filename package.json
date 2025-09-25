@@ -12,7 +12,7 @@
     "check-types": "tsc",
     "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
-    "install-18": "node scripts/react-18-install-prep.mjs && yarn add react@^18 react-dom@^18",
+    "install-18": "node scripts/react-18-install-prep.mjs && yarn add react@^18 react-dom@^18 react-test-renderer@^18.3.1 && node scripts/oldReactSupport.mjs",
     "install-canary": "node scripts/react-canary-install-prep.mjs && yarn add react@canary react-dom@canary",
     "start": "cross-env NODE_ENV=storybook storybook dev -p 9003 --ci -c '.storybook'",
     "build:storybook": "storybook build -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
@@ -178,7 +178,7 @@
     "jest-matchmedia-mock": "^1.1.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
-    "lucide-react": "^0.294.0",
+    "lucide-react": "^0.517.0",
     "md5": "^2.2.1",
     "motion": "^12.23.6",
     "npm-cli-login": "^1.0.0",
@@ -199,7 +199,7 @@
     "react-axe": "^3.0.2",
     "react-dom": "^19.1.0",
     "react-frame-component": "^5.0.0",
-    "react-test-renderer": "^18.3.1",
+    "react-test-renderer": "^19.1.0",
     "recast": "^0.23",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
@@ -251,7 +251,8 @@
     "remark-mdx": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
     "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch",
     "lightningcss": "1.30.1",
-    "react-server-dom-parcel": "canary"
+    "react-server-dom-parcel": "canary",
+    "react-test-renderer": "19.1.0"
   },
   "@parcel/transformer-css": {
     "cssModules": {
