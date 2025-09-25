@@ -33,7 +33,8 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {AvatarContext} from './Avatar';
+import {baseColor, edgeToText, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -239,6 +240,13 @@ const iconStyles = style({
   color: {
     isLoading: 'disabled'
   }
+});
+
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual',
+  marginTop: fontRelative(6), // made up, need feedback
+  alignSelf: 'center'
 });
 
 const loadingWrapperStyles = style({
@@ -571,6 +579,13 @@ export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'st
   children: ReactNode
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -599,21 +614,27 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
             }}}>
             <DefaultProvider
-              context={TextContext}
-              value={{
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({size})},
-                  label: {styles: label({size})},
-                  description: {styles: description({...renderProps, size})}
-                }
-              }}>
-              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !isLink && (
-                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
-                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
-                </div>
+              context={AvatarContext}
+              value={{slots: {
+                avatar: {size: avatarSize[size], styles: avatar}
+              }}}>
+              <DefaultProvider
+                context={TextContext}
+                value={{
+                  slots: {
+                    [DEFAULT_SLOT]: {styles: label({size})},
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})}
+                  }
+                }}>
+                {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+                {renderProps.selectionMode === 'multiple' && !isLink && (
+                  <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                    <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                  </div>
               )}
-              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+                {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+              </DefaultProvider>
             </DefaultProvider>
           </DefaultProvider>
         );
