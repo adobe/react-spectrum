@@ -180,6 +180,7 @@ function Example() {
   return (
     <ComboBox
       label="Favorite Animal"
+      placeholder="Select your favorite animal"
       inputValue={inputValue}
       onInputChange={setInputValue}>
       {/*- begin highlight -*/}
@@ -267,7 +268,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Favorite Animal"
-        placeholder="Select a favorite animal"
+        placeholder="Select your favorite animal"
         /*- begin highlight -*/
         /* PROPS */
         inputValue={value}
@@ -397,7 +398,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavior of the popover.
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a favorite animal'}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select your favorite animal'}} type="s2"
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
