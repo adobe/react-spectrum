@@ -164,6 +164,41 @@ function Example() {
 }
 ```
 
+### Actions
+
+Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when the item is selected. This example adds a "Create" action for the current input value.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
