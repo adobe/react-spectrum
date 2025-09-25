@@ -242,12 +242,15 @@ const iconStyles = style({
   }
 });
 
-const avatar = style({
+const buttonAvatar = style({
   gridArea: 'icon',
   marginEnd: 'text-to-visual',
-  marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center'
 });
+
+const itemAvatar = mergeStyles(buttonAvatar, style({
+  marginTop: fontRelative(6) // made up, need feedback
+}));
 
 const loadingWrapperStyles = style({
   gridColumnStart: '1',
@@ -469,6 +472,13 @@ function PickerProgressCircle(props) {
   );
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
@@ -533,6 +543,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                           }
                         }
                       }],
+                      [AvatarContext, {
+                        slots: {
+                          avatar: {
+                            render: centerBaseline({slot: 'avatar', styles: iconCenterWrapper}),
+                            size: avatarSize[size ?? 'M'], styles: buttonAvatar
+                          }
+                        }
+                      }],
                       [TextContext, {
                         slots: {
                           description: {},
@@ -579,13 +597,6 @@ export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'st
   children: ReactNode
 }
 
-const avatarSize = {
-  S: 16,
-  M: 20,
-  L: 22,
-  XL: 26
-} as const;
-
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -616,7 +627,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
             <DefaultProvider
               context={AvatarContext}
               value={{slots: {
-                avatar: {size: avatarSize[size], styles: avatar}
+                avatar: {size: avatarSize[size], styles: itemAvatar}
               }}}>
               <DefaultProvider
                 context={TextContext}
