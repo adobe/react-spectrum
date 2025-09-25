@@ -253,13 +253,6 @@ let image = style({
   objectFit: 'contain'
 });
 
-export let avatar = style({
-  gridArea: 'icon',
-  marginEnd: 'text-to-visual',
-  marginTop: fontRelative(6), // made up, need feedback
-  alignSelf: 'center'
-});
-
 export let label = style<{size: string}>({
   gridArea: 'label',
   font: controlFont(),
