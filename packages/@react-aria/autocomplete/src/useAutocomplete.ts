@@ -140,11 +140,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     delayNextActiveDescendant.current = false;
   });
 
-  // let turnOffVirtualFocus = useCallback((e) => {
-  //   e.stopPropagation();
-  //   setShouldUseVirtualFocus(false);
-  // }, []);
-
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
       // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
