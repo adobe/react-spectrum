@@ -44,7 +44,7 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement} from 'react-aria';
+import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
@@ -178,6 +178,9 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   const menuOffset: number = 6;
   const size = 'M';
   let ariaLabelledby = props['aria-labelledby'] ?? '';
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
+
   return (
     <div>
       <AriaSelect
@@ -244,42 +247,39 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Popover
               hideArrow
               offset={menuOffset}
-              crossOffset={-12}
+              crossOffset={RTLFlipOffset * -12}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
-              // TODO: not sure how best to type styles so it also can accept arbitrary css vars
-              // @ts-ignore
               styles={style({
                 minWidth: 192,
-                '--cross-offset': {
-                  type: 'width',
-                  value: -12
-                },
-                width: 'calc(var(--trigger-width) + (-2 * var(--cross-offset)))',
-                padding: 0,
-                overflow: 'unset',
-                display: 'flex'
+                width: 'calc(var(--trigger-width) - 24)'
               })}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {
-                    // @ts-ignore
-                    role: 'presentation',
-                    styles: sectionHeading
-                  }],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <ListBox
-                  items={items}
-                  className={menu}>
-                  {children}
-                </ListBox>
-              </Provider>
+              <div
+                className={style({
+                  display: 'flex',
+                  size: 'full'
+                })}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: sectionHeader({size})}],
+                    [HeadingContext, {
+                      // @ts-ignore
+                      role: 'presentation',
+                      styles: sectionHeading
+                    }],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
+                  <ListBox
+                    items={items}
+                    className={menu}>
+                    {children}
+                  </ListBox>
+                </Provider>
+              </div>
             </Popover>
           </>
         )}

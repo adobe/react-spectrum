@@ -320,11 +320,10 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
-let popoverStyles = style({
-  padding: 0,
-  overflow: 'unset',
-  display: 'flex'
-}, getAllowedOverrides());
+let wrappingDiv = style({
+  display: 'flex',
+  size: 'full'
+});
 
 /**
  * Menus display a list of actions or options that a user can choose.
@@ -374,11 +373,13 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     return (
       <Popover
         ref={ref}
-        hideArrow
-        UNSAFE_style={UNSAFE_style}
-        UNSAFE_className={UNSAFE_className}
-        styles={popoverStyles(null, styles)}>
-        {content}
+        padding="none"
+        hideArrow>
+        <div
+          style={UNSAFE_style}
+          className={(UNSAFE_className || '') + wrappingDiv}>
+          {content}
+        </div>
       </Popover>
     );
   }

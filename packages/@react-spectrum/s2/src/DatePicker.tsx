@@ -239,22 +239,27 @@ export function CalendarPopover(props: PropsWithChildren): ReactElement {
   return (
     <Popover
       hideArrow
-      styles={style({
-        paddingX: 16,
-        paddingY: 32,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16
-      })}>
-      <Dialog>
-        <Provider
-          values={[
-            [OverlayTriggerStateContext, null]
-          ]}>
-          {props.children}
-        </Provider>
-      </Dialog>
+      padding="none">
+      <div
+        className={style({
+          paddingX: 16,
+          paddingY: 32,
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          boxSizing: 'border-box',
+          size: 'full'
+        })}>
+        <Dialog>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            {props.children}
+          </Provider>
+        </Dialog>
+      </div>
     </Popover>
   );
 }

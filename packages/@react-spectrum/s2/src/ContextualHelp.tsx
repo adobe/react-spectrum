@@ -39,10 +39,12 @@ export interface ContextualHelpProps extends
   size?: 'XS' | 'S'
 }
 
-const popover = style({
+const wrappingDiv = style({
   minWidth: 268,
   width: 268,
-  padding: 24
+  padding: 24,
+  boxSizing: 'border-box',
+  height: 'full'
 });
 
 export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
@@ -96,37 +98,40 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
       <Popover
+        padding="none"
         placement={placement}
         shouldFlip={shouldFlip}
         // not working => containerPadding={containerPadding}
         offset={offset}
         crossOffset={crossOffset}
-        hideArrow
-        styles={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
-          <Provider
-            values={[
-              [TextContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {}
-                }
-              }],
-              [HeadingContext, {styles: style({
-                font: 'heading-xs',
-                margin: 0,
-                marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
-              })}],
-              [ContentContext, {styles: style({
-                font: 'body-sm'
-              })}],
-              [FooterContext, {styles: style({
-                font: 'body-sm',
-                marginTop: 16
-              })}]
-            ]}>
-            {children}
-          </Provider>
-        </RACDialog>
+        hideArrow>
+        <div
+          className={wrappingDiv}>
+          <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
+            <Provider
+              values={[
+                [TextContext, {
+                  slots: {
+                    [DEFAULT_SLOT]: {}
+                  }
+                }],
+                [HeadingContext, {styles: style({
+                  font: 'heading-xs',
+                  margin: 0,
+                  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
+                })}],
+                [ContentContext, {styles: style({
+                  font: 'body-sm'
+                })}],
+                [FooterContext, {styles: style({
+                  font: 'body-sm',
+                  marginTop: 16
+                })}]
+              ]}>
+              {children}
+            </Provider>
+          </RACDialog>
+        </div>
       </Popover>
     </DialogTrigger>
   );

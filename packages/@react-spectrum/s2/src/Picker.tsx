@@ -77,7 +77,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -339,6 +339,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
 
   return (
     <AriaSelect
@@ -396,53 +398,51 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
               <Popover
                 hideArrow
+                padding="none"
                 offset={menuOffset}
-                crossOffset={isQuiet ? -12 : undefined}
+                crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
                   width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
                 }}
-                // TODO: not sure how best to type styles so it also can accept arbitrary css vars
-                // @ts-ignore
                 styles={style({
-                  '--cross-offset': {
-                    type: 'width',
-                    value: -12
-                  },
                   minWidth: {
                     default: '--trigger-width',
                     isQuiet: 192
                   },
                   width: {
                     default: '--trigger-width',
-                    isQuiet: '[calc(var(--trigger-width) - 2 * var(--cross-offset))]'
-                  },
-                  padding: 0,
-                  overflow: 'unset',
-                  display: 'flex'
+                    isQuiet: '[calc(var(--trigger-width) - 24)]'
+                  }
                 })(props)}>
-                <Provider
-                  values={[
-                    [HeaderContext, {styles: listboxHeader({size})}],
-                    [HeadingContext, {
-                      // @ts-ignore
-                      role: 'presentation',
-                      styles: sectionHeading
-                    }],
-                    [TextContext, {
-                      slots: {
-                        description: {styles: description({size})}
-                      }
-                    }]
-                  ]}>
-                  <ListBox
-                    dependencies={props.dependencies}
-                    items={items}
-                    className={listbox({size})}>
-                    {renderer}
-                  </ListBox>
-                </Provider>
+                <div
+                  className={style({
+                    display: 'flex',
+                    size: 'full'
+                  })}>
+                  <Provider
+                    values={[
+                      [HeaderContext, {styles: listboxHeader({size})}],
+                      [HeadingContext, {
+                        // @ts-ignore
+                        role: 'presentation',
+                        styles: sectionHeading
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {styles: description({size})}
+                        }
+                      }]
+                    ]}>
+                    <ListBox
+                      dependencies={props.dependencies}
+                      items={items}
+                      className={listbox({size})}>
+                      {renderer}
+                    </ListBox>
+                  </Provider>
+                </div>
               </Popover>
             </Virtualizer>
           </InternalPickerContext.Provider>

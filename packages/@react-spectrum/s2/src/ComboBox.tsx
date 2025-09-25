@@ -652,48 +652,52 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           UNSAFE_style={{
             '--trigger-width': (menuWidth ? menuWidth + 'px' : triggerWidth)
           } as CSSProperties}
+          padding="none"
           styles={style({
             minWidth: '--trigger-width',
-            width: '--trigger-width',
-            display: 'flex',
-            overflow: 'unset',
-            padding: 0
+            width: '--trigger-width'
           })}>
-          <Provider
-            values={[
-              [HeaderContext, {styles: listboxHeader({size})}],
-              [HeadingContext, {
-                // @ts-ignore
-                role: 'presentation',
-                styles: sectionHeading
-              }],
-              [TextContext, {
-                slots: {
-                  'description': {styles: description({size})}
-                }
-              }]
-            ]}>
-            <Virtualizer
-              layout={ListLayout}
-              layoutOptions={{
-                estimatedRowHeight: 32,
-                padding: 8,
-                estimatedHeadingHeight: 50,
-                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
-              }}>
-              <ListBox
-                dependencies={props.dependencies}
-                renderEmptyState={() => (
-                  <span className={emptyStateText({size})}>
-                    {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
-                  </span>
-                )}
-                items={items}
-                className={listbox({size})}>
-                {renderer}
-              </ListBox>
-            </Virtualizer>
-          </Provider>
+          <div
+            className={style({
+              display: 'flex',
+              size: 'full'
+            })}>
+            <Provider
+              values={[
+                [HeaderContext, {styles: listboxHeader({size})}],
+                [HeadingContext, {
+                  // @ts-ignore
+                  role: 'presentation',
+                  styles: sectionHeading
+                }],
+                [TextContext, {
+                  slots: {
+                    'description': {styles: description({size})}
+                  }
+                }]
+              ]}>
+              <Virtualizer
+                layout={ListLayout}
+                layoutOptions={{
+                  estimatedRowHeight: 32,
+                  padding: 8,
+                  estimatedHeadingHeight: 50,
+                  loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
+                }}>
+                <ListBox
+                  dependencies={props.dependencies}
+                  renderEmptyState={() => (
+                    <span className={emptyStateText({size})}>
+                      {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
+                    </span>
+                  )}
+                  items={items}
+                  className={listbox({size})}>
+                  {renderer}
+                </ListBox>
+              </Virtualizer>
+            </Provider>
+          </div>
         </Popover>
       </InternalComboboxContext.Provider>
     </>

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {allowedOverrides, colorScheme, getAllowedOverrides, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
@@ -21,6 +20,7 @@ import {
   OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
+import {colorScheme, getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
@@ -228,42 +228,24 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   );
 });
 
-type popoverOverrides = [
-  'overflow',
-  'padding',
-  'paddingStart',
-  'paddingEnd',
-  'paddingTop',
-  'paddingBottom',
-  'paddingX',
-  'paddingY',
-  'display',
-  'flexDirection',
-  'gap',
-  'flexWrap',
-  'columnGap',
-  'rowGap',
-  'alignItems',
-  'alignContent',
-  'justifyItems',
-  'justifyContent',
-  'gridTemplateColumns',
-  'gridTemplateRows',
-  'gridTemplateAreas',
-  'gridAutoFlow',
-  'gridAutoRows',
-  'gridAutoColumns'
-];
-
-type PopoverStylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (popoverOverrides)[number]>;
-
+type PopoverStylesProp = StyleString<((typeof widthProperties)[number] | (typeof heightProperties)[number])>;
 export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+  /**
+   * The amount of padding around the contents of the dialog.
+   * @default 'default'
+   */
+  padding?: 'default' | 'none',
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: PopoverStylesProp
 }
 
 const innerDivStyle = style({
-  padding: 8,
+  padding: {
+    padding: {
+      default: 8,
+      none: 0
+    }
+  },
   boxSizing: 'border-box',
   outlineStyle: 'none',
   borderRadius: 'inherit',
@@ -271,7 +253,7 @@ const innerDivStyle = style({
   position: 'relative',
   width: 'full',
   maxSize: 'inherit'
-});
+}, getAllowedOverrides({height: true}));
 
 /**
  * A popover is an overlay element positioned relative to a trigger.
@@ -282,7 +264,7 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
   let {
     UNSAFE_className,
     UNSAFE_style,
-    styles,
+    padding = 'default',
     ...otherProps
   } = props;
 
@@ -291,7 +273,7 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
       {composeRenderProps(props.children, (children) => (
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + mergeStyles(innerDivStyle, styles)}>
+          className={(UNSAFE_className || '') + innerDivStyle({padding})}>
           {/* Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
           <OverlayTriggerStateContext.Provider value={null}>
             {children}

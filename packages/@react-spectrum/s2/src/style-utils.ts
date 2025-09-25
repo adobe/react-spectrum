@@ -275,7 +275,7 @@ export function control(options: ControlOptions): ControlResult {
   return result;
 }
 
-export const allowedOverrides = [
+const allowedOverrides = [
   'margin',
   'marginStart',
   'marginEnd',
