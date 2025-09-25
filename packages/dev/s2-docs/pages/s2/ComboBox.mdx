@@ -87,15 +87,20 @@ import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 "use client";
 import {Avatar, ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
 
-const users = Array.from({length: 10}, (_, i) => ({name: `User ${i + 1}`}));
+const users = Array.from({length: 10}, (_, i) => ({
+  name: `User ${i + 1}`,
+  email: `user${i + 1}@example.com`,
+  avatar: `https://i.imgur.com/kJOwAdv.png`
+}));
 
 <ComboBox label="Share" items={users}>
   {(item) => (
     <ComboBoxItem textValue={item.name}>
       {/*- begin highlight -*/}
-      <Avatar src="https://i.imgur.com/kJOwAdv.png" slot="avatar" />
+      <Avatar slot="avatar" src={item.avatar} />
       {/*- end highlight -*/}
       <Text slot="label">{item.name}</Text>
+      <Text slot="description">{item.email}</Text>
     </ComboBoxItem>
   )}
 </ComboBox>

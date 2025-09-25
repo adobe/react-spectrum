@@ -157,17 +157,17 @@ export const WithAvatars: Story = {
   render: (args) => (
     <ComboBox {...args}>
       <ComboBoxItem textValue="User One">
-        <Avatar src={SRC_URL_1} slot="avatar" />
+        <Avatar slot="avatar" src={SRC_URL_1} />
         <Text slot="label">User One</Text>
         <Text slot="description">user.one@example.com</Text>
       </ComboBoxItem>
       <ComboBoxItem textValue="User Two">
-        <Avatar src={SRC_URL_2} slot="avatar" />
+        <Avatar slot="avatar" src={SRC_URL_2} />
         <Text slot="label">User Two</Text>
         <Text slot="description">user.two@example.com<br />123-456-7890</Text>
       </ComboBoxItem>
       <ComboBoxItem textValue="User Three">
-        <Avatar src={SRC_URL_2} slot="avatar" />
+        <Avatar slot="avatar" src={SRC_URL_2} />
         <Text slot="label">User Three</Text>
       </ComboBoxItem>
     </ComboBox>
